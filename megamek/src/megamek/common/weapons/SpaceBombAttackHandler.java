@@ -91,7 +91,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if (!(ae instanceof Aero) || null == payload) {
+        if (!(ae.isAero()) || null == payload) {
             return;
         }
         
@@ -145,7 +145,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                     }
                 }
             }
-        }else{ // Ammo expenditure for a single fighter        
+        } else { // Ammo expenditure for a single fighter        
             for (int type = 0; type < payload.length; type++) {
                 for (int i = 0; i < payload[type]; i++) {
                     // find the first mounted bomb of this type and drop it

@@ -640,9 +640,9 @@ public class PlanetaryConditions implements Serializable {
             Spotlight = targetIlluminated;
         }else {
             Spotlight = en.isUsingSpotlight();
-            isMechVee = (en instanceof Mech) || (en instanceof Tank);
+            isMechVee = (en instanceof Mech && !en.isAero()) || (en instanceof Tank);
             isLargeCraft = (en instanceof Dropship) || (en instanceof Jumpship);
-            isAero = (en instanceof Aero) && !isLargeCraft;
+            isAero = (en.isAero()) && !isLargeCraft;
         }
         //anything else is infantry
 

@@ -90,6 +90,16 @@ public class BombType extends AmmoType {
         }
         return bombWeaponNames[type];
     }
+    
+    public static int getBombTypeForWeapon(EquipmentType weapon) {
+        for (int i = 0; i < B_NUM; i++) {
+            if (bombWeaponNames[i] != null
+                    && bombWeaponNames[i].equals(weapon.getInternalName())) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static String getBombInternalName(int type) {
         if((type >= B_NUM) || (type < 0)) {

@@ -46,6 +46,8 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.logging.FakeLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -172,7 +174,9 @@ public class FireControlTest {
 
     @Before
     public void setUp() {
+        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
@@ -2034,6 +2038,7 @@ public class FireControlTest {
         Assert.assertFalse(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void testCalculateUtility() {
         final double TOLERANCE = 0.00001;
@@ -2620,6 +2625,7 @@ public class FireControlTest {
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
         FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter, mockTarget, mockGame,
                                                             testToHitThreshold);
-        Assert.assertNotEquals(0, plan.getUtility(), 0.00001);
+        Assert.assertFalse("Expected not 0.0.  Got " + plan.getUtility(),
+                           Math.abs(0 - plan.getUtility()) < 0.00001);
     }
 }

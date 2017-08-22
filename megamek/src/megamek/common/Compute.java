@@ -503,7 +503,7 @@ public class Compute {
                         || (entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
                         || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)
                         || (entity.getMovementMode() == EntityMovementMode.WIGE)
-                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                        || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !isPavementStep) {
             return true;
@@ -547,7 +547,8 @@ public class Compute {
         // check sideslips
         if ((entity instanceof VTOL)
                 || (entity.getMovementMode() == EntityMovementMode.HOVER)
-                || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
+                || (entity.getMovementMode() == EntityMovementMode.WIGE
+                        && destElevation > 0 && !(entity instanceof Protomech))) {
             if (isTurning
                     && ((movementType == EntityMovementType.MOVE_RUN) 
                             || (movementType == EntityMovementType.MOVE_SPRINT)
@@ -569,7 +570,9 @@ public class Compute {
 
         // check leaps
         if ((entity instanceof Mech) && (delta_alt < -2)
-            && (movementType != EntityMovementType.MOVE_JUMP)) {
+            && (movementType != EntityMovementType.MOVE_JUMP
+            && (movementType != EntityMovementType.MOVE_VTOL_WALK
+            && (movementType != EntityMovementType.MOVE_VTOL_RUN)))) {
             return true;
         }
 
@@ -1104,6 +1107,7 @@ public class Compute {
                 !(isWeaponInfantry || isSwarmOrLegAttack
                   || isAttackerBA))
             && !(ae.isAirborne())
+            && !(ae.isBomber() && ((IBomber)ae).isVTOLBombing())
             && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                  && !ae.isAirborne() && !ae.isSpaceborne())
             && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target
@@ -1453,7 +1457,8 @@ public class Compute {
     public static int effectiveDistance(IGame game, Entity attacker,
                                         Targetable target, boolean useGroundDistance) {
 
-        if (Compute.isAirToGround(attacker, target)) {
+        if (Compute.isAirToGround(attacker, target)
+                || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
         }
@@ -2153,6 +2158,10 @@ public class Compute {
         if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             toHit.addModifier(3, "attacker used UMUs");
+        } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_WALK) {
+            toHit.addModifier(3, "attacker cruised");
+        } else if (entity instanceof LandAirMech && movement == EntityMovementType.MOVE_VTOL_RUN) {
+            toHit.addModifier(4, "attacker flanked");
         } else if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
                 || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
             toHit.addModifier(1, "attacker walked");
@@ -2252,7 +2261,7 @@ public class Compute {
     public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
         Entity entity = game.getEntity(entityId);
 
-        if (entity instanceof Aero) {
+        if (entity.isAero()) {
             return new ToHitData();
         }
 
@@ -3459,11 +3468,12 @@ public class Compute {
         // their positions to see who was further back
         if (game.getBoard().inSpace()
             && ae.getPosition().equals(t.getPosition())
-            && (ae instanceof Aero) && (t instanceof Aero)) {
-            if (((Aero) ae).shouldMoveBackHex((Aero) t)) {
+            && ae.isAero() && t.isAero()) {
+            int moveSort = shouldMoveBackHex(ae, (Entity)t);
+            if (moveSort < 0) {
                 aPos = ae.getPriorPosition();
             }
-            if (((Aero) t).shouldMoveBackHex((Aero) ae)) {
+            if (moveSort > 0) {
                 tPos = ((Entity) t).getPriorPosition();
             }
         }
@@ -3802,7 +3812,7 @@ public class Compute {
                 visualRange = visualRange / 2;
             }
             // Ground targets pick the closest path to Aeros (TW pg 107)
-            if ((te instanceof Aero) && isGroundToAir(ae, target)) {
+            if ((te.isAero()) && isGroundToAir(ae, target)) {
                 targetPos = Compute.getClosestFlightPath(ae.getId(),
                         ae.getPosition(), te);
             }
@@ -4047,11 +4057,12 @@ public class Compute {
         // table
         if (isAirToAir(attacker, target)
             && attackPos.equals(target.getPosition())
-            && (attacker instanceof Aero) && (target instanceof Aero)) {
-            if (((Aero) attacker).shouldMoveBackHex((Aero) target)) {
+            && attacker.isAero() && target.isAero()) {
+            int moveSort = shouldMoveBackHex(attacker, (Entity)target);
+            if (moveSort < 0) {
                 attackPos = attacker.getPriorPosition();
             }
-            usePrior = ((Aero) target).shouldMoveBackHex((Aero) attacker);
+            usePrior = moveSort > 0;
         }
 
         // if this is a air to ground attack, then attacker position is given by
@@ -4076,6 +4087,37 @@ public class Compute {
 
         return target.sideTable(attackPos, usePrior);
     }
+    
+    
+        /**
+         * Compares the initiative of two aerospace units in the same hex to determine attack angle.
+         * The attack angle is computed as if the unit with the higher initiative were in its previous hex.
+         *
+         * @param e1 The first <code>Entity</code> to compare
+         * @param e2 The second <code>Entity</code> to compare
+         * @return < 0 if the first unit has a higher initiative, > 0 if the second is higher,
+         *         or 0 if one of the units is not an aerospace unit, does not have a valid position,
+         *         or the two units are not in the same hex.
+         */
+    public static int shouldMoveBackHex(Entity e1, Entity e2) {
+        if (null == e1.getPosition() || null == e2.getPosition()
+                || !e1.getPosition().equals(e2.getPosition())
+                || !e1.isAero() || !e2.isAero()) {
+            return 0;
+        }
+
+        int retVal = UnitType.determineUnitTypeCode(e1) -
+                UnitType.determineUnitTypeCode(e2);
+        if (retVal == 0) {
+            retVal = ((IAero)e2).getCurrentVelocity() -
+                    ((IAero)e1).getCurrentVelocity();
+        }
+        // if all criteria are the same, select randomly
+        if (retVal == 0) {
+            retVal = d6() < 4? -1 : 1;
+        }
+        return retVal;
+    }        
 
     /**
      * Maintain backwards compatability.
@@ -4412,11 +4454,11 @@ public class Compute {
         int base = TargetRoll.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
 
-        if (!(attacker instanceof Aero)) {
+        if (!attacker.isAero()) {
             return new ToHitData(base, "attacker is not an Aero");
         }
 
-        Aero a = (Aero) attacker;
+        IAero a = (IAero) attacker;
 
         // the fighters nose must be aligned with its direction of travel
         boolean rightFacing = false;
@@ -4455,7 +4497,7 @@ public class Compute {
         // must be in control
         if (a.isOutControlTotal()) {
             reason.append("the attacker is out of control");
-        } else if (a.getBombs(AmmoType.F_SPACE_BOMB).size() < 1) {
+        } else if (attacker.getBombs(AmmoType.F_SPACE_BOMB).size() < 1) {
             reason.append("the attacker has no useable bombs");
         } else if (!rightFacing) {
             reason.append("the attacker is not facing the direction of travel");
@@ -5757,7 +5799,7 @@ public class Compute {
      */
     public static int roundsUntilReturn(IGame game, Entity en) {
 
-        if (!(en instanceof Aero)) {
+        if (!en.isAero()) {
             return -1;
         }
 
@@ -5765,7 +5807,7 @@ public class Compute {
             return -1;
         }
 
-        Aero a = (Aero) en;
+        IAero a = (IAero) en;
 
         // the table in AT2R is backwards, it should take longer to return if
         // your velocity is higher

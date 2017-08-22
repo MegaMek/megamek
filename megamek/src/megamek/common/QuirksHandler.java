@@ -32,6 +32,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
@@ -54,100 +57,84 @@ public class QuirksHandler {
     private static final String CUSTOM_QUIRKS_HEADER;
     
     static {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
-        sb.append("<!--\n");
-    
-        sb.append("NOTE: saving quirks for units within MM will cause this file to get re-written and all changes will be lost!\n\n");
-        sb.append("This file allows users to customize the default cannon quirks list.  Any quirk assignments in this file will override\n");
-        sb.append("  the cannon quirk entries entirely.  Changes to this file will not take effect until the next time megamek is launched.\n\n");
-
-        sb.append("To assign a unit a quirk, the entry should be in the following format:\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>[chassis name]</chassis>\n");
-        sb.append("        <model>{model}</model>\n");
-        sb.append("        <quirk>[quirk1 name]</quirk>\n");
-        sb.append("        <quirk>[quirk2 name]</quirk>\n");
-        sb.append("        <weaponQuirk>\n");
-        sb.append("            <weaponQuirkName>[weapon quirk 1 name]</weaponQuirkName>\n");
-        sb.append("            <location>[location of weapon]</location>\n");
-        sb.append("            <slot>[critical slot of weapon]</slot>\n");
-        sb.append("            <weaponName>[name of weapon]</weaponName>\n");
-        sb.append("        </weaponQuirk>\n");
-        sb.append("        <weaponQuirk>\n");
-        sb.append("            <weaponQuirkName>[weapon quirk 2 name]</weaponQuirkName>\n");
-        sb.append("            <location>[location of weapon]</location>\n");
-        sb.append("            <slot>[critical slot of weapon]</slot>\n");
-        sb.append("            <weaponName>[name of weapon]</weaponName>\n");
-        sb.append("        </weaponQuirk>\n");
-        sb.append("    </unit>\n\n");
-
-        sb.append("The \"model\" field can be left blank if there is no model number for the unit (common for some tank chassis), but the\n");
-        sb.append("  tags should still be included.  A <model> of \"all\" will cause all units with the same <chassis> to have the defined\n");
-        sb.append("  quirks.  This can later be overridden with entries for specific models.\n\n");
-
-        sb.append("Multiple quirks should be contained within separate \"quirk\" tags.\n\n");
-
-        sb.append("Multiple weapon quirks should be contained within separate \"weaponQuirk\" structures, even if multiple quirks apply to\n");
-        sb.append("  the same weapon.\n\n");
-
-        sb.append("The proper names for quirks can be found in the\n");
-        sb.append("  l10n/megamek/common/options/messages.properties file.  Search for the \"QuirksInfo\" section.\n");
-        sb.append("  The name you want will fall between \"option\" and \"displayableName\".  For example, if you wish to apply the\n");
-        sb.append("  \"Anti-Aircraft Targeting\" quirk to a unit, you will find the following entry in the messages.properties file:\n");
-        sb.append("    QuirksInfo.option.anti_air.displayableName\n");
-        sb.append("  The name you want to include in this file for the <quirk> entry is \"anti_air\".\n");
-
-        sb.append("If you wish to remove all quirks for a unit, you can create an entry in this file with a <quirk> of \"none\".\n\n");
-
-        sb.append("Example:  If you wish to declare that all Atlas variants do not have the Command Mech quirk:\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>all</model>\n");
-        sb.append("        <quirk>none</quirk>\n");
-        sb.append("    </unit>\n\n");
-
-        sb.append("Example: If you decide only the AS7-D Atlas, but no other variant, should have the Command Mech quirk:\n");
-        
-        sb.append("        <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>all</model>\n");
-        sb.append("        <quirk>none</quirk>\n");
-        sb.append("    </unit>\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>AS7-D</model>\n");
-        sb.append("        <quirk>command_mech</quirk>\n");
-        sb.append("    </unit>\n\n");
-
-        sb.append("Example: You can also do this in the opposite direction, so that all Atlases have the Command Mech quirk except the AS7-D:\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>all</model>\n");
-        sb.append("        <quirk>command_mech</quirk>\n");
-        sb.append("    </unit>\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>AS7-D</model>\n");
-        sb.append("        <quirk>none</quirk>\n");
-        sb.append("    </unit>\n\n");
-
-        sb.append("Example: You can define quirks that affect all units of a given chassis and then add specific quirks to specific models:\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>all</model>\n");
-        sb.append("        <quirk>command_mech</quirk>\n");
-        sb.append("    </unit>\n");
-        sb.append("    <unit>\n");
-        sb.append("        <chassis>Atlas</chassis>\n");
-        sb.append("        <model>AS7-D</model>\n");
-        sb.append("        <quirk>anti_air</quirk>\n");
-        sb.append("    </unit>\n");
-        sb.append("-->\n\n");
-
-        sb.append("<unitQuirks xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"../data/unitQuirksSchema.xsl\">\n");
-    
-        CUSTOM_QUIRKS_HEADER = sb.toString();
+        CUSTOM_QUIRKS_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n" +
+                               "<!--\n" +
+                               "NOTE: saving quirks for units within MM will cause this file to get re-written and all changes will be lost!\n\n" +
+                               "This file allows users to customize the default cannon quirks list.  Any quirk assignments in this file will override\n" +
+                               "  the cannon quirk entries entirely.  Changes to this file will not take effect until the next time megamek is launched.\n\n" +
+                               "To assign a unit a quirk, the entry should be in the following format:\n" +
+                               "    <unit>\n" +
+                               "        <chassis>[chassis name]</chassis>\n" +
+                               "        <model>{model}</model>\n" +
+                               "        <quirk>[quirk1 name]</quirk>\n" +
+                               "        <quirk>[quirk2 name]</quirk>\n" +
+                               "        <weaponQuirk>\n" +
+                               "            <weaponQuirkName>[weapon quirk 1 name]</weaponQuirkName>\n" +
+                               "            <location>[location of weapon]</location>\n" +
+                               "            <slot>[critical slot of weapon]</slot>\n" +
+                               "            <weaponName>[name of weapon]</weaponName>\n" +
+                               "        </weaponQuirk>\n" +
+                               "        <weaponQuirk>\n" +
+                               "            <weaponQuirkName>[weapon quirk 2 name]</weaponQuirkName>\n" +
+                               "            <location>[location of weapon]</location>\n" +
+                               "            <slot>[critical slot of weapon]</slot>\n" +
+                               "            <weaponName>[name of weapon]</weaponName>\n" +
+                               "        </weaponQuirk>\n" +
+                               "    </unit>\n\n" +
+                               "The \"model\" field can be left blank if there is no model number for the unit (common for some tank chassis), but the\n" +
+                               "  tags should still be included.  A <model> of \"all\" will cause all units with the same <chassis> to have the defined\n" +
+                               "  quirks.  This can later be overridden with entries for specific models.\n\n" +
+                               "Multiple quirks should be contained within separate \"quirk\" tags.\n\n" +
+                               "Multiple weapon quirks should be contained within separate \"weaponQuirk\" structures, even if multiple quirks apply to\n" +
+                               "  the same weapon.\n\n" +
+                               "The proper names for quirks can be found in the\n" +
+                               "  l10n/megamek/common/options/messages.properties file.  Search for the \"QuirksInfo\" section.\n" +
+                               "  The name you want will fall between \"option\" and \"displayableName\".  For example, if you wish to apply the\n" +
+                               "  \"Anti-Aircraft Targeting\" quirk to a unit, you will find the following entry in the messages.properties file:\n" +
+                               "    QuirksInfo.option.anti_air.displayableName\n" +
+                               "  The name you want to include in this file for the <quirk> entry is \"anti_air\".\n" +
+                               "If you wish to remove all quirks for a unit, you can create an entry in this file with a <quirk> of \"none\".\n\n" +
+                               "Example:  If you wish to declare that all Atlas variants do not have the Command Mech quirk:\n" +
+                               "    <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>all</model>\n" +
+                               "        <quirk>none</quirk>\n" +
+                               "    </unit>\n\n" +
+                               "Example: If you decide only the AS7-D Atlas, but no other variant, should have the Command Mech quirk:\n" +
+                               "        <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>all</model>\n" +
+                               "        <quirk>none</quirk>\n" +
+                               "    </unit>\n" +
+                               "    <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>AS7-D</model>\n" +
+                               "        <quirk>command_mech</quirk>\n" +
+                               "    </unit>\n\n" +
+                               "Example: You can also do this in the opposite direction, so that all Atlases have the Command Mech quirk except the AS7-D:\n" +
+                               "    <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>all</model>\n" +
+                               "        <quirk>command_mech</quirk>\n" +
+                               "    </unit>\n" +
+                               "    <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>AS7-D</model>\n" +
+                               "        <quirk>none</quirk>\n" +
+                               "    </unit>\n\n" +
+                               "Example: You can define quirks that affect all units of a given chassis and then add specific quirks to specific models:\n" +
+                               "    <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>all</model>\n" +
+                               "        <quirk>command_mech</quirk>\n" +
+                               "    </unit>\n" +
+                               "    <unit>\n" +
+                               "        <chassis>Atlas</chassis>\n" +
+                               "        <model>AS7-D</model>\n" +
+                               "        <quirk>anti_air</quirk>\n" +
+                               "    </unit>\n" +
+                               "-->\n\n" +
+                               "<unitQuirks xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"../data/unitQuirksSchema.xsl\">\n";
     }
     
     private static final String UNIT = "unit";
@@ -167,15 +154,32 @@ public class QuirksHandler {
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean customQuirksDirty = new AtomicBoolean(false);
     private static AtomicBoolean initialized = new AtomicBoolean(false);
+
+    private static MMLogger logger = null;
+
+    private QuirksHandler() {
+    }
+
+    // Use to pass in a fake logger for unit tests.
+    static void setLogger(final MMLogger newLogger) {
+        logger = newLogger;
+    }
+
+    private static MMLogger getLogger() {
+        if (null == logger) {
+            logger = DefaultMmLogger.getInstance();
+        }
+        return logger;
+    }
     
     /**
      * Generate a Quirk's Unit ID given an Entity.
-     * 
-     * @param Entity Entity to generate UnitId from
+     *
+     * @param ent Entity to generate UnitId from
      * @param useModel determines if the model should be used, or be 'all'
-     * @return
+     * @return The ID for the unit.
      */
-    public static String getUnitId(Entity ent, boolean useModel) {
+    private static String getUnitId(Entity ent, boolean useModel) {
         String typeText = Entity.getEntityMajorTypeName(ent.getEntityType());
         if (useModel) {
             return ent.getChassis() + "~" + ent.getModel() + "~" + typeText;
@@ -222,11 +226,14 @@ public class QuirksHandler {
     }
 
     private static Map<String, List<QuirkEntry>> loadQuirksFile(String path) throws IOException {
+        final String METHOD_NAME = "loadQuirksFile(String)";
+        
         Map<String, List<QuirkEntry>> quirkMap = new HashMap<>();
 
         File file = new File(path);
         if (!file.exists() || !file.isFile()) {
-            System.err.println("WARN: Could not load quirks from " + path);
+            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.WARNING,
+                            "Could not load quirks from " + path);
             return quirkMap;
         }
 
@@ -285,7 +292,7 @@ public class QuirksHandler {
                     Element quirkElement = (Element) quirkNodes.item(quirkCount);
                     String qeText = quirkElement.getTextContent().trim();
                     if ((quirkElement.getTextContent() == null) || qeText.isEmpty()) {
-                        log.append("\n\t\t" + unitId + ": no text content!");
+                        log.append("\n\t\t").append(unitId).append(": no text content!");
                         continue;
                     }
                     QuirkEntry quirkEntry = new QuirkEntry(qeText, unitId);
@@ -299,7 +306,7 @@ public class QuirksHandler {
                     // Get the name of the quirk.
                     Element nameElement = (Element) quirkElement.getElementsByTagName(WEAPON_QUIRK_NAME).item(0);
                     if (nameElement == null) {
-                        log.append("\n\t\t" + unitId + ": no weapon quirk name!");
+                        log.append("\n\t\t").append(unitId).append(": no weapon quirk name!");
                         continue;
                     }
                     String weaponQuirkName = nameElement.getTextContent().trim();
@@ -307,7 +314,7 @@ public class QuirksHandler {
                     // Get the weapon's location.
                     Element locElement = (Element) quirkElement.getElementsByTagName(LOCATION).item(0);
                     if (locElement == null) {
-                        log.append("\n\t\t" + unitId + ": no weapon quirk loc!");
+                        log.append("\n\t\t").append(unitId).append(": no weapon quirk loc!");
                         continue;
                     }
                     String location = locElement.getTextContent().trim();
@@ -315,7 +322,7 @@ public class QuirksHandler {
                     // Get the weapon's critical slot.
                     Element slotElement = (Element) quirkElement.getElementsByTagName(SLOT).item(0);
                     if (slotElement == null) {
-                        log.append("\n\t\t" + unitId + ": no weapon quirk slot!");
+                        log.append("\n\t\t").append(unitId).append(": no weapon quirk slot!");
                         continue;
                     }
                     String slot = slotElement.getTextContent().trim();
@@ -328,7 +335,7 @@ public class QuirksHandler {
                     // Get the weapon's name.
                     Element weapElement = (Element) quirkElement.getElementsByTagName(WEAPON_NAME).item(0);
                     if (weapElement == null) {
-                        log.append("\n\t\t" + unitId + ": no weapon quirk weapon name!");
+                        log.append("\n\t\t").append(unitId).append(": no weapon quirk weapon name!");
                         continue;
                     }
                     String weaponName = weapElement.getTextContent().trim();
@@ -350,23 +357,24 @@ public class QuirksHandler {
                     }
                 }
                 if (quirkMap.containsKey(unitId)) {
-                    log.append("\n\t\t" + unitId + ": duplicate entry added!");
+                    log.append("\n\t\t").append(unitId).append(": duplicate entry added!");
                 }
                 quirkMap.put(unitId, quirkList);
             }
             log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
         } catch (Exception e) {
+            getLogger().log(QuirksHandler.class, METHOD_NAME, e);
             throw new IOException(e);
         } finally {
-            System.out.println(log);
+            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.INFO, log);
         }
     }
 
     /**
      * Reads in the values from the canonUnitQuirks.xml file and stores them in memory.
      *
-     * @throws IOException
+     * @throws IOException If the file cannot be read.
      */
     public static void initQuirksList() throws IOException {
 
@@ -388,6 +396,8 @@ public class QuirksHandler {
     }
     
     public static void saveCustomQuirksList() throws IOException {
+        final String METHOD_NAME = "saveCustomQuirksList()";
+        
         // If customQuirkMap wasn't initialized, no reason to save it
         if (customQuirkMap == null) {
             return;
@@ -424,7 +434,7 @@ public class QuirksHandler {
                 output.write(getCloseTag(CHASSIS) + "\n");
                 
                 // Write Model
-                if (model.length() > 0) {
+                if ((null != model) && model.length() > 0) {
                     output.write("\t\t" + getOpenTag(MODEL));
                     output.write(model);
                     output.write(getCloseTag(MODEL) + "\n");
@@ -432,7 +442,7 @@ public class QuirksHandler {
 
                 // Write unit type
                 output.write("\t\t" + getOpenTag(UNIT_TYPE));
-                output.write(unitType);
+                output.write(null == unitType ? "" : unitType);
                 output.write(getCloseTag(UNIT_TYPE) + "\n");
 
                 // Write out quirks
@@ -470,8 +480,8 @@ public class QuirksHandler {
             
             output.write(CUSTOM_QUIRKS_FOOTER);
         } catch (IOException e) {
-            System.err.println("Error writing keybindings file!");
-            e.printStackTrace(System.err);
+            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.ERROR,
+                            "Error writting keybindings file!", e);
         } finally {
             if (output != null) {
                 output.close();
@@ -490,14 +500,13 @@ public class QuirksHandler {
     /**
      * Retrieves the list of quirks for the identified unit.
      *
-     * @param chassis The unit's chassis.
-     * @param model   The unit's model (may be left NULL or an empty string if there
-     *                is no model number).
+     * @param entity The entity whose quirks are to be returned.
      * @return A {@code List} of the quirks ({@code QuirkEntry}) for the given
      *         unit. If the unit is not in the list, a NULL value is returned.
      */
     @Nullable
-    public static List<QuirkEntry> getQuirks(Entity entity) {
+    static List<QuirkEntry> getQuirks(Entity entity) {
+        final String METHOD_NAME = "getQuirks(Entity)";
         final String NO_QUIRKS = "none";
 
         if (!initialized.get() || (null == canonQuirkMap)) {
@@ -560,17 +569,20 @@ public class QuirksHandler {
             return quirks.isEmpty() ? null : quirks;
         } catch (Exception e) {
             String msg = "generalId: '" + generalId + "'\nunitId: '" + unitId + "'\n";
+            getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.ERROR, msg, e);
             throw new RuntimeException(msg, e);
         }
     }
     
     public static void addCustomQuirk(Entity entity, boolean useModel) {
+        final String METHOD_NAME = "addCustomQuirk(Entity, boolean)";
+        
         // Shouldn't happen, but lets be careful
         if (customQuirkMap == null) {
             try {
                 QuirksHandler.initQuirksList();
             } catch (IOException e) {
-                System.out.println(e);
+                getLogger().log(QuirksHandler.class, METHOD_NAME, e);
             }
         }
         
@@ -612,7 +624,7 @@ public class QuirksHandler {
         
         // Handle Weapon/Equipment Quirks
         // Need to keep track of processed mounts, for multi-crit equipment
-        List<Mounted> addedEquipment = new ArrayList<Mounted>();
+        List<Mounted> addedEquipment = new ArrayList<>();
         // Need to know loc and slot, so can't iterate over Entity.getEquipment
         for  (int loc = 0; loc < entity.locations(); loc++) {
             int numCrits = entity.getNumberOfCriticals(loc);
@@ -643,13 +655,13 @@ public class QuirksHandler {
     
     /**
      * Convenience method for adding a weapon quirk to the quirk entries list.
-     * 
-     * @param quirkEntries
-     * @param m
-     * @param loc
-     * @param slot
-     * @param unitId
-     * @param entity
+     *
+     * @param quirkEntries The quirks to be added.
+     * @param m The weapon to which the quirks will be applied.
+     * @param loc The servo location of the weapon.
+     * @param slot The slot number of the weapon.
+     * @param unitId The identity of the unit.
+     * @param entity The entity itself.
      */
     private static void addWeaponQuirk(List<QuirkEntry> quirkEntries,
             @Nullable Mounted m, int loc, int slot, String unitId, Entity entity) {
@@ -690,12 +702,14 @@ public class QuirksHandler {
      * munge its eType and write it to customQuirks.
      */
     public static void mungeQuirks(String quirkId, String newId) {
+        final String METHOD_NAME = "mungeQuirks(String, String)";
+        
         // Shouldn't happen, but lets be careful
         if (customQuirkMap == null) {
             try {
                 QuirksHandler.initQuirksList();
             } catch (IOException e) {
-                System.out.println(e);
+                getLogger().log(QuirksHandler.class, METHOD_NAME, e);
             }
         }
 

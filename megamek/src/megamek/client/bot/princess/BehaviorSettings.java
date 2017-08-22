@@ -13,6 +13,8 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.util.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -107,11 +109,24 @@ public class BehaviorSettings {
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
 
+    private MMLogger logger = null;
+
     public BehaviorSettings() {
     }
 
     public BehaviorSettings(Element behavior) throws PrincessException {
         fromXml(behavior);
+    }
+
+    private MMLogger getLogger() {
+        if (null == logger) {
+            logger = DefaultMmLogger.getInstance();
+        }
+        return logger;
+    }
+
+    void setLogger(final MMLogger logger) {
+        this.logger = logger;
     }
 
     public BehaviorSettings getCopy() throws PrincessException {
@@ -648,6 +663,8 @@ public class BehaviorSettings {
      * @return An XML {@link org.w3c.dom.Element} describing this behavior settings object.
      */
     public Element toXml(Document doc, boolean includeTargets) {
+        final String METHOD_NAME = "toXml(Document, boolean)";
+        
         try {
             Element behavior = doc.createElement("behavior");
 
@@ -708,7 +725,8 @@ public class BehaviorSettings {
 
             return behavior;
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().log(getClass(), METHOD_NAME, e);
+            
         }
 
         return null;

@@ -79,7 +79,7 @@ import megamek.common.Player;
 import megamek.common.QuirksHandler;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.logging.LogLevel;
-import megamek.common.logging.Logger;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -965,7 +965,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            new Logger().log(getClass(), "showSkinningHowTo", e);
+            DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
         }
     }
 

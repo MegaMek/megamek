@@ -55,7 +55,7 @@ public class Warship extends Jumpship {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return TA_WARSHIP;
     }
 

@@ -100,7 +100,7 @@ public class Jumpship extends Aero {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
 

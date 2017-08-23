@@ -382,7 +382,7 @@ public class BattleArmor extends Infantry {
     };
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         int index = getWeightClass();
         if (index < 0 || index >= TA_BATTLEARMOR.length) {
             index = EntityWeightClass.WEIGHT_MEDIUM;

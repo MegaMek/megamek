@@ -1,5 +1,7 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 

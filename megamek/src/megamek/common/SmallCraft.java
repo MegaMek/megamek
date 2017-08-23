@@ -57,7 +57,7 @@ public class SmallCraft extends Aero {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (isPrimitive()) {
             return TA_SM_CRAFT_PRIMITIVE;
         } else {

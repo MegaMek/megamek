@@ -51,7 +51,7 @@ public class Dropship extends SmallCraft {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
     }
     

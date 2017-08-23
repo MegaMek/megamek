@@ -20,6 +20,7 @@ package megamek.common.weapons.bayweapons;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;

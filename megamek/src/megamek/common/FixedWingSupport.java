@@ -117,7 +117,7 @@ public class FixedWingSupport extends ConvFighter {
             .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             return TA_FIXED_WING_SUPPORT_LARGE;
         } else {

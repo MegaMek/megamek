@@ -215,7 +215,7 @@ public class Infantry extends Entity {
     }
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         TechAdvancement techAdvancement = new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

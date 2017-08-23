@@ -79,7 +79,7 @@ public class SuperHeavyTank extends Tank {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return TA_SUPERHEAVY_TANK;
     }
 

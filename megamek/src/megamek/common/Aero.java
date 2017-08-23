@@ -233,7 +233,7 @@ public class Aero extends Entity {
             .setTechRating(RATING_D).setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (isPrimitive()) {
             return TA_ASF_PRIMITIVE;
         } else {

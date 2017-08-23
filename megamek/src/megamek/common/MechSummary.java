@@ -40,7 +40,8 @@ public class MechSummary implements Serializable {
     private String m_sEntryName; // for files in zips
     private int m_nYear;
     private int m_nType;
-    private int[] altTypes; // tech level constant at standard, advanced, and experimental rules levels
+    private int[] altTypes = new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
+            TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules levels
     private double m_nTons;
     private int m_nBV;
     /**

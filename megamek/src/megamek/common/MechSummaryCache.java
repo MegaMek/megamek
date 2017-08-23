@@ -357,8 +357,7 @@ public class MechSummaryCache {
             int[] alt = new int[3];
             Arrays.fill(alt, e.getTechLevel());
             ms.setAltTypes(alt);
-        }
-        if (e.isClan()) {
+        } else if (e.isClan()) {
             ms.setAltTypes(new int[] { TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
                     TechConstants.T_CLAN_EXPERIMENTAL });
         } else if (e.getTechLevel() == TechConstants.T_INTRO_BOXSET) {

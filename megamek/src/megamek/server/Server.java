@@ -881,20 +881,28 @@ public class Server implements Runnable {
         String serverChecksum = MegaMek.getMegaMekSHA256();
         StringBuffer buf = new StringBuffer();
         boolean needs = false;
+        // print a message indicating client doesn't have jar file
+        if (clientChecksum == null) {
+        	buf.append(System.lineSeparator());
+            buf.append("Client Checksum is null. Client may not have a jar file");
+            	buf.append(System.lineSeparator());
+            System.out.println("ERROR: Client does not have a jar file");
+            needs = true;      	
+        } else if (serverChecksum == null) {    // print message indicating server doesn't have jar file
+    			buf.append(System.lineSeparator());
+            buf.append("Server Checksum is null. Server may not have a jar file");
+        		buf.append(System.lineSeparator());
+            System.out.println("ERROR: Server does not have a jar file");
+            needs = true; 
+	      }
+        
         if (!version.equals(MegaMek.VERSION)) {
             buf.append("Client/Server version mismatch. Server reports: "
                        + MegaMek.VERSION + ", Client reports: " + version);
             System.out.println("ERROR: Client/Server Version Mismatch -- Client: "+version+" Server: "+MegaMek.VERSION);
             needs = true;
-        } else if (clientChecksum == null) {    // print a message indicating client doesn't have jar file
-            buf.append("Client Checksum is null. Client may not have a jar file");
-            System.out.println("ERROR: Client does not have a jar file");
-            needs = true;      	
-        } else if (serverChecksum == null) {    // print message indicating server doesn't have jar file
-            buf.append("Server Checksum is null. Server may not have a jar file");
-            System.out.println("ERROR: Server does not have a jar file");
-            needs = true; 
-        } else if (!clientChecksum.equals(serverChecksum)) {
+        } 
+        if (!clientChecksum.equals(serverChecksum)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
             }

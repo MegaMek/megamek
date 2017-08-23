@@ -1238,6 +1238,11 @@ public class Engine implements Serializable, ITechnology {
     public int getFlags() {
         return engineFlags;
     }
+    
+    @Override
+    public int getTechBase() {
+        return getTechAdvancement().getTechBase();
+    }
 
     @Override
     public boolean isClan() {

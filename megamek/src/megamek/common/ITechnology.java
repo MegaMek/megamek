@@ -111,9 +111,7 @@ public interface ITechnology {
     
     boolean isClan();
     boolean isMixedTech();
-    default int getTechBase() {
-        return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
-    }
+    int getTechBase();
     
     int getIntroductionDate();
     int getPrototypeDate();

@@ -1235,6 +1235,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (getArmorTechLevel(loc) == TechConstants.T_CLAN_EXPERIMENTAL) || (getArmorTechLevel(loc) ==
                                                                                      TechConstants.T_CLAN_UNOFFICIAL));
     }
+    
+    @Override
+    public int getTechBase() {
+        return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
+    }
 
     public boolean isMixedTech() {
         return mixedTech;

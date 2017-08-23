@@ -351,6 +351,11 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             return start.compareTo(other.start);
         }
     }
+    
+    @Override
+    public int getTechBase() {
+        return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
+    }
 
     @Override
     public boolean isClan() {

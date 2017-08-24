@@ -1256,12 +1256,12 @@ public class Engine implements Serializable, ITechnology {
 
     @Override
     public boolean isIntroLevel() {
-        return getTechAdvancement().isMixedTech();
+        return getTechAdvancement().isIntroLevel();
     }
 
     @Override
     public boolean isUnofficial() {
-        return getTechAdvancement().isMixedTech();
+        return getTechAdvancement().isUnofficial();
     }
 
     @Override

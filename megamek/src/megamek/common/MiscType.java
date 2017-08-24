@@ -6135,10 +6135,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HEAT_SINK).or(F_COMPACT_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "316,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 2631, DATE_NONE, 2850, 3030)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3079)
+            .setISApproximate(false, false).setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS).setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
         return misc;
     }
 
@@ -6153,10 +6153,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK).or(F_COMPACT_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "316,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 2631, DATE_NONE, 2850, 3030)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3079)
+            .setISApproximate(false, false).setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS).setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
         return misc;
     }
 

@@ -136,13 +136,15 @@ public abstract class PathRanker {
         }
 
         boolean alreadyHaveSafePathOffBoard = false;
+        boolean isAeroOnAtmosphericGroundMap = mover.isAero() && mover.isOnAtmosphericGroundMap();
         
         for (MovePath path : startingPathList) {
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
-            	// if we are an aero unit
-            	if(UnitType.isAero(path.getEntity()))
+            	// if we are an aero unit on the ground map, we want to discard paths that take us off board
+                // of course, ideally, the path generator comes back with only one of those anyway.
+            	if(isAeroOnAtmosphericGroundMap)
             	{
             		// all safe (no rolls or crashes) paths off board might as well be the same 
             		// so we prune any beyond the first one we find
@@ -170,11 +172,15 @@ public abstract class PathRanker {
                 }
 
                 // Make sure I'm trying to get/stay in range of a target.
-                Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                if (!StringUtil.isNullOrEmpty(validation)) {
-                    msg.append("\n\t").append(validation);
-                    continue;
+                // Skip this part if I'm an aero on the ground map
+                if(!isAeroOnAtmosphericGroundMap)
+                {
+                    Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
+                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
+                    if (!StringUtil.isNullOrEmpty(validation)) {
+                        msg.append("\n\t").append(validation);
+                        continue;
+                    }
                 }
 
                 // Don't move on/through buildings that will not support our weight.

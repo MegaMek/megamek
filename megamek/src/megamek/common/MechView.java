@@ -29,7 +29,6 @@ import java.util.Iterator;
 
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
-import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.weapons.bayweapons.BayWeapon;
 

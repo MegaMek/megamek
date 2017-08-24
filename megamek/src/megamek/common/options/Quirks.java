@@ -89,7 +89,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false); 
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         

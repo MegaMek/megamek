@@ -862,6 +862,11 @@ public class EquipmentType implements ITechnology {
     public int getIntroductionDate() {
         return techAdvancement.getIntroductionDate();
     }
+    
+    @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return techAdvancement.getIntroductionDate(clan, faction);
+    }
 
     @Override
     public int getExtinctionDate(boolean clan) {
@@ -874,6 +879,11 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return techAdvancement.getExtinctionDate(clan, faction);
+    }
+
+    @Override
     public int getReintroductionDate(boolean clan) {
         return techAdvancement.getReintroductionDate(clan);
     }
@@ -881,6 +891,11 @@ public class EquipmentType implements ITechnology {
     @Override
     public int getReintroductionDate() {
         return techAdvancement.getReintroductionDate();
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return techAdvancement.getReintroductionDate(clan, faction);
     }
 
     public static double getArmorCost(int inArmor) {
@@ -1116,8 +1131,18 @@ public class EquipmentType implements ITechnology {
     }
 
     @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return techAdvancement.getPrototypeDate(clan, faction);
+    }
+
+    @Override
     public int getProductionDate() {
         return techAdvancement.getProductionDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return techAdvancement.getProductionDate(clan, faction);
     }
 
     @Override

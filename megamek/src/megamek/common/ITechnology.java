@@ -45,6 +45,7 @@ public interface ITechnology {
     public static final int DATE_ES = 2100;
     
     //codes for recording which factions had access to technology at various points
+    public static final int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
     public static final int F_IS = 0;
     public static final int F_CC = 1;
     public static final int F_CF = 2;
@@ -52,61 +53,61 @@ public interface ITechnology {
     public static final int F_CS = 4;
     public static final int F_DC = 5;
     public static final int F_EI = 6;
-    public static final int F_FR = 7;
-    public static final int F_FS = 8;
-    public static final int F_FW = 9;
-    public static final int F_LC = 10;
-    public static final int F_MC = 11;
-    public static final int F_MH = 12;
-    public static final int F_OA = 13;
-    public static final int F_TA = 14;
-    public static final int F_TC = 15;
-    public static final int F_TH = 16;
-    public static final int F_RD = 17;
-    public static final int F_RS = 18;
-    public static final int F_RA = 19;
-    public static final int F_RW = 20;
-    public static final int F_WB = 21;
-    public static final int F_MERC = 22;
-    public static final int F_CLAN = 23;
-    public static final int F_CBR = 24;
-    public static final int F_CBS = 25;
-    public static final int F_CCY = 26;
-    public static final int F_CCC = 27;
-    public static final int F_CFM = 28;
-    public static final int F_CGB = 29;
-    public static final int F_CGS = 30;
-    public static final int F_CHH = 31;
-    public static final int F_CIH = 32;
-    public static final int F_CJF = 33;
-    public static final int F_CMN = 34;
-    public static final int F_CNC = 35;
-    public static final int F_CSF = 36;
-    public static final int F_CSJ = 37;
-    public static final int F_CSR = 38;
-    public static final int F_CSV = 39;
-    public static final int F_CSA = 40;
-    public static final int F_CWM = 41;
-    public static final int F_CWF = 42;
-    public static final int F_CWX = 43;
-    public static final int F_CWV = 44;
-    public static final int F_PER = 45;
-    public static final int F_FC = 46;
+    public static final int F_FC = 7;
+    public static final int F_FR = 8;
+    public static final int F_FS = 9;
+    public static final int F_FW = 10;
+    public static final int F_LC = 11;
+    public static final int F_MC = 12;
+    public static final int F_MH = 13;
+    public static final int F_OA = 14;
+    public static final int F_TA = 15;
+    public static final int F_TC = 16;
+    public static final int F_TH = 17;
+    public static final int F_RD = 18;
+    public static final int F_RS = 19;
+    public static final int F_RA = 20;
+    public static final int F_RW = 21;
+    public static final int F_WB = 22;
+    public static final int F_MERC = 23;
+    public static final int F_PER = 24;
+    public static final int F_CLAN = 25;
+    public static final int F_CBR = 26;
+    public static final int F_CBS = 27;
+    public static final int F_CCY = 28;
+    public static final int F_CCC = 29;
+    public static final int F_CFM = 30;
+    public static final int F_CGB = 31;
+    public static final int F_CGS = 32;
+    public static final int F_CHH = 33;
+    public static final int F_CIH = 34;
+    public static final int F_CJF = 35;
+    public static final int F_CMN = 36;
+    public static final int F_CNC = 37;
+    public static final int F_CSF = 38;
+    public static final int F_CSJ = 39;
+    public static final int F_CSR = 40;
+    public static final int F_CSV = 41;
+    public static final int F_CSA = 42;
+    public static final int F_CWM = 43;
+    public static final int F_CWF = 44;
+    public static final int F_CWX = 45;
+    public static final int F_CWV = 46;
     
     //display codes using values from IOps
     public static final String[] IO_FACTION_CODES = {
-            "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FR", "FS", "FW", "LC", "MC",
-            "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", 
+            "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FC", "FR", "FS", "FW", "LC", "MC",
+            "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", "Per", 
             "Clan", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN",
-            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV", "PER", "FC" 
+            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV" 
     };
     
     //faction lookup names for MHQ
     public static final String[] MM_FACTION_CODES = {
-            "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FRR", "FS", "FWL", "LA", "MOC",
-            "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC",
+            "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FC", "FRR", "FS", "FWL", "LA", "MOC",
+            "MH", "OA", "TH", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC", "Periphery",
             "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
-            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV", "PER", "FC" 
+            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV", 
     };
     
     boolean isClan();
@@ -126,18 +127,23 @@ public interface ITechnology {
     default int getIntroductionDate(boolean clan) {
         return getIntroductionDate();
     }
+    int getIntroductionDate(boolean clan, int faction);
     default int getPrototypeDate(boolean clan) {
         return getPrototypeDate();
     }
+    int getPrototypeDate(boolean clan, int faction);
     default int getProductionDate(boolean clan) {
         return getProductionDate();
     }
+    int getProductionDate(boolean clan, int faction);
     default int getCommonDate(boolean clan) {
         return getCommonDate();
     }
+    int getExtinctionDate(boolean clan, int faction);
     default int getExtinctionDate(boolean clan) {
         return getExtinctionDate();
     }
+    int getReintroductionDate(boolean clan, int faction);
     default int getReintroductionDate(boolean clan) {
         return getReintroductionDate();
     }
@@ -170,6 +176,10 @@ public interface ITechnology {
     }
     
     default SimpleTechLevel getSimpleLevel(int year, boolean clan) {
+        return getSimpleLevel(year, clan, F_NONE);
+    }
+    
+    default SimpleTechLevel getSimpleLevel(int year, boolean clan, int faction) {
         if (isUnofficial()) {
             return SimpleTechLevel.UNOFFICIAL;
         } else if (year >= getCommonDate(clan) && getCommonDate(clan) != DATE_NONE) {
@@ -178,9 +188,9 @@ public interface ITechnology {
             } else {
                 return SimpleTechLevel.STANDARD;
             }
-        } else if (year >= getProductionDate(clan) && getProductionDate(clan) != DATE_NONE) {
+        } else if (year >= getProductionDate(clan, faction) && getProductionDate(clan, faction) != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;
-        } else if (year >= getPrototypeDate(clan) && getPrototypeDate(clan) != DATE_NONE) {
+        } else if (year >= getPrototypeDate(clan, faction) && getPrototypeDate(clan, faction) != DATE_NONE) {
             return SimpleTechLevel.EXPERIMENTAL;
         } else {
             return SimpleTechLevel.UNOFFICIAL;
@@ -257,12 +267,24 @@ public interface ITechnology {
                 || year < getReintroductionDate());        
     }
     
+    default boolean isExtinct(int year, boolean clan, int faction) {
+        return getExtinctionDate(clan, faction) != DATE_NONE
+                && getExtinctionDate(clan, faction) < year
+                && (getReintroductionDate(clan, faction) == DATE_NONE
+                || year < getReintroductionDate(clan, faction));
+    }
+    
     default boolean isAvailableIn(int year, boolean clan) {
         return year >= getIntroductionDate(clan) && getIntroductionDate(clan) != DATE_NONE  && !isExtinct(year, clan);
     }
     
     default boolean isAvailableIn(int year) {
         return year >= getIntroductionDate() && getIntroductionDate() != DATE_NONE && !isExtinct(year);
+    }
+    
+    default boolean isAvailableIn(int year, boolean clan, int faction) {
+        return year >= getIntroductionDate(clan, faction)
+                && getIntroductionDate(clan, faction) != DATE_NONE  && !isExtinct(year, clan, faction);
     }
     
     default boolean isLegal(int year, int techLevel, boolean mixedTech) {

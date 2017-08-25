@@ -62,26 +62,14 @@ public class TechAdvancement implements ITechnology {
      */
     public TechAdvancement(TechAdvancement ta) {
         this(ta.techBase);
-        System.arraycopy(ta.isAdvancement, 0, this.isAdvancement, 0, ta.isAdvancement.length);
-        System.arraycopy(ta.clanAdvancement, 0, this.clanAdvancement, 0, ta.clanAdvancement.length);
-        System.arraycopy(ta.isApproximate, 0, this.isApproximate, 0, ta.isApproximate.length);
-        System.arraycopy(ta.clanApproximate, 0, this.clanApproximate, 0, ta.clanApproximate.length);
-        if (prototypeFactions.length > 0) {
-            this.prototypeFactions = new int[prototypeFactions.length];
-            System.arraycopy(ta.productionFactions, 0, this.prototypeFactions, 0, ta.prototypeFactions.length);
-        }
-        if (prototypeFactions.length > 0) {
-            this.prototypeFactions = new int[prototypeFactions.length];
-            System.arraycopy(ta.productionFactions, 0, this.prototypeFactions, 0, ta.prototypeFactions.length);
-        }
-        if (extinctionFactions.length > 0) {
-            this.extinctionFactions = new int[extinctionFactions.length];
-            System.arraycopy(ta.extinctionFactions, 0, this.extinctionFactions, 0, ta.extinctionFactions.length);
-        }
-        if (reintroductionFactions.length > 0) {
-            this.reintroductionFactions = new int[reintroductionFactions.length];
-            System.arraycopy(ta.reintroductionFactions, 0, this.reintroductionFactions, 0, ta.reintroductionFactions.length);
-        }
+        isAdvancement = Arrays.copyOf(ta.isAdvancement, ta.isAdvancement.length);
+        clanAdvancement = Arrays.copyOf(ta.clanAdvancement, ta.clanAdvancement.length);
+        isApproximate = Arrays.copyOf(ta.isApproximate, ta.isApproximate.length);
+        clanApproximate = Arrays.copyOf(ta.clanApproximate, ta.clanApproximate.length);
+        prototypeFactions = Arrays.copyOf(ta.prototypeFactions, ta.prototypeFactions.length);
+        productionFactions = Arrays.copyOf(ta.productionFactions, ta.productionFactions.length);
+        extinctionFactions = Arrays.copyOf(ta.extinctionFactions, ta.extinctionFactions.length);
+        reintroductionFactions = Arrays.copyOf(ta.reintroductionFactions, ta.reintroductionFactions.length);
         this.staticTechLevel = ta.staticTechLevel;
         this.techRating = ta.techRating;
         System.arraycopy(ta.availability, 0, this.availability, 0, ta.availability.length);
@@ -175,7 +163,7 @@ public class TechAdvancement implements ITechnology {
      * @return
      */
     public TechAdvancement setPrototypeFactions(int... factions) {
-        prototypeFactions = factions;
+        prototypeFactions = Arrays.copyOf(factions, factions.length);
         return this;
     }
     
@@ -194,7 +182,7 @@ public class TechAdvancement implements ITechnology {
      * @return A reference to this object.
      */
     public TechAdvancement setProductionFactions(int... factions) {
-        productionFactions = factions;
+        productionFactions = Arrays.copyOf(factions, factions.length);
         return this;
     }
 
@@ -214,7 +202,7 @@ public class TechAdvancement implements ITechnology {
      * @return A reference to this object.
      */
     public TechAdvancement setExtinctionFactions(int... factions) {
-        extinctionFactions = factions;
+        extinctionFactions = Arrays.copyOf(factions, factions.length);
         return this;
     }
 
@@ -234,7 +222,7 @@ public class TechAdvancement implements ITechnology {
      * @return A reference to this object.
      */
     public TechAdvancement setReintroductionFactions(int... factions) {
-        reintroductionFactions = factions;
+        reintroductionFactions = Arrays.copyOf(factions, factions.length);
         return this;
     }
 
@@ -256,6 +244,39 @@ public class TechAdvancement implements ITechnology {
     }
     
     /**
+     * The prototype date for a particular faction. If there are prototype factions and the given faction
+     * is not among them, the prototype date is DATE_NONE.
+     * 
+     * @param clan Whether to use Clan or IS progression dates
+     * @faction    The index of the faction (F_* constant). If < 0, the prototype factions are ignored.
+     */
+    public int getPrototypeDate(boolean clan, int faction) {
+        if (getDate(PROTOTYPE, clan) == DATE_NONE) {
+            return DATE_NONE;
+        }
+        if ((prototypeFactions.length > 0) && (faction > F_NONE)) {
+            for (int f : prototypeFactions) {
+                if ((faction == f)
+                        || ((f == F_IS) && !clan)
+                        || ((f == F_CLAN) && clan)) {
+                    return getDate(PROTOTYPE, clan);
+                }
+            }
+            // Per IO p. 34, tech with only a prototype date becomes available to
+            // other factions after 3d6+5 years if it hasn't gone extinct by then.
+            // Using the minimum value here.
+            int date = getDate(PROTOTYPE, clan) + 8;
+            if ((getDate(PRODUCTION, clan) < date)
+                    || (getDate(COMMON, clan) < date)
+                    || (getDate(EXTINCT, clan) >= date)) {
+                return DATE_NONE;
+            }
+            return date;
+        }
+        return getDate(PROTOTYPE, clan);
+    }
+    
+    /**
      * The production date for either Clan or IS factions. If the date is flagged as approximate,
      * the date returned will be earlier by the value of APPROXIMATE_MARGIN.
      */
@@ -263,6 +284,37 @@ public class TechAdvancement implements ITechnology {
         return getDate(PRODUCTION, clan);
     }
 
+    /**
+     * The production date for a particular faction. If there are production factions and the given faction
+     * is not among them, the production date is DATE_NONE.
+     * 
+     * @param clan Whether to use Clan or IS progression dates
+     * @faction    The index of the faction (F_* constant). If < 0, the production factions are ignored.
+     */
+    public int getProductionDate(boolean clan, int faction) {
+        if (getDate(PRODUCTION, clan) == DATE_NONE) {
+            return DATE_NONE;
+        }
+        if ((productionFactions.length > 0) && (faction > F_NONE)) {
+            for (int f : productionFactions) {
+                if ((faction == f)
+                        || ((f == F_IS) && !clan)
+                        || ((f == F_CLAN) && clan)) {
+                    return getDate(PRODUCTION, clan);
+                }
+            }
+            // Per IO p. 34, tech with no common date becomes available to
+            // other factions after 10 years if it hasn't gone extinct by then.
+            int date = getDate(PRODUCTION, clan) + 10;
+            if ((getDate(COMMON, clan) <= date)
+                    || (getDate(EXTINCT, clan) >= date)) {
+                return DATE_NONE;
+            }
+            return date;
+        }
+        return getDate(PRODUCTION, clan);
+    }
+    
     /**
      * The common date for either Clan or IS factions. If the date is flagged as approximate,
      * the date returned will be earlier by the value of APPROXIMATE_MARGIN.
@@ -280,10 +332,67 @@ public class TechAdvancement implements ITechnology {
     }
 
     /**
+     * The extinction date for a particular faction. If there are extinction factions and the given faction
+     * is not among them, the extinction date is DATE_NONE.
+     * 
+     * @param clan Whether to use Clan or IS progression dates
+     * @faction    The index of the faction (F_* constant). If < 0, the extinction factions are ignored.
+     */
+    public int getExtinctionDate(boolean clan, int faction) {
+        if (getDate(EXTINCT, clan) == DATE_NONE) {
+            return DATE_NONE;
+        }
+        if ((extinctionFactions.length > 0) && (faction > F_NONE)) {
+            for (int f : extinctionFactions) {
+                if ((faction == f)
+                        || ((f == F_IS) && !clan)
+                        || ((f == F_CLAN) && clan)) {
+                    return getDate(EXTINCT, clan);
+                }
+            }
+            return DATE_NONE;
+        }
+        return getDate(EXTINCT, clan);
+    }
+    
+    /**
      * The reintroduction date for either Clan or IS factions. If the date is flagged as approximate,
      * the date returned will be earlier by the value of APPROXIMATE_MARGIN.
      */
     public int getReintroductionDate(boolean clan) {
+        return getDate(REINTRODUCED, clan);
+    }
+    
+    /**
+     * The reintroduction date for a particular faction. If there are reintroduction factions and the given faction
+     * is not among them, the reintroduction date is DATE_NONE.
+     * 
+     * @param clan Whether to use Clan or IS progression dates
+     * @faction    The index of the faction (F_* constant). If < 0, the reintroduction factions are ignored.
+     */
+    public int getReintroductionDate(boolean clan, int faction) {
+        if (getDate(REINTRODUCED, clan) == DATE_NONE) {
+            return DATE_NONE;
+        }
+        if ((reintroductionFactions.length > 0) && (faction > F_NONE)) {
+            for (int f : reintroductionFactions) {
+                if ((faction == f)
+                        || ((f == F_IS) && !clan)
+                        || ((f == F_CLAN) && clan)) {
+                    return getDate(REINTRODUCED, clan);
+                }
+            }
+            // If the production or common date is later than the reintroduction date, that is
+            // when it becomes available to other factions. Otherwise we use reintro + 10 as with
+            // production date.
+            if (getProductionDate(clan, faction) > getDate(REINTRODUCED, clan)) {
+                return getProductionDate(clan, faction);
+            } else if (getDate(COMMON, clan) > getDate(REINTRODUCED, clan)) {
+                    return getDate(COMMON, clan);
+            } else {
+                return getDate(REINTRODUCED, clan) + 10;
+            }
+        }
         return getDate(REINTRODUCED, clan);
     }
     
@@ -300,6 +409,24 @@ public class TechAdvancement implements ITechnology {
             return getProductionDate(clan);
         }
         return getCommonDate(clan);
+    }
+    
+    /**
+     * The year the technology first became available for the given faction, regardless
+     * of production level, or APPROXIMATE_MARGIN years earlier if
+     * marked as approximate.
+     */
+    public int getIntroductionDate(boolean clan, int faction) {
+        if (getPrototypeDate(clan, faction) > 0) {
+            return getPrototypeDate(clan, faction);
+        }
+        if (getProductionDate(clan, faction) > 0) {
+            return getProductionDate(clan, faction);
+        }
+        if (getCommonDate(clan) > 0) {
+            return getCommonDate(clan);
+        }
+        return getReintroductionDate(clan, faction);
     }
     
     /**

@@ -1268,6 +1268,11 @@ public class Engine implements Serializable, ITechnology {
     public int getIntroductionDate(boolean clan) {
         return getTechAdvancement().getIntroductionDate(clan);
     }
+    
+    @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getIntroductionDate(clan, faction);
+    }
 
     @Override
     public int getIntroductionDate() {
@@ -1285,6 +1290,11 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return getTechAdvancement().getPrototypeDate(clan, faction);
+    }
+
+    @Override
     public int getProductionDate(boolean clan) {
         return getTechAdvancement().getProductionDate(clan);
     }
@@ -1292,6 +1302,11 @@ public class Engine implements Serializable, ITechnology {
     @Override
     public int getProductionDate() {
         return getTechAdvancement().getProductionDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getProductionDate(clan, faction);
     }
 
     @Override
@@ -1315,6 +1330,11 @@ public class Engine implements Serializable, ITechnology {
     }
 
     @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return getTechAdvancement().getExtinctionDate(clan, faction);
+    }
+
+    @Override
     public int getReintroductionDate(boolean clan) {
         return getTechAdvancement().getReintroductionDate(clan);
     }
@@ -1322,6 +1342,11 @@ public class Engine implements Serializable, ITechnology {
     @Override
     public int getReintroductionDate() {
         return getTechAdvancement().getReintroductionDate();
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getReintroductionDate(clan, faction);
     }
 
     @Override

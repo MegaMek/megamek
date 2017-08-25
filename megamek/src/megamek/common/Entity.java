@@ -1062,13 +1062,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return year;
+    }
+
+    @Override
     public int getPrototypeDate() {
         return compositeTechLevel.getPrototypeDate();
+    }
+    
+    @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return compositeTechLevel.getPrototypeDate(clan, faction);
     }
 
     @Override
     public int getProductionDate() {
         return compositeTechLevel.getProductionDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return compositeTechLevel.getProductionDate(clan, faction);
     }
 
     @Override
@@ -1082,9 +1097,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return compositeTechLevel.getExtinctionDate(clan, faction);
+    }
+
+    @Override
     public int getReintroductionDate() {
         return compositeTechLevel.getReintroductionDate();
     }
+    
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return compositeTechLevel.getReintroductionDate(clan, faction);
+    }
+
 
     @Override
     public int getTechRating() {

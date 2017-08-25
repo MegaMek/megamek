@@ -422,4 +422,29 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     public SimpleTechLevel getStaticTechLevel() {
         return staticTechLevel;
     }
+
+    @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return getIntroductionDate();
+    }
+
+    @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return getPrototypeDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return getProductionDate();
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return getExtinctionDate();
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return getReintroductionDate();
+    }
 }

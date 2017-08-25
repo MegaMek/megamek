@@ -26,10 +26,10 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 
-import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
@@ -130,25 +130,25 @@ public class SquadronMapSet implements DisplayMapSet {
 
     public void setEntity(Entity e) {
         List<Entity> fighters = e.getSubEntities().orElse(Collections.emptyList());
-        int numFighters = Math.min(max_size, fighters.size());
-        for(int i = 0; i < numFighters; ++ i) {
-            final Aero fighter = (Aero) fighters.get(i);
-            if(null != fighter) {
-                int armor = fighter.getCapArmor();
-                int armorO = fighter.getCap0Armor();
+        for(int i = 0; i < max_size; ++ i) {
+            if(i < fighters.size()) {
+                final Entity fighter = fighters.get(i);
+                IAero a = (IAero) fighter;
+                int armor = a.getCapArmor();
+                int armorO = a.getCap0Armor();
                 armorVLabel[i].setValue(Integer.toString(armor));
 
-                if (fighter.getGame().getOptions().booleanOption(
+                if (((Entity)fighter).getGame().getOptions().booleanOption(
                         OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                     armor = (int) Math.ceil(armor / 10.0);
                     armorO = (int) Math.ceil(armorO / 10.0);
                 }
 
                 drawArmorImage(armorImage[i], armor, armorO);
-                drawCrits(avCritImage[i], fighter.getAvionicsHits());
+                drawCrits(avCritImage[i], a.getAvionicsHits());
                 drawCrits(engineCritImage[i], fighter.getEngineHits());
-                drawCrits(fcsCritImage[i], fighter.getFCSHits());
-                drawCrits(sensorCritImage[i], fighter.getSensorHits());
+                drawCrits(fcsCritImage[i], a.getFCSHits());
+                drawCrits(sensorCritImage[i], a.getSensorHits());
                 drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
 
                 nameLabel[i].setString(fighter.getDisplayName());

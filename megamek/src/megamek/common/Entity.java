@@ -1142,7 +1142,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void recalculateTechAdvancement() {
         initTechAdvancement();
-        getEquipment().forEach(m -> compositeTechLevel.addComponent(m.getType()));
+        for (Mounted m : getEquipment()) {
+            compositeTechLevel.addComponent(m.getType());
+            if (m.isArmored()) {
+                compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
+            }
+        }
     }
 
     protected final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL)
@@ -1162,6 +1167,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    protected final static TechAdvancement TA_ARMORED_COMPONENT = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(3061, 3082).setClanAdvancement(3061, 3077)
+            .setPrototypeFactions(F_CSF,F_FW).setProductionFactions(F_CJF,F_FW)
+            .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     public static TechAdvancement getOmniAdvancement() {
         return new TechAdvancement(TA_OMNI);
@@ -1173,6 +1183,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     public static TechAdvancement getMixedTechAdvancement() {
         return new TechAdvancement(TA_MIXED_TECH);
+    }
+    
+    public static TechAdvancement getArmoredComponentTechAdvancement() {
+        return new TechAdvancement(TA_ARMORED_COMPONENT);
     }
     
     /**
@@ -3360,6 +3374,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
         compositeTechLevel.addComponent(mounted.getType());
+        if (mounted.isArmored()) {
+            compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
+        }
 
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {

@@ -105,7 +105,7 @@ public interface ITechnology {
     //faction lookup names for MHQ
     public static final String[] MM_FACTION_CODES = {
             "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FC", "FRR", "FS", "FWL", "LA", "MOC",
-            "MH", "OA", "TH", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC", "Periphery",
+            "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC", "Periphery",
             "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
             "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV", 
     };

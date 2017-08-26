@@ -268,7 +268,7 @@ public class TechAdvancement implements ITechnology {
             int date = getDate(PROTOTYPE, clan) + 8;
             if ((getDate(PRODUCTION, clan) < date)
                     || (getDate(COMMON, clan) < date)
-                    || (getDate(EXTINCT, clan) >= date)) {
+                    || isExtinct(date, clan)) {
                 return DATE_NONE;
             }
             return date;
@@ -307,7 +307,7 @@ public class TechAdvancement implements ITechnology {
             // other factions after 10 years if it hasn't gone extinct by then.
             int date = getDate(PRODUCTION, clan) + 10;
             if ((getDate(COMMON, clan) <= date)
-                    || (getDate(EXTINCT, clan) >= date)) {
+                    || isExtinct(date, clan)) {
                 return DATE_NONE;
             }
             return date;
@@ -417,16 +417,14 @@ public class TechAdvancement implements ITechnology {
      * marked as approximate.
      */
     public int getIntroductionDate(boolean clan, int faction) {
+        int date = getReintroductionDate(clan, faction);
         if (getPrototypeDate(clan, faction) > 0) {
-            return getPrototypeDate(clan, faction);
+            return earliestDate(date, getPrototypeDate(clan, faction));
         }
         if (getProductionDate(clan, faction) > 0) {
-            return getProductionDate(clan, faction);
+            return earliestDate(date, getProductionDate(clan, faction));
         }
-        if (getCommonDate(clan) > 0) {
-            return getCommonDate(clan);
-        }
-        return getReintroductionDate(clan, faction);
+        return earliestDate(date, getCommonDate(clan));
     }
     
     /**

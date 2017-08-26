@@ -267,13 +267,6 @@ public interface ITechnology {
                 || year < getReintroductionDate());        
     }
     
-    default boolean isExtinct(int year, boolean clan, int faction) {
-        return getExtinctionDate(clan, faction) != DATE_NONE
-                && getExtinctionDate(clan, faction) < year
-                && (getReintroductionDate(clan, faction) == DATE_NONE
-                || year < getReintroductionDate(clan, faction));
-    }
-    
     default boolean isAvailableIn(int year, boolean clan) {
         return year >= getIntroductionDate(clan) && getIntroductionDate(clan) != DATE_NONE  && !isExtinct(year, clan);
     }
@@ -284,7 +277,7 @@ public interface ITechnology {
     
     default boolean isAvailableIn(int year, boolean clan, int faction) {
         return year >= getIntroductionDate(clan, faction)
-                && getIntroductionDate(clan, faction) != DATE_NONE  && !isExtinct(year, clan, faction);
+                && getIntroductionDate(clan, faction) != DATE_NONE  && !isExtinct(year, clan);
     }
     
     default boolean isLegal(int year, int techLevel, boolean mixedTech) {

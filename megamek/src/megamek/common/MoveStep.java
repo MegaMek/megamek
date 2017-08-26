@@ -1501,7 +1501,8 @@ public class MoveStep implements Serializable {
             legal = false;
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
-                && (type != MoveStepType.UNDOCK)) {
+                && (type != MoveStepType.UNDOCK)
+                && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
         }

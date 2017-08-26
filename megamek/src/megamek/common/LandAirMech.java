@@ -552,11 +552,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         // Fighter mode has the same terrain restrictions as ASFs.
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             IHex hex = game.getBoard().getHex(c);
-            if (isAirborne()) {
-                if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-                    return true;
-                }
-                return false;
+            if (hex.containsTerrain(Terrains.IMPASSABLE)) {
+                return !isAirborne();
             }
 
             // Additional restrictions for hidden units

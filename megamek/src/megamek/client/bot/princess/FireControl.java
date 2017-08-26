@@ -61,7 +61,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
@@ -74,165 +73,165 @@ import megamek.common.weapons.missiles.MMLWeapon;
  */
 public class FireControl {
 
-    private static double DAMAGE_UTILITY = 1.0;
-    private static double CRITICAL_UTILITY = 10.0;
-    private static double KILL_UTILITY = 50.0;
-    private static double OVERHEAT_DISUTILITY = 5.0;
-    private static double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
-    private static double EJECTED_PILOT_DISUTILITY = 1000.0;
-    private static double CIVILIAN_TARGET_DISUTILITY = 250.0;
-    private static double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
+    private static final double DAMAGE_UTILITY = 1.0;
+    private static final double CRITICAL_UTILITY = 10.0;
+    private static final double KILL_UTILITY = 50.0;
+    private static final double OVERHEAT_DISUTILITY = 5.0;
+    private static final double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
+    private static final double EJECTED_PILOT_DISUTILITY = 1000.0;
+    private static final double CIVILIAN_TARGET_DISUTILITY = 250.0;
+    private static final double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
+    static final int DOES_NOT_TRACK_HEAT = 999;
 
-    protected static double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
-    protected static double COMMANDER_UTILITY = 0.5;
-    protected static double SUB_COMMANDER_UTILITY = 0.25;
-    protected static double STRATEGIC_TARGET_UTILITY = 0.5;
-    protected static double PRIORITY_TARGET_UTILITY = 0.25;
+    private static final double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
+    static final double COMMANDER_UTILITY = 0.5;
+    static final double SUB_COMMANDER_UTILITY = 0.25;
+    static final double STRATEGIC_TARGET_UTILITY = 0.5;
+    static final double PRIORITY_TARGET_UTILITY = 0.25;
 
-    protected static final String TH_WOODS = "woods";
-    protected static final String TH_SMOKE = "smoke";
-    protected static final String TH_PHY_BASE = "base";
-    protected static final String TH_GUNNERY = "gunnery skill";
-    protected static final String TH_SENSORS = "attacker sensors damaged";
-    protected static final String TH_MINIMUM_RANGE = "Minimum Range";
-    protected static final String TH_HEAT = "heat";
-    protected static final String TH_WEAPON_MOD = "weapon to-hit";
-    protected static final String TH_AMMO_MOD = "ammunition to-hit modifier";
-    protected static final TargetRollModifier TH_ATT_PRONE = new TargetRollModifier(2, "attacker prone");
-    protected static final TargetRollModifier TH_TAR_IMMOBILE = new TargetRollModifier(-4, "target immobile");
-    protected static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
-    protected static final TargetRollModifier TH_TAR_NO_MOVE = new TargetRollModifier(1, "target didn't move");
-    protected static final TargetRollModifier TH_TAR_SPRINT = new TargetRollModifier(-1, "target sprinted");
-    protected static final TargetRollModifier TH_TAR_AERO_NOE_ADJ = new TargetRollModifier(1,
+    static final String TH_WOODS = "woods";
+    static final String TH_SMOKE = "smoke";
+    static final String TH_PHY_BASE = "base";
+    static final String TH_GUNNERY = "gunnery skill";
+    static final String TH_SENSORS = "attacker sensors damaged";
+    static final String TH_MINIMUM_RANGE = "Minimum Range";
+    static final String TH_HEAT = "heat";
+    static final String TH_WEAPON_MOD = "weapon to-hit";
+    static final String TH_AMMO_MOD = "ammunition to-hit modifier";
+    static final TargetRollModifier TH_ATT_PRONE = new TargetRollModifier(2, "attacker prone");
+    static final TargetRollModifier TH_TAR_IMMOBILE = new TargetRollModifier(-4, "target immobile");
+    static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
+    static final TargetRollModifier TH_TAR_NO_MOVE = new TargetRollModifier(1, "target didn't move");
+    static final TargetRollModifier TH_TAR_SPRINT = new TargetRollModifier(-1, "target sprinted");
+    static final TargetRollModifier TH_TAR_AERO_NOE_ADJ = new TargetRollModifier(1,
                                                                                            "NOE aero adjacent flight " +
                                                                                            "path");
-    protected static final TargetRollModifier TH_TAR_AERO_NOE = new TargetRollModifier(3,
+    static final TargetRollModifier TH_TAR_AERO_NOE = new TargetRollModifier(3,
                                                                                        "NOE aero non-adjacent flight " +
                                                                                        "path");
-    protected static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1,
-                                                                                          "target prone and at range");
-    protected static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2,
-                                                                                        "target prone and adjacent");
-    protected static final TargetRollModifier TH_TAR_BA = new TargetRollModifier(1, "battle armor target");
-    protected static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected mechwarrior target");
-    protected static final TargetRollModifier TH_TAR_INF = new TargetRollModifier(1, "infantry target");
-    protected static final TargetRollModifier TH_ANTI_AIR = new TargetRollModifier(-2, "anti-aircraft quirk");
-    protected static final TargetRollModifier TH_INDUSTRIAL =
+    static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1,
+                                                                                "target prone and at range");
+    static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2,
+                                                                              "target prone and adjacent");
+    static final TargetRollModifier TH_TAR_BA = new TargetRollModifier(1, "battle armor target");
+    static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected mechwarrior target");
+    static final TargetRollModifier TH_TAR_INF = new TargetRollModifier(1, "infantry target");
+    static final TargetRollModifier TH_ANTI_AIR = new TargetRollModifier(-2, "anti-aircraft quirk");
+    static final TargetRollModifier TH_INDUSTRIAL =
             new TargetRollModifier(1, "industrial cockpit without advanced fire control");
-    protected static final TargetRollModifier TH_PRIMATIVE_INDUSTRIAL =
+    static final TargetRollModifier TH_PRIMATIVE_INDUSTRIAL =
             new TargetRollModifier(2, "primitive industrial cockpit without advanced fire control");
-    protected static final TargetRollModifier TH_TAR_SUPER = new TargetRollModifier(-1, "superheavy target");
-    protected static final TargetRollModifier TH_TAR_GROUND_DS = new TargetRollModifier(-4, "grounded dropship target");
-    protected static final TargetRollModifier TH_TAR_LOW_PROFILE = new TargetRollModifier(1,
+    static final TargetRollModifier TH_TAR_SUPER = new TargetRollModifier(-1, "superheavy target");
+    static final TargetRollModifier TH_TAR_GROUND_DS = new TargetRollModifier(-4, "grounded dropship target");
+    static final TargetRollModifier TH_TAR_LOW_PROFILE = new TargetRollModifier(1,
                                                                                           "narrow/low profile target");
-    protected static final TargetRollModifier TH_PHY_NOT_MECH =
+    static final TargetRollModifier TH_PHY_NOT_MECH =
             new TargetRollModifier(TargetRoll.IMPOSSIBLE, "non-mechs don't make physical attacks");
-    protected static final TargetRollModifier TH_PHY_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                      "target not adjacent");
-    protected static final TargetRollModifier TH_NULL_POSITION = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
-                                                                                        "null position");
-    protected static final TargetRollModifier TH_RNG_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                      "target beyond max range");
-    protected static final TargetRollModifier TH_PHY_NOT_IN_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                         "target not in arc");
-    protected static final TargetRollModifier TH_PHY_TOO_MUCH_ELEVATION =
+    static final TargetRollModifier TH_PHY_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                            "target not adjacent");
+    static final TargetRollModifier TH_NULL_POSITION = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
+                                                                              "null position");
+    static final TargetRollModifier TH_RNG_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                            "target beyond max range");
+    static final TargetRollModifier TH_PHY_NOT_IN_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                               "target not in arc");
+    static final TargetRollModifier TH_PHY_TOO_MUCH_ELEVATION =
             new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target elevation not in range");
-    protected static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                          "can't punch while prone");
-    protected static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                        "can't punch infantry");
-    protected static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                       "Your arm's off!");
-    protected static final TargetRollModifier TH_PHY_P_NO_SHOULDER = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                            "shoulder destroyed");
-    protected static final TargetRollModifier TH_PHY_P_UPPER_ARM = new TargetRollModifier(2,
+    static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                                "can't punch while prone");
+    static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                              "can't punch infantry");
+    static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                             "Your arm's off!");
+    static final TargetRollModifier TH_PHY_P_NO_SHOULDER = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                                  "shoulder destroyed");
+    static final TargetRollModifier TH_PHY_P_UPPER_ARM = new TargetRollModifier(2,
                                                                                           "upper arm actuator " +
                                                                                           "destroyed");
-    protected static final TargetRollModifier TH_PHY_P_LOWER_ARM = new TargetRollModifier(2,
+    static final TargetRollModifier TH_PHY_P_LOWER_ARM = new TargetRollModifier(2,
                                                                                           "lower arm actuator missing" +
                                                                                           " or destroyed");
-    protected static final TargetRollModifier TH_PHY_P_HAND = new TargetRollModifier(1,
+    static final TargetRollModifier TH_PHY_P_HAND = new TargetRollModifier(1,
                                                                                      "hand actuator missing or " +
                                                                                      "destroyed");
-    protected static final TargetRollModifier TH_PHY_K_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                      "can't kick while prone");
-    protected static final TargetRollModifier TH_PHY_K_INF = new TargetRollModifier(3, "kicking infantry");
-    protected static final TargetRollModifier TH_PHY_K_INF_RNG = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+    static final TargetRollModifier TH_PHY_K_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                            "can't kick while prone");
+    static final TargetRollModifier TH_PHY_K_INF = new TargetRollModifier(3, "kicking infantry");
+    static final TargetRollModifier TH_PHY_K_INF_RNG = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
                                                                                         "Infantry too far away");
-    protected static final TargetRollModifier TH_PHY_K_HIP = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                    "can't kick with broken hip");
-    protected static final TargetRollModifier TH_PHY_K_UPPER_LEG = new TargetRollModifier(2,
+    static final TargetRollModifier TH_PHY_K_HIP = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                          "can't kick with broken hip");
+    static final TargetRollModifier TH_PHY_K_UPPER_LEG = new TargetRollModifier(2,
                                                                                           "upper leg actuator " +
                                                                                           "destroyed");
-    protected static final TargetRollModifier TH_PHY_K_LOWER_LEG = new TargetRollModifier(2,
+    static final TargetRollModifier TH_PHY_K_LOWER_LEG = new TargetRollModifier(2,
                                                                                           "lower leg actuator " +
                                                                                           "destroyed");
-    protected static final TargetRollModifier TH_PHY_K_FOOT = new TargetRollModifier(1, "foot actuator destroyed");
-    protected static final TargetRollModifier TH_PHY_LIGHT = new TargetRollModifier(-2, "weight class attack modifier");
-    protected static final TargetRollModifier TH_PHY_MEDIUM = new TargetRollModifier(-1,
+    static final TargetRollModifier TH_PHY_K_FOOT = new TargetRollModifier(1, "foot actuator destroyed");
+    static final TargetRollModifier TH_PHY_LIGHT = new TargetRollModifier(-2, "weight class attack modifier");
+    static final TargetRollModifier TH_PHY_MEDIUM = new TargetRollModifier(-1,
                                                                                      "weight class attack modifier");
-    protected static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
-    protected static final TargetRollModifier TH_PHY_SUPER = new TargetRollModifier(1, "superheavy attacker");
-    protected static final TargetRollModifier TH_PHY_EASY_PILOT = new TargetRollModifier(-1, "easy to pilot quirk");
-    protected static final TargetRollModifier TH_PHY_P_NO_ARMS_QUIRK = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+    static final TargetRollModifier TH_PHY_SUPER = new TargetRollModifier(1, "superheavy attacker");
+    static final TargetRollModifier TH_PHY_EASY_PILOT = new TargetRollModifier(-1, "easy to pilot quirk");
+    static final TargetRollModifier TH_PHY_P_NO_ARMS_QUIRK = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
                                                                                               "no/minimal arms quirk");
-    protected static final TargetRollModifier TH_WEAP_CANNOT_FIRE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                           "weapon cannot fire");
-    protected static final TargetRollModifier TH_WEAP_NO_AMMO = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                       "ammo is gone");
-    protected static final TargetRollModifier TH_WEAP_PRONE_ARMLESS =
+    static final TargetRollModifier TH_WEAP_CANNOT_FIRE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                                 "weapon cannot fire");
+    static final TargetRollModifier TH_WEAP_NO_AMMO = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                             "ammo is gone");
+    static final TargetRollModifier TH_WEAP_PRONE_ARMLESS =
             new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone and missing an arm");
-    protected static final TargetRollModifier TH_WEAP_ARM_PROP = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                        "using arm as prop");
-    protected static final TargetRollModifier TH_WEAP_PRONE_LEG = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                         "prone leg weapon");
-    protected static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                        "not in arc");
-    protected static final TargetRollModifier TH_INF_ZERO_RNG =
+    static final TargetRollModifier TH_WEAP_ARM_PROP = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                              "using arm as prop");
+    static final TargetRollModifier TH_WEAP_PRONE_LEG = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                               "prone leg weapon");
+    static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                              "not in arc");
+    static final TargetRollModifier TH_INF_ZERO_RNG =
             new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "noninfantry shooting with zero range");
-    protected static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                             "not swarming a Mek");
-    protected static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS,
-                                                                                        "stops swarming");
-    protected static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                       "out of range");
-    protected static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
-    protected static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
-    protected static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
-    protected static final TargetRollModifier TH_EXTREME_RANGE = new TargetRollModifier(6, "Extreme Range");
-    protected static final TargetRollModifier TH_LOS_RANGE = new TargetRollModifier(8, "LOS Range");
-    protected static final TargetRollModifier TH_TARGETTING_COMP = new TargetRollModifier(-1, "targeting computer");
-    protected static final TargetRollModifier TH_IMP_TARG_SHORT =
+    static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                                   "not swarming a Mek");
+    static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS,
+                                                                              "stops swarming");
+    static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
+                                                                             "out of range");
+    static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
+    static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
+    static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
+    static final TargetRollModifier TH_EXTREME_RANGE = new TargetRollModifier(6, "Extreme Range");
+    static final TargetRollModifier TH_TARGETTING_COMP = new TargetRollModifier(-1, "targeting computer");
+    static final TargetRollModifier TH_IMP_TARG_SHORT =
             new TargetRollModifier(-1, "improved targetting (short) quirk");
-    protected static final TargetRollModifier TH_IMP_TARG_MEDIUM =
+    static final TargetRollModifier TH_IMP_TARG_MEDIUM =
             new TargetRollModifier(-1, "improved targetting (medium) quirk");
-    protected static final TargetRollModifier TH_IMP_TARG_LONG =
+    static final TargetRollModifier TH_IMP_TARG_LONG =
             new TargetRollModifier(-1, "improved targetting (long) quirk");
-    protected static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_SHORT =
+    static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_SHORT =
             new TargetRollModifier(-1, "variable range targetting (short) quirk");
-    protected static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_LONG =
+    static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_LONG =
             new TargetRollModifier(1, "variable range targetting (short) quirk");
-    protected static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_LONG =
+    static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_LONG =
             new TargetRollModifier(-1, "variable range targetting (long) quirk");
-    protected static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_SHORT =
+    static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_SHORT =
             new TargetRollModifier(1, "variable range targetting (long) quirk");
-    protected static final TargetRollModifier TH_POOR_TARG_SHORT =
+    static final TargetRollModifier TH_POOR_TARG_SHORT =
             new TargetRollModifier(1, "poor targetting (short) quirk");
-    protected static final TargetRollModifier TH_POOR_TARG_MEDIUM =
+    static final TargetRollModifier TH_POOR_TARG_MEDIUM =
             new TargetRollModifier(1, "poor targetting (medium) quirk");
-    protected static final TargetRollModifier TH_POOR_TARG_LONG =
+    static final TargetRollModifier TH_POOR_TARG_LONG =
             new TargetRollModifier(1, "poor targetting (long) quirk");
-    protected static final TargetRollModifier TH_ACCURATE_WEAP =
+    static final TargetRollModifier TH_ACCURATE_WEAP =
             new TargetRollModifier(-1, "accurate weapon quirk");
-    protected static final TargetRollModifier TH_INACCURATE_WEAP =
+    static final TargetRollModifier TH_INACCURATE_WEAP =
             new TargetRollModifier(1, "inaccurate weapon quirk");
-    protected static final TargetRollModifier TH_STABLE_WEAP =
-            new TargetRollModifier(1, "stabilized weapon quirk");
-    protected static final TargetRollModifier TH_RNG_LARGE =
+    static final TargetRollModifier TH_RNG_LARGE =
             new TargetRollModifier(-1, "target large vehicle or superheavy mech");
-    protected static final TargetRollModifier TH_AIR_STRIKE_PATH =
+    static final TargetRollModifier TH_AIR_STRIKE_PATH =
             new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not under flight path");
-    protected static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
+    static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
+    private static final TargetRollModifier TH_STABLE_WEAP =
+            new TargetRollModifier(1, "stabilized weapon quirk");
+    private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
 
     private final Princess owner;
 
@@ -261,14 +260,15 @@ public class FireControl {
     }
 
     /**
-     * Returns the {@link Coords} computed by {@link Compute#getClosestFlightPath(Coords, Entity)}.
+     * Returns the {@link Coords} computed by 
+     * {@link Compute#getClosestFlightPath(int, Coords, Entity)}.
      *
      * @param shooterPosition The shooter's position.
      * @param targetAero      The aero unit being attacked.
      * @return The {@link Coords} from the target's flight path closest to the shooter.
      */
     @StaticWrapper
-    protected Coords getNearestPointInFlightPath(Coords shooterPosition, IAero targetAero) {
+    Coords getNearestPointInFlightPath(Coords shooterPosition, IAero targetAero) {
         return Compute.getClosestFlightPath(-1, shooterPosition, (Entity)targetAero);
     }
 
@@ -294,14 +294,14 @@ public class FireControl {
      * @param shooterState The state of the unit doing the shooting.
      * @param target       Who is being shot at.
      * @param targetState  The state of the target.
-     * @param distance
+     * @param distance     Distance between shooter and target.
      * @param game         The game being played.  @return The estimated to hit modifiers.
      */
-    protected ToHitData guessToHitModifierHelperForAnyAttack(Entity shooter,
-                                                             @Nullable EntityState shooterState,
-                                                             Targetable target,
-                                                             @Nullable EntityState targetState,
-                                                             int distance, IGame game) {
+    ToHitData guessToHitModifierHelperForAnyAttack(Entity shooter,
+                                                   @Nullable EntityState shooterState,
+                                                   Targetable target,
+                                                   @Nullable EntityState targetState,
+                                                   int distance, IGame game) {
 
         if (shooterState == null) {
             shooterState = new EntityState(shooter);
@@ -441,12 +441,12 @@ public class FireControl {
      * @param game         The game being played.
      * @return The estimated to hit modifiers.
      */
-    public ToHitData guessToHitModifierPhysical(Entity shooter,
-                                                @Nullable EntityState shooterState,
-                                                Targetable target,
-                                                @Nullable EntityState targetState,
-                                                PhysicalAttackType attackType,
-                                                IGame game) {
+    ToHitData guessToHitModifierPhysical(Entity shooter,
+                                         @Nullable EntityState shooterState,
+                                         Targetable target,
+                                         @Nullable EntityState targetState,
+                                         PhysicalAttackType attackType,
+                                         IGame game) {
 
         // todo weapons, frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
@@ -614,8 +614,8 @@ public class FireControl {
      * @return The resulting {@link LosEffects}.
      */
     @StaticWrapper
-    protected LosEffects getLosEffects(IGame game, int shooterId, Targetable target, Coords shooterPosition,
-                                       Coords targetPosition, boolean spotting) {
+    LosEffects getLosEffects(IGame game, int shooterId, Targetable target, Coords shooterPosition,
+                             Coords targetPosition, boolean spotting) {
         return LosEffects.calculateLos(game, shooterId, target, shooterPosition, targetPosition, spotting);
     }
 
@@ -628,7 +628,7 @@ public class FireControl {
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
-    protected ToHitData getSwarmMekBaseToHit(Entity attacker, Entity defender, IGame game) {
+    private ToHitData getSwarmMekBaseToHit(Entity attacker, Entity defender, IGame game) {
         return Compute.getSwarmMekBaseToHit(attacker, defender, game);
     }
 
@@ -641,20 +641,20 @@ public class FireControl {
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
-    protected ToHitData getLegAttackBaseToHit(Entity attacker, Entity defender, IGame game) {
+    private ToHitData getLegAttackBaseToHit(Entity attacker, Entity defender, IGame game) {
         return Compute.getLegAttackBaseToHit(attacker, defender, game);
     }
 
     /**
-     * Returns the value of {@link Compute#getInfantryRangeMods(int, InfantryWeapon)}.
+     * Returns the value of {@link Compute#getInfantryRangeMods(int, InfantryWeapon, InfantryWeapon, boolean)}.
      *
      * @param distance The distance to the target.
      * @param weapon   The {@link InfantryWeapon} being fired.
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
-    protected ToHitData getInfantryRangeMods(int distance, InfantryWeapon weapon,
-    		InfantryWeapon secondary, boolean underwater) {
+    private ToHitData getInfantryRangeMods(int distance, InfantryWeapon weapon,
+                                           InfantryWeapon secondary, boolean underwater) {
         return Compute.getInfantryRangeMods(distance, weapon, secondary, underwater);
     }
 
@@ -666,7 +666,7 @@ public class FireControl {
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
-    protected ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
+    private ToHitData getDamageWeaponMods(Entity attacker, Mounted weapon) {
         return Compute.getDamageWeaponMods(attacker, weapon);
     }
 
@@ -704,9 +704,9 @@ public class FireControl {
      * @return The to hit modifiers for the given weapon firing at the given
      *         target as a {@link ToHitData} object.
      */
-    public ToHitData guessToHitModifierForWeapon(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, Mounted weapon, IGame game) {
+    ToHitData guessToHitModifierForWeapon(Entity shooter,
+                                          @Nullable EntityState shooterState, Targetable target,
+                                          @Nullable EntityState targetState, Mounted weapon, IGame game) {
 
         if (shooterState == null) {
             shooterState = new EntityState(shooter);
@@ -991,10 +991,10 @@ public class FireControl {
      * @return The to hit modifiers for the given weapon firing at the given
      *         target as a {@link ToHitData} object.
      */
-    public ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, MovePath flightPath,
-            Mounted weapon, IGame game, boolean assumeUnderFlightPlan) {
+    ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
+                                                  @Nullable EntityState shooterState, Targetable target,
+                                                  @Nullable EntityState targetState, MovePath flightPath,
+                                                  Mounted weapon, IGame game, boolean assumeUnderFlightPlan) {
 
         if (targetState == null) {
             targetState = new EntityState(target);
@@ -1042,8 +1042,8 @@ public class FireControl {
      * @param targetState used for targets position
      * @return TRUE if the target is under the path.
      */
-    public boolean isTargetUnderFlightPath(MovePath flightPath,
-                                           EntityState targetState) {
+    boolean isTargetUnderFlightPath(MovePath flightPath,
+                                    EntityState targetState) {
 
         Coords targetCoords = targetState.getPosition();
         for (Enumeration<MoveStep> step = flightPath.getSteps(); step.hasMoreElements(); ) {
@@ -1070,7 +1070,7 @@ public class FireControl {
      *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
-    String checkGuess(Entity shooter, Targetable target, Mounted weapon, IGame game) {
+    private String checkGuess(Entity shooter, Targetable target, Mounted weapon, IGame game) {
 
         // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
         if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
@@ -1082,7 +1082,7 @@ public class FireControl {
             return null;
         }
 
-        String ret = null;
+        String ret = "";
         WeaponFireInfo guessInfo = new WeaponFireInfo(shooter, new EntityState(shooter), target, null, weapon, game,
                                                       true, owner);
         WeaponFireInfo accurateInfo = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
@@ -1113,8 +1113,8 @@ public class FireControl {
      *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
-    String checkGuessPhysical(Entity shooter, Targetable target,
-            PhysicalAttackType attackType, IGame game) {
+    private String checkGuessPhysical(Entity shooter, Targetable target,
+                                      PhysicalAttackType attackType, IGame game) {
 
         // This really should only be done for debugging purposes. Regular play
         // should avoid the overhead.
@@ -1127,7 +1127,7 @@ public class FireControl {
             return null;
         }
 
-        String ret = null;
+        String ret = "";
         if (shooter.getPosition() == null) {
             return "Shooter has NULL coordinates!";
         } else if (target.getPosition() == null) {
@@ -1165,38 +1165,35 @@ public class FireControl {
             return null;
         }
 
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
         for (Targetable enemy : enemies) {
             for (Mounted weapon : shooter.getWeaponList()) {
                 String shootingCheck = checkGuess(shooter, enemy, weapon, game);
                 if (shootingCheck != null) {
-                    ret += shootingCheck;
+                    ret.append(shootingCheck);
                 }
             }
             String physicalCheck;
             physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.RIGHT_KICK, game);
             if (physicalCheck != null) {
-                ret += physicalCheck;
+                ret.append(physicalCheck);
             }
             physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.LEFT_KICK, game);
             if (physicalCheck != null) {
-                ret += physicalCheck;
+                ret.append(physicalCheck);
             }
             physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.RIGHT_PUNCH, game);
             if (physicalCheck != null) {
-                ret += physicalCheck;
+                ret.append(physicalCheck);
             }
             physicalCheck = checkGuessPhysical(shooter, enemy, PhysicalAttackType.LEFT_PUNCH, game);
             if (physicalCheck != null) {
-                ret += physicalCheck;
+                ret.append(physicalCheck);
             }
 
         }
-        if (StringUtil.isNullOrEmpty(ret)) {
-            return null;
-        }
-        return ret;
+        return ret.toString();
     }
 
     /**
@@ -1322,7 +1319,7 @@ public class FireControl {
      * enough to reliably kill/cripple targets without falling into serious
      * overkill.
      */
-    public double calcDamageAllocationUtility(Targetable target, double expectedDamage) {
+    double calcDamageAllocationUtility(Targetable target, double expectedDamage) {
 
         double existingDamage = owner.getDamageAlreadyAssigned(target);
         int targetHP = Compute.getTargetTotalHP(owner.getGame(), target);
@@ -1357,7 +1354,7 @@ public class FireControl {
      * For now, this works by simply getting the max damage of the target at
      * range=1, ignoring to-hit, heat, etc.
      */
-    public double calcTargetPotentialDamage(Targetable target) {
+    private double calcTargetPotentialDamage(Targetable target) {
         if (!(target instanceof Entity)) {
             return 0;
         }
@@ -1430,10 +1427,10 @@ public class FireControl {
      *            full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
-    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter,
-            EntityState shooterState, Targetable target,
-            EntityState targetState, Mounted weapon, IGame game,
-            boolean guessToHit) {
+    WeaponFireInfo buildWeaponFireInfo(Entity shooter,
+                                       EntityState shooterState, Targetable target,
+                                       EntityState targetState, Mounted weapon, IGame game,
+                                       boolean guessToHit) {
         return new WeaponFireInfo(shooter, shooterState, target, targetState,
                 weapon, game, guessToHit, owner);
     }
@@ -1452,10 +1449,10 @@ public class FireControl {
      * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
-    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter,
-            MovePath flightPath, Targetable target, EntityState targetState,
-            Mounted weapon, IGame game, boolean assumeUnderFlightPath,
-            boolean guessToHit) {
+    WeaponFireInfo buildWeaponFireInfo(Entity shooter,
+                                       MovePath flightPath, Targetable target, EntityState targetState,
+                                       Mounted weapon, IGame game, boolean assumeUnderFlightPath,
+                                       boolean guessToHit) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
                 weapon, game, assumeUnderFlightPath, guessToHit, owner);
     }
@@ -1470,8 +1467,8 @@ public class FireControl {
      * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
-    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game,
-                                                 boolean guessToHit) {
+    WeaponFireInfo buildWeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game,
+                                       boolean guessToHit) {
         return new WeaponFireInfo(shooter, target, weapon, game, guessToHit, owner);
     }
 
@@ -1648,8 +1645,8 @@ public class FireControl {
     private int calcHeatTolerance(Entity entity, @Nullable Boolean isAero) {
 
         // If the unit doesn't track heat, we won't worry about it.
-        if (entity.getHeatCapacity() == 999) {
-            return 999;
+        if (entity.getHeatCapacity() == DOES_NOT_TRACK_HEAT) {
+            return DOES_NOT_TRACK_HEAT;
         }
 
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
@@ -1674,7 +1671,7 @@ public class FireControl {
      *            The unit doing the shooting.
      * @param alphaStrike
      *            The alpha strike plan.
-     * @return
+     * @return An array of all the resulting firing plans.
      */
     FiringPlan[] calcFiringPlansUnderHeat(Entity shooter, FiringPlan alphaStrike) {
 
@@ -1691,7 +1688,7 @@ public class FireControl {
 
         // How many plans do I need to compute?
         FiringPlan [] bestPlans;
-        if (shooter instanceof Infantry || shooter instanceof BattleArmor) {
+        if (shooter instanceof Infantry) {
             bestPlans = new FiringPlan[maxHeat + 4];
         } else {
             bestPlans = new FiringPlan[maxHeat + 1];
@@ -1708,17 +1705,16 @@ public class FireControl {
         for (WeaponFireInfo weaponFireInfo : alphaStrike) {
 
             //Leg and swarm attacks can't be mixed with any other attacks, so we have to consider each of those separately.
-            if (shooter instanceof Infantry || shooter instanceof BattleArmor) { 
-                if (((WeaponType) weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.LEG_ATTACK)) {
+            if (shooter instanceof Infantry) {
+                if ((weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.LEG_ATTACK)) {
                     legAttack.add(weaponFireInfo);
                     continue;
-                }
-                else if (((WeaponType) weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.SWARM_MEK)) {
+                } else if ((weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.SWARM_MEK)) {
                     swarmAttack.add(weaponFireInfo);
                     continue;
                 }
                 // We probably shouldn't consider stopping swarm attacks, since Princess isn't smart enough to recognize the rare situations when this is a good idea(e.g. planning to put lots of allied fire on the swarm target next turn, target is likely to explode and ammo explosion splash damage is on, etc).
-                else if (((WeaponType) weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
+                else if ((weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
                     continue;
                 }
                 else if (! (shooter instanceof BattleArmor) && weaponFireInfo.getWeapon().getLocation() == Infantry.LOC_FIELD_GUNS) {
@@ -1741,7 +1737,7 @@ public class FireControl {
         }
         calculateUtility(bestPlans[0], heatTolerance, isAero);
 
-        if(shooter instanceof Infantry || shooter instanceof BattleArmor) {
+        if (shooter instanceof Infantry) {
             calculateUtility(swarmAttack, heatTolerance, isAero);
             calculateUtility(legAttack, heatTolerance, isAero);         
             calculateUtility(fieldGuns, heatTolerance, isAero);
@@ -1804,8 +1800,8 @@ public class FireControl {
         // between firing different weapons, because swarm/leg attacks are
         // mutually exclusive with normal firing, so we treat them similarly to
         // heat-tracking units.
-        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry)
-                && !(shooter instanceof BattleArmor)) {
+        if (shooter.getHeatCapacity() == DOES_NOT_TRACK_HEAT
+            && !(shooter instanceof Infantry)) {
             return alphaStrike; // No need to worry about heat if the unit
                                 // doesn't track it.
         }
@@ -1834,9 +1830,9 @@ public class FireControl {
      *            The game currently being played.
      * @return the 'best' firing plan under a certain heat.
      */
-    FiringPlan guessBestFiringPlanUnderHeat(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, int maxHeat, IGame game) {
+    private FiringPlan guessBestFiringPlanUnderHeat(Entity shooter,
+                                                    @Nullable EntityState shooterState, Targetable target,
+                                                    @Nullable EntityState targetState, int maxHeat, IGame game) {
 
         // can't have less than zero heat
         if (maxHeat < 0) {
@@ -1848,8 +1844,7 @@ public class FireControl {
                 target, targetState, game);
         // Infantry and BA may have alternative options, so we need to consider
         // different firing options.
-        if (alphaStrike.getHeat() <= maxHeat && !(shooter instanceof Infantry)
-                && !(shooter instanceof BattleArmor)) {
+        if (alphaStrike.getHeat() <= maxHeat && !(shooter instanceof Infantry)) {
             return alphaStrike;
         }
 
@@ -1862,45 +1857,6 @@ public class FireControl {
             // Return a do nothing plan
             return new FiringPlan(target);
         }
-    }
-
-    /**
-     * Guesses the 'best' firing plan, using heat as a disutility. No twisting
-     * is done
-     *
-     * @param shooter
-     *            The unit doing the shooting.
-     * @param shooterState
-     *            The current state of the shooting unit.
-     * @param target
-     *            The unit being shot at.
-     * @param targetState
-     *            The current state of the target unit.
-     * @param game
-     *            The game currently being played.
-     * @return the 'best' firing plan, using heat as a disutility.
-     */
-    FiringPlan guessBestFiringPlan(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, IGame game) {
-
-        // Start with an alpha strike.
-        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
-                target, targetState, game);
-
-        // If we don't track heat, use the alpha.
-        // Although they don't track heat, infantry/BA do need to make tradeoffs
-        // between firing different weapons, because swarm/leg attacks are
-        // mutually exclusive with normal firing, so we treat them similarly to
-        // heat-tracking units.
-        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry)
-                && !(shooter instanceof BattleArmor)) {
-            return alphaStrike;
-        }
-
-        // Get all the best plans that generate less heat than an alpha strike.
-        FiringPlan allPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
-        return getBestFiringPlanUnderHeat(target, shooter, allPlans);
     }
 
     private FiringPlan getBestFiringPlanUnderHeat(Targetable target,
@@ -1921,159 +1877,67 @@ public class FireControl {
     }
 
     /**
-     * Gets the 'best' firing plan using heat as disutiltiy includes the option
-     * of twisting
+     * Figures out the best firing plan
      *
-     * @param shooter
-     *            The unit doing the shooting.
-     * @param target
-     *            The unit being shot at.
-     * @param game
-     *            The game currently being played.
-     * @return the 'best' firing plan using heat as disutiltiy includes the
-     *         option of twisting
+     * @param params - the appropriate firing plan calculation parameters
+     * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
      */
-    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target,
-            IGame game, Map<Mounted, Double> ammoConservation) {
-
-        // Keep track of our original facing so we can go back to it.
-        int originalFacing = shooter.getSecondaryFacing();
-
-        // Get the best plan without any twists.
-        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game,
-                ammoConservation);
-
+    FiringPlan determineBestFiringPlan(FiringPlanCalculationParameters params) {
+    	// unpack parameters for easier reference
+    	Entity shooter = params.getShooter();
+    	Targetable target = params.getTarget();
+    	EntityState shooterState = params.getShooterState();
+    	EntityState targetState = params.getTargetState();
+    	int maxHeat = params.getMaxHeat();
+    	Map<Mounted, Double> ammoConservation = params.getAmmoConservation();
+    	
+    	// Get the best plan without any twists.
+        FiringPlan noTwistPlan = null;
+        
+        switch(params.getCalculationType()) {
+        	case GET:
+        		noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
+        		break;
+        	case GUESS:
+        		noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, owner.getGame());
+        		break;
+        }
+        
         // If we can't change facing, we're done.
-        if (!shooter.canChangeSecondaryFacing()) {
-            return noTwistPlan;
-        }
-
-        // Turn to the right.
-        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
-        rightTwistPlan.setTwist(1);
-
-        // Turn to the left.
-        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
-        leftTwistPlan.setTwist(-1);
-
-        // todo extended torso twist.
-
-        // Back to where we started.
-        shooter.setSecondaryFacing(originalFacing);
-
-        // Return the highest utility plan.
-        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
-            (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
-            return noTwistPlan;
-        }
-        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
-            return leftTwistPlan;
-        }
-        return rightTwistPlan;
-    }
-
-    /**
-     * Guesses the 'best' firing plan under a certain heat includes the option  of twisting
-     *
-     * @param shooter      The unit doing the shooting.
-     * @param shooterState The current state of the shooting unit.
-     * @param target       The unit being shot at.
-     * @param targetState  The current state of the target unit.
-     * @param maxHeat      How much heat we're willing to tolerate.
-     * @param game         The game currently being played.
-     * @return the 'best' firing plan under a certain heat includes the option  of twisting.
-     */
-    FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, int maxHeat, IGame game) {
-
-        // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter,
-                shooterState, target, targetState, maxHeat, game);
-
-        // If we can't change facing, we're done.
-        if (!shooter.canChangeSecondaryFacing()) {
+        if (!params.getShooter().canChangeSecondaryFacing()) {
             return noTwistPlan;
         }
 
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
-        // Turn to the right.
-        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter,
-                shooterState, target, targetState, maxHeat, game);
-        rightTwistPlan.setTwist(1);
-
-        // Turn to the left.
-        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter,
-                shooterState, target, targetState, maxHeat, game);
-        leftTwistPlan.setTwist(-1);
-
-        // todo extended torso twist.
+        List<Integer> validFacingChanges = getValidFacingChanges(shooter);
+        
+        // Now, we loop through all possible facings. If one facing produces a better plan 
+        // than what we currently have as the best plan then use that. Start with "no twist" as default.
+        FiringPlan bestFiringPlan = noTwistPlan;
+        for(int currentTwist : validFacingChanges) {        	
+        	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+        	
+        	FiringPlan twistPlan = null;
+        	switch(params.getCalculationType()) {
+            	case GET:
+            		twistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
+            		break;
+            	case GUESS:
+            		twistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, owner.getGame());
+            }
+        	twistPlan.setTwist(currentTwist);
+        	
+        	if(twistPlan.getUtility() > bestFiringPlan.getUtility()) {
+        		bestFiringPlan = twistPlan;
+        	}
+        }
 
         // Back to where we started.
         shooter.setSecondaryFacing(originalFacing);
 
-        // Return the highest utility plan.
-        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
-            (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
-            return noTwistPlan;
-        }
-        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
-            return leftTwistPlan;
-        }
-        return rightTwistPlan;
-    }
-
-    /**
-     * Guesses the 'best' firing plan under a certain heat includes the option of twisting
-     */
-    FiringPlan guessBestFiringPlanWithTwists(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, IGame game) {
-
-        // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlan(shooter, shooterState,
-                target, targetState, game);
-
-        // If we can't change facing, we're done.
-        if (!shooter.canChangeSecondaryFacing()) {
-            return noTwistPlan;
-        }
-
-        // Keep track of our original facing so we can go back to it.
-        int originalFacing = shooter.getSecondaryFacing();
-
-        // Turn to the right.
-        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState,
-                target, targetState, game);
-        rightTwistPlan.setTwist(1);
-
-        // Turn to the left.
-        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlan(shooter, shooterState,
-                target, targetState, game);
-        leftTwistPlan.setTwist(-1);
-
-        // todo extended torso twist.
-
-        // Back to where we started.
-        shooter.setSecondaryFacing(originalFacing);
-
-        // Return the highest utility plan.
-        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
-            (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
-            return noTwistPlan;
-        }
-        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
-            return leftTwistPlan;
-        }
-        return rightTwistPlan;
+        return bestFiringPlan;
     }
 
     /**
@@ -2083,7 +1947,7 @@ public class FireControl {
      * @param game    The game being played.
      * @return A list of potential targets.
      */
-    List<Targetable> getTargetableEnemyEntities(Entity shooter, IGame game) {
+    private List<Targetable> getTargetableEnemyEntities(Entity shooter, IGame game) {
         List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
@@ -2145,7 +2009,7 @@ public class FireControl {
      *
      * @param shooter The unit doing the shooting.
      * @param game    The game being played.
-     * @return
+     * @return The best firing plan according to our calculations.
      */
     FiringPlan getBestFiringPlan(Entity shooter, IHonorUtil honorUtil, IGame game,
                                  Map<Mounted, Double> ammoConservation) {
@@ -2169,8 +2033,12 @@ public class FireControl {
                 continue;
             }
 
-            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy,
-                                                          game, ammoConservation);
+            FiringPlanCalculationParameters parameters =
+                    new FiringPlanCalculationParameters.Builder().buildExact(shooter,
+                                                                             enemy,
+                                                                             ammoConservation);
+            FiringPlan plan = determineBestFiringPlan(parameters);
+            
             owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((bestPlan == null) || (plan.getUtility() > bestPlan.getUtility())) {
@@ -2187,11 +2055,11 @@ public class FireControl {
      *
      * @param shooter         The firing unit.
      * @param range           The range to be checked.
-     * @param useExtremeRange
+     * @param useExtremeRange Is the extreme range optional rule in effect?
      * @return The most damage done at that range.
      */
     // todo cluster and other variable damage.
-    public double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
+    double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
         double maxDamage = 0;
 
         // cycle through my weapons
@@ -2211,7 +2079,7 @@ public class FireControl {
      * @param facing The facing to be corrected.
      * @return The properly adjusted facing.
      */
-    public static int correctFacing(int facing) {
+    static int correctFacing(int facing) {
         while (facing < 0) {
             facing += 6;
         }
@@ -2224,7 +2092,7 @@ public class FireControl {
     /**
      * Makes sure ammo is loaded for each weapon
      */
-    public void loadAmmo(Entity shooter, FiringPlan plan) {
+    void loadAmmo(Entity shooter, FiringPlan plan) {
         if (shooter == null) {
             return;
         }
@@ -2268,15 +2136,15 @@ public class FireControl {
      */
     private List<Targetable> additionalTargets = new ArrayList<>();
 
-    public List<Targetable> getAdditionalTargets() {
+    List<Targetable> getAdditionalTargets() {
         return additionalTargets;
     }
 
-    public void setAdditionalTargets(List<Targetable> targets) {
+    void setAdditionalTargets(List<Targetable> targets) {
         additionalTargets = targets;
     }
 
-    protected Mounted getClusterAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    Mounted getClusterAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2315,7 +2183,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getPreferredAmmo(Entity shooter, Targetable target, WeaponType weaponType) {
+    Mounted getPreferredAmmo(Entity shooter, Targetable target, WeaponType weaponType) {
         final String METHOD_NAME = "getPreferredAmmo(Entity, Targetable, WeaponType)";
 
         StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName())
@@ -2448,7 +2316,7 @@ public class FireControl {
         }
     }
 
-    protected Mounted getGeneralMmlAmmo(List<Mounted> ammoList, int range) {
+    Mounted getGeneralMmlAmmo(List<Mounted> ammoList, int range) {
         Mounted returnAmmo;
 
         // Get the LRM and SRM bins if we have them.
@@ -2485,7 +2353,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getAtmAmmo(List<Mounted> ammoList, int range, EntityState target, boolean fireResistant) {
+    Mounted getAtmAmmo(List<Mounted> ammoList, int range, EntityState target, boolean fireResistant) {
         Mounted returnAmmo;
 
         // Get the Hi-Ex, Ex-Range and Standard ammo bins if we have them.
@@ -2561,7 +2429,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getAntiVeeAmmo(List<Mounted> ammoList, WeaponType weaponType, int range, boolean fireResistant) {
+    Mounted getAntiVeeAmmo(List<Mounted> ammoList, WeaponType weaponType, int range, boolean fireResistant) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2601,7 +2469,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getAntiInfantryAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    Mounted getAntiInfantryAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2644,7 +2512,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getHeatAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    private Mounted getHeatAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2683,7 +2551,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getIncendiaryAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    Mounted getIncendiaryAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2725,7 +2593,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getHardTargetAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    Mounted getHardTargetAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2796,7 +2664,7 @@ public class FireControl {
         return returnAmmo;
     }
 
-    protected Mounted getAntiAirAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
+    Mounted getAntiAirAmmo(List<Mounted> ammoList, WeaponType weaponType, int range) {
         Mounted returnAmmo = null;
         Mounted mmlLrm = null;
         Mounted mmlSrm = null;
@@ -2835,5 +2703,35 @@ public class FireControl {
         }
 
         return returnAmmo;
+    }
+
+    // Helper method that figures out the valid facing changes for the given shooter
+    private List<Integer> getValidFacingChanges(Entity shooter) {
+    	// figure out all valid twists or turret turns
+        // mechs can turn:
+        //		one left, one right unless he has "no torso twist" quirk or is on the ground
+        //		two left, two right if he has "extended torso twist" quirk
+        // vehicles and turrets can turn any direction unless he has no turret
+        List<Integer> validFacingChanges = new ArrayList<>();
+        if (shooter.getEntityType() == Entity.ETYPE_MECH
+            && !shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)
+            && !shooter.hasFallen()) {
+            validFacingChanges.add(1);
+            validFacingChanges.add(-1);
+
+        	if(shooter.hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST)) {
+                validFacingChanges.add(2);
+                validFacingChanges.add(-2);
+        	}
+        } else if (shooter instanceof Tank
+                   && !((Tank) shooter).hasNoTurret()) {
+            validFacingChanges.add(1);
+        	validFacingChanges.add(-1);
+        	validFacingChanges.add(2);
+        	validFacingChanges.add(-2);
+        	validFacingChanges.add(3);
+        }
+        
+        return validFacingChanges;
     }
 }

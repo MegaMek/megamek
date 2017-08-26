@@ -3149,11 +3149,8 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
-        if (isAirborne()) {
-            if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-                return true;
-            }
-            return false;
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
+            return !isAirborne();
         }
 
         // Additional restrictions for hidden units

@@ -19,6 +19,10 @@ v0.43.4-git
 + Updated GUIPreferences for BV Matching and changing default splash screen. 
 + Feature: LAMs and glider Protomechs.
 + Feature: TacOps VTOL bombing and strafing option (per pending errata, VTOL strafing is a separate unofficial option).
++ Issue #539 - Enable Princess to rotate turrets and use "extended torso twist" quirk.
++ Data - LRM Infantry date fixes. Also Clan LRM infantry become unofficial since LRM Infantry is a IS weapon.
++ Issue #598: Terrain Impassable to ASFs? Airborne Units?
++ Issue #606: Aerodyne DSs Dropping Units on Ground Map Have Issues.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

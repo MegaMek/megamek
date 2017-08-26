@@ -13,15 +13,15 @@ Infantry
 </UnitType>
 
 <Name>
-Mountaineer
+Heavy Mountain Infantry
 </Name>
 
 <Model>
-45th Cerulean Mountain Infantry, 3rd Davion Guards
+Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers
 </Model>
 
 <year>
-3064
+2500
 </year>
 
 <type>
@@ -48,11 +48,11 @@ Leg
 </secondn>
 
 <Primary>
-Federated Barrett M42B
+Imperator AX-22 Assault Rifle
 </Primary>
 
 <Secondary>
-InfantrySRMLight
+Infantry Heavy Mortar
 </Secondary>
 
 <specialization>
@@ -60,9 +60,6 @@ InfantrySRMLight
 </specialization>
 
 <armorKit>
-DavionKit
+CanopianKit
 </armorKit>
 
-<era>
-TRO 3085 - Civil War
-</era>

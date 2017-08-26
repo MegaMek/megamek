@@ -13,15 +13,15 @@ Infantry
 </UnitType>
 
 <Name>
-Frogmen
+Mechanized Wheeled Platoon
 </Name>
 
 <Model>
-Blue Water Marine Response Teams (Frogmen)
+(LRM)
 </Model>
 
 <year>
-2500
+3057
 </year>
 
 <type>
@@ -29,37 +29,33 @@ IS Level 3
 </type>
 
 <motion_type>
-Motorized SCUBA
+Wheeled
 </motion_type>
 
 <Field Guns Equipment>
 </Field Guns Equipment>
 
 <source>
-TRO 3085 - Age of War
+Total Warfare - Succession Wars
 </source>
 
 <squad_size>
-6
+4
 </squad_size>
 
 <squadn>
-2
+4
 </squadn>
 
 <secondn>
-1
+2
 </secondn>
 
 <Primary>
-Federated Barrett M61A
+Auto-Rifle
 </Primary>
 
 <Secondary>
-Infantry Support Laser
+LRM Launcher (FarShot)
 </Secondary>
-
-<armorKit>
-ISFlakStandard
-</armorKit>
 

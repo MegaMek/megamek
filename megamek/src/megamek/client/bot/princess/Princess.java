@@ -1052,7 +1052,7 @@ public class Princess extends BotClient {
             List<Entity> ents = game.getEntitiesVector();
             for (Entity ent : ents) {
                 String errors = fireControl.checkAllGuesses(ent, game);
-                if (errors != null) {
+                if (!StringUtil.isNullOrEmpty(errors)) {
                     log(getClass(), METHOD_NAME, LogLevel.WARNING, errors);
                 }
             }

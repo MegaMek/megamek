@@ -13,41 +13,49 @@ Infantry
 </UnitType>
 
 <Name>
-Royal Engineers
+Clan Mechanized Wheeled Point
 </Name>
 
 <Model>
-1st Lyran Royal Guards RCT
+(LRM)
 </Model>
 
 <year>
-3045
+3057
 </year>
 
 <type>
-IS Level 3
+Clan Level 5
 </type>
 
 <motion_type>
-Motorized
+Wheeled
 </motion_type>
 
 <Field Guns Equipment>
 </Field Guns Equipment>
 
+<source>
+Total Warfare - Succession Wars
+</source>
+
 <squad_size>
-7
+5
 </squad_size>
 
 <squadn>
-2
+4
 </squadn>
 
+<secondn>
+2
+</secondn>
+
 <Primary>
-Gunther MP-20
+Auto-Rifle
 </Primary>
 
-<armorKit>
-SteinerKit3060
-</armorKit>
+<Secondary>
+LRM Launcher (FarShot)
+</Secondary>
 

@@ -1888,7 +1888,7 @@ public class MoveStep implements Serializable {
             return;
         }
         
-        if (prev.getAltitude() > 0) {
+        if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
 
             // If airborne and not an Aero then everything is illegal, except
             // turns and AirMech 

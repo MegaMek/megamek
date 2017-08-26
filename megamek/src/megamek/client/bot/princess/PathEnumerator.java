@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
+import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
@@ -207,13 +209,34 @@ public class PathEnumerator {
                         return isLegalAeroMove(movePath);
                     }
                 };
-                paths = new ArrayList<>(filter.doFilter(paths));
                 
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered paths");
+                // also, remove duplicate off-board paths. There shouldn't be too many but every little bit helps.
+                AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
+                
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Unfiltered paths: " + paths.size());
+                paths = new ArrayList<>(filter.doFilter(paths));
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out illegal paths: " + paths.size());
+                paths = new ArrayList<>(offBoardFilter.doFilter(paths));
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out all but one offboard path: " + paths.size());
+                
+                HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
                 for(MovePath path : paths)
                 {
+                    if(!pathLengths.containsKey(path.length())) {
+                        pathLengths.put(path.length(), 0);
+                    }
+                    Integer lengthCount = pathLengths.get(path.length());
+                    pathLengths.put(path.length(), lengthCount + 1);
+                    
                     this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, path.toString());
                 }
+                
+                for(Integer length : pathLengths.keySet())
+                {
+                    this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Paths of length " + length + ": " + pathLengths.get(length));
+                }
+                
+                //paths.addAll(AeroGroundPathFinder.getAdjustedHeightPaths(paths, mover));
             }
             else if (mover.isAero()) {
                 IAero aeroMover = (IAero)mover;

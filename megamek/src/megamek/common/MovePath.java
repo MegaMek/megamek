@@ -45,7 +45,7 @@ public class MovePath implements Cloneable, Serializable {
     private Set<Coords> coordsSet = null;
     private final transient Object COORD_SET_LOCK = new Object();
 
-    protected IGame getGame() {
+    public IGame getGame() {
         return game;
     }
 

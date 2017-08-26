@@ -160,6 +160,8 @@ public abstract class PathRanker {
             			msg.append("\n\tFirst safe path off board found");
             			alreadyHaveSafePathOffBoard = true;
             		}
+            		
+            		// if we have no bombs, we want to make sure our altitude is above 1
             	}
             	
                 Coords finalCoords = path.getFinalCoords();

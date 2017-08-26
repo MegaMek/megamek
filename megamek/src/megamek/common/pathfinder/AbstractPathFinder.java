@@ -107,7 +107,7 @@ public class AbstractPathFinder<N, C, E> {
          * @param collection collection to be filtered
          * @return filtered collection
          */
-        final public Collection<T> doFilter(Collection<T> collection) {
+        public Collection<T> doFilter(Collection<T> collection) {
             List<T> filteredMoves = new ArrayList<>();
             for (T e : collection) {
                 if (shouldStay(e))

@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represtents a volume of space set aside for carrying first class passengers
  */
 
 public final class FirstClassQuartersCargoBay extends Bay {
@@ -50,6 +50,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
         weight = space;
         currentSpace = (int)space/10;
         this.doors = doors;
+        currentdoors = doors; 
     }
 
     /**
@@ -72,7 +73,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("1st Class Quarters ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

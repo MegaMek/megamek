@@ -1,0 +1,12 @@
+FWLM Medium Mechs B 3067
+Apollo APL-1M,1
+Scorpion SCP-1O,2
+Cicada CDA-3M,3
+Shadow Hawk SHD-7M,4
+Hermes II HER-5S,5
+Trebuchet TBT-7M,6
+Griffin GRF-5M,5
+Wolverine WVR-7M,4
+Griffin GRF-3M,3
+Wraith TR1,2
+Blackjack BJ2-O,1

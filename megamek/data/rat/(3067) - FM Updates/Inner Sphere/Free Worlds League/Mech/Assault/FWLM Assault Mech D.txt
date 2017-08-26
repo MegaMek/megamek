@@ -1,0 +1,12 @@
+FWLM Assault Mechs D 3067
+Charger CGR-1A1,1
+Awesome AWS-9M,2
+Awesome AWS-8Q,3
+Goliath GOL-1H,4
+Stalker STK-3F,5
+BattleMaster BLR-1G,6
+Cyclops CP-10-Z,5
+Stalker STK-5M,4
+Victor VTR-9B,3
+Banshee BNC-3E,2
+Zeus ZEU-6S,1

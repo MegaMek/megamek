@@ -1,0 +1,228 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Dropship
+</UnitType>
+<Name>
+Interdictor Pocket Warship
+</Name>
+<Model>
+(Republic)
+</Model>
+<Tonnage>
+9400
+</Tonnage>
+<SafeThrust>
+7
+</SafeThrust>
+<Armor>
+685
+513
+513
+342
+</Armor>
+<Nose Equipment>
+(B) MediumSCC
+MediumSCC
+MediumSCC Ammo:30
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+AMS
+AMS
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Nose Equipment>
+<Left Side Equipment>
+SCL1
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISERPPC
+ISERPPC
+AMS
+AMS
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+(R) ISHeavyPPC
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) AMS
+(R) ISAMS Ammo
+(R) ISAMS Ammo
+(R) ISAMS Ammo
+</Left Side Equipment>
+<Right Side Equipment> 
+SCL1
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISERPPC
+ISERPPC
+AMS
+AMS
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+(R) ISHeavyPPC
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) AMS
+(R) ISAMS Ammo
+(R) ISAMS Ammo
+(R) ISAMS Ammo
+</Right Side Equipment>
+<Aft Equipment>
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISMML9
+ISArtemisIV
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 LRM Ammo Artemis-Capable
+ISMML9 SRM Ammo Artemis-Capable
+ISHeavyPPC
+ISHeavyPPC
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+AMS
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Aft Equipment>
+<structural_integrity>
+25
+</structural_integrity>
+<heatsinks>
+244
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+12000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3078
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+13
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:2:2
+CargoBay:385:2
+</transporters>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+6
+</life_boat>
+<crew>
+109
+</crew>
+<passengers>
+0
+</passengers>

@@ -1,0 +1,100 @@
+3067-3081 Free Worlds League Conventional Infantry
+FWL Motorized Platoon (Rifle),90
+FWL Motorized Platoon (MG),24
+FWL Motorized Platoon (Flamer),18
+FWL Motorized Platoon (SRM),24
+FWL Motorized Platoon (Laser),24
+FWL Motorized Platoon (AA),3
+FWL Motorized Platoon (Lt AA),6
+FWL Motorized Platoon (LRM),24
+FWL Motorized Platoon (Blazer),18
+FWL Motorized Platoon (ER Laser),15
+FWL Motorized Platoon (Heavy Laser),15
+FWL Motorized Platoon (Pulse Laser),12
+FWL Motorized Platoon (David Lt Gauss),18
+FWL Motorized Platoon (King David Lt Gauss),9
+FWL Mechanized Tracked Platoon (Rifle),60
+FWL Mechanized Tracked Platoon (MG),16
+FWL Mechanized Tracked Platoon (Flamer),12
+FWL Mechanized Tracked Platoon (SRM),16
+FWL Mechanized Tracked Platoon (Laser),16
+FWL Mechanized Tracked Platoon (AA),2
+FWL Mechanized Tracked Platoon (Lt AA),4
+FWL Mechanized Tracked Platoon (LRM),16
+FWL Mechanized Tracked Platoon (Blazer),12
+FWL Mechanized Tracked Platoon (ER Laser),10
+FWL Mechanized Tracked Platoon (Heavy Laser),10
+FWL Mechanized Tracked Platoon (Pulse Laser),8
+FWL Mechanized Tracked Platoon (David Lt Gauss),12
+FWL Mechanized Tracked Platoon (King David Lt Gauss),6
+FWL Mechanized Wheeled Platoon (Rifle),60
+FWL Mechanized Wheeled Platoon (MG),16
+FWL Mechanized Wheeled Platoon (Flamer),12
+FWL Mechanized Wheeled Platoon (SRM),16
+FWL Mechanized Wheeled Platoon (Laser),16
+FWL Mechanized Wheeled Platoon (AA),2
+FWL Mechanized Wheeled Platoon (Lt AA),4
+FWL Mechanized Wheeled Platoon (LRM),16
+FWL Mechanized Wheeled Platoon (Blazer),12
+FWL Mechanized Wheeled Platoon (ER Laser),10
+FWL Mechanized Wheeled Platoon (Heavy Laser),10
+FWL Mechanized Wheeled Platoon (Pulse Laser),8
+FWL Mechanized Wheeled Platoon (David Lt Gauss),12
+FWL Mechanized Wheeled Platoon (King David Lt Gauss),6
+FWL Jump Platoon (Rifle),30
+FWL Jump Platoon (MG),8
+FWL Jump Platoon (Flamer),6
+FWL Jump Platoon (SRM),8
+FWL Jump Platoon (Laser),8
+FWL Jump Platoon (AA),1
+FWL Jump Platoon (Lt AA),2
+FWL Jump Platoon (LRM),8
+FWL Jump Platoon (Blazer),6
+FWL Jump Platoon (ER Laser),5
+FWL Jump Platoon (Heavy Laser),5
+FWL Jump Platoon (Pulse Laser),4
+FWL Jump Platoon (David Lt Gauss),6
+FWL Jump Platoon (King David Lt Gauss),3
+FWL Mechanized Hover Platoon (Rifle),30
+FWL Mechanized Hover Platoon (MG),8
+FWL Mechanized Hover Platoon (Flamer),6
+FWL Mechanized Hover Platoon (SRM),8
+FWL Mechanized Hover Platoon (Laser),8
+FWL Mechanized Hover Platoon (AA),1
+FWL Mechanized Hover Platoon (Lt AA),2
+FWL Mechanized Hover Platoon (LRM),8
+FWL Mechanized Hover Platoon (Blazer),6
+FWL Mechanized Hover Platoon (ER Laser),5
+FWL Mechanized Hover Platoon (Heavy Laser),5
+FWL Mechanized Hover Platoon (Pulse Laser),4
+FWL Mechanized Hover Platoon (David Lt Gauss),6
+FWL Mechanized Hover Platoon (King David Lt Gauss),3
+Field Gunners (AC2),2
+Field Gunners (AC5),2
+Field Gunners (AC10),4
+Field Gunners (AC20),2
+Field Gunners (UAC2),2
+Field Gunners (UAC5),4
+Field Gunners (UAC10),4
+Field Gunners (UAC20),2
+Field Gunners (LBX2),3
+Field Gunners (LBX5),3
+Field Gunners (LBX10),5
+Field Gunners (LBX20),3
+Field Gunners (RAC2),1
+Field Gunners (RAC5),2
+Field Gunners (Light Gauss),8
+Field Gunners (Gauss),3
+Hover Assault Infantry Johnston Industries Rapid Response Force,3
+Heavy Support Infantry Irian Technologies SWAT Team,4
+Jump Support Infantry Star Corps Jump Assault Infantry,4
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,4
+Heavy Infantry Heavy Urban Response Platoon,3
+AA Jump Infantry 292nd League Regulars,1
+FWL Foot Platoon (Blazer),4
+FWL Foot Platoon (Rifle),5
+Xenoplanetary Infantry Eagle Corps Eyrie Defense Force,1
+Mechanized Assault XCT Word of Blake Militia NBC,3
+Bridge-builder Engineers Take the Time III-chi (Forty-eighth Division),2
+Heavy Jump Infantry Royal Gurkha Battalion,2
+Field Gun Infantry (Motorized Batteries),4

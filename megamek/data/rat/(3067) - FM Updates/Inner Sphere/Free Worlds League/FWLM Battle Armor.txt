@@ -1,0 +1,12 @@
+FWLM Battle Armor 3067
+Phalanx Battle Armor (A),1
+Achileus Light Battle Armor [David],2
+Achileus Light Battle Armor [Flamer],3
+Achileus Light Battle Armor [MG],4
+Achileus Light Battle Armor [Laser],5
+IS Standard Battle Armor [Laser],6
+Longinus Battle Armor [Laser],5
+Longinus Battle Armor [MG],4
+Longinus Battle Armor [Flamer],3
+Longinus Battle Armor [David],2
+Phalanx Battle Armor (A),1

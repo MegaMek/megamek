@@ -1,0 +1,43 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Foot Platoon
+</Name>
+<Model>
+(Heavy MG)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Auto Rifle
+</Primary>
+<Secondary>
+InfantryHMG
+</Secondary>
+<secondn>
+2
+</secondn>
+<type>
+IS
+</type>
+<year>
+2200
+</year>
+<motion_type>
+Leg
+</motion_type>
+<antimek>
+</antimek>

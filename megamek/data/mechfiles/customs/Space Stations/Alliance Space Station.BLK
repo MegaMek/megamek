@@ -1,0 +1,355 @@
+#building block data file
+
+
+<BlockVersion>
+
+
+1
+
+
+</BlockVersion>
+
+
+#Write the version number just in case...
+
+
+<Version>
+
+
+MAM0
+
+
+</Version>
+
+
+<UnitType>
+
+
+SpaceStation
+
+
+</UnitType>
+
+
+<Name>
+
+Alliance Class Space Dock
+
+</Name>
+
+
+<Tonnage>
+
+100000
+
+</Tonnage>
+
+<Armor>
+
+13
+
+14
+14
+13
+
+13
+13
+
+</Armor>
+
+<Nose Equipment>
+
+ISPPC
+
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+
+</Nose Equipment>
+
+<Front Left Side Equipment>
+
+ISPPC
+
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+
+
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+ISPPC
+
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+
+
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+
+
+ISPPC
+
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+ISPPC
+
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+
+
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+ISPPC
+
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+
+
+</Aft Equipment>
+
+<structural_integrity>
+
+1
+
+</structural_integrity>
+
+<heatsinks>
+
+400
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+17460
+
+</fuel>
+
+<type>
+
+IS Level 3
+
+</type>
+
+<year>
+
+2713
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<transporters>
+
+SmallCraftBay:8:4
+
+CargoBay:76486:2
+
+Repair:100000:1
+
+Repair:100000:1
+
+</transporters>
+
+<docking_collar>
+
+2
+</docking_collar>
+
+<grav_deck>
+
+1
+</grav_deck>
+
+<escape_pod>
+
+60
+</escape_pod>
+
+<life_boat>
+
+60
+</life_boat>
+
+<crew>
+
+300
+
+</crew>
+
+<passengers>
+
+200
+
+</passengers>

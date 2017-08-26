@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+FS Motorized Platoon
+</Name>
+<Model>
+(Heavy Gauss)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Federated Barrett M42B
+</Primary>
+<Secondary>
+Infantry Magshot Gauss Rifle
+</Secondary>
+<Secondn>
+2
+</Secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<EncumberingArmor>
+</EncumberingArmor>
+<type>
+IS
+</type>
+<year>
+3064
+</year>
+<motion_type>
+Motorized
+</motion_type>

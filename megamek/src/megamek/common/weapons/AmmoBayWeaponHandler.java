@@ -13,11 +13,18 @@
  */
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -34,6 +41,8 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         // deserialization only
     }
 
+    public boolean amsEngaged = false;
+    
     /**
      * @param t
      * @param w
@@ -98,7 +107,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
-                            // try loadinsg something else
+                            // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinked();
                         }
@@ -201,7 +210,22 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             } else {
                 current_av = 2;
             }
+            
+            //Any AMS attacks by the target?
+            ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+            if(null != lCounters) {
+            	for (Mounted counter: lCounters) {
+            		boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
+            		if (isAMS) {
+            			System.out.println("AMS On"); //test to see if the AMS is activating
+            		if (!isAMS) {
+            			System.out.println("AMS Failure");
+            		}
+            		}
+            	}
+            }
         }
         return current_av;
     }
-}
+
+} 

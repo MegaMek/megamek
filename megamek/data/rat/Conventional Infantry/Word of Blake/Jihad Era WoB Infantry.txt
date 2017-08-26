@@ -1,0 +1,79 @@
+3067-3081 Word of Blake Conventional Infantry
+WoB Mechanized Wheeled Platoon (Laser Rifle),90
+WoB Mechanized Wheeled Platoon (Heavy MG),51
+WoB Mechanized Wheeled Platoon (Flamer),27
+WoB Mechanized Wheeled Platoon (SRM),24
+WoB Mechanized Wheeled Platoon (Blazer),21
+WoB Mechanized Wheeled Platoon (LRM),15
+WoB Mechanized Wheeled Platoon (Autocannon),15
+WoB Mechanized Wheeled Platoon (PPC),12
+WoB Mechanized Wheeled Platoon (ER Laser),12
+WoB Mechanized Wheeled Platoon (Pulse Laser),12
+WoB Mechanized Wheeled Platoon (Hellbore),9
+WoB Mechanized Wheeled Platoon (David Lt Gauss),9
+WoB Mechanized Wheeled Platoon (King David Lt Gauss),3
+WoB Mechanized Tracked Platoon (Laser Rifle),90
+WoB Mechanized Tracked Platoon (Heavy MG),51
+WoB Mechanized Tracked Platoon (Flamer),27
+WoB Mechanized Tracked Platoon (SRM),24
+WoB Mechanized Tracked Platoon (Blazer),21
+WoB Mechanized Tracked Platoon (LRM),15
+WoB Mechanized Tracked Platoon (Autocannon),15
+WoB Mechanized Tracked Platoon (PPC),12
+WoB Mechanized Tracked Platoon (ER Laser),12
+WoB Mechanized Tracked Platoon (Pulse Laser),12
+WoB Mechanized Tracked Platoon (Hellbore),9
+WoB Mechanized Tracked Platoon (David Lt Gauss),9
+WoB Mechanized Tracked Platoon (King David Lt Gauss),3
+WoB Jump Platoon (Laser Rifle),60
+WoB Jump Platoon (Heavy MG),34
+WoB Jump Platoon (Flamer),18
+WoB Jump Platoon (SRM),16
+WoB Jump Platoon (Blazer),14
+WoB Jump Platoon (LRM),10
+WoB Jump Platoon (Autocannon),10
+WoB Jump Platoon (PPC),8
+WoB Jump Platoon (ER Laser),8
+WoB Jump Platoon (Pulse Laser),8
+WoB Jump Platoon (Hellbore),6
+WoB Jump Platoon (David Lt Gauss),6
+WoB Jump Platoon (King David Lt Gauss),2
+WoB Mechanized Hover Platoon (Laser Rifle),30
+WoB Mechanized Hover Platoon (Heavy MG),17
+WoB Mechanized Hover Platoon (Flamer),9
+WoB Mechanized Hover Platoon (SRM),8
+WoB Mechanized Hover Platoon (Blazer),7
+WoB Mechanized Hover Platoon (LRM),5
+WoB Mechanized Hover Platoon (Autocannon),5
+WoB Mechanized Hover Platoon (PPC),4
+WoB Mechanized Hover Platoon (ER Laser),4
+WoB Mechanized Hover Platoon (Pulse Laser),4
+WoB Mechanized Hover Platoon (Hellbore),3
+WoB Mechanized Hover Platoon (David Lt Gauss),3
+WoB Mechanized Hover Platoon (King David Lt Gauss),1
+Field Gunners (AC2),2
+Field Gunners (AC5),3
+Field Gunners (AC10),3
+Field Gunners (AC20),2
+Field Gunners (UAC2),4
+Field Gunners (UAC5),6
+Field Gunners (UAC10),6
+Field Gunners (UAC20),4
+Field Gunners (LBX2),4
+Field Gunners (LBX5),6
+Field Gunners (LBX10),6
+Field Gunners (LBX20),4
+Field Gunners (RAC2),2
+Field Gunners (RAC5),3
+Field Gunners (Light Gauss),3
+Field Gunners (Gauss),2
+Hover Assault Infantry Johnston Industries Rapid Response Force,6
+Heavy Support Infantry Irian Technologies SWAT Team,6
+Jump Support Infantry Star Corps Jump Assault Infantry,6
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,6
+Heavy Infantry Heavy Urban Response Platoon,6
+Motorized XCT Infantry Explorer Corps Hostile Environment,2
+Mechanized Assault XCT Word of Blake Militia NBC,2
+Bridge-builder Engineers Take the Time III-chi (Forty-eighth Division),2
+WoB SpecOps Platoon (Light of Mankind Assault Team),2
+WoB SpecOps Platoon (Manei Domini Tau Soldiers),2

@@ -1,0 +1,40 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+FS Jump Platoon
+</Name>
+<Model>
+(Laser)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+3
+</squadn>
+<Primary>
+Federated Barrett M61A
+</Primary>
+<InfantryArmor>
+2
+</InfantryArmor>
+<EncumberingArmor>
+</EncumberingArmor>
+<type>
+IS
+</type>
+<year>
+3062
+</year>
+<motion_type>
+Jump
+</motion_type>

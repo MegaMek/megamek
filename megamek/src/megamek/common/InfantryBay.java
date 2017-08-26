@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying infantry platoons
+ * aboard large spacecraft and mobile structures.  Marines count as crew and should have at least steerage quarters.
  */
 
 public final class InfantryBay extends Bay {
@@ -53,6 +53,7 @@ public final class InfantryBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -84,6 +85,11 @@ public final class InfantryBay extends Bay {
         if (doors < loadedThisTurn) {
             result = false;
         }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
+        }
 
         // Return our result.
         return result;
@@ -91,7 +97,7 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Infantry Bay (" + getDoors() + " doors) - "
+        return "Infantry Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " platoons" : " platoon");
     }

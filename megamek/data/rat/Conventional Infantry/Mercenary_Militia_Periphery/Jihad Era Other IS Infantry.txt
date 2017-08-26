@@ -1,0 +1,125 @@
+3067-3081 Mercenary/Militia/Periphery Conventional Infantry
+Foot Platoon (Rifle),120
+Foot Platoon (MG),32
+Foot Platoon (Flamer),24
+Foot Platoon (SRM),32
+Foot Platoon (Laser),32
+Foot Platoon (Heavy MG),20
+Foot Platoon (Autocannon),16
+Foot Platoon (Grenade Launcher),20
+Foot Platoon (Recoilless),20
+Foot Platoon (Gyrojet),16
+Foot Platoon (Mortar),8
+Foot Platoon (LRM),12
+Foot Platoon (Pulse Laser),12
+Foot Platoon (Flechette),4
+Foot Platoon (Heavy Laser),16
+Foot Platoon (PPC),12
+Foot Platoon (Gauss),4
+Motorized Platoon (Rifle),60
+Motorized Platoon (MG),16
+Motorized Platoon (Flamer),12
+Motorized Platoon (SRM),16
+Motorized Platoon (Laser),16
+Motorized Platoon (Heavy MG),10
+Motorized Platoon (Autocannon),8
+Motorized Platoon (Grenade Launcher),10
+Motorized Platoon (Recoilless),10
+Motorized Platoon (Gyrojet),8
+Motorized Platoon (Mortar),4
+Motorized Platoon (LRM),6
+Motorized Platoon (Pulse Laser),6
+Motorized Platoon (Flechette),2
+Motorized Platoon (Heavy Laser),8
+Motorized Platoon (PPC),6
+Motorized Platoon (Gauss),2
+Mechanized Tracked Platoon (Rifle),15
+Mechanized Tracked Platoon (MG),4
+Mechanized Tracked Platoon (Flamer),3
+Mechanized Tracked Platoon (SRM),4
+Mechanized Tracked Platoon (Laser),4
+Mechanized Tracked Platoon (Heavy MG),3
+Mechanized Tracked Platoon (Autocannon),2
+Mechanized Tracked Platoon (Grenade Launcher),2
+Mechanized Tracked Platoon (Recoilless),3
+Mechanized Tracked Platoon (Gyrojet),2
+Mechanized Tracked Platoon (Mortar),1
+Mechanized Tracked Platoon (LRM),2
+Mechanized Tracked Platoon (Pulse Laser),1
+Mechanized Tracked Platoon (Heavy Laser),2
+Mechanized Tracked Platoon (PPC),2
+Mechanized Wheeled Platoon (Rifle),30
+Mechanized Wheeled Platoon (MG),8
+Mechanized Wheeled Platoon (Flamer),6
+Mechanized Wheeled Platoon (SRM),8
+Mechanized Wheeled Platoon (Laser),8
+Mechanized Wheeled Platoon (Heavy MG),5
+Mechanized Wheeled Platoon (Autocannon),4
+Mechanized Wheeled Platoon (Grenade Launcher),5
+Mechanized Wheeled Platoon (Recoilless),6
+Mechanized Wheeled Platoon (Gyrojet),4
+Mechanized Wheeled Platoon (Mortar),2
+Mechanized Wheeled Platoon (LRM),3
+Mechanized Wheeled Platoon (Pulse Laser),3
+Mechanized Wheeled Platoon (Heavy Laser),4
+Mechanized Wheeled Platoon (PPC),4
+Jump Platoon (Rifle),30
+Jump Platoon (MG),8
+Jump Platoon (Flamer),6
+Jump Platoon (SRM),8
+Jump Platoon (Laser),8
+Jump Platoon (Heavy MG),5
+Jump Platoon (Autocannon),4
+Jump Platoon (Grenade Launcher),5
+Jump Platoon (Recoilless),5
+Jump Platoon (Gyrojet),4
+Jump Platoon (Mortar),2
+Jump Platoon (LRM),3
+Jump Platoon (Pulse Laser),3
+Jump Platoon (Heavy Laser),4
+Jump Platoon (PPC),4
+Jump Platoon (Gauss),1
+Mechanized Hover Platoon (Rifle),15
+Mechanized Hover Platoon (MG),4
+Mechanized Hover Platoon (Flamer),3
+Mechanized Hover Platoon (SRM),4
+Mechanized Hover Platoon (Laser),4
+Mechanized Hover Platoon (Heavy MG),3
+Mechanized Hover Platoon (Autocannon),2
+Mechanized Hover Platoon (Grenade Launcher),2
+Mechanized Hover Platoon (Recoilless),3
+Mechanized Hover Platoon (Gyrojet),2
+Mechanized Hover Platoon (Mortar),1
+Mechanized Hover Platoon (LRM),2
+Mechanized Hover Platoon (Pulse Laser),1
+Mechanized Hover Platoon (Heavy Laser),2
+Mechanized Hover Platoon (PPC),2
+Field Gunners (AC2),6
+Field Gunners (AC5),6
+Field Gunners (AC10),5
+Field Gunners (AC20),5
+Field Gunners (UAC2),3
+Field Gunners (UAC5),3
+Field Gunners (UAC10),2
+Field Gunners (UAC20),2
+Field Gunners (LBX2),3
+Field Gunners (LBX5),3
+Field Gunners (LBX10),2
+Field Gunners (LBX20),2
+Field Gunners (RAC2),1
+Field Gunners (RAC5),2
+Field Gunners (Light Gauss),3
+Field Gunners (Gauss),2
+Hover Assault Infantry Johnston Industries Rapid Response Force,4
+Heavy Support Infantry Irian Technologies SWAT Team,3
+Jump Support Infantry Star Corps Jump Assault Infantry,4
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,4
+Heavy Infantry Heavy Urban Response Platoon,4
+Foot Infantry Raventhir's Infantry Guard,3
+Pirate Lady Death's 'Pacification' Squads,2
+Scout Infantry The Battle Corps - Baker Street Irregulars,2
+SRM Foot Infantry Taurian Citizens' Militia,4
+XCT Marine Special Asteroid Support Forces,2
+Missile Artillery Infantry Kommando Special Forces,2
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard (Magistracy Cavaliers),3
+Field Gun Infantry (Motorized Batteries),3

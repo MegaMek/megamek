@@ -19,13 +19,28 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying cargo of some sort
+ * aboard large spacecraft and mobile structures
  */
 
 public class Bay implements Transporter {
 
     // Private attributes and helper functions.
+	
+	// For tracking damage to the bay itself, not the cargo it carries
+    protected int damaged = 0;
+    
+    public int getbayDamaged() {
+    	return damaged;
+    }
+
+    public void setbayDamaged() {
+        damaged = 1;
+    }
+    
+    public void clearbayDamaged() {
+        damaged = 0;
+    }
 
     /**
      *
@@ -33,6 +48,7 @@ public class Bay implements Transporter {
     private static final long serialVersionUID = -9056450317468016272L;
     int doors = 1;
     int doorsNext = 1;
+    int currentdoors = doors;
     protected int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();
@@ -47,7 +63,7 @@ public class Bay implements Transporter {
     /**
      * The total amount of space available for troops.
      */
-    /* package */double totalSpace;
+    public /* package */double totalSpace;
 
     /**
      * The current amount of space available for troops.
@@ -59,7 +75,7 @@ public class Bay implements Transporter {
     /**
      * The default constructor is only for serialization.
      */
-    protected Bay() {
+    public Bay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -75,14 +91,16 @@ public class Bay implements Transporter {
      *            - The weight of troops (in tons) this space can carry.
      * @param bayNumber2
      */
-    public Bay(double space, int doors, int bayNumber) {
+    public Bay(double space,int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+     
     }
 
+    // the starting number of doors for the bay.
     public int getDoors() {
         return doors;
     }
@@ -90,6 +108,16 @@ public class Bay implements Transporter {
     public void setDoors(int d) {
         doors = d;
         doorsNext = d;
+        currentdoors = d;
+    }
+    
+    // for tracking the number of doors remaining after some are damaged
+    public int getCurrentDoors() {
+        return currentdoors;
+    }
+    
+    public void setCurrentDoors(int d) {
+    	currentdoors = d;
     }
 
     // for setting doors after this launch
@@ -102,7 +130,7 @@ public class Bay implements Transporter {
     }
 
     public void resetDoors() {
-        doors = doorsNext;
+        currentdoors = doorsNext;
     }
 
     public void resetCounts() {
@@ -137,8 +165,13 @@ public class Bay implements Transporter {
         }
 
         // more doors than units loaded
-        if (doors <= loadedThisTurn) {
+        if (currentdoors <= loadedThisTurn) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
         }
 
         // Return our result.
@@ -152,7 +185,7 @@ public class Bay implements Transporter {
      * @return
      */
     public boolean canUnloadUnits() {
-        return doors > unloadedThisTurn;
+        return currentdoors > unloadedThisTurn;
     }
 
     /**
@@ -279,7 +312,7 @@ public class Bay implements Transporter {
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString(boolean showrecovery) {
-        return "(" + getDoors() + " doors)  - " + currentSpace
+        return "(" + getCurrentDoors() + " doors)  - " + currentSpace
                 + (currentSpace > 1 ? " units" : " unit");
     }
 
@@ -358,9 +391,20 @@ public class Bay implements Transporter {
 
     // destroy a door
     public void destroyDoor() {
+      if (getCurrentDoors() > 0) {
+        setCurrentDoors(getCurrentDoors() - 1);
+      }
 
-        setDoors(getDoors() - 1);
-
+    }
+    // restore a door
+    public void restoreDoor() {
+       if (getCurrentDoors() < getDoors()) {
+        setCurrentDoors(getCurrentDoors() + 1);
+       }
+    }
+    // restore all doors
+    public void restoreAllDoors() {
+       setCurrentDoors(getDoors());
     }
 
     public int getNumberUnloadedThisTurn() {

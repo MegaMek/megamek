@@ -836,7 +836,7 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
-            
+           
             // Aero stuff that also applies to LAMs
             if (entity instanceof IAero) {
                 IAero a = (IAero)entity;
@@ -866,6 +866,7 @@ public class EntityListFile {
                             output.write(CommonConstants.NL);
                         }
                     }
+                
                     for (Mounted m : b.getBombs()) {
                         if (!(m.getType() instanceof BombType)) {
                             continue;
@@ -881,7 +882,6 @@ public class EntityListFile {
                     output.write(CommonConstants.NL);
                 }
             }
-
             // aero stuff that does not apply to LAMs
             if (entity instanceof Aero) {
                 Aero a = (Aero) entity;
@@ -898,9 +898,26 @@ public class EntityListFile {
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                // TODO: dropship docking collars, bays
+                //large craft bays and doors. 
+                // Bays and Doors
+                if ((a instanceof Dropship) || (a instanceof Jumpship)) {
+                    for (Bay nextbay : a.getTransportBays()) {
+                	output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
+                    output.write(CommonConstants.NL);
+                    if (nextbay.getbayDamaged() == 0) {
+                    output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"false\"/>\n");
+                    }
+                    if (nextbay.getbayDamaged() == 1) {
+                    output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"true\"/>\n");
+                    }
+                    output.write(indentStr(indentLvl+1) + "<BayDoors doors=\"" + nextbay.getCurrentDoors() + "\"/>");
+                    output.write(CommonConstants.NL);
+                    output.write(indentStr(indentLvl+1) + "</TransportBay>");
+                    output.write(CommonConstants.NL);
+                    }
+                }
 
-                // large craft stuff
+                // jumpship, warship and space station stuff
                 if (a instanceof Jumpship) {
                     Jumpship j = (Jumpship) a;
 
@@ -917,8 +934,14 @@ public class EntityListFile {
                     output.write(CommonConstants.NL);
                 }
 
-                // crits
+                // general aero crits
                 output.write(EntityListFile.getAeroCritString(a));
+                
+                // dropship only crits
+                if (a instanceof Dropship) {
+                	Dropship d = (Dropship) a;
+                    output.write(EntityListFile.getDropshipCritString(d));
+                }
 
             }
 
@@ -1022,12 +1045,6 @@ public class EntityListFile {
         }
         output.write("\" piloting=\"");
         output.write(String.valueOf(crew.getPiloting(pos)));
-        if (crew instanceof LAMPilot) {
-            writeLAMAeroAttributes(output, (LAMPilot)crew,
-                    (null != entity.getGame())
-                    && entity.getGame().getOptions()
-                    .booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
-        }
         if ((null != entity.getGame())
                 && entity.getGame().getOptions()
                         .booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
@@ -1057,22 +1074,6 @@ public class EntityListFile {
             output.write(crew.getExternalIdAsString(pos));
         }
     }
-    
-    private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew,
-            boolean rpgGunnery) throws IOException {
-        output.write("\" gunneryAero=\"");
-        output.write(String.valueOf(crew.getGunneryAero()));
-        if (rpgGunnery) {
-            output.write("\" gunneryAeroL=\"");
-            output.write(String.valueOf(crew.getGunneryAeroL()));
-            output.write("\" gunneryAeroM=\"");
-            output.write(String.valueOf(crew.getGunneryAeroM()));
-            output.write("\" gunneryAeroB=\"");
-            output.write(String.valueOf(crew.getGunneryAeroB()));
-        }
-        output.write("\" pilotingAero=\"");
-        output.write(String.valueOf(crew.getPilotingAero()));
-    }    
 
     /**
      * Writes attributes that pertain to entire crew.
@@ -1216,8 +1217,36 @@ public class EntityListFile {
         return retVal;
 
     }
+    
+    // Dropship crits
+    private static String getDropshipCritString(Dropship a) {
 
-    // Aero crits
+        String retVal = "      <dcriticals";
+        String critVal = "";
+
+        // crits
+        if (a.isDockCollarDamaged()) {
+            critVal = critVal.concat(" dockingcollar=\"none\"");
+        }
+        if (a.isKFBoomDamaged()) {
+            critVal = critVal.concat(" kfboom=\"none\"");
+        }
+    
+        if (!critVal.equals("")) {
+            // then add beginning and end
+            retVal = retVal.concat(critVal);
+            retVal = retVal.concat("/>\n");
+        } else {
+            return critVal;
+        }
+
+        return retVal;
+
+    }
+  
+
+
+    // Tank crits?
     private static String getTankCritString(Tank t) {
 
         String retVal = "      <tcriticals";

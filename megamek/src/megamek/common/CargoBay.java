@@ -15,8 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying general cargo.
  */
 
 public final class CargoBay extends Bay {
@@ -49,6 +48,7 @@ public final class CargoBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -71,7 +71,7 @@ public final class CargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("Cargo Space ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.3f", currentSpace));

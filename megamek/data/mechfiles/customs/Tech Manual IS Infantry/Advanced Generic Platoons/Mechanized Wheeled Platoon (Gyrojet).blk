@@ -1,0 +1,35 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Mechanized Wheeled Platoon
+</Name>
+<Model>
+(Gyrojet)
+</Model>
+<squad_size>
+6
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Gyrojet Rifle
+</Primary>
+<type>
+IS
+</type>
+<year>
+2530
+</year>
+<motion_type>
+Wheeled
+</motion_type>

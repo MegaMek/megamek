@@ -80,6 +80,7 @@ import megamek.common.weapons.autocannons.ISUAC20;
 import megamek.common.weapons.autocannons.ISUAC5;
 import megamek.common.weapons.battlearmor.*;
 import megamek.common.weapons.bayweapons.ACBayWeapon;
+import megamek.common.weapons.bayweapons.AMSBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalACBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalGaussBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
@@ -604,7 +605,8 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SCREEN = 21;
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
-    public static final int NUM_CLASSES = 24;
+    public static final int CLASS_AMS = 24;
+    public static final int NUM_CLASSES = 25;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -959,6 +961,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Laser Bay");
             case (CLASS_POINT_DEFENSE):
                 return EquipmentType.get("Point Defense Bay");
+            case (CLASS_AMS):
+                return EquipmentType.get("AMS Bay");
             case (CLASS_PPC):
                 return EquipmentType.get("PPC Bay");
             case (CLASS_PULSE_LASER):
@@ -2105,6 +2109,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapLaserBayWeapon());
         EquipmentType.addType(new SubCapitalMissileBayWeapon());
         EquipmentType.addType(new MiscBayWeapon());
+        EquipmentType.addType(new AMSBayWeapon());
 
         // Improved OS Weapons
         EquipmentType.addType(new ISLRM5IOS());

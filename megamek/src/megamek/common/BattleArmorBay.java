@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying Battle Armor squads
+ * aboard large spacecraft and mobile structures
  */
 
 public final class BattleArmorBay extends Bay {
@@ -57,6 +57,7 @@ public final class BattleArmorBay extends Bay {
         this.bayNumber = bayNumber;
         this.isClan = isClan;
         this.isComStar = isComStar;
+        currentdoors = doors; 
     }
 
     /**
@@ -73,7 +74,7 @@ public final class BattleArmorBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
+        // Only Battle Armor squads
         if (unit instanceof BattleArmor) {
             result = true;
         }
@@ -88,6 +89,11 @@ public final class BattleArmorBay extends Bay {
         if (doors < loadedThisTurn) {
             result = false;
         }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
+        }
 
         // Return our result.
         return result;
@@ -95,7 +101,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Battle Armor Bay (" + getDoors() + " doors) - "
+        return "Battle Armor Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? isClan ? " Points"
                         : isComStar ? " Level I" : " Squads"
@@ -104,7 +110,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getType() {
-        return "Battle Armor";
+        return "BattleArmor";
     }
 
     @Override

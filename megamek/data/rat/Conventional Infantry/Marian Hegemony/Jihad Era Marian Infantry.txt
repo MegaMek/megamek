@@ -1,0 +1,103 @@
+3067-3081 Marian Hegemony Conventional Infantry
+MH Foot Platoon (Rifle),120
+MH Foot Platoon (MG),40
+MH Foot Platoon (Flamer),24
+MH Foot Platoon (SRM),32
+MH Foot Platoon (Laser),32
+MH Foot Platoon (Heavy MG),20
+MH Foot Platoon (Autocannon),16
+MH Foot Platoon (Grenade Launcher),20
+MH Foot Platoon (Recoilless),20
+MH Foot Platoon (Gyrojet),16
+MH Foot Platoon (Mortar),8
+MH Foot Platoon (LRM),12
+MH Foot Platoon (Pulse Laser),12
+MH Foot Platoon (Heavy Laser),16
+MH Foot Platoon (PPC),12
+MH Motorized Platoon (Rifle),60
+MH Motorized Platoon (MG),20
+MH Motorized Platoon (Flamer),12
+MH Motorized Platoon (SRM),16
+MH Motorized Platoon (Laser),16
+MH Motorized Platoon (Heavy MG),10
+MH Motorized Platoon (Autocannon),8
+MH Motorized Platoon (Grenade Launcher),10
+MH Motorized Platoon (Recoilless),10
+MH Motorized Platoon (Gyrojet),8
+MH Motorized Platoon (Mortar),4
+MH Motorized Platoon (LRM),6
+MH Motorized Platoon (Pulse Laser),6
+MH Motorized Platoon (Heavy Laser),8
+MH Motorized Platoon (PPC),6
+MH Mechanized Tracked Platoon (Rifle),30
+MH Mechanized Tracked Platoon (MG),10
+MH Mechanized Tracked Platoon (Flamer),6
+MH Mechanized Tracked Platoon (SRM),8
+MH Mechanized Tracked Platoon (Laser),8
+MH Mechanized Tracked Platoon (Heavy MG),5
+MH Mechanized Tracked Platoon (Autocannon),4
+MH Mechanized Tracked Platoon (Grenade Launcher),5
+MH Mechanized Tracked Platoon (Recoilless),5
+MH Mechanized Tracked Platoon (Gyrojet),4
+MH Mechanized Tracked Platoon (Mortar),3
+MH Mechanized Tracked Platoon (LRM),3
+MH Mechanized Tracked Platoon (Pulse Laser),2
+MH Mechanized Tracked Platoon (Heavy Laser),4
+MH Mechanized Tracked Platoon (PPC),3
+MH Mechanized Wheeled Platoon (Rifle),30
+MH Mechanized Wheeled Platoon (MG),10
+MH Mechanized Wheeled Platoon (Flamer),6
+MH Mechanized Wheeled Platoon (SRM),8
+MH Mechanized Wheeled Platoon (Laser),8
+MH Mechanized Wheeled Platoon (Heavy MG),5
+MH Mechanized Wheeled Platoon (Autocannon),4
+MH Mechanized Wheeled Platoon (Grenade Launcher),5
+MH Mechanized Wheeled Platoon (Recoilless),5
+MH Mechanized Wheeled Platoon (Gyrojet),4
+MH Mechanized Wheeled Platoon (Mortar),3
+MH Mechanized Wheeled Platoon (LRM),3
+MH Mechanized Wheeled Platoon (Pulse Laser),2
+MH Mechanized Wheeled Platoon (Heavy Laser),4
+MH Mechanized Wheeled Platoon (PPC),3
+MH Jump Platoon (Rifle),30
+MH Jump Platoon (MG),10
+MH Jump Platoon (Flamer),6
+MH Jump Platoon (SRM),8
+MH Jump Platoon (Laser),8
+MH Jump Platoon (Heavy MG),5
+MH Jump Platoon (Autocannon),4
+MH Jump Platoon (Grenade Launcher),5
+MH Jump Platoon (Recoilless),5
+MH Jump Platoon (Gyrojet),4
+MH Jump Platoon (Mortar),3
+MH Jump Platoon (LRM),3
+MH Jump Platoon (Pulse Laser),2
+MH Jump Platoon (Heavy Laser),4
+MH Jump Platoon (PPC),3
+Field Gunners (AC2),6
+Field Gunners (AC5),6
+Field Gunners (AC10),5
+Field Gunners (AC20),5
+Field Gunners (UAC2),3
+Field Gunners (UAC5),3
+Field Gunners (UAC10),2
+Field Gunners (UAC20),2
+Field Gunners (LBX2),3
+Field Gunners (LBX5),3
+Field Gunners (LBX10),2
+Field Gunners (LBX20),2
+Field Gunners (RAC2),1
+Field Gunners (RAC5),2
+Field Gunners (Light Gauss),3
+Field Gunners (Gauss),2
+Hover Assault Infantry Johnston Industries Rapid Response Force,4
+Heavy Support Infantry Irian Technologies SWAT Team,3
+Jump Support Infantry Star Corps Jump Assault Infantry,4
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,4
+Heavy Infantry Heavy Urban Response Platoon,4
+Foot Infantry Raventhir's Infantry Guard,3
+Pirate Lady Death's 'Pacification' Squads,2
+SRM Foot Infantry Taurian Citizens' Militia,2
+Ceremonial Guard Caesar's Royal Guard  (Marian Hegemony),6
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard (Magistracy Cavaliers),3
+Field Gun Infantry (Motorized Batteries),5

@@ -1,0 +1,81 @@
+3067-3081 Lyran Commonwealth Conventional Infantry
+LCAF Foot Platoon (Rifle),60
+LCAF Foot Platoon (MG),34
+LCAF Foot Platoon (Flamer),12
+LCAF Foot Platoon (SRM),18
+LCAF Foot Platoon (Laser),24
+LCAF Foot Platoon (Flechette),16
+LCAF Foot Platoon (LRM),12
+LCAF Foot Platoon (Gyroslug),16
+LCAF Foot Platoon (Heavy Gyrojet),8
+LCAF Motorized Platoon (Rifle),60
+LCAF Motorized Platoon (MG),34
+LCAF Motorized Platoon (Flamer),12
+LCAF Motorized Platoon (SRM),18
+LCAF Motorized Platoon (Laser),24
+LCAF Motorized Platoon (Flechette),16
+LCAF Motorized Platoon (LRM),12
+LCAF Motorized Platoon (Gyroslug),16
+LCAF Motorized Platoon (Heavy Gyrojet),8
+LCAF Mechanized Tracked Platoon (Rifle),45
+LCAF Mechanized Tracked Platoon (MG),25
+LCAF Mechanized Tracked Platoon (Flamer),9
+LCAF Mechanized Tracked Platoon (SRM),14
+LCAF Mechanized Tracked Platoon (Laser),18
+LCAF Mechanized Tracked Platoon (Flechette),12
+LCAF Mechanized Tracked Platoon (LRM),9
+LCAF Mechanized Tracked Platoon (Gyroslug),12
+LCAF Mechanized Tracked Platoon (Heavy Gyrojet),6
+LCAF Mechanized Wheeled Platoon (Rifle),45
+LCAF Mechanized Wheeled Platoon (MG),25
+LCAF Mechanized Wheeled Platoon (Flamer),9
+LCAF Mechanized Wheeled Platoon (SRM),14
+LCAF Mechanized Wheeled Platoon (Laser),18
+LCAF Mechanized Wheeled Platoon (Flechette),12
+LCAF Mechanized Wheeled Platoon (LRM),9
+LCAF Mechanized Wheeled Platoon (Gyroslug),12
+LCAF Mechanized Wheeled Platoon (Heavy Gyrojet),6
+LCAF Jump Platoon (Rifle),45
+LCAF Jump Platoon (MG),25
+LCAF Jump Platoon (Flamer),9
+LCAF Jump Platoon (SRM),14
+LCAF Jump Platoon (Laser),18
+LCAF Jump Platoon (Flechette),12
+LCAF Jump Platoon (LRM),9
+LCAF Jump Platoon (Gyroslug),12
+LCAF Jump Platoon (Heavy Gyrojet),6
+LCAF Mechanized Hover Platoon (Rifle),15
+LCAF Mechanized Hover Platoon (MG),8
+LCAF Mechanized Hover Platoon (Flamer),3
+LCAF Mechanized Hover Platoon (SRM),5
+LCAF Mechanized Hover Platoon (Laser),6
+LCAF Mechanized Hover Platoon (Flechette),4
+LCAF Mechanized Hover Platoon (LRM),3
+LCAF Mechanized Hover Platoon (Gyroslug),4
+LCAF Mechanized Hover Platoon (Heavy Gyrojet),2
+Field Gunners (AC2),2
+Field Gunners (AC5),2
+Field Gunners (AC10),3
+Field Gunners (AC20),3
+Field Gunners (UAC2),4
+Field Gunners (UAC5),4
+Field Gunners (UAC10),6
+Field Gunners (UAC20),6
+Field Gunners (LBX2),4
+Field Gunners (LBX5),4
+Field Gunners (LBX10),6
+Field Gunners (LBX20),6
+Field Gunners (RAC2),2
+Field Gunners (RAC5),3
+Field Gunners (Light Gauss),3
+Field Gunners (Gauss),2
+Hover Assault Infantry Johnston Industries Rapid Response Force,6
+Heavy Support Infantry Irian Technologies SWAT Team,6
+Jump Support Infantry Star Corps Jump Assault Infantry,6
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,6
+Heavy Infantry Heavy Urban Response Platoon,6
+Motorized MG Galatean Support Wheels,2
+Anti-Infantry Unit Second Lyran Armored Infantry,1
+Royal Engineers 1st Lyran Royal Guards RCT,1
+HALO Paratrooper Lyran Paratrooper Corps,3
+Mechanized Field Artillery 71st Mechanized,3

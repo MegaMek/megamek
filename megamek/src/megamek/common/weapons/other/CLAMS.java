@@ -52,7 +52,9 @@ public class CLAMS extends AmmoWeapon {
 		setModes(new String[] { "On", "Off" });
 		setInstantModeSwitch(false);
 		cost = 100000;
-		atClass = CLASS_POINT_DEFENSE;
+		atClass = CLASS_AMS;
+        shortAV = 3; // StratOps Advanced Point Defense Damage
+        maxRange = RANGE_SHORT; //TODO: add point defense range of 1.
 		rulesRefs = "204,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
 		        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)

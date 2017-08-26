@@ -891,7 +891,17 @@ public class Server implements Runnable {
             System.out.println("ERROR: Client/Server Version Mismatch -- Client: "+version+" Server: "+MegaMek.VERSION);
             needs = true;
         }
-        if (!clientChecksum.equals(serverChecksum)) {
+        else if (clientChecksum == null) {    // print a message indicating client doesn't have jar file
+            buf.append("Client Checksum is null. Client may not have a jar file");
+            System.out.println("ERROR: Client does not have a jar file");
+            needs = true;      	
+        }
+        else if (serverChecksum == null) {    // print message indicating server doesn't have jar file
+            buf.append("Server Checksum is null. Server may not have a jar file");
+            System.out.println("ERROR: Server does not have a jar file");
+            needs = true; 
+        }
+        else if (!clientChecksum.equals(serverChecksum)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
             }
@@ -7557,7 +7567,7 @@ public class Server implements Runnable {
                         // of fighters to doors beyond the launch rate. The most
                         // sensible thing
                         // is probably to distribute them evenly.
-                        int doors = currentBay.getDoors();
+                        int doors = currentBay.getCurrentDoors();
                         int[] distribution = new int[doors];
                         for (int l = 0; l < nLaunched; l++) {
                             distribution[l % doors] = distribution[l % doors]
@@ -26076,10 +26086,14 @@ public class Server implements Runnable {
                 break;
             case Aero.CRIT_KF_BOOM:
                 // KF boom hit
-                // no real effect yet
+                // no real effect until MHQ starts checking for jump capability during travel
+            	// but here it is
+                if (aero instanceof Dropship) {
+                    ((Dropship)aero).setDamageKFBoom(true);
                 r = new Report(9180);
                 r.subject = aero.getId();
                 reports.add(r);
+                }
                 break;
             case Aero.CRIT_CIC:
                 if (js == null) {

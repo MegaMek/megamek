@@ -48,6 +48,7 @@ public class MechView {
     private boolean isFixedWingSupport;
     private boolean isSquadron;
     private boolean isSmallCraft;
+    private boolean isDropship;
     private boolean isJumpship;
     private boolean isSpaceStation;
 
@@ -72,6 +73,7 @@ public class MechView {
         isFixedWingSupport = entity instanceof FixedWingSupport;
         isSquadron = entity instanceof FighterSquadron;
         isSmallCraft = entity instanceof SmallCraft;
+        isDropship = entity instanceof Dropship;
         isJumpship = entity instanceof Jumpship;
         isSpaceStation = entity instanceof SpaceStation;
 
@@ -349,6 +351,12 @@ public class MechView {
         if (isAero && !((Aero) entity).getCritDamageString().equals("")) {
             sBasic.append("<br><br>System Damage: <font color='red'>"
                     + ((Aero) entity).getCritDamageString() + "</font>");
+        }
+        
+        //Strategic Fuel Use for Large Craft  TODO: Change reference to reflect different ship types
+        if (isDropship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        			+ ((Dropship) entity).getStrategicFuelUse());
         }
 
         sBasic.append("<br>"); //$NON-NLS-1$

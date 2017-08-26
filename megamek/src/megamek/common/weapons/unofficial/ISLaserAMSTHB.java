@@ -55,6 +55,9 @@ public class ISLaserAMSTHB extends LaserWeapon {
         cost = 300000;
         //Since this are the Tactical Handbook Weapons I'm using the TM Stats.
         rulesRefs = "322,TO";
+        atClass = CLASS_AMS;
+        shortAV = 3; // StratOps Advanced Point Defense Damage
+        maxRange = RANGE_SHORT; //TODO: add point defense range of 1.
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setUnofficial(true)
             .setTechRating(RATING_E)

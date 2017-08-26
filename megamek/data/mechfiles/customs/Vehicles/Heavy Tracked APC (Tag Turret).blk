@@ -1,0 +1,110 @@
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Tank
+
+</UnitType>
+
+<Name>
+
+Heavy Tracked APC
+
+</Name>
+
+<Model>
+
+(TAG Turret)
+
+</Model>
+
+<Tonnage>
+
+20
+
+</Tonnage>
+
+<cruiseMP>
+
+5
+
+</cruiseMP>
+
+<Armor>
+
+16
+13
+13
+
+10
+12
+</Armor>
+
+<Turret Equipment>
+
+ISTAG
+</Turret Equipment>
+
+<transporters>
+
+TroopSpace:5
+
+</transporters>
+
+<Body Equipment>
+
+</Body Equipment>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3076
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+1
+
+</engine_type>
+
+<motion_type>
+
+Tracked
+
+</motion_type>
+
+<source>
+
+Star League
+
+</source>

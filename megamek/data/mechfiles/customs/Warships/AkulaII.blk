@@ -1,0 +1,314 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Akula II
+</Name>
+<Model>
+Guided Missile Cruiser
+</Model>
+<Tonnage>
+1295000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+562
+508
+508
+508
+508
+457
+</Armor>
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) Medium N-Gauss
+Medium N-Gauss
+MediumNGauss Ammo:150
+KillerWhale
+KillerWhale
+KillerWhale Ammo:20
+NC3
+</Nose Equipment>
+<Front Left Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem 
+(B) Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:100
+(B) Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:100
+(B) Medium N-Gauss
+Medium N-Gauss
+MediumNGauss Ammo:150
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem 
+(B) Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:100
+(B) Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:100
+(B) Medium N-Gauss
+Medium N-Gauss
+MediumNGauss Ammo:150
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+(B) NL45
+NL45
+(B) NL45
+NL45
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) Medium NPPC
+Medium NPPC
+Medium NPPC
+Medium NPPC
+(B) Medium NPPC
+Medium NPPC
+Medium NPPC
+Medium NPPC
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+(B) NL45
+NL45
+(B) NL45
+NL45
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) Medium NPPC
+Medium NPPC
+Medium NPPC
+Medium NPPC
+(B) Medium NPPC
+Medium NPPC
+Medium NPPC
+Medium NPPC
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+(B) Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:125
+(B) NL45
+NL45
+(B) NL45
+NL45
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem 
+(B) Medium N-Gauss
+Medium N-Gauss
+MediumNGauss Ammo:150
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+(B) Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:125
+(B) NL45
+NL45
+(B) NL45
+NL45
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem 
+(B) Medium N-Gauss
+Medium N-Gauss
+MediumNGauss Ammo:150
+</Aft Right Side Equipment>
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Equipment>
+<structural_integrity>
+115
+</structural_integrity>
+<heatsinks>
+2650
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+20000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3124
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+12
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:18:3
+CargoBay:4500:1
+ASFBay:18:3
+CargoBay:4500:1
+SmallCraftBay:4:2
+CargoBay:1000:1
+CargoBay:16576:1
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<HPG>
+</HPG>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+100
+</escape_pod>
+<life_boat>
+22
+</life_boat>
+<crew>
+600
+</crew>
+<passengers>
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

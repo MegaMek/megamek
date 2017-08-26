@@ -50,6 +50,9 @@ public class ISLaserAMS extends LaserWeapon {
         setInstantModeSwitch(false);
         cost = 225000;
         rulesRefs = "322,TO";
+        atClass = CLASS_AMS;
+        shortAV = 3; // StratOps Advanced Point Defense Damage
+        maxRange = RANGE_SHORT; //TODO: add point defense range of 1.
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)

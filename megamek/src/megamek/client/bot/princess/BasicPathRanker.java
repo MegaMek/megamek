@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Compute;

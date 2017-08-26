@@ -1,0 +1,12 @@
+FWLM Assault Mechs A 3067
+Albatross ALB-3U,1
+Grand Crusader GRN-D-01,2
+Sirocco SRC-3C,3
+Stalker STK-5M,4
+Awesome AWS-9M,5
+BattleMaster BLR-5M,6
+Longbow LGB-7Q,5
+Atlas AS7-K,4
+Grand Titan T-IT-N10M,3
+Sirocco SRC-3C,2
+Cerberus MR-V2,1

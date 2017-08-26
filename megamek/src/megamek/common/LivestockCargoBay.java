@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a volume of space set aside for carrying livestock
  */
 
 public final class LivestockCargoBay extends Bay {
@@ -52,6 +52,7 @@ public final class LivestockCargoBay extends Bay {
         currentSpace = space * 0.83;
         this.doors = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -74,7 +75,7 @@ public final class LivestockCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("Livestock Cargo Space ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.3f", currentSpace));
@@ -88,7 +89,7 @@ public final class LivestockCargoBay extends Bay {
 
     @Override
     public String getType() {
-        return "Livestock Cargo";
+        return "LivestockCargo";
     }
 
     @Override

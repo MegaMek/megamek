@@ -57,7 +57,9 @@ public class Dropship extends SmallCraft {
     
     // what needs to go here?
     // loading and unloading of units?
-    private boolean dockCollarDamaged = false;
+    private static boolean dockCollarDamaged = false;
+    
+    private static boolean kfBoomDamaged = false;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -66,7 +68,12 @@ public class Dropship extends SmallCraft {
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
     }
+    
+    public boolean isKFBoomDamaged() {
+    	return kfBoomDamaged;
+    }
 
+    // Critical hits
     public String getCritDamageString() {
         String toReturn = super.getCritDamageString();
         boolean first = toReturn.isEmpty();
@@ -77,6 +84,15 @@ public class Dropship extends SmallCraft {
             toReturn += "Docking Collar";
             first = false;
         }
+            
+        if (isKFBoomDamaged()) {
+        	if (!first) {
+            	toReturn += ", ";
+            }
+        	toReturn += "K-F Boom";
+        	first = false;
+        }
+        
         return toReturn;
     }
 
@@ -188,8 +204,12 @@ public class Dropship extends SmallCraft {
         return isProhibited;
     }
 
-    public void setDamageDockCollar(boolean b) {
+    public static void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
+    }
+    
+    public static void setDamageKFBoom(boolean b) {
+    	kfBoomDamaged = b;
     }
 
     public void setEscapePods(int n) {
@@ -237,7 +257,57 @@ public class Dropship extends SmallCraft {
 
         return points;
     }
-
+    
+    public double getStrategicFuelUse() {
+    	
+    	double tonsperday = 0;
+    	
+    	
+    	if (this.getDesignType() == 1) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	} 
+    	else if (weight >= 70000) {
+    		tonsperday = 8.83;
+    		return tonsperday;
+    	}
+    	else if (weight >= 50000) {
+    		tonsperday = 8.37;
+    		return tonsperday;
+    	}
+    	else if (weight >= 40000) {
+    		tonsperday = 7.71;
+    		return tonsperday;
+    	}
+    	else if (weight >= 30000) {
+    		tonsperday = 6.52;
+    		return tonsperday;
+    	}
+    	else if (weight >= 20000) {
+    		tonsperday = 5.19;
+    		return tonsperday;
+    	}
+    	else if (weight >= 9000) {
+    		tonsperday = 4.22;
+    		return tonsperday;
+    	}
+    	else if (weight >= 4000) {
+    		tonsperday = 3.37;
+    		return tonsperday;
+    	}
+    	else if (weight >= 1000) {
+    		tonsperday = 2.82;
+    		return tonsperday;
+    	}
+    	else if (weight >= 100) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	}
+    	
+    return tonsperday;
+    }
+    
+  
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -281,7 +351,7 @@ public class Dropship extends SmallCraft {
 
         // Fuel Tanks
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
-
+        
         // Armor
         costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
@@ -1320,6 +1390,34 @@ public class Dropship extends SmallCraft {
         return retVal;
 
     }
+    
+ /*   //Weights of various systems in TechManual construction order
+    public double getComponentWeight() {
+        double[] partweights = new double[3];
+        int partIdx = 0;
+        double ComponentWeight = 0;
+        
+    //Engine, see TM p185
+        double engineMultiplier = 0.065;
+        if (isClan()) {
+            engineMultiplier = 0.061;
+        }
+        double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
+        partweights[partIdx++] += engineWeight;
+    //Fuel Tanks and Pumps: See TM p 186
+        partweights[partIdx++] += getFuel() * 1.02;
+    //Bridge and Controls
+        partweights[partIdx++] += (getWeight() * .0075);
+        
+    //Sum component weights
+        for (int i = 0; i < partIdx; i++) {
+            ComponentWeight += partweights[i];
+        }
+    return ComponentWeight;
+    }
+    
+    //Placeholder to check weight calculations
+    double totalweight = this.getComponentWeight();  /*
 
     /**
      * need to check bay location before loading ammo
@@ -1334,7 +1432,7 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        // for large craft, ammo must be in the same ba
+        // for large craft, ammo must be in the same bay
         Mounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;

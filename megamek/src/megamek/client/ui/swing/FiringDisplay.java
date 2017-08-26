@@ -1940,6 +1940,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         .getString("FiringDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
+            } else if (m.getType().hasModes() && m.curMode().equals("Point Defense")) {
+            	clientgui.mechD.wPan.wToHitR.setText(Messages
+                        .getString("FiringDisplay.autoFiringWeapon"));
+                setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);

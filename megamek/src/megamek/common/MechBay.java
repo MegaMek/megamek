@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying mechs aboard dropships
+ * Represents a volume of space set aside for carrying mechs or LAMs aboard large spacecraft and mobile structures
  */
 
 public final class MechBay extends Bay {
@@ -32,6 +32,7 @@ public final class MechBay extends Bay {
         totalSpace = 0;
         currentSpace = 0;
     }
+    
 
     // Public constructors and methods.
 
@@ -50,6 +51,7 @@ public final class MechBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -66,8 +68,9 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only mechs
-        if (unit instanceof Mech) {
+        // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs 
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if ((unit instanceof Mech) || (unit instanceof QuadVee && unit.getConversionMode() == QuadVee.CONV_MODE_MECH) || (unit instanceof LandAirMech && unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER)) {
             result = true;
         }
 
@@ -81,6 +84,10 @@ public final class MechBay extends Bay {
         if (doors <= loadedThisTurn) {
             result = false;
         }
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
+        }
 
         // Return our result.
         return result;
@@ -88,7 +95,7 @@ public final class MechBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Mech (" + getDoors() + " doors) - "
+        return "Mech (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }
@@ -107,5 +114,6 @@ public final class MechBay extends Bay {
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
     }
+
 
 } // End package class TroopSpace implements Transporter

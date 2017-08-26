@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Drillson Heavy Hover Tank
+</Name>
+
+<Model>
+(Streak C3)
+</Model>
+
+<year>
+3078
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+30
+27
+27
+24
+30
+</armor>
+
+<Body Equipment>
+IS Streak SRM 2 Ammo
+ISC3SlaveUnit
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLargePulseLaser
+ISStreakSRM2
+ISStreakSRM2
+</Turret Equipment>
+
+<source>
+Clan Invasion
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

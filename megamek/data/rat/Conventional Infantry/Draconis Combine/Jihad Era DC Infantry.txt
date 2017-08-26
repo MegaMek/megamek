@@ -1,0 +1,127 @@
+3067-3081 Draconis Combine Conventional Infantry
+Foot Platoon (Rifle),100
+Foot Platoon (MG),32
+Foot Platoon (Flamer),20
+Foot Platoon (SRM),16
+DC Foot Platoon (Laser),32
+Foot Platoon (Heavy MG),32
+Foot Platoon (Autocannon),20
+Foot Platoon (Grenade Launcher),24
+Foot Platoon (Recoilless),24
+Foot Platoon (Gyrojet),12
+Foot Platoon (Mortar),16
+DC Foot Platoon (MRM),24
+Foot Platoon (Pulse Laser),12
+DC Foot Platoon (Dragonsbane),8
+DC Foot Platoon (Heavy Laser),8
+DC Foot Platoon (PPC),16
+DC Foot Platoon (Tsunami),4
+Motorized Platoon (Rifle),75
+Motorized Platoon (MG),24
+Motorized Platoon (Flamer),15
+Motorized Platoon (SRM),12
+DC Motorized Platoon (Laser),24
+Motorized Platoon (Heavy MG),24
+Motorized Platoon (Autocannon),15
+Motorized Platoon (Grenade Launcher),18
+Motorized Platoon (Recoilless),18
+Motorized Platoon (Gyrojet),9
+Motorized Platoon (Mortar),12
+DC Motorized Platoon (MRM),18
+Motorized Platoon (Pulse Laser),9
+DC Motorized Platoon (Dragonsbane),6
+DC Motorized Platoon (Heavy Laser),6
+DC Motorized Platoon (PPC),12
+DC Motorized Platoon (Tsunami),3
+Mechanized Tracked Platoon (Rifle),12
+Mechanized Tracked Platoon (MG),4
+Mechanized Tracked Platoon (Flamer),3
+Mechanized Tracked Platoon (SRM),2
+DC Mechanized Tracked Platoon (Laser),4
+Mechanized Tracked Platoon (Heavy MG),4
+Mechanized Tracked Platoon (Autocannon),2
+Mechanized Tracked Platoon (Grenade Launcher),3
+Mechanized Tracked Platoon (Recoilless),3
+Mechanized Tracked Platoon (Gyrojet),1
+Mechanized Tracked Platoon (Mortar),2
+DC Mechanized Tracked Platoon (MRM),3
+Mechanized Tracked Platoon (Pulse Laser),2
+DC Mechanized Tracked Platoon (Dragonsbane),1
+DC Mechanized Tracked Platoon (Heavy Laser),1
+DC Mechanized Tracked Platoon (PPC),2
+DC Mechanized Tracked Platoon (Tsunami),1
+Mechanized Wheeled Platoon (Rifle),12
+Mechanized Wheeled Platoon (MG),4
+Mechanized Wheeled Platoon (Flamer),3
+Mechanized Wheeled Platoon (SRM),2
+DC Mechanized Wheeled Platoon (Laser),4
+Mechanized Wheeled Platoon (Heavy MG),4
+Mechanized Wheeled Platoon (Autocannon),2
+Mechanized Wheeled Platoon (Grenade Launcher),3
+Mechanized Wheeled Platoon (Recoilless),3
+Mechanized Wheeled Platoon (Gyrojet),1
+Mechanized Wheeled Platoon (Mortar),2
+DC Mechanized Wheeled Platoon (MRM),3
+Mechanized Wheeled Platoon (Pulse Laser),2
+DC Mechanized Wheeled Platoon (Dragonsbane),1
+DC Mechanized Wheeled Platoon (Heavy Laser),1
+DC Mechanized Wheeled Platoon (PPC),2
+DC Mechanized Wheeled Platoon (Tsunami),1
+Jump Platoon (Rifle),12
+Jump Platoon (MG),4
+Jump Platoon (Flamer),3
+Jump Platoon (SRM),2
+DC Jump Platoon (Laser),4
+Jump Platoon (Heavy MG),4
+Jump Platoon (Autocannon),2
+Jump Platoon (Grenade Launcher),3
+Jump Platoon (Recoilless),3
+Jump Platoon (Gyrojet),1
+Jump Platoon (Mortar),2
+DC Jump Platoon (MRM),3
+Jump Platoon (Pulse Laser),2
+DC Jump Platoon (Dragonsbane),1
+DC Jump Platoon (Heavy Laser),1
+DC Jump Platoon (PPC),2
+DC Jump Platoon (Tsunami),1
+Mechanized Hover Platoon (Rifle),12
+Mechanized Hover Platoon (MG),4
+Mechanized Hover Platoon (Flamer),3
+Mechanized Hover Platoon (SRM),2
+DC Mechanized Hover Platoon (Laser),4
+Mechanized Hover Platoon (Heavy MG),4
+Mechanized Hover Platoon (Autocannon),2
+Mechanized Hover Platoon (Grenade Launcher),3
+Mechanized Hover Platoon (Recoilless),3
+Mechanized Hover Platoon (Gyrojet),1
+Mechanized Hover Platoon (Mortar),2
+DC Mechanized Hover Platoon (MRM),3
+Mechanized Hover Platoon (Pulse Laser),2
+DC Mechanized Hover Platoon (Dragonsbane),1
+DC Mechanized Hover Platoon (Heavy Laser),1
+DC Mechanized Hover Platoon (PPC),2
+DC Mechanized Hover Platoon (Tsunami),1
+Field Gunners (AC2),6
+Field Gunners (AC5),6
+Field Gunners (AC10),5
+Field Gunners (AC20),5
+Field Gunners (UAC2),3
+Field Gunners (UAC5),3
+Field Gunners (UAC10),2
+Field Gunners (UAC20),2
+Field Gunners (LBX2),3
+Field Gunners (LBX5),3
+Field Gunners (LBX10),2
+Field Gunners (LBX20),2
+Field Gunners (RAC2),1
+Field Gunners (RAC5),2
+Field Gunners (Light Gauss),3
+Field Gunners (Gauss),2
+Hover Assault Infantry Johnston Industries Rapid Response Force,6
+Heavy Support Infantry Irian Technologies SWAT Team,6
+Jump Support Infantry Star Corps Jump Assault Infantry,6
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,6
+Heavy Infantry Heavy Urban Response Platoon,9
+Recon Infantry Recon Battalion 201st Pesht Assault Team (3rd Proserpina Hussars),3
+Heavy Jump Infantry DEST Heavy Response Platoon,3
+Ceremonial Guard Otomo Guard,1

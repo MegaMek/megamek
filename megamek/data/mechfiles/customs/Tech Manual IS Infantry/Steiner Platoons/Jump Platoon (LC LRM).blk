@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+LCAF Jump Platoon
+</Name>
+<Model>
+(LRM)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+3
+</squadn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<Primary>
+InfantryTKAssaultRifle
+</Primary>
+<Secondary>
+LRM Launcher
+</Secondary>
+<Secondn>
+2
+</Secondn>
+<type>
+IS
+</type>
+<year>
+3061
+</year>
+<motion_type>
+Jump
+</motion_type>
+<antimek>
+</antimek>

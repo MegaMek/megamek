@@ -91,6 +91,8 @@ public interface IBomber {
         IGame game = ((Entity)this).getGame();
         int gameTL = TechConstants.getSimpleLevel(game.getOptions()
                 .stringOption("techlevel"));
+        //Exit method if bombs have already been loaded
+        if(getBombPoints() > 0) return;
         Integer[] sorted = new Integer[BombType.B_NUM];
         // Apply the largest bombs first because we need to fit larger bombs into a single location
         // in LAMs.

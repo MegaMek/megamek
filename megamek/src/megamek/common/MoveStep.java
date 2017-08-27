@@ -1501,7 +1501,8 @@ public class MoveStep implements Serializable {
             legal = false;
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
-                && (type != MoveStepType.UNDOCK)) {
+                && (type != MoveStepType.UNDOCK)
+                && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
         }
@@ -1887,7 +1888,7 @@ public class MoveStep implements Serializable {
             return;
         }
         
-        if (prev.getAltitude() > 0) {
+        if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
 
             // If airborne and not an Aero then everything is illegal, except
             // turns and AirMech 
@@ -3368,7 +3369,9 @@ public class MoveStep implements Serializable {
         // if the Dropship is taking off, movetype will be safe thrust
         if ((entity instanceof Dropship) && !entity.isAirborne()
                 && isPavementStep() && entity.isLocationProhibited(dest, getElevation())
-                && (movementType != EntityMovementType.MOVE_SAFE_THRUST)) {
+                && (movementType != EntityMovementType.MOVE_SAFE_THRUST)
+                && (type != MoveStepType.LOAD)
+                && (type != MoveStepType.UNLOAD)) {
             for (int dir = 0; dir < 6; dir++) {
                 Coords secondaryCoords = dest.translated(dir);
                 IHex secondaryHex = game.getBoard().getHex(secondaryCoords);

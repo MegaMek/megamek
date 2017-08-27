@@ -2513,7 +2513,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-            return true;
+            return !isAirborne();
         }
 
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {

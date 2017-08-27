@@ -1637,4 +1637,17 @@ public class MovePath implements Cloneable, Serializable {
         }
         return false;
     }
+
+    /**
+     * @return A list of entity ids for all units that have previously be plotted to be dropped/launched.
+     */
+    public Set<Integer> getDroppedUnits() {
+        Set<Integer> dropped = new HashSet<>();
+        for (MoveStep s : steps) {
+            for (Vector<Integer> ids : s.getLaunched().values()) {
+                dropped.addAll(ids);
+            }
+        }
+        return dropped;
+    }
 }

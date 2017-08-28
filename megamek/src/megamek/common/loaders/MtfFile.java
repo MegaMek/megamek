@@ -694,7 +694,7 @@ public class MtfFile implements IMechLoader {
                             }
                         }
                         if (bFound && (m != null)) {
-                            m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 1 : 2));
+                            m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 2 : 1));
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);
                             }

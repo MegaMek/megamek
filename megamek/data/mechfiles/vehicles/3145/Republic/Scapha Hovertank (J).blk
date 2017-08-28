@@ -66,13 +66,13 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 ISGuardianECMSuite:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
 </Body Equipment>
 
 <Front Equipment>

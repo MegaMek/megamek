@@ -1796,7 +1796,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Jump Jet";
         misc.setInternalName("VehicleJumpJet");
-        misc.setInternalName("VJJ");
+        misc.addLookupName("VJJ");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 1;

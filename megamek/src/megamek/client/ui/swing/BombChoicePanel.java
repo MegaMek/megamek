@@ -46,7 +46,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
     
     //Variable for MekHQ functionality
-    private int[] typeMax;
+    private int[] typeMax = null;
 
     //private BombChoicePanel m_bombs;
     //private JPanel panBombs = new JPanel();
@@ -187,9 +187,11 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     @Override
     public void setEnabled(boolean enabled) {
         for (int type = 0; type < BombType.B_NUM; type++) {
-            if ((type == BombType.B_ALAMO) && !at2Nukes) {
+            if ((type == BombType.B_ALAMO) 
+                    && !at2Nukes) {
                 b_choices[type].setEnabled(false);
-            } else if ((type > BombType.B_TAG) && !allowAdvancedAmmo) {
+            } else if ((type > BombType.B_TAG) 
+                    && !allowAdvancedAmmo) {
                 b_choices[type].setEnabled(false);
             } else if ((type == BombType.B_ASEW)
                        || (type == BombType.B_ALAMO)

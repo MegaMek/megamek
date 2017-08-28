@@ -856,6 +856,12 @@ public class Compute {
 
     public static ToHitData getImmobileMod(Targetable target, int aimingAt,
                                            int aimingMode) {
+        // if we are bombing hexes, they are not considered immobile.
+        if(target.getTargetType() == target.TYPE_HEX_BOMB || 
+           target.getTargetType() == target.TYPE_HEX_AERO_BOMB) {
+            return null;
+        }
+        
         if (target.isImmobile()) {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD)
                 && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {

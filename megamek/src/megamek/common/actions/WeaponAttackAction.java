@@ -75,6 +75,7 @@ import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.ArtilleryWeapon;
+import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISHGaussRifle;
@@ -3494,12 +3495,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
-                if (ae.getAltitude() > 5) {
+                if (ae.getAltitude() > DiveBombAttack.DIVE_BOMB_MAX_ALTITUDE) {
                     return "no dive bombing above altitude 5";
                 }
                 if (ae.isAero()) {
                     int altLoss = ((IAero) ae).getAltLossThisRound();
-                    if ((ae.getAltitude() + altLoss) < 3) {
+                    if ((ae.getAltitude() + altLoss) < DiveBombAttack.DIVE_BOMB_MIN_ALTITUDE) {
                         return "no dive bombing below altitude 3";
                     }
                 }
@@ -4176,6 +4177,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return bombPayload;
     }
 
+    /**
+     * 
+     * @param load This is the "bomb payload". It's an array indexed by the constants declared in BombType.
+     * Each element indicates how many types of that bomb should be fired.
+     */
     public void setBombPayload(int[] load) {
         bombPayload = load;
     }

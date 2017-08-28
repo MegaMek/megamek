@@ -361,7 +361,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         FiringPlan myFiringPlan;
-        if (path.getEntity().isAero()) {
+        // we're only going to do air to ground attack plans if we're an airborne aero attacking a ground unit
+        if (path.getEntity().isAirborne() && !enemy.isAirborne()) {
             myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {
@@ -552,11 +553,6 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
 
-            if(path.getFliesOverEnemy() == true)
-            {
-            	int alpha = 1;
-            }
-            
             // Copy the path to avoid inadvertent changes.
             MovePath pathCopy = path.clone();
 

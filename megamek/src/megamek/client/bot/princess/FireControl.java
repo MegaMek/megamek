@@ -18,11 +18,14 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.BombType;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -33,6 +36,7 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
+import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -62,6 +66,7 @@ import megamek.common.annotations.StaticWrapper;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ATMWeapon;
+import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -229,6 +234,7 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE_PATH =
             new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not under flight path");
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
+    //static final TargetRollModifier 
     private static final TargetRollModifier TH_STABLE_WEAP =
             new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
@@ -346,7 +352,7 @@ public class FireControl {
         if (shooterState.isProne()) {
             toHitData.addModifier(TH_ATT_PRONE);
         }
-        if (targetState.isImmobile()) {
+        if (targetState.isImmobile() && !target.isHexBeingBombed()) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
@@ -964,7 +970,7 @@ public class FireControl {
 
         return toHit;
     }
-
+    
     /**
      * Makes an educated guess as to the to hit modifier by an aerospace unit
      * flying on a ground map doing a strike attack on a unit
@@ -1008,8 +1014,12 @@ public class FireControl {
             return new ToHitData(TH_WEAP_CANNOT_FIRE);
         }
 
-        // Is the weapon loaded?
-        if (((WeaponType) weapon.getType()).ammoType != AmmoType.T_NA) {
+        if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            int alpha = 1;
+        }
+        
+        // Is the weapon loaded? (ignore this check for bombs)
+        if ((((WeaponType) weapon.getType()).ammoType != AmmoType.T_NA)) {
             if (weapon.getLinked() == null) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
             }
@@ -1447,6 +1457,7 @@ public class FireControl {
      * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
      *                              calculation.
      * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param owner                 The owner Princess instance
      * @return The resulting {@link WeaponFireInfo}.
      */
     WeaponFireInfo buildWeaponFireInfo(Entity shooter,
@@ -1454,7 +1465,31 @@ public class FireControl {
                                        Mounted weapon, IGame game, boolean assumeUnderFlightPath,
                                        boolean guessToHit) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
-                weapon, game, assumeUnderFlightPath, guessToHit, owner);
+                weapon, game, assumeUnderFlightPath, guessToHit, owner, new int[0]);
+    }
+    
+    /**
+     * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
+     *
+     * @param shooter               The unit doing the shooting.
+     * @param flightPath            The path the unit flies over this turn.
+     * @param target                The target being fired on.
+     * @param targetState           The current state of the target.
+     * @param weapon                The weapon being fired.
+     * @param game                  The game being played.
+     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
+     *                              calculation.
+     * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param owner                 The owner Princess instance
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @return The resulting {@link WeaponFireInfo}.
+     */
+    WeaponFireInfo buildWeaponFireInfo(Entity shooter,
+                                       MovePath flightPath, Targetable target, EntityState targetState,
+                                       Mounted weapon, IGame game, boolean assumeUnderFlightPath,
+                                       boolean guessToHit, int[] bombPayload) {
+        return new WeaponFireInfo(shooter, flightPath, target, targetState,
+                weapon, game, assumeUnderFlightPath, guessToHit, owner, bombPayload);
     }
 
     /**
@@ -1568,7 +1603,7 @@ public class FireControl {
         if (!assumeUnderFlightPath && !isTargetUnderFlightPath(flightPath, targetState)) {
             return new FiringPlan(target);
         }
-
+        
         FiringPlan myPlan = new FiringPlan(target);
 
         // Shooting isn't possible if one of us isn't on the board.
@@ -1577,13 +1612,29 @@ public class FireControl {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
             return myPlan;
         }
+        
         if ((target.getPosition() == null) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            return myPlan;
+        }
+        
+        if(shooter.getAltitude() <= 1) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter will crash if striking at altitude 1!");
+            return myPlan;
+        }
+        
+        if(shooter.getAltitude() > 5) {
+            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's altitude is too high!");
             return myPlan;
         }
 
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
+            // bombing attacks have to be carried out separately from other weapon attacks, so we handle them in a special case
+            if(weapon.isGroundBomb()) {
+                continue;
+            }
+            
         	WeaponFireInfo shoot = buildWeaponFireInfo(shooter, flightPath, target, targetState, weapon, game, true,
                                                        true);
 
@@ -1595,14 +1646,55 @@ public class FireControl {
             }
         }
         
-        // insert logic for bombs somewhere here
+        // if we are here, we have already confirmed the target is under the flight path and are guessing
+        FiringPlan bombPlan = getDiveBombPlan(shooter, flightPath, target, targetState, game, true, true);
+        calculateUtility(bombPlan, DOES_NOT_TRACK_HEAT, shooter.isAero()); // bombs don't generate heat so don't bother with this calculation
         
-        // how about we don't overheat instead
-        //myPlan = this.guessBestFiringPlanUnderHeat(shooter, new EntityState(flightPath), target, targetState, shooter.getHeatCapacity(), game);
-
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
-        return myPlan;
+        
+        if(myPlan.getUtility() >= bombPlan.getUtility())
+            return myPlan;
+        else
+            return bombPlan;
+    }
+   
+    /**
+     * Creates a firing plan that fires dive bombs, dropping all bombs on the given target
+     *
+     * @param shooter               The unit doing the shooting.
+     * @param target                The unit being fired on.
+     * @param targetState           The current state of the target.
+     * @param flightPath            The path the shooter is flying over.
+     * @param game                  The game being played.
+     * @param passedOverTarget      Set TRUE to automatically assume the target will be under the flight path rather
+     *                              than going through the full calculation.
+     * @param guess                 Whether we're just thinking about this firing plan or about to                              
+     * @return The {@link FiringPlan} containing all bombs on target, if the shooter is capable of dropping bombs.
+     */
+    FiringPlan getDiveBombPlan(Entity shooter, MovePath flighPath, Targetable target, @Nullable EntityState targetState, 
+            IGame game, boolean passedOverTarget, boolean guess) {
+        FiringPlan diveBombPlan = new FiringPlan(target);
+        HexTarget hexToBomb = new HexTarget(target.getPosition(), game.getBoard(), 
+                shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);
+        
+        for(Iterator<Mounted> weaponIter = shooter.getWeapons(); weaponIter.hasNext();) {
+            Mounted weapon = weaponIter.next();
+            if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+                
+                int[] bombPayload = new int[BombType.B_NUM];
+                // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
+                // seriously, though, TODO: more intelligent bomb drops
+                for(Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                    bombPayload[((BombType) bomb.getType()).getBombType()]++;
+                }
+                
+                WeaponFireInfo diveBomb = buildWeaponFireInfo(shooter, flighPath, hexToBomb, null, weapon, game, passedOverTarget, guess, bombPayload);
+                diveBombPlan.add(diveBomb);
+            }
+        }
+        
+        return diveBombPlan;
     }
 
     /**
@@ -1744,7 +1836,7 @@ public class FireControl {
             }
         }
         calculateUtility(bestPlans[0], heatTolerance, isAero);
-
+        
         if (shooter instanceof Infantry) {
             calculateUtility(swarmAttack, heatTolerance, isAero);
             calculateUtility(legAttack, heatTolerance, isAero);         
@@ -1783,6 +1875,20 @@ public class FireControl {
                 }
             }
         }
+        
+        // if we are an aero blasting away at ground targets, another good option for a heatless plan is to bomb the crap out of the enemy
+        //bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
+        //currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
+        //dropping everything it has, including specialized munitions such as thunder bombs and infernos
+        if(shooter.isAirborne() && shooter.getBombs(BombType.F_GROUND_BOMB).size() > 0) {
+            FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target, null, shooter.getGame(), shooter.passedOver(target), false);
+            
+            calculateUtility(diveBombPlan, DOES_NOT_TRACK_HEAT, true);
+            if(diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
+                bestPlans[0] = diveBombPlan;
+            }
+        }
+        
         return bestPlans;
     }
 

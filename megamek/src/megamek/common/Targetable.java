@@ -128,6 +128,11 @@ public interface Targetable extends Serializable {
      * @return
      */
     public boolean isEnemyOf(Entity other);
+    
+    public default boolean isHexBeingBombed() {
+        return getTargetType() == TYPE_HEX_AERO_BOMB || 
+                getTargetType() == TYPE_HEX_BOMB;
+    }
 
     @Override
     int hashCode();

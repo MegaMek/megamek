@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -3448,6 +3450,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
 
         Vector<Entity> droppableUnits = ce.getDroppableUnits();
+        Set<Integer> alreadyDropped = cmd.getDroppedUnits();
 
         // Handle error condition.
         if (droppableUnits.size() <= 0) {
@@ -3458,13 +3461,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // cycle through the bays
             int bayNum = 1;
             Bay currentBay;
-            Vector<Entity> currentUnits = new Vector<Entity>();
+            List<Entity> currentUnits = new ArrayList<Entity>();
             int doors = 0;
             Vector<Bay> Bays = ce.getTransportBays();
             for (int i = 0; i < Bays.size(); i++) {
                 currentBay = Bays.elementAt(i);
                 Vector<Integer> bayChoices = new Vector<Integer>();
-                currentUnits = currentBay.getDroppableUnits();
+                currentUnits = currentBay.getDroppableUnits().stream()
+                        .filter(e -> !alreadyDropped.contains(e.getId()))
+                        .collect(Collectors.toList());
+
                 doors = currentBay.getDoors();
                 if ((currentUnits.size() > 0) && (doors > 0)) {
                     String[] names = new String[currentUnits.size()];
@@ -3473,7 +3479,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                     "MovementDisplay.DropUnitDialog.message", new Object[]{ //$NON-NLS-1$
                                                                                             doors, bayNum});
                     for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentUnits.elementAt(loop)
+                        names[loop] = currentUnits.get(loop)
                                                   .getShortName();
                     }
                     ChoiceDialog choiceDialog = new ChoiceDialog(
@@ -3487,7 +3493,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         // load up the choices
                         int[] unitsLaunched = choiceDialog.getChoices();
                         for (int element : unitsLaunched) {
-                            bayChoices.add(currentUnits.elementAt(element)
+                            bayChoices.add(currentUnits.get(element)
                                                        .getId());
                         }
                         choices.put(i, bayChoices);

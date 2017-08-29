@@ -1301,6 +1301,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return hits > 3 ? 5 : hits;
         }
     }
+    
+    //Landing mods for partial repairs
+    public int getLandingGearPartialRepairs() {
+    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+        return 2;
+    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
 
     /**
      * In fighter mode the weapon arcs need to be translated to Aero arcs.

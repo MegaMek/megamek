@@ -413,11 +413,11 @@ public class MiscType extends EquipmentType {
                 }
             } else {
                 if (entity.getWeight() <= 55.0) {
-                    return multiplier;
+                    return 0.5 * multiplier;
                 } else if (entity.getWeight() <= 85.0) {
-                    return 2.0 * multiplier;
+                    return 1.0 * multiplier;
                 } else {
-                    return 4.0 * multiplier;
+                    return 2.0 * multiplier;
                 }
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {

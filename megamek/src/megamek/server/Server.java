@@ -12885,18 +12885,7 @@ public class Server implements Runnable {
                 sendChangedBuildings(buildings);
             }
         }
-        int waterDepth = destHex.terrainLevel(Terrains.WATER);
-        // Falling into water instantly destroys most non-mechs
-        if ((waterDepth > 0)
-            && !(entity instanceof Mech)
-            && !(entity instanceof Protomech)
-            && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
-            && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
-            && (entity.getMovementMode() != EntityMovementMode.NAVAL)
-            && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
-            && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
-            vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
-        }
+
         // mechs that were stuck will automatically fall in their new hex
         if (wasStuck && entity.canFall()) {
             if (roll == null) {
@@ -12916,7 +12905,34 @@ public class Server implements Runnable {
             }
         }
 
-        if ((waterDepth > 0)
+        int waterDepth = destHex.terrainLevel(Terrains.WATER);
+
+        if (destHex.containsTerrain(Terrains.ICE)
+                && destHex.containsTerrain(Terrains.WATER)) {
+            if (!(entity instanceof Infantry)) {
+                int d6 = Compute.d6(1);
+                r = new Report(2118);
+                r.addDesc(entity);
+                r.add(d6);
+                r.subject = entity.getId();
+                vPhaseReport.add(r);
+
+                if (d6 == 6) {
+                    vPhaseReport.addAll(resolveIceBroken(dest));
+                }
+            }
+        }
+        // Falling into water instantly destroys most non-mechs
+        else if ((waterDepth > 0)
+                && !(entity instanceof Mech)
+                && !(entity instanceof Protomech)
+                && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
+                && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
+                && (entity.getMovementMode() != EntityMovementMode.NAVAL)
+                && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
+            vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
+        } else if ((waterDepth > 0)
                 && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
             PilotingRollData waterRoll = entity.checkWaterMove(waterDepth,
                     entity.moved);
@@ -12978,7 +12994,7 @@ public class Server implements Runnable {
                             // Make sure we got the right type of response
                             if (cfrType != Packet.COMMAND_CFR_DOMINO_EFFECT) {
                                 logError(METHOD_NAME,
-                                        "Excepted a " + "COMMAND_CFR_DOMINO_EFFECT CFR packet, "
+                                        "Excepted a COMMAND_CFR_DOMINO_EFFECT CFR packet, "
                                                 + "received: " + cfrType);
                                 throw new IllegalStateException();
                             }

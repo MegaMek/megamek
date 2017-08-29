@@ -215,7 +215,22 @@ public class Tank extends Entity {
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_COMBAT_VEHICLE;
     }
+    
+    //Advanced turrets
+    public static TechAdvancement getDualTurretTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, 3080, 3080).setApproximate(false, true, false)
+                .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
 
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        if (!hasNoDualTurret()) {
+            compositeTechLevel.addComponent(getDualTurretTA());
+        }
+    }
+    
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
@@ -2272,6 +2287,13 @@ public class Tank extends Entity {
      * @return suspension factor of vehicle
      */
     public int getSuspensionFactor() {
+        return getSuspensionFactor(getMovementMode(), weight);
+    }
+    
+    /**
+     * Static method to calculate suspension factor without needing a vehicle
+     */
+    public static int getSuspensionFactor(EntityMovementMode movementMode, double weight) {
         switch (movementMode) {
             case HOVER:
                 if (weight <= 10) {

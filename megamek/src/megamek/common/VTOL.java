@@ -656,6 +656,20 @@ public class VTOL extends Tank implements IBomber {
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
     }
 
+    public static TechAdvancement getChinTurretTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, 3079, 3080).setApproximate(false, true, false)
+                .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        if (!hasNoTurret()) {
+            compositeTechLevel.addComponent(getChinTurretTA());
+        }
+    }
+    
     /**
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other

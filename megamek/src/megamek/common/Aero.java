@@ -2403,6 +2403,7 @@ public class Aero extends Entity implements IAero, IBomber {
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         // this is a control roll. Affected by:
         // avionics damage
+    	// partial repairs
         // pilot damage
         // current velocity
         int avihits = getAvionicsHits();
@@ -2417,7 +2418,16 @@ public class Aero extends Entity implements IAero, IBomber {
         if (avihits >= 3) {
             prd.addModifier(5, "Avionics Destroyed");
         }
-
+        
+        if ((getPartialRepairs() != null) && (avihits < 3)) {
+            if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+                prd.addModifier(1, "Partial repair of Avionics");
+            }
+            if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+                prd.addModifier(1, "Misreplaced Avionics");
+            }
+        }
+        
         if (pilothits > 0) {
             prd.addModifier(pilothits, "Pilot Hits");
         }

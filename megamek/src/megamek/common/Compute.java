@@ -1221,7 +1221,7 @@ public class Compute {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
-        // if partial sensor repairs are present the shot will be more difficult
+        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
         // if its a non physical attack
         if (ae.getPartialRepairs() != null) {
             if (ae.getPartialRepairs().booleanOption("sensors_1_crit")) {

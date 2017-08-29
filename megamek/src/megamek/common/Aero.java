@@ -599,8 +599,19 @@ public class Aero extends Entity implements IAero, IBomber {
         if (gearHit) {
             return vTakeoff ? 1 : 5;
         } else {
-            return 0;
+        	return 0;
         }
+    }
+    
+    //Landing mods for partial repairs
+    public int getLandingGearPartialRepairs() {
+    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+        return 2;
+    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
     }
 
     public void setOHeatSinks(int hs) {

@@ -110,6 +110,8 @@ public interface IAero {
     int getSensorHits();
 
     int getFCSHits();
+    
+    int getLandingGearPartialRepairs();
 
     default int getClusterMods() {
         return -1 * (getFCSHits() + getSensorHits());
@@ -407,6 +409,13 @@ public interface IAero {
 
         if (!hasLifeSupport()) {
             roll.addModifier(+2, "No life support");
+        }
+        
+        // Landing Gear Partial Repairs
+        if (getLandingGearPartialRepairs() == 2) {
+            roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
+        } else if (getLandingGearPartialRepairs() == 1) {
+            roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
         }
 
         // Landing Modifiers table, TW pg 86

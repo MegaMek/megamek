@@ -21,6 +21,8 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Jumpship;
+import megamek.common.Warship;
+import megamek.common.SpaceStation;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -54,6 +56,19 @@ public class PartialRepairs extends AbstractOptions {
         addOption(partRep, "veh_locked_turret", false); //$NON-NLS-1$
         addOption(partRep, "mech_engine_replace", false); //$NON-NLS-1$
         addOption(partRep, "mech_gyro_replace", false); //$NON-NLS-1$
+        addOption(partRep, "aero_avionics_replace", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_cic_fcs_replace", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_gear_replace", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_sensor_replace", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_weapon_replace", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_avionics_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_cic_fcs_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_collar_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_engine_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_asf_fueltank_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_fueltank_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_gear_crit", false); //$NON-NLS-1$ 
+        addOption(partRep, "aero_weapon_crit", false); //$NON-NLS-1$ 
         }
 
     /*
@@ -68,14 +83,21 @@ public class PartialRepairs extends AbstractOptions {
 
     public static boolean isPartRepLegalFor(IOption quirk, Entity en) {
 
-        if(en instanceof Mech) {
-            if(quirk.getName().equals("veh_stabilizer_crit")
-                    || quirk.getName().equals("veh_locked_turret")
-                    ) {
-                return false;
-            }
-            return true;
-        }
+        if(en instanceof Mech) { 
+             if(quirk.getName().equals("mech_reactor_3_crit") 
+                     || quirk.getName().equals("mech_reactor_2_crit") 
+                     || quirk.getName().equals("mech_reactor_1_crit") 
+                     || quirk.getName().equals("mech_gyro_2_crit") 
+                     || quirk.getName().equals("mech_gyro_1_crit") 
+                     || quirk.getName().equals("mech_sensors_2_crit") 
+                     || quirk.getName().equals("mech_engine_replace") 
+                     || quirk.getName().equals("mech_gyro_replace") 
+                     || quirk.getName().equals("sensors_1_crit") 
+                      ) { 
+                 return true; 
+            } 
+            return false; 
+        } 
 
         if(en instanceof GunEmplacement) {
             return false;
@@ -93,16 +115,78 @@ public class PartialRepairs extends AbstractOptions {
         if(en instanceof BattleArmor) {
                 return false;
         }
-
-        if(en instanceof Jumpship) {
-                return false;
+        
+        if(en instanceof Warship) { 
+        	if(quirk.getName().equals("aero_avionics_replace") 
+                    || quirk.getName().equals("aero_cic_fcs_replace") 
+                    || quirk.getName().equals("aero_sensor_replace") 
+                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_avionics_crit") 
+                    || quirk.getName().equals("aero_cic_fcs_crit") 
+                    || quirk.getName().equals("aero_collar_crit") 
+                    || quirk.getName().equals("aero_engine_crit") 
+                    || quirk.getName().equals("aero_fueltank_crit") 
+                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("sensors_1_crit")  
+        			) { 
+                return true; 
+        	} 
+        	return false; 
         } 
-        if (en instanceof Dropship) {
-                return false;
-        }
+
+        if ((en instanceof Jumpship) || (en instanceof SpaceStation)) { 
+        	if(quirk.getName().equals("aero_avionics_replace") 
+                    || quirk.getName().equals("aero_cic_fcs_replace") 
+                    || quirk.getName().equals("aero_sensor_replace") 
+                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_avionics_crit") 
+                    || quirk.getName().equals("aero_cic_fcs_crit") 
+                    || quirk.getName().equals("aero_collar_crit") 
+                    || quirk.getName().equals("aero_fueltank_crit") 
+                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("sensors_1_crit")  
+        			) { 
+                return true; 
+        	} 
+        	return false; 
+        } 
+        if (en instanceof Dropship) { 
+        	if(quirk.getName().equals("aero_avionics_replace") 
+                    || quirk.getName().equals("aero_cic_fcs_replace") 
+                    || quirk.getName().equals("aero_gear_replace") 
+                    || quirk.getName().equals("aero_sensor_replace") 
+                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_avionics_crit") 
+                    || quirk.getName().equals("aero_cic_fcs_crit") 
+                    || quirk.getName().equals("aero_collar_crit") 
+                    || quirk.getName().equals("aero_engine_crit") 
+                    || quirk.getName().equals("aero_fueltank_crit") 
+                    || quirk.getName().equals("aero_gear_crit") 
+                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("sensors_1_crit")  
+        			) { 
+                return true; 
+        	} 
+        	return false; 
+        } 
         if (en instanceof Aero) {
-                return false;
-        }
+        	if(quirk.getName().equals("aero_avionics_replace") 
+                    || quirk.getName().equals("aero_cic_fcs_replace") 
+                    || quirk.getName().equals("aero_gear_replace") 
+                    || quirk.getName().equals("aero_sensor_replace") 
+                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_avionics_crit") 
+                    || quirk.getName().equals("aero_cic_fcs_crit") 
+                    || quirk.getName().equals("aero_engine_crit") 
+                    || quirk.getName().equals("aero_asf_fueltank_crit") 
+                    || quirk.getName().equals("aero_gear_crit") 
+                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("sensors_1_crit")  
+        			) { 
+                return true; 
+        	} 
+        	return false; 
+        } 
         if (en instanceof Protomech) {
             return false;
         }

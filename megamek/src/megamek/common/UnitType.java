@@ -101,22 +101,23 @@ public class UnitType {
     
     // series of convenience methods to shorten unit type determination
     
-    // Whether the given entity is a VTOL
+    /**
+     * Whether the given entity is a VTOL
+     * @param e the entity to examine
+     * @return True or false
+     */
     public static boolean isVTOL(Entity e)
     {
-    	return determineUnitTypeCode(e) == VTOL;
+    	return e.getEntityType() == Entity.ETYPE_VTOL;
     }
     
-    // Whether the given entity is a Spheroid dropship
+    /**
+     * Whether the given entity is a Spheroid dropship
+     * @param e the entity to examine
+     * @return True or false
+     */
     public static boolean isSpheroidDropship(Entity e)
     {
-    	return determineUnitTypeCode(e) == DROPSHIP && ((Aero) e).isSpheroid();
+    	return e.isAero() && ((IAero) e).isSpheroid();
     }
-    
-    // Whether the given entity is an aerotech units
-    public static boolean isAero(Entity e)
-    {
-    	return determineUnitTypeCode(e) == AERO;
-    }
-
 }

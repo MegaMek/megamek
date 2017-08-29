@@ -314,7 +314,7 @@ public class AbstractPathFinder<N, C, E> {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.");//$NON-NLS-1$
         } catch(Exception e) {
-            e.printStackTrace();//this.getOwner().log(this.getClass(), METHOD_NAME, e.toString());
+            e.printStackTrace(); //do something, don't just swallow the exception, good lord
         }
     }
 

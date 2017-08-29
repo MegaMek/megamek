@@ -29,6 +29,7 @@ import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 import megamek.common.pathfinder.MovePathFinder.MovePathLegalityFilter;
 import megamek.common.pathfinder.MovePathFinder.MovePathVelocityFilter;
 import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
+import megamek.common.weapons.DiveBombAttack;
 
 /**
  * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere
@@ -66,39 +67,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<AeroGroundPathFinde
     }
     
     /**
-     * Utility method that attempts to adjust each path in the given collection
-     * to go to an "optimal" altitude. Optimal altitudes are:
-     *                  // we want to take ourselves to the following important altitudes:
-     * 5 (max altitude for bombing and striking)
-     * 3 max altitude for strafing - skip for now, princess won't be strafing
-     * 1 is a superb altitude for "attitude" bombing - skip for now, princess won't be altitude bombing
-     * 7 guarantees you won't hit by AA fire at all, ever, good for dogfighting other aeros
-     * @param paths The collection of paths to process
-     * @param aero The entity moving around
-     * @return
-     */
-    public static Collection<MovePath> getAdjustedHeightPaths(Collection<MovePath> paths, Entity mover) {
-        Collection<MovePath> resultingPaths = new ArrayList<MovePath>();
-        boolean enemyAircraftOnBoard = airborneEnemiesOnBoard(mover);
-        boolean moverIsBomberWithBombs = mover.getBombs(AmmoType.F_GROUND_BOMB).size() > 0;
-        
-        for(MovePath path : paths) {
-            // 5 is always a nice altitude to be at
-            resultingPaths.add(reconstructMovePathWithAltitudeChange(path, 5));
-            
-            // 7 is good if there are enemy aircraft on the game board and we don't have bombs on board
-            if(enemyAircraftOnBoard && !moverIsBomberWithBombs) {
-                resultingPaths.add(reconstructMovePathWithAltitudeChange(path, 7));
-            }
-            // these two are disabled until we teach the Princess to altitude bomb and strafe
-            //resultingPaths.add(reconstructMovePathWithAltitudeChange(path, 3)); 
-            //resultingPaths.add(reconstructMovePathWithAltitudeChange(path, 1));
-        }
-        
-        return resultingPaths;
-    }
-    
-    /**
      * Worker function that indicates if there is an enemy aircraft on the board for the current path.
      * Assumes we are on a ground map
      * @param path the current path we're evaluating
@@ -116,69 +84,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<AeroGroundPathFinde
     }
     
     /**
-     * Worker function that takes a given path and desired altitude and
-     * returns a new path instance that attempts to get the given path to the desired altitude
-     * by inserting UP and DOWN steps after any existing ACC/DEC steps.
-     * Returns null if the starting path is already at the desired altitude.
-     * @param startingPath The starting path.
-     * @param desiredAltitude The desired altitude.
-     * @return Altitude-adjusted path.
-     */
-    private static MovePath reconstructMovePathWithAltitudeChange(MovePath startingPath, int desiredAltitude)
-    {
-        // if the starting path is already at the desired altitude, then bug out
-        // also sanity check for a path not having any steps
-        if(startingPath.getFinalAltitude() == desiredAltitude ||
-                startingPath.length() == 0) {
-            return null;
-        }
-        
-        MovePath result = new MovePath(startingPath.getGame(), startingPath.getEntity());
-        
-        // The general pattern is that we put all "ACC/DEC" move steps first
-        // then insert as many UP or DOWN actions to get to the desired altitude as we need and can do
-        // then insert the rest of the path
-        // as an added bonus, we omit any "NONE" move steps
-        
-        Enumeration<MoveStep> stepEnum = startingPath.getSteps();
-        MoveStep currentStep = stepEnum.nextElement();
-        
-        // insert all ACC/DEC steps
-        while((currentStep.getType() == MoveStepType.ACC) || 
-                (currentStep.getType() == MoveStepType.DEC))
-        {
-            result.addStep(currentStep.getType());
-            currentStep = stepEnum.nextElement();
-        }
-        
-        while(result.getFinalAltitude() != desiredAltitude) {
-            // up steps use thrust. Two points, to be exact
-            if(result.getFinalAltitude() < desiredAltitude &&
-                    result.getMpUsed() < calculateMaxThrust((IAero) result.getEntity()) - 1) {
-                result.addStep(MoveStepType.UP);
-            }
-            // down steps don't use thrust, but if we have more than one, we affect the unit's velocity, so let's don't do that
-            // just add one "DOWN" and break out of the while loop
-            else if(result.getFinalAltitude() > desiredAltitude &&
-                    result.getFinalAltitude() == startingPath.getFinalAltitude()) {
-                result.addStep(MoveStepType.DOWN);
-                break;
-            }
-        }
-        
-        // now add all the rest of the steps
-        while(stepEnum.hasMoreElements()) {
-            result.addStep(currentStep.getType());
-            currentStep = stepEnum.nextElement();
-        }
-        
-        // this step should be the last step
-        result.addStep(currentStep.getType());
-        
-        return result;
-    }
-    
-    /**
      * Helper function to calculate the maximum thrust we should use for a particular aircraft
      * We limit ourselves to the lowest of "safe thrust" and "structural integrity"...
      *  ... or something a little lower to prevent using gigabyte after gigabyte of memory on high-thrust paths
@@ -188,7 +93,7 @@ public class AeroGroundPathFinder extends AbstractPathFinder<AeroGroundPathFinde
      */
     private static int calculateMaxThrust(IAero aero) {
         int maxThrust = Math.min(aero.getCurrentThrust(), aero.getSI());    // we should only thrust up to our SI
-        maxThrust = Math.min(maxThrust, 4); // lol just kidding, you ain't going nowhere fast bro
+        //maxThrust = Math.min(maxThrust, artificialCap); // lol just kidding, you ain't going nowhere fast bro
         return maxThrust;
     }
     
@@ -472,7 +377,11 @@ public class AeroGroundPathFinder extends AbstractPathFinder<AeroGroundPathFinde
             
             int currentVelocity = startingPath.getFinalVelocity();
             int lowerBound = Math.max(1, currentVelocity - maxThrust);
-            int upperBound = Math.min(12, currentVelocity + maxThrust); 
+            // put a governor on that engine
+            // while the rulebook max velocity on ground map is 12, in reality we want to limit ourselves to about velocity 4
+            // so we don't churn through thousands of useless paths that go off board or loop around endlessly
+            // even on a 100x100 map, velocity 4 will get you halfway across that map in one turn
+            int upperBound = Math.min(4, currentVelocity + maxThrust); 
             
             // we go from the lower bound to the current velocity and generate paths with the required number of DECs to get to
             // the desired velocity
@@ -530,28 +439,31 @@ public class AeroGroundPathFinder extends AbstractPathFinder<AeroGroundPathFinde
                 return results;
             }
             
-            boolean terminate = false;
+            boolean stepsAdded = false;
             int maxThrust = AeroGroundPathFinder.calculateMaxThrust((IAero) altitudePath.getEntity());
             
-            while(altitudePath.getFinalAltitude() != desiredAltitude && 
-                    !terminate) {
+            // generate a path that involves making changes that go up or down towards the desired altitude as far as possible
+            while(altitudePath.getFinalAltitude() != desiredAltitude) {
                 // up steps use thrust. Two points, to be exact
                 if(altitudePath.getFinalAltitude() < desiredAltitude &&
                         altitudePath.getMpUsed() < maxThrust - 1) {
                     altitudePath.addStep(MoveStepType.UP);
+                    stepsAdded = true;
                 }
                 // down steps don't use thrust, but if we take more than two, that's a PSR so avoid that
                 else if(altitudePath.getFinalAltitude() > desiredAltitude &&
                         altitudePath.getFinalAltitude() >=  startingPath.getFinalAltitude() - 2) {
                     altitudePath.addStep(MoveStepType.DOWN);
+                    stepsAdded = true;
                 }
                 // we've either reached the desired altitude or have hit some other stopping condition so that's enough of that
                 else {
-                    terminate = true;
+                    break;
                 }
-                
+            }
+            
+            if(stepsAdded) {
                 results.add(altitudePath);
-                altitudePath = altitudePath.clone();
             }
             
             return results;

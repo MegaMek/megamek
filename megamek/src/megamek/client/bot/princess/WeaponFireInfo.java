@@ -100,6 +100,8 @@ public class WeaponFireInfo {
      * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param owner                 Instance of the princess owner
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     WeaponFireInfo(Entity shooter, MovePath shooterPath, Targetable target, EntityState targetState,
                    Mounted weapon, IGame game, boolean assumeUnderFlightPath, boolean guess, Princess owner, int[] bombPayload) {
@@ -120,6 +122,8 @@ public class WeaponFireInfo {
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
+     * @param owner                 Instance of the princess owner
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     private WeaponFireInfo(Entity shooter, EntityState shooterState, MovePath shooterPath, Targetable target,
                    EntityState targetState, Mounted weapon, IGame game, boolean assumeUnderFlightPath,

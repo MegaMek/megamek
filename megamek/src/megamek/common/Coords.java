@@ -308,8 +308,7 @@ public class Coords implements Serializable {
     /* 
      * Determines if this set of coordinates is on the edge of the board
      */
-    public boolean isOnBoardEdge(IBoard board)
-    {
+    public boolean isOnBoardEdge(IBoard board) {
         return (getX() == 0) 
                 || (getY() == 0)
                 || (getX() == (board.getWidth() - 1)) 

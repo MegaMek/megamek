@@ -272,25 +272,27 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         	// A path that takes us over an enemy and stays on the board is superior to one that does not
         	// A path that causes leaves us at 0 velocity on a ground map is inferior to anything else
         	
-        	// Check whether we fly over an enemy or not
-        	if(first.getFliesOverEnemy() || second.getFliesOverEnemy())
-        	{
+            // Check whether we will stall or not, we want to keep paths that will not stall
+            if(AeroPathUtil.WillStall(first) || AeroPathUtil.WillStall(second)) {
+                int firstPathWillStall = AeroPathUtil.WillStall(first) ? 1 : 0;
+                int secondPathWillStall = AeroPathUtil.WillStall(second) ? 1 : 0;
+                
+                // if they both stall, then the rest of the comparisons don't matter, just throw one out and move on
+                return firstPathWillStall - secondPathWillStall;
+            }
+            
+        	// Check whether we fly over an enemy or not, we want to keep paths that will fly over enemies
+        	if(first.getFliesOverEnemy() || second.getFliesOverEnemy()) {
         		int firstPathEnemyFlyover = first.getFliesOverEnemy() && !first.fliesOffBoard() ? 1 : 0;
         		int secondPathEnemyFlyover = second.getFliesOverEnemy() && !second.fliesOffBoard() ? 1 : 0;
         		
-        		return firstPathEnemyFlyover - secondPathEnemyFlyover;
+        		// if they both fly over an enemy, try other criteria
+        		if(firstPathEnemyFlyover != secondPathEnemyFlyover) {
+        		    return firstPathEnemyFlyover - secondPathEnemyFlyover;
+        		}
         	}
         	
-        	// Check whether we will stall or not
-        	if(AeroPathUtil.WillStall(first) || AeroPathUtil.WillStall(second))
-        	{
-        		int firstPathWillStall = AeroPathUtil.WillStall(first) ? 1 : 0;
-        		int secondPathWillStall = AeroPathUtil.WillStall(second) ? 1 : 0;
-        		
-        		return firstPathWillStall - secondPathWillStall;
-        	}
-        	
-            boolean firstFlyoff = first.fliesOffBoard();
+        	boolean firstFlyoff = first.fliesOffBoard();
             int velFirst = first.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (firstFlyoff) {
@@ -400,8 +402,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * @param movePath The parent movePath
          * @see AbstractPathFinder.AdjacencyMap
          */
-        protected void AddUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp)
-        {
+        protected void AddUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
             Coords pos;
             int elevation;
             pos = last != null ? last.getPosition() : entity.getPosition();
@@ -447,29 +448,24 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             // if we haven't done anything else yet, and we are an aerodyne unit on a ground map with atmosphere, 
             // we can attempt to accelerate or decelerate
             if(mp.isOnAtmosphericGroundMap() &&
-            		!UnitType.isSpheroidDropship(mp.getEntity()))
-            {
-            	if(!mp.containsAnyOther(MoveStepType.ACC))
-            	{
+            		!UnitType.isSpheroidDropship(mp.getEntity())) {
+            	if(!mp.containsAnyOther(MoveStepType.ACC)) {
             		result.add(mp.clone().addStep(MoveStepType.ACC));
             	}
             	// we also don't want to bother decelerating to 0 on ground maps, as that'll just crash our aircraft
             	else if(!mp.containsAnyOther(MoveStepType.DEC) && 
-            			mp.getFinalVelocityLeft() > 1)
-            	{
+            			mp.getFinalVelocityLeft() > 1) {
             		result.add(mp.clone().addStep(MoveStepType.DEC));
             	}
             }
             
             // we can move forward if we have some velocity left
-            if(mp.getFinalVelocityLeft() > 0)
-            {
+            if(mp.getFinalVelocityLeft() > 0) {
             	result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }            
             
         	// we can turn if we can turn. very philosophical.
-        	if(lastStep != null && lastStep.canAeroTurn(lastStep.getGame()))
-        	{
+        	if(lastStep != null && lastStep.canAeroTurn(lastStep.getGame())) {
         		result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
         		result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
         	}

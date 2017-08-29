@@ -192,11 +192,9 @@ public class PathEnumerator {
             List<MovePath> paths = new ArrayList<>();
             
             // Aero movement on atmospheric ground maps
-            if(mover.isAero() &&
+            if(mover.isAirborne() &&
                mover.isOnAtmosphericGroundMap() &&
-               mover.isAirborne() &&
-               !((IAero) mover).isSpheroid())
-            {
+               !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
                 MovePath startPath = new MovePath(getGame(), mover);
                 apf.run(startPath);
@@ -213,11 +211,11 @@ public class PathEnumerator {
                 // also, remove duplicate off-board paths. There shouldn't be too many but every little bit helps.
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Unfiltered paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out illegal paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out all but one offboard path: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out all but one offboard path: " + paths.size());
                 
                 HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
                 for(MovePath path : paths)
@@ -228,12 +226,12 @@ public class PathEnumerator {
                     Integer lengthCount = pathLengths.get(path.length());
                     pathLengths.put(path.length(), lengthCount + 1);
                     
-                    this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, path.toString());
+                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
                 }
                 
                 for(Integer length : pathLengths.keySet())
                 {
-                    this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Paths of length " + length + ": " + pathLengths.get(length));
+                    this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
                 }
                 
                 //paths.addAll(AeroGroundPathFinder.getAdjustedHeightPaths(paths, mover));
@@ -420,9 +418,9 @@ public class PathEnumerator {
     
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path)
     {
-    	/*this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.WARNING, 
+    	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.DEBUG, 
     			path.length() + ":" + path.getFliesOverEnemy() + ":" + 
-    			path.toString() + ":" + whyNot);*/
+    			path.toString() + ":" + whyNot);
     }
 
     protected Map<Integer, List<MovePath>> getUnitPaths() {

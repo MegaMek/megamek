@@ -1704,8 +1704,7 @@ public class Game implements Serializable, IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
      *         coordinates who are enemies of the given unit.
      */
-    public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity)
-    {
+    public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
     	return getSelectedEntities(new EntitySelector() {
     		private Entity friendly = currentEntity;
     		

@@ -229,20 +229,25 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    // performs some evaluation of the path specific to aerotech units
+    /**
+     * Performs some evaluation of the path specific to aerotech units
+     * @param movePath the path to check
+     * @return A 'RankedPath' object with a certain evaluation
+     */
     protected RankedPath doAeroSpecificRanking(MovePath movePath) {
+        // stalling is awful
     	if(AeroPathUtil.WillStall(movePath)) {
             return new RankedPath(-1000d, movePath, "stall");
         }
 
-        // So is crashing.
+        // crashing is even worse
         if (AeroPathUtil.WillCrash(movePath)) {
             return new RankedPath(-10000d, movePath, "crash");
         }
 
         // Flying off board should only be done if necessary, but is better than taking a lot of damage.
-        // VTOLs really should not be flying off board.
-        if (AeroPathUtil.WillGoOffBoard(movePath)) {
+        // VTOLs really should not be flying off board as they can just stop moving instead
+        if (movePath.fliesOffBoard()) {
             if (UnitType.isVTOL(movePath.getEntity())) {
                 return new RankedPath(-5000d, movePath, "off-board");
             }
@@ -338,8 +343,8 @@ public class BasicPathRanker extends PathRanker {
         Entity me = path.getEntity();
 
         // If I don't have range, I can't do damage.
-        // exception: I might, if I'm an aero on a ground map attacking a ground unit
-        boolean aeroAttackingGroundUnitOnGroundMap = UnitType.isAero(path.getEntity()) && !UnitType.isAero(enemy) && game.getBoard().onGround();
+        // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
+        boolean aeroAttackingGroundUnitOnGroundMap = path.getEntity().isAirborne() && !enemy.isAero() && game.getBoard().onGround();
         
         int maxRange = me.getMaxWeaponRange();
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
@@ -362,7 +367,7 @@ public class BasicPathRanker extends PathRanker {
 
         FiringPlan myFiringPlan;
         // we're only going to do air to ground attack plans if we're an airborne aero attacking a ground unit
-        if (path.getEntity().isAirborne() && !enemy.isAirborne()) {
+        if (aeroAttackingGroundUnitOnGroundMap) {
             myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {

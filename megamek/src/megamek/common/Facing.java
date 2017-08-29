@@ -73,18 +73,4 @@ public enum Facing {
     public Facing getNextCounterClockwise() {
         return ccw.get(this);
     }
-    
-    public boolean isLeftOf(double other) {
-        // easy case: the "other" is on the west side of the hex
-        if((other > 3) && (this.intValue < other)) {
-            return true;
-        }
-        else if ((other < 3) && (this.getOpposite().intValue > other))
-        {
-            return true;
-        }
-        
-        return false;
-    }
-
 }

@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.ui.SharedUtility;
+import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -67,7 +68,7 @@ public abstract class PathRanker {
                                List<Entity> enemies, Coords friendsCoords);
 
     ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
-                                    double fallTollerance, int startingHomeDistance,
+                                    double fallTolerance, int startingHomeDistance,
                                     List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
@@ -79,7 +80,7 @@ public abstract class PathRanker {
             }
 
             // Let's try to whittle down this list.
-            List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
+            List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
             getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
                                                                movePaths.size() + " possible paths.");
 
@@ -91,7 +92,7 @@ public abstract class PathRanker {
             BigDecimal interval = new BigDecimal(5);
             for (MovePath path : validPaths) {
                 count = count.add(BigDecimal.ONE);
-                returnPaths.add(rankPath(path, game, maxRange, fallTollerance, startingHomeDistance, enemies,
+                returnPaths.add(rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
                                          allyCenter));
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
@@ -136,7 +137,7 @@ public abstract class PathRanker {
         }
 
         boolean alreadyHaveSafePathOffBoard = false;
-        boolean isAeroOnAtmosphericGroundMap = mover.isAero() && mover.isOnAtmosphericGroundMap();
+        boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
         
         for (MovePath path : startingPathList) {
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
@@ -144,24 +145,27 @@ public abstract class PathRanker {
             try {
             	// if we are an aero unit on the ground map, we want to discard paths that take us off board
                 // of course, ideally, the path generator comes back with only one of those anyway.
-            	if(isAeroOnAtmosphericGroundMap)
-            	{
+            	if(isAirborneAeroOnAtmosphericGroundMap) {
             		// all safe (no rolls or crashes) paths off board might as well be the same 
             		// so we prune any beyond the first one we find
-            		if(alreadyHaveSafePathOffBoard && AeroPathUtil.WillGoOffBoard(path))
-            		{
+            		if(alreadyHaveSafePathOffBoard && path.fliesOffBoard()) {
             			msg.append("\n\tUNNECESSARY: Already have a safe path off board");
             			continue;
             		}
             		
             		// make note of the first time we find a safe path off board
-            		if(AeroPathUtil.IsSafePathOffBoard(path))
-            		{
+            		if(AeroPathUtil.IsSafePathOffBoard(path)) {
             			msg.append("\n\tFirst safe path off board found");
             			alreadyHaveSafePathOffBoard = true;
             		}
             		
             		// if we have no bombs, we want to make sure our altitude is above 1
+            		// if we do have bombs, we may consider altitude bombing (in the future)
+            		if((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
+            		        (path.getFinalAltitude() < 2)) {
+            		    msg.append("\n\tNo bombs but at altitude 1. No way.");
+            		    continue;
+            		}
             	}
             	
                 Coords finalCoords = path.getFinalCoords();
@@ -175,8 +179,7 @@ public abstract class PathRanker {
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map
-                if(!isAeroOnAtmosphericGroundMap)
-                {
+                if(!isAirborneAeroOnAtmosphericGroundMap) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
                     if (!StringUtil.isNullOrEmpty(validation)) {

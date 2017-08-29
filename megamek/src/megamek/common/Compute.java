@@ -1233,6 +1233,12 @@ public class Compute {
             if (ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
                 mods.addModifier(1, "stabilizer damage");
             }
+            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
+                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
+            } 
+            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
+                 mods.addModifier(1, "faulty cic/fcs repairs"); 
+            }
         }
 
         // if this is an infantry weapon then we use a whole different

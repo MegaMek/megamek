@@ -2419,6 +2419,7 @@ public class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(5, "Avionics Destroyed");
         }
         
+        // partial repairs to avionics system, but only if the avionics aren't already destroyed
         if ((getPartialRepairs() != null) && (avihits < 3)) {
             if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
                 prd.addModifier(1, "Partial repair of Avionics");
@@ -2552,7 +2553,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * Tanks don't have MASC
+     * Fighters don't have MASC
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -2654,7 +2655,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean canCharge() {
-        // ramming is resolved differently than chargin
+        // ramming is resolved differently than charging
         return false;
     }
 

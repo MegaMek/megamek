@@ -328,8 +328,8 @@ public class TestAero extends TestEntity {
         // VSTOL equipment weighs extra forr conventional fighters
         if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) &&
                 aero.isVSTOL()){
-            // Weight = tonnage * 0.05 rounded to nearest half ton
-            return Math.round(0.05f * aero.getWeight()*2) / 2.0;
+            // Weight = tonnage * 0.05 rounded up to nearest half ton
+            return Math.ceil(0.05 * aero.getWeight()*2) / 2.0;
         }
         return 0.0f;
     }
@@ -356,7 +356,7 @@ public class TestAero extends TestEntity {
             }
             // Power amp weighs: 
             //   energy weapon tonnage * 0.1 rounded to nearest half ton
-            return Math.round(0.1 * weight*2) / 2.0;
+            return Math.ceil(0.1 * weight*2) / 2.0;
         }
         return 0;
     }
@@ -885,6 +885,32 @@ public class TestAero extends TestEntity {
         } else {
             return "Aerospace Fighter: " + aero.getDisplayName();
         }
+    }
+
+    /**
+     * Calculate the structural integrity weight
+     */
+    public double getWeightStructure() {
+        double tonnage = 0;
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            tonnage = aero.getSI() * aero.getWeight();
+            if (aero.isSpheroid()) {
+                tonnage /= 500;
+            } else {
+                tonnage /= 200;
+            }
+        } else if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            tonnage = aero.getWeight() / 100;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            // SI * weight / 1000, rounded up to half ton
+            tonnage = aero.getSI() * aero.getWeight() / 1000;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            tonnage = aero.getWeight() / 150;
+        } else {
+            // Fighters do not allocate weight to structure
+            return 0;
+        }
+        return Math.ceil(tonnage * 2) / 2.0;
     }
 
 

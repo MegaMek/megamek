@@ -617,6 +617,23 @@ public class Aero extends Entity implements IAero, IBomber {
     	return 0;
     	}
     }
+    
+    //Avionics mods for partial repairs
+    public int getAvionicsMisreplaced() {
+    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
+    
+    public int getAvionicsMisrepaired() {
+    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
 
     public void setOHeatSinks(int hs) {
         heatSinksOriginal = hs;

@@ -688,7 +688,12 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getFuel() {
+        if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
+        	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+        	return (int) (fuel * 0.9);
+        } else {
         return fuel;
+        }
     }
 
     /**

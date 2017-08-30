@@ -183,8 +183,9 @@ public class TestAero extends TestEntity {
             }
         }
         
-        // XXL engines take up extra space in the aft
-        if (a.hasEngine() && (a.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
+        // XXL engines take up extra space in the aft in conventional fighters
+        if (a.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)
+                && a.hasEngine() && (a.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
             if (a.getEngine().hasFlag(Engine.CLAN_ENGINE)) {
                 availSpace[Aero.LOC_AFT] -= 2;
             } else {

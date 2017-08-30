@@ -1314,6 +1314,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISHardenedArmor());
         EquipmentType.addType(MiscType.createISIndustrialArmor());
         EquipmentType.addType(MiscType.createISPrimitiveArmor());
+        EquipmentType.addType(MiscType.createPrimitiveAerospaceArmor());
         EquipmentType.addType(MiscType.createISHeavyIndustrialArmor());
         EquipmentType.addType(MiscType.createISCommercialArmor());
         EquipmentType.addType(MiscType.createCLFerroLamellorArmor());
@@ -2212,6 +2213,29 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createPrimitiveAerospaceArmor() {
+        // Currently this services for both Aero and Mechs which is technically
+        // wrong.
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE_AERO);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+        misc.industrial = true;
+        misc.flags = misc.flags.or(F_PRIMITIVE_ARMOR).or(F_AERO_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.rulesRefs = "125,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+                .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
+                .setClanApproximate(false, true, true, false, false)
+                .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return misc;
+    }
+
     public static MiscType createISIndustrialArmor() {
         MiscType misc = new MiscType();
 
@@ -2254,7 +2278,8 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Regular");
         misc.addLookupName("IS Standard Armor");
         misc.addLookupName("Clan Standard Armor");
-        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+                .or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.criticals = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);

@@ -255,13 +255,17 @@ public class Aero extends Entity implements IAero, IBomber {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Primitive            
     };
     
-    public TechAdvancement getCockpitTechAdvancement() {
-        if (getCockpitType() >= 0 && getCockpitType() < COCKPIT_TA.length) {
-            return COCKPIT_TA[getCockpitType()];
+    public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
+        if (cockpitType >= 0 && cockpitType < COCKPIT_TA.length) {
+            return new TechAdvancement(COCKPIT_TA[cockpitType]);
         }
         return null;
     }
-
+    
+    public TechAdvancement getCockpitTechAdvancement() {
+        return getCockpitTechAdvancement(getCockpitType());
+    }
+    
     @Override
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
@@ -732,9 +736,9 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public double getFuelPointsPerTon() {
-        if (getEntityType() == Entity.ETYPE_CONV_FIGHTER) {
+        if (hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             return 160;
-        } else if (getEntityType() == Entity.ETYPE_DROPSHIP) {
+        } else if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             if (getWeight() < 400) {
                 return 80;
             } else if (getWeight() < 800) {
@@ -752,8 +756,7 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 10;
             }
-        } else if ((getEntityType() == Entity.ETYPE_WARSHIP) || (getEntityType() == Entity.ETYPE_JUMPSHIP)
-                || (getEntityType() == Entity.ETYPE_SPACE_STATION)) {
+        } else if (hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (getWeight() < 110000) {
                 return 10;
             } else if (getWeight() < 250000) {
@@ -761,7 +764,7 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 2.5;
             }
-        } else if (getEntityType() == Entity.ETYPE_SMALL_CRAFT) {
+        } else if (hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             return 80;
         } else { // Entity.ETYPE_AERO
             return 80;

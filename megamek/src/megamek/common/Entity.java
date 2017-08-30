@@ -14282,6 +14282,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public abstract long getEntityType();
+    
+    /**
+     * Convenience method that checks whether a bit is set in the entity type field.
+     * 
+     * @param flag An ETYPE_* value
+     * @return     true if getEntityType() has the flag set
+     */
+    public boolean hasETypeFlag(long flag) {
+        return (getEntityType() & flag) == flag;
+    }
 
     /**
      * Given an Entity type, return the name of the major class it belongs to

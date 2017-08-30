@@ -411,13 +411,14 @@ public interface IAero {
             roll.addModifier(+2, "No life support");
         }
         
-        // Landing Gear Partial Repairs
-        if (getLandingGearPartialRepairs() == 2) {
+        // Landing Gear Partial Repairs, only apply if the landing gear isn't currently damaged
+        if (getLandingGearMod(false) == 0) {
+        	if (getLandingGearPartialRepairs() == 2) {
             roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
-        } else if (getLandingGearPartialRepairs() == 1) {
+        	} else if (getLandingGearPartialRepairs() == 1) {
             roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
-        }
-
+        	}
+    	}
         // Landing Modifiers table, TW pg 86
         int velmod;
         if (isVertical) {

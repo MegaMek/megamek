@@ -212,7 +212,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
-     * temperatures, gravity, and bomb load.
+     * temperatures, gravity, partial repairs and bomb load.
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -238,6 +238,10 @@ public class Aero extends Entity implements IAero, IBomber {
 
         if (hasModularArmor()) {
             j--;
+        }
+        // partially repaired engine
+        if (getPartialRepairs().booleanOption("aero_engine_crit")) {
+        	j--;
         }
 
         // if they are not airborne, then they get MP halved (aerodyne) or no MP

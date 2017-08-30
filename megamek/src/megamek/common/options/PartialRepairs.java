@@ -43,7 +43,7 @@ public class PartialRepairs extends AbstractOptions {
 
     @Override
     public void initialize() {
-        //positive quirks
+        //partial repairs
         IBasicOptionGroup partRep = addGroup("part_repairs", PART_REPAIRS); //$NON-NLS-1$
         addOption(partRep, "mech_reactor_3_crit", false); //$NON-NLS-1$
         addOption(partRep, "mech_reactor_2_crit", false); //$NON-NLS-1$
@@ -60,7 +60,6 @@ public class PartialRepairs extends AbstractOptions {
         addOption(partRep, "aero_cic_fcs_replace", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_gear_replace", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_sensor_replace", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_weapon_replace", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_avionics_crit", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_cic_fcs_crit", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_collar_crit", false); //$NON-NLS-1$ 
@@ -68,7 +67,6 @@ public class PartialRepairs extends AbstractOptions {
         addOption(partRep, "aero_asf_fueltank_crit", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_fueltank_crit", false); //$NON-NLS-1$ 
         addOption(partRep, "aero_gear_crit", false); //$NON-NLS-1$ 
-        addOption(partRep, "aero_weapon_crit", false); //$NON-NLS-1$ 
         }
 
     /*
@@ -119,14 +117,12 @@ public class PartialRepairs extends AbstractOptions {
         if(en instanceof Warship) { 
         	if(quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
-                    || quirk.getName().equals("aero_sensor_replace") 
-                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_sensor_replace")                   
                     || quirk.getName().equals("aero_avionics_crit") 
                     || quirk.getName().equals("aero_cic_fcs_crit") 
                     || quirk.getName().equals("aero_collar_crit") 
                     || quirk.getName().equals("aero_engine_crit") 
-                    || quirk.getName().equals("aero_fueltank_crit") 
-                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("aero_fueltank_crit")       
                     || quirk.getName().equals("sensors_1_crit")  
         			) { 
                 return true; 
@@ -137,13 +133,11 @@ public class PartialRepairs extends AbstractOptions {
         if ((en instanceof Jumpship) || (en instanceof SpaceStation)) { 
         	if(quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
-                    || quirk.getName().equals("aero_sensor_replace") 
-                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_sensor_replace")                     
                     || quirk.getName().equals("aero_avionics_crit") 
                     || quirk.getName().equals("aero_cic_fcs_crit") 
                     || quirk.getName().equals("aero_collar_crit") 
-                    || quirk.getName().equals("aero_fueltank_crit") 
-                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("aero_fueltank_crit")                    
                     || quirk.getName().equals("sensors_1_crit")  
         			) { 
                 return true; 
@@ -154,15 +148,13 @@ public class PartialRepairs extends AbstractOptions {
         	if(quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
                     || quirk.getName().equals("aero_gear_replace") 
-                    || quirk.getName().equals("aero_sensor_replace") 
-                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_sensor_replace")                     
                     || quirk.getName().equals("aero_avionics_crit") 
                     || quirk.getName().equals("aero_cic_fcs_crit") 
                     || quirk.getName().equals("aero_collar_crit") 
                     || quirk.getName().equals("aero_engine_crit") 
                     || quirk.getName().equals("aero_fueltank_crit") 
-                    || quirk.getName().equals("aero_gear_crit") 
-                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("aero_gear_crit")                     
                     || quirk.getName().equals("sensors_1_crit")  
         			) { 
                 return true; 
@@ -173,14 +165,12 @@ public class PartialRepairs extends AbstractOptions {
         	if(quirk.getName().equals("aero_avionics_replace") 
                     || quirk.getName().equals("aero_cic_fcs_replace") 
                     || quirk.getName().equals("aero_gear_replace") 
-                    || quirk.getName().equals("aero_sensor_replace") 
-                    || quirk.getName().equals("aero_weapon_replace") 
+                    || quirk.getName().equals("aero_sensor_replace")                    
                     || quirk.getName().equals("aero_avionics_crit") 
                     || quirk.getName().equals("aero_cic_fcs_crit") 
                     || quirk.getName().equals("aero_engine_crit") 
                     || quirk.getName().equals("aero_asf_fueltank_crit") 
-                    || quirk.getName().equals("aero_gear_crit") 
-                    || quirk.getName().equals("aero_weapon_crit") 
+                    || quirk.getName().equals("aero_gear_crit")                     
                     || quirk.getName().equals("sensors_1_crit")  
         			) { 
                 return true; 

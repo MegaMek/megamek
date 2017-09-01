@@ -140,13 +140,14 @@ public class TestInfantry extends TestEntity {
         	}
     	}
     	
-    	max = maxSquadSize(inf);
+    	max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1));
     	if (inf.getSquadSize() > max) {
             buff.append("Maximum squad size is " + max + "\n\n");
             correct = false;    		
     	}
 
-    	max = maxUnitSize(inf);
+    	max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
+    	        inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS));
     	if (inf.getShootingStrength() > max) {
             buff.append("Maximum platoon size is " + max + "\n\n");
             correct = false;    		
@@ -179,52 +180,59 @@ public class TestInfantry extends TestEntity {
     	return max;
     }
     
-    public static int maxSquadSize(Infantry inf) {
-    	switch(inf.getMovementMode()) {
-    	case HOVER:
-    	case SUBMARINE:
-    		return 5;
-    	case WHEELED:
-    		return 6;
-    	case TRACKED:
-    		return 7;
-    	case INF_UMU:
-    		 return inf.getAllUMUCount() > 1? 6 : 10;
-    	case VTOL:
-    		return inf.hasMicrolite()? 2 : 4;
-    	default:
-    		return 10;
+    /**
+     * Maximum squad size based on motive type
+     * 
+     * @param movementMode  The platoon's movement mode
+     * @param alt           True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @return              The maximum size of a squad.
+     */
+    public static int maxSquadSize(EntityMovementMode movementMode, boolean alt) {
+    	switch(movementMode) {
+        	case HOVER:
+        	case SUBMARINE:
+        		return 5;
+        	case WHEELED:
+        		return 6;
+        	case TRACKED:
+        		return 7;
+        	case INF_UMU:
+        		 return alt? 6 : 10;
+        	case VTOL:
+        		return alt? 2 : 4;
+        	default:
+        		return 10;
     	}
     }
     
-    public static int maxUnitSize(Infantry inf) {
+    public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain) {
     	int max;
-    	switch(inf.getMovementMode()) {
-    	case INF_UMU:
-    		if (inf.getAllUMUCount() > 1) {
-    			max = 12;
-    		} else {
-    			max = 30;
-    		}
-    		break;
-    	case HOVER:
-    	case SUBMARINE:
-    		max = 20;
-    		break;
-    	case WHEELED:
-    		max = 24;
-    		break;
-    	case TRACKED:
-    		max = 28;
-    		break;
-    	case VTOL:
-    		max = maxSquadSize(inf) * 4;
-    		break;
-    	default:
-    		max = 30;
-    		break;
+    	switch(movementMode) {
+        	case INF_UMU:
+        		if (alt) {
+        			max = 12;
+        		} else {
+        			max = 30;
+        		}
+        		break;
+        	case HOVER:
+        	case SUBMARINE:
+        		max = 20;
+        		break;
+        	case WHEELED:
+        		max = 24;
+        		break;
+        	case TRACKED:
+        		max = 28;
+        		break;
+        	case VTOL:
+        		max = maxSquadSize(movementMode, alt) * 4;
+        		break;
+        	default:
+        		max = 30;
+        		break;
     	}
-    	if (inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) {
+    	if (engOrMountain) {
     		max = Math.min(max, 20);
     	}
     	return max;

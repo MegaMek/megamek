@@ -1735,24 +1735,31 @@ chassis "Hasek Mechanized Combat Vehicle" "vehicles/Hasek Mechanized Combat Vehi
 chassis "Hawk Moth Gunship" "vehicles/hawkmoth.png"
 chassis "Hawk Moth II Gunship" "vehicles/Hawk Moth II.png"
 chassis "Heavy Battlemech Recovery Vehicle" "vehicles/Heavy BattleMech Recovery Vehicle.png"
+
 chassis "Heavy Hover APC" "vehicles/HH_APC.png"
-exact "Heavy Hover APC (LRM)" "vehicles/HH_APC (LRM).png"
-exact "Heavy Hover APC (MG)" "vehicles/HH_APC (MG).png"
-exact "Heavy Hover APC (SRM)" "vehicles/HH_APC (SRM).png"
-exact "Heavy Hover APC (Scout Tank)" "vehicles/HH_APC (Scout).png"
+exact "Heavy Hover APC (LRM)" "vehicles/HH_APC(LRM).png"
+exact "Heavy Hover APC (MG)" "vehicles/HH_APC(MG).png"
+exact "Heavy Hover APC (SRM)" "vehicles/HH_APC(SRM).png"
+exact "Heavy Hover APC (Scout Tank)" "vehicles/HH_APC(Scout).png"
+
 chassis "Heavy LRM Carrier" "vehicles/heavy_lrm.png"
 chassis "Heavy NLRM Carrier" "vehicles/heavy_lrm.png"
 chassis "Heavy MML Carrier" "vehicles/heavy_lrm.png"
+
 chassis "Heavy Tracked APC" "vehicles/HT_APC.png"
-exact "Heavy Tracked APC (LRM)" "vehicles/HT_APC (LRM).png"
-exact "Heavy Tracked APC (MG)" "vehicles/HT_APC (MG).png"
-exact "Heavy Tracked APC (SRM)" "vehicles/HT_APC (SRM).png"
+exact "Heavy Tracked APC (LRM)" "vehicles/HT_APC(LRM).png"
+exact "Heavy Tracked APC (MG)" "vehicles/HT_APC(MG).png"
+exact "Heavy Tracked APC (SRM)" "vehicles/HT_APC(SRM).png"
+
 chassis "Heavy Transport B1" "vehicles/Heavy Transport B1.png"
+
 chassis "Heavy Wheeled APC" "vehicles/HW_APC.png"
-exact "Heavy Wheeled APC (LRM)" "vehicles/HW_APC (LRM).png"
-exact "Heavy Wheeled APC (MG)" "vehicles/HW_APC (MG).png"
-exact "Heavy Wheeled APC (SRM)" "vehicles/HW_APC (SRM).png"
-exact "Heavy Wheeled APC (WoB)" "vehicles/HW_APC (WoB).png"
+exact "Heavy Wheeled APC (LRM)" "vehicles/HW_APC(LRM).png"
+exact "Heavy Wheeled APC (MG)" "vehicles/HW_APC(MG).png"
+exact "Heavy Wheeled APC (SRM)" "vehicles/HW_APC(SRM).png"
+exact "Heavy Wheeled APC (WoB)" "vehicles/HW_APC(WoB).png"
+
+
 chassis "Hector Road Train Tractor" "vehicles/Hector Road Train Tractor.png"
 chassis "Hector Road Train Trailer Module" "vehicles/Hector Road Train Trailer Module.png"
 chassis "Heimdall Ground Monitor Tank" "vehicles/Heimdall Ground Monitor Tank Prime.png"

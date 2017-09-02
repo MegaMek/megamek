@@ -23,6 +23,11 @@ v0.43.4-git
 + Data - LRM Infantry date fixes. Also Clan LRM infantry become unofficial since LRM Infantry is a IS weapon.
 + Issue #598: Terrain Impassable to ASFs? Airborne Units?
 + Issue #606: Aerodyne DSs Dropping Units on Ground Map Have Issues.
++ Data: New Sprites and GE/BA Sprite Clean up
++ Issue #603: New Data: Wars of the Republic Era RATs
++ Updates to Skins
++ Issue #604 - Packrat LRPV PKR-T5 unable to carry 1 ton of troops
++ Issue #596 - Bandit (C) Invalid units
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

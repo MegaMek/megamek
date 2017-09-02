@@ -77,18 +77,18 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_IMPACT_RESISTANT = 25;
     public static final int T_ARMOR_BALLISTIC_REINFORCED = 26;
     public static final int T_ARMOR_FERRO_ALUM_PROTO = 27;
-    public static final int T_ARMOR_PRIMITIVE_AERO = 28;
-    public final static int T_ARMOR_BA_STANDARD = 29;
-    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 30;
-    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 31;
-    public final static int T_ARMOR_BA_STEALTH_BASIC = 32;
-    public final static int T_ARMOR_BA_STEALTH = 33;
-    public final static int T_ARMOR_BA_STEALTH_IMP = 34;
-    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 35;
-    public final static int T_ARMOR_BA_FIRE_RESIST = 36;
-    public final static int T_ARMOR_BA_MIMETIC = 37;
-    public final static int T_ARMOR_BA_REFLECTIVE = 38;
-    public final static int T_ARMOR_BA_REACTIVE = 39;
+    public final static int T_ARMOR_BA_STANDARD = 28;
+    public final static int T_ARMOR_BA_STANDARD_PROTOTYPE = 29;
+    public final static int T_ARMOR_BA_STANDARD_ADVANCED = 30;
+    public final static int T_ARMOR_BA_STEALTH_BASIC = 31;
+    public final static int T_ARMOR_BA_STEALTH = 32;
+    public final static int T_ARMOR_BA_STEALTH_IMP = 33;
+    public final static int T_ARMOR_BA_STEALTH_PROTOTYPE = 34;
+    public final static int T_ARMOR_BA_FIRE_RESIST = 35;
+    public final static int T_ARMOR_BA_MIMETIC = 36;
+    public final static int T_ARMOR_BA_REFLECTIVE = 37;
+    public final static int T_ARMOR_BA_REACTIVE = 38;
+    public static final int T_ARMOR_PRIMITIVE_AERO = 39;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -111,10 +111,11 @@ public class EquipmentType implements ITechnology {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "Primitive Aero", "BA Standard (Basic)",
+            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
             "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)"};
+            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
+            "Primitive Aero"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
@@ -129,14 +130,14 @@ public class EquipmentType implements ITechnology {
     public static final double[] armorCosts = {
             10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
             3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 5000, 10000,
-            10000, 12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000 };
+            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
+            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000 };
 
     public static final double[] armorPointMultipliers = {
             1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
             1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
-            1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 0.67,
-            1.6, 0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96 };
+            1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
+            0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67 };
 
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;

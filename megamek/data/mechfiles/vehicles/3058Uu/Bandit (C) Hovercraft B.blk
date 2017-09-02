@@ -53,7 +53,7 @@ BattleArmorHandles - troopers:-1
 </armor_type>
 
 <armor_tech>
--1
+2
 </armor_tech>
 
 <omni>
@@ -62,8 +62,8 @@ BattleArmorHandles - troopers:-1
 
 <armor>
 40
-39
-39
+40
+40
 20
 32
 </armor>
@@ -92,7 +92,7 @@ CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO 3058 - Early Succession War
 </source>
 
 <tonnage>

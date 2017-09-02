@@ -174,8 +174,10 @@
 		<name>MainMenuBorder</name>
         <no_border>true</no_border>
 		<!-- Specification of border images -->
-		<background_image>../misc/megamek-splash-bw.jpg</background_image>
+		<background_image>../misc/megamek_splash_spooky_fhd.png</background_image>
 		<background_image>Bloodwolf/Parts/phase/background.png</background_image>
+		<background_image>../misc/megamek_splash_spooky_uhd.png</background_image>
+		<background_image>../misc/megamek_splash_spooky_hd.png</background_image>
 		<font_color>#ffffff</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
 	</UI_Element>

@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -29,6 +30,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.MediaTracker;
+import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -309,6 +311,28 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                             + file.getAbsolutePath());
                 } else {
                     backgroundIcon = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+                }
+            }
+            // Check for multi-resolutioned splash image
+            if (skinSpec.backgrounds.size() > 2) {
+                // Determine largest monitor size
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                GraphicsDevice[] gs = ge.getScreenDevices();
+                double maxWidth = 0;
+                for (int i = 0; i < gs.length; i++)
+                {
+                    Rectangle b = gs[i].getDefaultConfiguration().getBounds();
+                    if (b.getWidth() > maxWidth)
+                    {   // Update the max size found on this monitor
+                        maxWidth = b.getWidth();
+                    }
+                }
+                // If the largest size is over FHD, use the third image
+                if (maxWidth > 1920) {
+                    splashFilename = skinSpec.backgrounds.get(2);
+                // If we have a low-rez version, and the resolution is below HD+ (1600x900)...
+                } else if ((skinSpec.backgrounds.size() > 3) && (maxWidth < 1600)) {
+                    splashFilename = skinSpec.backgrounds.get(3);
                 }
             }
         } else {

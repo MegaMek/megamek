@@ -315,6 +315,11 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             splashFilename = FILENAME_MEGAMEK_SPLASH;
             backgroundIcon = null;
         }
+        File splashFile = new File(Configuration.widgetsDir(), splashFilename);
+        // Ensure we have a splash image, even if we have to fall back to default.
+        if (!splashFile.exists()) {
+            splashFilename = FILENAME_MEGAMEK_SPLASH;
+        }
         // initialize splash image
         Image imgSplash = frame.getToolkit()
                 .getImage(new MegaMekFile(Configuration.widgetsDir(), splashFilename).toString());

@@ -39,13 +39,13 @@
 
 super * "swamp:1" "grass" "bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_1.png(0,72-84,-72);bloodwolf/hq_boring/swamp_1.png(84,0--84,72);bloodwolf/hq_boring/swamp_1.png(84,72--84,-72)"
 super * "swamp:1" "" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_0.png(0,72-84,-72);bloodwolf/hq_boring/swamp_0.png(84,0--84,72);bloodwolf/hq_boring/swamp_0.png(84,72--84,-72)"
-super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
-super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
+super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_0.gif(0,72-84,-72);swamp/quicksand_0.gif(84,0--84,72);swamp/quicksand_0.gif(84,72--84,-72);swamp/quicksand_1.gif;swamp/quicksand_1.gif(0,72-84,-72);swamp/quicksand_1.gif(84,0--84,72);swamp/quicksand_1.gif(84,72--84,-72);swamp/quicksand_2.gif;swamp/quicksand_2.gif(0,72-84,-72);swamp/quicksand_2.gif(84,0--84,72);swamp/quicksand_2.gif(84,72--84,-72);swamp/quicksand_3.gif;swamp/quicksand_3.gif(0,72-84,-72);swamp/quicksand_3.gif(84,0--84,72);swamp/quicksand_3.gif(84,72--84,-72)"
+super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_0.gif(0,72-84,-72);swamp/quicksand_0.gif(84,0--84,72);swamp/quicksand_0.gif(84,72--84,-72);swamp/quicksand_1.gif;swamp/quicksand_1.gif(0,72-84,-72);swamp/quicksand_1.gif(84,0--84,72);swamp/quicksand_1.gif(84,72--84,-72);swamp/quicksand_2.gif;swamp/quicksand_2.gif(0,72-84,-72);swamp/quicksand_2.gif(84,0--84,72);swamp/quicksand_2.gif(84,72--84,-72);swamp/quicksand_3.gif;swamp/quicksand_3.gif(0,72-84,-72);swamp/quicksand_3.gif(84,0--84,72);swamp/quicksand_3.gif(84,72--84,-72)"
 
 super * "fortified:1" "" "boring/sandbags.gif"
 
-super * "rough:1" "lunar" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
-super * "rough:2" "lunar" "transparent/ultra_rough.png"
+super * "rough:1" "lunar" "transparent/rough_0.png;transparent/rough_0.png(0,72-84,-72);transparent/rough_0.png(84,0--84,72);transparent/rough_0.png(84,72--84,-72);transparent/rough_1.png;transparent/rough_1.png(0,72-84,-72);transparent/rough_1.png(84,0--84,72);transparent/rough_1.png(84,72--84,-72);transparent/rough_2.png;transparent/rough_2.png(0,72-84,-72);transparent/rough_2.png(84,0--84,72);transparent/rough_2.png(84,72--84,-72)"
+super * "rough:2" "lunar" "transparent/ultra_rough.png;transparent/ultra_rough.png(0,72-84,-72);transparent/ultra_rough.png(84,0--84,72);transparent/ultra_rough.png(84,72--84,-72)"
 
 super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png;hq_boring/rough_3.png"
 super * "rough:2" "" "bloodwolf/hq_boring/ultra_rough.png"

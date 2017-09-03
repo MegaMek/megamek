@@ -188,6 +188,7 @@ public class MegamekButton extends JButton {
 
         if (skinSpec.fontName != null) {
             specificFont = new Font(skinSpec.fontName, Font.PLAIN, skinSpec.fontSize);
+            setFont(specificFont);
         }
     }
 

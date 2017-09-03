@@ -250,6 +250,9 @@ public final class ImageUtil {
             }
             String baseName = fileName.substring(0, tileStart);
             File baseFile = new File(baseName);
+            if (!baseFile.exists()) {
+                return null;
+            }
             System.out.println("Loading atlas: " + baseFile);
             ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if(null == base) {

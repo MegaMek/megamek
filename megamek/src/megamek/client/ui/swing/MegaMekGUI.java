@@ -21,6 +21,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -360,6 +361,36 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         ImageIcon icon = new ImageIcon(imgSplash);
         JLabel panTitle = new JLabel(icon);
 
+        FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
+        int width = metrics.stringWidth(hostB.getText());
+        int height = metrics.getHeight();
+        Dimension textDim =  new Dimension(width+50,height+10);
+
+        Dimension splashDim = new Dimension((int)(imgSplash.getWidth(frame) * 0.3), 25);
+        Dimension minButtonDim;
+        if (textDim.getWidth() > splashDim.getWidth()) {
+            minButtonDim = textDim;
+        } else {
+            minButtonDim = splashDim;
+        }
+        hostB.setPreferredSize(minButtonDim);
+        connectB.setPreferredSize(minButtonDim);
+        botB.setPreferredSize(minButtonDim);
+        editB.setPreferredSize(minButtonDim);
+        skinEditB.setPreferredSize(minButtonDim);
+        scenB.setPreferredSize(minButtonDim);
+        loadB.setPreferredSize(minButtonDim);
+        quitB.setPreferredSize(minButtonDim);
+        hostB.setPreferredSize(minButtonDim);
+
+        connectB.setMinimumSize(minButtonDim);
+        botB.setMinimumSize(minButtonDim);
+        editB.setMinimumSize(minButtonDim);
+        skinEditB.setMinimumSize(minButtonDim);
+        scenB.setMinimumSize(minButtonDim);
+        loadB.setMinimumSize(minButtonDim);
+        quitB.setMinimumSize(minButtonDim);
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -369,13 +400,14 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         c.insets = new Insets(10, 5, 10, 10);
         c.ipadx = 10; c.ipady = 5;
         c.gridx = 0;  c.gridy = 0;
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 0.0; c.weighty = 1.0;
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0.0; c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 9;
         addBag(panTitle, gridbag, c);
         // Right Column
-        c.insets = new Insets(4, 4, 1, 1);
+        c.insets = new Insets(4, 4, 1, 12);
+        c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0; c.weighty = 1.0;
         c.ipadx = 0; c.ipady = 0;
         c.gridheight = 1;
@@ -396,7 +428,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         c.gridy++;
         addBag(skinEditB, gridbag, c);
         c.gridy++;
-        c.insets = new Insets(4, 4, 5, 1);
+        c.insets = new Insets(4, 4, 15, 12);
         addBag(quitB, gridbag, c);
         frame.validate();
         frame.pack();

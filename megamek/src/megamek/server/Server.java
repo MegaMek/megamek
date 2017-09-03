@@ -974,16 +974,39 @@ public class Server implements Runnable {
         if (!version.equals(MegaMek.VERSION)) {
             buf.append("Client/Server version mismatch. Server reports: "
                        + MegaMek.VERSION + ", Client reports: " + version);
-            logError(METHOD_NAME, "Client/Server Version Mismatch -- Client: " + version + " Server: " + MegaMek.VERSION);
+            logError(METHOD_NAME,
+                    "Client/Server Version Mismatch -- Client: " + version + " Server: " + MegaMek.VERSION);
             needs = true;
         }
-        if (!clientChecksum.equals(serverChecksum)) {
+        // print a message indicating client doesn't have jar file
+        if (clientChecksum == null) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
+                buf.append(System.lineSeparator());    
             }
-            buf.append("Client/Server checksum mismatch. Server reports: "
-                    + serverChecksum + ", Client reports: " + clientChecksum);
-            logError(METHOD_NAME, "Client/Server Checksum Mismatch -- Client: " + clientChecksum + " Server: " + serverChecksum);
+            buf.append("Client Checksum is null. Client may not have a jar file");
+            System.out.println("ERROR: Client does not have a jar file");
+            needs = true; 
+        // print message indicating server doesn't have jar file
+        } else if (serverChecksum == null) {
+            if (!version.equals(MegaMek.VERSION)) {
+                buf.append(System.lineSeparator());
+                buf.append(System.lineSeparator());    
+            }
+            buf.append("Server Checksum is null. Server may not have a jar file");
+            System.out.println("ERROR: Server does not have a jar file");
+            needs = true; 
+        // print message indicating a client/server checksum mismatch
+        } else if (!clientChecksum.equals(serverChecksum)) {
+            if (!version.equals(MegaMek.VERSION)) {
+                buf.append(System.lineSeparator());
+                buf.append(System.lineSeparator());    
+            }
+            buf.append("Client/Server checksum mismatch. Server reports: " + serverChecksum + ", Client reports: "
+                    + clientChecksum);
+            logError(METHOD_NAME,
+                    "Client/Server Checksum Mismatch -- Client: " + clientChecksum + " Server: " + serverChecksum);
+
             needs = true;
         }
 

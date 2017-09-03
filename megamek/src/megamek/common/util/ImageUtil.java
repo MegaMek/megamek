@@ -209,7 +209,7 @@ public final class ImageUtil {
          * @param c
          * @return
          */
-        private Coords parseCoords(String c) {
+        protected Coords parseCoords(String c) {
             if(null == c || c.isEmpty()) {
                 return null;
             }
@@ -282,12 +282,55 @@ public final class ImageUtil {
         }
 
         public Image loadImage(String fileName) {
-            File fn = new File(fileName);
+            // The tileset could be using the tiling syntax to flip the image
+            // We may still need to look up the base file name in an atlas and then modify the image
+            int tileStart = fileName.indexOf('(');
+            int tileEnd = fileName.indexOf(')');
+
+            String baseName;
+            Coords start, size;
+            start = size = null;
+            boolean tileAdjusting = (tileStart != -1) && (tileEnd != -1) && (tileEnd > tileStart);
+            if (tileAdjusting) {
+                String coords = fileName.substring(tileStart + 1, tileEnd);
+                int coordsSplitter = coords.indexOf('-');
+                if(coordsSplitter == -1) {
+                    return null;
+                }
+                start = parseCoords(coords.substring(0, coordsSplitter));
+                size = parseCoords(coords.substring(coordsSplitter + 1));
+                if((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
+                    return null;
+                }
+                // If we don't have any negative values, this entry isn't doing any image manipulation
+                // therefore, it must be a TileMapImageLoader entry, and we should ignore it
+                if (size.getX() > 0 && size.getY() > 0) {
+                    return null;
+                }
+                baseName = fileName.substring(0, tileStart);
+            } else {
+                baseName = fileName;
+            }
+
+            // Check to see if the base file is in an atlas
+            File fn = new File(baseName);
             Path p = fn.toPath();
             if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(p)) {
                 return null;
             }
-            return super.loadImage(imgFileToAtlasMap.get(p));
+
+            // Check to see if we need to flip the image
+            if (tileAdjusting) {
+               Image img = super.loadImage(imgFileToAtlasMap.get(p));
+               BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
+               Graphics2D g2d = result.createGraphics();
+               g2d.drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
+                   start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+               g2d.dispose();
+               return img;
+            } else { // Otherwise just return the image loaded from the atlas
+                return super.loadImage(imgFileToAtlasMap.get(p));
+            }
         }
     }
 

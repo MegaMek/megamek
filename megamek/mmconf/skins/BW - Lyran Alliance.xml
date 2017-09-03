@@ -173,9 +173,10 @@
 	<UI_Element>
 		<name>MainMenuBorder</name>
         <no_border>true</no_border>
-		<!-- Specification of border images -->
-		<background_image>../misc/megamek-splash.jpg</background_image>
+		<background_image>../misc/megamek_splash_spooky_fhd.png</background_image>
 		<background_image>Bloodwolf/Parts/title/background.png</background_image>
+		<background_image>../misc/megamek_splash_spooky_uhd.png</background_image>
+		<background_image>../misc/megamek_splash_spooky_hd.png</background_image>
 		<font_color>#ffffff</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
 	</UI_Element>
@@ -183,7 +184,6 @@
 	<UI_Element>
 		<name>MainMenuButton</name>
 		<no_border>true</no_border>
-		<!-- Specification of border images -->
 		<background_image>Bloodwolf/parts/title/buttonNormal.png</background_image>
 		<background_image>Bloodwolf/parts/title/buttonPushed.png</background_image>
 		<tile_background>false</tile_background>
@@ -199,27 +199,6 @@
 	<UI_Element>
 		<name>defaultButton</name>
 		<no_border>true</no_border>
-		<!-- Specification of border images -->
-		<border>
-			<!-- Corner images -->
-			<corner_top_left></corner_top_left>
-			<corner_top_right></corner_top_right>
-			<corner_bottom_left></corner_bottom_left>
-			<corner_bottom_right></corner_bottom_right>
-			<!-- Border lines: these images will be tiled -->
-			<edge>
-				<edgeName>top</edgeName>
-			</edge>
-			<edge>
-				<edgeName>bottom</edgeName>
-			</edge>
-			<edge>
-				<edgeName>left</edgeName>
-			</edge>
-			<edge>
-				<edgeName>right</edgeName>
-			</edge>
-		</border>
 		<background_image>Bloodwolf/Lyran Alliance/button/buttonNormal.png</background_image>
 		<background_image>Bloodwolf/Lyran Alliance/button/buttonPushed.png</background_image>
 		<tile_background>false</tile_background>

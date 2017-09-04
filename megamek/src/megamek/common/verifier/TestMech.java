@@ -89,6 +89,17 @@ public class TestMech extends TestEntity {
         }
         return armor;
     }
+    
+    public static int maxJumpMP(Mech mech) {
+        if (mech.isSuperHeavy() || !mech.hasEngine()
+                || (!mech.getEngine().isFusion() && (mech.getEngine().getEngineType() != Engine.FISSION))) {
+            return 0;
+        } else if (mech.getJumpType() == Mech.JUMP_IMPROVED) {
+            return (int)Math.ceil(mech.getOriginalWalkMP() * 1.5);
+        } else {
+            return mech.getOriginalWalkMP();
+        }
+    }
 
     @Override
     public Entity getEntity() {

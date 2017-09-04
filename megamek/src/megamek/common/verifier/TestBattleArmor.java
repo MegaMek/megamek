@@ -300,7 +300,43 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
     }
-
+    
+    public static int maxWalkMP(BattleArmor ba) {
+        int max = 3;
+        if (ba.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
+            max--;
+        }
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            max += 2;
+        }
+        return max;
+    }
+    
+    public static int maxJumpMP(BattleArmor ba) {
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            return 0;
+        } else {
+            return maxWalkMP(ba);
+        }
+    }
+    
+    public static int maxVtolMP(BattleArmor ba) {
+        if ((ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
+                || (ba.getWeightClass() > EntityWeightClass.WEIGHT_MEDIUM)) {
+            return 0;
+        } else {
+            return 7 - ba.getWeightClass() + EntityWeightClass.WEIGHT_ULTRA_LIGHT;
+        }
+    }
+    
+    public static int maxUmuMP(BattleArmor ba) {
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            return 0;
+        } else {
+            return Math.min(5, 5 - ba.getWeightClass() + EntityWeightClass.WEIGHT_LIGHT);
+        }
+    }
+    
     private BattleArmor ba;
 
     public TestBattleArmor(BattleArmor armor, TestEntityOption option,

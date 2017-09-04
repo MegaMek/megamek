@@ -12617,11 +12617,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param bv The initial BV of a unit.
      */
     public void setInitialBV(int bv) {
-        if (initialBV < 0) {
             initialBV = bv;
-        }
     }
-
 
     /**
      * produce an int array of the number of bombs of each type based on the

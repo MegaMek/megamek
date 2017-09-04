@@ -1529,6 +1529,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAHeatSensor());
         EquipmentType.addType(MiscType.createISBAExtendedLifeSupport());
         EquipmentType.addType(MiscType.createBAPartialWing());
+        EquipmentType.addType(MiscType.createBAJumpJet());
+        EquipmentType.addType(MiscType.createBAVTOLEquipment());
+        EquipmentType.addType(MiscType.createBAUMU());
         EquipmentType.addType(MiscType.createISBAJumpBooster());
         EquipmentType.addType(MiscType.createISBAMechanicalJumpBooster());
         EquipmentType.addType(MiscType.createISBAFuelTank());
@@ -10629,11 +10632,62 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createBAJumpJet() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Jump Jet [BA]";
+        misc.setInternalName("BAJumpJet");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_BA_EQUIPMENT);
+        misc.rulesRefs = "257,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+                .setAdvancement(DATE_ES, DATE_ES, DATE_ES);
+        return misc;
+    }
+
+    public static MiscType createBAVTOLEquipment() {
+        MiscType misc = new MiscType();
+
+        misc.name = "VTOL [BA]";
+        misc.setInternalName("BAVTOL");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.rulesRefs = "271,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(3052, 3060, 3066).setClanApproximate(true, false, false)
+                .setPrototypeFactions(F_CCC).setProductionFactions(F_CCC);
+        return misc;
+    }
+
+    public static MiscType createBAUMU() {
+        MiscType misc = new MiscType();
+
+        misc.name = "UMU [BA]";
+        misc.setInternalName("BAUMU");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_UMU).or(F_BA_EQUIPMENT);
+        misc.rulesRefs = "270,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+                .setClanAdvancement(2840, 3059, 3065).setClanApproximate(true, false, false)
+                .setPrototypeFactions(F_CGS).setProductionFactions(F_CGS);
+        return misc;
+    }
+
     public static MiscType createISBAJumpBooster() {
         MiscType misc = new MiscType();
 
         misc.name = "Jump Booster [BA]";
-        misc.setInternalName("ISBAJumpBooster");
+        misc.setInternalName("BAJumpBooster");
+        misc.addLookupName("ISBAJumpBooster");
         misc.addLookupName("CLBAJumpBooster");
         misc.tonnage = 0.125;
         misc.criticals = 2;
@@ -10680,7 +10734,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createISBAMechanicalJumpBooster() {
         MiscType misc = new MiscType();
         misc.name = "Mechanical Jump Booster";
-        misc.setInternalName("ISMechanicalJumpBooster");
+        misc.setInternalName("BAMechanicalJumpBooster");
+        misc.addLookupName("ISMechanicalJumpBooster");
         misc.addLookupName("CLMechanicalJumpBooster");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;

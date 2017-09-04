@@ -297,20 +297,23 @@ public final class ImageUtil {
             if (tileAdjusting) {
                 String coords = fileName.substring(tileStart + 1, tileEnd);
                 int coordsSplitter = coords.indexOf('-');
+                // It's possible we have a unit with a paren in the name, we still want to try to load that
                 if(coordsSplitter == -1) {
-                    return null;
+                    baseName = fileName;
+                    tileAdjusting = false;
+                } else {
+                    start = parseCoords(coords.substring(0, coordsSplitter));
+                    size = parseCoords(coords.substring(coordsSplitter + 1));
+                    if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
+                        return null;
+                    }
+                    // If we don't have any negative values, this entry isn't doing any image manipulation
+                    // therefore, it must be a TileMapImageLoader entry, and we should ignore it
+                    if (size.getX() > 0 && size.getY() > 0) {
+                        return null;
+                    }
+                    baseName = fileName.substring(0, tileStart);
                 }
-                start = parseCoords(coords.substring(0, coordsSplitter));
-                size = parseCoords(coords.substring(coordsSplitter + 1));
-                if((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
-                    return null;
-                }
-                // If we don't have any negative values, this entry isn't doing any image manipulation
-                // therefore, it must be a TileMapImageLoader entry, and we should ignore it
-                if (size.getX() > 0 && size.getY() > 0) {
-                    return null;
-                }
-                baseName = fileName.substring(0, tileStart);
             } else {
                 baseName = fileName;
             }

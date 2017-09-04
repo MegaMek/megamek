@@ -33,6 +33,7 @@ v0.43.4-git
 + Issue #609: Ice not working with unit displacement correctly
 + Added Random Skills dialog button to Random Army Dialog (helps if using to reinforce mid-game)
 + Issue #624: Mechs with destroyed gyros can't eject
++ Issue #579: Reflective armor takes strange damage from physicals
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

@@ -2811,6 +2811,10 @@ public class Server implements Runnable {
             case PHASE_EXCHANGE:
                 resetPlayersDone();
                 calculatePlayerBVs();
+                // Update initial BVs, as things may have been modified in lounge
+                for (Entity e : game.getEntitiesVector()) {
+                    e.setInitialBV(e.calculateBattleValue(false, false));
+                }
                 // Build teams vector
                 game.setupTeams();
                 applyBoardSettings();

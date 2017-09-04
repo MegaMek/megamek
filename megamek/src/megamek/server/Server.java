@@ -2811,6 +2811,10 @@ public class Server implements Runnable {
             case PHASE_EXCHANGE:
                 resetPlayersDone();
                 calculatePlayerBVs();
+                // Update initial BVs, as things may have been modified in lounge
+                for (Entity e : game.getEntitiesVector()) {
+                    e.setInitialBV(e.calculateBattleValue(false, false));
+                }
                 // Build teams vector
                 game.setupTeams();
                 applyBoardSettings();
@@ -23105,27 +23109,27 @@ public class Server implements Runnable {
                            && !isBattleArmor) { // BA reflec does not receive extra physical damage
                     tmpDamageHold = damage;
                     int currArmor = te.getArmor(hit);
-                    int dmgToDouble = Math.max(0, currArmor / 2);
+                    int dmgToDouble = Math.min(damage, currArmor / 2);
                     damage += dmgToDouble;
                     r = new Report(6066);
                     r.subject = te_n;
                     r.indent(3);
                     r.add(currArmor);
+                    r.add(tmpDamageHold);
                     r.add(dmgToDouble);
-                    r.add(dmgToDouble * 2);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
                     tmpDamageHold = damage; // BA reflec does not receive extra AE damage
                     int currArmor = te.getArmor(hit);
-                    int dmgToDouble = Math.max(0, currArmor / 2);
+                    int dmgToDouble = Math.min(damage, currArmor / 2);
                     damage += dmgToDouble;
                     r = new Report(6087);
                     r.subject = te_n;
                     r.indent(3);
                     r.add(currArmor);
+                    r.add(tmpDamageHold);
                     r.add(dmgToDouble);
-                    r.add(dmgToDouble * 2);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
@@ -30305,6 +30309,10 @@ public class Server implements Runnable {
             entity.setExternalSpotlight(entity.hasExternaSpotlight()
                                         || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityIds.add(entity.getId());
+
+            if (game.getPhase() != Phase.PHASE_LOUNGE) {
+                entity.getOwner().increaseInitialBV(entity.calculateBattleValue(false, false));
+            }
         }
 
         send(createAddEntityPacket(entityIds));

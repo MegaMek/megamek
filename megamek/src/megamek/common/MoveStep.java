@@ -2464,14 +2464,14 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_VTOL_SPRINT;
         }
         
-        if (entity.isGyroDestroyed()
-                && !(entity instanceof LandAirMech && entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
-            //A prone 'Mech with a destroyed gyro can only change a single hex side.
+        if (entity.isGyroDestroyed() && !((entity instanceof LandAirMech)
+                && (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
+            //A prone 'Mech with a destroyed gyro can only change a single hex side, or eject
             if (entity.isProne()) {
-                if ((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
-                        || getMpUsed() > 1) {
+                if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
+                        || getMpUsed() > 1) && stepType != MoveStepType.EJECT) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
-                }                
+                }
             } else {
                 //Normally a 'Mech falls immediately when the gyro is destroyed and can't stand again.
                 //QuadVees using vehicle mode and 'Mechs using tracks do not fall and can continue to

@@ -381,6 +381,10 @@ public class BattleArmor extends Infantry {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
     };
     
+    public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
+        return new TechAdvancement(TA_BATTLEARMOR[weightClass]);
+    }
+    
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         int index = getWeightClass();

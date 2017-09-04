@@ -30309,6 +30309,10 @@ public class Server implements Runnable {
             entity.setExternalSpotlight(entity.hasExternaSpotlight()
                                         || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityIds.add(entity.getId());
+
+            if (game.getPhase() != Phase.PHASE_LOUNGE) {
+                entity.getOwner().increaseInitialBV(entity.calculateBattleValue(false, false));
+            }
         }
 
         send(createAddEntityPacket(entityIds));

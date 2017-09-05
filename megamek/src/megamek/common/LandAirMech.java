@@ -259,7 +259,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             mp = getAirMechFlankMP(gravity, ignoremodulararmor);
         } else {
-            mp = super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            // conversion reduction has already been done at this point
+            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         if (convertingNow) {
             mp /= 2;
@@ -275,7 +276,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             mp = getAirMechFlankMP(gravity, ignoremodulararmor);
         } else {
-            mp = super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
         if (convertingNow) {
             mp /= 2;

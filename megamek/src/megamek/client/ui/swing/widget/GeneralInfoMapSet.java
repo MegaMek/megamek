@@ -559,6 +559,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
+            mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
         } else if (en instanceof LandAirMech

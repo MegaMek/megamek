@@ -553,6 +553,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public boolean canAssaultDrop() {
+        return getConversionMode() != CONV_MODE_FIGHTER;
+    }
+
+    @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         // Fighter mode has the same terrain restrictions as ASFs.
         if (getConversionMode() == CONV_MODE_FIGHTER) {

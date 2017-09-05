@@ -1256,7 +1256,7 @@ public class UnitEditorDialog extends JDialog {
             		}
             		if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
             			bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
-            		} else if ((null != doorCrit) && doorCrit.getHits() == 0) {
+            		} else if (doorCrit.getHits() == 0) {
             			bay.setCurrentDoors(bay.getDoors());
             		}
             	b++;

@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a volume of space set aside for carrying a mobile structure or spacecraft's crew
  */
 
 public final class CrewQuartersCargoBay extends Bay {
@@ -50,6 +50,7 @@ public final class CrewQuartersCargoBay extends Bay {
         weight = space;
         currentSpace = (int)space/7;
         this.doors = doors;
+        currentdoors = doors;
     }
 
     /**
@@ -72,7 +73,7 @@ public final class CrewQuartersCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("Crew Quarters ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

@@ -37,7 +37,6 @@ v0.43.4-git
 + Issue #625: Initial BV in Entity tooltip can be wrong
 + Issue #626: Reinforced units don't count against a players total BV
 + Issue #623, #627: Missing mech icon crashes UnitSelectorDialog
-+ Issue #628: Gained BV On Round Two (LAMS, Tripods, & QuadVees)
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

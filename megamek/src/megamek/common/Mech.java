@@ -3555,7 +3555,7 @@ public abstract class Mech extends Entity {
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity, heat and modular
         // armor, but taking into account hit actuators
-        int bvWalk = getOriginalWalkMP();
+        int bvWalk = getWalkMP(false, true, true);
         int runMP;
         if (hasTSM()) {
             bvWalk++;

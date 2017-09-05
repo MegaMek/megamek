@@ -29683,7 +29683,7 @@ public class Server implements Runnable {
         for (Enumeration<IPlayer> p = game.getPlayers(); p.hasMoreElements();) {
             IPlayer player = p.nextElement();
 
-            if (player.canSeeAll() && !vCanSee.contains(p)) {
+            if (player.canSeeAll() && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
         }

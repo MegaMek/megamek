@@ -245,6 +245,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return mp;
     }
+    
+    // Use Mech mode to determine walk MP for BV calculations
+    public int getBVWalkMP() {
+        return super.getWalkMP(false, true, true);
+    }
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {

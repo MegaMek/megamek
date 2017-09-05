@@ -17,8 +17,8 @@ package megamek.common;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying and launching ASFs
+ * aboard large spacecraft and mobile structures
  */
 
 public final class ASFBay extends Bay {
@@ -52,6 +52,7 @@ public final class ASFBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.currentdoors = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
     }
@@ -70,8 +71,9 @@ public final class ASFBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only ASFs
-        if (unit.isFighter() && !(unit instanceof FighterSquadron)) {
+        // Only ASFs or Fighter-Mode LAMs
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if ((unit.isFighter() && !(unit instanceof FighterSquadron)) || (unit instanceof LandAirMech && unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
             result = true;
         }
 
@@ -84,6 +86,11 @@ public final class ASFBay extends Bay {
         // is there at least one recovery slot available?
         if (getRecoverySlots() < 1) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
         }
 
         // Return our result.
@@ -134,12 +141,12 @@ public final class ASFBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Aerospace Fighter (" + getDoors() + " doors) - "
+            return "Aerospace Fighter (" + getCurrentDoors() + " doors) - "
                     + String.format("%1$,.0f", currentSpace) + " units ("
                     + getRecoverySlots() + " recovery open)";
         }
         return String.format("Aerospace Fighter Bay (%1$d doors) - %2$,.0f",
-                getDoors(), currentSpace)
+                getCurrentDoors(), currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }
 
@@ -167,7 +174,7 @@ public final class ASFBay extends Bay {
 
         Vector<Integer> slots = new Vector<Integer>();
 
-        for (int i = 0; i < doors; i++) {
+        for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
         }
@@ -200,11 +207,13 @@ public final class ASFBay extends Bay {
         }
     }
 
-    // destroy a door
+    // destroy a door for next turn
     @Override
     public void destroyDoorNext() {
 
-        setDoorsNext(getDoorsNext() - 1);
+    	if (getDoorsNext() > 0) {
+    		setDoorsNext(getDoorsNext() - 1);
+    	}
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
@@ -220,7 +229,9 @@ public final class ASFBay extends Bay {
     @Override
     public void destroyDoor() {
 
-        doors -= 1;
+    	if (getCurrentDoors() > 0) {
+    		setCurrentDoors(getCurrentDoors() - 1);
+    	}
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
@@ -231,16 +242,16 @@ public final class ASFBay extends Bay {
             recoverySlots.remove(0);
         }
     }
-
+    /*
     // get doors should be different - first I must subtract the number of
-    // active recoveries
+    // active recoveries  *** don't know that we need this anymore.
     @Override
     public int getDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);
 
-    }
+    } */
 
     @Override
     public double getWeight() {

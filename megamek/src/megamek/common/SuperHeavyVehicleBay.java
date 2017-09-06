@@ -15,22 +15,21 @@
 package megamek.common;
 
 /**
- * Represents a (cramped) volume of space set aside for carrying a mobile structure or spacecraft's crew
+ * Represents a volume of space set aside for carrying vehicles <= 200 tons
+ * aboard large spacecraft and mobile structures
  */
 
-public final class SteerageQuartersCargoBay extends Bay {
+public final class SuperHeavyVehicleBay extends Bay {
 
     /**
      *
      */
-    private static final long serialVersionUID = 4161027191694822726L;
-
-    private double weight = 0;
+    private static final long serialVersionUID = 3490408642054662664L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected SteerageQuartersCargoBay() {
+    protected SuperHeavyVehicleBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -44,12 +43,14 @@ public final class SteerageQuartersCargoBay extends Bay {
      *
      * @param space
      *            - The weight of troops (in tons) this space can carry.
+     * @param bayNumber
      */
-    public SteerageQuartersCargoBay(double space, int doors) {
-        totalSpace = ((int)space)/5;
-        weight = space;
-        currentSpace = ((int)space)/5;
+    public SuperHeavyVehicleBay(double space, int doors, int bayNumber) {
+        totalSpace = space;
+        currentSpace = space;
         this.doors = doors;
+        doorsNext = doors;
+        this.bayNumber = bayNumber;
         currentdoors = doors;
     }
 
@@ -67,30 +68,52 @@ public final class SteerageQuartersCargoBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
+        // Only tanks or vehicle-mode quadvees equal or less than 200 tons
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if (((unit instanceof Tank) || ((unit instanceof QuadVee && unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) && (unit.getWeight() <= 200)) {
+            result = true;
+        }
+
+        // We must have enough space for the new troops.
+        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
+        if (currentSpace < 1) {
+            result = false;
+        }
+
+        // is the door functional
+        if (currentdoors < loadedThisTurn) {
+            result = false;
+        }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
+        }
+
+        // Return our result.
         return result;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Steerage Quarters ("
-                + getCurrentDoors() + " doors) - ");
-        returnString.append((int)currentSpace);
-        return returnString.toString();
+        return "Superheavy Vehicle Bay (" + getCurrentDoors() + " doors) - "
+                + String.format("%1$,.0f", currentSpace)
+                + (currentSpace > 1 ? " units" : " unit");
     }
 
     @Override
     public String getType() {
-        return "Steerage Quarters";
+        return "Superheavy Vehicle";
     }
 
     @Override
     public double getWeight() {
-        return weight;
+        return totalSpace * 200;
     }
 
     @Override
     public String toString() {
-        return "steeragequarters:" + totalSpace + ":" + doors;
+        return "superheavyvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
-}
+} // End package class TroopSpace implements Transporter

@@ -17,8 +17,8 @@ package megamek.common;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying ASFs and Small Craft
+ * aboard large spacecraft and mobile structures
  */
 
 public final class SmallCraftBay extends Bay {
@@ -54,6 +54,7 @@ public final class SmallCraftBay extends Bay {
         doorsNext = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
+        this.currentdoors = doors;
     }
 
     /**
@@ -70,8 +71,12 @@ public final class SmallCraftBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only ASFs
-        if ((unit.isAero()) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
+        // Only ASFs, Fighter-mode LAMs or Small Craft
+        if (((unit.isAero()) 
+        		&& !(unit instanceof FighterSquadron) 
+        		&& !(unit instanceof Dropship) 
+        		&& !(unit instanceof Jumpship)) 
+        		|| (unit instanceof LandAirMech && unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
             result = true;
         }
 
@@ -84,6 +89,11 @@ public final class SmallCraftBay extends Bay {
         // is there at least one recovery slot available?
         if (getRecoverySlots() < 1) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
         }
 
         // Return our result.
@@ -132,12 +142,12 @@ public final class SmallCraftBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Small Craft (" + getDoors() + " doors) - "
+            return "Small Craft (" + getCurrentDoors() + " doors) - "
                     + String.format("%1$,.0f", currentSpace)
                     + (currentSpace > 1 ? " units (" : " unit (")
                     + getRecoverySlots() + " recovery open)";
         } else {
-            return "Small Craft (" + getDoors() + " doors) - "
+            return "Small Craft (" + getCurrentDoors() + " doors) - "
                     + String.format("%1$,.0f", currentSpace)
                     + (currentSpace > 1 ? " units" : " unit");
         }
@@ -167,7 +177,7 @@ public final class SmallCraftBay extends Bay {
 
         Vector<Integer> slots = new Vector<Integer>();
 
-        for (int i = 0; i < doors; i++) {
+        for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
         }
@@ -219,9 +229,10 @@ public final class SmallCraftBay extends Bay {
     // destroy a door
     @Override
     public void destroyDoor() {
-
-        doors -= 1;
-
+    	if (getCurrentDoors() > 0) {
+    		currentdoors -= 1;
+    	}
+    
         // get rid of two empty recovery slots
         // it doesn't matter which ones
         if (recoverySlots.size() > 0) {
@@ -235,7 +246,7 @@ public final class SmallCraftBay extends Bay {
     // get doors should be different - first I must subtract the number of
     // active recoveries
     @Override
-    public int getDoors() {
+    public int getCurrentDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);

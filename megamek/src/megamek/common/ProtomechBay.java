@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying protomechs aboard
- * dropships
+ * Represents a volume of space set aside for carrying protomechs aboard
+ * large spacecraft and mobile structures
  */
 
 public final class ProtomechBay extends Bay {
@@ -51,6 +51,7 @@ public final class ProtomechBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -67,7 +68,7 @@ public final class ProtomechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
+        // Only ProtoMechs
         if (unit instanceof Protomech) {
             result = true;
         }
@@ -82,6 +83,11 @@ public final class ProtomechBay extends Bay {
         if (doors <= loadedThisTurn) {
             result = false;
         }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
+        }
 
         // Return our result.
         return result;
@@ -89,7 +95,7 @@ public final class ProtomechBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Protomech (" + getDoors() + " doors) - "
+        return "Protomech (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

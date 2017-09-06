@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a standard sized passenger seat.
  */
 
 public final class StandardSeatCargoBay extends Bay {
@@ -50,6 +50,7 @@ public final class StandardSeatCargoBay extends Bay {
         weight = space;
         currentSpace = (int)(space/0.075);
         this.doors = doors;
+        currentdoors = doors;
     }
 
     /**
@@ -72,7 +73,7 @@ public final class StandardSeatCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("Passenger Seats ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

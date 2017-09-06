@@ -86,7 +86,7 @@ public final class BattleArmorBay extends Bay {
         }
 
         // is the door functional
-        if (doors < loadedThisTurn) {
+        if (currentdoors < loadedThisTurn) {
             result = false;
         }
         

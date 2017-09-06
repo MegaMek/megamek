@@ -977,11 +977,10 @@ public class UnitEditorDialog extends JDialog {
             if (((Dropship) aero).isKFBoomDamaged()) {
             	kfboomHits = 1;
             }
-            dockCollarCrit = new CheckCritPanel(1, kfboomHits);
+            kfboomCrit = new CheckCritPanel(1, kfboomHits);
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(kfboomCrit, gridBagConstraints);
-
         }
         
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {

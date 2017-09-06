@@ -5276,29 +5276,6 @@ public class Compute {
      * there are remaining missiles.
      */
 
-    public static Coords getSmokeMissileTarget(IGame game, Coords coords,
-                                               int fli) {
-
-        // loop through adjacent hexes
-        for (int dir = fli; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            IHex hextor = game.getBoard().getHex(tempcoords);
-
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            // hex already smoke-filled?
-            if (hextor.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
-                continue;
-            }
-            return tempcoords;
-        }
-        return null;
-    }
-
     /**
      * * STUFF FOR VECTOR MOVEMENT CALCULATIONS **
      */

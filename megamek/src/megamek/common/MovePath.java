@@ -1459,9 +1459,13 @@ public class MovePath implements Cloneable, Serializable {
             return false;
         }
         // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
-        if (getEntity() instanceof LandAirMech
-                && ((LandAirMech)getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH) {
-            return true;
+        if ((getEntity() instanceof LandAirMech)
+                && (((LandAirMech)getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)){
+            if (getLastStep() != null) {
+                return getLastStep().getClearance() > 0;
+            } else {
+                return getEntity().isAirborneVTOLorWIGE();
+            }
         }
         if ((getHexesMoved() + getEntity().delta_distance >= 5)
                 || (getEntity() instanceof Protomech

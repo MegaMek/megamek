@@ -132,6 +132,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private Targetable airmechBombTarget = null;
 
     private int fuel;
+    private int currentfuel;
     private int whoFirst;
 
     // Capital Fighter stuff
@@ -1502,6 +1503,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int getFuel() {
         return fuel;
     }
+    
+    public int getCurrentFuel() {
+    	return currentfuel;
+    }
 
     /**
      * Sets the number of fuel points.
@@ -1512,6 +1517,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public void setFuel(int gas) {
         fuel = gas;
+    }
+    
+    public void setCurrentFuel(int gas) {
+    	currentfuel = gas;
     }
 
     @Override

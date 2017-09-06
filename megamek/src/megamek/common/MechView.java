@@ -48,7 +48,9 @@ public class MechView {
     private boolean isFixedWingSupport;
     private boolean isSquadron;
     private boolean isSmallCraft;
+    private boolean isDropship;
     private boolean isJumpship;
+    private boolean isWarship;
     private boolean isSpaceStation;
 
     StringBuffer sHead = new StringBuffer();
@@ -72,7 +74,9 @@ public class MechView {
         isFixedWingSupport = entity instanceof FixedWingSupport;
         isSquadron = entity instanceof FighterSquadron;
         isSmallCraft = entity instanceof SmallCraft;
+        isDropship = entity instanceof Dropship;
         isJumpship = entity instanceof Jumpship;
+        isWarship = entity instanceof Warship;
         isSpaceStation = entity instanceof SpaceStation;
 
         sLoadout.append(getWeapons(showDetail)).append("<br>"); //$NON-NLS-1$
@@ -317,6 +321,22 @@ public class MechView {
             sBasic.append("<br><br>System Damage: <font color='red'>"
                     + ((Aero) entity).getCritDamageString() + "</font>");
         }
+        
+        //Display Strategic Fuel Use for Small Craft and up
+        if (isSmallCraft) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((SmallCraft) entity).getStrategicFuelUse());
+        } else if (isDropship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((Dropship) entity).getStrategicFuelUse());
+        } else if (isJumpship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((Jumpship) entity).getStrategicFuelUse());
+        } else if (isWarship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((Warship) entity).getStrategicFuelUse());
+        }
+        
 
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {

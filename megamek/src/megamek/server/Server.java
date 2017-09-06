@@ -7664,7 +7664,7 @@ public class Server implements Runnable {
                         // of fighters to doors beyond the launch rate. The most
                         // sensible thing
                         // is probably to distribute them evenly.
-                        int doors = currentBay.getDoors();
+                        int doors = currentBay.getCurrentDoors();
                         int[] distribution = new int[doors];
                         for (int l = 0; l < nLaunched; l++) {
                             distribution[l % doors] = distribution[l % doors]
@@ -26164,9 +26164,12 @@ public class Server implements Runnable {
             case Aero.CRIT_KF_BOOM:
                 // KF boom hit
                 // no real effect yet
+            	if (aero instanceof Dropship) {
+            		((Dropship)aero).setDamageKFBoom(true);
                 r = new Report(9180);
                 r.subject = aero.getId();
                 reports.add(r);
+            	}
                 break;
             case Aero.CRIT_CIC:
                 if (js == null) {

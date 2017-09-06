@@ -10458,15 +10458,14 @@ public class Server implements Runnable {
      * @param coords the <code>Coords</code> where to deliver
      */
 
-    public void deliverMissileSmoke(Coords coords, Vector<Report> vPhaseReport) {
+    public void deliverMissileSmoke(Coords coords, int smokeType, Vector<Report> vPhaseReport) {
         Report r = new Report(5185, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
+        createSmoke(coords, smokeType, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, smokeType));
         sendChangedHex(coords);
     }
 

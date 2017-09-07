@@ -129,17 +129,25 @@ public class MovePath implements Cloneable, Serializable {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer();
+        sb.append("MOVE PATH:");
         sb.append(this.getKey().hashCode());
         sb.append(' '); // it's useful to know for debugging purposes which path you're looking at.
-        
-        if(this.getFliesOverEnemy()) {
-        	sb.append("E! ");
-        }
+        sb.append("Length: " + this.length());
+        sb.append(System.lineSeparator());
         
         for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements(); ) {
             sb.append(i.nextElement().toString());
             sb.append(' ');
         }
+        
+        if(!getGame().getBoard().contains(this.getFinalCoords())) {
+            sb.append("OUT!");
+        }
+        
+        if(this.getFliesOverEnemy()) {
+            sb.append("E! ");
+        }
+        
         return sb.toString();
     }
 
@@ -628,11 +636,14 @@ public class MovePath implements Cloneable, Serializable {
     }
     
     /**
-     * Convenience function to determine whether this path results in the unit moving off board
+     * Convenience function to determine whether this path results in the unit explicitly moving off board
+     * More relevant for aircraft
      * @return Whether or not this path will result in the unit moving off board
      */
     public boolean fliesOffBoard() {
-    	return contains(MoveStepType.OFF) || contains(MoveStepType.RETURN);// || contains(MoveStepType.FLEE);
+    	return contains(MoveStepType.OFF) || 
+    	        contains(MoveStepType.RETURN) || 
+    	        contains(MoveStepType.FLEE);
     }
     
     /**

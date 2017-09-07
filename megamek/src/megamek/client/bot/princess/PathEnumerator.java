@@ -208,15 +208,15 @@ public class PathEnumerator {
                     }
                 };
                 
-                // also, remove duplicate off-board paths. There shouldn't be too many but every little bit helps.
-                AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
-                
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out illegal paths: " + paths.size());
+                AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out all but one offboard path: " + paths.size());
+                paths.add(offBoardFilter.getShortestPath());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out offboard paths: " + paths.size());
                 
+                // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
                 HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
                 for(MovePath path : paths)
                 {
@@ -226,15 +226,13 @@ public class PathEnumerator {
                     Integer lengthCount = pathLengths.get(path.length());
                     pathLengths.put(path.length(), lengthCount + 1);
                     
-                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+                    this.owner.log(this.getClass(), "Path ", LogLevel.WARNING, path.toString());
                 }
                 
                 for(Integer length : pathLengths.keySet())
                 {
                     this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
                 }
-                
-                //paths.addAll(AeroGroundPathFinder.getAdjustedHeightPaths(paths, mover));
             }
             else if (mover.isAero()) {
                 IAero aeroMover = (IAero)mover;

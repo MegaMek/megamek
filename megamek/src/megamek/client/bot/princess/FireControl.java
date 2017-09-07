@@ -1618,12 +1618,12 @@ public class FireControl {
             return myPlan;
         }
         
-        if(shooter.getAltitude() <= 1) {
+        if(flightPath.getFinalAltitude() <= 1) {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
         
-        if(shooter.getAltitude() > 5) {
+        if(flightPath.getFinalAltitude() > 5) {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's altitude is too high!");
             return myPlan;
         }

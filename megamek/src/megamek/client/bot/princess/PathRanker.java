@@ -111,7 +111,7 @@ public abstract class PathRanker {
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
         final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
-        LogLevel logLevel = LogLevel.DEBUG;
+        LogLevel logLevel = LogLevel.INFO;
 
         if (startingPathList.isEmpty()) {
             // Nothing to validate here, might as well return the empty list
@@ -136,29 +136,23 @@ public abstract class PathRanker {
             startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
         }
 
-        boolean alreadyHaveSafePathOffBoard = false;
         boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
         
         for (MovePath path : startingPathList) {
+            // just in case
+            if(path == null) {
+                continue;
+            }
+            
+            if(path.getFliesOverEnemy()) {
+                int alpha = 1;
+            }
+            
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
-            	// if we are an aero unit on the ground map, we want to discard paths that take us off board
-                // of course, ideally, the path generator comes back with only one of those anyway.
+                // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
             	if(isAirborneAeroOnAtmosphericGroundMap) {
-            		// all safe (no rolls or crashes) paths off board might as well be the same 
-            		// so we prune any beyond the first one we find
-            		if(alreadyHaveSafePathOffBoard && path.fliesOffBoard()) {
-            			msg.append("\n\tUNNECESSARY: Already have a safe path off board");
-            			continue;
-            		}
-            		
-            		// make note of the first time we find a safe path off board
-            		if(AeroPathUtil.IsSafePathOffBoard(path)) {
-            			msg.append("\n\tFirst safe path off board found");
-            			alreadyHaveSafePathOffBoard = true;
-            		}
-            		
             		// if we have no bombs, we want to make sure our altitude is above 1
             		// if we do have bombs, we may consider altitude bombing (in the future)
             		if((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
@@ -178,7 +172,7 @@ public abstract class PathRanker {
                 }
 
                 // Make sure I'm trying to get/stay in range of a target.
-                // Skip this part if I'm an aero on the ground map
+                // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
                 if(!isAirborneAeroOnAtmosphericGroundMap) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
@@ -207,6 +201,9 @@ public abstract class PathRanker {
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
 
+            }
+            catch(Exception e) {
+                MovePath barf = path;
             } finally {
                 getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
             }

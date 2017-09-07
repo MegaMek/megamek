@@ -361,6 +361,10 @@ public class AbstractPathFinder<N, C, E> {
             throw new NullPointerException();
         this.adjacencyMap = edgeNeighborsFactory;
     }
+    
+    public AdjacencyMap<E> getAdjacencyMap() {
+        return adjacencyMap;
+    }
 
     /**
      * Sets comparator.

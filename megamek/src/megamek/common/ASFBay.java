@@ -245,13 +245,13 @@ public final class ASFBay extends Bay {
     
     // get doors should be different - first I must subtract the number of
     // active recoveries  *** don't know that we need this anymore.
-    @Override
+   /* @Override
     public int getCurrentDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);
 
-    } 
+    } */
 
     @Override
     public double getWeight() {

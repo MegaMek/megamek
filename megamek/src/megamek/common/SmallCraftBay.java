@@ -52,9 +52,9 @@ public final class SmallCraftBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.currentdoors = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
-        this.currentdoors = doors;
     }
 
     /**
@@ -230,7 +230,7 @@ public final class SmallCraftBay extends Bay {
     @Override
     public void destroyDoor() {
     	if (getCurrentDoors() > 0) {
-    		currentdoors -= 1;
+    		setCurrentDoors(getCurrentDoors() - 1);
     	}
     
         // get rid of two empty recovery slots
@@ -245,13 +245,13 @@ public final class SmallCraftBay extends Bay {
 
     // get doors should be different - first I must subtract the number of
     // active recoveries
-    @Override
+   /* @Override
     public int getCurrentDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);
 
-    }
+    } */
 
     @Override
     public double getWeight() {

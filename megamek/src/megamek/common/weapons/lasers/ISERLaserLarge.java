@@ -62,7 +62,8 @@ public class ISERLaserLarge extends LaserWeapon {
             .setISAdvancement(2610, 2620, 3045, 2950, 3037)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_DC);
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_DC);
     }
 
     @Override

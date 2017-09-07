@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import megamek.common.ASFBay;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
@@ -56,6 +57,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
+import megamek.common.SmallCraftBay;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 
@@ -1255,9 +1257,18 @@ public class UnitEditorDialog extends JDialog {
             		}
             		if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
             			bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
+
             		} else if (doorCrit.getHits() == 0) {
             			bay.setCurrentDoors(bay.getDoors());
             		}
+        			// for ASF and SC bays, we have to update recovery slots as doors are changed
+        			if (bay instanceof ASFBay) {
+        				ASFBay a = (ASFBay) bay;
+        				a.getRecoverySlots();
+        			} else if (bay instanceof SmallCraftBay) {
+    					SmallCraftBay s = (SmallCraftBay) bay;
+        				s.getRecoverySlots();
+        			}
             	b++;
             	}
             }

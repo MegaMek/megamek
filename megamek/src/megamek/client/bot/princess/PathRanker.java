@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 
 import megamek.client.ui.SharedUtility;
@@ -48,6 +49,8 @@ public abstract class PathRanker {
         owner = princess;
     }
 
+    private HashMap<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<MovePath.Key, Double>();
+    
     /**
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
@@ -278,6 +281,10 @@ public abstract class PathRanker {
      * Returns the probability of success of a movepath
      */
     public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+        if(pathSuccessProbabilities.containsKey(movePath.getKey())) {
+            return pathSuccessProbabilities.get(movePath.getKey());
+        }
+        
         MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
@@ -315,6 +322,8 @@ public abstract class PathRanker {
         }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
+        pathSuccessProbabilities.put(movePath.getKey(), successProbability);
+        
         return successProbability;
     }
 

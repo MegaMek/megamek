@@ -58,8 +58,25 @@ ground to air fire:
 		+2 to range for each altitude hex (so no reason to go past 7)
 
 Aero firing plan should come in under heat more efficiently
-getMovePathSuccessProbability is calculated twice in PathRanker (once in ValidatePaths, once in rankPath)
+DONE getMovePathSuccessProbability is calculated twice in PathRanker (once in ValidatePaths, once in rankPath)
 DONE implement logic for "crippled" aeros to flee instead of returning (AeroGroundPathFinder.AddStep(MovePath)).
+DONE implement "pared down" aero PSR check
 implement logic to add 'Evasion' mode to paths that remain on the board but do not make any attacks (possibly in 	BasicPathRanker after evaluateMovedEnemy())
 DONE implement "hex visitation" logic - mark hexes as visited while generating path, if it does not go off board. If a path winds 	up such that all hexes have already been visited, then discard.
 implement logic to "respect edges", so that an aero whose path will take it off the edge will attempt to make a turn instead
+
+Exception in thread "Packet Pump" java.lang.ArrayIndexOutOfBoundsException: 1
+	at megamek.common.Crew.isActive(Crew.java:623)
+	at megamek.common.Crew.hasActiveCommandConsole(Crew.java:1353)
+	at megamek.common.actions.WeaponAttackAction.toHit(WeaponAttackAction.java:701)
+	at megamek.common.actions.WeaponAttackAction.toHit(WeaponAttackAction.java:284)
+	at megamek.common.actions.WeaponAttackAction.toHit(WeaponAttackAction.java:256)
+	at megamek.common.weapons.Weapon.fire(Weapon.java:46)
+	at megamek.common.weapons.AmmoWeapon.fire(AmmoWeapon.java:53)
+	at megamek.server.Server.resolveOnlyWeaponAttacks(Server.java:14426)
+	at megamek.server.Server.endCurrentPhase(Server.java:2970)
+	at megamek.server.Server.changeToNextTurn(Server.java:3294)
+	at megamek.server.Server.endCurrentTurn(Server.java:2323)
+	at megamek.server.Server.receiveAttack(Server.java:13479)
+	at megamek.server.Server.handle(Server.java:31553)
+	at megamek.server.Server$PacketPump.run(Server.java:362)

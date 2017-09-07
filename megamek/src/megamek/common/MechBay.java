@@ -66,8 +66,9 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only mechs
-        if (unit instanceof Mech) {
+        // Only mechs, except LAMs in fighter mode
+        if ((unit instanceof Mech)
+                && !unit.isAero()) {
             result = true;
         }
 

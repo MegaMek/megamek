@@ -1141,6 +1141,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
                 toHit.addModifier(+1, OptionsConstants.PILOT_SHAKY_STICK);
             }
+            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                       || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
+                    && te.moved == EntityMovementType.MOVE_WALK) {
+                toHit.addModifier(+1, "forest ranger");
+            }
         }
 
         // check for VDNI

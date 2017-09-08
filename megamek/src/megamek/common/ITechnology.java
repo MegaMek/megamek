@@ -261,6 +261,10 @@ public interface ITechnology {
     }
     
     default boolean isExtinct(int year, boolean clan, int faction) {
+        // Tech that is lost but later recovered in the IS is not lost to ComStar.
+        if ((F_CS == faction) && (getReintroductionDate(false) != DATE_NONE)) {
+            return false;
+        }
         return getExtinctionDate(clan) != DATE_NONE
                 && getExtinctionDate(clan) < year
                 && (getReintroductionDate(clan) == DATE_NONE
@@ -340,7 +344,11 @@ public interface ITechnology {
     }
     
     default int calcYearAvailability(int year, boolean clanUse) {
-        if (!clanUse && !isClan() && getTechEra(year) == ERA_SW
+        return calcYearAvailability(year, clanUse, -1);
+    }
+    
+    default int calcYearAvailability(int year, boolean clanUse, int faction) {
+        if (!clanUse && !isClan() && (faction != F_CS) && getTechEra(year) == ERA_SW
                 && getBaseAvailability(ERA_SW) >= RATING_E
                 && getExtinctionDate(false) != DATE_NONE
                 && getExtinctionDate(false) <= year) {

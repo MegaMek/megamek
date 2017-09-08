@@ -97,8 +97,10 @@ public interface ITechManager {
         // A little bit of hard-coded universe detail
         if ((faction == ITechnology.F_CS)
                 && extinctIS && (tech.getReintroductionDate(false) != ITechnology.DATE_NONE)
+                && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())) < ITechnology.RATING_X)
                 && tech.getIntroductionDate(false) <= getTechIntroYear()) {
-            // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH.
+            // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
+            // unless it has an availability of X (which is SLDF Royal equipment).
             extinctIS = false;
             faction = ITechnology.F_TH;
         } else if (useClanTechBase() && !introducedClan

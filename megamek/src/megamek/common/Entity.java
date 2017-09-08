@@ -7446,6 +7446,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ASFBay nextBay = (ASFBay) next;
                 nextBay.updateSlots();
             }
+            if (next instanceof SmallCraftBay) {
+                SmallCraftBay nextBay = (SmallCraftBay) next;
+                nextBay.updateSlots();
+            }
         }
     }
 

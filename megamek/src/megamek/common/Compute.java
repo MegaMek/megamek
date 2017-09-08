@@ -1221,7 +1221,7 @@ public class Compute {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
-        // if partial sensor repairs are present the shot will be more difficult
+        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
         // if its a non physical attack
         if (ae.getPartialRepairs() != null) {
             if (ae.getPartialRepairs().booleanOption("sensors_1_crit")) {
@@ -1232,6 +1232,12 @@ public class Compute {
             }
             if (ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
                 mods.addModifier(1, "stabilizer damage");
+            }
+            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
+                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
+            } 
+            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
+                 mods.addModifier(1, "faulty cic/fcs repairs"); 
             }
         }
 

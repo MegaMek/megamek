@@ -6844,6 +6844,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
                 && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
+            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                roll.addModifier(-1, "Mountaineer");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: Entity is not entering rubble");

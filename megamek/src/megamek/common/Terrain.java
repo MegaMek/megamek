@@ -370,6 +370,22 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 0;
         case Terrains.RUBBLE:
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                if (level == 6) {
+                    if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                        || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                        return 0;
+                    }
+                    return 1;
+                }
+                if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                    || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                            && (moveMode == EntityMovementMode.INF_LEG))) {
+                    return 0;
+                }
+                return 0;
+            }
             if (level == 6) {
                 if (((e instanceof Mech) && ((Mech) e).isSuperHeavy())
                         || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
@@ -469,6 +485,16 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.ROUGH:
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                if (level == 2) {
+                    if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                            || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV) && (moveMode == EntityMovementMode.INF_LEG))) {
+                        return 0;
+                    }
+                    return 1;
+                }
+                return 0;
+            }
             if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
                     && (moveMode == EntityMovementMode.INF_LEG)) {
                 return level - 1;

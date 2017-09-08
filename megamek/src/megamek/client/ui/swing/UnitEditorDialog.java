@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 import java.util.function.BiConsumer;
 
 import javax.swing.BorderFactory;
@@ -1264,10 +1263,11 @@ public class UnitEditorDialog extends JDialog {
         			// for ASF and SC bays, we have to update recovery slots as doors are changed
         			if (bay instanceof ASFBay) {
         				ASFBay a = (ASFBay) bay;
-        				a.getRecoverySlots();
-        			} else if (bay instanceof SmallCraftBay) {
+        				a.initializeRecoverySlots();        				
+        			} 
+        			if (bay instanceof SmallCraftBay) {
     					SmallCraftBay s = (SmallCraftBay) bay;
-        				s.getRecoverySlots();
+    					s.initializeRecoverySlots();    					
         			}
             	b++;
             	}

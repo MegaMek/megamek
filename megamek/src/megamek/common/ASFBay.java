@@ -173,12 +173,14 @@ public final class ASFBay extends Bay {
     public Vector<Integer> initializeRecoverySlots() {
 
         Vector<Integer> slots = new Vector<Integer>();
-
+        	// We have to account for changes in the number of doors, so remove all slots first.
+        	slots.removeAllElements();
+        	//now add 2 slots back on for each functional door.
         for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
         }
-
+        recoverySlots = slots;
         return slots;
     }
 
@@ -206,7 +208,7 @@ public final class ASFBay extends Bay {
             }
         }
     }
-
+    
     // destroy a door for next turn
     @Override
     public void destroyDoorNext() {

@@ -1147,6 +1147,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && te.moved == EntityMovementType.MOVE_WALK) {
                 toHit.addModifier(+1, "forest ranger");
             }
+            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
+                    && te.moved == EntityMovementType.MOVE_RUN) {
+                toHit.addModifier(+1, "swamp beast");
+            }
         }
 
         // check for VDNI

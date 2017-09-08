@@ -430,10 +430,19 @@ public class Terrain implements ITerrain, Serializable {
             if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
             }
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                return 0;
+            }
             return 1;
         case Terrains.SWAMP:
             if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
+            } else if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+                    return 0;
+                } else {
+                    return 1;
+                }
             } else if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
                 return 1;
             } else {

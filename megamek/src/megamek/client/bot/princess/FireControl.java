@@ -64,6 +64,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
@@ -232,7 +233,6 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE_PATH =
             new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not under flight path");
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
-    //static final TargetRollModifier 
     private static final TargetRollModifier TH_STABLE_WEAP =
             new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
@@ -1612,12 +1612,14 @@ public class FireControl {
             return myPlan;
         }
         
-        if(flightPath.getFinalAltitude() <= 1) {
+        // if we have no bombs on board, we can't attack from down here
+        if(flightPath.getFinalAltitude() <= AeroGroundPathFinder.NAP_OF_THE_EARTH &&
+                shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
         
-        if(flightPath.getFinalAltitude() > 5) {
+        if(flightPath.getFinalAltitude() > AeroGroundPathFinder.OPTIMAL_STRIKE_ALTITUDE) {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's altitude is too high!");
             return myPlan;
         }

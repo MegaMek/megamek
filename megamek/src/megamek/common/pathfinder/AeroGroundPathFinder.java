@@ -28,6 +28,10 @@ import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
  */
 public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, MovePath, MovePath> {
     
+    public static final int OPTIMAL_STRIKE_ALTITUDE = 5; // also great for dive bombs
+    public static final int NAP_OF_THE_EARTH = 1;
+    public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
+    
     private IGame game;
     private AeroGroundOffBoardFilter offBoardFilter;
     private List<MovePath> aeroGroundPaths;
@@ -198,6 +202,7 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
         }
 
         /**
+         * Unused, will be deleted pending code review
          * Extends the result produced by
          * {@linkNextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)}
          * with manoeuvres for Aero
@@ -371,6 +376,7 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
         }
 
         /**
+         * Unused, will be deleted pending code review
          * Given a starting path, generates paths that go to the desired altitude (or as close as possible)
          * @param startingPath
          * @param desiredAltitude
@@ -451,7 +457,7 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
             }
             
             // repeat with 1, 3, 7 when we settle things down?
-            MovePath desiredAltitudePath = adjustTowardsDesiredAltitude(start, 5);
+            MovePath desiredAltitudePath = adjustTowardsDesiredAltitude(start, OPTIMAL_STRIKE_ALTITUDE);
             
             if(choppedOffFlyOff) {
                 desiredAltitudePath.addStep(MoveStepType.RETURN);
@@ -558,9 +564,11 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
          
             int turnCost = currentStep.asfTurnCost(mp.getGame(), stepType, mp.getEntity());
             
-            // if we can turn *and* turning won't cause us to make a PSR, let's attempt to turn
-            if(currentStep.canAeroTurn(game) && 
-                    (currentStep.getMpUsed() < mp.getEntity().getWalkMP() - turnCost)) {
+            // if we can turn 
+            // safe mode: currentStep.getMpUsed() < mp.getEntity().getWalkMP() - turnCost)
+            ///         *and* turning won't cause us to make a PSR, let's attempt to turn
+            // disabled as it currentl results in annoying behavior.
+            if(currentStep.canAeroTurn(game)) { 
                 MovePath tiltedPath = straightLine.clone();
                 tiltedPath.addStep(stepType);
                 

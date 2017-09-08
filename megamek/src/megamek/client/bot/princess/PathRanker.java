@@ -113,7 +113,7 @@ public abstract class PathRanker {
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
         final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
-        LogLevel logLevel = LogLevel.INFO;
+        LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
             // Nothing to validate here, might as well return the empty list
@@ -273,6 +273,7 @@ public abstract class PathRanker {
      * Returns the probability of success of a movepath
      */
     public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+        // introduced a caching mechanism, as the success probability was being calculated at least twice
         if(pathSuccessProbabilities.containsKey(movePath.getKey())) {
             return pathSuccessProbabilities.get(movePath.getKey());
         }

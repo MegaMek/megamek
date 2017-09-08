@@ -90,8 +90,8 @@ public interface ITechManager {
         int faction = getTechFaction();
         boolean clanTech = useClanTechBase();
         
-        boolean availableIS = tech.isAvailableIn(getTechIntroYear(), false, faction);
-        boolean availableClan = tech.isAvailableIn(getTechIntroYear(), true, faction);
+        boolean introducedIS = tech.getIntroductionDate(false) <= getTechIntroYear();
+        boolean introducedClan = tech.getIntroductionDate(true) <= getTechIntroYear();
         boolean extinctIS = tech.isExtinct(getTechIntroYear(), false);
         boolean extinctClan = tech.isExtinct(getTechIntroYear(), true);
         // A little bit of hard-coded universe detail
@@ -99,22 +99,21 @@ public interface ITechManager {
                 && extinctIS && (tech.getReintroductionDate(false) != ITechnology.DATE_NONE)
                 && tech.getIntroductionDate(false) <= getTechIntroYear()) {
             // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH.
-            availableIS = true;
             extinctIS = false;
             faction = ITechnology.F_TH;
-        } else if (useClanTechBase() && !availableClan
+        } else if (useClanTechBase() && !introducedClan
                 && tech.isAvailableIn(2787, false, ITechnology.F_TH)
                 && !extinctClan && !extinctIS
                 && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
             // Transitional period: Clans can treat IS tech as Clan if it was available to TH and
             // has an extinction date that it hasn't reached yet (using specific Clan date if given).
-            availableClan = true;
             faction = ITechnology.F_TH;
             clanTech = false;
         }
         if (useMixedTech()) {
-            if (!availableIS && !availableClan
-                    && !(showExtinct() && (extinctIS || extinctClan))) {
+            if ((!introducedIS && !introducedClan) 
+                    || (!showExtinct()
+                            && (tech.isExtinct(getTechIntroYear())))) {
                 return false;
             } else if (useVariableTechLevel()) {
                 // If using tech progression with mixed tech, we pass if either IS or Clan meets the required level
@@ -125,9 +124,9 @@ public interface ITechManager {
             if (tech.getTechBase() != ITechnology.TECH_BASE_ALL
                     && clanTech != tech.isClan()) {
                 return false;
-            } else if (clanTech && !availableClan && !(showExtinct() && extinctClan)) {
+            } else if (clanTech && (!introducedClan || (!showExtinct() && extinctClan))) {
                 return false;
-            } else if (!clanTech && !availableIS && !(showExtinct() && extinctIS)) {
+            } else if (!clanTech && (!introducedIS || (!showExtinct() && extinctIS))) {
                 return false;
             } else if (useVariableTechLevel()) {
                 return tech.getSimpleLevel(getGameYear(), clanTech, faction).compareTo(getTechLevel()) <= 0;

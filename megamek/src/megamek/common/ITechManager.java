@@ -88,6 +88,8 @@ public interface ITechManager {
         }
 
         int faction = getTechFaction();
+        boolean clanTech = useClanTechBase();
+        
         boolean availableIS = tech.isAvailableIn(getTechIntroYear(), false, faction);
         boolean availableClan = tech.isAvailableIn(getTechIntroYear(), true, faction);
         boolean extinctIS = tech.isExtinct(getTechIntroYear(), false);
@@ -96,14 +98,19 @@ public interface ITechManager {
         if ((faction == ITechnology.F_CS)
                 && extinctIS && (tech.getReintroductionDate(false) != ITechnology.DATE_NONE)
                 && tech.getIntroductionDate(false) <= getTechIntroYear()) {
+            // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH.
             availableIS = true;
             extinctIS = false;
             faction = ITechnology.F_TH;
-        } else if (useClanTechBase() && !availableClan && tech.isAvailableIn(2787, false, ITechnology.F_TH)) {
-            if (!extinctClan) {
-                availableClan = true;
-                faction = ITechnology.F_TH;
-            }
+        } else if (useClanTechBase() && !availableClan
+                && tech.isAvailableIn(2787, false, ITechnology.F_TH)
+                && !extinctClan && !extinctIS
+                && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
+            // Transitional period: Clans can treat IS tech as Clan if it was available to TH and
+            // has an extinction date that it hasn't reached yet (using specific Clan date if given).
+            availableClan = true;
+            faction = ITechnology.F_TH;
+            clanTech = false;
         }
         if (useMixedTech()) {
             if (!availableIS && !availableClan
@@ -116,14 +123,14 @@ public interface ITechManager {
             }
         } else {
             if (tech.getTechBase() != ITechnology.TECH_BASE_ALL
-                    && useClanTechBase() != tech.isClan()) {
+                    && clanTech != tech.isClan()) {
                 return false;
-            } else if (useClanTechBase() && !availableClan && !(showExtinct() && extinctClan)) {
+            } else if (clanTech && !availableClan && !(showExtinct() && extinctClan)) {
                 return false;
-            } else if (!useClanTechBase() && !availableIS && !(showExtinct() && extinctIS)) {
+            } else if (!clanTech && !availableIS && !(showExtinct() && extinctIS)) {
                 return false;
             } else if (useVariableTechLevel()) {
-                return tech.getSimpleLevel(getGameYear(), useClanTechBase(), faction).compareTo(getTechLevel()) <= 0;
+                return tech.getSimpleLevel(getGameYear(), clanTech, faction).compareTo(getTechLevel()) <= 0;
             }
         }
         // It's available in the year and we're not using tech progression, so just check the tech level.

@@ -714,19 +714,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
 
-        SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
-        SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_HIT.init();
+        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
+        SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
+        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
+        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.PLAYER_NOTE.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
-        flareImage = getToolkit().getImage(
+        flareImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
                         .toString());
-        radarBlipImage = getToolkit().getImage(
+        radarBlipImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(),
                         FILENAME_RADAR_BLIP_IMAGE).toString());
     }

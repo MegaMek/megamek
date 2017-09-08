@@ -15,10 +15,10 @@
 package megamek.common;
 
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.Serializable;
 import java.util.Objects;
 
-import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 
 /**
@@ -92,9 +92,9 @@ public class SpecialHexDisplay implements Serializable {
             defaultImagePath = iconPath;
         }
 
-        public void init() {
+        public void init(Toolkit toolkit) {
             if (defaultImagePath != null) {
-                defaultImage = ImageUtil.loadImageFromFile(defaultImagePath);
+                defaultImage = toolkit.getImage(defaultImagePath);
             }
 
         }

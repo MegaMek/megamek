@@ -36,32 +36,32 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public void log(Class<?> callingClass, String methodName, LogLevel level, String message) {
+    public void log(Class callingClass, String methodName, LogLevel level, String message) {
 
     }
 
     @Override
-    public void log(Class<?> callingClass, String methodName, LogLevel level, StringBuilder message) {
+    public void log(Class callingClass, String methodName, LogLevel level, StringBuilder message) {
 
     }
 
     @Override
-    public void methodBegin(Class<?> callingClass, String methodName) {
+    public void methodBegin(Class callingClass, String methodName) {
 
     }
 
     @Override
-    public void methodEnd(Class<?> callingClass, String methodName) {
+    public void methodEnd(Class callingClass, String methodName) {
 
     }
 
     @Override
-    public void methodCalled(Class<?> callingClass, String methodName) {
+    public void methodCalled(Class callingClass, String methodName) {
 
     }
 
     @Override
-    public boolean willLog(Class<?> callingClass, LogLevel level) {
+    public boolean willLog(Class callingClass, LogLevel level) {
         return false;
     }
 

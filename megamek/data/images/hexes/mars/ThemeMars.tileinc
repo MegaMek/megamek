@@ -1,5 +1,7 @@
 # Standard Mars Theme
 
+include "mars/MarsBuildings.tileinc"
+
 super 0 "rough:1" "mars" "mars/mars_rough_0.gif"
 super 1 "rough:1" "mars" "mars/mars_rough_0.gif"
 super 2 "rough:1" "mars" "mars/mars_rough_1.gif"

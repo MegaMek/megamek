@@ -107,7 +107,7 @@ public class AbstractPathFinder<N, C, E> {
          * @param collection collection to be filtered
          * @return filtered collection
          */
-        final public Collection<T> doFilter(Collection<T> collection) {
+        public Collection<T> doFilter(Collection<T> collection) {
             List<T> filteredMoves = new ArrayList<>();
             for (T e : collection) {
                 if (shouldStay(e))
@@ -203,7 +203,7 @@ public class AbstractPathFinder<N, C, E> {
 
     private AdjacencyMap<E> adjacencyMap;
 
-    private PriorityQueue<E> candidates;
+    protected PriorityQueue<E> candidates;
 
     private Comparator<E> comparator;
     private DestinationMap<N, E> destinationMap;
@@ -211,7 +211,7 @@ public class AbstractPathFinder<N, C, E> {
 
     private List<Filter<E>> filters = new ArrayList<>();
 
-    private Map<N, C> pathsCosts = new HashMap<>();
+    protected Map<N, C> pathsCosts = new HashMap<>();
 
     private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 
@@ -313,6 +313,8 @@ public class AbstractPathFinder<N, C, E> {
             System.err.println("Not enough memory to analyse all options."//$NON-NLS-1$
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.");//$NON-NLS-1$
+        } catch(Exception e) {
+            e.printStackTrace(); //do something, don't just swallow the exception, good lord
         }
     }
 
@@ -359,6 +361,10 @@ public class AbstractPathFinder<N, C, E> {
             throw new NullPointerException();
         this.adjacencyMap = edgeNeighborsFactory;
     }
+    
+    public AdjacencyMap<E> getAdjacencyMap() {
+        return adjacencyMap;
+    }
 
     /**
      * Sets comparator.
@@ -381,6 +387,10 @@ public class AbstractPathFinder<N, C, E> {
         if (nodeFactory == null)
             throw new NullPointerException();
         this.destinationMap = nodeFactory;
+    }
+    
+    protected DestinationMap<N, E> getDestinationMap() {
+        return destinationMap;
     }
 
     /**

@@ -51,9 +51,125 @@ public class SharedUtility {
 
     @SuppressWarnings("unchecked")
     public static List<TargetRoll> getPSRList(MovePath md) {
-        return (List<TargetRoll>) doPSRCheck(md, false);
+        // certain types of entities, such as airborne aero units, do not require many of the checks
+        // carried out in the full PSR Check. So, we call a method that skips most of those.
+        if(md.getEntity().isAirborne()) {
+            return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
+        }
+        else {
+            return (List<TargetRoll>) doPSRCheck(md, false);
+        }
     }
 
+    /**
+     * Function that carries out PSR checks specific only to airborne aero units
+     * @param md The path to check
+     * @param stringResult Whether to return the report as a string
+     * @return Collection of PSRs that will be required for this activity
+     */
+    public static Object getAeroSpecificPSRList(MovePath md, boolean stringResult) {
+        StringBuffer nagReport = new StringBuffer();
+        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
+
+        final Entity entity = md.getEntity();
+        final IGame game = entity.getGame();
+        // okay, proceed with movement calculations
+        Coords curPos = entity.getPosition();
+        int curFacing = entity.getFacing();
+        EntityMovementType moveType = EntityMovementType.MOVE_NONE;
+        EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
+        
+        PilotingRollData rollTarget;
+
+        // Compile the move
+        md.clipToPossible();
+
+        overallMoveType = md.getLastStepMovementType();
+
+        // iterate through steps
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            
+            // stop for illegal movement
+            if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
+                break;
+            }
+
+            // check for more than one roll
+            IAero a = (IAero) entity;
+            rollTarget = a.checkRolls(step, overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            rollTarget = a.checkManeuver(step, overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // set most step parameters
+            moveType = step.getMovementType(md.isEndStep(step));
+
+            // set last step parameters
+            curPos = step.getPosition();
+            curFacing = step.getFacing();
+
+            //check for vertical takeoff
+            if (step.getType() == MoveStepType.VTAKEOFF) {
+                rollTarget = ((IAero)entity).checkVerticalTakeOff();
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            //check for landing
+            if (step.getType() == MoveStepType.LAND) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
+                        step.getVelocity(), curPos, curFacing, false);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+            
+            if (step.getType() == MoveStepType.VLAND) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
+                        step.getVelocity(), curPos, curFacing, true);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            // Check for Ejecting
+            if (step.getType() == MoveStepType.EJECT 
+                    && (entity instanceof Mech)) {
+                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+        }
+
+        // check to see if thrust exceeded SI
+        IAero a = (IAero) entity;
+        int thrust = md.getMpUsed();
+        rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
+        checkNag(rollTarget, nagReport, psrList);
+
+        // Atmospheric checks
+        if (!game.getBoard().inSpace() && !md.contains(MoveStepType.LAND)
+                && !md.contains(MoveStepType.VLAND)) {
+            // check to see if velocity is 2x thrust
+            rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
+                    overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // check to see if descended more than two hexes
+            rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // stalling out
+            rollTarget = a.checkStall(md);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // check for hovering
+            rollTarget = a.checkHover(md);
+            checkNag(rollTarget, nagReport, psrList);
+        }
+
+        if (stringResult) {
+            return nagReport.toString();
+        }
+        return psrList;
+    }
+    
     /**
      * Checks to see if piloting skill rolls are needed for the currently
      * selected movement. This code is basically a simplified version of
@@ -257,7 +373,7 @@ public class SharedUtility {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                             || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                             || (moveType == EntityMovementType.MOVE_RUN)
-                            || (moveType == EntityMovementType  .MOVE_VTOL_RUN)) {
+                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
                         //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);

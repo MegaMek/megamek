@@ -98,5 +98,26 @@ public class UnitType {
         }
         throw new IllegalArgumentException("Unknown unit type");
     }
-
+    
+    // series of convenience methods to shorten unit type determination
+    
+    /**
+     * Whether the given entity is a VTOL
+     * @param e the entity to examine
+     * @return True or false
+     */
+    public static boolean isVTOL(Entity e)
+    {
+    	return e.getEntityType() == Entity.ETYPE_VTOL;
+    }
+    
+    /**
+     * Whether the given entity is a Spheroid dropship
+     * @param e the entity to examine
+     * @return True or false
+     */
+    public static boolean isSpheroidDropship(Entity e)
+    {
+    	return e.isAero() && ((IAero) e).isSpheroid();
+    }
 }

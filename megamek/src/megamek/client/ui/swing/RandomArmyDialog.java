@@ -113,7 +113,6 @@ WindowListener, TreeSelectionListener {
     private JPanel m_pAdvSearch = new JPanel();
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
-    private JButton m_bRandomSkills = new JButton(Messages.getString("RandomSkillDialog.title"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
@@ -207,10 +206,8 @@ WindowListener, TreeSelectionListener {
         m_bOK.addActionListener(this);
         m_pButtons.add(m_bCancel);
         m_bCancel.addActionListener(this);
-        m_bRandomSkills.addActionListener(this);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
-        m_pButtons.add(m_bRandomSkills);
 
         // construct the Adv Search Panel
         m_pAdvSearch.setLayout(new FlowLayout(FlowLayout.LEADING));
@@ -742,8 +739,6 @@ WindowListener, TreeSelectionListener {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
-        } else if (ev.getSource().equals(m_bRandomSkills)) {
-            m_clientgui.getRandomSkillDialog().showDialog();
         }
     }
 

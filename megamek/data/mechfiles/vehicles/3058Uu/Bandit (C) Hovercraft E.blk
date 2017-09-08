@@ -53,7 +53,7 @@ BattleArmorHandles - troopers:-1
 </armor_type>
 
 <armor_tech>
-2
+-1
 </armor_tech>
 
 <omni>
@@ -62,8 +62,8 @@ BattleArmorHandles - troopers:-1
 
 <armor>
 40
-40
-40
+39
+39
 20
 32
 </armor>
@@ -92,7 +92,7 @@ CLATM9:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3058 - Civil War
+Civil War
 </source>
 
 <tonnage>

@@ -1350,7 +1350,7 @@ public class Crew implements Serializable {
      */
     public boolean hasActiveCommandConsole() {
         int commandPos = 1 - getCurrentPilotIndex();
-        return crewType.equals(CrewType.COMMAND_CONSOLE) && isActive(commandPos) && !actedThisTurn[commandPos];
+        return isActive(commandPos) && !actedThisTurn[commandPos];
     }
     
     /**

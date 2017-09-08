@@ -2013,6 +2013,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return getElevation() + height();
     }
 
+    /*
+     * Convenience method to determine whether this entity is on a ground map with an atmosphere
+     */
+    public boolean isOnAtmosphericGroundMap() {
+        return  ((getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_VACUUM) ||
+                (getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_TRACE)) &&
+                
+                (getGame().getBoard().onGround() || 
+                // doesn't make sense in english, but "atmospheric" map actually
+                // covers maps that are within a planet's gravity well
+                getGame().getBoard().inAtmosphere()); 
+    }
+    
     /**
      * Returns the display name for this entity.
      */
@@ -2513,7 +2526,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-            return !isAirborne();
+            return true;
         }
 
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
@@ -12409,8 +12422,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param bv The initial BV of a unit.
      */
     public void setInitialBV(int bv) {
+        if (initialBV < 0) {
             initialBV = bv;
+        }
     }
+
 
     /**
      * produce an int array of the number of bombs of each type based on the

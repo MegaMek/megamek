@@ -532,9 +532,6 @@ public class MechSummaryCache {
                 if (f.getName().indexOf('.') == -1) {
                     continue;
                 }
-                if (f.getName().toLowerCase().endsWith(".gitignore")) {
-                    continue;
-                }
                 if (f.getName().toLowerCase().endsWith(".txt")) {
                     continue;
                 }

@@ -447,11 +447,6 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public void increaseInitialBV(int bv) {
-        initialBV += bv;
-    }
-
-    @Override
     public int getInitialBV() {
         return initialBV;
     }

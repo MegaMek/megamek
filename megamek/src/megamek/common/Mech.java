@@ -3556,17 +3556,6 @@ public abstract class Mech extends Entity {
         // we use full possible movement, ignoring gravity, heat and modular
         // armor, but taking into account hit actuators
         int bvWalk = getWalkMP(false, true, true);
-        int airmechMP = 0;
-        if (((getEntityType() & ETYPE_LAND_AIR_MECH) != 0)) {
-            bvWalk = ((LandAirMech)this).getBVWalkMP();
-            if (((LandAirMech)this).getLAMType() == LandAirMech.LAM_STANDARD) {
-                airmechMP = ((LandAirMech)this).getAirMechFlankMP();
-            }
-        } else if (((getEntityType() & ETYPE_QUADVEE) != 0)
-                && (getMovementMode() == EntityMovementMode.WHEELED)) {
-            // Don't use bonus cruise MP in calculating BV
-            bvWalk = Math.max(0, walkMP);
-        }
         int runMP;
         if (hasTSM()) {
             bvWalk++;
@@ -3599,7 +3588,7 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Target Movement Modifier For Run");
+        bvText.append("Target Movement Modifer For Run");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3610,7 +3599,7 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
 
         // Calculate modifiers for jump and UMU movement where applicable.
-        final int jumpMP = Math.max(getJumpMP(false, true), airmechMP);
+        final int jumpMP = getJumpMP(false, true);
         final int tmmJumped = (jumpMP > 0) ? Compute.
                 getTargetMovementModifier(jumpMP, true, false, game).getValue()
                 : 0;
@@ -3623,11 +3612,7 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        if (airmechMP == 0) {
-            bvText.append("Target Movement Modifier For Jumping");
-        } else {
-            bvText.append("Target Movement Modifier For AirMech Flank");
-        }
+        bvText.append("Target Movement Modifer For Jumping");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3637,7 +3622,7 @@ public abstract class Mech extends Entity {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        bvText.append("Target Movement Modifier For UMUs");
+        bvText.append("Target Movement Modifer For UMUs");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3653,7 +3638,7 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Target Movement Modifier");
+        bvText.append("Target Movement Modifer");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);

@@ -102,8 +102,6 @@ include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoads.tileinc"
 include "StandardIncludes/StandardRailMaglev.tileinc"
 
-include "lunar/LunarBuildings.tileinc"
-include "mars/MarsBuildings.tileinc"
 include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
 include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
 include "StandardIncludes/BuildingsSClassArmor.tileinc"

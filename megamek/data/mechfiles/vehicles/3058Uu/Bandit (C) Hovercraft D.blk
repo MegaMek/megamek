@@ -25,7 +25,7 @@ D
 </year>
 
 <type>
-Clan Level 2
+Clan Level 3
 </type>
 
 <motion_type>
@@ -62,8 +62,8 @@ BattleArmorHandles - troopers:-1
 
 <armor>
 40
-40
-40
+39
+39
 20
 32
 </armor>
@@ -92,7 +92,7 @@ CLLBXAC2:OMNI
 </Turret Equipment>
 
 <source>
-TRO 3058 - Early Succession War
+Succession Wars
 </source>
 
 <tonnage>

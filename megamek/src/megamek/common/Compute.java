@@ -856,6 +856,12 @@ public class Compute {
 
     public static ToHitData getImmobileMod(Targetable target, int aimingAt,
                                            int aimingMode) {
+        // if we are bombing hexes, they are not considered immobile.
+        if(target.getTargetType() == target.TYPE_HEX_BOMB || 
+           target.getTargetType() == target.TYPE_HEX_AERO_BOMB) {
+            return null;
+        }
+        
         if (target.isImmobile()) {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD)
                 && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
@@ -1221,7 +1227,7 @@ public class Compute {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
-        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
+        // if partial sensor repairs are present the shot will be more difficult
         // if its a non physical attack
         if (ae.getPartialRepairs() != null) {
             if (ae.getPartialRepairs().booleanOption("sensors_1_crit")) {
@@ -1232,12 +1238,6 @@ public class Compute {
             }
             if (ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
                 mods.addModifier(1, "stabilizer damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
-                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
-            } 
-            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
-                 mods.addModifier(1, "faulty cic/fcs repairs"); 
             }
         }
 
@@ -5276,6 +5276,29 @@ public class Compute {
      * Gets a new target hex for a flight of smoke missiles fired at a hex, if
      * there are remaining missiles.
      */
+
+    public static Coords getSmokeMissileTarget(IGame game, Coords coords,
+                                               int fli) {
+
+        // loop through adjacent hexes
+        for (int dir = fli; dir <= 5; dir++) {
+            Coords tempcoords = coords.translated(dir);
+            IHex hextor = game.getBoard().getHex(tempcoords);
+
+            if (!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if (coords.equals(tempcoords)) {
+                continue;
+            }
+            // hex already smoke-filled?
+            if (hextor.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
+                continue;
+            }
+            return tempcoords;
+        }
+        return null;
+    }
 
     /**
      * * STUFF FOR VECTOR MOVEMENT CALCULATIONS **

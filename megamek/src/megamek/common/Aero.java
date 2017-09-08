@@ -212,7 +212,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
-     * temperatures, gravity, partial repairs and bomb load.
+     * temperatures, gravity, and bomb load.
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -238,10 +238,6 @@ public class Aero extends Entity implements IAero, IBomber {
 
         if (hasModularArmor()) {
             j--;
-        }
-        // partially repaired engine
-        if (getPartialRepairs().booleanOption("aero_engine_crit")) {
-        	j--;
         }
 
         // if they are not airborne, then they get MP halved (aerodyne) or no MP
@@ -603,36 +599,8 @@ public class Aero extends Entity implements IAero, IBomber {
         if (gearHit) {
             return vTakeoff ? 1 : 5;
         } else {
-        	return 0;
+            return 0;
         }
-    }
-    
-    //Landing mods for partial repairs
-    public int getLandingGearPartialRepairs() {
-    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
-        return 2;
-    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
-    }
-    
-    //Avionics mods for partial repairs
-    public int getAvionicsMisreplaced() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
-    }
-    
-    public int getAvionicsMisrepaired() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
     }
 
     public void setOHeatSinks(int hs) {
@@ -688,12 +656,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getFuel() {
-        if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-        	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-        	return (int) (fuel * 0.9);
-        } else {
         return fuel;
-        }
     }
 
     /**
@@ -2440,7 +2403,6 @@ public class Aero extends Entity implements IAero, IBomber {
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         // this is a control roll. Affected by:
         // avionics damage
-    	// partial repairs
         // pilot damage
         // current velocity
         int avihits = getAvionicsHits();
@@ -2455,17 +2417,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (avihits >= 3) {
             prd.addModifier(5, "Avionics Destroyed");
         }
-        
-        // partial repairs to avionics system, but only if the avionics aren't already destroyed
-        if ((getPartialRepairs() != null) && (avihits < 3)) {
-            if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
-                prd.addModifier(1, "Partial repair of Avionics");
-            }
-            if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
-                prd.addModifier(1, "Misreplaced Avionics");
-            }
-        }
-        
+
         if (pilothits > 0) {
             prd.addModifier(pilothits, "Pilot Hits");
         }
@@ -2590,7 +2542,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * Fighters don't have MASC
+     * Tanks don't have MASC
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -2692,7 +2644,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean canCharge() {
-        // ramming is resolved differently than charging
+        // ramming is resolved differently than chargin
         return false;
     }
 
@@ -3131,8 +3083,11 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
-        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-            return !isAirborne();
+        if (isAirborne()) {
+            if (hex.containsTerrain(Terrains.IMPASSABLE)) {
+                return true;
+            }
+            return false;
         }
 
         // Additional restrictions for hidden units

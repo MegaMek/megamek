@@ -136,15 +136,8 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         super.setVisible(show);
     }
 
-    public  void showDialog(){
-        this.units=null;
-        butOkay.setEnabled(false);
-        setVisible(true);
-    }
-
     public  void showDialog(List<Entity> units){
         this.units=units;
-        butOkay.setEnabled(true);
         setVisible(true);
     }
 

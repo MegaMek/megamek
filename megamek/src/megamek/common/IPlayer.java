@@ -165,12 +165,6 @@ public interface IPlayer extends ITurnOrdered {
 
     void setInitialBV();
 
-    /**
-     * Used to increase the initial BV by the specified value, which may be necessary if the player reinforces.
-     * @param bv
-     */
-    void increaseInitialBV(int bv);
-
     int getInitialBV();
 
     void setCompensationInitBonus(int newBonus);

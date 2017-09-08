@@ -33,7 +33,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-troopspace:1
+cargobay:1.0:1
 </transporters>
 
 <cruiseMP>

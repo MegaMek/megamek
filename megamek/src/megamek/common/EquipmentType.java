@@ -510,7 +510,7 @@ public class EquipmentType {
      */
     public boolean removeMode(String mode) {
         if (modes != null) {
-            return modes.remove(EquipmentMode.getMode(mode));
+            return modes.remove(mode);
         } else {
             return false;
         }

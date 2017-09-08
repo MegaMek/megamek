@@ -407,43 +407,24 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load minefield sign
-        minefieldSign = ImageUtil
-                .loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
-        if (minefieldSign.getWidth(null) <= 0 || minefieldSign.getHeight(null) <= 0) {
-            System.out.println("Error opening minefield sign image!");
-        }
+        minefieldSign = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
 
         // load night overlay
-        nightFog = ImageUtil
-                .loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
-        if (nightFog.getWidth(null) <= 0 || nightFog.getHeight(null) <= 0) {
-            System.out.println("Error opening nightFog image!");
-        }
-
+        nightFog = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
+        
         // load the hexMask
-        hexMask = ImageUtil.loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
-        if (hexMask.getWidth(null) <= 0 || hexMask.getHeight(null) <= 0) {
-            System.out.println("Error opening hexMask image!");
-        }
+        hexMask = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
 
         // load artillery targets
-        artilleryAutohit = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString());
-        if (artilleryAutohit.getWidth(null) <= 0 || artilleryAutohit.getHeight(null) <= 0) {
-            System.out.println("Error opening artilleryAutohit image!");
-        }
-
-        artilleryAdjusted = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString());
-        if (artilleryAdjusted.getWidth(null) <= 0 || artilleryAdjusted.getHeight(null) <= 0) {
-            System.out.println("Error opening artilleryAdjusted image!");
-        }
-
-        artilleryIncoming = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString());
-        if (artilleryIncoming.getWidth(null) <= 0 || artilleryIncoming.getHeight(null) <= 0) {
-            System.out.println("Error opening artilleryIncoming image!");
-        }
+        artilleryAutohit = boardview.getToolkit().getImage(
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString()
+        );
+        artilleryAdjusted = boardview.getToolkit().getImage(
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString()
+        );
+        artilleryIncoming = boardview.getToolkit().getImage(
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString()
+        );
 
         started = true;
     }

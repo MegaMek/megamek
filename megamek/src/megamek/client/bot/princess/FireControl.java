@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -66,7 +65,6 @@ import megamek.common.annotations.StaticWrapper;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ATMWeapon;
-import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1012,10 +1010,6 @@ public class FireControl {
         // first check if the shot is impossible
         if (!weapon.canFire()) {
             return new ToHitData(TH_WEAP_CANNOT_FIRE);
-        }
-
-        if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-            int alpha = 1;
         }
         
         // Is the weapon loaded? (ignore this check for bombs)

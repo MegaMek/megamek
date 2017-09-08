@@ -3521,7 +3521,7 @@ public class MoveStep implements Serializable {
         return velocityLeft;
     }
 
-    private int asfTurnCost(IGame game, MoveStepType direction, Entity entity) {
+    public int asfTurnCost(IGame game, MoveStepType direction, Entity entity) {
 
         // jumpships (but not space stations and warships) never pay
         if ((entity instanceof Jumpship) && !(entity instanceof Warship)

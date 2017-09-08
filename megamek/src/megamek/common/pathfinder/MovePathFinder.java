@@ -17,11 +17,9 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
 import megamek.common.IGame;
-import megamek.common.ManeuverType;
 import megamek.common.MovePath;
 import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.LogLevel;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
 
@@ -268,29 +266,14 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Comparator<MovePath> {
         @Override
         public int compare(final MovePath first, final MovePath second) {
-        	// Criteria:
-        	// A path that takes us over an enemy and stays on the board is superior to one that does not
-        	// A path that causes leaves us at 0 velocity on a ground map is inferior to anything else
-        	
-            // Check whether we will stall or not, we want to keep paths that will not stall
+        	// Check whether we will stall or not, we want to keep paths that will not stall
             if(AeroPathUtil.WillStall(first) || AeroPathUtil.WillStall(second)) {
                 int firstPathWillStall = AeroPathUtil.WillStall(first) ? 1 : 0;
                 int secondPathWillStall = AeroPathUtil.WillStall(second) ? 1 : 0;
                 
-                // if they both stall, then the rest of the comparisons don't matter, just throw one out and move on
+                // if they both stall, then the rest of the comparisons still don't matter, just throw one out and move on
                 return firstPathWillStall - secondPathWillStall;
             }
-            
-        	// Check whether we fly over an enemy or not, we want to keep paths that will fly over enemies
-        	if(first.getFliesOverEnemy() || second.getFliesOverEnemy()) {
-        		int firstPathEnemyFlyover = first.getFliesOverEnemy() && !first.fliesOffBoard() ? 1 : 0;
-        		int secondPathEnemyFlyover = second.getFliesOverEnemy() && !second.fliesOffBoard() ? 1 : 0;
-        		
-        		// if they both fly over an enemy, try other criteria
-        		if(firstPathEnemyFlyover != secondPathEnemyFlyover) {
-        		    return firstPathEnemyFlyover - secondPathEnemyFlyover;
-        		}
-        	}
         	
         	boolean firstFlyoff = first.fliesOffBoard();
             int velFirst = first.getFinalVelocityLeft();

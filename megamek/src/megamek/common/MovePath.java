@@ -649,9 +649,11 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Whether any of the steps in the path (except for the last one, based on experimentation)
      * pass over an enemy unit eligible for targeting. Useful for aerotech units.
+     * Note that this is only useful for debugging against stationary targets, as it "may" become inaccurate
+     * if the target moves.
      * @return Whether or not this flight path takes us over an enemy unit
      */
-    public boolean getFliesOverEnemy() {
+    private boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
     }
     

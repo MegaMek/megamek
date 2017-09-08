@@ -192,6 +192,7 @@ public class PathEnumerator {
             List<MovePath> paths = new ArrayList<>();
             
             // Aero movement on atmospheric ground maps
+            // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
             if(mover.isAirborne() &&
                mover.isOnAtmosphericGroundMap() &&
                !((IAero) mover).isSpheroid()) {
@@ -208,13 +209,13 @@ public class PathEnumerator {
                     }
                 };
                 
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Unfiltered paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out illegal paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
                 paths.add(offBoardFilter.getShortestPath());
-                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered out offboard paths: " + paths.size());
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
                 HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
@@ -226,7 +227,7 @@ public class PathEnumerator {
                     Integer lengthCount = pathLengths.get(path.length());
                     pathLengths.put(path.length(), lengthCount + 1);
                     
-                    this.owner.log(this.getClass(), "Path ", LogLevel.WARNING, path.toString());
+                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
                 }
                 
                 for(Integer length : pathLengths.keySet())
@@ -417,7 +418,7 @@ public class PathEnumerator {
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path)
     {
     	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.DEBUG, 
-    			path.length() + ":" + path.getFliesOverEnemy() + ":" + 
+    			path.length() + ":" + 
     			path.toString() + ":" + whyNot);
     }
 

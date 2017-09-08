@@ -34,7 +34,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
-import megamek.common.IAero;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -44,7 +43,6 @@ import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.MiscType;
 import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
@@ -549,11 +547,6 @@ public class BasicPathRanker extends PathRanker {
         StringBuilder formula = new StringBuilder("Calculation: {");
 
         try {
-            if(path.getFliesOverEnemy()) 
-            {
-                int alpha = 1;
-            }
-            
         	if (movingUnit.isAero() || movingUnit instanceof VTOL) {
             	RankedPath aeroRankedPath = doAeroSpecificRanking(path);
                 if (aeroRankedPath != null) {

@@ -35,7 +35,6 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
@@ -147,10 +146,6 @@ public abstract class PathRanker {
                 continue;
             }
             
-            if(path.getFliesOverEnemy()) {
-                int alpha = 1;
-            }
-            
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
@@ -203,11 +198,8 @@ public abstract class PathRanker {
                 // If all the above checks have passed, this is a valid path.
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
-
             }
-            catch(Exception e) {
-                MovePath barf = path;
-            } finally {
+            finally {
                 getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
             }
         }

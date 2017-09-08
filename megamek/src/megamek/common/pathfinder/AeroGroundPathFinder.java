@@ -3,34 +3,21 @@ package megamek.common.pathfinder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.PriorityQueue;
 
-import megamek.client.bot.princess.FireControl;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Facing;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.pathfinder.AbstractPathFinder.AdjacencyMap;
-import megamek.common.pathfinder.AbstractPathFinder.DestinationMap;
-import megamek.common.pathfinder.AbstractPathFinder.EdgeRelaxer;
-import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 import megamek.common.pathfinder.MovePathFinder.MovePathLegalityFilter;
 import megamek.common.pathfinder.MovePathFinder.MovePathVelocityFilter;
 import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
-import megamek.common.weapons.DiveBombAttack;
 
 /**
  * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere
@@ -142,70 +129,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
         return maxThrust;
     }
     
-    /** 
-     * A path node for an aero on a ground map. 
-     * These things are pretty complicated and there's not much overlap between paths, so we basically compare the whole move sequence.
-     */
-    public static class AeroGroundPathNode {
-        private List<Coords> pathVertices;
-        private int remainingVelocity;
-        private boolean fliesOffBoard;
-        
-        public List<Coords> getPathVertices() {
-            return pathVertices;
-        }
-        
-        public int getRemainingVelocity() {
-            return remainingVelocity;
-        }
-        
-        public boolean getFliesOffBoard() {
-            return fliesOffBoard;
-        }
-        
-        public AeroGroundPathNode(List<Coords> pathVertices, int remainingVelocity, boolean fliesOffBoard) {
-            this.pathVertices = pathVertices;
-            this.remainingVelocity = remainingVelocity;
-            this.fliesOffBoard = fliesOffBoard;
-        }
-        
-        @Override
-        public boolean equals(Object other) {
-            if(!(other instanceof AeroGroundPathNode))
-            {
-                return false;
-            }
-            
-            AeroGroundPathNode otherNode = (AeroGroundPathNode) other;
-            
-            // all nodes that fly off board might as well be the same
-            // the MovePathVelocityCostComparator will pick the roughly shortest one
-            if(fliesOffBoard && otherNode.getFliesOffBoard()) {
-                return true;
-            }
-            
-            // if we don't have the same move sequence length, then we sure as hell aren't on the same path
-            if(pathVertices.size() != otherNode.getPathVertices().size()) {
-                return false;
-            }
-            
-            // now we run along the path, and if the two paths deviate at any point, the two paths are not the same
-            for(int pos = 0; pos < pathVertices.size(); pos++) {
-                if(!pathVertices.get(pos).equals(otherNode.getPathVertices().get(pos))) {
-                    return false;
-                }
-            }
-            
-            // we may have the same path so far, but it won't be the same in the future
-            return remainingVelocity == otherNode.getRemainingVelocity();
-        }
-        
-        @Override
-        public int hashCode() {
-            return pathVertices.hashCode() + 7 * remainingVelocity + (fliesOffBoard ? 1 : 0);
-        }
-    }
-
     /**
      * 
      * @author NickAragua
@@ -265,30 +188,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
         
     }
     
-    // Destination map for paths taken by aerodyne units on atmospheric ground maps
-    public static class AeroGroundDestinationMap 
-        implements AbstractPathFinder.DestinationMap<AeroGroundPathNode, MovePath>{
-     
-        /**
-         * Gets a "node" representing the destination.
-         */
-        public AeroGroundPathNode getDestination(MovePath mp) {
-            if(mp.length() == 25 && mp.getFliesOverEnemy()) {
-                int alpha = 1;
-            }
-            
-            List<Coords> pathVertices = new ArrayList<Coords>();
-            for(MoveStep step : mp.getStepVector()) {
-                if(step.getType() == MoveStepType.TURN_LEFT ||
-                        step.getType() == MoveStepType.TURN_RIGHT) {
-                    pathVertices.add(step.getPosition());
-                }
-            }
-            
-            return new AeroGroundPathNode(pathVertices, mp.getFinalVelocityLeft(), mp.fliesOffBoard());
-        }
-    }
-
     /**
      * Functional Interface for {@link #getAdjacent(MovePath)}
      */
@@ -313,14 +212,9 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
                 return new ArrayList<MovePath>();
             }
             
-            if(mp.length() == 25 && mp.getFliesOverEnemy()) { //&& mp.getLastStep().getType() == MoveStepType.TURN_RIGHT) {
-                int alpha = 1;
-            }
-            
             Collection<MovePath> result = new ArrayList<MovePath>();
             MoveStep lastStep = mp.getLastStep();
             IGame game = mp.getEntity().getGame();
-            IAero aero = (IAero) mp.getEntity();
             
             // if it's the first step of the move, this will add zero or more neighbor paths that change the aircraft's velocity
             result.addAll(generateValidAccelerations(mp));
@@ -539,6 +433,11 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
     // This object contains a hex and the shortest non-off-board path that has flown over it.
     HashMap<Coords, MovePath> visitedHexes;
     
+    /**
+     * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of them.
+     * @param startingPaths The collection of paths to process
+     * @return The new collection of resulting paths.
+     */
     private List<MovePath> getAltitudeAdjustedPaths(List<MovePath> startingPaths) {
         List<MovePath> desiredAltitudes = new ArrayList<MovePath>();
         
@@ -564,7 +463,12 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
         return desiredAltitudes;
     }
     
-    // Moves a given path towards 
+    /**
+     * Moves a given path towards the desired altitude. 
+     * @param startingPath The path to adjust
+     * @param desiredAltitude The desired altitude
+     * @return New instance of movepath with as much altitude adjustment as possible
+     */
     private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
         MovePath altitudePath = startingPath.clone();
         int maxThrust = AeroGroundPathFinder.calculateMaxThrust((IAero) altitudePath.getEntity());
@@ -618,9 +522,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
             if(path.fliesOffBoard() || newHexVisited(path)) {
                 retval.add(path);
             }
-            else {
-                int alpha = 1; // bitch say what;
-            }
         }
         
         for(MovePath path : generateSidePaths(mp, MoveStepType.TURN_LEFT)) {
@@ -628,9 +529,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
             // off-board paths will get thrown out later
             if(path.fliesOffBoard() || newHexVisited(path)) {
                 retval.add(path);
-            }
-            else {
-                int alpha = 1; // bitch say what;
             }
         }
         
@@ -658,12 +556,21 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
                 currentStep = new MoveStep(straightLine, MoveStepType.NONE);
             }
          
-            if(currentStep.canAeroTurn(game)) {
+            int turnCost = currentStep.asfTurnCost(mp.getGame(), stepType, mp.getEntity());
+            
+            // if we can turn *and* turning won't cause us to make a PSR, let's attempt to turn
+            if(currentStep.canAeroTurn(game) && 
+                    (currentStep.getMpUsed() < mp.getEntity().getWalkMP() - turnCost)) {
                 MovePath tiltedPath = straightLine.clone();
                 tiltedPath.addStep(stepType);
                 
                 // the first time we add a turn, we recurse in the same direction
                 if(firstTurn) {
+                    
+                    // potential to do, depending on demonstrated princess performance:
+                    // If we are going to run ourselves off the board, also generate side paths in the opposite direction of stepType
+                    // This *may* result in a drastic increase in generated paths, so maybe hold off on it for now.
+                    
                     retval.addAll(generateSidePaths(tiltedPath, stepType));
                 }
                 

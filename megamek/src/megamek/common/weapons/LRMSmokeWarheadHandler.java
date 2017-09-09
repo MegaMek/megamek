@@ -36,7 +36,6 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      */
 
     private static final long serialVersionUID = -30934685350251837L;
-    private int smokeMissilesNowLeft = 0;
 
     /**
      * @param t

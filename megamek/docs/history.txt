@@ -40,6 +40,8 @@ v0.43.4-git
 + Issue #628: Gained BV On Round Two (LAMS, Tripods, & QuadVees)
 + Issue #582: Crash when spotting for LRM indirect fire
 + Issue #582: LRM/SRM smoke munitions now use current TO rules, fixes rare NPE
++ Fixed a bug where some ancillary images weren't working, along with the largeTextures tileset
++ PR #613: Aero partial repairs
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

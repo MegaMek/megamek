@@ -3697,7 +3697,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         IAero a = (IAero) ce;
-        if (a.getFuel() < 1) {
+        if (a.getCurrentFuel() < 1) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);

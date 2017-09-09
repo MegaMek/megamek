@@ -445,7 +445,7 @@ class EntitySprite extends Sprite {
             if (isAero) {
                 IAero a = (IAero) entity;
                 if (a.isRolled()) stStr.add(new Status(Color.YELLOW, "ROLLED"));
-                if (a.getFuel() <= 0) stStr.add(new Status(Color.RED, "FUEL"));
+                if (a.getCurrentFuel() <= 0) stStr.add(new Status(Color.RED, "FUEL"));
                 if (entity.isEvading()) stStr.add(new Status(Color.GREEN, "EVADE"));
                 
                 if (a.isOutControlTotal() & a.isRandomMove()) {

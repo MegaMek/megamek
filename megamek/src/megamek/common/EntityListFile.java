@@ -842,7 +842,7 @@ public class EntityListFile {
                 IAero a = (IAero)entity;
                 // fuel
                 output.write(indentStr(indentLvl+1) + "<fuel left=\"");
-                output.write(String.valueOf(a.getFuel()));
+                output.write(String.valueOf(a.getCurrentFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
             }

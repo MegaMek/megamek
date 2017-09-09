@@ -19,6 +19,8 @@
 
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -205,6 +207,46 @@ public class TestBattleArmor extends TestEntity {
         }
     }
 
+    public enum BAMotiveSystems {
+        BA_JUMP ("BAJumpJet", EntityMovementMode.INF_JUMP),
+        BA_VTOL ("BAVTOL", EntityMovementMode.VTOL),
+        BA_UMU ("BAUMU", EntityMovementMode.INF_UMU);
+
+        private String internalName;
+        private EntityMovementMode mode;
+        
+        BAMotiveSystems(String internalName, EntityMovementMode mode) {
+            this.internalName = internalName;
+            this.mode = mode;
+        }
+        
+        public String getName() {
+            return internalName;
+        }
+        
+        public EntityMovementMode getMovementMode() {
+            return mode;
+        }
+
+        public static List<EquipmentType> allSystems() {
+            List<EquipmentType> retVal = new ArrayList<>();
+            for (BAMotiveSystems ms : values()) {
+                retVal.add(EquipmentType.get(ms.internalName));
+            }
+            return retVal;
+        }
+        
+        public static EquipmentType getEquipment(EntityMovementMode mode) {
+            for (BAMotiveSystems ms : values()) {
+                if (ms.getMovementMode() == mode) {
+                    return EquipmentType.get(ms.internalName);
+                }
+            }
+            return null;
+        }
+
+    }
+    
     /**
      * Checks to see if the supplied <code>Mounted</code> is valid to be mounted
      * in the given location on the supplied <code>BattleArmor</code>.

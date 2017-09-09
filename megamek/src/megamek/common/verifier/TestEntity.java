@@ -19,7 +19,10 @@
 
 package megamek.common.verifier;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -267,6 +270,24 @@ public abstract class TestEntity implements TestEntityOption {
     public static double setPrecision(double value, int precision) {
         return Math.round(value * Math.pow(10, precision))
                 / Math.pow(10, precision);
+    }
+    
+    public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {
+        if ((entitytype & Entity.ETYPE_MECH) != 0) {
+            return TestMech.MechJumpJets.allJJs(industrial);
+        } else if ((entitytype & Entity.ETYPE_TANK) != 0) {
+            return Collections.singletonList(EquipmentType.get("VehicleJumpJet"));
+        } else if ((entitytype & Entity.ETYPE_BATTLEARMOR) != 0) {
+            return TestBattleArmor.BAMotiveSystems.allSystems();
+        } else if ((entitytype & Entity.ETYPE_PROTOMECH) != 0) {
+            // Until we have a TestProtomech
+            return Arrays.asList(new EquipmentType[] {
+                EquipmentType.get("ProtomechJumpJet"),
+                EquipmentType.get("ExtendedJumpJetSystem"),
+                EquipmentType.get("ProtomechUMU")});
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private boolean hasMASC() {

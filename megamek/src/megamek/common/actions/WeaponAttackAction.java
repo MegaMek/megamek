@@ -1135,7 +1135,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
-                toHit.addModifier(+1, "urban guerrilla");
+                toHit.addModifier(+1, "Urban Guerrilla");
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
                     && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
@@ -1145,13 +1145,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
                     && te.moved == EntityMovementType.MOVE_WALK) {
-                toHit.addModifier(+1, "forest ranger");
+                toHit.addModifier(+1, "Forest Ranger");
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
                         || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
                     && te.moved == EntityMovementType.MOVE_RUN) {
-                toHit.addModifier(+1, "swamp beast");
+                toHit.addModifier(+1, "Swamp Beast");
             }
         }
 

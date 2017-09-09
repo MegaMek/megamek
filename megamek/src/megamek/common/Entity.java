@@ -6875,7 +6875,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
             if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
-                roll.addModifier(-1, "swamp beast");
+                roll.addModifier(-1, "Swamp Beast");
             }
             addPilotingModifierForTerrain(roll, curPos, false);
             adjustDifficultTerrainPSRModifier(roll);

@@ -464,7 +464,7 @@ public class Hex implements IHex, Serializable {
     public int movementCost(Entity entity) {
         int rv = 0;
         for (ITerrain terrain : terrains.values()) {
-            rv += terrain.movementCost(entity);
+            rv += Math.max(0, terrain.movementCost(entity));;
         }
         return rv;
     }

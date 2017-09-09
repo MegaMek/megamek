@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -99,7 +98,7 @@ public class MovePath implements Cloneable, Serializable {
     private transient Entity entity;
     
     // holds the types of steps present in this movement 
-    private HashSet<MoveStepType> containedStepTypes = new HashSet<>();
+    private Set<MoveStepType> containedStepTypes = new HashSet<>();
     
     // whether this movePath take us directly over an enemy unit
     // useful for aircraft

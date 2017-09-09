@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.client.ui.SharedUtility;
 import megamek.common.BombType;
@@ -48,7 +49,7 @@ public abstract class PathRanker {
         owner = princess;
     }
 
-    private HashMap<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<MovePath.Key, Double>();
+    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<MovePath.Key, Double>();
     
     /**
      * Gives the "utility" of a path; a number representing how good it is.
@@ -81,6 +82,9 @@ public abstract class PathRanker {
                 return new ArrayList<>();
             }
 
+            // the cached path probability data is really only relevant for one iteration through this method
+            pathSuccessProbabilities.clear();
+            
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
             getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
@@ -198,8 +202,7 @@ public abstract class PathRanker {
                 // If all the above checks have passed, this is a valid path.
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
-            }
-            finally {
+            } finally {
                 getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
             }
         }

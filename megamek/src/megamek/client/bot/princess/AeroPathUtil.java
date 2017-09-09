@@ -14,8 +14,7 @@ public class AeroPathUtil
 	 * @param movePath the path to check
 	 * @return whether the aircraft will stall at the end of the path
 	 */
-	public static boolean WillStall(MovePath movePath)
-	{
+	public static boolean willStall(MovePath movePath) {
 		// Stalling only happens in atmospheres on ground maps
 		if(!movePath.isOnAtmosphericGroundMap()) {
 			return false;
@@ -42,12 +41,11 @@ public class AeroPathUtil
 	}
 	
 	/**
-     * Determines if the aircraft undertaking the given path will explicitly go off the board
+     * Determines if the aircraft undertaking the given path will become a lawn dart
      * @param movePath the path to check
      * @return True or false
      */
-	public static boolean WillCrash(MovePath movePath)
-	{
+	public static boolean willCrash(MovePath movePath) {
 		return movePath.getEntity().isAero() && 
 		        (movePath.getFinalAltitude() < 1) && 
 		        !movePath.contains(MoveStepType.VLAND) && 
@@ -60,15 +58,14 @@ public class AeroPathUtil
 	 * @param movePath The path to check
 	 * @return True or false
 	 */
-	public static boolean IsSafePathOffBoard(MovePath movePath)
-	{
+	public static boolean isSafePathOffBoard(MovePath movePath)	{
 	    // common causes of PSR include, but are not limited to:
 	    // stalling your aircraft
 	    // crashing your aircraft into the ground
 	    // executing maneuvers
 	    // thrusting too hard 
 	    // see your doctor if you experience any of these symptoms as it may lead to your aircraft transforming into a lawn dart
-		return !WillStall(movePath) && !WillCrash(movePath) && movePath.fliesOffBoard() && !movePath.contains(MoveStepType.MANEUVER) &&
+		return !willStall(movePath) && !willCrash(movePath) && movePath.fliesOffBoard() && !movePath.contains(MoveStepType.MANEUVER) &&
 		        (movePath.getMpUsed() <= movePath.getEntity().getWalkMP()) && 
 		        (movePath.getEntity().isAero() && (movePath.getMpUsed() <= ((IAero) movePath.getEntity()).getSI()));
 	}

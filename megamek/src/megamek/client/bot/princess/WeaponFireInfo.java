@@ -385,7 +385,7 @@ public class WeaponFireInfo {
                 
                 // now we go through all affected hexes and add up the damage done
                 for(Coords coords : affectedHexes) {
-                    for(Iterator<Entity> iter = game.getEntities(bombedHex); iter.hasNext();) { 
+                    for(Iterator<Entity> iter = game.getEntities(coords); iter.hasNext();) { 
                         Entity currentVictim = iter.next();
                         
                         if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {

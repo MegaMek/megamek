@@ -234,12 +234,12 @@ public class BasicPathRanker extends PathRanker {
      */
     protected RankedPath doAeroSpecificRanking(MovePath movePath) {
         // stalling is awful
-    	if(AeroPathUtil.WillStall(movePath)) {
+    	if(AeroPathUtil.willStall(movePath)) {
             return new RankedPath(-1000d, movePath, "stall");
         }
 
         // crashing is even worse
-        if (AeroPathUtil.WillCrash(movePath)) {
+        if (AeroPathUtil.willCrash(movePath)) {
             return new RankedPath(-10000d, movePath, "crash");
         }
 
@@ -708,7 +708,9 @@ public class BasicPathRanker extends PathRanker {
             utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game,
                                                     formula);
 
-            return new RankedPath(utility, pathCopy, formula.toString());
+            RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
+            rankedPath.setExpectedDamage(maximumDamageDone);
+            return rankedPath;
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }

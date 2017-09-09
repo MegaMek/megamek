@@ -23,9 +23,28 @@ import java.text.DecimalFormat;
  * @since 12/5/13 10:19 AM
  */
 class RankedPath implements Comparable<RankedPath> {
-    public MovePath path;
-    public double rank;
-    public String reason;
+    private MovePath path;
+    private double rank;
+    private String reason;
+    
+    // the expected damage resulting from the calculation of this ranked path
+    private double expectedDamage;
+    
+    public MovePath getPath() {
+        return path;
+    }
+    
+    public double getRank() {
+        return rank;
+    }
+    
+    public double getExpectedDamage() {
+        return expectedDamage;
+    }
+    
+    public void setExpectedDamage(double damage) {
+        expectedDamage = damage;
+    }
 
     public RankedPath() {
     }

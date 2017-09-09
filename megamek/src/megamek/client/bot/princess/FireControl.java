@@ -1649,10 +1649,12 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         
-        if(myPlan.getUtility() >= bombPlan.getUtility())
+        if(myPlan.getUtility() >= bombPlan.getUtility()) {
             return myPlan;
-        else
+        }
+        else {
             return bombPlan;
+        }
     }
    
     /**

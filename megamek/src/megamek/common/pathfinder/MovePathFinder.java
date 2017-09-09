@@ -267,9 +267,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         @Override
         public int compare(final MovePath first, final MovePath second) {
         	// Check whether we will stall or not, we want to keep paths that will not stall
-            if(AeroPathUtil.WillStall(first) || AeroPathUtil.WillStall(second)) {
-                int firstPathWillStall = AeroPathUtil.WillStall(first) ? 1 : 0;
-                int secondPathWillStall = AeroPathUtil.WillStall(second) ? 1 : 0;
+            if(AeroPathUtil.willStall(first) || AeroPathUtil.willStall(second)) {
+                int firstPathWillStall = AeroPathUtil.willStall(first) ? 1 : 0;
+                int secondPathWillStall = AeroPathUtil.willStall(second) ? 1 : 0;
                 
                 // if they both stall, then the rest of the comparisons still don't matter, just throw one out and move on
                 return firstPathWillStall - secondPathWillStall;
@@ -370,7 +370,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }
             
-            AddUpAndDown(result, last, entity, mp);
+            addUpAndDown(result, last, entity, mp);
             
             return result;
         }
@@ -385,7 +385,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * @param movePath The parent movePath
          * @see AbstractPathFinder.AdjacencyMap
          */
-        protected void AddUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
+        protected void addUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
             Coords pos;
             int elevation;
             pos = last != null ? last.getPosition() : entity.getPosition();

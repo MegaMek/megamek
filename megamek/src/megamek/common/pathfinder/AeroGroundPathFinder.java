@@ -2,22 +2,22 @@ package megamek.common.pathfinder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.MMLogger;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
-import megamek.common.pathfinder.MovePathFinder.MovePathLegalityFilter;
-import megamek.common.pathfinder.MovePathFinder.MovePathVelocityFilter;
-import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
+import megamek.common.pathfinder.AbstractPathFinder.Filter;
 
 /**
  * This set of classes is intended for use for pathfinding by aerodyne units on ground maps with an atmosphere
@@ -26,26 +26,29 @@ import megamek.common.pathfinder.MovePathFinder.NextStepsAdjacencyMap;
  * @author NickAragua
  *
  */
-public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, MovePath, MovePath> {
+public class AeroGroundPathFinder {
     
     public static final int OPTIMAL_STRIKE_ALTITUDE = 5; // also great for dive bombs
     public static final int NAP_OF_THE_EARTH = 1;
     public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
+    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroGroundPathFinder";
     
     private IGame game;
-    private AeroGroundOffBoardFilter offBoardFilter;
     private List<MovePath> aeroGroundPaths;
+    private int maxThrust;
+    private MMLogger logger;
     
-    private AeroGroundPathFinder(DestinationMap<CoordsWithFacing, MovePath> edgeDestinationMap, 
-            EdgeRelaxer<MovePath, MovePath> edgeRelaxer, AdjacencyMap<MovePath> edgeAdjacencyMap, Comparator<MovePath> edgeComparator, IGame game) {
-        super(edgeDestinationMap, edgeRelaxer, edgeAdjacencyMap, edgeComparator);
-        this.offBoardFilter = new AeroGroundOffBoardFilter();
-        this.addFilter(offBoardFilter); // special case, as the offBoardFilter maintains state
+    private AeroGroundPathFinder(IGame game) {
         this.game = game;
+        getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return aeroGroundPaths;
+    }
+    
+    private MMLogger getLogger() {
+        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
     }
     
     /**
@@ -53,16 +56,18 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
      * 
      * @param startingEdges a collection of possible starting edges.
      */
-    @Override
-    public void run(Collection<MovePath> startingEdges) {
+    public void run(MovePath startingEdge) {
+        final String METHOD_NAME = "run";
+        
         try {
             aeroGroundPaths = new ArrayList<MovePath>();
-            for(MovePath path : startingEdges) {
-                Collection<MovePath> validAccelerations = NextStepsAeroGroundAdjacencyMap.generateValidAccelerations(path);
-                
-                for(MovePath acceleratedPath : validAccelerations) {
-                    aeroGroundPaths.addAll(getAltitudeAdjustedPaths(GenerateAllPaths(acceleratedPath)));
-                }
+            
+            // recalculate max thrust for the given path's entity
+            maxThrust = calculateMaxSafeThrust((IAero) startingEdge.getEntity());                
+            Collection<MovePath> validAccelerations = generateValidAccelerations(startingEdge);
+            
+            for(MovePath acceleratedPath : validAccelerations) {
+                aeroGroundPaths.addAll(getAltitudeAdjustedPaths(GenerateAllPaths(acceleratedPath)));
             }
         } catch (OutOfMemoryError e) {
             /*
@@ -71,34 +76,19 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
              * by ending prematurely while preserving already computed results.
              */
 
-            candidates = null;
-            //candidates = new PriorityQueue<E>(100, comparator);
-            e.printStackTrace();
-            System.err.println("Not enough memory to analyse all options."//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
-                    + "increase java memory limit.");//$NON-NLS-1$
+                    + "increase java memory limit.";
+            
+            getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
         } catch(Exception e) {
-            e.printStackTrace(); //do something, don't just swallow the exception, good lord
+            getLogger().log(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
         }
     }
     
-    /**
-     * Gets the shortest of all paths generated so far that explicitly goes off-board.
-     */
-    public MovePath getShortestOffBoardPath() {
-        return offBoardFilter.getShortestPath();
-    }
-    
     public static AeroGroundPathFinder getInstance(IGame game) {
-        AeroGroundPathFinder apf = new AeroGroundPathFinder(
-                                        new MovePathFinder.MovePathDestinationMap(),
-                                        new ShortestPathFinder.AeroMovePathRelaxer(),
-                                        new NextStepsAeroGroundAdjacencyMap(MoveStepType.FORWARDS),
-                                        new MovePathFinder.MovePathVelocityCostComparator(),
-                                        game);
-        
-        apf.addFilter(new MovePathVelocityFilter());
-        apf.addFilter(new MovePathLegalityFilter(game));
+        AeroGroundPathFinder apf = new AeroGroundPathFinder(game);
+
         return apf;
     }
     
@@ -127,9 +117,8 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
      * @param aero The aero entity for which to calculate max thrust.
      * @return The max thrust.
      */
-    private static int calculateMaxThrust(IAero aero) {
+    public static int calculateMaxSafeThrust(IAero aero) {
         int maxThrust = Math.min(aero.getCurrentThrust(), aero.getSI());    // we should only thrust up to our SI
-        //maxThrust = Math.min(maxThrust, artificialCap); // lol just kidding, you ain't going nowhere fast bro
         return maxThrust;
     }
     
@@ -139,7 +128,7 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
      *
      * @param <MovePath> a move path
      * 
-     * This class removes all off-board paths, but does kee
+     * This class removes all off-board paths, but keeps track of the shortest of all the paths removed
      */
     public static class AeroGroundOffBoardFilter extends Filter<MovePath> {
 
@@ -166,10 +155,11 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
                 }
                 else {
                     // if the path *does* go off board, we want to compare its length to 
-                    // our current shortest off-board path and keep it in mind if it's shorter
+                    // our current shortest off-board path and keep it in mind if it's both shorter and safe
                     // at the end of the process, we will add the shortest path off board to the list of moves
                     if(shortestPath == null || 
-                            (shortestPath.length() > e.length())) {
+                            (shortestPath.length() > e.length()) && 
+                            AeroPathUtil.isSafePathOffBoard(e)) {
                         shortestPath = e;
                     }
                 }
@@ -191,253 +181,69 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
         }
         
     }
-    
-    /**
-     * Functional Interface for {@link #getAdjacent(MovePath)}
-     */
-    public static class NextStepsAeroGroundAdjacencyMap extends NextStepsAdjacencyMap {
-
-        public NextStepsAeroGroundAdjacencyMap(MoveStepType stepType) {
-            super(stepType);
-        }
-
-        /**
-         * Unused, will be deleted pending code review
-         * Extends the result produced by
-         * {@linkNextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)}
-         * with manoeuvres for Aero
-         *
-         * @see NextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)
-         */
-        @Override
-        public Collection<MovePath> getAdjacent(MovePath mp) {
-            // These steps are terminal, and shouldn't have anything after them
-            if (mp.contains(MoveStepType.RETURN)
-                    || mp.contains(MoveStepType.OFF)) {
-                return new ArrayList<MovePath>();
-            }
-            
-            Collection<MovePath> result = new ArrayList<MovePath>();
-            MoveStep lastStep = mp.getLastStep();
-            IGame game = mp.getEntity().getGame();
-            
-            // if it's the first step of the move, this will add zero or more neighbor paths that change the aircraft's velocity
-            result.addAll(generateValidAccelerations(mp));
-            //result.addAll(generateValidAltitudeChanges(mp, 5));
-            
-            // we can move forward if we have some velocity left
-            // additionally, if we can't turn, we should move forward until we encounter one of these situations:
-            //  can turn
-            //  have run out of velocity
-            //  have gone off the board
-            // this will not add the single "forward" when the aircraft *can* turn, so we handle that subsequently 
-            if(mp.getFinalVelocityLeft() > 0)
-            {
-                MovePath longJump = mp.clone();
-                boolean stepAdded = false;
-                        
-                // little dirty hack to get around the problem where if this is the first step of a path
-                // we have no last step
-                MoveStep currentStep = longJump.getLastStep();
-                if(currentStep == null) {
-                    currentStep = new MoveStep(longJump, MoveStepType.NONE);
-                }
-                
-                while(!currentStep.canAeroTurn(game) &&
-                      longJump.getFinalVelocityLeft() > 0 && 
-                      game.getBoard().contains(longJump.getFinalCoords())) {
-                    
-                    longJump.addStep(MoveStepType.FORWARDS);
-                    currentStep = longJump.getLastStep();
-                    stepAdded = true;
-                }
-                
-                if(stepAdded)
-                {
-                    // chop off the last step if it took us off board
-                    if(!game.getBoard().contains(longJump.getFinalCoords()))
-                    {
-                        longJump.removeLastStep();
-                    }
-                    
-                    result.add(longJump);
-                }
-            }            
-            
-            // we can turn if we can turn. very philosophical.
-            // Actually, though, don't turn on the last step of a move. It's pointless.
-            if(lastStep != null && lastStep.canAeroTurn(game) && lastStep.getVelocityLeft() > 0)
-            {
-                result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
-                result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
-                result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            }
-            
-            // we can fly off of edge of board if we're at the edge of the board
-            Coords c = mp.getFinalCoords();
-            
-            if (c.isOnBoardEdge(game.getBoard()) 
-                && (mp.getFinalVelocity() > 0)) {
-                result.add(mp.clone().addStep(MoveStepType.RETURN));
-            }
-                               
-            // Maneuvers are temporarily disabled, as Princess is a little bit cavalier with them at the moment
-            /*if (!mp.contains(MoveStepType.MANEUVER)) {
-                // side slips
-                result.add(mp.clone()
-                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
-                             .addStep(MoveStepType.LATERAL_LEFT, true, true));
-                result.add(mp.clone()
-                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
-                             .addStep(MoveStepType.LATERAL_RIGHT, true, true));
-                boolean has_moved = mp.getHexesMoved() == 0;
-                if (!has_moved) {
-                    //result.add(mp.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
-                    //result.add(mp.clone().addManeuver(MoveStepType.YAW, true, true);
-                    // immelman
-                    if (mp.getFinalVelocity() > 2) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
-                    }
-                    // split s
-                    if (mp.getFinalAltitude() > 2) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
-                    }
-                    // loop
-                    if (mp.getFinalVelocity() > 4) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_LOOP)
-                                     .addStep(MoveStepType.LOOP, true, true));
-                    }
-                }
-            }*/
-            
-            return result;
-        }
-
-        /**
-         * Generates paths that begin with all valid acceleration sequences for this aircraft.
-         * Avoids sequences that will cause a PSR (just no)
-         * @param startingPath
-         * @return
-         */
-        public static Collection<MovePath> generateValidAccelerations(MovePath startingPath)
-        {
-            // the possible velocities at ground level are 1 - 12 (we ignore "0" velocity as that will just stall our aircraft)
-            // with an additional lower and upper bound of "current velocity" -/+ walk MP (investigate utility of adjusting it to be run MP instead)
-
-            Collection<MovePath> paths = new ArrayList<MovePath>();
-            
-            // sanity check: if we've already done something else with the path, there's no acceleration to be done
-            if(startingPath.length() > 0) {
-                return paths;
-            }
-            
-            int maxThrust = AeroGroundPathFinder.calculateMaxThrust((IAero) startingPath.getEntity());
-            
-            int currentVelocity = startingPath.getFinalVelocity();
-            int lowerBound = Math.max(1, currentVelocity - maxThrust);
-            // put a governor on that engine
-            // while the rulebook max velocity on ground map is 12, in reality we want to limit ourselves to velocity 3, for two reasons:
-            // 1: velocity 3 lets us do a 360 degree turn, so any further turning is superfluous
-            // 2: velocity 4 generates about 6,000 paths which is pretty painful for performance, although we can probably improve
-            //      that by updating PathRanker.getMovePathSuccessProbability() to skip most non-aero related checks
-            int upperBound = Math.min(3, currentVelocity + maxThrust); 
-            
-            // we go from the lower bound to the current velocity and generate paths with the required number of DECs to get to
-            // the desired velocity
-            for(int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++)
-            {
-                MovePath path = startingPath.clone();
-                for(int deltaVelocity = 0; deltaVelocity < currentVelocity - desiredVelocity; deltaVelocity++) {
-                    path.addStep(MoveStepType.DEC);
-                }
-                
-                paths.add(path);
-            }
-            
-            // If the unaltered starting path is within acceptable velocity bounds, it's also a valid "acceleration".
-            if(startingPath.getFinalVelocity() <= upperBound &&
-               startingPath.getFinalVelocity() >= lowerBound) {
-                paths.add(startingPath.clone());
-            }
-            
-            // we go from the current velocity to the upper bound and generate paths with the required number of DECs to get to
-            // the desired velocity
-            for(int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++)
-            {
-                MovePath path = startingPath.clone();
-                for(int deltaVelocity = 0; deltaVelocity < upperBound - desiredVelocity; deltaVelocity++) {
-                    path.addStep(MoveStepType.ACC);
-                }
-                
-                paths.add(path);
-            }
-            
-            return paths;
-        }
-
-        /**
-         * Unused, will be deleted pending code review
-         * Given a starting path, generates paths that go to the desired altitude (or as close as possible)
-         * @param startingPath
-         * @param desiredAltitude
-         * @return
-         */
-        private Collection<MovePath> generateValidAltitudeChanges(MovePath startingPath, int desiredAltitude) {
-            Collection<MovePath> results = new ArrayList<MovePath>();
-            
-            // sanity check: if we're already at the desired altitude, don't bother
-            // additionally, quit out if the starting path's last step is not an acceleration 
-            // (it's ok to continue if we have no steps)
-            if(startingPath.getFinalAltitude() == desiredAltitude ||
-                    (startingPath.getLastStep() != null && 
-                        startingPath.getLastStep().getType() != MoveStepType.DEC &&
-                        startingPath.getLastStep().getType() != MoveStepType.ACC)) {
-                return results;
-            }
-            
-            MovePath altitudePath = startingPath.clone();
-            
-            // special case: if we are at velocity 0, we don't want to stall, so just generate "double decelerate" and call it a day
-            if(startingPath.getFinalVelocity() == 0) {
-                altitudePath.addStep(MoveStepType.DOWN);
-                altitudePath.addStep(MoveStepType.DOWN);
-                results.add(altitudePath);
-                return results;
-            }
-            
-            boolean stepsAdded = false;
-            int maxThrust = AeroGroundPathFinder.calculateMaxThrust((IAero) altitudePath.getEntity());
-            
-            // generate a path that involves making changes that go up or down towards the desired altitude as far as possible
-            while(altitudePath.getFinalAltitude() != desiredAltitude) {
-                // up steps use thrust. Two points, to be exact
-                if(altitudePath.getFinalAltitude() < desiredAltitude &&
-                        altitudePath.getMpUsed() < maxThrust - 1) {
-                    altitudePath.addStep(MoveStepType.UP);
-                    stepsAdded = true;
-                }
-                // down steps don't use thrust, but if we take more than two, that's a PSR so avoid that
-                else if(altitudePath.getFinalAltitude() > desiredAltitude &&
-                        altitudePath.getFinalAltitude() >=  startingPath.getFinalAltitude() - 2) {
-                    altitudePath.addStep(MoveStepType.DOWN);
-                    stepsAdded = true;
-                }
-                // we've either reached the desired altitude or have hit some other stopping condition so that's enough of that
-                else {
-                    break;
-                }
-            }
-            
-            if(stepsAdded) {
-                results.add(altitudePath);
-            }
-            
-            return results;
-        }
-    }
 
     // This object contains a hex and the shortest non-off-board path that has flown over it.
     HashMap<Coords, MovePath> visitedHexes;
+    
+    /**
+     * Generates paths that begin with all valid acceleration sequences for this aircraft.
+     * Avoids sequences that will cause a PSR (just no)
+     * @param startingPath
+     * @return
+     */
+    public Collection<MovePath> generateValidAccelerations(MovePath startingPath)
+    {
+        // the possible velocities at ground level are 1 - 12 (we ignore "0" velocity as that will just stall our aircraft)
+        // with an additional lower and upper bound of "current velocity" -/+ walk MP (investigate utility of adjusting it to be run MP instead)
+
+        Collection<MovePath> paths = new ArrayList<MovePath>();
+        
+        // sanity check: if we've already done something else with the path, there's no acceleration to be done
+        if(startingPath.length() > 0) {
+            return paths;
+        }
+        
+        int currentVelocity = startingPath.getFinalVelocity();
+        int lowerBound = Math.max(1, currentVelocity - maxThrust);
+        // put a governor on that engine
+        // while the rulebook max velocity on ground map is 12, in reality we want to limit ourselves to velocity 3, for two reasons:
+        // 1: velocity 3 lets us do a 360 degree turn, so any further turning is superfluous
+        // 2: velocity 4 generates about 6,000 paths which is pretty painful for performance, although we can probably improve
+        //      that by updating PathRanker.getMovePathSuccessProbability() to skip most non-aero related checks
+        int upperBound = Math.min(3, currentVelocity + maxThrust); 
+        
+        // we go from the lower bound to the current velocity and generate paths with the required number of DECs to get to
+        // the desired velocity
+        for(int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++)
+        {
+            MovePath path = startingPath.clone();
+            for(int deltaVelocity = 0; deltaVelocity < currentVelocity - desiredVelocity; deltaVelocity++) {
+                path.addStep(MoveStepType.DEC);
+            }
+            
+            paths.add(path);
+        }
+        
+        // If the unaltered starting path is within acceptable velocity bounds, it's also a valid "acceleration".
+        if(startingPath.getFinalVelocity() <= upperBound &&
+           startingPath.getFinalVelocity() >= lowerBound) {
+            paths.add(startingPath.clone());
+        }
+        
+        // we go from the current velocity to the upper bound and generate paths with the required number of DECs to get to
+        // the desired velocity
+        for(int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++)
+        {
+            MovePath path = startingPath.clone();
+            for(int deltaVelocity = 0; deltaVelocity < upperBound - desiredVelocity; deltaVelocity++) {
+                path.addStep(MoveStepType.ACC);
+            }
+            
+            paths.add(path);
+        }
+        
+        return paths;
+    }
     
     /**
      * Given a list of MovePaths, applies adjustTowardsDesiredAltitude to each of them.
@@ -477,7 +283,6 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
      */
     private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
         MovePath altitudePath = startingPath.clone();
-        int maxThrust = AeroGroundPathFinder.calculateMaxThrust((IAero) altitudePath.getEntity());
         
         // generate a path that involves making changes that go up or down towards the desired altitude as far as possible
         while(altitudePath.getFinalAltitude() != desiredAltitude) {
@@ -565,10 +370,11 @@ public class AeroGroundPathFinder extends AbstractPathFinder<CoordsWithFacing, M
             int turnCost = currentStep.asfTurnCost(mp.getGame(), stepType, mp.getEntity());
             
             // if we can turn 
-            // safe mode: currentStep.getMpUsed() < mp.getEntity().getWalkMP() - turnCost)
-            ///         *and* turning won't cause us to make a PSR, let's attempt to turn
-            // disabled as it currentl results in annoying behavior.
-            if(currentStep.canAeroTurn(game)) { 
+            // *and* it's a legal turn 
+            // ("early" turns before the "free turn" use thrust, so if we go over max thrust, it's an illegal move
+            //  and thus not worth evaluating further)
+            if(currentStep.canAeroTurn(game) &&
+                    currentStep.getMpUsed() <= mp.getEntity().getRunMP() - turnCost) { 
                 MovePath tiltedPath = straightLine.clone();
                 tiltedPath.addStep(stepType);
                 

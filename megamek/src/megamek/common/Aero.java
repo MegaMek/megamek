@@ -671,6 +671,7 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void setFuel(int gas) {
         fuel = gas;
+        currentfuel = gas;
     }
     
     public void setCurrentFuel(int gas) {

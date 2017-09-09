@@ -182,7 +182,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labStartingMode"), SwingConstants.RIGHT); //$NON-NLS-1$
     
     private JComboBox<String> choStartingMode = new JComboBox<>();
-    
+       
     private JLabel labCurrentFuel = new JLabel(
             Messages.getString("CustomMechDialog.labCurrentFuel"), SwingConstants.RIGHT); //$NON-NLS-1$
     
@@ -427,7 +427,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             panDeploy.add(labStartAltitude, GBC.std());
             panDeploy.add(fldStartAltitude, GBC.eol());
-            
+                        
             panDeploy.add(labCurrentFuel, GBC.std());
             panDeploy.add(fldCurrentFuel, GBC.eol());
         }
@@ -510,7 +510,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartAltitude.addActionListener(this);
             
             fuel = a.getFuel();
-            fldCurrentFuel.setText(new Integer(a.getCurrentFuel()) //TODO: This needs to be current fuel when implemented
+            fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
                     .toString());
             fldCurrentFuel.addActionListener(this);
         }

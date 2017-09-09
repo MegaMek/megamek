@@ -1517,6 +1517,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public void setFuel(int gas) {
         fuel = gas;
+        currentfuel = gas;
     }
     
     public void setCurrentFuel(int gas) {

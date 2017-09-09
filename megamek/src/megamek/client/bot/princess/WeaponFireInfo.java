@@ -390,8 +390,7 @@ public class WeaponFireInfo {
                         
                         if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
                             damage += damagePerShot;
-                        }
-                        else { // we prefer not to blow up friendlies if we can help it
+                        } else { // we prefer not to blow up friendlies if we can help it
                             damage -= damagePerShot;
                         }                    
                     }

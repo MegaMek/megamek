@@ -22,11 +22,12 @@ import java.util.stream.Collectors;
  *
  */
 public class CompositeTechLevel implements ITechnology, Serializable {
-    private static final long serialVersionUID = -2591881133085092725L;
-    
-    private boolean clan;
-    private boolean mixed;
-    private int introYear;
+    private static final long serialVersionUID = -2591881133085092725L;    
+
+    private final boolean clan;
+    private final boolean mixed;
+    private final int introYear;
+    private final int techFaction;
     private Integer experimental;
     private Integer advanced;
     private Integer standard;
@@ -44,7 +45,8 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param introYear - the year the composite equipment is first available
      */
     public CompositeTechLevel(TechAdvancement initialTA,
-            boolean clan, boolean mixed, int introYear) {
+            boolean clan, boolean mixed, int introYear, int techFaction) {
+        this.techFaction = techFaction;
         this.clan = clan;
         this.mixed = mixed;
         this.introYear = introYear;
@@ -82,8 +84,8 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     /**
      * @param en 
      */
-    public CompositeTechLevel(Entity en) {
-        this(en.getConstructionTechAdvancement(), en.isClan(), en.isMixedTech(), en.getYear());
+    public CompositeTechLevel(Entity en, int techFaction) {
+        this(en.getConstructionTechAdvancement(), en.isClan(), en.isMixedTech(), en.getYear(), techFaction);
     }
     
     /**
@@ -142,13 +144,11 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @param tech - the advancement for the new component
      */
     public void addComponent(ITechnology tech) {
-        int protoDate = mixed?tech.getPrototypeDate() : tech.getPrototypeDate(clan);
-        int prodDate = mixed?tech.getProductionDate() : tech.getProductionDate(clan);
+        int protoDate = mixed?tech.getPrototypeDate() : tech.getPrototypeDate(clan, techFaction);
+        int prodDate = mixed?tech.getProductionDate() : tech.getProductionDate(clan, techFaction);
         int commonDate = mixed?tech.getCommonDate() : tech.getCommonDate(clan);
         
-        if (staticTechLevel.compareTo(tech.getStaticTechLevel()) < 0) {
-            staticTechLevel = tech.getStaticTechLevel();
-        }
+        staticTechLevel = SimpleTechLevel.max(staticTechLevel, tech.getStaticTechLevel());
         //If this record is blank we ignore it
         if (protoDate == DATE_NONE
                 && prodDate == DATE_NONE
@@ -214,17 +214,21 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             standard = Math.max(standard, commonDate);
         }
         
-        addExtinctionRange(mixed?tech.getExtinctionDate() : tech.getExtinctionDate(clan),
-                mixed?tech.getReintroductionDate() : tech.getReintroductionDate(clan));
+        addExtinctionRange(mixed?tech.getExtinctionDate() : tech.getExtinctionDate(clan, techFaction),
+                mixed?tech.getReintroductionDate() : tech.getReintroductionDate(clan, techFaction));
         
         techRating = Math.max(techRating, tech.getTechRating());
         for (int era = 0; era < ERA_NUM; era++) {
             int av = tech.getBaseAvailability(era);
+            // Clan mixed tech units cannot use IS tech introduced during SW until 3050.
             if (clan && era == ERA_SW
                     && !tech.isClan()
+                    && (techFaction < F_CLAN)
+                    && (techFaction != F_CS)
                     && ITechnology.getTechEra(tech.getIntroductionDate()) == ERA_SW) {
                 av = RATING_X; 
             }
+            // IS base cannot include Clan tech before 3050; after 3050 av is +1.
             if (!clan && tech.isClan()) {
                 if (era == ERA_SW) {
                     av = RATING_X;

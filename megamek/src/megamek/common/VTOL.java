@@ -663,10 +663,10 @@ public class VTOL extends Tank implements IBomber {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
-    protected void addSystemTechAdvancement() {
-        super.addSystemTechAdvancement();
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
         if (!hasNoTurret()) {
-            compositeTechLevel.addComponent(getChinTurretTA());
+            ctl.addComponent(getChinTurretTA());
         }
     }
     

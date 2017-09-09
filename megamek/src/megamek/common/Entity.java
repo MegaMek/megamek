@@ -197,7 +197,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String model;
     protected int year = 3071;
     protected int techLevel;
-    protected CompositeTechLevel compositeTechLevel;
+    private CompositeTechLevel compositeTechLevel;
     /**
      * Used by support vehicles to define the structural tech rating 
      * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
@@ -1041,10 +1041,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Sets initial TechAdvancement without equipment based on construction options.
      */
     protected void initTechAdvancement() {
-        compositeTechLevel = new CompositeTechLevel(this);
-        addSystemTechAdvancement();
+        compositeTechLevel = new CompositeTechLevel(this, F_NONE);
+        addSystemTechAdvancement(compositeTechLevel);
     }
     
+    public CompositeTechLevel factionTechLevel(int techFaction) {
+        CompositeTechLevel retVal = new CompositeTechLevel(this, techFaction);
+        addSystemTechAdvancement(retVal);
+        return retVal;
+    }
+    
+    protected void addTechComponent(ITechnology tech) {
+        compositeTechLevel.addComponent(tech);
+    }
 
     @Override
     public boolean isIntroLevel() {
@@ -1192,27 +1201,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Incorporate dates for components that are not in the equipment list, such as engines and structure.
      */
-    protected void addSystemTechAdvancement() {
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         if (hasEngine()) {
-            compositeTechLevel.addComponent(getEngine());
+            ctl.addComponent(getEngine());
         }
         if (isOmni()) {
-            compositeTechLevel.addComponent(TA_OMNI);
+            ctl.addComponent(TA_OMNI);
         }
         if (hasPatchworkArmor()) {
-            compositeTechLevel.addComponent(TA_PATCHWORK_ARMOR);
+            ctl.addComponent(TA_PATCHWORK_ARMOR);
             for (int loc = 0; loc < locations(); loc++) {
-                compositeTechLevel.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
+                ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
                         TechConstants.isClan(armorTechLevel[loc])));
             }
         } else {
-            compositeTechLevel.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
+            ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
                     TechConstants.isClan(armorTechLevel[0])));
         }
         if (isMixedTech()) {
-            compositeTechLevel.addComponent(TA_MIXED_TECH);
+            ctl.addComponent(TA_MIXED_TECH);
         }
-        compositeTechLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
+        ctl.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
                 TechConstants.isClan(structureTechLevel)));
     }
     

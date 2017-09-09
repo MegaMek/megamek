@@ -331,29 +331,29 @@ public class Infantry extends Entity {
     }
         
     @Override
-    protected void addSystemTechAdvancement() {
-        super.addSystemTechAdvancement();
-        compositeTechLevel.addComponent(Infantry.getMotiveTechAdvancement(movementMode));
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        ctl.addComponent(Infantry.getMotiveTechAdvancement(movementMode));
         if (hasSpecialization(COMBAT_ENGINEERS)) {
-            compositeTechLevel.addComponent(Infantry.getCombatEngineerTA());
+            ctl.addComponent(Infantry.getCombatEngineerTA());
         }
         if (hasSpecialization(MARINES)) {
-            compositeTechLevel.addComponent(Infantry.getMarineTA());
+            ctl.addComponent(Infantry.getMarineTA());
         }
         if (hasSpecialization(MOUNTAIN_TROOPS)) {
-            compositeTechLevel.addComponent(Infantry.getMountainTA());
+            ctl.addComponent(Infantry.getMountainTA());
         }
         if (hasSpecialization(PARATROOPS)) {
-            compositeTechLevel.addComponent(Infantry.getParatrooperTA());
+            ctl.addComponent(Infantry.getParatrooperTA());
         }
         if (hasSpecialization(PARAMEDICS)) {
-            compositeTechLevel.addComponent(Infantry.getParamedicTA());
+            ctl.addComponent(Infantry.getParamedicTA());
         }
         if (hasSpecialization(TAG_TROOPS)) {
-            compositeTechLevel.addComponent(Infantry.getTAGTroopsTA());
+            ctl.addComponent(Infantry.getTAGTroopsTA());
         }
         if (isAntiMekTrained()) {
-            compositeTechLevel.addComponent(Infantry.getAntiMekTA());
+            ctl.addComponent(Infantry.getAntiMekTA());
         }
     }
     
@@ -2250,7 +2250,7 @@ public class Infantry extends Entity {
                 default:
                     setOriginalWalkMP(1);
             }
-            compositeTechLevel.addComponent(Infantry.getMotiveTechAdvancement(movementMode));
+            addTechComponent(Infantry.getMotiveTechAdvancement(movementMode));
         }
     }
 

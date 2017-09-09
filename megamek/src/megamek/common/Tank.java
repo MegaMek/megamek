@@ -224,10 +224,10 @@ public class Tank extends Entity {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
-    protected void addSystemTechAdvancement() {
-        super.addSystemTechAdvancement();
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
         if (!hasNoDualTurret()) {
-            compositeTechLevel.addComponent(getDualTurretTA());
+            ctl.addComponent(getDualTurretTA());
         }
     }
     

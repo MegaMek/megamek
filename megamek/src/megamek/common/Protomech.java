@@ -1143,7 +1143,7 @@ public class Protomech extends Entity {
                         }
                     }
             }
-            compositeTechLevel.addComponent(mounted.getType());
+            addTechComponent(mounted.getType());
         } else {
             super.addEquipment(mounted, loc, rearMounted);
         }

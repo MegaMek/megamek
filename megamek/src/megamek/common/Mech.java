@@ -3234,20 +3234,20 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    protected void addSystemTechAdvancement() {
-        super.addSystemTechAdvancement();
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
         // battlemechs with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            compositeTechLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
         }
         if (getGyroTechAdvancement() != null) {
-            compositeTechLevel.addComponent(getGyroTechAdvancement());
+            ctl.addComponent(getGyroTechAdvancement());
         }
         if (getCockpitTechAdvancement() != null) {
-            compositeTechLevel.addComponent(getCockpitTechAdvancement());
+            ctl.addComponent(getCockpitTechAdvancement());
         }
         if (hasFullHeadEject()) {
-            compositeTechLevel.addComponent(getFullHeadEjectAdvancement());
+            ctl.addComponent(getFullHeadEjectAdvancement());
         }
         //FIXME: Clan interface cockpit has higher tech rating
         //if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {

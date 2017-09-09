@@ -67,16 +67,10 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-<<<<<<< HEAD
         // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs
         if ((unit instanceof Mech) 
         		|| (unit instanceof QuadVee && unit.getConversionMode() == QuadVee.CONV_MODE_MECH) 
         		|| (unit instanceof LandAirMech && unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER)) {
-=======
-        // Only mechs, except LAMs in fighter mode
-        if ((unit instanceof Mech)
-                && !unit.isAero()) {
->>>>>>> branch 'master' of https://github.com/MegaMek/megamek
             result = true;
         }
 

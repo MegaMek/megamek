@@ -4249,7 +4249,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_VEE.getCmd())) {
             if (ce instanceof QuadVee && ((QuadVee)ce).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
-                adjustConvertSteps(EntityMovementMode.TRACKED);
+                adjustConvertSteps(EntityMovementMode.WHEELED);
             } else if ((ce instanceof Mech && ((Mech)ce).hasTracks())
                     || ce instanceof QuadVee) {
                 adjustConvertSteps(EntityMovementMode.TRACKED);

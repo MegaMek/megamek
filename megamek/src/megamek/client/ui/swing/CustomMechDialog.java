@@ -411,6 +411,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choStartingMode.setToolTipText(Messages
                     .getString("CustomMechDialog.startingModeToolTip")); //$NON-NLS-1$
             refreshDeployment();
+            // Disable conversions for loaded units so we don't get fighter LAMs in mech bays and vice-versa
+            choStartingMode.setEnabled(entities.get(0).getTransportId() == Entity.NONE);
         }
         if (isVTOL || isLAM || isGlider) {
             panDeploy.add(labStartHeight, GBC.std());

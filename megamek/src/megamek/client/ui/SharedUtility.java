@@ -257,7 +257,7 @@ public class SharedUtility {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                             || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                             || (moveType == EntityMovementType.MOVE_RUN)
-                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
+                            || (moveType == EntityMovementType  .MOVE_VTOL_RUN)) {
                         //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);

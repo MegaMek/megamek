@@ -8796,7 +8796,7 @@ public class Server implements Runnable {
                 }
             } // End STEP_MOUNT
 
-            // handle fighter recovery
+            // handle fighter recovery, and also Dropship docking with another large craft
             if (step.getType() == MoveStepType.RECOVER) {
 
                 loader = game.getEntity(step.getRecoveryUnit());
@@ -8807,12 +8807,16 @@ public class Server implements Runnable {
                 if (loader.mpUsed > 0) {
                     rollTarget.addModifier(5, "carrier used thrust");
                 }
+                if (entity.getPartialRepairs().booleanOption("aero_collar_crit")) {
+                	rollTarget.addModifier(2, "misrepaired docking collar");
+                }
                 int ctrlroll = Compute.d6(2);
                 if (isDS) {
                     r = new Report(9388);
                 } else {
                     r = new Report(9381);
                 }
+                //TODO: This doesn't currently break out the modifiers and should...
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
                 r.add(loader.getDisplayName());
@@ -10458,15 +10462,14 @@ public class Server implements Runnable {
      * @param coords the <code>Coords</code> where to deliver
      */
 
-    public void deliverMissileSmoke(Coords coords, Vector<Report> vPhaseReport) {
+    public void deliverMissileSmoke(Coords coords, int smokeType, Vector<Report> vPhaseReport) {
         Report r = new Report(5185, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
+        createSmoke(coords, smokeType, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, smokeType));
         sendChangedHex(coords);
     }
 

@@ -110,7 +110,13 @@ public interface IAero {
     int getSensorHits();
 
     int getFCSHits();
-
+    
+    int getLandingGearPartialRepairs();
+    
+    int getAvionicsMisreplaced();
+    
+    int getAvionicsMisrepaired();
+    
     default int getClusterMods() {
         return -1 * (getFCSHits() + getSensorHits());
     }
@@ -412,7 +418,24 @@ public interface IAero {
         if (!hasLifeSupport()) {
             roll.addModifier(+2, "No life support");
         }
-
+        
+        // Landing Gear Partial Repairs, only apply if the landing gear isn't currently damaged
+        if (getLandingGearMod(false) == 0) {
+        	if (getLandingGearPartialRepairs() == 2) {
+            roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
+        	} else if (getLandingGearPartialRepairs() == 1) {
+            roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
+        	}
+    	}
+        
+        //Avionics Partial Repairs, only apply if the Avionics package isn't destroyed
+        if (avihits < 3) {
+        	if (getAvionicsMisrepaired() == 1) {
+        	roll.addModifier(1, "misrepaired avionics");
+        	} if (getAvionicsMisreplaced() == 1) {
+            roll.addModifier(1, "misreplaced avionics");
+        	}
+        }
         // Landing Modifiers table, TW pg 86
         int velmod;
         if (isVertical) {

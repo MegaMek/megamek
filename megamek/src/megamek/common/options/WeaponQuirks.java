@@ -63,6 +63,8 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED, false); //$NON-NLS-1$
 
     }
     
@@ -169,6 +171,40 @@ public class WeaponQuirks extends AbstractOptions {
                 || en instanceof BattleArmor
                 || en instanceof Jumpship
                 || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
+            if (en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
+            if (en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
+            if (en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
+            if (en instanceof Jumpship) {
 
                 return false;
             }

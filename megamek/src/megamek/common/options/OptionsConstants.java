@@ -132,6 +132,10 @@ public class OptionsConstants {
     public static final String QUIRK_WEAP_NEG_NON_FUNCTIONAL = "non_functional"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_POOR_COOLING = "poor_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed"; //$NON-NLS-1$
+    //Technically, these are partial repairs, not quirks, but I don't think we need to iterate 
+    //through all the weapons on both the quirk and partial repairs tabs just to add these.
+    public static final String QUIRK_WEAP_NEG_MISREPAIRED = "misrepaired_weapon"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_MISREPLACED = "misreplaced_weapon"; //$NON-NLS-1$
 
     // PILOTING SKILLS
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery"; //$NON-NLS-1$

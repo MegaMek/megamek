@@ -856,7 +856,7 @@ public class UnitEditorDialog extends JDialog {
 
         if (aero instanceof Jumpship) {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
@@ -868,7 +868,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(fcsCrit, gridBagConstraints);
         } else {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
@@ -881,7 +881,7 @@ public class UnitEditorDialog extends JDialog {
         }
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Sensor" + "</b><br></html>"),
                 gridBagConstraints);
@@ -891,7 +891,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(sensorCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Engine" + "</b><br></html>"),
                 gridBagConstraints);
@@ -902,9 +902,10 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(engineCrit, gridBagConstraints);
-
+        
+    if (!(aero instanceof Jumpship)) {
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Landing Gear"
                 + "</b><br></html>"), gridBagConstraints);
@@ -916,9 +917,10 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(gearCrit, gridBagConstraints);
-
+    }
+    
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Life Support"
                 + "</b><br></html>"), gridBagConstraints);
@@ -933,7 +935,7 @@ public class UnitEditorDialog extends JDialog {
 
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 6;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Left Thruster"
                     + "</b><br></html>"), gridBagConstraints);
@@ -943,7 +945,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(leftThrusterCrit, gridBagConstraints);
 
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 7;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Right Thruster"
                     + "</b><br></html>"), gridBagConstraints);
@@ -956,7 +958,7 @@ public class UnitEditorDialog extends JDialog {
         if (aero instanceof Dropship) {
 
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 8;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Docking Collar"
                     + "</b><br></html>"), gridBagConstraints);
@@ -970,7 +972,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(dockCollarCrit, gridBagConstraints);
             
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 9;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "K-F Boom"
                     + "</b><br></html>"), gridBagConstraints);

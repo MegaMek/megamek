@@ -179,6 +179,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.autoSetFatalThresh();
 
         a.autoSetInternal();
+        a.recalculateTechAdvancement();
         a.autoSetSI();
         // This is not working right for arrays for some reason
         a.autoSetThresh();

@@ -245,6 +245,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         a.initializeArmor(0, Warship.LOC_RBS);
 
         a.autoSetInternal();
+        a.recalculateTechAdvancement();
         a.autoSetThresh();
         a.initializeKFIntegrity();
         a.initializeSailIntegrity();

@@ -215,6 +215,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         a.autoSetThresh();
         a.initializeKFIntegrity();
         a.initializeSailIntegrity();
+        a.recalculateTechAdvancement();
 
         loadEquipment(a, "Nose", Aero.LOC_NOSE);
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);

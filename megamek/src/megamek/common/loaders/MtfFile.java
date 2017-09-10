@@ -426,6 +426,8 @@ public class MtfFile implements IMechLoader {
             if (!(thisArmorType.length() > 0)) {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
+            mech.recalculateTechAdvancement();
+
             for (int x = 0; x < locationOrder.length; x++) {
                 if ((locationOrder[x] == Mech.LOC_CLEG) && !(mech instanceof TripodMech)) {
                     continue;

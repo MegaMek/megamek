@@ -81,7 +81,7 @@ public class Bay implements Transporter {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
-        doorsNext = doors;
+        doorsNext = currentdoors;
         this.bayNumber = bayNumber;
     }
     
@@ -127,7 +127,7 @@ public class Bay implements Transporter {
     }
 
     public void resetDoors() {
-        currentdoors = doorsNext;
+        doorsNext = currentdoors;
     }
 
     public void resetCounts() {

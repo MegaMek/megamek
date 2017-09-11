@@ -2628,6 +2628,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         final Entity ce = ce();
         
+        if (null == ce) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
         if (ce instanceof LandAirMech) {
             boolean canConvert = false;
             for (int i = 0; i < 3; i++) {

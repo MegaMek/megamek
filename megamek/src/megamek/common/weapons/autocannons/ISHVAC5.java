@@ -1,5 +1,7 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
@@ -53,13 +55,10 @@ public class ISHVAC5 extends HVACWeapon {
         explosionDamage = 5;
         rulesRefs = "285,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3059, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CC)
-            .setProductionFactions(F_CC);
+            .setISAdvancement(3059, 3079)
+            .setPrototypeFactions(F_CC).setProductionFactions(F_CC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

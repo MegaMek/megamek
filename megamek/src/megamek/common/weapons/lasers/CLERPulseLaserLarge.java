@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
@@ -53,13 +55,8 @@ public class CLERPulseLaserLarge extends PulseLaserWeapon {
         cost = 400000;
         rulesRefs = "320,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setClanAdvancement(3057, 3082, 3095, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CWF)
-            .setProductionFactions(F_CWF);
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setClanAdvancement(3057, 3082, 3095).setPrototypeFactions(F_CWF)
+            .setProductionFactions(F_CWF).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

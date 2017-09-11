@@ -1,5 +1,7 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
@@ -56,12 +58,9 @@ public class CLRAC2 extends RACWeapon {
         maxRange = RANGE_EXT;
         rulesRefs = "286,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3073, 3104, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CSF)
-            .setProductionFactions(F_CSF);
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setClanAdvancement(3073, 3104, 3145).setClanApproximate(false, false, false)
+            .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.TechAdvancement;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -44,9 +44,10 @@ public class CLStreakLRM12 extends StreakLRMWeapon {
         criticals = 1;
         bv = 207;
         cost = 180000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3065, DATE_NONE, 3079);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
+            .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

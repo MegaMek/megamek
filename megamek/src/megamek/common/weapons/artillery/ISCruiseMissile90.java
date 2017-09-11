@@ -18,6 +18,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -54,7 +55,7 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
             .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS);
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

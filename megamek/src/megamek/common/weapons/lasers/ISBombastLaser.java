@@ -18,6 +18,7 @@
 package megamek.common.weapons.lasers;
 
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -59,15 +60,10 @@ public class ISBombastLaser extends LaserWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_BOMBAST_LASER);
         rulesRefs = "319,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_D)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setISAdvancement(3064, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_LC)
-            .setProductionFactions(F_LC);
+            .setISAdvancement(3064, 3085).setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

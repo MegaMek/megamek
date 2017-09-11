@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -56,13 +58,10 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         maxRange = RANGE_MED;
         rulesRefs = "319,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
-            .setISAdvancement(2812, 3077, 3085,DATE_NONE, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
+            .setISAdvancement(2812, 3077, 3085)
             .setPrototypeFactions(F_FW)
-            .setProductionFactions(F_WB);
+            .setProductionFactions(F_WB).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

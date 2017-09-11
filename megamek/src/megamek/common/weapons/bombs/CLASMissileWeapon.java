@@ -15,6 +15,7 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
@@ -58,6 +59,6 @@ public class CLASMissileWeapon extends CapitalMissileWeapon {
         .setTechRating(RATING_D)
         .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false, false, false);
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

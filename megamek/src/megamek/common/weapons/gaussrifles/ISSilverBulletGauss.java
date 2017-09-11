@@ -21,6 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -69,15 +70,10 @@ public class ISSilverBulletGauss extends GaussWeapon {
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
         rulesRefs = "314,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3051, 3080, 3090, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_FS,F_LC)
-        .setProductionFactions(F_FC);
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3051, 3080, 3090).setPrototypeFactions(F_FS,F_LC)
+            .setProductionFactions(F_FC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

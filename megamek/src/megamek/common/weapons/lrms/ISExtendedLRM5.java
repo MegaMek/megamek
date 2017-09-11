@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lrms;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Sebastian Brocks
  */
@@ -45,14 +47,9 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
         longAV = 3;
         extAV = 3;
         rulesRefs = "327,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3054, 3078, 3083, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_FS,F_LC)
-            .setProductionFactions(F_LC);
+            .setISAdvancement(3054, 3078, 3083).setPrototypeFactions(F_FS,F_LC)
+            .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

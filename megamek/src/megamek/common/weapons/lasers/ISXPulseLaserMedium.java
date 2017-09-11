@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
@@ -54,14 +56,9 @@ public class ISXPulseLaserMedium extends PulseLaserWeapon {
         bv = 71;
         cost = 110000;
         rulesRefs = "321,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3057, 3078, 3082, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_LC,F_FS)
-            .setProductionFactions(F_LC);
+            .setISAdvancement(3057, 3078, 3082).setPrototypeFactions(F_LC,F_FS)
+            .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

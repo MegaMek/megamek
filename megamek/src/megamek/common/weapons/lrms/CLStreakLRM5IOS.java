@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lrms;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Sebastian Brocks
  */
@@ -49,14 +51,10 @@ public class CLStreakLRM5IOS extends StreakLRMWeapon {
         longAV = 5;
         maxRange = RANGE_LONG;
         rulesRefs = "327,TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_B)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3058, 3081, 3088, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, true, false,false, false)
-            .setPrototypeFactions(F_CNC)
-            .setProductionFactions(F_CNC);
+            .setClanAdvancement(3058, 3081, 3088).setClanApproximate(false, true, false)
+            .setPrototypeFactions(F_CNC).setProductionFactions(F_CNC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

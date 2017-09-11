@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
 /**
@@ -61,15 +62,10 @@ public class ISVariableSpeedPulseLaserLarge extends
         medAV = 7;
         maxRange = RANGE_MED;
         rulesRefs = "321,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3070, 3072, 3080, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_FW,F_WB)
-            .setProductionFactions(F_FW,F_WB);
+            .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW,F_WB)
+            .setProductionFactions(F_FW,F_WB).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

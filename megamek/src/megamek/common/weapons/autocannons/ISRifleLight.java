@@ -1,5 +1,7 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -57,15 +59,10 @@ public class ISRifleLight extends RifleWeapon {
         maxRange = RANGE_MED;
         explosionDamage = 0;
         rulesRefs = "338,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_C, RATING_F, RATING_X, RATING_D)
-        .setISAdvancement(DATE_PS, DATE_PS, 3085, 2825, 3084)
-        .setISApproximate(false, false, false,true, true)
-        .setPrototypeFactions(F_IS)
-        .setProductionFactions(F_IS)
-        .setReintroductionFactions(F_IS);
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_B)
+            .setAvailability(RATING_C, RATING_F, RATING_X, RATING_D)
+            .setISAdvancement(DATE_PS, DATE_PS, 3085, 2825, 3084)
+            .setISApproximate(false, false, false, true, true)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

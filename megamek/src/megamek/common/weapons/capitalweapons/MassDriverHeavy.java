@@ -17,6 +17,7 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Jay Lawson
@@ -48,16 +49,13 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.medAV = 140;
         this.longAV = 140;
         rulesRefs = "323,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_D)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
             .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
             .setISApproximate(true, false, false,true, false)
             .setClanAdvancement(2715, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(true, false, false,true, false)
-            .setPrototypeFactions(F_TH)
-            .setReintroductionFactions(F_WB);	
+            .setPrototypeFactions(F_TH).setReintroductionFactions(F_WB)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

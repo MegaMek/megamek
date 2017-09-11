@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -56,14 +58,9 @@ public class CLImprovedHeavyLaserMedium extends LaserWeapon {
         explosionDamage = 5;
         explosive = true;
         rulesRefs = "321,TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
-            .setClanAdvancement(3069, 3079, 3085, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CGS)
-            .setProductionFactions(F_RD);
+            .setClanAdvancement(3069, 3079, 3085).setPrototypeFactions(F_CGS)
+            .setProductionFactions(F_RD).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

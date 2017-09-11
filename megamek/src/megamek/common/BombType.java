@@ -287,8 +287,8 @@ public class BombType extends AmmoType {
 	    .setISApproximate(false, true, false,false, false)
 	    .setClanAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
 	    .setClanApproximate(false, false, false, false, false)
-	    .setPrototypeFactions(F_FS)	
-	    .setProductionFactions(F_FS);
+	    .setPrototypeFactions(F_FS).setProductionFactions(F_FS)
+	    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
 		return bomb;
 	}

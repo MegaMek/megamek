@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lrms;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Sebastian Brocks
  */
@@ -45,14 +47,10 @@ public class CLStreakLRM4OS extends StreakLRMWeapon {
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "327,TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setClanAdvancement(3057, 3079, 3088, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, true, false,false, false)
-        .setPrototypeFactions(F_CCY)
-        .setProductionFactions(F_CJF);
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)
+            .setPrototypeFactions(F_CCY).setProductionFactions(F_CJF)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

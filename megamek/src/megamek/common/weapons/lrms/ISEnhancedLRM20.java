@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lrms;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author BATTLEMASTER
  */
@@ -47,14 +49,9 @@ public class ISEnhancedLRM20 extends EnhancedLRMWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         rulesRefs = "326,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
-            .setISAdvancement(3058, 3082, 3090, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS);
+            .setISAdvancement(3058, 3082, 3090).setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Jason Tighe
  */
@@ -51,15 +53,10 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_LASER;
         rulesRefs = "320,TO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH);
+            .setClanAdvancement(3059, 3083, 3145).setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

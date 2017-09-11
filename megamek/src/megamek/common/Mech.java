@@ -3133,7 +3133,7 @@ public abstract class Mech extends Entity {
                 .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
                 .setApproximate(false, true, false).setTechRating(RATING_D) 
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Torso mounted
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Torso mounted
             //FIXME: Dual is unofficial; these are stats for standard
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
                 .setApproximate(true, false, false).setTechRating(RATING_D)

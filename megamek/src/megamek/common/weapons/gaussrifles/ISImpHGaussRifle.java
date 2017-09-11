@@ -19,6 +19,7 @@ package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -62,15 +63,11 @@ public class ISImpHGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 30;
         rulesRefs = "313,TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3065, 3081, 3090, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3065, 3081, 3090)
+            .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

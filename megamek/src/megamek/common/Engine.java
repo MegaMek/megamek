@@ -757,7 +757,7 @@ public class Engine implements Serializable, ITechnology {
             .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
             .setPrototypeFactions(F_TH).setProductionFactions(F_LC)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
@@ -769,7 +769,7 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_LC).setTechRating(RATING_C)
             .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
@@ -781,7 +781,7 @@ public class Engine implements Serializable, ITechnology {
             .setISAdvancement(3064, 3065).setISApproximate(true)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3060, 3068, 3072).setISApproximate(true)
@@ -806,37 +806,37 @@ public class Engine implements Serializable, ITechnology {
             .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_LC, F_FS)
             .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
             .setPrototypeFactions(F_CIH).setProductionFactions(F_CHH)
             .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3055, 3110).setISApproximate(true, true)
             .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(2954, 3084).setApproximate(true, true)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3058, 3130).setTechRating(RATING_F)
             .setPrototypeFactions(F_FS).setProductionFactions(F_LC)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3055, 3125).setTechRating(RATING_F)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     private static final TechAdvancement FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2470, 2882, 3079).setTechRating(RATING_D)

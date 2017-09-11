@@ -1,5 +1,7 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -55,12 +57,9 @@ public class CLProtoMechAC2 extends ProtoMechACWeapon {
         explosionDamage = damage;
         rulesRefs = "286,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, true, false,false, false)
-            .setPrototypeFactions(F_CBS)
-            .setProductionFactions(F_CBS);
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
+            .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

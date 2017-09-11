@@ -1180,7 +1180,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setISAdvancement(3061, 3082).setClanAdvancement(3061, 3077)
             .setPrototypeFactions(F_CSF,F_FW).setProductionFactions(F_CJF,F_FW)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     
     public static TechAdvancement getOmniAdvancement() {
         return new TechAdvancement(TA_OMNI);

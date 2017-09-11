@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:60
 Engine:220 ICE Engine(IS)
-Structure:UNKNOWN
+Structure:IS Industrial
 Myomer:Standard
 Cockpit:Primitive Industrial Cockpit
 Gyro:Standard Gyro
@@ -19,7 +19,7 @@ Heat Sinks:0 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Primitive(Inner Sphere)
+Armor:Commercial(Inner Sphere)
 LA Armor:8
 RA Armor:8
 LT Armor:9

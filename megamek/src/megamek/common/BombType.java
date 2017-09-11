@@ -807,11 +807,10 @@ public class BombType extends AmmoType {
 		bomb.cost = 0;
 		bomb.flags = bomb.flags.or(F_NUCLEAR);
 		bomb.capital = true;
-		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-		bomb.techAdvancement.setISAdvancement(2200, DATE_NONE, DATE_NONE);
-		bomb.techAdvancement.setTechRating(RATING_E);
-		bomb.techAdvancement.setPrototypeFactions(F_TA);
-		bomb.techAdvancement.setAvailability(new int[] { RATING_F, RATING_F, RATING_F, RATING_F });
+		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS).setTechRating(RATING_E)
+	        .setISAdvancement(2200).setPrototypeFactions(F_TA)
+	        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+	        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
 		return bomb;
 	}

@@ -14,6 +14,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.BattleForceElement;
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 import megamek.common.weapons.missiles.ATMWeapon;
 
@@ -48,15 +49,10 @@ public class CLFussilade extends ATMWeapon {
         cost = 100000;
         bv = 11;
         rulesRefs = "65,IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-            .setClanAdvancement(3072, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CCY)
-            .setProductionFactions(F_CCY);
+            .setClanAdvancement(3072).setPrototypeFactions(F_CCY)
+            .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override

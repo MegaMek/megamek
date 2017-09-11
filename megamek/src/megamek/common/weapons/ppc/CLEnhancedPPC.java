@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.ppc;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Harold "BATTLEMASTER" N.
  */
@@ -58,15 +60,11 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.maxRange = RANGE_LONG;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         rulesRefs = "95,IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
             .setClanAdvancement(2822, 2823, DATE_NONE, 2831, 3080)
             .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CWV)
-            .setProductionFactions(F_CWV)
-            .setReintroductionFactions(F_EI);
+            .setPrototypeFactions(F_CWV).setProductionFactions(F_CWV)
+            .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -56,14 +58,10 @@ public class ISRISCHyperLaser extends LaserWeapon {
         explosionDamage = 10;
         explosive = true;
         rulesRefs = "93,IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
             .setISAdvancement(3134, DATE_NONE, DATE_NONE, 3141, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_RS);
+            .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     }
 }

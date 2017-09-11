@@ -252,7 +252,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 .setISApproximate(false, true, false, false)
                 .setPrototypeFactions(F_TA).setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Primitive            
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Primitive            
     };
     
     public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {

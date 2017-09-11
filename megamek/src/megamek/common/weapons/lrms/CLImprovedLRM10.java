@@ -14,6 +14,7 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -48,15 +49,10 @@ public class CLImprovedLRM10 extends LRMWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_LRM_IMP;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
-        .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
-        .setClanApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_CCY)
-        .setProductionFactions(F_CCY)
-        .setReintroductionFactions(F_EI);
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+            .setClanAdvancement(2815, 2818, 2820, 2831, 3080)
+            .setPrototypeFactions(F_CCY).setProductionFactions(F_CCY)
+            .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

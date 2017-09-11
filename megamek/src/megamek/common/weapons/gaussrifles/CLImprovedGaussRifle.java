@@ -19,6 +19,7 @@ package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -61,16 +62,12 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
-        .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CGS)
-        .setProductionFactions(F_CGS)
-        .setReintroductionFactions(F_EI);
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
+            .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CGS).setProductionFactions(F_CGS)
+            .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

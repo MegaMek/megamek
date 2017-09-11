@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
@@ -51,14 +53,11 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         rulesRefs = "95,IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2812, 2815, 2818, 2830, 3080)
             .setClanApproximate(true, true, false, false, false)
-            .setPrototypeFactions(F_CNC)
-            .setProductionFactions(F_CNC);
+            .setPrototypeFactions(F_CNC).setProductionFactions(F_CNC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.ppc;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Andrew Hunter
  */
@@ -57,16 +59,12 @@ public class CLImprovedPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "95,IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(true)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2819, 2820, DATE_NONE, 2832, 3080)
             .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CSR)
-            .setProductionFactions(F_CSR)
-            .setReintroductionFactions(F_EI);
+            .setPrototypeFactions(F_CSR).setProductionFactions(F_CSR)
+            .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     }
 

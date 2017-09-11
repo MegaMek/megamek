@@ -18,6 +18,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -63,14 +64,11 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_CWS);
         rulesRefs = "85,IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
+        techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
         .setAvailability(RATING_F, RATING_F, RATING_F, RATING_X)
         .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
         .setISApproximate(true, false, false, true, false)
-        .setPrototypeFactions(F_TH);
+        .setPrototypeFactions(F_TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
     
     /*

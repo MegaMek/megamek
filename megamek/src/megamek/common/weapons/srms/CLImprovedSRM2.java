@@ -14,6 +14,7 @@
 package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -49,14 +50,10 @@ public class CLImprovedSRM2 extends SRMWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
-        .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
-        .setClanApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_CCC)
-        .setProductionFactions(F_CCC);
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+            .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
+            .setPrototypeFactions(F_CCC).setProductionFactions(F_CCC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

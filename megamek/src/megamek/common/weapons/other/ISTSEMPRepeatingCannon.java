@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.other;
 
+import megamek.common.SimpleTechLevel;
+
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
 
     /**
@@ -31,14 +33,10 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         criticals  = 7;
         tankslots = 1;
 		rulesRefs = "92,IO";
-		techAdvancement.setTechBase(TECH_BASE_IS)
-			.setIntroLevel(false)
-			.setUnofficial(false)
-		    .setTechRating(RATING_F)
+		techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
 		    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
 		    .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)
-		    .setISApproximate(false, false, false,false, false)
-		    .setPrototypeFactions(F_RS);
+		    .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
     
     //TODO - Implement Game Rules.  See IO pg 94 for specifics.

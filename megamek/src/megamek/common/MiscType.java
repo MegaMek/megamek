@@ -231,7 +231,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1).shiftLeft(183);
     public static final BigInteger F_HYDROFOIL = BigInteger.valueOf(1).shiftLeft(184);
     public static final BigInteger F_SUBMERSIBLE = BigInteger.valueOf(1).shiftLeft(185);
-    public static final BigInteger F_VEEDC = BigInteger.valueOf(1).shiftLeft(201);
+    public static final BigInteger F_VEEDC = BigInteger.valueOf(1).shiftLeft(203);
 
     // Flag for BattleArmor Modular Equipment Adaptor
     public static final BigInteger F_BA_MEA = BigInteger.valueOf(1).shiftLeft(186);
@@ -402,6 +402,9 @@ public class MiscType extends EquipmentType {
             double multiplier = 1.0;
             if (hasSubType(S_IMPROVED)) {
                 multiplier = 2.0;
+            }
+            if (hasSubType(S_PROTOTYPE) && (hasSubType(S_IMPROVED))) {
+                multiplier = 1.0;
             }
             if (hasFlag(F_PROTOMECH_EQUIPMENT)) {
                 if (entity.getWeight() < 6) {
@@ -6603,7 +6606,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tonnage = .5;
         misc.cost = 1000;
-        misc.flags = misc.flags.or(F_LIGHT_FLUID_SUCTION_SYSTEM).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FLUID_SUCTION_SYSTEM).or(F_MECH_EQUIPMENT);
         misc.rulesRefs = "248,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)

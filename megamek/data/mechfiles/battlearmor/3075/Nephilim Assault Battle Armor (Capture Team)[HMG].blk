@@ -58,26 +58,32 @@ IS BA Mimetic:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
 </Trooper 4 Equipment>
 
 <Trooper 5 Equipment>
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
 </Trooper 5 Equipment>
 
 <Trooper 6 Equipment>
+ISDetachableWeaponPack:Body
 ISBATaser:DWP
 </Trooper 6 Equipment>
 

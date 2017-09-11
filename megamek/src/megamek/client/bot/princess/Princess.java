@@ -55,6 +55,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
@@ -342,6 +343,7 @@ public class Princess extends BotClient {
      * Returns the first set of valid deployment coordinates for the given unit out of the given deployment coordinates.
      * It's possible to return null, which indicates that there are no valid hexes for the given unit to deploy into.
      */
+    @Nullable
     @Override
     protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         if((deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT) {
@@ -351,8 +353,7 @@ public class Princess extends BotClient {
             }
             
             return null;
-        }
-        else {
+        } else {
             return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
         }
     }

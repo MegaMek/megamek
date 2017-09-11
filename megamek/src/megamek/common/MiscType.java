@@ -9088,6 +9088,8 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL));
+        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL, false));
+        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL, true));
         misc.addLookupName("IS Industrial Structure");
         misc.addLookupName("Clan Industrial Structure");
         misc.tonnage = TONNAGE_VARIABLE;

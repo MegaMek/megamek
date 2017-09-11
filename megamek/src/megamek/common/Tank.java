@@ -3365,6 +3365,11 @@ public class Tank extends Entity {
                     continue;
                 }
             }
+            if ((mount.getType() instanceof MiscType)
+                    && mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                // Only one slot for all jump jets, added later.
+                continue;
+            }
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {

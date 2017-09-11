@@ -18,32 +18,36 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
  */
-public class CLSniper extends ArtilleryWeapon {
+public class Sniper extends ArtilleryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -599648142688689572L;
+    private static final long serialVersionUID = -5022670163785084036L;
 
     /**
      *
      */
-    public CLSniper() {
+    public Sniper() {
         super();
+
         name = "Sniper";
-        setInternalName("CLSniper");
+        setInternalName("ISSniper");
+        addLookupName("ISSniperArtillery");
+        addLookupName("IS Sniper");
+        addLookupName("CLSniper");
         addLookupName("CLSniperArtillery");
         addLookupName("Clan Sniper");
         flags = flags.or(F_AERO_WEAPON);
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.T_SNIPER;
-        shortRange = 1; //
+        shortRange = 1;
         mediumRange = 2;
         longRange = 18;
         extremeRange = 18; // No extreme range.
@@ -51,12 +55,12 @@ public class CLSniper extends ArtilleryWeapon {
         criticals = 20;
         bv = 85;
         cost = 300000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
+        rulesRefs = "284,TO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }
-
-//Commented out in Weapon Type. Stats identical to IS version and Tech Progression captured in the IS version of the weapon for both Clan and IS.

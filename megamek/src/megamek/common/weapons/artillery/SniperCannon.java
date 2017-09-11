@@ -18,18 +18,19 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISSniperCannon extends ArtilleryCannonWeapon {
+public class SniperCannon extends ArtilleryCannonWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -6192123762419323551L;
 
-    public ISSniperCannon() {
+    public SniperCannon() {
         super();
 
         name = "Sniper Cannon";
@@ -57,14 +58,10 @@ public class ISSniperCannon extends ArtilleryCannonWeapon {
         maxRange = RANGE_MED;
         rulesRefs = "285,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-        .setISAdvancement(3012, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(3032, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_LC,F_CWF)
-        .setProductionFactions(F_LC);
+            .setTechRating(RATING_B).setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+            .setISAdvancement(3012, 3079).setClanAdvancement(3032, 3079)
+            .setPrototypeFactions(F_LC,F_CWF).setProductionFactions(F_LC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

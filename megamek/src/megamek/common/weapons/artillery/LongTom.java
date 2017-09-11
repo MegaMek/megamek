@@ -18,11 +18,12 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISLongTom extends ArtilleryWeapon {
+public class LongTom extends ArtilleryWeapon {
 
     /**
      *
@@ -32,7 +33,7 @@ public class ISLongTom extends ArtilleryWeapon {
     /**
      *
      */
-    public ISLongTom() {
+    public LongTom() {
         super();
         name = "Long Tom";
         setInternalName("ISLongTom");
@@ -53,15 +54,11 @@ public class ISLongTom extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         rulesRefs = "284,TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
+        techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_B)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setAdvancement(2445, 2500, 2520)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }

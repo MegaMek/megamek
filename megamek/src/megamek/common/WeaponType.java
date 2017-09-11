@@ -32,12 +32,12 @@ import megamek.common.weapons.artillery.ISCruiseMissile120;
 import megamek.common.weapons.artillery.ISCruiseMissile50;
 import megamek.common.weapons.artillery.ISCruiseMissile70;
 import megamek.common.weapons.artillery.ISCruiseMissile90;
-import megamek.common.weapons.artillery.ISLongTom;
-import megamek.common.weapons.artillery.ISLongTomCannon;
-import megamek.common.weapons.artillery.ISSniper;
-import megamek.common.weapons.artillery.ISSniperCannon;
-import megamek.common.weapons.artillery.ISThumper;
-import megamek.common.weapons.artillery.ISThumperCannon;
+import megamek.common.weapons.artillery.LongTom;
+import megamek.common.weapons.artillery.LongTomCannon;
+import megamek.common.weapons.artillery.Sniper;
+import megamek.common.weapons.artillery.SniperCannon;
+import megamek.common.weapons.artillery.Thumper;
+import megamek.common.weapons.artillery.ThumperCannon;
 import megamek.common.weapons.autocannons.CLImprovedAC10;
 import megamek.common.weapons.autocannons.CLImprovedAC2;
 import megamek.common.weapons.autocannons.CLImprovedAC20;
@@ -1501,17 +1501,17 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMML7());
         EquipmentType.addType(new ISMML9());
         // Arty
-        EquipmentType.addType(new ISLongTom());
-        EquipmentType.addType(new ISThumper());
-        EquipmentType.addType(new ISSniper());
+        EquipmentType.addType(new LongTom());
+        EquipmentType.addType(new Thumper());
+        EquipmentType.addType(new Sniper());
         EquipmentType.addType(new ISArrowIV());
         EquipmentType.addType(new CLArrowIV());
         EquipmentType.addType(new ISBATubeArtillery());
         EquipmentType.addType(new PrototypeArrowIV());
         // Arty Cannons
-        EquipmentType.addType(new ISLongTomCannon());
-        EquipmentType.addType(new ISThumperCannon());
-        EquipmentType.addType(new ISSniperCannon());
+        EquipmentType.addType(new LongTomCannon());
+        EquipmentType.addType(new ThumperCannon());
+        EquipmentType.addType(new SniperCannon());
         // MFUK weapons
         EquipmentType.addType(new CLPlasmaRifle());
         EquipmentType.addType(new CLRAC2());

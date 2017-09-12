@@ -2117,11 +2117,14 @@ public class MoveStep implements Serializable {
         }
 
         // WIGEs can take off on their first step...
-        if (type == MoveStepType.UP && entity.getMovementMode() == EntityMovementMode.WIGE
-                && ((firstStep && prev.getClearance() == 0 && entity.getRunMP() > mp)
-                        || (prev.getClearance() > 0 && entity.canGoUp(getElevation(), getPosition())
-                                && (entity instanceof LandAirMech || entity instanceof Protomech)))) {
-            movementType = EntityMovementType.MOVE_VTOL_WALK;                    
+        if ((type == MoveStepType.UP) && (entity.getMovementMode() == EntityMovementMode.WIGE)
+                && (prev.getClearance() == 0)) {
+            if (firstStep && (entity.getRunMP() >= mp)) {
+                movementType = EntityMovementType.MOVE_VTOL_WALK;
+            } else {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
         }
 
         // WIGEs need to be able to land too, or even descend

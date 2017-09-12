@@ -1076,6 +1076,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (ae.moved == EntityMovementType.MOVE_RUN)) {
             toHit.addModifier(-1, "stabilized weapon");
         }
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
+            toHit.addModifier(+1, "misrepaired weapon");
+        }
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
+            toHit.addModifier(+1, "misreplaced weapon");
+        }
 
         // Has the pilot the appropriate gunnery skill?
         if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_LASER)

@@ -2153,8 +2153,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                          cmd.getFinalCoords()));
             return;
         }
-        setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(),
-                                   cmd.getFinalCoords()));
+        // WiGEs (and LAMs and glider protomechs) cannot go up if they've used ground movement.
+        if ((ce.getMovementMode() == EntityMovementMode.WIGE)
+                && !ce.isAirborneVTOLorWIGE()
+                && (cmd.getMpUsed() > 0)
+                && !cmd.contains(MoveStepType.UP)) {
+            setRaiseEnabled(false);
+        } else {
+            setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(),
+                                       cmd.getFinalCoords()));
+        }
         setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(),
                                      cmd.getFinalCoords()));
     }
@@ -2619,6 +2627,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         final Entity ce = ce();
+        
+        if (null == ce) {
+            setModeConvertEnabled(false);
+            return;
+        }
         
         if (ce instanceof LandAirMech) {
             boolean canConvert = false;

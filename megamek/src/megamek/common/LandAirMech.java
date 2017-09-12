@@ -1312,6 +1312,34 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return hits > 3 ? 5 : hits;
         }
     }
+    
+    //Landing mods for partial repairs
+    public int getLandingGearPartialRepairs() {
+    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+        return 2;
+    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
+    
+    //Avionics mods for partial repairs
+    public int getAvionicsMisreplaced() {
+    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
+    
+    public int getAvionicsMisrepaired() {
+    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }    
 
     /**
      * In fighter mode the weapon arcs need to be translated to Aero arcs.
@@ -1996,4 +2024,5 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }
+
 }

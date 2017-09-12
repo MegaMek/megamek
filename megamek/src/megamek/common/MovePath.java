@@ -707,6 +707,21 @@ public class MovePath implements Cloneable, Serializable {
         }
         return getEntity().getElevation();
     }
+    
+    /**
+     * get final elevation relative to the tops of any buildings in the hex
+     * @return
+     */
+    public int getFinalClearance() {
+        if (getLastStep() != null) {
+            return getLastStep().getClearance();
+        }
+        IHex hex = entity.getGame().getBoard().getHex(getEntity().getPosition());
+        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            return getEntity().getElevation() - hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        return getEntity().getElevation();
+    }
 
     /**
      * Returns the highest elevation in the current path

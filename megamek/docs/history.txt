@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.43.4-git
++ PR #635: Terrain Master SPA (All but Drag Racer and Nightwalker)
 + Issue #573: Jumping through buildings.
 + Issue #414[MekHQ] - Longinus (WoB) not showing in Hanger
 + Fixing issues with sprite names in the mechset.

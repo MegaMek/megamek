@@ -175,8 +175,7 @@ public class AeroGroundPathFinder {
          * @return true if the object should stay in the collection
          */
         @Override
-        public boolean shouldStay(MovePath object) {
-            MovePath path = (MovePath) object;
+        public boolean shouldStay(MovePath path) {
             return !path.fliesOffBoard();
         }
         
@@ -232,8 +231,7 @@ public class AeroGroundPathFinder {
         
         // we go from the current velocity to the upper bound and generate paths with the required number of DECs to get to
         // the desired velocity
-        for(int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++)
-        {
+        for(int desiredVelocity = currentVelocity; desiredVelocity < upperBound; desiredVelocity++) {
             MovePath path = startingPath.clone();
             for(int deltaVelocity = 0; deltaVelocity < upperBound - desiredVelocity; deltaVelocity++) {
                 path.addStep(MoveStepType.ACC);
@@ -406,20 +404,39 @@ public class AeroGroundPathFinder {
                 
                 mp.addStep(MoveStepType.FORWARDS);
                 
-                // if we have arrived on the edge, 
-                if(mp.getFinalCoords().isOnBoardEdge(game.getBoard())) {
-                    // if we're up against the west edge and came from northeast, turn south
-                    // if we're up against the west edge and came from southeast, turn north
-                    // if we're up against the east edge and came from northwest, turn south
-                    // if we're up against the east edge and came from southwest, turn north
-                    // if we're up against the north edge and came from southwest, turn south
-                    // if we're up against the north edge and came from 
+                // if we have arrived on the edge, and we can turn, then attempt to "bounce off" or "ride" the edge. 
+                // as long as we're not trying to go off board, then forget about it
+                // this slightly increases the area covered by the aero in cases where the path takes it near the edge
+                if(mp.nextForwardStepOffBoard() &&
+                        mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED &&
+                        mp.getLastStep().canAeroTurn(game)) {
+                    
+                    // we want to generate a path that looks like this:
+                    // ||
+                    // ||
+                    // |\
+                    // | \   
+                    // |  \
+                    // at this point, we can know that going forward will take us off board
+                    // we can either turn right or left
+                    // if turning right and going forwards still takes us off board, then we go left
+                    // you can approach the top and bottom edges of the board in such a way that neither left
+                    // nor right produces an off-board path
+                    // there's probably a better mathematical way to formulate this but I'm not really a math guy.
+                    mp.addStep(MoveStepType.TURN_RIGHT);
+                    if(mp.nextForwardStepOffBoard()) {
+                        mp.removeLastStep();
+                    }
+                    
+                    mp.addStep(MoveStepType.TURN_LEFT);
+                    if(mp.nextForwardStepOffBoard()) {
+                        mp.removeLastStep();
+                    }
                 }
                 
-                // chop off the last step if it took us off board
-                if(!game.getBoard().contains(mp.getFinalCoords()))
+                // if we're going off board (even after all this turning stuff)
+                if(mp.nextForwardStepOffBoard())
                 {
-                    mp.removeLastStep();
                     if(mp.getEntity().getDamageLevel() != Entity.DMG_CRIPPLED) {
                         mp.addStep(MoveStepType.RETURN);
                     }

@@ -250,7 +250,6 @@ public class AbstractPathFinder<N, C, E> {
         this.comparator = edgeComparator;
 
         candidates = new PriorityQueue<E>(100, edgeComparator);
-        getLogger().setLogLevel(this.LOGGER_CATEGORY, LogLevel.DEBUG);
     }
 
     /**

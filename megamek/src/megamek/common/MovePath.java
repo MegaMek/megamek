@@ -1711,4 +1711,13 @@ public class MovePath implements Cloneable, Serializable {
         }
         return false;
     }
+    
+    /**
+     * Convenience function encapsulating logic for whether, if we continue forward 
+     * along the current path in the current direction, we will run off the board
+     * @return
+     */
+    public boolean nextForwardStepOffBoard() {
+        return !game.getBoard().contains(getFinalCoords().translated(getFinalFacing()));
+    }
 }

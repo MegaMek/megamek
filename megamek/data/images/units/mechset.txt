@@ -3734,7 +3734,7 @@ exact "Mad Cat Mk IV (Savage Wolf) B" "mechs/Mad Cat Mk IV (Savage Wolf) B.png"
 exact "Mad Cat Mk IV (Savage Wolf) C" "mechs/Mad Cat Mk IV (Savage Wolf) C.png"
 exact "Mad Cat Mk IV (Savage Wolf) D" "mechs/Mad Cat Mk IV (Savage Wolf).png"
 exact "Mad Cat Mk IV (Savage Wolf) PR 2" "mechs/Mad Cat Mk IV (Savage Wolf) PR 2.png"
-exact "Mad Cat Mk IV (Savage Wolf) PR (Standard)" "mechs/Mad Cat Mk IV (Savage Wolf).png
+exact "Mad Cat Mk IV (Savage Wolf) PR (Standard)" "mechs/Mad Cat Mk IV (Savage Wolf).png"
 chassis "Maelstrom" "mechs/Maelstrom.png"
 exact "Maelstrom MTR-6K" "mechs/Maelstrom MTR-6K.png"
 exact "Maelstrom MTR-7K" "mechs/Maelstrom MTR-7K.png"

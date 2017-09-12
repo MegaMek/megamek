@@ -6844,6 +6844,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
                 && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
+            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                roll.addModifier(-1, "Mountaineer");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: Entity is not entering rubble");
@@ -6870,6 +6873,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
+            }
+            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                roll.addModifier(-1, "Swamp Beast");
             }
             addPilotingModifierForTerrain(roll, curPos, false);
             adjustDifficultTerrainPSRModifier(roll);
@@ -6924,6 +6930,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = 1;
         }
 
+        if ((waterLevel > 1) && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+                && ((this instanceof Mech) || (this instanceof Protomech))) {
+            roll.append(new PilotingRollData(getId(), -1, "Frogman"));
+        }
         if (waterLevel > 0) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod,
@@ -10268,6 +10278,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         IHex hex = game.getBoard().getHex(c);
         hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
+
+        if (hex.containsTerrain(Terrains.JUNGLE) && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+            roll.addModifier(-1, "Forest Ranger");
+        }
     }
 
     /**

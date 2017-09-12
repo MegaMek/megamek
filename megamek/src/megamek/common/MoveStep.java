@@ -2924,7 +2924,12 @@ public class MoveStep implements Serializable {
                     if (destHex.terrainLevel(Terrains.WATER) == 1) {
                         mp++;
                     } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
-                        mp += 3;
+                        if (getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+                                && ((entity instanceof Mech) || (entity instanceof Protomech))) {
+                            mp += 2;
+                        } else {
+                            mp += 3;
+                        }
                     }
                 }
                 // if using non-careful movement on ice then reduce cost
@@ -2956,7 +2961,11 @@ public class MoveStep implements Serializable {
                             || (moveMode == EntityMovementMode.HOVER))) {
                 delta_e *= 2;
             }
-            mp += delta_e;
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                mp += delta_e - 1;
+            } else {
+                mp += delta_e;
+            }
         }
 
         // WiGEs in climb mode pay 2 extra MP to stay at the same flight level

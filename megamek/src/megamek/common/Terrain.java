@@ -386,7 +386,7 @@ public class Terrain implements ITerrain, Serializable {
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
-                return mp;
+                return Math.max(0, mp);
             case Terrains.WOODS:
                 mp = level;
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
@@ -399,7 +399,7 @@ public class Terrain implements ITerrain, Serializable {
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
-                return mp;
+                return Math.max(0, mp);
             case Terrains.JUNGLE:
                 mp = level +1;
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
@@ -412,7 +412,7 @@ public class Terrain implements ITerrain, Serializable {
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
-                return mp;
+                return Math.max(0, mp);
             case Terrains.SNOW:
                 if (level == 2) {
                     if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
@@ -444,7 +444,7 @@ public class Terrain implements ITerrain, Serializable {
                 if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
                     mp -= 1;
                 }
-                return mp;
+                return Math.max(0, mp);
             case Terrains.ICE:
                 if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                     return 0;
@@ -463,7 +463,7 @@ public class Terrain implements ITerrain, Serializable {
                 if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
                     mp -= 1;
                 }
-                return mp;
+                return Math.max(0, mp);
             case Terrains.ROUGH:
                 if (level == 2) {
                     mp = 2;
@@ -480,7 +480,7 @@ public class Terrain implements ITerrain, Serializable {
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
-                return mp;
+                return Math.max(0, mp);
             case Terrains.SAND:
                 if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(MiscType.F_DUNE_BUGGY))
                         || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)

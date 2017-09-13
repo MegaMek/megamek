@@ -1921,9 +1921,9 @@ public class MULParser {
     				String currentdoors = currEle.getAttribute(DOORS);
     				int doors = Integer.parseInt(currentdoors);
     				currentbay.setCurrentDoors(doors);
-    			}
-    		}
-    	}
+    		    }
+    	    }
+        }
     } // End parseTransportBay
     
     /**

@@ -19,6 +19,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +52,9 @@ import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
+import megamek.common.Terrains;
 import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
@@ -94,6 +97,7 @@ public class Princess extends BotClient {
             Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private MMLogger logger = null;
 
+    
     public Princess(String name, String host, int port, LogLevel verbosity) {
         super(name, host, port);
         getLogger().setLogLevel(LOGGING_CATEGORY, verbosity);
@@ -288,17 +292,22 @@ public class Princess extends BotClient {
             Coords deployCoords = getFirstValidCoords(getEntity(entityNum),
                                                       startingCoords);
             if (deployCoords == null) {
+                // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business                
                 log(getClass(),
-                    METHOD_NAME,
-                    LogLevel.ERROR,
-                    "getCoordsAround gave no location for "
-                    + getEntity(entityNum).getChassis());
+                        METHOD_NAME,
+                        LogLevel.ERROR,
+                        "getCoordsAround gave no location for "
+                        + getEntity(entityNum).getChassis() + ". Removing unit.");
+                
+                sendDeleteEntity(entityNum);
                 return;
             }
 
             // first coordinate that it is legal to put this unit on now find 
             // some sort of reasonable facing. If there are deployed enemies, 
             // face them
+            
+            // specifically, face the last deployed enemy.
             int decentFacing = -1;
             for (Entity e : getEnemyEntities()) {
                 if (e.isDeployed() && (!e.isOffBoard())) {
@@ -329,6 +338,81 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Returns the first set of valid deployment coordinates for the given unit out of the given deployment coordinates.
+     * It's possible to return null, which indicates that there are no valid hexes for the given unit to deploy into.
+     */
+    @Nullable
+    @Override
+    protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        if ((deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT) {
+            List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit, possibleDeployCoords);
+            if (validCoords.size() > 0) {            
+                return validCoords.get(0);
+            }
+            
+            return null;
+        } else {
+            return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
+        }
+    }
+    
+    /**
+     * Helper function that calculates the possible locations where a given gun emplacement can be deployed
+     * @param deployedUnit The unit to check
+     * @param possibleDeployCoords The list of possible deployment coordinates
+     * @return
+     */
+    private List<Coords> calculateTurretDeploymentLocations(GunEmplacement deployedUnit, List<Coords> possibleDeployCoords) {
+        // algorithm:
+        // get all hexes in deployment zone with buildings
+        // for each building, if deploying on the roof does not cause a stacking violation, add it to the list
+        // sort the list in decreasing order based on CF then height
+        List<Coords> turretDeploymentLocations = new Vector<>();
+        
+        for (Coords coords : possibleDeployCoords) {
+            Building building = game.getBoard().getBuildingAt(coords);
+            IHex hex = game.getBoard().getHex(coords);
+            
+            if (building != null) {
+                int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
+                
+                // check stacking violation at the roof level
+                Entity violation = Compute.stackingViolation(game, deployedUnit, coords, buildingHeight, coords, null);
+                // Ignore coords that could cause a stacking violation
+                if (violation == null) {
+                    turretDeploymentLocations.add(coords);
+                }
+            }
+        }
+        
+        turretDeploymentLocations.sort(new Comparator<Coords>() {
+            @Override
+            public int compare(Coords arg0, Coords arg1) {
+                return calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(arg0);
+            }
+        });        
+        return turretDeploymentLocations;
+    }
+    
+    /**
+     * Helper function that calculates the "utility" of placing a turret at the given coords
+     * @param coords
+     * @return An "arbitrary" utility number
+     */
+    private int calculateTurretDeploymentValue(Coords coords) {
+        // algorithm: a building is valued by the following formula:
+        //      (CF + height * 2) / # turrets placed on the roof
+        //      This way, we will generally favor unpopulated higher CF buildings, 
+        //      but have some wiggle room in case of a really tall high CF building
+        Building building = game.getBoard().getBuildingAt(coords);
+        IHex hex = game.getBoard().getHex(coords);
+        int turretCount = 1 + game.getGunEmplacements(coords).size();
+        
+        int value = (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
+        return value;
+    }
+    
     @Override
     protected void calculateFiringTurn() {
         final String METHOD_NAME = "calculateFiringTurn()";

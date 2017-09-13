@@ -127,8 +127,6 @@ public class MULParser {
     private static final String TYPE = "type";
     private static final String SHOTS = "shots";
     private static final String IS_HIT = "isHit";
-    private static final String TRUE = "true";
-    private static final String FALSE = "false";
     private static final String MUNITION = "munition";
     private static final String DIRECTION = "direction";
     private static final String INTEGRITY = "integrity";
@@ -1916,7 +1914,7 @@ public class MULParser {
     			if (nodeName.equalsIgnoreCase(BAYDAMAGED)) {
     				String bayhit = currEle.getAttribute(DAMAGED);
     				if (bayhit.equals("true")) {
-    					currentbay.setbayDamaged();
+    					currentbay.setBayDamaged();
     				}
     			}
     			if (nodeName.equalsIgnoreCase(BAYDOORS)) {

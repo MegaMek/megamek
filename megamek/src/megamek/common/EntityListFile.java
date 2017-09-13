@@ -903,9 +903,9 @@ public class EntityListFile {
                 	for (Bay nextbay : a.getTransportBays()) {
                 		output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
                 		output.write(CommonConstants.NL);
-                		if (nextbay.getbayDamaged() == 0) {
+                		if (nextbay.getBayDamaged() == 0) {
                 			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"false\"/>\n");
-                		} else if (nextbay.getbayDamaged() == 1) {
+                		} else if (nextbay.getBayDamaged() == 1) {
                 			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"true\"/>\n");
                 		}
                 		output.write(indentStr(indentLvl+1) + "<BayDoors doors=\"" + nextbay.getCurrentDoors() + "\"/>");

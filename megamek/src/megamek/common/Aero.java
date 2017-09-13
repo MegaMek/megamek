@@ -3769,7 +3769,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         // Cargo bays and bay doors for large craft
         for (Bay next : getTransportBays()) {
-        	if (next.getbayDamaged() > 0) {
+        	if (next.getBayDamaged() > 0) {
         		if (!first) {
         			toReturn += ", ";
         		}

@@ -346,9 +346,9 @@ public class Princess extends BotClient {
     @Nullable
     @Override
     protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
-        if((deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT) {
+        if ((deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT) {
             List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit, possibleDeployCoords);
-            if(validCoords.size() > 0) {            
+            if (validCoords.size() > 0) {            
                 return validCoords.get(0);
             }
             
@@ -371,11 +371,11 @@ public class Princess extends BotClient {
         // sort the list in decreasing order based on CF then height
         List<Coords> turretDeploymentLocations = new Vector<>();
         
-        for(Coords coords : possibleDeployCoords) {
+        for (Coords coords : possibleDeployCoords) {
             Building building = game.getBoard().getBuildingAt(coords);
             IHex hex = game.getBoard().getHex(coords);
             
-            if(building != null) {
+            if (building != null) {
                 int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
                 
                 // check stacking violation at the roof level

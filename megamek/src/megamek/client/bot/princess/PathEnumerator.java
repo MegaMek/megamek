@@ -194,6 +194,7 @@ public class PathEnumerator {
             // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
             if(mover.isAirborne() &&
                mover.isOnAtmosphericGroundMap() &&
+               mover.isAero() &&                    // guards against the edge case of airborne non-aero units
                !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
                 MovePath startPath = new MovePath(getGame(), mover);

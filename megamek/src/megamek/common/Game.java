@@ -801,6 +801,9 @@ public class Game implements Serializable, IGame {
             case PHASE_PHYSICAL:
                 resetActions();
                 break;
+            case PHASE_DEPLOYMENT:
+                resetActions();
+                break;
             case PHASE_INITIATIVE:
                 resetActions();
                 resetCharges();

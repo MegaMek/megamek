@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -2151,8 +2153,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                          cmd.getFinalCoords()));
             return;
         }
-        setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(),
-                                   cmd.getFinalCoords()));
+        // WiGEs (and LAMs and glider protomechs) cannot go up if they've used ground movement.
+        if ((ce.getMovementMode() == EntityMovementMode.WIGE)
+                && !ce.isAirborneVTOLorWIGE()
+                && (cmd.getMpUsed() > 0)
+                && !cmd.contains(MoveStepType.UP)) {
+            setRaiseEnabled(false);
+        } else {
+            setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(),
+                                       cmd.getFinalCoords()));
+        }
         setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(),
                                      cmd.getFinalCoords()));
     }
@@ -2402,10 +2412,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final Entity ce = ce();
 
         // Aeros should be able to fly off if they reach a border hex with
-        // velocity
-        // remaining
-        // and facing the right direction
-        if (!ce.isAero() || !ce.isAirborne()) {
+        // velocity remaining and facing the right direction
+        if ((ce == null) || !ce.isAero() || !ce.isAirborne()) {
             setFlyOffEnabled(false);
             return;
         }
@@ -2422,16 +2430,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             velocityLeft = step.getVelocityLeft();
         }
 
+        final IBoard board = clientgui.getClient().getGame().getBoard();
         // for spheroids in atmosphere we just need to check being on the edge
-        if (a.isSpheroid()
-            && !clientgui.getClient().getGame().getBoard().inSpace()) {
-            setFlyOffEnabled((position != null)
-                             && (ce.getWalkMP() > 0)
-                             && ((position.getX() == 0)
-                                 || (position.getX() == (clientgui.getClient().getGame()
-                                                                  .getBoard().getWidth() - 1))
-                                 || (position.getY() == 0) || (position.getY() == (clientgui
-                                                                                           .getClient().getGame().getBoard().getHeight() - 1))));
+        if (a.isSpheroid() && !board.inSpace()) {
+            setFlyOffEnabled((position != null) && (ce.getWalkMP() > 0)
+                    && ((position.getX() == 0)
+                            || (position.getX() == (board.getWidth() - 1))
+                            || (position.getY() == 0)
+                            || (position.getY() == (board.getHeight() - 1))));
             return;
         }
 
@@ -2441,17 +2447,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // remaining
 
         boolean evenx = (position.getX() % 2) == 0;
-        if ((velocityLeft > 0)
-            && (((position.getX() == 0) && ((facing == 5) || (facing == 4)))
-                || ((position.getX() == (clientgui.getClient().getGame()
-                                                  .getBoard().getWidth() - 1)) && ((facing == 1) || (facing == 2)))
-                || ((position.getY() == 0)
-                    && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
+        if ((velocityLeft > 0) && (((position.getX() == 0) && ((facing == 5) || (facing == 4)))
+                || ((position.getX() == (board.getWidth() - 1))
+                        && ((facing == 1) || (facing == 2)))
+                || ((position.getY() == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
                 || ((position.getY() == 0) && (facing == 0))
-                || ((position.getY() == (clientgui.getClient().getGame()
-                                                  .getBoard().getHeight() - 1))
-                    && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.getY() == (clientgui
-                                                                                                                     .getClient().getGame().getBoard().getHeight() - 1)) && (facing == 3)))) {
+                || ((position.getY() == (board.getHeight() - 1))
+                        && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx)
+                || ((position.getY() == (board.getHeight() - 1))
+                        && (facing == 3)))) {
             setFlyOffEnabled(true);
         } else {
             setFlyOffEnabled(false);
@@ -2623,6 +2627,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         final Entity ce = ce();
+        
+        if (null == ce) {
+            setModeConvertEnabled(false);
+            return;
+        }
         
         if (ce instanceof LandAirMech) {
             boolean canConvert = false;
@@ -3448,6 +3457,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
 
         Vector<Entity> droppableUnits = ce.getDroppableUnits();
+        Set<Integer> alreadyDropped = cmd.getDroppedUnits();
 
         // Handle error condition.
         if (droppableUnits.size() <= 0) {
@@ -3458,13 +3468,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // cycle through the bays
             int bayNum = 1;
             Bay currentBay;
-            Vector<Entity> currentUnits = new Vector<Entity>();
+            List<Entity> currentUnits = new ArrayList<Entity>();
             int doors = 0;
             Vector<Bay> Bays = ce.getTransportBays();
             for (int i = 0; i < Bays.size(); i++) {
                 currentBay = Bays.elementAt(i);
                 Vector<Integer> bayChoices = new Vector<Integer>();
-                currentUnits = currentBay.getDroppableUnits();
+                currentUnits = currentBay.getDroppableUnits().stream()
+                        .filter(e -> !alreadyDropped.contains(e.getId()))
+                        .collect(Collectors.toList());
+
                 doors = currentBay.getDoors();
                 if ((currentUnits.size() > 0) && (doors > 0)) {
                     String[] names = new String[currentUnits.size()];
@@ -3473,7 +3486,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                     "MovementDisplay.DropUnitDialog.message", new Object[]{ //$NON-NLS-1$
                                                                                             doors, bayNum});
                     for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentUnits.elementAt(loop)
+                        names[loop] = currentUnits.get(loop)
                                                   .getShortName();
                     }
                     ChoiceDialog choiceDialog = new ChoiceDialog(
@@ -3487,7 +3500,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         // load up the choices
                         int[] unitsLaunched = choiceDialog.getChoices();
                         for (int element : unitsLaunched) {
-                            bayChoices.add(currentUnits.elementAt(element)
+                            bayChoices.add(currentUnits.get(element)
                                                        .getId());
                         }
                         choices.put(i, bayChoices);
@@ -4249,7 +4262,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_VEE.getCmd())) {
             if (ce instanceof QuadVee && ((QuadVee)ce).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
-                adjustConvertSteps(EntityMovementMode.TRACKED);
+                adjustConvertSteps(EntityMovementMode.WHEELED);
             } else if ((ce instanceof Mech && ((Mech)ce).hasTracks())
                     || ce instanceof QuadVee) {
                 adjustConvertSteps(EntityMovementMode.TRACKED);

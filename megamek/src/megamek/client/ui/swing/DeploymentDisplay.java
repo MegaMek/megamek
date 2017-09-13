@@ -527,7 +527,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) 
                     || assaultDropPreference)
-                || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
+                || (ce().isLocationProhibited(moveto)
+                        && !isTankOnPavement)) {
             msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                     new Object[] { ce().getShortName(), moveto.getBoardNum() });
             title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$

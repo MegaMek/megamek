@@ -56,6 +56,10 @@ public class PilotOptions extends AbstractOptions {
         // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_TM_, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_MOUNTAINEER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_SWAMP_BEAST, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false); //$NON-NLS-1$
 

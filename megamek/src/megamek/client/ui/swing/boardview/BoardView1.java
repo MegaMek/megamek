@@ -714,19 +714,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
 
-        SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
-        SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_HIT.init();
+        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
+        SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
+        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
+        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.PLAYER_NOTE.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
-        flareImage = getToolkit().getImage(
+        flareImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
                         .toString());
-        radarBlipImage = getToolkit().getImage(
+        radarBlipImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(),
                         FILENAME_RADAR_BLIP_IMAGE).toString());
     }
@@ -5766,7 +5766,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             && ecmCenters.containsKey(eSprite.getPosition())) {
                         txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
-                                + "/Tooltip/ECM.png>&nbsp;"); //$NON-NLS-1$
+                                + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
                         txt.append("</FONT>"); //$NON-NLS-1$
                     }
@@ -5774,7 +5774,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             && eccmCenters.containsKey(eSprite.getPosition())) {
                         txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
-                                + "/Tooltip/ECM.png>&nbsp;"); //$NON-NLS-1$
+                                + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
                         txt.append("</FONT>");
                     }

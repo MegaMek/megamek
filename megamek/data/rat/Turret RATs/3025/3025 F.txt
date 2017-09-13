@@ -1,90 +1,25 @@
 Turrets 3025 F
-Rocket Launcher/1 Turret (Single),1
-Rocket Launcher/2 Turret (Single),2
-Rocket Launcher/3 Turret (Single),3
-Rocket Launcher/4 Turret (Single),4
-MG Turret (Single),5
-Flamer Turret (Single),6
-Rocket Launcher/5 Turret (Single),7
-Small Laser Turret (Single),8
-MG Turret (Dual),9
-Flamer Turret (Dual),10
-MG Turret (Triple),11
-Flamer Turret (Triple),12
-Rocket Launcher/10 Turret (Single),13
-Small Laser Turret (Dual),14
-MG Turret (Quad),15
-Rocket Launcher/15 Turret (Single),16
-Flamer Turret (Quad),17
-Rocket Launcher/20 Turret (Single),18
-SRM/2 Turret (Single),19
-Small Laser Turret (Triple),20
-Light Rifle Turret (Single),21
-Small Laser Turret (Quad),22
-SRM/4 Turret (Single),23
-Medium Laser Turret (Single),24
-SRM/2 Turret (Dual),25
-Light Rifle Turret (Dual),26
-AC/2 Turret (Single),27
-Medium Rifle Turret (Single),28
-Thumper Artillery Turret (Single),29
-LRM/5 Turret (Single),30
-SRM/2 Turret (Triple),31
-SRM/6 Turret (Single),32
-Light Rifle Turret (Triple),33
-AC/2 Turret (Dual),34
-Medium Laser Turret (Dual),35
-SRM/2 Turret (Quad),36
-AC/5 Turret (Single),37
-SRM/4 Turret (Dual),38
-Heavy Rifle Turret (Single),39
-Medium Rifle Turret (Dual),40
-Large Laser Turret (Single),41
-AC/2 Turret (Triple),42
-SRM/4 Turret (Triple),43
-Thumper Artillery Turret (Dual),44
-Medium Laser Turret (Triple),45
-LRM/5 Turret (Dual),44
-SRM/6 Turret (Dual),43
-LRM/10 Turret (Single),42
-AC/10 Turret (Single),41
-Large Re-engineered Laser Turret (Single),40
-AC/5 Turret (Dual),39
-SRM/4 Turret (Quad),38
-PPC Turret (Single),37
-Medium Rifle Turret (Triple),36
-Thumper Artillery Turret (Triple),35
-Medium Laser Turret (Quad),34
-LRM/5 Turret (Triple),33
-Sniper Artillery Turret (Single),32
-Heavy Rifle Turret (Dual),31
-SRM/6 Turret (Triple),30
-AC/20 Turret (Single),29
-AC/5 Turret (Triple),28
-Large Laser Turret (Dual),27
-LRM/15 Turret (Single),26
-LRM/5 Turret (Quad),25
-LRM/10 Turret (Dual),24
-Sniper Artillery Turret (Dual),23
-SRM/6 Turret (Quad),22
-AC/10 Turret (Dual),21
-Heavy Rifle Turret (Triple),20
-Large Re-engineered Laser Turret (Dual),19
-PPC Turret (Dual),18
-Sniper Artillery Turret (Triple),17
-Large Laser Turret (Triple),16
-LRM/10 Turret (Triple),15
-LRM/15 Turret (Dual),14
-AC/10 Turret (Triple),13
-LRM/20 Turret (Single),12
-AC/20 Turret (Dual),11
-Large Re-engineered Laser Turret (Triple),10
-Large Laser Turret (Quad),9
-LRM/10 Turret (Quad),8
-PPC Turret (Triple),7
-LRM/15 Turret (Triple),6
-AC/20 Turret (Triple),5
-Large Re-engineered Laser Turret (Quad),4
-LRM/20 Turret (Dual),3
-LRM/15 Turret (Quad),2
-Long Tom Artillery Turret (Single),1
+Rocket Launcher/1 Turret (Single), 1
+Rocket Launcher/2 Turret (Single), 2
+Rocket Launcher/3 Turret (Single), 3
+Rocket Launcher/4 Turret (Single), 4
+Flamer Turret (Single), 5
+Rocket Launcher/5 Turret (Single), 6
+Small Laser Turret (Single), 7
+Flamer Turret (Dual), 8
+Flamer Turret (Triple), 9
+Rocket Launcher/10 Turret (Single), 10
+MG Turret (Single), 11
+MG Turret (Dual), 12
+MG Turret (Triple), 12
+MG Turret (Quad), 11
+Small Laser Turret (Dual), 10
+Rocket Launcher/15 Turret (Single), 9
+Flamer Turret (Quad), 8
+Rocket Launcher/20 Turret (Single), 7
+Small Laser Turret (Triple), 6
+Small Laser Turret (Quad), 5
+Medium Laser Turret (Single), 4
+Medium Laser Turret (Dual), 3
+Medium Laser Turret (Triple), 2
+Medium Laser Turret (Quad), 1

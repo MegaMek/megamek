@@ -1504,7 +1504,8 @@ public class MoveStep implements Serializable {
             legal = false;
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
-                && (type != MoveStepType.UNDOCK)) {
+                && (type != MoveStepType.UNDOCK)
+                && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
         }
@@ -1890,7 +1891,7 @@ public class MoveStep implements Serializable {
             return;
         }
         
-        if (prev.getAltitude() > 0) {
+        if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
 
             // If airborne and not an Aero then everything is illegal, except
             // turns and AirMech 
@@ -2119,11 +2120,14 @@ public class MoveStep implements Serializable {
         }
 
         // WIGEs can take off on their first step...
-        if (type == MoveStepType.UP && entity.getMovementMode() == EntityMovementMode.WIGE
-                && ((firstStep && prev.getClearance() == 0 && entity.getRunMP() > mp)
-                        || (prev.getClearance() > 0 && entity.canGoUp(getElevation(), getPosition())
-                                && (entity instanceof LandAirMech || entity instanceof Protomech)))) {
-            movementType = EntityMovementType.MOVE_VTOL_WALK;                    
+        if ((type == MoveStepType.UP) && (entity.getMovementMode() == EntityMovementMode.WIGE)
+                && (prev.getClearance() == 0)) {
+            if (firstStep && (entity.getRunMP() >= mp)) {
+                movementType = EntityMovementType.MOVE_VTOL_WALK;
+            } else {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
         }
 
         // WIGEs need to be able to land too, or even descend
@@ -2466,14 +2470,14 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_VTOL_SPRINT;
         }
         
-        if (entity.isGyroDestroyed()
-                && !(entity instanceof LandAirMech && entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
-            //A prone 'Mech with a destroyed gyro can only change a single hex side.
+        if (entity.isGyroDestroyed() && !((entity instanceof LandAirMech)
+                && (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
+            //A prone 'Mech with a destroyed gyro can only change a single hex side, or eject
             if (entity.isProne()) {
-                if ((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
-                        || getMpUsed() > 1) {
+                if (((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
+                        || getMpUsed() > 1) && stepType != MoveStepType.EJECT) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
-                }                
+                }
             } else {
                 //Normally a 'Mech falls immediately when the gyro is destroyed and can't stand again.
                 //QuadVees using vehicle mode and 'Mechs using tracks do not fall and can continue to
@@ -2923,7 +2927,12 @@ public class MoveStep implements Serializable {
                     if (destHex.terrainLevel(Terrains.WATER) == 1) {
                         mp++;
                     } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
-                        mp += 3;
+                        if (getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+                                && ((entity instanceof Mech) || (entity instanceof Protomech))) {
+                            mp += 2;
+                        } else {
+                            mp += 3;
+                        }
                     }
                 }
                 // if using non-careful movement on ice then reduce cost
@@ -2955,7 +2964,11 @@ public class MoveStep implements Serializable {
                             || (moveMode == EntityMovementMode.HOVER))) {
                 delta_e *= 2;
             }
-            mp += delta_e;
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                mp += delta_e - 1;
+            } else {
+                mp += delta_e;
+            }
         }
 
         // WiGEs in climb mode pay 2 extra MP to stay at the same flight level
@@ -3371,7 +3384,9 @@ public class MoveStep implements Serializable {
         // if the Dropship is taking off, movetype will be safe thrust
         if ((entity instanceof Dropship) && !entity.isAirborne()
                 && isPavementStep() && entity.isLocationProhibited(dest, getElevation())
-                && (movementType != EntityMovementType.MOVE_SAFE_THRUST)) {
+                && (movementType != EntityMovementType.MOVE_SAFE_THRUST)
+                && (type != MoveStepType.LOAD)
+                && (type != MoveStepType.UNLOAD)) {
             for (int dir = 0; dir < 6; dir++) {
                 Coords secondaryCoords = dest.translated(dir);
                 IHex secondaryHex = game.getBoard().getHex(secondaryCoords);

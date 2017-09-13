@@ -510,7 +510,7 @@ public class EquipmentType {
      */
     public boolean removeMode(String mode) {
         if (modes != null) {
-            return modes.remove(mode);
+            return modes.remove(EquipmentMode.getMode(mode));
         } else {
             return false;
         }
@@ -691,48 +691,48 @@ public class EquipmentType {
     public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
         switch (type) {
         case T_ARMOR_BA_STANDARD_PROTOTYPE:
-            return 0.1f;
+            return 0.1;
         case T_ARMOR_BA_STANDARD_ADVANCED:
-            return 0.04f;
+            return 0.04;
         case T_ARMOR_BA_STEALTH:
             if (isClan) {
-                return 0.035f;
+                return 0.035;
             }
             return 0.06f;
         case T_ARMOR_BA_STEALTH_BASIC:
             if (isClan) {
-                return 0.03f;
+                return 0.03;
             }
-            return 0.055f;
+            return 0.055;
         case T_ARMOR_BA_STEALTH_IMP:
             if (isClan) {
-                return 0.035f;
+                return 0.035;
             }
-            return 0.06f;
+            return 0.06;
         case T_ARMOR_BA_STEALTH_PROTOTYPE:
-            return 0.1f;
+            return 0.1;
         case T_ARMOR_BA_FIRE_RESIST:
-            return 0.03f;
+            return 0.03;
         case T_ARMOR_BA_MIMETIC:
-            return 0.05f;
+            return 0.05;
         case T_ARMOR_BA_REFLECTIVE:
             if (isClan) {
-                return 0.03f;
+                return 0.03;
             } else {
-                return 0.055f;
+                return 0.055;
             }
         case T_ARMOR_BA_REACTIVE:
             if (isClan) {
-                return 0.035f;
+                return 0.035;
             } else {
-                return 0.06f;
+                return 0.06;
             }
         case T_ARMOR_BA_STANDARD:
         default:
             if (isClan) {
-                return 0.025f;
+                return 0.025;
             }
-            return 0.05f;
+            return 0.05;
         }
     }
 

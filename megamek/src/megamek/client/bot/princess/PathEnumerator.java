@@ -132,7 +132,9 @@ public class PathEnumerator {
                 return returnSet;
             }
             for (Integer id : getUnitPotentialLocations().keySet()) {
-                if (groundOnly && getGame().getEntity(id).isAero()) {
+                if (groundOnly
+                        && getGame().getEntity(id) != null
+                        && getGame().getEntity(id).isAero()) {
                     continue;
                 }
 

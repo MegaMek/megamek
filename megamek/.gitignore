@@ -22,6 +22,7 @@
 atlasedImages.txt
 data/images/imgFileAtlasMap.xml
 /userdata/
-*.pdf
-*.ps
-*.png
+/*.pdf
+/*.ps
+/*.png
+/MegaMekLab.jar

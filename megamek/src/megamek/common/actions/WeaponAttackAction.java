@@ -1077,6 +1077,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (ae.moved == EntityMovementType.MOVE_RUN)) {
             toHit.addModifier(-1, "stabilized weapon");
         }
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
+            toHit.addModifier(+1, "misrepaired weapon");
+        }
+        
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
+            toHit.addModifier(+1, "misreplaced weapon");
+        }
 
         // Has the pilot the appropriate gunnery skill?
         if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_LASER)
@@ -1136,11 +1144,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
-                toHit.addModifier(+1, "urban guerrilla");
+                toHit.addModifier(+1, "Urban Guerrilla");
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
                     && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
                 toHit.addModifier(+1, OptionsConstants.PILOT_SHAKY_STICK);
+            }
+            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                       || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
+                    && te.moved == EntityMovementType.MOVE_WALK) {
+                toHit.addModifier(+1, "Forest Ranger");
+            }
+            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
+                    && te.moved == EntityMovementType.MOVE_RUN) {
+                toHit.addModifier(+1, "Swamp Beast");
             }
         }
 

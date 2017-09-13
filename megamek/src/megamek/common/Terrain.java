@@ -361,121 +361,140 @@ public class Terrain implements ITerrain, Serializable {
 
     public int movementCost(Entity e) {
         EntityMovementMode moveMode = e.getMovementMode();
+        int mp = 0;
         switch (type) {
-        case Terrains.MAGMA:
-            return level - 1;
-        case Terrains.GEYSER:
-            if (level == 2) {
-                return 1;
-            }
-            return 0;
-        case Terrains.RUBBLE:
-            if (level == 6) {
-                if (((e instanceof Mech) && ((Mech) e).isSuperHeavy())
-                        || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
-                                && (moveMode == EntityMovementMode.INF_LEG))) {
+            case Terrains.MAGMA:
+                return level - 1;
+            case Terrains.GEYSER:
+                if (level == 2) {
                     return 1;
                 }
-                return 2;
-            }
-            if (((e instanceof Mech) && ((Mech) e).isSuperHeavy())
-                    || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
-                            && (moveMode == EntityMovementMode.INF_LEG))) {
                 return 0;
-            }
-            return 1;
-        case Terrains.WOODS:
-            if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
-                    && (moveMode == EntityMovementMode.INF_LEG) && (level > 1)) {
-                return level - 1;
-            }
-            if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
-                return level - 1;
-            }
-            return level;
-        case Terrains.JUNGLE:
-            if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
-                    && (moveMode == EntityMovementMode.INF_LEG)) {
-                return level;
-            }
-            if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
-                return level;
-            }
-            return level + 1;
-        case Terrains.SNOW:
-            if (level == 2) {
+            case Terrains.RUBBLE:
+                if (level == 6) {
+                    mp = 2;
+                } else {
+                    mp = 1;
+                }
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    mp -= 1;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                    mp -= 1;
+                }
+                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                    mp -= 1;
+                }
+                return Math.max(0, mp);
+            case Terrains.WOODS:
+                mp = level;
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    mp -= 1;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+                    mp -= 1;
+                }
+                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                    mp -= 1;
+                }
+                return Math.max(0, mp);
+            case Terrains.JUNGLE:
+                mp = level +1;
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    mp -= 1;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+                    mp -= 1;
+                }
+                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                    mp -= 1;
+                }
+                return Math.max(0, mp);
+            case Terrains.SNOW:
+                if (level == 2) {
+                    if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+                        return 0;
+                    }
+                    return 1;
+                }
+                if ((moveMode == EntityMovementMode.WHEELED) || (moveMode == EntityMovementMode.INF_JUMP)
+                        || (moveMode == EntityMovementMode.INF_LEG) || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
+                    return 1;
+                }
+                return 0;
+            case Terrains.MUD:
+                if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+                    return 0;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                    return 0;
+                }
+                return 1;
+            case Terrains.SWAMP:
+                mp = 2;
+                if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+                    return 0;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                    mp -= 1;
+                }
+                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+                    mp -= 1;
+                }
+                return Math.max(0, mp);
+            case Terrains.ICE:
                 if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                     return 0;
                 }
                 return 1;
-            }
-            if ((moveMode == EntityMovementMode.WHEELED) || (moveMode == EntityMovementMode.INF_JUMP)
-                    || (moveMode == EntityMovementMode.INF_LEG) || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
-                return 1;
-            }
-            return 0;
-        case Terrains.MUD:
-            if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
-                return 0;
-            }
-            return 1;
-        case Terrains.SWAMP:
-            if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
-                return 0;
-            } else if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
-                return 1;
-            } else {
-                return 2;
-            }
-        case Terrains.ICE:
-            if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
-                return 0;
-            }
-            return 1;
-        case Terrains.RAPIDS:
-            // Doesn't apply to Hover, or airborne WiGE or VTOL
-            if (e.isAirborneVTOLorWIGE() || (e.getMovementMode() == EntityMovementMode.HOVER)) {
-                return 0;
-            }
-            if (level == 2) {
+            case Terrains.RAPIDS:
+                // Doesn't apply to Hover, or airborne WiGE or VTOL
+                if (e.isAirborneVTOLorWIGE() || (e.getMovementMode() == EntityMovementMode.HOVER)) {
+                    return 0;
+                }
+                if (level == 2) {
+                    mp = 2;
+                } else {
+                    mp = 1;
+                }
                 if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
+                    mp -= 1;
+                }
+                return Math.max(0, mp);
+            case Terrains.ROUGH:
+                if (level == 2) {
+                    mp = 2;
+                } else {
+                    mp = 1;
+                }
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    mp -= 1;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                    mp -= 1;
+                }
+                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                    mp -= 1;
+                }
+                return Math.max(0, mp);
+            case Terrains.SAND:
+                if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(MiscType.F_DUNE_BUGGY))
+                        || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)
+                        || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
                     return 1;
                 }
-                return 2;
-            }
-            if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
                 return 0;
-            }
-            return 1;
-        case Terrains.ROUGH:
-            if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
-                    && (moveMode == EntityMovementMode.INF_LEG)) {
-                return level - 1;
-            }
-            if (level == 2) {
-                if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
+            case Terrains.INDUSTRIAL:
+                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
                     return 1;
                 }
-                return 2;
-            }
-            if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
                 return 0;
-            }
-            return 1;
-        case Terrains.SAND:
-            if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(MiscType.F_DUNE_BUGGY))
-                    || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)
-                    || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
-                return 1;
-            }
-            return 0;
-        case Terrains.INDUSTRIAL:
-            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
-                return 1;
-            }
-            return 0;
-        default:
-            return 0;
+            default:
+                return 0;
         }
     }
 

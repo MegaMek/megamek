@@ -245,6 +245,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return mp;
     }
+    
+    // Use Mech mode to determine walk MP for BV calculations
+    public int getBVWalkMP() {
+        return super.getWalkMP(false, true, true);
+    }
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -254,7 +259,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             mp = getAirMechFlankMP(gravity, ignoremodulararmor);
         } else {
-            mp = super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            // conversion reduction has already been done at this point
+            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         if (convertingNow) {
             mp /= 2;
@@ -270,7 +276,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             mp = getAirMechFlankMP(gravity, ignoremodulararmor);
         } else {
-            mp = super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
         if (convertingNow) {
             mp /= 2;
@@ -548,15 +554,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public boolean canAssaultDrop() {
+        return getConversionMode() != CONV_MODE_FIGHTER;
+    }
+
+    @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         // Fighter mode has the same terrain restrictions as ASFs.
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             IHex hex = game.getBoard().getHex(c);
-            if (isAirborne()) {
-                if (hex.containsTerrain(Terrains.IMPASSABLE)) {
-                    return true;
-                }
-                return false;
+            if (hex.containsTerrain(Terrains.IMPASSABLE)) {
+                return !isAirborne();
             }
 
             // Additional restrictions for hidden units
@@ -1304,6 +1312,34 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return hits > 3 ? 5 : hits;
         }
     }
+    
+    //Landing mods for partial repairs
+    public int getLandingGearPartialRepairs() {
+    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+        return 2;
+    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
+    
+    //Avionics mods for partial repairs
+    public int getAvionicsMisreplaced() {
+    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }
+    
+    public int getAvionicsMisrepaired() {
+    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+        return 1;
+    	} else {
+    	return 0;
+    	}
+    }    
 
     /**
      * In fighter mode the weapon arcs need to be translated to Aero arcs.
@@ -1988,4 +2024,5 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }
+
 }

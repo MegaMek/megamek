@@ -769,6 +769,21 @@ public class MovePath implements Cloneable, Serializable {
         }
         return getEntity().getElevation();
     }
+    
+    /**
+     * get final elevation relative to the tops of any buildings in the hex
+     * @return
+     */
+    public int getFinalClearance() {
+        if (getLastStep() != null) {
+            return getLastStep().getClearance();
+        }
+        IHex hex = entity.getGame().getBoard().getHex(getEntity().getPosition());
+        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            return getEntity().getElevation() - hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        return getEntity().getElevation();
+    }
 
     /**
      * Returns the highest elevation in the current path
@@ -1526,9 +1541,13 @@ public class MovePath implements Cloneable, Serializable {
             return false;
         }
         // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
-        if (getEntity() instanceof LandAirMech
-                && ((LandAirMech)getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH) {
-            return true;
+        if ((getEntity() instanceof LandAirMech)
+                && (((LandAirMech)getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)){
+            if (getLastStep() != null) {
+                return getLastStep().getClearance() > 0;
+            } else {
+                return getEntity().isAirborneVTOLorWIGE();
+            }
         }
         if ((getHexesMoved() + getEntity().delta_distance >= 5)
                 || (getEntity() instanceof Protomech
@@ -1710,6 +1729,19 @@ public class MovePath implements Cloneable, Serializable {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * @return A list of entity ids for all units that have previously be plotted to be dropped/launched.
+     */
+    public Set<Integer> getDroppedUnits() {
+        Set<Integer> dropped = new HashSet<>();
+        for (MoveStep s : steps) {
+            for (Vector<Integer> ids : s.getLaunched().values()) {
+                dropped.addAll(ids);
+            }
+        }
+        return dropped;
     }
     
     /**

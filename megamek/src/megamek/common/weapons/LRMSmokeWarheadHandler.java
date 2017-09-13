@@ -24,6 +24,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.SmokeCloud;
 
 /**
  * @author FogHat
@@ -35,7 +36,6 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      */
 
     private static final long serialVersionUID = -30934685350251837L;
-    private int smokeMissilesNowLeft = 0;
 
     /**
      * @param t
@@ -87,21 +87,14 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             }
         }
 
-        smokeMissilesNowLeft = wtype.getRackSize();
-
         // Handle munitions.
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
-
-            server.deliverMissileSmoke(center, vPhaseReport);
-            smokeMissilesNowLeft = (smokeMissilesNowLeft - 5);
-            int flight = 0;
-
-            while (smokeMissilesNowLeft > 0) {
-                coords = Compute.getSmokeMissileTarget(game, center, flight);
-                server.deliverMissileSmoke(coords, vPhaseReport);
-                smokeMissilesNowLeft = (smokeMissilesNowLeft - 5);
-                flight++;
+            int damage = wtype.getRackSize() * calcDamagePerHit();
+            int smokeType = SmokeCloud.SMOKE_LIGHT;
+            if (damage > 5) {
+                smokeType = SmokeCloud.SMOKE_HEAVY;
             }
+            server.deliverMissileSmoke(center, smokeType, vPhaseReport);
         }
         return true;
     }

@@ -285,14 +285,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean eligibleForOffBoard = true;
         
         for (Entity e : entities) {
-            isAero &= e instanceof Aero && !(e instanceof SmallCraft || e instanceof Jumpship);
-            isMech &= e instanceof Mech;
-            isShip &= e instanceof SmallCraft || e instanceof Jumpship;
-            isVTOL &= e instanceof VTOL;
-            isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
-            isQuadVee &= e instanceof QuadVee;
-            isLAM &= e instanceof LandAirMech;
-            isGlider &= e instanceof Protomech && e.getMovementMode() == EntityMovementMode.WIGE;
+            isAero &= (e instanceof Aero && !(e instanceof SmallCraft || e instanceof Jumpship));
+            isMech &= (e instanceof Mech);
+            isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
+            isVTOL &= (e instanceof VTOL);
+            isWiGE &= (e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE);
+            isQuadVee &= (e instanceof QuadVee);
+            isLAM &= (e instanceof LandAirMech);
+            isGlider &= (e instanceof Protomech && e.getMovementMode() == EntityMovementMode.WIGE);
             boolean entityEligibleForOffBoard = false;
             for (Mounted mounted : e.getWeaponList()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
@@ -502,7 +502,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         setupButtons();
 
-        if (isAero || isLAM) {
+        if (isAero || isLAM || isShip) {
             IAero a = (IAero) entity;
             fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
                     .toString());
@@ -511,21 +511,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
             
-            fuel = a.getFuel();
-            fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
-                    .toString());
-            fldCurrentFuel.addActionListener(this);
-        }
-        
-        if (isShip) {
-            Aero a = (Aero) entity;
-            fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
-                    .toString());
-            fldStartVelocity.addActionListener(this);
-
-            fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
-            fldStartAltitude.addActionListener(this);
-
             fuel = a.getFuel();
             fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
                     .toString());
@@ -991,7 +976,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         && (choStartingMode.getSelectedIndex() == 2
                             || ((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL
                                 && choStartingMode.getSelectedIndex() == 1);
-            isShip &= e instanceof SmallCraft || e instanceof Jumpship;
+            isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
             isVTOL &= e instanceof VTOL;
             isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
             isQuadVee &= e instanceof QuadVee;
@@ -1260,7 +1245,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.setOffBoard(0, OffBoardDirection.NONE);
             }
 
-            if (isAero) {
+            if (isAero || isShip) {
                 IAero a = (IAero) entity;
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
@@ -1278,11 +1263,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
             
-            if (isShip) {
-            	Aero a = (Aero) entity;
-            	a.setCurrentFuel(currentfuel);
-            }
-
             if (isVTOL || isWiGE || isAirMech || isGlider) {
                 entity.setElevation(height);
             }

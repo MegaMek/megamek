@@ -76,7 +76,7 @@ public final class SmallCraftBay extends Bay {
         		&& !(unit instanceof FighterSquadron) 
         		&& !(unit instanceof Dropship) 
         		&& !(unit instanceof Jumpship)) 
-        		|| (unit instanceof LandAirMech && unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
+        		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
 

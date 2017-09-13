@@ -70,7 +70,7 @@ public final class HeavyVehicleBay extends Bay {
 
         // Only tanks or vehicle-mode quadvees equal or less than 100 tons
         // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
-        if (((unit instanceof Tank) || ((unit instanceof QuadVee && unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) && (unit.getWeight() <= 100)) {
+        if (((unit instanceof Tank) || (((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)))) && (unit.getWeight() <= 100)) {
             result = true;
         }
 

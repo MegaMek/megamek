@@ -73,7 +73,7 @@ public final class ASFBay extends Bay {
 
         // Only ASFs or Fighter-Mode LAMs
         // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
-        if ((unit.isFighter() && !(unit instanceof FighterSquadron)) || (unit instanceof LandAirMech && unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
+        if (((unit.isFighter()) && (!(unit instanceof FighterSquadron))) || ((unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
 

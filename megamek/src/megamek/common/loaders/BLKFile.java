@@ -589,6 +589,9 @@ public class BLKFile {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
                 name += ":RA";
             }
+            if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET){
+                name += ":TU";
+            }
             // For BattleArmor, we need to save how many shots are in this
             //  location
             if ((t instanceof BattleArmor)
@@ -645,6 +648,10 @@ public class BLKFile {
 
             } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
                 blk.writeBlockData("chassis", "quad");
+                if (ba.getTurretCapacity() > 0) {
+                    blk.writeBlockData("turret",
+                            (ba.hasModularTurretMount()? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                }
             }
             if (ba.isExoskeleton()) {
                 blk.writeBlockData("exoskeleton", "true");

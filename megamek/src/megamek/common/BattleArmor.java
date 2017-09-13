@@ -257,18 +257,23 @@ public class BattleArmor extends Infantry {
     /**
      * The location for mounted equipment on BA
      */
-    public static final int MOUNT_LOC_NONE = -1;
-    public static final int MOUNT_LOC_BODY = 0;
-    public static final int MOUNT_LOC_RARM = 1;
-    public static final int MOUNT_LOC_LARM = 2;
+    public static final int MOUNT_LOC_NONE   = -1;
+    public static final int MOUNT_LOC_BODY   = 0;
+    public static final int MOUNT_LOC_RARM   = 1;
+    public static final int MOUNT_LOC_LARM   = 2;
+    public static final int MOUNT_LOC_TURRET = 3;
 
     public static final String[] MOUNT_LOC_NAMES = { "Body", "Right Arm",
-    "Left Arm" };
+            "Left Arm", "Turret" };
 
     /**
      * How many mount locations are possible?
      */
-    public static final int MOUNT_NUM_LOCS = 3;
+    public static final int MOUNT_NUM_LOCS = 4;
+    
+    // Quad BA can add critical space by adding a turret mount.
+    private int turretSize = 0;
+    private boolean modularTurret = false;
 
     private boolean exoskeleton = false;
 
@@ -1762,6 +1767,19 @@ public class BattleArmor extends Infantry {
         buff.append(newline);
         buff.append("</armor>");
         buff.append(newline);
+        
+        if (getTurretCapacity() > 0) {
+            buff.append("<turret>");
+            buff.append(newline);
+            if (hasModularTurretMount()) {
+                buff.append("Modular:");
+            } else {
+                buff.append("Standard:");
+            }
+            buff.append(String.valueOf(getTurretCapacity()));
+            buff.append("</turret>");
+            buff.append(newline);
+        }
 
         buff.append("<armor_type>");
         buff.append(newline);
@@ -2356,20 +2374,27 @@ public class BattleArmor extends Infantry {
         }
 
     }
-
+    
     public int getBodyCrits() {
         if(getChassisType() == CHASSIS_TYPE_QUAD) {
+            int turret = 0;
+            if (getTurretCapacity() > 0) {
+                turret = 1;
+                if (hasModularTurretMount()) {
+                    turret++;
+                }
+            }
             switch(getWeightClass()) {
             case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
                 return 0;
             case EntityWeightClass.WEIGHT_LIGHT:
-                return 5;
+                return 5 - turret;
             case EntityWeightClass.WEIGHT_MEDIUM:
-                return 7;
+                return 7 - turret;
             case EntityWeightClass.WEIGHT_HEAVY:
-                return 9;
+                return 9 - turret;
             default:
-                return 11;
+                return 11 - turret;
             }
         } else {
             switch(getWeightClass()) {
@@ -2383,9 +2408,25 @@ public class BattleArmor extends Infantry {
             }
         }
     }
+    
+    public int getTurretCapacity() {
+        return turretSize;
+    }
+    
+    public void setTurretSize(int capacity) {
+        turretSize = capacity;
+    }
+    
+    public boolean hasModularTurretMount() {
+        return modularTurret;
+    }
+    
+    public void setModularTurret(boolean modular) {
+        modularTurret = modular;
+    }
 
     public int getTotalCrits() {
-        return (getArmCrits() * 2) + getBodyCrits();
+        return (getArmCrits() * 2) + getBodyCrits() + getTurretCapacity();
     }
 
     public int getNumCrits(int loc){
@@ -2393,6 +2434,8 @@ public class BattleArmor extends Infantry {
             return getBodyCrits();
         } else if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)){
             return getArmCrits();
+        } else if (loc == MOUNT_LOC_TURRET) {
+            return getTurretCapacity();
         } else {
             return 0;
         }
@@ -2410,7 +2453,7 @@ public class BattleArmor extends Infantry {
     public int getNumAllowedAntiMechWeapons(int loc){
         if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)){
             return 1;
-        } else if (loc == MOUNT_LOC_BODY){
+        } else if ((loc == MOUNT_LOC_BODY) || (loc == MOUNT_LOC_TURRET)) {
             if (getChassisType() == CHASSIS_TYPE_QUAD){
                 return 4;
             } else {

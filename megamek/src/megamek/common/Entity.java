@@ -36,7 +36,6 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import megamek.client.bot.princess.WeaponFireInfo;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;

@@ -2247,6 +2247,13 @@ public class Compute {
             toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
         }
 
+        IHex curHex = game.getBoard().getHex(attacker.getPosition());
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+                && ((attacker instanceof Mech) || (attacker instanceof Protomech))
+                && (curHex.terrainLevel(Terrains.WATER) > 1)) {
+            toHit.addModifier(-1, "Frogman");
+        }
+
         if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING)) {
             toHit.addModifier(1, "clan pilot training");
         }

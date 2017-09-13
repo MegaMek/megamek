@@ -43,6 +43,8 @@ v0.43.4-git
 + Fixed a bug where some ancillary images weren't working, along with the largeTextures tileset
 + PR #613: Aero partial repairs
 + Issue #645: Princess continues to stop at one point.
++ PR #635: Terrain Master SPA (Forest Ranger, Frogman, Mountaineer, and Swamp Beast)
++ PR #640: Improved Princess turret placement (including preventing illegal turret deployments)
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

@@ -216,7 +216,12 @@ public class PathEnumerator {
                 this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
-                paths.add(offBoardFilter.getShortestPath());
+                
+                MovePath offBoardPath = offBoardFilter.getShortestPath();
+                if(offBoardPath != null) {
+                    paths.add(offBoardFilter.getShortestPath());
+                }
+                
                 this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 

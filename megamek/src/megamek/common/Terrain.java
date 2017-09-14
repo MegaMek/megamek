@@ -399,6 +399,14 @@ public class Terrain implements ITerrain, Serializable {
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+                    if (e.entityIsQuad()) {
+                        mp -= 1;
+                    }
+                    if ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic")) {
+                        mp -= 1;
+                    }
+                }
                 return Math.max(0, mp);
             case Terrains.JUNGLE:
                 mp = level +1;
@@ -411,6 +419,14 @@ public class Terrain implements ITerrain, Serializable {
                 if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
+                }
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+                    if (e.entityIsQuad()) {
+                        mp -= 1;
+                    }
+                    if ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic")) {
+                        mp -= 1;
+                    }
                 }
                 return Math.max(0, mp);
             case Terrains.SNOW:

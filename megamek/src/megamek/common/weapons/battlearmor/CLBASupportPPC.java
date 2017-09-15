@@ -37,8 +37,6 @@ public class CLBASupportPPC extends PPCWeapon {
         name = "Support PPC";
         setInternalName("BA Support PPC");
         addLookupName("CLBASupportPPC");
-        addLookupName("ISBASupportPPC");
-        addLookupName("IS BA Support PPC");
         damage = 2;
         ammoType = AmmoType.T_NA;
         shortRange = 2;
@@ -50,21 +48,14 @@ public class CLBASupportPPC extends PPCWeapon {
         waterLongRange = 5;
         waterExtremeRange = 6;
         bv = 14;
-        tonnage = .240;
+        tonnage = 0.240;
+        criticals = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;
         rulesRefs = "267,TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(3051, 3053, 3056, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, true, false, false)
-        .setPrototypeFactions(F_DC)	
-        .setProductionFactions(F_DC);
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+            .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE);
     }
 }

@@ -971,11 +971,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isAirMech = true;
         boolean isGlider = true;
         for (Entity e : entities) {
-            isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship))
-                    || (e instanceof LandAirMech)
-                        && (choStartingMode.getSelectedIndex() == 2)
-                            || (((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL)
-                                && (choStartingMode.getSelectedIndex() == 1);
+            isAero &= ((e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship)))
+                    || ((e instanceof LandAirMech)
+                        && (choStartingMode.getSelectedIndex() == 2
+                            || ((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL
+                                && choStartingMode.getSelectedIndex() == 1));
             isShip &= (e instanceof SmallCraft) || (e instanceof Jumpship);
             isVTOL &= (e instanceof VTOL);
             isWiGE &= (e instanceof Tank) && (e.getMovementMode() == EntityMovementMode.WIGE);

@@ -400,10 +400,7 @@ public class Terrain implements ITerrain, Serializable {
                     mp -= 1;
                 }
                 if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
-                    if (e.entityIsQuad()) {
-                        mp -= 1;
-                    }
-                    if ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic")) {
+                    if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic")) {
                         mp -= 1;
                     }
                 }
@@ -421,10 +418,7 @@ public class Terrain implements ITerrain, Serializable {
                     mp -= 1;
                 }
                 if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
-                    if (e.entityIsQuad()) {
-                        mp -= 1;
-                    }
-                    if ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic")) {
+                    if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic")) {
                         mp -= 1;
                     }
                 }

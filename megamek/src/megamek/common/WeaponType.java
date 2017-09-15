@@ -1143,7 +1143,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLightPPC());
         EquipmentType.addType(new ISHeavyPPC());
         EquipmentType.addType(new ISKinsSlaughterPPC());
-//        EquipmentType.addType(new ISBASupportPPC());
+        EquipmentType.addType(new ISBASupportPPC());
         EquipmentType.addType(new CLBASupportPPC());
         // Flamers
         EquipmentType.addType(new CLFlamer());
@@ -1235,7 +1235,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLightMGA());
         EquipmentType.addType(new CLHeavyMGA());
         // LRMs
-/*        These were BA versions and their are currently BA
+/*        These were BA versions and there are currently BA
 		 versions of these weapons. So they've been commented out.
 		 EquipmentType.addType(new ISLRM1()); 
 		 EquipmentType.addType(new ISLRM1OS()); 

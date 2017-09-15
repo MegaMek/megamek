@@ -5156,19 +5156,11 @@ Example: You can define quirks that affect all units of a given chassis and then
 	</unit>
 
 	<unit>
-		<chassis>Kodiak</chassis>
-		<model>all</model>
-		<unitType>Mech</unitType>
-		<quirk>animalistic</quirk>
-	</unit>
-
-	<unit>
 		<chassis>Kodiak II</chassis>
 		<model>all</model>
 		<unitType>Mech</unitType>
 		<quirk>command_mech</quirk>
 		<quirk>distracting</quirk>
-		<quirk>animalistic</quirk>
 	</unit>
 
 	<unit>
@@ -6222,13 +6214,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Tank</unitType>
 		<quirk>imp_com</quirk>
 		<quirk>difficult_maintain</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Mandrill</chassis>
-		<model>all</model>
-		<unitType>Mech</unitType>
-		<quirk>animalistic</quirk>
 	</unit>
 
 </unitQuirks>  

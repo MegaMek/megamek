@@ -282,6 +282,13 @@ public class TestBattleArmor extends TestEntity {
         int numUsedCrits = 0;
         int numAntiMechWeapons = 0;
         int numAntiPersonnelWeapons = 0;
+        if ((ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
+                && ((loc == BattleArmor.MOUNT_LOC_LARM) || (loc == BattleArmor.MOUNT_LOC_RARM))) {
+            return false;
+        }
+        if ((loc == BattleArmor.MOUNT_LOC_TURRET) && (ba.getTurretCapacity() == 0)) {
+            return false;
+        }
         for (Mounted m : ba.getEquipment()) {
             // Manipulators don't take up slots in BA
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {

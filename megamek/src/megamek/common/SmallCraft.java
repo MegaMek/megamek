@@ -92,6 +92,11 @@ public class SmallCraft extends Aero {
     public int getNOtherPassenger() {
         return nOtherPassenger;
     }
+    
+    public double getStrategicFuelUse() {
+    	double tonsperday = 1.84;
+    	return tonsperday;
+    }
 
     @Override
     public String[] getLocationAbbrs() {

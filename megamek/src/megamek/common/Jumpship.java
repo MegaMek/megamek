@@ -286,6 +286,25 @@ public class Jumpship extends Aero {
     public int getNOtherCrew() {
         return nOtherCrew;
     }
+    
+    public double getStrategicFuelUse() {
+    	double tonsperday = 0;
+    	    	
+    	if (weight >= 200000) {
+    		tonsperday = 3.95;
+    		return tonsperday;
+    	} else if (weight >= 100000) {
+    		tonsperday = 1.98;
+    		return tonsperday;
+    	} else if (weight >= 50000) {
+    		tonsperday = 0.98;
+    		return tonsperday;
+    	} else if (weight >= 2000) {
+    		tonsperday = 0.28;
+    		return tonsperday;
+    	}
+    	return tonsperday;
+    }
 
     @Override
     public String[] getLocationAbbrs() {

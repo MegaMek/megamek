@@ -45,6 +45,27 @@ public class Warship extends Jumpship {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
     }
+    
+    @Override
+    public double getStrategicFuelUse() {
+    	double tonsperday = 0;
+    	
+    	
+    	if (weight >= 200000) {
+    		tonsperday = 39.52;
+    		return tonsperday;
+    	} else if (weight >= 100000) {
+    		tonsperday = 19.75;
+    		return tonsperday;
+    	} else if (weight >= 50000) {
+    		tonsperday = 9.77;
+    		return tonsperday;
+    	} else if (weight >= 2000) {
+    		tonsperday = 2.82;
+    		return tonsperday;
+    	}
+    	return tonsperday;
+    }
 
     @Override
     public String[] getLocationAbbrs() {

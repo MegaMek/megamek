@@ -41,6 +41,7 @@ public class Dropship extends SmallCraft {
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
+    private boolean kfBoomDamaged = false;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -48,6 +49,10 @@ public class Dropship extends SmallCraft {
 
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
+    }
+    
+    public boolean isKFBoomDamaged() {
+        return kfBoomDamaged;
     }
 
     public String getCritDamageString() {
@@ -58,6 +63,13 @@ public class Dropship extends SmallCraft {
                 toReturn += ", ";
             }
             toReturn += "Docking Collar";
+            first = false;
+        }
+        if (isKFBoomDamaged()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Boom";
             first = false;
         }
         return toReturn;
@@ -174,6 +186,10 @@ public class Dropship extends SmallCraft {
     public void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
     }
+    
+    public void setDamageKFBoom(boolean b) {
+        kfBoomDamaged = b;
+    }
 
     public void setEscapePods(int n) {
         escapePods = n;
@@ -219,6 +235,43 @@ public class Dropship extends SmallCraft {
         }
 
         return points;
+    }
+    
+    public double getStrategicFuelUse() {
+    	double tonsperday = 0;
+    	
+    	if (this.getDesignType() == 1) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	} else if (weight >= 70000) {
+    		tonsperday = 8.83;
+    		return tonsperday;
+    	} else if (weight >= 50000) {
+    		tonsperday = 8.37;
+    		return tonsperday;
+    	} else if (weight >= 40000) {
+    		tonsperday = 7.71;
+    		return tonsperday;
+    	} else if (weight >= 30000) {
+    		tonsperday = 6.52;
+    		return tonsperday;
+    	} else if (weight >= 20000) {
+    		tonsperday = 5.19;
+    		return tonsperday;
+    	} else if (weight >= 9000) {
+    		tonsperday = 4.22;
+    		return tonsperday;
+    	} else if (weight >= 4000) {
+    		tonsperday = 3.37;
+    		return tonsperday;
+    	} else if (weight >= 1000) {
+    		tonsperday = 2.82;
+    		return tonsperday;
+    	} else if (weight >= 100) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	}
+    	return tonsperday;
     }
 
     @Override
@@ -1313,7 +1366,7 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        // for large craft, ammo must be in the same ba
+        // for large craft, ammo must be in the same bay
         Mounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;

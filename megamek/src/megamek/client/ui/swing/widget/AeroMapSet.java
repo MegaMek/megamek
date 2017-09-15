@@ -28,6 +28,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Aero;
 import megamek.common.Configuration;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.FixedWingSupport;
 import megamek.common.SmallCraft;
@@ -41,8 +42,8 @@ public class AeroMapSet implements DisplayMapSet {
 
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
-    private PMSimpleLabel[] labels = new PMSimpleLabel[11];
-    private PMValueLabel[] vLabels = new PMValueLabel[11];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[13];
+    private PMValueLabel[] vLabels = new PMValueLabel[13];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
     
@@ -132,6 +133,21 @@ public class AeroMapSet implements DisplayMapSet {
             vLabels[9].setValue("-");
             vLabels[10].setValue("-");
         }
+        
+        if (t instanceof Dropship) {
+        	// add kf boom and docking collar
+        	Dropship ds = (Dropship)t;
+        	int kfboom = 0;
+        	int collar = 0;
+        	if (ds.isKFBoomDamaged()) {
+        		kfboom = 1;
+        	}
+        	vLabels[11].setValue(getCriticalHitTally(kfboom,1));
+        	if (ds.isDockCollarDamaged()) {
+        		collar = 1;
+        	}
+        	vLabels[12].setValue(getCriticalHitTally(collar,1));
+        }
 
     }
 
@@ -158,6 +174,10 @@ public class AeroMapSet implements DisplayMapSet {
         content.addArea(vLabels[9]);
         content.addArea(labels[10]);
         content.addArea(vLabels[10]);
+        content.addArea(labels[11]);
+        content.addArea(vLabels[11]);
+        content.addArea(labels[12]);
+        content.addArea(vLabels[12]);
     }
 
     private void setAreas() {
@@ -201,8 +221,10 @@ public class AeroMapSet implements DisplayMapSet {
                 "L Thrust:", fm, Color.white, 90, 210); //$NON-NLS-1$
         labels[10] = WidgetUtils.createLabel(
                 "R Thrust:", fm, Color.white, 90, 225); //$NON-NLS-1$
+        labels[11] = WidgetUtils.createLabel("K-F Boom:", fm, Color.white,90,240); //$NON-NLS-1$
+        labels[12] = WidgetUtils.createLabel("Collar:", fm, Color.white,90,255); //$NON-NLS-1$
 
-        // Value labels for all parts of mek
+        // Value labels for all parts of aero
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
         vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(62, 45, "", fm); //$NON-NLS-1$
@@ -219,6 +241,8 @@ public class AeroMapSet implements DisplayMapSet {
         vLabels[8] = WidgetUtils.createValueLabel(40, 255, "", fm); //$NON-NLS-1$
         vLabels[9] = WidgetUtils.createValueLabel(130, 210, "", fm); //$NON-NLS-1$
         vLabels[10] = WidgetUtils.createValueLabel(130, 225, "", fm); //$NON-NLS-1$
+        vLabels[11] = WidgetUtils.createValueLabel(135, 240, "", fm); //$NON-NLS-1$
+        vLabels[12] = WidgetUtils.createValueLabel(130, 255, "", fm); //$NON-NLS-1$
     }
 
     private void setBackGround() {

@@ -21,7 +21,6 @@ import megamek.common.logging.LogLevel;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -385,9 +384,7 @@ public class WeaponFireInfo {
                 
                 // now we go through all affected hexes and add up the damage done
                 for(Coords coords : affectedHexes) {
-                    for(Iterator<Entity> iter = game.getEntities(coords); iter.hasNext();) { 
-                        Entity currentVictim = iter.next();
-                        
+                    for(Entity currentVictim : game.getEntitiesVector(coords)) {                        
                         if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
                             damage += damagePerShot;
                         } else { // we prefer not to blow up friendlies if we can help it

@@ -43,6 +43,7 @@ public class Quirks extends AbstractOptions {
     public synchronized void initialize() {
         //positive quirks
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_ANIMALISTIC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ATMO_FLYER, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_COMP, false);

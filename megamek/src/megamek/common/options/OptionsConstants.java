@@ -19,7 +19,8 @@ package megamek.common.options;
  * @since 2/21/14 7:57 AM
  */
 public class OptionsConstants {
-     
+
+    public static final String QUIRK_POS_ANIMALISTIC = "animalistic"; //$NON-NLS-1$
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la"; //$NON-NLS-1$
@@ -141,8 +142,7 @@ public class OptionsConstants {
     // PILOTING SKILLS
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery"; //$NON-NLS-1$
     public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting"; //$NON-NLS-1$
-    // public static final String PILOT_ANIMAL_MIMIC= "animal_mimic";
-    // //$NON-NLS$
+    public static final String PILOT_ANIMAL_MIMIC= "animal_mimic"; //$NON-NLS$
     // public static final String PILOT_CROSS_COUNTRY= "cross_country";
     // //$NON-NLS$
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver"; // $NON-NLS$

@@ -57,12 +57,12 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.MegaMekFile;
-import megamek.common.weapons.CLERPPC;
-import megamek.common.weapons.ISERPPC;
-import megamek.common.weapons.ISHeavyPPC;
-import megamek.common.weapons.ISLightPPC;
-import megamek.common.weapons.ISPPC;
-import megamek.common.weapons.ISSnubNosePPC;
+import megamek.common.weapons.ppc.CLERPPC;
+import megamek.common.weapons.ppc.ISERPPC;
+import megamek.common.weapons.ppc.ISHeavyPPC;
+import megamek.common.weapons.ppc.ISLightPPC;
+import megamek.common.weapons.ppc.ISPPC;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 /*
  * Switches between the various type-specific parsers depending on suffix
@@ -320,8 +320,10 @@ public class MechFileParser {
             }
 
             // Link Artemis IV fire-control systems to their missle racks.
-            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType()
-                    .hasFlag(MiscType.F_ARTEMIS_V))) && (m.getLinked() == null)) {
+            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) 
+                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
+                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
+                    && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
@@ -511,9 +513,10 @@ public class MechFileParser {
                 }
             }
 
-            if ((ent instanceof Mech)
-                    && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
-                            .hasFlag(MiscType.F_CASEII))) {
+            if ((ent instanceof Mech) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)
+                    || m.getType().hasFlag(MiscType.F_CASEP)
+
+            )) {
                 ((Mech) ent).setAutoEject(false);
             }
 

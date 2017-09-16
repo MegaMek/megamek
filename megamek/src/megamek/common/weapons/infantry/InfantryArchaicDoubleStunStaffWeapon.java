@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicDoubleStunStaffWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Staff (Stun Staff, Double-End)";
-        setInternalName(name);
-        addLookupName("InfantryDoubleStunStaff");
-        addLookupName("Double Ended Stun Staff");
-        ammoType = AmmoType.T_NA;
-        cost = 500;
-        bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.07;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_C,RATING_A};
-        techRating = RATING_C;
-    }
+	public InfantryArchaicDoubleStunStaffWeapon() {
+		super();
+
+		name = "Staff (Stun Staff, Double-End)";
+		setInternalName(name);
+		addLookupName("InfantryDoubleStunStaff");
+		addLookupName("Double Ended Stun Staff");
+		ammoType = AmmoType.T_NA;
+		cost = 500;
+		bv = 0.06;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+		infantryDamage = 0.07;
+		infantryRange = 0;
+		rulesRefs = " 272,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_A, RATING_C, RATING_A, RATING_C);
+
+	}
 }

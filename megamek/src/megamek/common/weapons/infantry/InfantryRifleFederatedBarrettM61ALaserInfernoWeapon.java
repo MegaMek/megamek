@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
@@ -32,7 +31,7 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
 
     public InfantryRifleFederatedBarrettM61ALaserInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM61AInferno");
@@ -44,9 +43,12 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         setModes(modeStrings);
         infantryDamage = 0.55;
         infantryRange = 2;
-        introDate = 3062;
-        techLevel.put(3062,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_C;
+        rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS).setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
     }
 }

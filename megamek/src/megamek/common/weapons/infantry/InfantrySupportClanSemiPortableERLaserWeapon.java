@@ -18,36 +18,38 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportClanSemiPortableERLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Support Laser (ER, Semi-Portable)";
-        setInternalName(name);
-        addLookupName("InfantryClanERMicroLaser");
-        addLookupName("InfantryClanSemiPortableERLaser");
-        addLookupName("Infantry Clan Semi-Portable ER Laser");
-        ammoType = AmmoType.T_NA;
-        cost = 10000;
-        bv = 5.02;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.70;
-        infantryRange = 3;
-        crew = 2;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_F;
-    }
+	public InfantrySupportClanSemiPortableERLaserWeapon() {
+		super();
+
+		name = "Support Laser (ER, Semi-Portable)";
+		setInternalName(name);
+		addLookupName("InfantryClanERMicroLaser");
+		addLookupName("InfantryClanSemiPortableERLaser");
+		addLookupName("Infantry Clan Semi-Portable ER Laser");
+		ammoType = AmmoType.T_NA;
+		cost = 10000;
+		bv = 5.02;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+		infantryDamage = 0.70;
+		infantryRange = 3;
+		crew = 2;
+		tonnage = .025;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3056, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSJ)
+		        .setProductionFactions(F_CSJ).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_D);
+
+	}
 }

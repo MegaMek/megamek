@@ -18,36 +18,38 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportClanERHeavyLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportClanERHeavyLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Support Laser (ER Heavy, Clan)";
-        setInternalName(name);
-        addLookupName("InfantryClanERHeavyLaser");
-        addLookupName("InfantryClanERMediumLaser");
-        addLookupName("Infantry Clan ER Heavy Laser");
-        ammoType = AmmoType.T_NA;
-        cost = 80000;
-        bv = 18.52;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 1.26;
-        infantryRange = 7;
-        crew = 3;
-        introDate = 2827;
-        techLevel.put(2827,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_E,RATING_D};
-        techRating = RATING_F;
-    }
+	public InfantrySupportClanERHeavyLaserWeapon() {
+		super();
+
+		name = "Support Laser (ER Heavy, Clan)";
+		setInternalName(name);
+		addLookupName("InfantryClanERHeavyLaser");
+		addLookupName("InfantryClanERMediumLaser");
+		addLookupName("Infantry Clan ER Heavy Laser");
+		ammoType = AmmoType.T_NA;
+		cost = 80000;
+		bv = 18.52;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+		infantryDamage = 1.26;
+		infantryRange = 7;
+		crew = 3;
+		tonnage = .240;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2825, 2827, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
+		        .setProductionFactions(F_CHH).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C);
+
+	}
 }

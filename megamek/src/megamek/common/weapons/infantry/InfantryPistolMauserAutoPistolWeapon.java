@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
@@ -32,7 +31,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolMauserAutoPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Auto-Pistol (M&G)";
         setInternalName(name);
         addLookupName("InfantryMauserAutopistol");
@@ -43,9 +42,11 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;
-        introDate = 2495;
-        techLevel.put(2495,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_B,RATING_C};
-        techRating = RATING_C;
+        rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_B, RATING_C, RATING_B);
+
     }
 }

@@ -1024,8 +1024,25 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean canFall(boolean gyroLegDamage) {
         return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE();
     }
-
+    
+    private final static TechAdvancement[] TA_LAM = {
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
+                .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //standard
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2680, 2684, DATE_NONE, 2781)
+                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) //bimodal
+    };
+    
     @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_LAM[lamType];
+    }
+    
     public int height() {
         if (getConversionMode() == CONV_MODE_MECH) {
             return super.height();
@@ -1903,7 +1920,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (bombs > 0) {
             specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
         }
-        specialAbilities.put(BattleForceSPA.LAM, null);
+        if (lamType == LAM_BIMODAL) {
+            specialAbilities.put(BattleForceSPA.BIM, null);
+        } else {
+            specialAbilities.put(BattleForceSPA.LAM, null);
+        }
     }
 
     @Override

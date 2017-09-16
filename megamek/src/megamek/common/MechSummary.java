@@ -40,6 +40,8 @@ public class MechSummary implements Serializable {
     private String m_sEntryName; // for files in zips
     private int m_nYear;
     private int m_nType;
+    private int[] altTypes = new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
+            TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules levels
     private double m_nTons;
     private int m_nBV;
     /**
@@ -53,6 +55,8 @@ public class MechSummary implements Serializable {
     private long m_aCost;
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
+    private int m_nAdvTechYear; // year after which the unit is advanced level
+    private int m_nStdTechYear; // year after which the unit is standard level
     private boolean canon;
     private boolean clan;
     private boolean support;
@@ -230,6 +234,20 @@ public class MechSummary implements Serializable {
     public int getType() {
         return (m_nType);
     }
+    
+    public int[] getAltTypes() {
+        return altTypes;
+    }
+    
+    public int getType(int year) {
+        if (year >= m_nStdTechYear) {
+            return altTypes[0];
+        } else if (year >= m_nAdvTechYear) {
+            return altTypes[1];
+        } else {
+            return altTypes[2];
+        }
+    }
 
     public double getTons() {
         return (m_nTons);
@@ -266,6 +284,31 @@ public class MechSummary implements Serializable {
     public String getLevel() {
         return (m_sLevel);
     }
+    
+    public int getAdvancedTechYear() {
+        return m_nAdvTechYear;
+    }
+
+    public int getStandardTechYear() {
+        return m_nStdTechYear;
+    }
+    
+    public String getLevel(int year) {
+        if (m_sLevel.equals("F")) {
+            return m_sLevel;
+        }
+        if (year >= m_nStdTechYear) {
+            if (m_nType == TechConstants.T_INTRO_BOXSET) {
+                return m_sLevel;
+            } else {
+                return String.valueOf(TechConstants.T_SIMPLE_STANDARD + 1);
+            }
+        } else if (year >= m_nAdvTechYear) {
+            return String.valueOf(TechConstants.T_SIMPLE_ADVANCED + 1);
+        } else {
+            return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL + 1);
+        }
+    }
 
     public void setName(String m_sName) {
         this.m_sName = m_sName;
@@ -298,7 +341,11 @@ public class MechSummary implements Serializable {
     public void setType(int m_nType) {
         this.m_nType = m_nType;
     }
-
+    
+    public void setAltTypes(int[] altTypes) {
+        this.altTypes = altTypes;
+    }
+    
     public void setTons(double m_nTons) {
         this.m_nTons = m_nTons;
     }
@@ -333,6 +380,14 @@ public class MechSummary implements Serializable {
 
     public void setLevel(String level) {
         m_sLevel = level;
+    }
+    
+    public void setAdvancedYear(int year) {
+        m_nAdvTechYear = year;
+    }
+    
+    public void setStandardYear(int year) {
+        m_nStdTechYear = year;
     }
 
     public void setCanon(boolean canon) {

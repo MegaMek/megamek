@@ -52,8 +52,8 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.ATMWeapon;
-import megamek.common.weapons.MMLWeapon;
+import megamek.common.weapons.missiles.ATMWeapon;
+import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.server.SmokeCloud;
 

@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicKatanaWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Katana";
-        setInternalName(name);
-        addLookupName("InfantryKatana");
-        addLookupName("Blade (Katana)");
-        ammoType = AmmoType.T_NA;
-        cost = 250;
-        bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.07;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_A;
-    }
+	public InfantryArchaicKatanaWeapon() {
+		super();
+
+		name = "Katana (Unofficial)";
+		// IO Combines the Katana into Archaic Dao Weapon
+		setInternalName(name);
+		addLookupName("InfantryKatana");
+		addLookupName("Blade (Katana)");
+		ammoType = AmmoType.T_NA;
+		cost = 250;
+		bv = 0.06;
+		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+		infantryDamage = 0.07;
+		infantryRange = 0;
+		rulesRefs = " 272,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+
+	}
 }

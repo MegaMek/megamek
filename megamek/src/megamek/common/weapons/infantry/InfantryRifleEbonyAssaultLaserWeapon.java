@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleEbonyAssaultLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
-        name = "Laser Rifle (Ebony Assault)";
-        setInternalName(name);
-        addLookupName("InfantryEbonyAssaultLaser");
-        addLookupName("Infantry Ebony Assault Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 8500;
-        bv = 1.07;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.21;
-        infantryRange = 2;
-        introDate = 3063;
-        techLevel.put(3063,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
-        techRating = RATING_F;
-    }
+	public InfantryRifleEbonyAssaultLaserWeapon() {
+		super();
+
+		name = "Laser Rifle (Ebony Assault)";
+		setInternalName(name);
+		addLookupName("InfantryEbonyAssaultLaser");
+		addLookupName("Infantry Ebony Assault Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 8500;
+		bv = 1.07;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.21;
+		infantryRange = 2;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3063, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_MC)
+		        .setProductionFactions(F_MC).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

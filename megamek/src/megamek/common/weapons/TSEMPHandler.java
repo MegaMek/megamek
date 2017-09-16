@@ -35,6 +35,7 @@ import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.Server;
 
 /**
@@ -44,7 +45,7 @@ import megamek.server.Server;
  * @author arlith
  *
  */ 
-class TSEMPHandler extends EnergyWeaponHandler {
+public class TSEMPHandler extends EnergyWeaponHandler {
     /**
      *
      */

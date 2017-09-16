@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Heavy Mountain Infantry
+</Name>
+
+<Model>
+Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers
+</Model>
+
+<year>
+3071
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO 3085 - Civil War
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Rifle (Imperator AX-22 Assault)
+</Primary>
+
+<Secondary>
+Mortar (Heavy)
+</Secondary>
+
+<antimek>
+8
+</antimek>
+
+<armorKit>
+Magistracy of Canopus Infantry Kit
+</armorKit>
+

@@ -18,34 +18,35 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleClanERLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Laser Rifle (ER)";
-        setInternalName(name);
-        addLookupName("InfantryClanERLaserRifle");
-        addLookupName("Infantry Clan ER Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 2.01;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.28;
-        infantryRange = 3;
-        introDate = 2845;
-        techLevel.put(2845,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_D,RATING_D};
-        techRating = RATING_F;
-    }
+	public InfantryRifleClanERLaserWeapon() {
+		super();
+
+		name = "Laser Rifle (ER)";
+		setInternalName(name);
+		addLookupName("InfantryClanERLaserRifle");
+		addLookupName("Infantry Clan ER Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 2000;
+		bv = 2.01;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.28;
+		infantryRange = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2840, 2845, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
+		        .setProductionFactions(F_CSA).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C);
+
+	}
 }

@@ -89,7 +89,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false); 
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         
@@ -458,7 +459,8 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
@@ -517,7 +519,8 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
-                    || qName.equals(OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
@@ -570,7 +573,8 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
-                    || qName.equals(OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)

@@ -28,6 +28,25 @@ public class SpaceStation extends Jumpship {
      */
     private static final long serialVersionUID = -3160156173650960985L;
 
+    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    /*
+    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setReintroductionFactions(F_RS).setTechRating(RATING_D)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            */
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_SPACE_STATION;
+    }
+
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[20];

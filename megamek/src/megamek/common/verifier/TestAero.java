@@ -33,8 +33,8 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.CLChemicalLaserWeapon;
-import megamek.common.weapons.VehicleFlamerWeapon;
+import megamek.common.weapons.flamers.VehicleFlamerWeapon;
+import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 /**
  * Class for testing and validating instantiations for Conventional Fighters and
@@ -70,7 +70,7 @@ public class TestAero extends TestEntity {
         FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO,3,false),        
         HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM,4,false),
         LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM,1,false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE,0,false),        
+        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO,0,false),        
         REACTIVE(EquipmentType.T_ARMOR_REACTIVE,3,false),        
         REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE,2,false),
         STEALTH_VEHICLE(EquipmentType.T_ARMOR_STEALTH_VEHICLE,2,false);
@@ -139,7 +139,7 @@ public class TestAero extends TestEntity {
      */
     public static int maxArmorPoints(Entity aero, double tonnage){
         long eType = aero.getEntityType();
-        if (eType == Entity.ETYPE_CONV_FIGHTER){
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             return (int)(tonnage * 1);
         } else if (eType == Entity.ETYPE_AERO){
             return (int)(tonnage * 8);
@@ -207,7 +207,7 @@ public class TestAero extends TestEntity {
             int desiredSafeThrust){
         int rating;
         long eType = unit.getEntityType();
-        if (eType == Entity.ETYPE_CONV_FIGHTER){
+        if (unit.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             rating = (tonnage * desiredSafeThrust);
         } else if (eType == Entity.ETYPE_AERO){
             rating = (tonnage * (desiredSafeThrust - 2));
@@ -239,7 +239,7 @@ public class TestAero extends TestEntity {
     public static float calculateMaxTurnsAtSafe(Aero aero){
         int fuelPoints = aero.getFuel();
         float fuelPerTurn;
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
         } else {
             fuelPerTurn = aero.getWalkMP();
@@ -264,7 +264,7 @@ public class TestAero extends TestEntity {
     public static float calculateMaxTurnsAtMax(Aero aero){
         int fuelPoints = aero.getFuel();
         float fuelPerTurn;
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
             if(aero.hasEngine()) {
                 if(aero.getEngine().isFusion()) {
@@ -327,10 +327,10 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightMisc() {
         // VSTOL equipment weighs extra forr conventional fighters
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER &&
+        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) &&
                 aero.isVSTOL()){
-            // Weight = tonnage * 0.05 rounded to nearest half ton
-            return Math.round(0.05f * aero.getWeight()*2) / 2.0;
+            // Weight = tonnage * 0.05 rounded up to nearest half ton
+            return Math.ceil(0.05 * aero.getWeight()*2) / 2.0;
         }
         return 0.0f;
     }
@@ -338,7 +338,7 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightPowerAmp() {
         // Conventional Fighters with ICE engines may need a power amp
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER && aero.hasEngine()
+        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) && aero.hasEngine()
                 && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             double weight = 0;
             for (Mounted m : aero.getWeaponList()) {
@@ -357,7 +357,7 @@ public class TestAero extends TestEntity {
             }
             // Power amp weighs: 
             //   energy weapon tonnage * 0.1 rounded to nearest half ton
-            return Math.round(0.1 * weight*2) / 2.0;
+            return Math.ceil(0.1 * weight*2) / 2.0;
         }
         return 0;
     }
@@ -367,7 +367,7 @@ public class TestAero extends TestEntity {
         // Controls for Aerospace Fighters and Conventional Fighters consists
         //  of the cockpit and the fuel
         double weight;
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             // Weight = tonnage * 0.1 rounded to nearest half ton
             weight = Math.round(0.1 * aero.getWeight()*2) / 2.0;
         } else {
@@ -513,7 +513,7 @@ public class TestAero extends TestEntity {
      * @return
      */
     public boolean correctControlSystems(StringBuffer buff){
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER &&
+        if ((aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) &&
                 aero.getCockpitType() != Aero.COCKPIT_STANDARD){
             buff.append(
                     "Conventional fighters may only have standard cockpits!");
@@ -613,9 +613,9 @@ public class TestAero extends TestEntity {
                     && !canHaveSpecialMunitions) {
                 EquipmentType linkedType = m.getLinked().getType();
                 boolean hasArtemisFCS = m.getLinkedBy() != null
-                        && (m.getLinkedBy().getType()
-                                .hasFlag(MiscType.F_ARTEMIS) || m.getLinkedBy()
-                                .getType().hasFlag(MiscType.F_ARTEMIS_V));
+                        && (m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS)
+                        || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_PROTO)
+                        || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_V));
                 if (linkedType instanceof AmmoType) {
                     AmmoType linkedAT = (AmmoType)linkedType;
                     // Check LBX's
@@ -713,7 +713,7 @@ public class TestAero extends TestEntity {
                     + ".  Found " + aero.getHeatType() + ".");
         }
         // Conventional Fighters must be heat neutral
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             int maxWeapHeat = countHeatEnergyWeapons();
             int heatDissipation = 0;
             if (aero.getHeatType() == Aero.HEAT_DOUBLE){
@@ -881,11 +881,37 @@ public class TestAero extends TestEntity {
 
     @Override
     public String getName() {
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             return "Conventional Fighter: " + aero.getDisplayName();
         } else {
             return "Aerospace Fighter: " + aero.getDisplayName();
         }
+    }
+
+    /**
+     * Calculate the structural integrity weight
+     */
+    public double getWeightStructure() {
+        double tonnage = 0;
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            tonnage = aero.getSI() * aero.getWeight();
+            if (aero.isSpheroid()) {
+                tonnage /= 500;
+            } else {
+                tonnage /= 200;
+            }
+        } else if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            tonnage = aero.getWeight() / 100;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            // SI * weight / 1000, rounded up to half ton
+            tonnage = aero.getSI() * aero.getWeight() / 1000;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            tonnage = aero.getWeight() / 150;
+        } else {
+            // Fighters do not allocate weight to structure
+            return 0;
+        }
+        return Math.ceil(tonnage * 2) / 2.0;
     }
 
 

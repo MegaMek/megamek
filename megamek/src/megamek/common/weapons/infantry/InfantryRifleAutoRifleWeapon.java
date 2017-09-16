@@ -18,43 +18,46 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleAutoRifleWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Auto-Rifle";
-        setInternalName(name);
-        addLookupName("InfantryAssaultRifle");
-        addLookupName("Auto Rifle");
-        addLookupName("Infantry Automatic Rifle");
-        addLookupName("InfantryAutoRifle");
-        addLookupName("Infantry Auto Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 80;
-        bv = 1.59;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.52;
-        infantryRange = 1;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
-        techRating = RATING_C;
-    }
+	public InfantryRifleAutoRifleWeapon() {
+		super();
+
+		name = "Auto-Rifle (Modern, Generic)";
+		setInternalName(name);
+		addLookupName("InfantryAssaultRifle");
+		addLookupName("Auto Rifle");
+		addLookupName("Auto-Rifle");
+		addLookupName("Infantry Automatic Rifle");
+		addLookupName("InfantryAutoRifle");
+		addLookupName("Infantry Auto Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 80;
+		bv = 1.59;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.52;
+		infantryRange = 1;
+		damage = 1;
+		minimumRange = 0;
+		shortRange = 1;
+		mediumRange = 2;
+		longRange = 3;
+		extremeRange = 4;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+	}
 }

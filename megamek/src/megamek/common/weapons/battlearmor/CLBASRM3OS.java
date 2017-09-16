@@ -13,8 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.SRMWeapon;
+import megamek.common.weapons.srms.SRMWeapon;
 
 
 /**
@@ -32,7 +31,6 @@ public class CLBASRM3OS extends SRMWeapon {
      */
     public CLBASRM3OS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 3 (OS)";
         setInternalName("CLBASRM3 (OS)");
         addLookupName("Clan BA SRM 3 (OS)");
@@ -46,14 +44,20 @@ public class CLBASRM3OS extends SRMWeapon {
         bv = 6;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 7500;
-        tonnage = .06f;
+        tonnage = .06;
         criticals = 2;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_F;
+		rulesRefs = "261,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_F)
+	    .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+	    .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(true, false, false, false, false)
+	    .setPrototypeFactions(F_CWF)
+	    .setProductionFactions(F_CWF);
     }
     
 }

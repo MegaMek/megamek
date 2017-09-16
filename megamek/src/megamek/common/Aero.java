@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.EnergyWeapon;
-import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.lasers.EnergyWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -210,7 +210,71 @@ public class Aero extends Entity implements IAero, IBomber {
         // need to set altitude to something different than entity
         altitude = 5;
     }
+    
+    protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
+            .setISApproximate(false, true, false).setProductionFactions(F_TA)
+            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        if (isPrimitive()) {
+            return TA_ASF_PRIMITIVE;
+        } else {
+            return TA_ASF;
+        }
+    }
+    
+    protected static final TechAdvancement[] COCKPIT_TA = {
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TH)
+                .setPrototypeFactions(F_TH).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Standard            
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
+                .setISApproximate(true, false, false).setPrototypeFactions(F_WB)
+                .setPrototypeFactions(F_WB, F_CSR).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small            
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+                .setISApproximate(true, false, false, true, true)
+                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                .setClanApproximate(true, false).setPrototypeFactions(F_TH)
+                .setPrototypeFactions(F_TH).setReintroductionFactions(F_FS).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Cockpit command console
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
+                .setISApproximate(false, true, false, false)
+                .setPrototypeFactions(F_TA).setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Primitive            
+    };
+    
+    public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
+        if (cockpitType >= 0 && cockpitType < COCKPIT_TA.length) {
+            return new TechAdvancement(COCKPIT_TA[cockpitType]);
+        }
+        return null;
+    }
+    
+    public TechAdvancement getCockpitTechAdvancement() {
+        return getCockpitTechAdvancement(getCockpitType());
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        if (getCockpitTechAdvancement() != null) {
+            ctl.addComponent(getCockpitTechAdvancement());
+        }        
+    }
+    
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, partial repairs and bomb load.
@@ -721,9 +785,9 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public double getFuelPointsPerTon() {
-        if (getEntityType() == Entity.ETYPE_CONV_FIGHTER) {
+        if (hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             return 160;
-        } else if (getEntityType() == Entity.ETYPE_DROPSHIP) {
+        } else if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             if (getWeight() < 400) {
                 return 80;
             } else if (getWeight() < 800) {
@@ -741,8 +805,7 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 10;
             }
-        } else if ((getEntityType() == Entity.ETYPE_WARSHIP) || (getEntityType() == Entity.ETYPE_JUMPSHIP)
-                || (getEntityType() == Entity.ETYPE_SPACE_STATION)) {
+        } else if (hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (getWeight() < 110000) {
                 return 10;
             } else if (getWeight() < 250000) {
@@ -750,7 +813,7 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 2.5;
             }
-        } else if (getEntityType() == Entity.ETYPE_SMALL_CRAFT) {
+        } else if (hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             return 80;
         } else { // Entity.ETYPE_AERO
             return 80;
@@ -1877,7 +1940,13 @@ public class Aero extends Entity implements IAero, IBomber {
                     dBV *= 1.3;
                     name = name.concat(" with Artemis V");
                 }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.1;
+                    name = name.concat(" with Artemis IV Prototype");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     name = name.concat(" with Apollo");
                 }

@@ -18,33 +18,35 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolGyrojetPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolGyrojetPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Gyrojet Pistol";
-        setInternalName(name);
-        addLookupName("InfantryGyrojetpistol");
-        ammoType = AmmoType.T_NA;
-        cost = 450;
-        bv = 0.04;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.04;
-        infantryRange = 0;
-        introDate = 2625;
-        techLevel.put(2625,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_D,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantryPistolGyrojetPistolWeapon() {
+		super();
+		name = "Gyrojet Pistol";
+		setInternalName(name);
+		addLookupName("InfantryGyrojetpistol");
+		ammoType = AmmoType.T_NA;
+		cost = 450;
+		bv = 0.04;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.04;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setClanAdvancement(2620, 2625, 2700, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+				.setProductionFactions(F_TH).setTechRating(RATING_D)
+				.setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
+
+	}
 }

@@ -45,9 +45,9 @@ biped
 
 <Point Equipment>
 Clan BA Machine Gun:RA
-ISImprovedSensors:Body
+CLImprovedSensors:Body
 CLBAHeatSensor:Body
-BARemoteSensorDispenser:Body
+Clan BA Remote Sensor Dispenser:Body
 BABattleClaw:RA
 BAAPMount:LA
 InfantryAssaultRifle:LA:APM

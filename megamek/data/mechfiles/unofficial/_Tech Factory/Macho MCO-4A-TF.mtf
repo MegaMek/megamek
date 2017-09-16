@@ -5,7 +5,7 @@ MCO-4A-TF
 Config:Biped
 TechBase:Inner Sphere
 Era:3025
-Rules Level:1
+Rules Level:5
 
 Mass:75
 Engine:300 Fusion Engine

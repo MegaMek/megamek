@@ -19,6 +19,8 @@
 
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -205,6 +207,46 @@ public class TestBattleArmor extends TestEntity {
         }
     }
 
+    public enum BAMotiveSystems {
+        BA_JUMP ("BAJumpJet", EntityMovementMode.INF_JUMP),
+        BA_VTOL ("BAVTOL", EntityMovementMode.VTOL),
+        BA_UMU ("BAUMU", EntityMovementMode.INF_UMU);
+
+        private String internalName;
+        private EntityMovementMode mode;
+        
+        BAMotiveSystems(String internalName, EntityMovementMode mode) {
+            this.internalName = internalName;
+            this.mode = mode;
+        }
+        
+        public String getName() {
+            return internalName;
+        }
+        
+        public EntityMovementMode getMovementMode() {
+            return mode;
+        }
+
+        public static List<EquipmentType> allSystems() {
+            List<EquipmentType> retVal = new ArrayList<>();
+            for (BAMotiveSystems ms : values()) {
+                retVal.add(EquipmentType.get(ms.internalName));
+            }
+            return retVal;
+        }
+        
+        public static EquipmentType getEquipment(EntityMovementMode mode) {
+            for (BAMotiveSystems ms : values()) {
+                if (ms.getMovementMode() == mode) {
+                    return EquipmentType.get(ms.internalName);
+                }
+            }
+            return null;
+        }
+
+    }
+    
     /**
      * Checks to see if the supplied <code>Mounted</code> is valid to be mounted
      * in the given location on the supplied <code>BattleArmor</code>.
@@ -300,7 +342,43 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
     }
-
+    
+    public static int maxWalkMP(BattleArmor ba) {
+        int max = 3;
+        if (ba.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
+            max--;
+        }
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            max += 2;
+        }
+        return max;
+    }
+    
+    public static int maxJumpMP(BattleArmor ba) {
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            return 0;
+        } else {
+            return maxWalkMP(ba);
+        }
+    }
+    
+    public static int maxVtolMP(BattleArmor ba) {
+        if ((ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
+                || (ba.getWeightClass() > EntityWeightClass.WEIGHT_MEDIUM)) {
+            return 0;
+        } else {
+            return 7 - ba.getWeightClass() + EntityWeightClass.WEIGHT_ULTRA_LIGHT;
+        }
+    }
+    
+    public static int maxUmuMP(BattleArmor ba) {
+        if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+            return 0;
+        } else {
+            return Math.min(5, 5 - ba.getWeightClass() + EntityWeightClass.WEIGHT_LIGHT);
+        }
+    }
+    
     private BattleArmor ba;
 
     public TestBattleArmor(BattleArmor armor, TestEntityOption option,
@@ -900,10 +978,10 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                     numLAManipulators++;
-                    laManipType = BAManipulator.getManipulator(m.getName());
+                    laManipType = BAManipulator.getManipulator(m.getType().getInternalName());
                 } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                     numRAManipulators++;
-                    raManipType = BAManipulator.getManipulator(m.getName());
+                    raManipType = BAManipulator.getManipulator(m.getType().getInternalName());
                 } else {
                     if (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE) {
                         buff.append(m.getName()

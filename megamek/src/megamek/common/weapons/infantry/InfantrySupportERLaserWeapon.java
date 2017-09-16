@@ -18,36 +18,39 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportERLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportERLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Support Laser (ER, IS)";
-        setInternalName(name);
-        addLookupName("InfantryERLaser");
-        addLookupName("InfantryERSmallLaser");
-        addLookupName("Infantry ER Laser");
-        ammoType = AmmoType.T_NA;
-        cost = 11250;
-        bv = 8.21;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.84;
-        infantryRange = 4;
-        crew = 2;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_E;
-    }
+	public InfantrySupportERLaserWeapon() {
+		super();
+
+		name = "Support Laser (ER, IS)";
+		setInternalName(name);
+		addLookupName("InfantryERLaser");
+		addLookupName("InfantryERSmallLaser");
+		addLookupName("Infantry ER Laser");
+		ammoType = AmmoType.T_NA;
+		cost = 11250;
+		bv = 8.21;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+		infantryDamage = 0.84;
+		infantryRange = 4;
+		crew = 2;
+		tonnage = .110;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3059, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

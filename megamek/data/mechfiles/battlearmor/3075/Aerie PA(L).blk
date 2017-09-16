@@ -48,16 +48,16 @@ Jump
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 CLBASpaceOperationsAdaptation:Body
-BAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-Infantry Clan Mauser IIC:APM:RA
-Clan BA Stealth:RA
-Clan BA Stealth:LA
-Clan BA Stealth:LA
-Clan BA Stealth:RA
+Laser Rifle (Mauser IIC IAS):APM:RA
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+CLBAExtendedLifeSupport:Body
 </Point Equipment>
 
 <Trooper 1 Equipment>

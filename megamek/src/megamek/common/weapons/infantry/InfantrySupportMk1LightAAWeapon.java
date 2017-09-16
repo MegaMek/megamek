@@ -18,37 +18,38 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportMk1LightAAWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "AA Weapon (Mk. 1, Light)";
-        setInternalName(name);
-        addLookupName("InfantryMk1LightAA");
-        addLookupName("Infantry Mk 1 Light AA Weapon");
-        ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 0.70;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
-        infantryDamage = 0.23;
-        infantryRange = 1;
-        crew = 1;
-        introDate = 2500;
-        techLevel.put(2500,techLevel.get(3071));
-        extinctDate = 2790;
-        reintroDate = 3056;
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
-        techRating = RATING_D;
-    }
+	public InfantrySupportMk1LightAAWeapon() {
+		super();
+
+		name = "AA Weapon (Mk. 1, Light)";
+		setInternalName(name);
+		addLookupName("InfantryMk1LightAA");
+		addLookupName("Infantry Mk 1 Light AA Weapon");
+		ammoType = AmmoType.T_NA;
+		cost = 1000;
+		bv = 0.70;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+		infantryDamage = 0.23;
+		infantryRange = 1;
+		crew = 1;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2490, 2500, 2590, 2790, 3056)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2490, 2500, 2590, DATE_NONE, 3056)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D);
+
+	}
 }

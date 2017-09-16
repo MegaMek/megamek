@@ -93,12 +93,12 @@ public class BattleArmor extends Infantry {
      * name for the manipulator's MiscType entry.
      */
     public static final String[] MANIPULATOR_NAME_STRINGS = { "None",
-        "Armored Glove", "Basic Manipulator",
-        "Basic Manipulator (Mine Clearance)", "Battle Claw",
-        "Battle Magnetic Claw", "Battle Vibro Claw",
-        "Heavy Battle Claw", "Heavy Battle Magnetic Claw",
-        "Heavy Battle Vibro Claw", "Salvage Arm", "Cargo Lifter",
-    "Industrial Drill" };
+        "BA Manipulators [Armored Gloves]", "BA Manipulators [Manipulator (Basic)]",
+        "BA Manipulator Adaptation [Mine Clearance Equipment]", "BA Manipulators [Battle Claw]",
+        "BA Manipulator Adaptation [Magnetic Battle Claw]", "BA Manipulator Adaptation [Vibro-Claw]",
+        "BA Manipulators [Heavy Battle Claw]", "BA Manipulator Adaptation [Heavy Magnetic Battle Claw]",
+        "BA Manipulator Adaptation [Heavy Vibro-Claw", "BA Manipulators [Salvage Arm]", "BA Manipulators [Cargo Lifter]",
+    "BA Manipulators [Industrial Drill]" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;
@@ -346,6 +346,51 @@ public class BattleArmor extends Infantry {
 
         // Construction complete.
         isInitialized = true;
+    }
+    
+    protected static final TechAdvancement[] TA_BATTLEARMOR = {
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
+                .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)
+                .setReintroductionFactions(F_CS).setTechRating(RATING_D)
+                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //ultralight
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3050)
+                .setClanAdvancement(2865, 2870, 2900).setPrototypeFactions(F_CWF)
+                .setProductionFactions(F_CIH, F_FS, F_LC).setClanApproximate(true, false, false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //light
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3052, 3052)
+                .setClanAdvancement(2840, 2868, 2875)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CGS)
+                .setProductionFactions(F_CWF, F_FS, F_LC, F_CS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //medium
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3058)
+                .setClanAdvancement(2867, 2875, 3058)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CWF)
+                .setProductionFactions(F_CHH, F_FS, F_LC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), // heavy
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3058, 3060)
+                .setClanAdvancement(2870, 2877, 3060)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CNC)
+                .setProductionFactions(F_CGB, F_DC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
+    };
+    
+    public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
+        return new TechAdvancement(TA_BATTLEARMOR[weightClass]);
+    }
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        int index = getWeightClass();
+        if (index < 0 || index >= TA_BATTLEARMOR.length) {
+            index = EntityWeightClass.WEIGHT_MEDIUM;
+        }
+        return TA_BATTLEARMOR[index];
     }
 
     /**

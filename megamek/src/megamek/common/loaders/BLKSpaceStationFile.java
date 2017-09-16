@@ -213,9 +213,11 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKJumpshipFile.AFT], Aero.LOC_AFT);
 
         a.autoSetInternal();
+        a.recalculateTechAdvancement();
         a.autoSetThresh();
         a.initializeKFIntegrity();
         a.initializeSailIntegrity();
+        a.recalculateTechAdvancement();
 
         loadEquipment(a, "Nose", Aero.LOC_NOSE);
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);

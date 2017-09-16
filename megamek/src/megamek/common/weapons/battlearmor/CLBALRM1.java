@@ -13,8 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.LRMWeapon;
+import megamek.common.weapons.lrms.LRMWeapon;
 
 
 /**
@@ -32,21 +31,27 @@ public class CLBALRM1 extends LRMWeapon {
      */
     public CLBALRM1() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 1";
         setInternalName("CLBALRM1");
         heat = 0;
         rackSize = 1;
         minimumRange = WEAPON_NA;
-        tonnage = 0.035f;
+        tonnage = 0.035;
         criticals = 2;
         bv = 17;
         cost = 6000;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-
+		rulesRefs = "261,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_F)
+	    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+	    .setClanAdvancement(3058, 3060, 3062, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(true, false, false, false, false)
+	    .setPrototypeFactions(F_CGS)
+	    .setProductionFactions(F_CGS);
     }
 }
+
+

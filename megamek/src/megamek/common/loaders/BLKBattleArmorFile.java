@@ -147,6 +147,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("armor_tech")) {
             t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
+        t.recalculateTechAdvancement();
 
         String[] abbrs = t.getLocationAbbrs();
         for (int loop = 0; loop < t.locations(); loop++) {

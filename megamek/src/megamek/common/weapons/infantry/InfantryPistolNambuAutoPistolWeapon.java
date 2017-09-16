@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolNambuAutoPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Auto-Pistol (Nambu)";
-        setInternalName(name);
-        addLookupName("InfantryNambuAutopistol");
-        addLookupName("Nambu Auto Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 75;
-        bv = 0.19;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.21;
-        infantryRange = 0;
-        introDate = 2540;
-        techLevel.put(2540,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_C};
-        techRating = RATING_C;
-    }
+	public InfantryPistolNambuAutoPistolWeapon() {
+		super();
+
+		name = "Auto-Pistol (Nambu)";
+		setInternalName(name);
+		addLookupName("InfantryNambuAutopistol");
+		addLookupName("Nambu Auto Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 75;
+		bv = 0.19;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.21;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2535, 2540, 2600, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setClanAdvancement(2535, 2540, 2600, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
+				.setProductionFactions(F_DC).setTechRating(RATING_C)
+				.setAvailability(RATING_B, RATING_C, RATING_C, RATING_C);
+
+	}
 }

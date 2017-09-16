@@ -20,9 +20,10 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
 /**
@@ -40,7 +41,6 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
     public ArtilleryBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.techLevel.put(3071, TechConstants.T_ALL);
         this.flags = flags.or(F_ARTILLERY);
         this.name = "Artillery Bay";
         this.setInternalName(this.name);
@@ -54,6 +54,10 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_ARTILLERY;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 
     /*

@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleSunbeamStarfireERLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleSunbeamStarfireERLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Laser Rifle (ER [Sunbeam Starfire])";
-        setInternalName(name);
-        addLookupName("InfantrySunbeamStarfire");
-        addLookupName("Sunbeam Starfire ER Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 2.01;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.28;
-        infantryRange = 3;
-        introDate = 3052;
-        techLevel.put(3052,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
-        techRating = RATING_E;
-    }
+	public InfantryRifleSunbeamStarfireERLaserWeapon() {
+		super();
+
+		name = "Laser Rifle (ER [Sunbeam Starfire])";
+		setInternalName(name);
+		addLookupName("InfantrySunbeamStarfire");
+		addLookupName("Sunbeam Starfire ER Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 2500;
+		bv = 2.01;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.28;
+		infantryRange = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

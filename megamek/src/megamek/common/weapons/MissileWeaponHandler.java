@@ -140,6 +140,28 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
+            
+        } else if (((mLinker != null)
+                && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_PROTO))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+            if (bECMAffected) {
+                // ECM prevents bonus
+                Report r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else if (bMekTankStealthActive) {
+                // stealth prevents bonus
+                Report r = new Report(3335);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else {
+                nMissilesModifier += 1;
+            }
         } else if (((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -325,6 +347,19 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
                 if (atype.getAmmoType() == AmmoType.T_SRM) {
                     bonus = 2;
+                }
+            }
+        }
+        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_PROTO))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+            // MML3 gets no bonus from Artemis IV (how sad)
+            if (atype.getRackSize() > 3) {
+                bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+                if (atype.getAmmoType() == AmmoType.T_SRM) {
+                    bonus = 1;
                 }
             }
         }
@@ -870,7 +905,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         && !mLinker.isDestroyed() && !mLinker.isMissing()
                         && !mLinker.isBreached() && (mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS) || mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS_V)))) {
+                        MiscType.F_ARTEMIS_V) || mLinker.getType().hasFlag(
+                                MiscType.F_ARTEMIS_PROTO)))) {
             if ((!weapon.getType().hasModes() || !weapon.curMode().equals(
                     "Indirect"))
                     && (((atype.getAmmoType() == AmmoType.T_ATM) && ((atype

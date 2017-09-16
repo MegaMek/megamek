@@ -18,33 +18,35 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolWhiteDwarfLaserPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Laser Pistol (Intek White Dwarf )";
-        setInternalName(name);
-        addLookupName("White Dwarf Holdout Laser Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 250;
-        bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.02;
-        infantryRange = 0;
-        introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantryPistolWhiteDwarfLaserPistolWeapon() {
+		super();
+
+		name = "Laser Pistol (Hold-Out [White Dwarf])";
+		setInternalName(name);
+		addLookupName("White Dwarf Holdout Laser Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 250;
+		bv = 0.02;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.02;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3058, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+
+	}
 }

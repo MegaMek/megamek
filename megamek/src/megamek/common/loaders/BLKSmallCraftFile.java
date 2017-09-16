@@ -174,6 +174,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         a.autoSetInternal();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
+        a.recalculateTechAdvancement();
 
         loadEquipment(a, "Nose", Aero.LOC_NOSE);
         loadEquipment(a, "Right Side", Aero.LOC_RWING);

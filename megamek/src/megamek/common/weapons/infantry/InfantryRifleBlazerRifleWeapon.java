@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleBlazerRifleWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Rifle (Blazer)";
-        setInternalName(name);
-        addLookupName("InfantryBlazerRifle");
-        addLookupName("Infantry Blazer Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 2190;
-        bv = 1.79;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.35;
-        infantryRange = 2;
-        introDate = 2290;
-        techLevel.put(2290,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_D;
-    }
+	public InfantryRifleBlazerRifleWeapon() {
+		super();
+
+		name = "Laser Rifle (Blazer)";
+		setInternalName(name);
+		addLookupName("InfantryBlazerRifle");
+		addLookupName("Infantry Blazer Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 2190;
+		bv = 1.79;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.35;
+		infantryRange = 2;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2290, 2350, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(2100, 2290, 2350, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setProductionFactions(F_FW)
+		        .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_D, RATING_C);
+
+	}
 }

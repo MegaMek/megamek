@@ -67,7 +67,7 @@ ISMediumLaser
 </fuel>
 
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <armor_tech>
@@ -83,7 +83,7 @@ IS Level 5
 </internal_type>
 
 <armor_type>
-17
+39
 </armor_type>
 
 <engine_type>

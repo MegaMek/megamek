@@ -36,6 +36,10 @@ Hover
 9
 </cruiseMP>
 
+<jumpingMP>
+8
+</jumpingMP>
+
 <engine_type>
 0
 </engine_type>
@@ -58,14 +62,14 @@ Hover
 
 <Body Equipment>
 CLArmoredMotiveSystem
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
 CLAPGaussRifle Ammo
 </Body Equipment>
 

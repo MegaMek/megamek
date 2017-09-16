@@ -19,6 +19,7 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.Server;
 
 /**

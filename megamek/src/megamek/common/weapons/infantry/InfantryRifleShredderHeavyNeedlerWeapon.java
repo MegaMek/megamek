@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleShredderHeavyNeedlerWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Needler Rifle (Shredder Heavy)";
-        setInternalName(name);
-        addLookupName("InfantryShredder");
-        addLookupName("Shredder Heavy Needler");
-        ammoType = AmmoType.T_NA;
-        cost = 150;
-        bv = 0.31;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
-        infantryDamage = 0.34;
-        infantryRange = 0;
-        introDate = 3054;
-        techLevel.put(3054,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantryRifleShredderHeavyNeedlerWeapon() {
+		super();
+
+		name = "Needler Rifle (Shredder Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryShredder");
+		addLookupName("Shredder Heavy Needler");
+		ammoType = AmmoType.T_NA;
+		cost = 150;
+		bv = 0.31;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
+		infantryDamage = 0.34;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3051, 3054, 3067, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC, F_FS)
+		        .setProductionFactions(F_LC, F_FS).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+
+	}
 }

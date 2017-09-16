@@ -71,7 +71,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long"; //$NON-NLS-1$
     public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short"; //$NON-NLS-1$
     //TODO Game Rules
-    public static final String QUIRK_POS_VERSTIGAL_HANDS = "vestigial_hands"; //$NON-NLS-1$
+    public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la"; //$NON-NLS-1$
+    public static final String QUIRK_POS_VESTIGIAL_HANDS_RA = "vestigial_hands_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_VTOL_ROTOR= "vtol_rotor"; //$NON-NLS-1$
     
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate"; //$NON-NLS-1$
@@ -306,6 +307,7 @@ public class OptionsConstants {
     public static final String ALLOWED_CANON_ONLY= "canon_only";  //$NON-NLS$
     public static final String ALLOWED_YEAR= "year";  //$NON-NLS$
     public static final String ALLOWED_TECHLEVEL= "techlevel";  //$NON-NLS$
+    public static final String ALLOWED_ERA_BASED = "era_based"; //$NON_NLS$
     public static final String ALLOWED_ALLOW_ILLEGAL_UNITS= "allow_illegal_units";  //$NON-NLS$
     public static final String ALLOWED_CLAN_IGNORE_EQ_LIMITS= "clan_ignore_eq_limits";  //$NON-NLS$
     public static final String ALLOWED_NO_CLAN_PHYSICAL= "no_clan_physical";  //$NON-NLS$

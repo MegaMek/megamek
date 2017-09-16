@@ -48,7 +48,7 @@ Leg
 BASalvageArm:LA
 BAArmoredGlove:RA
 ISBASpaceOperationsAdaptation:Body
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

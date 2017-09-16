@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.ui.swing.AdvancedSearchDialog;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 
 
 /**
@@ -385,7 +387,21 @@ public class MechSearchFilter {
             while (eqIter.hasNext())
             {
                 String currEq = eqIter.next();
+                         
                 int currQty = qtyIter.next();
+                
+                if (null == currEq) {
+                    DefaultMmLogger.getInstance().log(MechSearchFilter.class,
+                            "evaluate(List<String>,List<Integer>,ExpNode)", LogLevel.DEBUG,
+                            "List<String> currEq is null");
+                }
+                
+                if (null == n) {
+                    DefaultMmLogger.getInstance().log(MechSearchFilter.class,
+                            "evaluate(List<String>,List<Integer>,ExpNode)", LogLevel.DEBUG,
+                            "ExpNode n is null");
+                }
+                
                 if (currEq.equals(n.name) && currQty >= n.qty)
                     return true;
             }

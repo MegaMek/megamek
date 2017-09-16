@@ -282,6 +282,13 @@ public class TestBattleArmor extends TestEntity {
         int numUsedCrits = 0;
         int numAntiMechWeapons = 0;
         int numAntiPersonnelWeapons = 0;
+        if ((ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
+                && ((loc == BattleArmor.MOUNT_LOC_LARM) || (loc == BattleArmor.MOUNT_LOC_RARM))) {
+            return false;
+        }
+        if ((loc == BattleArmor.MOUNT_LOC_TURRET) && (ba.getTurretCapacity() == 0)) {
+            return false;
+        }
         for (Mounted m : ba.getEquipment()) {
             // Manipulators don't take up slots in BA
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
@@ -308,6 +315,28 @@ public class TestBattleArmor extends TestEntity {
                     numUsedCrits++;
                 } else {
                     numUsedCrits += m.getType().getCriticals(ba);
+                }
+            }
+        }
+        
+        // In the case of quads with turrets, we need to apply the total of body + turret to the limitation
+        if ((loc == BattleArmor.MOUNT_LOC_TURRET)
+                || ((loc == BattleArmor.MOUNT_LOC_BODY)
+                        && (ba.getTurretCapacity() > 0))) {
+            int otherLoc = (loc == BattleArmor.MOUNT_LOC_BODY)?
+                    BattleArmor.MOUNT_LOC_TURRET : BattleArmor.MOUNT_LOC_BODY;
+            for (Mounted m : ba.getEquipment()) {
+                if (m.getBaMountLoc() == otherLoc 
+                        && (m.getLocation() == trooper 
+                            || m.getLocation() == BattleArmor.LOC_SQUAD)) {
+                    
+                    if ((m.getType() instanceof WeaponType) 
+                            && !(m.getType() instanceof InfantryWeapon)) {
+                        numAntiMechWeapons++;
+                    }
+                    if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                        numAntiPersonnelWeapons++;
+                    }             
                 }
             }
         }
@@ -415,6 +444,16 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public double getWeightMisc() {
+        int turret = ba.getTurretCapacity();
+        if (turret > 0) {
+            double weight = turret * 0.01 + 0.03;
+            if (ba.hasModularTurretMount()) {
+                // modular turret has the same base weight as a standard turret with one more slot,
+                // plus another 10 kg for being modular
+                weight += 0.02;
+            }
+            return weight;
+        }
         return 0;
     }
 
@@ -848,7 +887,7 @@ public class TestBattleArmor extends TestEntity {
                     }
                 }
             }
-            
+                        
             if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
                 if ((m.getLinked() != null) 
                         && (m.getLinked().getType() instanceof InfantryWeapon)) {
@@ -890,6 +929,12 @@ public class TestBattleArmor extends TestEntity {
             }
         }
 
+        // Turret-mounted weapons on quad BA count against the body weapon limits
+        for (int t = 0; t < ba.locations(); t++) {
+            numAMWeapons[t][BattleArmor.MOUNT_LOC_BODY] += numAMWeapons[t][BattleArmor.MOUNT_LOC_TURRET];
+            numAPWeapons[t][BattleArmor.MOUNT_LOC_BODY] += numAPWeapons[t][BattleArmor.MOUNT_LOC_TURRET];
+        }
+
         // Now check to make sure the counts are valid
         for (int t = 0; t <= ba.getTroopers(); t++) {
             for (int loc = 0; loc < BattleArmor.MOUNT_NUM_LOCS; loc++) {
@@ -900,6 +945,9 @@ public class TestBattleArmor extends TestEntity {
                             + " used criticals, but only has "
                             + ba.getNumCrits(loc) + " available criticsl!\n");
                     correct = false;
+                }
+                if (BattleArmor.MOUNT_LOC_TURRET == loc) {
+                    continue;
                 }
                 if (numAMWeapons[t][loc] > 
                         ba.getNumAllowedAntiMechWeapons(loc)) {
@@ -1269,6 +1317,7 @@ public class TestBattleArmor extends TestEntity {
         double weight = 0;
         weight += getWeightStructure();
         weight += getWeightArmor();
+        weight += getWeightMisc();
 
         weight += getWeightMiscEquip(trooper);
         weight += getWeightWeapon(trooper);

@@ -64,6 +64,7 @@ v0.43.4-git
 	o New era-based play option to vary unit tech level according to year.
 	o Numerous unit validation fixes.
 + PR #656: BA Quad turrets (displays equipment location correctly; no change in function)
++ Issue #657: Right click -> Set all MGs to burst fire doesn't work [also hotload and searchlight].
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

@@ -3789,7 +3789,7 @@ public class MoveStep implements Serializable {
      * Should we treat this movement as if it is occuring for an aerodyne unit
      * flying in atmosphere?
      */
-	public boolean useAeroAtmosphere(IGame game, Entity en) {
+	boolean useAeroAtmosphere(IGame game, Entity en) {
         if (!en.isAero()) {
             return false;
         }

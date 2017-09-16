@@ -30,11 +30,15 @@ class RankedPath implements Comparable<RankedPath> {
     // the expected damage resulting from the calculation of this ranked path
     private double expectedDamage;
     
+    public String getReason() {
+        return reason;
+    }
+    
     public MovePath getPath() {
         return path;
     }
     
-    public double getRank() {
+    double getRank() {
         return rank;
     }
     
@@ -42,7 +46,7 @@ class RankedPath implements Comparable<RankedPath> {
         return expectedDamage;
     }
     
-    public void setExpectedDamage(double damage) {
+    void setExpectedDamage(double damage) {
         expectedDamage = damage;
     }
 

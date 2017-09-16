@@ -385,7 +385,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * @param movePath The parent movePath
          * @see AbstractPathFinder.AdjacencyMap
          */
-        protected void addUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
+        void addUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp) {
             Coords pos;
             int elevation;
             pos = last != null ? last.getPosition() : entity.getPosition();

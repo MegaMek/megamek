@@ -232,7 +232,7 @@ public class BasicPathRanker extends PathRanker {
      * @param movePath the path to check
      * @return A 'RankedPath' object with a certain evaluation
      */
-    protected RankedPath doAeroSpecificRanking(MovePath movePath) {
+    RankedPath doAeroSpecificRanking(MovePath movePath) {
         // stalling is awful
     	if(AeroPathUtil.willStall(movePath)) {
             return new RankedPath(-1000d, movePath, "stall");

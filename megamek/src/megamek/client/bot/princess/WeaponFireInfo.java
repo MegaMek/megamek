@@ -324,7 +324,7 @@ public class WeaponFireInfo {
                                       getShooter().getEquipmentNum(getWeapon()));
     }
     
-    protected WeaponAttackAction buildBombAttackAction(int[] bombPayload) {
+    private WeaponAttackAction buildBombAttackAction(int[] bombPayload) {
         WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
                 getShooter().getEquipmentNum(getWeapon()));
         
@@ -364,7 +364,7 @@ public class WeaponFireInfo {
      * @param bombedHex
      * @return
      */
-    protected double computeExpectedBombDamage(Entity shooter, Mounted weapon, Coords bombedHex) {
+    private double computeExpectedBombDamage(Entity shooter, Mounted weapon, Coords bombedHex) {
         double damage = 0D; //lol double damage I wish
         
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
@@ -411,7 +411,7 @@ public class WeaponFireInfo {
      *                              path.
      * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
      */
-    protected void initDamage(@Nullable MovePath shooterPath, boolean assumeUnderFlightPath, boolean guess, int[] bombPayload) {
+    void initDamage(@Nullable MovePath shooterPath, boolean assumeUnderFlightPath, boolean guess, int[] bombPayload) {
         final String METHOD_NAME = "initDamage(MovePath, boolean)";
 
         StringBuilder msg =

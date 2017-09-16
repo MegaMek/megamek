@@ -55,8 +55,7 @@ public class SharedUtility {
         // carried out in the full PSR Check. So, we call a method that skips most of those.
         if(md.getEntity().isAirborne()) {
             return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
-        }
-        else {
+        } else {
             return (List<TargetRoll>) doPSRCheck(md, false);
         }
     }
@@ -67,7 +66,7 @@ public class SharedUtility {
      * @param stringResult Whether to return the report as a string
      * @return Collection of PSRs that will be required for this activity
      */
-    public static Object getAeroSpecificPSRList(MovePath md, boolean stringResult) {
+    private static Object getAeroSpecificPSRList(MovePath md, boolean stringResult) {
         StringBuffer nagReport = new StringBuffer();
         List<TargetRoll> psrList = new ArrayList<TargetRoll>();
 

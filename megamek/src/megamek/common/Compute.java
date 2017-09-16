@@ -41,6 +41,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
@@ -854,6 +855,14 @@ public class Compute {
                                       IAimingModes.AIM_MODE_NONE);
     }
 
+    /**
+     * Gets the ToHitData associated with firing at an immobile target. Returns null if target isn't.
+     * @param target The target being considered for firing
+     * @param aimingAt The location of the unit being aimed at
+     * @param aimingMode The aiming mode
+     * @return The relevant ToHitData
+     */
+    @Nullable
     public static ToHitData getImmobileMod(Targetable target, int aimingAt,
                                            int aimingMode) {
         // if we are bombing hexes, they are not considered immobile.

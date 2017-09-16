@@ -1651,8 +1651,7 @@ public class FireControl {
         
         if(myPlan.getUtility() >= bombPlan.getUtility()) {
             return myPlan;
-        }
-        else {
+        } else {
             return bombPlan;
         }
     }

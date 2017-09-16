@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
@@ -152,8 +153,7 @@ public class AeroGroundPathFinder {
                 // if the path does not go off board, then we add it to the returned collection
                 if (shouldStay(e)) {
                     filteredMoves.add(e);
-                }
-                else {
+                } else {
                     // if the path *does* go off board, we want to compare its length to 
                     // our current shortest off-board path and keep it in mind if it's both shorter and safe
                     // at the end of the process, we will add the shortest path off board to the list of moves
@@ -182,7 +182,7 @@ public class AeroGroundPathFinder {
     }
 
     // This object contains a hex and the shortest non-off-board path that has flown over it.
-    HashMap<Coords, MovePath> visitedHexes;
+    Map<Coords, MovePath> visitedHexes;
     
     /**
      * Generates paths that begin with all valid acceleration sequences for this aircraft.
@@ -190,8 +190,7 @@ public class AeroGroundPathFinder {
      * @param startingPath
      * @return
      */
-    public Collection<MovePath> generateValidAccelerations(MovePath startingPath)
-    {
+    private Collection<MovePath> generateValidAccelerations(MovePath startingPath) {
         // the possible velocities at ground level are 1 - 12 (we ignore "0" velocity as that will just stall our aircraft)
         // with an additional lower and upper bound of "current velocity" -/+ walk MP (investigate utility of adjusting it to be run MP instead)
 
@@ -213,8 +212,7 @@ public class AeroGroundPathFinder {
         
         // we go from the lower bound to the current velocity and generate paths with the required number of DECs to get to
         // the desired velocity
-        for(int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++)
-        {
+        for(int desiredVelocity = lowerBound; desiredVelocity < currentVelocity; desiredVelocity++) {
             MovePath path = startingPath.clone();
             for(int deltaVelocity = 0; deltaVelocity < currentVelocity - desiredVelocity; deltaVelocity++) {
                 path.addStep(MoveStepType.DEC);
@@ -354,9 +352,9 @@ public class AeroGroundPathFinder {
         List<MovePath> retval = new ArrayList<MovePath>();
         MovePath straightLine = mp.clone();
         
+        boolean firstTurn = true;        
         while(straightLine.getFinalVelocityLeft() > 0 && 
                 game.getBoard().contains(straightLine.getFinalCoords())) {
-            boolean firstTurn = true;            
             
             // little dirty hack to get around the problem where if this is the first step of a path
             // we have no last step
@@ -449,7 +447,7 @@ public class AeroGroundPathFinder {
         }
     }
     
-    private HashMap<Coords, MovePath> visitedCoords = new HashMap<Coords, MovePath>();
+    private Map<Coords, MovePath> visitedCoords = new HashMap<Coords, MovePath>();
     // goes through a path.
     // if it does not take us off-board, records the coordinates it visits
     // returns true if this path visits hexes that have not been visited before

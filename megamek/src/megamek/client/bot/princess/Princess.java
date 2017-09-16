@@ -1495,7 +1495,7 @@ public class Princess extends BotClient {
      * Currently insinuates an "evasion" step for aircraft that will not be shooting.
      * @param path The path to process
      */
-    void performPathPostProcessing(RankedPath path) {
+    private void performPathPostProcessing(RankedPath path) {
         // if we're an airborne aircraft
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR

@@ -226,8 +226,7 @@ public class PathEnumerator {
                 
                 // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
                 HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
-                for(MovePath path : paths)
-                {
+                for(MovePath path : paths) {
                     if(!pathLengths.containsKey(path.length())) {
                         pathLengths.put(path.length(), 0);
                     }
@@ -237,12 +236,10 @@ public class PathEnumerator {
                     this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
                 }
                 
-                for(Integer length : pathLengths.keySet())
-                {
+                for(Integer length : pathLengths.keySet()) {
                     this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
                 }
-            }
-            else if (mover.isAero()) {
+            } else if (mover.isAero()) {
                 IAero aeroMover = (IAero)mover;
                 // Get the shortest paths possible.
                 ShortestPathFinder spf;
@@ -422,8 +419,7 @@ public class PathEnumerator {
         }
     }
     
-    private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path)
-    {
+    private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {
     	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.DEBUG, 
     			path.length() + ":" + 
     			path.toString() + ":" + whyNot);

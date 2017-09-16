@@ -106,8 +106,7 @@ public class UnitType {
      * @param e the entity to examine
      * @return True or false
      */
-    public static boolean isVTOL(Entity e)
-    {
+    public static boolean isVTOL(Entity e) {
     	return e.getEntityType() == Entity.ETYPE_VTOL;
     }
     
@@ -116,8 +115,7 @@ public class UnitType {
      * @param e the entity to examine
      * @return True or false
      */
-    public static boolean isSpheroidDropship(Entity e)
-    {
+    public static boolean isSpheroidDropship(Entity e) {
     	return e.isAero() && ((IAero) e).isSpheroid();
     }
 }

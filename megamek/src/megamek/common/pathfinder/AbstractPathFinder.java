@@ -207,7 +207,7 @@ public class AbstractPathFinder<N, C, E> {
 
     private AdjacencyMap<E> adjacencyMap;
 
-    protected PriorityQueue<E> candidates;
+    private PriorityQueue<E> candidates;
 
     private Comparator<E> comparator;
     private DestinationMap<N, E> destinationMap;
@@ -215,7 +215,7 @@ public class AbstractPathFinder<N, C, E> {
 
     private List<Filter<E>> filters = new ArrayList<>();
 
-    protected Map<N, C> pathsCosts = new HashMap<>();
+    private Map<N, C> pathsCosts = new HashMap<>();
 
     private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 

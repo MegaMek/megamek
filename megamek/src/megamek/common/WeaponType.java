@@ -573,6 +573,8 @@ public class WeaponType extends EquipmentType {
     // Weapon required to make a bomb type function
     public static final BigInteger F_BOMB_WEAPON = BigInteger.valueOf(1).shiftLeft(61);
     
+    public static final BigInteger F_BA_INDIVIDUAL = BigInteger.valueOf(1).shiftLeft(62);
+    
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;

@@ -45,6 +45,20 @@ v0.43.4-git
 + Issue #645: Princess continues to stop at one point.
 + PR #635: Terrain Master SPA (Forest Ranger, Frogman, Mountaineer, and Swamp Beast)
 + PR #640: Improved Princess turret placement (including preventing illegal turret deployments)
++ PR #642: Feature: Configure starting fuel points in lobby
++ PR #642: Feature: Damage KF Boom, Cargo/Transport Bays and Bay Doors in lobby
++ PR #642: Save the above to/load from MUL files
++ PR #642: Feature: Add functionality to KFBoom critical hit
++ PR #642: Feature: Strategic Fuel use calculations
++ PR #642: Feature: Implement Superheavy Vehicle Bays
++ PR #642: Feature: Prep work for adding all of the above as MHQ parts
++ PR #642: Feature: Add docking collar and KFBoom damage display to Aero/SpheroidMapSet Critical Hits list
++ PR #642: Bug: Fix right thruster hits, which were displaying left thruster hits
++ PR #642: Bug #597: Fix NPE when recovering aeros within visual range of the enemy
++ PR #642: Bug: Fix recovery slot update on Small Craft Bays
++ PR #642: Bug: Change recovery code to always put ASFs in an available ASF bay first if one is present
++ PR #642: Bug: Remove landing gear crit checkbox from unit editor for Jumpships, warships and stations
++ PR #655: Popup mines (fixed loading and validation problems, added modes for squads larger than 4 troopers.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

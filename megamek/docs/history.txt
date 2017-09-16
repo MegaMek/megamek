@@ -58,6 +58,7 @@ v0.43.4-git
 + PR #642: Bug: Fix recovery slot update on Small Craft Bays
 + PR #642: Bug: Change recovery code to always put ASFs in an available ASF bay first if one is present
 + PR #642: Bug: Remove landing gear crit checkbox from unit editor for Jumpships, warships and stations
++ PR #655: Popup mines (fixed loading and validation problems, added modes for squads larger than 4 troopers.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

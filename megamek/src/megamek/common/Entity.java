@@ -3203,7 +3203,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setOmniPodMounted(mounted.isOmniPodMounted());
-                m.setShotsLeft(1);
+                int shots = 1;
+                // BA pop-up mines can be fired individually and need a shot for each launcher in the squad.
+                if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
+                    shots = getTotalInternal();
+                }
+                m.setShotsLeft(shots);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location
                 // of null. Other areas in the code will rely on this.

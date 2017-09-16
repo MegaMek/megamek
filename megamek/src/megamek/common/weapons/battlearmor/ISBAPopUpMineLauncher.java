@@ -58,7 +58,7 @@ public class ISBAPopUpMineLauncher extends Weapon {
         criticals = 1;
         cost = 2500;
         bv = 6;
-        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
+        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON).or(F_ONESHOT);
         introDate = 3050;

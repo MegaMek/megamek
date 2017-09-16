@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying refrigerated cargo
+ * Represents a volume of space set aside for carrying refrigerated cargo
  */
 
 public final class RefrigeratedCargoBay extends Bay {
@@ -52,6 +52,7 @@ public final class RefrigeratedCargoBay extends Bay {
         currentSpace = space * 0.87;
         this.doors = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -74,7 +75,7 @@ public final class RefrigeratedCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer(
-                "Refrigerated Cargo Space (" + getDoors() + " doors) - ");
+                "Refrigerated Cargo Space (" + getCurrentDoors() + " doors) - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.3f", currentSpace));
@@ -88,7 +89,7 @@ public final class RefrigeratedCargoBay extends Bay {
 
     @Override
     public String getType() {
-        return "Refrigerated Cargo";
+        return "Reefer";
     }
 
     @Override

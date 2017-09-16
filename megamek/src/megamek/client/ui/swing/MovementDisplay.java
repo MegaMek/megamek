@@ -3272,7 +3272,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
              * that these excess fighters will be distributed equally among
              * available doors
              */
-            doors = currentBay.getDoors();
+            doors = currentBay.getCurrentDoors();
             if (currentFighters.size() == 0) {
                 bayNum++;
                 continue;
@@ -3478,7 +3478,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         .filter(e -> !alreadyDropped.contains(e.getId()))
                         .collect(Collectors.toList());
 
-                doors = currentBay.getDoors();
+                doors = currentBay.getCurrentDoors();
                 if ((currentUnits.size() > 0) && (doors > 0)) {
                     String[] names = new String[currentUnits.size()];
                     String question = Messages
@@ -3710,7 +3710,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         IAero a = (IAero) ce;
-        if (a.getFuel() < 1) {
+        if (a.getCurrentFuel() < 1) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);

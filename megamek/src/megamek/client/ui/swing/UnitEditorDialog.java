@@ -39,8 +39,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import megamek.common.ASFBay;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Bay;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -54,6 +56,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
+import megamek.common.SmallCraftBay;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 
@@ -106,6 +109,8 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel rightThrusterCrit;
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
+    CheckCritPanel[] bayCriticals;
+    CheckCritPanel[] bayDoorCrit;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -851,7 +856,7 @@ public class UnitEditorDialog extends JDialog {
 
         if (aero instanceof Jumpship) {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
@@ -863,7 +868,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(fcsCrit, gridBagConstraints);
         } else {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
@@ -876,7 +881,7 @@ public class UnitEditorDialog extends JDialog {
         }
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Sensor" + "</b><br></html>"),
                 gridBagConstraints);
@@ -886,7 +891,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(sensorCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Engine" + "</b><br></html>"),
                 gridBagConstraints);
@@ -897,9 +902,10 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(engineCrit, gridBagConstraints);
-
+        
+    if (!(aero instanceof Jumpship)) {
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Landing Gear"
                 + "</b><br></html>"), gridBagConstraints);
@@ -911,9 +917,10 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(gearCrit, gridBagConstraints);
-
+    }
+    
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Life Support"
                 + "</b><br></html>"), gridBagConstraints);
@@ -928,7 +935,7 @@ public class UnitEditorDialog extends JDialog {
 
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 6;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Left Thruster"
                     + "</b><br></html>"), gridBagConstraints);
@@ -938,7 +945,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(leftThrusterCrit, gridBagConstraints);
 
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 7;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Right Thruster"
                     + "</b><br></html>"), gridBagConstraints);
@@ -951,7 +958,7 @@ public class UnitEditorDialog extends JDialog {
         if (aero instanceof Dropship) {
 
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 8;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Docking Collar"
                     + "</b><br></html>"), gridBagConstraints);
@@ -963,8 +970,53 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(dockCollarCrit, gridBagConstraints);
-
+            
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "K-F Boom"
+                    + "</b><br></html>"), gridBagConstraints);
+            int kfboomHits = 0;
+            if (((Dropship) aero).isKFBoomDamaged()) {
+            	kfboomHits = 1;
+            }
+            kfboomCrit = new CheckCritPanel(1, kfboomHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(kfboomCrit, gridBagConstraints);
         }
+        
+        if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
+        	int b = 0;
+        	bayCriticals = new CheckCritPanel [aero.getTransportBays().size()];
+        	bayDoorCrit = new CheckCritPanel [aero.getTransportBays().size()];
+        	for (Bay nextbay : aero.getTransportBays()) {
+        		gridBagConstraints.gridx = 0;
+        		gridBagConstraints.gridy++;
+        		gridBagConstraints.weightx = 0.0;
+        		panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + nextbay.getBayNumber()
+        				+ "</b><br></html>"), gridBagConstraints);
+    		
+        		CheckCritPanel bayCrit = new CheckCritPanel(1, nextbay.getBayDamaged());
+        		bayCriticals[b] = bayCrit;
+        		gridBagConstraints.gridx = 1;
+        		gridBagConstraints.weightx = 1.0;
+        		panSystem.add(bayCrit, gridBagConstraints);
+    		
+        		gridBagConstraints.gridx = 0;
+        		gridBagConstraints.gridy++;
+        		gridBagConstraints.weightx = 0.0;
+        		panSystem.add(new JLabel("<html><b>" + "Bay # " + nextbay.getBayNumber() + " Doors"
+        				+ "</b><br></html>"), gridBagConstraints);
+    		
+        		CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
+        		bayDoorCrit[b] = doorCrit;
+        		gridBagConstraints.gridx = 1;
+        		gridBagConstraints.weightx = 1.0;
+        		panSystem.add(doorCrit, gridBagConstraints);
+        		b++;
+    		}
+    	}
     }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1177,11 +1229,50 @@ public class UnitEditorDialog extends JDialog {
                 aero.setLeftThrustHits(leftThrusterCrit.getHits());
             }
             if (null != rightThrusterCrit) {
-                aero.setLeftThrustHits(leftThrusterCrit.getHits());
+                aero.setRightThrustHits(rightThrusterCrit.getHits());
             }
             if ((null != dockCollarCrit) && (aero instanceof Dropship)) {
                 ((Dropship) aero)
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
+            }
+            if ((null != kfboomCrit) && (aero instanceof Dropship)) {
+            	((Dropship) aero)
+            			.setDamageKFBoom(kfboomCrit.getHits() > 0);
+            }
+            // cargo bays and bay doors
+            if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
+            	int b = 0;
+            	for (Bay bay : aero.getTransportBays()) {
+            		CheckCritPanel bayCrit = bayCriticals[b];
+            		if (null == bayCrit) {
+            			continue;
+            		}
+            		if (bayCrit.getHits() > 0) {
+            			bay.setBayDamaged();
+            		} else {
+            			bay.clearBayDamaged();
+            		}
+            		CheckCritPanel doorCrit = bayDoorCrit[b];
+            		if (null == doorCrit) {
+            			continue;
+            		}
+            		if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
+            			bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
+
+            		} else if (doorCrit.getHits() == 0) {
+            			bay.setCurrentDoors(bay.getDoors());
+            		}
+        			// for ASF and SC bays, we have to update recovery slots as doors are changed
+        			if (bay instanceof ASFBay) {
+        				ASFBay a = (ASFBay) bay;
+        				a.initializeRecoverySlots();        				
+        			} 
+        			if (bay instanceof SmallCraftBay) {
+    					SmallCraftBay s = (SmallCraftBay) bay;
+    					s.initializeRecoverySlots();    					
+        			}
+            	b++;
+            	}
             }
         }
 

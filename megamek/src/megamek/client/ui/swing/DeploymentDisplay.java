@@ -43,7 +43,6 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
-import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;

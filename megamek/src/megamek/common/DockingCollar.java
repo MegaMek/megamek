@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a docking collar with which a Jumpship can carry a DropShip
+ * 
  */
 
 public class DockingCollar implements Transporter {

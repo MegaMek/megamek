@@ -156,6 +156,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     // fuel - number of fuel points
     private int fuel = 0;
+    private int currentfuel = 0;
 
     // these are used by more advanced aeros
     private boolean lifeSupport = true;
@@ -320,7 +321,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * Thi is the same as getWalkMP, but does not divide by 2 when grounded
+     * This is the same as getWalkMP, but does not divide by 2 when grounded
      *
      * @return
      */
@@ -750,13 +751,21 @@ public class Aero extends Entity implements IAero, IBomber {
         return rightThrustHits;
     }
 
-    @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-        	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+        		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
         	return (int) (fuel * 0.9);
         } else {
-        return fuel;
+        	return fuel;
+        }
+    }
+    
+    public int getCurrentFuel() {
+        if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
+            	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+            return (int) (currentfuel * 0.9);
+        } else {
+        	return currentfuel;
         }
     }
 
@@ -766,12 +775,15 @@ public class Aero extends Entity implements IAero, IBomber {
      * @param gas
      *            Number of fuel points.
      */
-    @Override
     public void setFuel(int gas) {
         fuel = gas;
+        currentfuel = gas;
+    }
+    
+    public void setCurrentFuel(int gas) {
+    	currentfuel = gas;
     }
 
-    @Override
     public double getFuelPointsPerTon() {
         if (hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             return 160;
@@ -3823,6 +3835,23 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             toReturn += "Right Thruster (" + getRightThrustHits() + ")";
             first = false;
+        }
+        // Cargo bays and bay doors for large craft
+        for (Bay next : getTransportBays()) {
+        	if (next.getBayDamaged() > 0) {
+        		if (!first) {
+        			toReturn += ", ";
+        		}
+        	toReturn += next.getType() + " Bay # " + next.getBayNumber();
+        	first = false;
+        	}
+        	if (next.getCurrentDoors() < next.getDoors()) {
+        		if (!first) {
+        			toReturn += ", ";
+        		}
+        	toReturn += next.getType() + " Bay #" + next.getBayNumber() + " Doors (" + (next.getDoors() - next.getCurrentDoors()) + ")";
+        	first = false;
+        	}
         }
         return toReturn;
     }

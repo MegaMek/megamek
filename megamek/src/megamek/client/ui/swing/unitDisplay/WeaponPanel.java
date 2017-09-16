@@ -260,7 +260,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             wn.append(']');
             // determine shots left & total shots left
             if ((wtype.getAmmoType() != AmmoType.T_NA)
-                && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                    && (!wtype.hasFlag(WeaponType.F_ONESHOT)
+                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))) {
                 int shotsLeft = 0;
                 if ((mounted.getLinked() != null)
                     && !mounted.getLinked().isDumping()) {

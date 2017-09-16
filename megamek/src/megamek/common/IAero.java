@@ -140,6 +140,10 @@ public interface IAero {
     int getFuel();
 
     void setFuel(int gas);
+    
+    int getCurrentFuel();
+    
+    void setCurrentFuel(int gas);
 
     double getFuelPointsPerTon();
 
@@ -768,7 +772,7 @@ public interface IAero {
      *            The number of fuel points to use
      */
     default void useFuel(int fuelUsed) {
-        setFuel(Math.max(0, getFuel() - fuelUsed));
+        setCurrentFuel(Math.max(0, getCurrentFuel() - fuelUsed));
     }
 
 }

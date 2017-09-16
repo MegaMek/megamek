@@ -137,6 +137,12 @@ public class FighterSquadron extends Aero {
         return fighters.stream().map(fid -> game.getEntity(fid))
             .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getFuel()).min().orElse(0);
     }
+    
+    @Override
+    public int getCurrentFuel() {
+        return fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getCurrentFuel()).min().orElse(0);
+    }
 
     /*
      * base this on the max size of the fighter squadron, since the initial size

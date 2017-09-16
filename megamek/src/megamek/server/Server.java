@@ -6133,7 +6133,9 @@ public class Server implements Runnable {
      * @param curPos    The coordinates of the hex in which the maneuver was attempted.
      * @param turnDirection The difference between the intended final facing and the starting facing
      *                      (-1 for left turn, 1 for right turn, 0 for not turning).
-     * @param prevStep  The <code>MoveStep</code> immediately preceding the one being processes.
+     * @param prevStep  The <code>MoveStep</code> immediately preceding the one being processed.
+     *                  Cannot be null; if the check is made for the first step of the path,
+     *                  use the current step.
      * @param lastStepMoveType  The <code>EntityMovementType</code> of the last step in the path.
      * @param distance  The distance moved so far during the phase; used to calculate any potential skid.
      * @param modifier  The modifier to the maneuver failure roll.
@@ -6257,12 +6259,12 @@ public class Server implements Runnable {
                 skidDistance = Math.min(marginOfFailure, distance);
             }
             if (skidDistance > 0) {
-                int skidDirection = prevStep == null?entity.getFacing() : prevStep.getFacing();
+                int skidDirection = prevStep.getFacing();
                 if (isBackwards) {
                     skidDirection = (skidDirection + 3) % 6;
                 }
                 processSkid(entity, curPos,
-                        prevStep == null? entity.getElevation() : prevStep.getElevation(),
+                        prevStep.getElevation(),
                         skidDirection, skidDistance,
                         prevStep, lastStepMoveType, flip);
             }
@@ -7303,7 +7305,9 @@ public class Server implements Runnable {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                             curPos, rollTarget, false);
                     if (mof > 0) {
-                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                        // Since this is the first step, we don't have a previous step so we'll pass
+                        // this one in case it's needed to process a skid.
+                        if (processFailedVehicleManeuver(entity, curPos, 0, step, step.isThisStepBackwards(),
                                 lastStepMoveType, distance, 2, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
@@ -7339,7 +7343,7 @@ public class Server implements Runnable {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                             curPos, rollTarget, false);
                     if (mof > 0) {
-                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                        if (processFailedVehicleManeuver(entity, curPos, 0, step, step.isThisStepBackwards(),
                                 lastStepMoveType, distance, 2, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
@@ -8105,8 +8109,11 @@ public class Server implements Runnable {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                             curPos, rollTarget, false);
                     if (mof > 0) {
-                        if (processFailedVehicleManeuver(entity, curPos, step.getFacing() - curFacing,
-                                prevStep, step.isThisStepBackwards(), lastStepMoveType, distance, mof, mof)) {
+                        if (processFailedVehicleManeuver(entity, curPos,
+                                step.getFacing() - curFacing,
+                                (null == prevStep)?step : prevStep,
+                                        step.isThisStepBackwards(),
+                                        lastStepMoveType, distance, mof, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
                             } else {
@@ -8134,7 +8141,8 @@ public class Server implements Runnable {
                         curPos, curPos, rollTarget, false);
                 if (mof > 0) {
                     // If the bootlegger maneuver fails, we treat it as a turn in a random direction.
-                    processFailedVehicleManeuver(entity, curPos, Compute.d6() < 4? -1 : 1, prevStep,
+                    processFailedVehicleManeuver(entity, curPos, Compute.d6() < 4? -1 : 1,
+                            (null == prevStep)? step : prevStep,
                             step.isThisStepBackwards(), lastStepMoveType, distance, 2, mof);
                     curFacing = entity.getFacing();
                     curPos = entity.getPosition();

@@ -16,7 +16,13 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.IGame;
 import megamek.common.TechAdvancement;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoBayWeaponHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -52,5 +58,11 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+    }
+    
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new AmmoBayWeaponHandler(toHit, waa, game, server);
     }
 }

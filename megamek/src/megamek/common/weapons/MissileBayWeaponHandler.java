@@ -26,11 +26,11 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class AmmoBayWeaponHandler extends BayWeaponHandler {
+public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
     private static final long serialVersionUID = -1618484541772117621L;
 
-    protected AmmoBayWeaponHandler() {
+    protected MissileBayWeaponHandler() {
         // deserialization only
     }
 
@@ -40,7 +40,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * @param g
      * @param s
      */
-    public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
     }
@@ -107,6 +107,15 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                         }
                     }
                 }
+
+                // check for nukes and tele-missiles and if they are there then
+                // I will need to
+                // add them to an inserted attack list and reset the av
+                if (atype.hasFlag(AmmoType.F_NUCLEAR)
+                        || atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
+                    insertedAttacks.addElement(wId);
+                    av = av - current_av;
+                }
             }
         }
         if (bDirect) {
@@ -121,13 +130,77 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
     }
 
     /*
-     * check for special munitions and their effect on av 
+     * check for special munitions and their effect on av TODO: it might be
+     * better to have unique weapon handlers for these by bay, but I am lazy
      */
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
 
+        // check for artemisIV
+        Mounted mLinker = weapon.getLinkedBy();
+        int bonus = 0;
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS))
+                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+            if (atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+            current_av = current_av + bonus;
+        }
+        // check for Artemis V
+        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_V))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+            // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
+            // to cross-tech it
+            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+            if (atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+        }
+        // check for Artemis IV Proto Type
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_PROTO))
+                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+            if (atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+            current_av = current_av + bonus;
+        }
+
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
-            current_av = Math.floor(0.6 * current_av);            
+            current_av = Math.floor(0.6 * current_av);
+        } else if (AmmoType.T_ATM == atype.getAmmoType()) {
+            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                current_av = bayWType.getShortAV() / 2;
+            } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                current_av = 1.5 * current_av;
+                if (range > WeaponType.RANGE_SHORT) {
+                    current_av = 0.0;
+                }
+            }
+        } else if (atype.getAmmoType() == AmmoType.T_MML
+                && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+            current_av = 2 * current_av;
+            if (range > WeaponType.RANGE_SHORT) {
+                current_av = 0;
+            }
+        } else if (atype.getAmmoType() == AmmoType.T_AR10) {
+            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                current_av = 4;
+            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                current_av = 3;
+            } else {
+                current_av = 2;
+            }
         }
         return current_av;
     }

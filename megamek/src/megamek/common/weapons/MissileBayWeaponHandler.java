@@ -359,33 +359,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         } // end check for counterfire
         return counterAV;
     } // end getAMSAV
-    
-    @Override
-    protected boolean reportCounterfire(Entity entityTarget, Vector<Report> vPhaseReport) {
         
-        int CounterAV = getCounterAV();
-
-        // Report any AMS bay action.
-        if (amsBayEngaged) {
-            Report r = new Report(3352);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        // Report any Point Defense bay action.
-        if (pdBayEngaged) {
-            Report r = new Report(3353);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        return true;
-    }
-    
     /**
      * Sigh, according to the ruling linked below, when weapon bays are fired at
      * ground targets, they should make one to-hit roll, but the AV of each
@@ -544,10 +518,26 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
         } // End missed-target
         
-        if (reportCounterfire(entityTarget, vPhaseReport)) {
-        	reportCounterfire(entityTarget, vPhaseReport);        	
-        	return false;        	
-        }        
+        int CounterAV = getCounterAV();
+
+        // Report any AMS bay action.
+        if (amsBayEngaged) {
+            r = new Report(3352);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+
+        // Report any Point Defense bay action.
+        if (pdBayEngaged) {
+            r = new Report(3353);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
         if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                 || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
             handleIgnitionDamage(vPhaseReport, bldg, 1);

@@ -136,7 +136,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         av = (int) Math.floor(getBracketingMultiplier() * av);
         
         //Point Defenses engage the missiles still aimed at us
-        counterAV = getCounterAV();
+        counterAV = calcCounterAV();
         av = av - counterAV;
         
         //Apply direct/glancing blow modifiers to the survivors
@@ -246,7 +246,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
    
     // check for AMS and Point Defense Bay fire
     @Override
-    protected int getCounterAV () {
+    protected int calcCounterAV () {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
             return 0;
@@ -356,8 +356,14 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
              
             } //end "for Mounted counter"
         } // end check for counterfire
+        CounterAV = (int) counterAV;
         return counterAV;
     } // end getAMSAV
+    
+    @Override
+    protected int getCounterAV() {
+    	return CounterAV;
+    }
     
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {

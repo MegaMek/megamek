@@ -82,7 +82,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nRange;
     protected int nDamPerHit;
     protected int attackValue;
-    protected int counterAV;
+    protected int CounterAV;
     protected boolean throughFront;
     protected boolean underWater;
     protected boolean announcedEntityFiring = false;
@@ -115,8 +115,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected boolean isStrafingFirstShot = false;
     
+    /**
+     * Calculates the attack value of point defense weapons used against a missile bay attack
+     */    
+    protected int calcCounterAV() {
+    	return 0;
+    }
+    
+    /**
+     * Return the attack value of point defense weapons used against a missile bay attack
+     */ 
     protected int getCounterAV() {
-    	return counterAV;
+    	return CounterAV;
     }
     
     /**
@@ -479,11 +489,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             attackValue = calcAttackValue();
             
 	        // Report any AMS bay action.
-            counterAV = getCounterAV();
+            CounterAV = getCounterAV();
 	        if (amsBayEngaged) {
 	        	r = new Report(3352);
 	        	r.indent();
-	        	r.add(counterAV);
+	        	r.add(CounterAV);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
 	        }
@@ -492,7 +502,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        if (pdBayEngaged) {
 	        	r = new Report(3353);
 	        	r.indent();
-	        	r.add(counterAV);
+	        	r.add(CounterAV);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
 	        }

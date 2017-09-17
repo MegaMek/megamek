@@ -95,7 +95,7 @@ public class BayWeaponHandler extends WeaponHandler {
     }
     
     // Return the attack value of any Point Defense bay weapons
-    protected int getCounterAV() {
+    protected int calcCounterAV() {
     	return 0;
     }
 

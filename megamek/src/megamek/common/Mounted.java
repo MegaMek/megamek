@@ -31,10 +31,10 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
  * This describes equipment mounted on a mech.
@@ -520,6 +520,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             }
             if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                 desc.append(" (Right arm)");
+            }
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
+                desc.append(" (Turret)");
             }
             if (isDWPMounted()) {
                 desc.append(" (DWP)");
@@ -1486,7 +1489,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isBodyMounted() {
-        return baMountLoc == BattleArmor.MOUNT_LOC_BODY;
+        return (baMountLoc == BattleArmor.MOUNT_LOC_BODY)
+                || (baMountLoc == BattleArmor.MOUNT_LOC_TURRET);
     }
 
     public boolean isDWPMounted() {

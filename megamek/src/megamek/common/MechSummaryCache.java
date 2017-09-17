@@ -27,6 +27,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -352,6 +353,20 @@ public class MechSummaryCache {
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());
+        if (TechConstants.convertFromNormalToSimple(e.getTechLevel()) == TechConstants.T_SIMPLE_UNOFFICIAL) {
+            int[] alt = new int[3];
+            Arrays.fill(alt, e.getTechLevel());
+            ms.setAltTypes(alt);
+        } else if (e.isClan()) {
+            ms.setAltTypes(new int[] { TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
+                    TechConstants.T_CLAN_EXPERIMENTAL });
+        } else if (e.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
+            ms.setAltTypes(new int[] { TechConstants.T_INTRO_BOXSET, TechConstants.T_IS_ADVANCED,
+                    TechConstants.T_IS_EXPERIMENTAL });
+        } else {
+            ms.setAltTypes(new int[] { TechConstants.T_IS_TW_NON_BOX, TechConstants.T_IS_ADVANCED,
+                    TechConstants.T_IS_EXPERIMENTAL });
+        }
         ms.setTons(e.getWeight());
         if (e instanceof BattleArmor){
             ms.setTOweight(((BattleArmor)e).getAlternateWeight());
@@ -369,6 +384,8 @@ public class MechSummaryCache {
         e.setUseGeometricBV(false);
         e.setUseReducedOverheatModifierBV(false);
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
+        ms.setAdvancedYear(e.getProductionDate(e.isClan()));
+        ms.setStandardYear(e.getCommonDate(e.isClan()));
         ms.setCost((long) e.getCost(false));
         ms.setUnloadedCost(((long) e.getCost(true)));
         ms.setAlternateCost((int) e.getAlternateCost());

@@ -131,6 +131,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         }
 
         t.autoSetInternal();
+        t.recalculateTechAdvancement();
 
         String[] abbrs = t.getLocationNames();
         for (int loop = 0; loop < t.locations(); loop++) {

@@ -46,7 +46,7 @@ import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
-import megamek.common.weapons.TSEMPWeapon;
+import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
  * This class shows information about a unit that doesn't belong elsewhere.

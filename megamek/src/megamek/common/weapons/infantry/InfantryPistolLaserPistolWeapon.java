@@ -18,33 +18,35 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolLaserPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolLaserPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Pistol";
-        setInternalName(name);
-        addLookupName("InfantryLaserpistol");
-        ammoType = AmmoType.T_NA;
-        cost = 750;
-        bv = 0.64;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.21;
-        infantryRange = 1;
-        introDate = 2210;
-        techLevel.put(2210,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_A,RATING_A};
-        techRating = RATING_D;
-    }
+	public InfantryPistolLaserPistolWeapon() {
+		super();
+
+		name = "Laser Pistol";
+		setInternalName(name);
+		addLookupName("InfantryLaserpistol");
+		ammoType = AmmoType.T_NA;
+		cost = 750;
+		bv = 0.64;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.21;
+		infantryRange = 1;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_D)
+				.setAvailability(RATING_B, RATING_A, RATING_A, RATING_B);
+
+	}
 }

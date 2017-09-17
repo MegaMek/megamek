@@ -18,40 +18,41 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportFiredrakeNeedlerWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Needler, Support (Firedrake)";
-        setInternalName(name);
-        addLookupName("InfantryFiredrake");
-        addLookupName("InfantrySupportNeedler");
-        addLookupName("Infantry Firedrake Needler");
-        ammoType = AmmoType.T_NA;
-        cost = 500;
-        bv = 6.13;
-        // TM and its errata don't say this has the (N) property, but the fluff text does, as does its original entry in Combat Equipment, so I have included it here.
-        //Taharqa: I think we should ask on the forums about this before we make assumptions, removing
-        flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 1.2;
-        infantryRange = 1;
-        crew = 2;
-        introDate = 3061;
-        techLevel.put(3061,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantrySupportFiredrakeNeedlerWeapon() {
+		super();
+
+		name = "Needler, Support (Firedrake)";
+		setInternalName(name);
+		addLookupName("InfantryFiredrake");
+		addLookupName("InfantrySupportNeedler");
+		addLookupName("Infantry Firedrake Needler");
+		ammoType = AmmoType.T_NA;
+		cost = 500;
+		bv = 6.13;
+		flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 1.2;
+		infantryRange = 1;
+		crew = 2;
+		tonnage = .025;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3061, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+
+	}
 }

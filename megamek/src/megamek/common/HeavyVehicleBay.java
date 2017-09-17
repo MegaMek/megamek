@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying vehicles <= 100 tons
+ * aboard large spacecraft and mobile structures
  */
 
 public final class HeavyVehicleBay extends Bay {
@@ -51,6 +51,7 @@ public final class HeavyVehicleBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -67,8 +68,9 @@ public final class HeavyVehicleBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
-        if (unit instanceof Tank) {
+        // Only tanks or vehicle-mode quadvees equal or less than 100 tons
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if (((unit instanceof Tank) || (((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)))) && (unit.getWeight() <= 100)) {
             result = true;
         }
 
@@ -79,8 +81,13 @@ public final class HeavyVehicleBay extends Bay {
         }
 
         // is the door functional
-        if (doors < loadedThisTurn) {
+        if (currentdoors < loadedThisTurn) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (damaged == 1) {
+        	result = false;
         }
 
         // Return our result.
@@ -89,7 +96,7 @@ public final class HeavyVehicleBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Heavy Vehicle Bay (" + getDoors() + " doors) - "
+        return "Heavy Vehicle Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

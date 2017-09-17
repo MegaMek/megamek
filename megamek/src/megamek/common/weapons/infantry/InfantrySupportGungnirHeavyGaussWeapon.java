@@ -18,36 +18,39 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportGungnirHeavyGaussWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Gungnir Heavy Support Gauss Rifle";
-        setInternalName(name);
-        addLookupName("InfantryGungnirHeavySupportGaussRifle");
-        addLookupName("GungnirHeavySupportGaussRifle");
-        ammoType = AmmoType.T_NA;
-        cost = 15000;
-        tonnage = 0.006f;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 1.23;
-        infantryRange = 3;
-        crew = 3;
-        introDate = 3080;
-        techLevel.put(3080,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
-        techRating = RATING_E;
-    }
+	public InfantrySupportGungnirHeavyGaussWeapon() {
+		super();
+
+		name = "Gauss Rifle (Gungnir Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryGungnirHeavySupportGaussRifle");
+		addLookupName("GungnirHeavySupportGaussRifle");
+		ammoType = AmmoType.T_NA;
+		cost = 15000;
+		tonnage = 0.006f;
+		bv = 0.0;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		infantryDamage = 1.23;
+		infantryRange = 3;
+		crew = 3;
+		tonnage = .060;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+
+	}
 }

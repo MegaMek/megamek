@@ -326,8 +326,11 @@ public class TechConstants {
         }
 
         // IS TW stuff can be in any IS unit
-        if ((equipmentTechlevel == T_IS_TW_NON_BOX)
+        if ((equipmentTechlevel == T_IS_TW_NON_BOX 
+                    || equipmentTechlevel == T_TW_ALL
+                    || equipmentTechlevel == T_IS_TW_ALL)
                 && ((entityTechlevel == T_IS_TW_ALL)
+                        || (entityTechlevel == T_IS_TW_NON_BOX)
                         || (entityTechlevel == T_TW_ALL)
                         || (entityTechlevel == T_IS_ADVANCED)
                         || (entityTechlevel == T_IS_EXPERIMENTAL)
@@ -335,7 +338,8 @@ public class TechConstants {
             return true;
         }
         // clan TW stuff can be in any clan
-        if ((equipmentTechlevel == T_CLAN_TW)
+        if ((equipmentTechlevel == T_CLAN_TW
+                    || equipmentTechlevel == T_TW_ALL)
                 && ((entityTechlevel == T_CLAN_TW)
                         || (entityTechlevel == T_CLAN_ADVANCED)
                         || (entityTechlevel == T_CLAN_EXPERIMENTAL)

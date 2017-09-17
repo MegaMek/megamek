@@ -65,10 +65,10 @@ import megamek.common.annotations.StaticWrapper;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
-import megamek.common.weapons.ATMWeapon;
-import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.missiles.ATMWeapon;
+import megamek.common.weapons.missiles.MMLWeapon;
 
 /**
  * FireControl selects which weapons a unit wants to fire and at whom Pay
@@ -968,7 +968,7 @@ public class FireControl {
 
         return toHit;
     }
-    
+
     /**
      * Makes an educated guess as to the to hit modifier by an aerospace unit
      * flying on a ground map doing a strike attack on a unit
@@ -1011,9 +1011,9 @@ public class FireControl {
         if (!weapon.canFire()) {
             return new ToHitData(TH_WEAP_CANNOT_FIRE);
         }
-        
-        // Is the weapon loaded? (ignore this check for bombs)
-        if ((((WeaponType) weapon.getType()).ammoType != AmmoType.T_NA)) {
+
+        // Is the weapon loaded?
+        if (((WeaponType) weapon.getType()).ammoType != AmmoType.T_NA) {
             if (weapon.getLinked() == null) {
                 return new ToHitData(TH_WEAP_NO_AMMO);
             }
@@ -1597,7 +1597,7 @@ public class FireControl {
         if (!assumeUnderFlightPath && !isTargetUnderFlightPath(flightPath, targetState)) {
             return new FiringPlan(target);
         }
-        
+
         FiringPlan myPlan = new FiringPlan(target);
 
         // Shooting isn't possible if one of us isn't on the board.

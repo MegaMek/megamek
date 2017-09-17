@@ -842,7 +842,7 @@ public class EntityListFile {
                 IAero a = (IAero)entity;
                 // fuel
                 output.write(indentStr(indentLvl+1) + "<fuel left=\"");
-                output.write(String.valueOf(a.getFuel()));
+                output.write(String.valueOf(a.getCurrentFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
             }
@@ -898,9 +898,24 @@ public class EntityListFile {
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                // TODO: dropship docking collars, bays
+                //large craft bays and doors. 
+                if ((a instanceof Dropship) || (a instanceof Jumpship)) {
+                	for (Bay nextbay : a.getTransportBays()) {
+                		output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
+                		output.write(CommonConstants.NL);
+                		if (nextbay.getBayDamaged() == 0) {
+                			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"false\"/>\n");
+                		} else if (nextbay.getBayDamaged() == 1) {
+                			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"true\"/>\n");
+                		}
+                		output.write(indentStr(indentLvl+1) + "<BayDoors doors=\"" + nextbay.getCurrentDoors() + "\"/>");
+                		output.write(CommonConstants.NL);
+                		output.write(indentStr(indentLvl+1) + "</TransportBay>");
+                		output.write(CommonConstants.NL);
+                	}
+                }
 
-                // large craft stuff
+                // jumpship, warship and space station stuff
                 if (a instanceof Jumpship) {
                     Jumpship j = (Jumpship) a;
 
@@ -917,8 +932,14 @@ public class EntityListFile {
                     output.write(CommonConstants.NL);
                 }
 
-                // crits
+                // general aero crits
                 output.write(EntityListFile.getAeroCritString(a));
+                
+                // dropship only crits
+                if (a instanceof Dropship) {
+                	Dropship d = (Dropship) a;
+                	output.write(EntityListFile.getDropshipCritString(d));
+                }
 
             }
 
@@ -1155,7 +1176,7 @@ public class EntityListFile {
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
-
+    
     // Aero crits
     private static String getAeroCritString(Aero a) {
 
@@ -1216,8 +1237,31 @@ public class EntityListFile {
         return retVal;
 
     }
+    // Dropship crits
+    private static String getDropshipCritString(Dropship a) {
+    	String retVal = "      <dcriticals";
+    	String critVal = "";
+    	
+    	//crits
+    	if (a.isDockCollarDamaged()) {
+    		critVal = critVal.concat(" dockingcollar=\"none\"");
+    	}
+    	if (a.isKFBoomDamaged()) {
+    		critVal = critVal.concat(" kfboom=\"none\"");
+    	}
+    	
+        if (!critVal.equals("")) {
+            // then add beginning and end
+            retVal = retVal.concat(critVal);
+            retVal = retVal.concat("/>\n");
+        } else {
+            return critVal;
+        }
 
-    // Aero crits
+        return retVal;
+    }
+
+    // Tank crits
     private static String getTankCritString(Tank t) {
 
         String retVal = "      <tcriticals";

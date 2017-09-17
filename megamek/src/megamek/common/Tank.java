@@ -25,8 +25,8 @@ import java.util.Vector;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;
-import megamek.common.weapons.CLChemicalLaserWeapon;
-import megamek.common.weapons.VehicleFlamerWeapon;
+import megamek.common.weapons.flamers.VehicleFlamerWeapon;
+import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 /**
  * You know what tanks are, silly.
@@ -205,7 +205,32 @@ public class Tank extends Entity {
     public void setMotivePenalty(int p) {
         motivePenalty = p;
     }
+    
+    private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
+            .setTechRating(RATING_E).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_COMBAT_VEHICLE;
+    }
+    
+    //Advanced turrets
+    public static TechAdvancement getDualTurretTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, 3080, 3080).setApproximate(false, true, false)
+                .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
 
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        if (!hasNoDualTurret()) {
+            ctl.addComponent(getDualTurretTA());
+        }
+    }
+    
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
@@ -1524,7 +1549,12 @@ public class Tank extends Entity {
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
-                    bvText.append(" x 1.2 Artemis");
+                    bvText.append(" x 1.2 Artemis IV");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.1;
+                    bvText.append(" x 1.1 Artemis IV Prototype");
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
@@ -2257,6 +2287,13 @@ public class Tank extends Entity {
      * @return suspension factor of vehicle
      */
     public int getSuspensionFactor() {
+        return getSuspensionFactor(getMovementMode(), weight);
+    }
+    
+    /**
+     * Static method to calculate suspension factor without needing a vehicle
+     */
+    public static int getSuspensionFactor(EntityMovementMode movementMode, double weight) {
         switch (movementMode) {
             case HOVER:
                 if (weight <= 10) {
@@ -3327,6 +3364,11 @@ public class Tank extends Entity {
                 } else {
                     continue;
                 }
+            }
+            if ((mount.getType() instanceof MiscType)
+                    && mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                // Only one slot for all jump jets, added later.
+                continue;
             }
             if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(

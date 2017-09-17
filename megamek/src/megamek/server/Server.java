@@ -238,15 +238,15 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.BPodWeapon;
-import megamek.common.weapons.HVACWeapon;
-import megamek.common.weapons.MPodWeapon;
-import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TAGHandler;
-import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.defensivepods.BPodWeapon;
+import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
@@ -6133,7 +6133,9 @@ public class Server implements Runnable {
      * @param curPos    The coordinates of the hex in which the maneuver was attempted.
      * @param turnDirection The difference between the intended final facing and the starting facing
      *                      (-1 for left turn, 1 for right turn, 0 for not turning).
-     * @param prevStep  The <code>MoveStep</code> immediately preceding the one being processes.
+     * @param prevStep  The <code>MoveStep</code> immediately preceding the one being processed.
+     *                  Cannot be null; if the check is made for the first step of the path,
+     *                  use the current step.
      * @param lastStepMoveType  The <code>EntityMovementType</code> of the last step in the path.
      * @param distance  The distance moved so far during the phase; used to calculate any potential skid.
      * @param modifier  The modifier to the maneuver failure roll.
@@ -6257,12 +6259,12 @@ public class Server implements Runnable {
                 skidDistance = Math.min(marginOfFailure, distance);
             }
             if (skidDistance > 0) {
-                int skidDirection = prevStep == null?entity.getFacing() : prevStep.getFacing();
+                int skidDirection = prevStep.getFacing();
                 if (isBackwards) {
                     skidDirection = (skidDirection + 3) % 6;
                 }
                 processSkid(entity, curPos,
-                        prevStep == null? entity.getElevation() : prevStep.getElevation(),
+                        prevStep.getElevation(),
                         skidDirection, skidDistance,
                         prevStep, lastStepMoveType, flip);
             }
@@ -7303,7 +7305,9 @@ public class Server implements Runnable {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                             curPos, rollTarget, false);
                     if (mof > 0) {
-                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                        // Since this is the first step, we don't have a previous step so we'll pass
+                        // this one in case it's needed to process a skid.
+                        if (processFailedVehicleManeuver(entity, curPos, 0, step, step.isThisStepBackwards(),
                                 lastStepMoveType, distance, 2, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
@@ -7339,7 +7343,7 @@ public class Server implements Runnable {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                             curPos, rollTarget, false);
                     if (mof > 0) {
-                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                        if (processFailedVehicleManeuver(entity, curPos, 0, step, step.isThisStepBackwards(),
                                 lastStepMoveType, distance, 2, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
@@ -7664,7 +7668,7 @@ public class Server implements Runnable {
                         // of fighters to doors beyond the launch rate. The most
                         // sensible thing
                         // is probably to distribute them evenly.
-                        int doors = currentBay.getDoors();
+                        int doors = currentBay.getCurrentDoors();
                         int[] distribution = new int[doors];
                         for (int l = 0; l < nLaunched; l++) {
                             distribution[l % doors] = distribution[l % doors]
@@ -8105,8 +8109,11 @@ public class Server implements Runnable {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                             curPos, rollTarget, false);
                     if (mof > 0) {
-                        if (processFailedVehicleManeuver(entity, curPos, step.getFacing() - curFacing,
-                                prevStep, step.isThisStepBackwards(), lastStepMoveType, distance, mof, mof)) {
+                        if (processFailedVehicleManeuver(entity, curPos,
+                                step.getFacing() - curFacing,
+                                (null == prevStep)?step : prevStep,
+                                        step.isThisStepBackwards(),
+                                        lastStepMoveType, distance, mof, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
                             } else {
@@ -8134,7 +8141,8 @@ public class Server implements Runnable {
                         curPos, curPos, rollTarget, false);
                 if (mof > 0) {
                     // If the bootlegger maneuver fails, we treat it as a turn in a random direction.
-                    processFailedVehicleManeuver(entity, curPos, Compute.d6() < 4? -1 : 1, prevStep,
+                    processFailedVehicleManeuver(entity, curPos, Compute.d6() < 4? -1 : 1,
+                            (null == prevStep)? step : prevStep,
                             step.isThisStepBackwards(), lastStepMoveType, distance, 2, mof);
                     curFacing = entity.getFacing();
                     curPos = entity.getPosition();
@@ -26167,9 +26175,12 @@ public class Server implements Runnable {
             case Aero.CRIT_KF_BOOM:
                 // KF boom hit
                 // no real effect yet
+            	if (aero instanceof Dropship) {
+            		((Dropship)aero).setDamageKFBoom(true);
                 r = new Report(9180);
                 r.subject = aero.getId();
                 reports.add(r);
+            	}
                 break;
             case Aero.CRIT_CIC:
                 if (js == null) {

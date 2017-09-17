@@ -427,9 +427,9 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             IAero a = (IAero) en;
             curMoveR.setString(Integer.toString(a.getCurrentVelocity())
                     + Messages.getString("GeneralInfoMapSet.velocity"));
-            int currentFuel = a.getFuel();
+            int currentFuel = a.getCurrentFuel();
             int safeThrust = en.getWalkMP();
-            fuelR.setString(Integer.toString(a.getFuel()));
+            fuelR.setString(Integer.toString(a.getCurrentFuel()));
             if (currentFuel < (5 * safeThrust)) {
                 fuelR.setColor(Color.red);
             } else if (currentFuel < (10 * safeThrust)) {

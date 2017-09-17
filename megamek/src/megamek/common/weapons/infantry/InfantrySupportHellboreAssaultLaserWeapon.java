@@ -18,36 +18,39 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Laser (Hellbore Assault)";
-        setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
-        ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
-        techRating = RATING_E;
-    }
+	public InfantrySupportHellboreAssaultLaserWeapon() {
+		super();
+
+		name = "Laser (Hellbore Assault)";
+		setInternalName(name);
+		addLookupName("InfantryHellbore");
+		addLookupName("InfantryHellboreAssaultLaser");
+		addLookupName("Infantry Hellbore Assault Laser");
+		ammoType = AmmoType.T_NA;
+		cost = 2500;
+		bv = 3.22;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+		infantryDamage = 0.63;
+		infantryRange = 2;
+		crew = 1;
+		tonnage = .020;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3058, 3062, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_CS)
+		        .setProductionFactions(F_CS).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

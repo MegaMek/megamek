@@ -17,8 +17,8 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.TAGWeapon;
+import megamek.common.TechAdvancement;
+import megamek.common.weapons.tag.TAGWeapon;
 
 
 /**
@@ -34,11 +34,10 @@ public class ISBALightTAG extends TAGWeapon {
 
     public ISBALightTAG() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        this.name = "Light TAG";
+        this.name = "TAG (Light)";
         setInternalName("ISBALightTAG");
         this.addLookupName("IS BA Light TAG");
-        this.tonnage = 0.035f;
+        this.tonnage = 0.035;
         this.criticals = 1;
         this.hittable = true;
         this.spreadable = false;
@@ -50,10 +49,13 @@ public class ISBALightTAG extends TAGWeapon {
         this.extremeRange = 12;
         this.bv = 0;
         this.cost = 40000;
-        introDate = 3053;
-        techLevel.put(3053, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "270,TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3046, 3053, 3057);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }
+
+//Commented out in Weapontype. Clan version is same stats as IS one. And Clan versions captures Tech progression for both.

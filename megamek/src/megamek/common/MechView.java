@@ -30,7 +30,7 @@ import java.util.Iterator;
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * A utility class for retrieving mech information in a formatted string.
@@ -48,7 +48,9 @@ public class MechView {
     private boolean isFixedWingSupport;
     private boolean isSquadron;
     private boolean isSmallCraft;
+    private boolean isDropship;
     private boolean isJumpship;
+    private boolean isWarship;
     private boolean isSpaceStation;
 
     StringBuffer sHead = new StringBuffer();
@@ -72,7 +74,9 @@ public class MechView {
         isFixedWingSupport = entity instanceof FixedWingSupport;
         isSquadron = entity instanceof FighterSquadron;
         isSmallCraft = entity instanceof SmallCraft;
+        isDropship = entity instanceof Dropship;
         isJumpship = entity instanceof Jumpship;
+        isWarship = entity instanceof Warship;
         isSpaceStation = entity instanceof SpaceStation;
 
         sLoadout.append(getWeapons(showDetail)).append("<br>"); //$NON-NLS-1$
@@ -121,10 +125,12 @@ public class MechView {
         sHead.append("<font size=+1><b>" + entity.getShortNameRaw()
                 + "</b></font>");
         sHead.append("<br>"); //$NON-NLS-1$
+        sHead.append(Messages.getString("MechView.BaseTechLevel"));
         if (!entity.isDesignValid()) {
             sHead.append(Messages.getString("MechView.DesignInvalid"));
             sHead.append("<br>"); //$NON-NLS-1$
         }
+        sHead.append(entity.getStaticTechLevel().toString());
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
                 sHead.append(Messages.getString("MechView.MixedClan"));
@@ -132,10 +138,40 @@ public class MechView {
                 sHead.append(Messages.getString("MechView.MixedIS"));
             }
         } else {
-            sHead.append(TechConstants.getLevelDisplayableName(entity
-                    .getTechLevel()));
+            if (entity.isClan()) {
+                sHead.append(Messages.getString("MechView.Clan"));
+            } else {
+                sHead.append(Messages.getString("MechView.IS"));
+            }
         }
         sHead.append("<br>"); //$NON-NLS-1$
+        
+        sHead.append("<table cellspacing=0 cellpadding=1 border=0>");
+        sHead.append(String.format("<tr><th align='left'>%s</th><th align='center'>%s</th></tr>", //$NON-NLS-1$//
+                Messages.getString("MechView.Level"), Messages.getString("MechView.Era"))); //$NON-NLS-1$//
+        sHead.append(String.format("<tr><td>%s</td><td align='center'>%s</td></tr>", //$NON-NLS-1$//
+                TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_EXPERIMENTAL),
+                entity.getExperimentalRange()));
+        sHead.append(String.format("<tr><td>%s</td><td align='center'>%s</td></tr>", //$NON-NLS-1$//
+                TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_ADVANCED),
+                entity.getAdvancedRange()));
+        sHead.append(String.format("<tr><td>%s</td><td align='center'>%s</td></tr>", //$NON-NLS-1$//
+                TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_STANDARD),
+                entity.getStandardRange()));
+        String extinctRange = entity.getExtinctionRange();
+        if (extinctRange.length() > 1) {
+            sHead.append(String.format("<tr><td>%s</td><td align='center'>%s", //$NON-NLS-1$//
+                    Messages.getString("MechView.Extinct"), //$NON-NLS-1$//
+                    extinctRange));
+            sHead.append("</td></tr>"); //$NON-NLS-1$//
+        }
+        sHead.append("</td><br/>"); //$NON-NLS-1$//
+        sHead.append("<br/>");                //$NON-NLS-1$//
+            
+        sHead.append(Messages.getString("MechView.TechRating")).append(": ") //$NON-NLS-1$//
+            .append(entity.getFullRatingName())
+            .append("<br/>");
+            
         if (!isInf) {
             sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
@@ -317,6 +353,22 @@ public class MechView {
             sBasic.append("<br><br>System Damage: <font color='red'>"
                     + ((Aero) entity).getCritDamageString() + "</font>");
         }
+        
+        //Display Strategic Fuel Use for Small Craft and up
+        if (isSmallCraft) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((SmallCraft) entity).getStrategicFuelUse());
+        } else if (isDropship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((Dropship) entity).getStrategicFuelUse());
+        } else if (isJumpship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((Jumpship) entity).getStrategicFuelUse());
+        } else if (isWarship) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        					+ ((Warship) entity).getStrategicFuelUse());
+        }
+        
 
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {

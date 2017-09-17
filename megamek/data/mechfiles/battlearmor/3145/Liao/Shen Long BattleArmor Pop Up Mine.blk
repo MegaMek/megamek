@@ -45,10 +45,9 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-ISBAHeavyGrenadeLauncher:Body
-ISBAHeavyGrenadeLauncher:Body
-BAMineLauncher:Body
-BA-Mine Launcher Ammo:Body:Shots4#
+CLBAHeavyGrenadeLauncher:TU
+CLBAHeavyGrenadeLauncher:TU
+BAMineLauncher:TU
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -70,6 +69,10 @@ TRO 3145 Capellan Confederation - Early Republic
 <chassis>
 quad
 </chassis>
+
+<turret>
+Modular:4
+</turret>
 
 <jumpingMP>
 0

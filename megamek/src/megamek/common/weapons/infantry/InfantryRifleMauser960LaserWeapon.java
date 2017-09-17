@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMauser960LaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Laser Rifle (Mauser 960)";
-        setInternalName(name);
-        addLookupName("InfantryMauser960");
-        addLookupName("Mauser 960 Assault System");
-        ammoType = AmmoType.T_NA;
-        cost = 8000;
-        bv = 4.75;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.93;
-        infantryRange = 2;
-        introDate = 2700;
-        techLevel.put(2700,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_F,RATING_D};
-        techRating = RATING_E;
-    }
+	public InfantryRifleMauser960LaserWeapon() {
+		super();
+
+		name = "Laser Rifle (Mauser 960)";
+		setInternalName(name);
+		addLookupName("InfantryMauser960");
+		addLookupName("Mauser 960 Assault System");
+		ammoType = AmmoType.T_NA;
+		cost = 8000;
+		bv = 4.75;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.93;
+		infantryRange = 2;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2698, 2700, 2710, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2698, 2700, 2710, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setTechRating(RATING_E)
+		        .setAvailability(RATING_C, RATING_F, RATING_D, RATING_E);
+
+	}
 }

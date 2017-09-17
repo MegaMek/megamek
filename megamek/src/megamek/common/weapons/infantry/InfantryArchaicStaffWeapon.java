@@ -18,33 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryArchaicStaffWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicStaffWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Staff";
-        setInternalName(name);
-        addLookupName("InfantryStaff");
-        ammoType = AmmoType.T_NA;
-        cost = 5;
-        bv = 0.04;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.04;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
-        techRating = RATING_A;
-    }
+	public InfantryArchaicStaffWeapon() {
+		super();
+
+		name = "Staff (Unofficial)";
+		// IO Combines this weapon into the Polearm Weapon
+		setInternalName(name);
+		addLookupName("InfantryStaff");
+		ammoType = AmmoType.T_NA;
+		cost = 5;
+		bv = 0.04;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+		infantryDamage = 0.04;
+		infantryRange = 0;
+		rulesRefs = " 272,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+
+	}
 }

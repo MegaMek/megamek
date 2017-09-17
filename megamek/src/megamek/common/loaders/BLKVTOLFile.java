@@ -133,6 +133,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         }
 
         t.autoSetInternal();
+        t.recalculateTechAdvancement();
 
         loadEquipment(t, "Front", Tank.LOC_FRONT);
         loadEquipment(t, "Right", Tank.LOC_RIGHT);

@@ -47,6 +47,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -990,6 +991,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // send change to the server
         int nMode = m.switchMode(forward);
+        // BattleArmor can fire popup-mine launchers individually. The mode determines
+        // how many will be fired, but we don't want to set the mode higher than the
+        // number of troopers in the squad.
+        if ((ce() instanceof BattleArmor)
+                && (m.getType() instanceof WeaponType)
+                && ((WeaponType)m.getType()).hasFlag(WeaponType.F_BA_INDIVIDUAL)
+                && (m.curMode().getName().contains("-shot"))
+                && (Integer.parseInt(m.curMode().getName().replace("-shot", "")) > ce().getTotalInternal())) {
+            m.setMode(0);
+        }
         clientgui.getClient().sendModeChange(cen, wn, nMode);
 
         // notify the player

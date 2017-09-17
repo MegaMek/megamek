@@ -43,7 +43,6 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
-import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
@@ -504,7 +503,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         boolean isAero = ce().isAero();
         boolean isVTOL = ce() instanceof VTOL;
         boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
-        boolean isTankOnPavement = (ce() instanceof Tank)
+        boolean isTankOnPavement = ((ce().getEntityType() & Entity.ETYPE_TANK) == Entity.ETYPE_TANK)
+                && !((ce().getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT)
                 && (deployhex.containsTerrain(Terrains.PAVEMENT)
                         || deployhex.containsTerrain(Terrains.ROAD)
                         || deployhex.containsTerrain(Terrains.BRIDGE_ELEV));

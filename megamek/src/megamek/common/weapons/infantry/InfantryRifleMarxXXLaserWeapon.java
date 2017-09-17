@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMarxXXLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Rifle (Marx XX)";
-        setInternalName(name);
-        addLookupName("InfantryMarxXXLaser");
-        addLookupName("Marx XX Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 1750;
-        bv = 1.86;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.26;
-        infantryRange = 3;
-        introDate = 2690;
-        techLevel.put(2690,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_E,RATING_D};
-        techRating = RATING_D;
-    }
+	public InfantryRifleMarxXXLaserWeapon() {
+		super();
+
+		name = "Laser Rifle (Marx XX)";
+		setInternalName(name);
+		addLookupName("InfantryMarxXXLaser");
+		addLookupName("Marx XX Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 1750;
+		bv = 1.86;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.26;
+		infantryRange = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2685, 2670, 2690, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setTechRating(RATING_D)
+		        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+
+	}
 }

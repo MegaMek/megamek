@@ -18,35 +18,39 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryGrenadeMiniInfernoWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Grenade (Mini) (Inferno)";
-        setInternalName(name);
-        addLookupName("InfantryMiniInfernoGrenade");
-        addLookupName("Mini Inferno Grenades");
-        ammoType = AmmoType.T_NA;
-        cost = 8;
-        bv = 0.10;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 0.11;
-        infantryRange = 0;
-        introDate = 2380;
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
-    }
+	public InfantryGrenadeMiniInfernoWeapon() {
+		super();
+
+		name = "Grenade (Mini) (Inferno)";
+		setInternalName(name);
+		addLookupName("InfantryMiniInfernoGrenade");
+		addLookupName("Mini Inferno Grenades");
+		ammoType = AmmoType.T_NA;
+		cost = 8;
+		bv = 0.10;
+		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 0.11;
+		infantryRange = 0;
+		// very hackish - using some data from Inferno Fuel.
+		rulesRefs = " 272,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+
+	}
 }

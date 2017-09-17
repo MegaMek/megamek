@@ -58,6 +58,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
@@ -547,9 +548,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
             
             // Check to see if the tech level of the equipment is legal
-            if (!TechConstants.isLegal(entity.getTechLevel(), 
-                    eq.getTechLevel(entity.getTechLevelYear()), false,
-                    entity.isMixedTech())){
+            if (!eq.isLegal(entity.getTechLevelYear(), entity.getTechLevel(), entity.isMixedTech())) {
                 continue;
             }
             
@@ -614,7 +613,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
-        boolean isClan = entity.isClan();
 
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
@@ -640,10 +638,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             for (AmmoType atCheck : vAllTypes) {
-                int atTechLvl = atCheck.getTechLevel(gameYear);
-                int legalLevel = TechConstants.getGameTechLevel(game, isClan);
-                boolean bTechMatch = TechConstants.isLegal(legalLevel,
-                        atTechLvl, true, entity.isMixedTech());
+                SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
+                boolean bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
+                        entity.isMixedTech());
 
                 // If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo.
@@ -1359,15 +1356,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             public void initialize() {
                 inf = (Infantry) entity;
                 
-                int gameTechLevel = TechConstants.getGameTechLevel(client.getGame(),
-                		entity.isClan());
+                SimpleTechLevel gameTechLevel = SimpleTechLevel.getGameTechLevel(client.getGame());
                 int year = client.getGame().getOptions().intOption("year");
                 for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
                 	final EquipmentType et = e.nextElement();
                 	if (et.hasFlag(MiscType.F_ARMOR_KIT)
-                			&& et.isAvailableIn(year)
-                			&& TechConstants.isLegal(gameTechLevel,
-                					et.getTechLevel(year), entity.isMixedTech())) {
+                	        && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech())) {
                 		armorKits.add(et);
                 	}
                 }

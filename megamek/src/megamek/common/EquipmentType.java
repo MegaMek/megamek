@@ -21,21 +21,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.options.GameOptions;
-import megamek.common.weapons.BPodWeapon;
-import megamek.common.weapons.HVACWeapon;
-import megamek.common.weapons.MPodWeapon;
-import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.defensivepods.BPodWeapon;
+import megamek.common.weapons.defensivepods.MPodWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.Server;
 
 /**
@@ -45,7 +42,7 @@ import megamek.server.Server;
  * @author Ben
  * @version
  */
-public class EquipmentType {
+public class EquipmentType implements ITechnology {
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
@@ -91,6 +88,7 @@ public class EquipmentType {
     public final static int T_ARMOR_BA_MIMETIC = 36;
     public final static int T_ARMOR_BA_REFLECTIVE = 37;
     public final static int T_ARMOR_BA_REACTIVE = 38;
+    public static final int T_ARMOR_PRIMITIVE_AERO = 39;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -113,10 +111,11 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "BA Standard",
+            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
-            "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Reflective", "BA Reactive"};
+            "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
+            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
+            "Primitive Aero"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
@@ -128,39 +127,21 @@ public class EquipmentType {
             1600, 3200 };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts = { 10000, 20000, 30000, 30000,
-            15000, 15000, 25000, /* patchwork */0, 50000, 60000, 3000, 75000,
-            100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000, 25000,
-            15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
-            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000 };
+    public static final double[] armorCosts = {
+            10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
+            3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
+            25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
+            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000 };
 
-    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
-            1.06, 1.24, 1, 1, 1.12, 1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875,
-            0.67, 1, 1.12, 1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8,
-            1.6, 0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96 };
+    public static final double[] armorPointMultipliers = {
+            1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
+            1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
+            1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
+            0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67 };
 
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
-
-    public static final int RATING_A = 0;
-    public static final int RATING_B = 1;
-    public static final int RATING_C = 2;
-    public static final int RATING_D = 3;
-    public static final int RATING_E = 4;
-    public static final int RATING_F = 5;
-    public static final int RATING_X = 6;
-
-    public static final int ERA_SL = 0;
-    public static final int ERA_SW = 1;
-    public static final int ERA_CLAN = 2;
-    public static final int ERA_DA = 3;
-
-    public static final int DATE_NONE = -1;
-
-    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F",
-            "X" };
-
 
     protected String name = null;
 
@@ -182,7 +163,9 @@ public class EquipmentType {
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
-    protected Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
+//    protected Map<Integer,Integer> techLevel = new HashMap<>();
+    
+    protected TechAdvancement techAdvancement = new TechAdvancement();
 
     protected BigInteger flags = BigInteger.valueOf(0);
 
@@ -193,13 +176,6 @@ public class EquipmentType {
 
     // For equipment that cannot be pod-mounted on an omni unit
     protected boolean omniFixedOnly = false;
-
-    // fluffy stuff
-    protected int techRating = RATING_C;
-    protected int[] availRating = { RATING_E, RATING_E, RATING_E, RATING_E };
-    protected int introDate = DATE_NONE;
-    protected int extinctDate = DATE_NONE;
-    protected int reintroDate = DATE_NONE;
 
     /**
      * what modes can this equipment be in?
@@ -266,26 +242,63 @@ public class EquipmentType {
     public String getInternalName() {
         return internalName;
     }
+    
+    public String getRulesRefs() {
+        return rulesRefs;
+    }
 
+    /**
+     * @deprecated The old tech progression system has been replaced by the TechAdvancement class.
+     */
+    @Deprecated
     public Map<Integer, Integer> getTechLevels() {
+        Map<Integer,Integer> techLevel = new HashMap<>();
+        if (isUnofficial()) {
+            if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
+                techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
+            } else {
+                techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
+            }
+            return techLevel;
+        }
+        if (techAdvancement.getPrototypeDate(true) > 0) {
+            techLevel.put(techAdvancement.getPrototypeDate(true), TechConstants.T_CLAN_EXPERIMENTAL);
+        }
+        if (techAdvancement.getPrototypeDate(false) > 0) {
+            techLevel.put(techAdvancement.getPrototypeDate(false), TechConstants.T_IS_EXPERIMENTAL);
+        }
+        if (techAdvancement.getProductionDate(true) > 0) {
+            techLevel.put(techAdvancement.getProductionDate(true), TechConstants.T_CLAN_ADVANCED);
+        }
+        if (techAdvancement.getProductionDate(false) > 0) {
+            techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
+        }
+        if (techAdvancement.getTechBase() == TECH_BASE_ALL
+                && techAdvancement.getCommonDate() > 0) {
+            techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
+        } else if (techAdvancement.getCommonDate(true) > 0) {
+            techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
+        } else if (techAdvancement.getCommonDate(false) > 0) {
+            techLevel.put(techAdvancement.getCommonDate(false),
+                    isIntroLevel()? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
+        }
         return techLevel;
     }
 
     public int getTechLevel(int date) {
-        if (techLevel.containsKey(date)) {
-            return techLevel.get(date);
+        return techAdvancement.getTechLevel(date);
+    }
+    
+    public int getTechLevel(int date, boolean clan) {
+        return techAdvancement.getTechLevel(date, clan);
+    }
+    
+    public SimpleTechLevel getStaticTechLevel() {
+        if (null != techAdvancement.getStaticTechLevel()) {
+            return techAdvancement.getStaticTechLevel();
         } else {
-            List<Integer> introdates = new ArrayList<Integer>(
-                    techLevel.keySet());
-            Collections.sort(introdates);
-            Collections.reverse(introdates);
-            for (Integer introdate : introdates) {
-                if (introdate <= date) {
-                    return techLevel.get(introdate);
-                }
-            }
+            return techAdvancement.guessStaticTechLevel(rulesRefs);
         }
-        return TechConstants.T_TECH_UNKNOWN;
     }
 
     public double getTonnage(Entity entity) {
@@ -608,6 +621,12 @@ public class EquipmentType {
             AmmoType.initializeTypes();
             MiscType.initializeTypes();
             BombType.initializeTypes();
+            for (EquipmentType et : allTypes) {
+                if (et.getTechAdvancement().getStaticTechLevel() == null) {
+                    et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()
+                            .guessStaticTechLevel(et.getRulesRefs()));
+                }
+            }
         }
     }
 
@@ -698,7 +717,7 @@ public class EquipmentType {
             if (isClan) {
                 return 0.035;
             }
-            return 0.06f;
+            return 0.06;
         case T_ARMOR_BA_STEALTH_BASIC:
             if (isClan) {
                 return 0.03;
@@ -735,6 +754,47 @@ public class EquipmentType {
             return 0.05;
         }
     }
+    
+    /* Armor and structure are stored as integers and standard uses a generic MiscType that
+     * does not have its own TechAdvancement.
+     */
+
+    protected final static TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false).setIntroLevel(true)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    protected final static TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+
+    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
+        if (at == T_ARMOR_STANDARD) {
+            return TA_STANDARD_ARMOR;
+        }
+        String armorName = EquipmentType.getArmorTypeName(at, clan);
+        EquipmentType armor = EquipmentType.get(armorName);
+        if (armor != null) {
+            return armor.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
+
+    public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
+        if (at == T_STRUCTURE_STANDARD) {
+            return TA_STANDARD_STRUCTURE;
+        }
+        String structureName = EquipmentType.getStructureTypeName(at, clan);
+        EquipmentType structure = EquipmentType.get(structureName);
+        if (structure != null) {
+            return structure.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
 
     /**
      * @return The C-Bill cost of the piece of equipment.
@@ -747,61 +807,44 @@ public class EquipmentType {
         return cost;
     }
 
-    public static String getRatingName(int rating) {
-        if ((rating < 0) || (rating > ratingNames.length)) {
-            return "U";
-        }
-        return ratingNames[rating];
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
     }
 
     public int getTechRating() {
-        return techRating;
+        return techAdvancement.getTechRating();
     }
 
-    public String getTechRatingName() {
-        return EquipmentType.getRatingName(getTechRating());
-    }
-
-    public String getFullRatingName() {
-        String rating = getTechRatingName();
-        rating += "/";
-        rating += getAvailabilityName(ERA_SL);
-        rating += "-";
-        rating += getAvailabilityName(ERA_SW);
-        rating += "-";
-        rating += getAvailabilityName(ERA_CLAN);
-        rating += "-";
-        rating += getAvailabilityName(ERA_DA);
-        return rating;
-    }
-
+    /**
+     * @deprecated Use {@link #calcEraAvailability(int,boolean) calcEraAvailability to get availability
+     *      for IS/Clan in a given year, or {@link #getBaseAvailability(int) getBaseAvailability}
+     *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
+     */
+    @Deprecated
     public int getAvailability(int era) {
-        if ((era < 0) || (era > ERA_DA)) {
-            return RATING_X;
-        }
-    // If the avail ratings don't list the era, assume RATING_X
-        if (availRating.length <= era) {
-            return RATING_X;
-        }
-        
-        return availRating[era];
+        return calcEraAvailability(era);
     }
 
+    /**
+     * @deprecated Use {@link #getYearAvailabilityName(int,boolean) getYearAvailabilityName}
+     *      to get availability for IS or Clan in a specific year,
+     *      or {@link #getEraAvailabilityName(int) getEraAvailabilityName to get code(s) for the era.
+     */
+    @Deprecated
     public String getAvailabilityName(int era) {
-        int avail = getAvailability(era);
-        return EquipmentType.getRatingName(avail);
+        return getEraAvailabilityName(era);
     }
-
-    public int getIntroductionDate() {
-        return introDate;
+    
+    public boolean isClan() {
+        return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }
-
-    public int getExtinctionDate() {
-        return extinctDate;
+    
+    public boolean isMixedTech() {
+        return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
-
-    public int getReintruductionDate() {
-        return reintroDate;
+    
+    public int getTechBase() {
+        return techAdvancement.getTechBase();
     }
 
     public static String getEquipDateAsString(int date) {
@@ -812,18 +855,50 @@ public class EquipmentType {
         }
 
     }
+    
+    @Override
+    public int getIntroductionDate(boolean clan) {
+        return techAdvancement.getIntroductionDate(clan);
+    }
+    
+    @Override
+    public int getIntroductionDate() {
+        return techAdvancement.getIntroductionDate();
+    }
+    
+    @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return techAdvancement.getIntroductionDate(clan, faction);
+    }
 
-    public boolean isAvailableIn(int year) {
-        if (year < introDate) {
-            return false;
-        }
-        if ((extinctDate == DATE_NONE) || (year < extinctDate)) {
-            return true;
-        }
-        if ((reintroDate == DATE_NONE) || (year < reintroDate)) {
-            return false;
-        }
-        return true;
+    @Override
+    public int getExtinctionDate(boolean clan) {
+        return techAdvancement.getExtinctionDate(clan);
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        return techAdvancement.getExtinctionDate();
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return techAdvancement.getExtinctionDate(clan, faction);
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan) {
+        return techAdvancement.getReintroductionDate(clan);
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return techAdvancement.getReintroductionDate();
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return techAdvancement.getReintroductionDate(clan, faction);
     }
 
     public static double getArmorCost(int inArmor) {
@@ -981,7 +1056,7 @@ public class EquipmentType {
                 w.write(",");
                 w.write(getEquipDateAsString(type.getExtinctionDate()));
                 w.write(",");
-                w.write(getEquipDateAsString(type.getReintruductionDate()));
+                w.write(getEquipDateAsString(type.getReintroductionDate()));
                 w.write(",");
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");
@@ -1041,5 +1116,45 @@ public class EquipmentType {
         }
 
         return shortName;
+    }
+
+    @Override
+    public boolean isIntroLevel() {
+        return techAdvancement.isIntroLevel();
+    }
+
+    @Override
+    public boolean isUnofficial() {
+        return techAdvancement.isUnofficial();
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return techAdvancement.getPrototypeDate();
+    }
+
+    @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return techAdvancement.getPrototypeDate(clan, faction);
+    }
+
+    @Override
+    public int getProductionDate() {
+        return techAdvancement.getProductionDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return techAdvancement.getProductionDate(clan, faction);
+    }
+
+    @Override
+    public int getCommonDate() {
+        return techAdvancement.getCommonDate();
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        return techAdvancement.getBaseAvailability(era);
     }
 }

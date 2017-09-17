@@ -18,8 +18,8 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
-import megamek.common.weapons.PPCWeapon;
+import megamek.common.TechAdvancement;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -35,7 +35,6 @@ public class ISBASupportPPC extends PPCWeapon {
      */
     public ISBASupportPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Support PPC";
         setInternalName("ISBASupportPPC");
         addLookupName("IS BA Support PPC");
@@ -45,15 +44,21 @@ public class ISBASupportPPC extends PPCWeapon {
         mediumRange = 5;
         longRange = 7;
         extremeRange = 10;
-        tonnage = 0.25f;
+        waterShortRange = 1;
+        waterMediumRange = 3;
+        waterLongRange = 5;
+        waterExtremeRange = 6;
+        tonnage = 0.25;
         criticals = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         bv = 12;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
-        cost = 14000;
-        introDate = 2436;
-        techLevel.put(2436, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
-        techRating = RATING_D;
+        rulesRefs = "267,TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
+            .setISAdvancement(3046, 3053, 3056).setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
     }
 }
+
+
+//Commented out in Weapontype. Clan version is same stats as IS one. And Clan versions captures Tech progression for both.

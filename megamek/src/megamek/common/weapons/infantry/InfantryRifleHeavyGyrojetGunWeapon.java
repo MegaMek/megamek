@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleHeavyGyrojetGunWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Gyrojet Gun (Heavy)";
-        setInternalName(name);
-        addLookupName("InfantryHeavyGyrojetGun");
-        addLookupName("Heavy Gyrojet Gun");
-        ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 1.07;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.21;
-        infantryRange = 2;
-        introDate = 2590;
-        techLevel.put(2590,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantryRifleHeavyGyrojetGunWeapon() {
+		super();
+
+		name = "Gyrojet Gun (Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryHeavyGyrojetGun");
+		addLookupName("Heavy Gyrojet Gun");
+		ammoType = AmmoType.T_NA;
+		cost = 2500;
+		bv = 1.07;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.21;
+		infantryRange = 2;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+
+	}
 }

@@ -3249,6 +3249,10 @@ public class Game implements Serializable, IGame {
      * well as other light sources.
      */
     public int isPositionIlluminated(Coords c) {
+    	// fix for NPE when recovering spacecraft while in visual range of enemy
+    	if (getBoard().inSpace()) {
+    		return ILLUMINATED_NONE;
+    	}
         // Flares happen first, because they totally negate nighttime penalties
         for (Flare flare : flares) {
             if (flare.illuminates(c)) {

@@ -47,7 +47,7 @@ Leg
 <Squad Equipment>
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm

@@ -51,7 +51,7 @@ StopSwarm
 LegAttack
 BABattleClaw:LA
 BABattleClaw:RA
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 BASearchlight:Body
 ISBALightMachineGun:RA
 </Squad Equipment>

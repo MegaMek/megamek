@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
@@ -32,21 +31,22 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
 
     public InfantryPistolVintageWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Vintage Pistol";
+
+        name = "Auto-Pistol (Vintage)";
         setInternalName(name);
         addLookupName("InfantryPistolVintage");
         addLookupName("Vintage Pistol");
         ammoType = AmmoType.T_NA;
         cost = 500;
-        tonnage = 0.0005f;
+        tonnage = 0;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.11;
         infantryRange = 1;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
-        techRating = RATING_C;
+        rulesRefs =" 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_D, RATING_D, RATING_E);
+
     }
 }

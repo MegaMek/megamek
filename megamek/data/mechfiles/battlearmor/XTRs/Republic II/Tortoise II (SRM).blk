@@ -45,15 +45,15 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
 BACLERMediumPulseLaser:DWP
-CLDetachableWeaponPack:Body
-CLBASRM6:Body
-BA-SRM6 Ammo:Body:Shots3#
+ISDetachableWeaponPack:Body
+CLBASRM6:TU
+BA-SRM6 Ammo:TU:Shots3#
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -75,6 +75,10 @@ XTRO Republic II - Dark Ages
 <chassis>
 quad
 </chassis>
+
+<turret>
+Modular:5
+</turret>
 
 <jumpingMP>
 0

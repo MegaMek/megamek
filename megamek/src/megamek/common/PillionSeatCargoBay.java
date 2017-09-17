@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a tiny seat for a passenger.
  */
 
 public final class PillionSeatCargoBay extends Bay {
@@ -50,6 +50,7 @@ public final class PillionSeatCargoBay extends Bay {
         weight = space;
         currentSpace = (int)(space/0.025);
         this.doors = doors;
+        currentdoors = doors;
     }
 
     /**
@@ -72,7 +73,7 @@ public final class PillionSeatCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer(
-                "Passenger Pillion Seats (" + getDoors() + " doors) - ");
+                "Passenger Pillion Seats (" + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

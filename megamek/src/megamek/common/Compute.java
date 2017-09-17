@@ -43,13 +43,13 @@ import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ArtilleryCannonWeapon;
-import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.MGWeapon;
-import megamek.common.weapons.MekMortarWeapon;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.mgs.MGWeapon;
+import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 
@@ -2914,6 +2914,11 @@ public class Compute {
                             && (at.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                             fHits *= 1.2f;
                         }
+                        if (((weapon.curMode() == null) || !weapon.curMode()
+                                                            .equals("Indirect"))
+                            && (at.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                            fHits *= 1.3f;
+                            }                      
                     }
                 }
 

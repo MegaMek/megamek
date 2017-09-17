@@ -56,12 +56,12 @@ IS Ammo AC/5
 IS Ammo LRM-10
 IS Ammo SRM-4
 IS Machine Gun Ammo - Half
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
+VehicleJumpJet
 </Body Equipment>
 
 <Front Equipment>

@@ -90,7 +90,7 @@ public class SupportVeeStructure extends Structure {
         if (sv.getWeight() < 5) {
             roundWeight = TestEntity.Ceil.KILO;
         }
-        return TestEntity.ceil(weight,roundWeight);
+        return TestEntity.floor(weight,roundWeight);
     }
     
     @Override

@@ -45,6 +45,40 @@ public class Warship extends Jumpship {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
     }
+    
+    @Override
+    public double getStrategicFuelUse() {
+    	double tonsperday = 0;
+    	
+    	
+    	if (weight >= 200000) {
+    		tonsperday = 39.52;
+    		return tonsperday;
+    	} else if (weight >= 100000) {
+    		tonsperday = 19.75;
+    		return tonsperday;
+    	} else if (weight >= 50000) {
+    		tonsperday = 9.77;
+    		return tonsperday;
+    	} else if (weight >= 2000) {
+    		tonsperday = 2.82;
+    		return tonsperday;
+    	}
+    	return tonsperday;
+    }
+
+    private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
+            .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
+            .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
+            .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
+            .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_WARSHIP;
+    }
 
     @Override
     public String[] getLocationAbbrs() {

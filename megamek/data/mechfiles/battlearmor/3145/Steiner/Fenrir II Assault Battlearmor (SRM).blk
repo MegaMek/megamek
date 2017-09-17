@@ -36,16 +36,36 @@ Leg
 3
 </cruiseMP>
 
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
 <Squad Equipment>
-CLBASRM5:Body
-BASRM5 Ammo:Body:Shots4#
-BASRM5 Ammo:Body:Shots2#
-IS BA Advanced:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
+CLBASRM5:TU
+BA-SRM5 Ammo:TU:Shots4#
+BA-SRM5 Ammo:TU:Shots2#
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth - Late Republic
@@ -54,6 +74,10 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <chassis>
 quad
 </chassis>
+
+<turret>
+Modular:6
+</turret>
 
 <jumpingMP>
 0
@@ -70,11 +94,4 @@ quad
 <weightclass>
 4
 </weightclass>
-
-<armor_type>
-30
-</armor_type>
-<armor_tech>
-11
-</armor_tech>
 

@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolHoldOutLaserPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Pistol (Hold-Out)";
-        setInternalName(name);
-        addLookupName("InfantryHoldoutLaserpistol");
-        addLookupName("Holdout Laser Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 100;
-        bv = 0.13;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.14;
-        infantryRange = 0;
-        introDate = 2320;
-        techLevel.put(2320,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
-        techRating = RATING_D;
-    }
+	public InfantryPistolHoldOutLaserPistolWeapon() {
+		super();
+
+		name = "Laser Pistol (Hold-Out)";
+		setInternalName(name);
+		addLookupName("InfantryHoldoutLaserpistol");
+		addLookupName("Holdout Laser Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 100;
+		bv = 0.13;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.14;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setClanAdvancement(2318, 2320, 2350, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+				.setProductionFactions(F_LC).setTechRating(RATING_D)
+				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+
+	}
 }

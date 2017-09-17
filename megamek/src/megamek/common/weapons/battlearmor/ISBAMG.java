@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -31,8 +31,7 @@ public class ISBAMG extends BAMGWeapon {
      */
     public ISBAMG() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Machine Gun";
+        name = "Machine Gun (Medium)";
         setInternalName("ISBAMG");
         addLookupName("IS BA Machine Gun");
         addLookupName("ISBAMachine Gun");
@@ -45,14 +44,18 @@ public class ISBAMG extends BAMGWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.1f;
+        tonnage = 0.1;
         criticals = 1;
         bv = 5;
         cost = 5000;
-        introDate = 1950;
-        techLevel.put(1950, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_C;
+		rulesRefs = "258,TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 1950, 3050);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
     }
 
 }
+
+
+//Commented out in Weapontype. Clan version is same stats as IS one. And Clan versions captures Tech progression for both.

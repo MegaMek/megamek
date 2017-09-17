@@ -71,8 +71,8 @@ import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
-import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.HAGWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -260,7 +260,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             wn.append(']');
             // determine shots left & total shots left
             if ((wtype.getAmmoType() != AmmoType.T_NA)
-                && !wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                    && (!wtype.hasFlag(WeaponType.F_ONESHOT)
+                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))) {
                 int shotsLeft = 0;
                 if ((mounted.getLinked() != null)
                     && !mounted.getLinked().isDumping()) {

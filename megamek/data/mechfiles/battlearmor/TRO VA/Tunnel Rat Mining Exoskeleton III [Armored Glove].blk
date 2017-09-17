@@ -45,7 +45,7 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm

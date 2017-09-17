@@ -23,7 +23,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
@@ -38,9 +38,27 @@ public class Dropship extends SmallCraft {
     int escapePods = 0;
     int lifeBoats = 0;
 
+    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+            .setISApproximate(false, true, false, false)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
+    }
+    
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
+    private boolean kfBoomDamaged = false;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -48,6 +66,10 @@ public class Dropship extends SmallCraft {
 
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
+    }
+    
+    public boolean isKFBoomDamaged() {
+        return kfBoomDamaged;
     }
 
     public String getCritDamageString() {
@@ -58,6 +80,13 @@ public class Dropship extends SmallCraft {
                 toReturn += ", ";
             }
             toReturn += "Docking Collar";
+            first = false;
+        }
+        if (isKFBoomDamaged()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Boom";
             first = false;
         }
         return toReturn;
@@ -174,6 +203,10 @@ public class Dropship extends SmallCraft {
     public void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
     }
+    
+    public void setDamageKFBoom(boolean b) {
+        kfBoomDamaged = b;
+    }
 
     public void setEscapePods(int n) {
         escapePods = n;
@@ -219,6 +252,43 @@ public class Dropship extends SmallCraft {
         }
 
         return points;
+    }
+    
+    public double getStrategicFuelUse() {
+    	double tonsperday = 0;
+    	
+    	if (this.getDesignType() == 1) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	} else if (weight >= 70000) {
+    		tonsperday = 8.83;
+    		return tonsperday;
+    	} else if (weight >= 50000) {
+    		tonsperday = 8.37;
+    		return tonsperday;
+    	} else if (weight >= 40000) {
+    		tonsperday = 7.71;
+    		return tonsperday;
+    	} else if (weight >= 30000) {
+    		tonsperday = 6.52;
+    		return tonsperday;
+    	} else if (weight >= 20000) {
+    		tonsperday = 5.19;
+    		return tonsperday;
+    	} else if (weight >= 9000) {
+    		tonsperday = 4.22;
+    		return tonsperday;
+    	} else if (weight >= 4000) {
+    		tonsperday = 3.37;
+    		return tonsperday;
+    	} else if (weight >= 1000) {
+    		tonsperday = 2.82;
+    		return tonsperday;
+    	} else if (weight >= 100) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	}
+    	return tonsperday;
     }
 
     @Override
@@ -808,6 +878,10 @@ public class Dropship extends SmallCraft {
                     if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         dBV *= 1.2;
                     }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                        dBV *= 1.1;
+                    }
+                    
                     if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                         dBV *= 1.3;
                     }
@@ -1313,7 +1387,7 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        // for large craft, ammo must be in the same ba
+        // for large craft, ammo must be in the same bay
         Mounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;

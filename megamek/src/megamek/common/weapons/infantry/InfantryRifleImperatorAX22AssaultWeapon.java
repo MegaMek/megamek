@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleImperatorAX22AssaultWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Rifle (Imperator AX-22 Assault)";
-        setInternalName(name);
-        addLookupName("InfantryImperatorAX22");
-        addLookupName("Imperator AX-22 Assault Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 200;
-        bv = 1.59;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.52;
-        infantryRange = 1;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_B};
-        techRating = RATING_C;
-    }
+	public InfantryRifleImperatorAX22AssaultWeapon() {
+		super();
+
+		name = "Rifle (Imperator AX-22 Assault)";
+		setInternalName(name);
+		addLookupName("InfantryImperatorAX22");
+		addLookupName("Imperator AX-22 Assault Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 200;
+		bv = 1.59;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.52;
+		infantryRange = 1;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3060, 3085, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B);
+
+	}
 }

@@ -20,9 +20,11 @@
 package megamek.common.verifier;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -43,15 +45,57 @@ import megamek.common.QuadVee;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.ACWeapon;
-import megamek.common.weapons.ArtilleryWeapon;
-import megamek.common.weapons.EnergyWeapon;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.LBXACWeapon;
-import megamek.common.weapons.PPCWeapon;
-import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.common.weapons.autocannons.UACWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.lasers.EnergyWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 public class TestMech extends TestEntity {
+
+    public enum MechJumpJets {
+        JJ_STANDARD ("JumpJet", true, Mech.JUMP_STANDARD),
+        JJ_IMPROVED ("ImprovedJump Jet", false, Mech.JUMP_IMPROVED),
+        JJ_PROTOTYPE ("ISPrototypeJumpJet", true, Mech.JUMP_PROTOTYPE),
+        JJ_PROTOTYPE_IMPROVED ("ISPrototypeImprovedJumpJet", false, Mech.JUMP_PROTOTYPE_IMPROVED),
+        JJ_UMU ("UMU", false, Mech.JUMP_NONE),
+        JJ_BOOSTER ("Mech Mechanical Jump Boosters", true, Mech.JUMP_BOOSTER);
+        
+        private String internalName;
+        private boolean industrial;
+        private int jumpType;
+        
+        MechJumpJets(String internalName, boolean industrial, int jumpType) {
+            this.internalName = internalName;
+            this.industrial = industrial;
+            this.jumpType = jumpType;
+        }
+        
+        public String getName() {
+            return internalName;
+        }
+        
+        public boolean canIndustrialUse() {
+            return industrial;
+        }
+        
+        public int getJumpType() {
+            return jumpType;
+        }
+        public static List<EquipmentType> allJJs(boolean industrialOnly) {
+            List<EquipmentType> retVal = new ArrayList<>();
+            for (MechJumpJets jj : values()) {
+                if (jj.industrial || !industrialOnly) {
+                    retVal.add(EquipmentType.get(jj.internalName));
+                }
+            }
+            return retVal;
+        }
+
+    }
+    
     private Mech mech = null;
 
     public TestMech(Mech mech, TestEntityOption option, String fileString) {
@@ -88,6 +132,21 @@ public class TestMech extends TestEntity {
             }
         }
         return armor;
+    }
+    
+    public static Integer maxJumpMP(Mech mech) {
+        if (mech.isSuperHeavy()) {
+            return 0;
+        }
+        if (mech.getJumpType() == Mech.JUMP_BOOSTER) {
+            return null;
+        } else if (!mech.hasEngine() || (!mech.getEngine().isFusion() && (mech.getEngine().getEngineType() != Engine.FISSION))) {
+            return 0;
+        } else if (mech.getJumpType() == Mech.JUMP_IMPROVED) {
+            return (int)Math.ceil(mech.getOriginalWalkMP() * 1.5);
+        } else {
+            return mech.getOriginalWalkMP();
+        }
     }
 
     @Override
@@ -1003,6 +1062,7 @@ public class TestMech extends TestEntity {
                         || mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)
                     && (misc.hasFlag(MiscType.F_TARGCOMP)
                         || misc.hasFlag(MiscType.F_ARTEMIS)
+                        || misc.hasFlag(MiscType.F_ARTEMIS_PROTO)
                         || misc.hasFlag(MiscType.F_ARTEMIS_V)
                         || misc.hasFlag(MiscType.F_BAP))) {
                     buff.append("Industrial mech without advanced fire control can't mount " + misc.getName() + "\n");
@@ -1069,7 +1129,6 @@ public class TestMech extends TestEntity {
             if ((mech.getJumpType() != Mech.JUMP_STANDARD)
                     && (mech.getJumpType() != Mech.JUMP_NONE)
                     && (mech.getJumpType() != Mech.JUMP_PROTOTYPE)
-                    && (mech.getJumpType() != Mech.JUMP_PROTOTYPE_IMPROVED)
                     && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
                 buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
                 illegal = true;

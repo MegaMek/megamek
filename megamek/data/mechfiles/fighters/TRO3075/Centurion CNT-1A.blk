@@ -25,7 +25,7 @@ CNT-1A
 </year>
 
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
@@ -57,7 +57,7 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-17
+39
 </armor_type>
 
 <armor_tech>

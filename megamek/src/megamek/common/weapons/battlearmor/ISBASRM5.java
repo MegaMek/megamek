@@ -13,8 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.SRMWeapon;
+import megamek.common.weapons.srms.SRMWeapon;
 
 
 /**
@@ -32,7 +31,6 @@ public class ISBASRM5 extends SRMWeapon {
      */
     public ISBASRM5() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "SRM 5";
         setInternalName("ISBASRM5");
         addLookupName("IS BA SRM-5");
@@ -44,12 +42,18 @@ public class ISBASRM5 extends SRMWeapon {
         extremeRange = 12;
         bv = 47;
         cost = 25000;
-        introDate = 3050;
-        techLevel.put(3050, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_E;
-        tonnage = .3f;
+        tonnage = .3;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "261,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+        .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FS,F_LC)
+        .setProductionFactions(F_FS,F_LC);
     }
 }

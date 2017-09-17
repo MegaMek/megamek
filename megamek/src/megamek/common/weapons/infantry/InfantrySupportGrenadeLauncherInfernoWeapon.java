@@ -18,38 +18,40 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportGrenadeLauncherInfernoWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Grenade Launcher - Inferno";
-        setInternalName(name);
-        addLookupName("InfantryGrenadeLauncherInferno");
-        addLookupName("InfantryInfernoGrenadeLauncher");
-        addLookupName("Infantry Inferno Grenade Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 465;
-        bv = 1.04;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 0.34;
-        infantryRange = 1;
-        crew = 1;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_B,RATING_B};
-        techRating = RATING_C;
-    }
+	public InfantrySupportGrenadeLauncherInfernoWeapon() {
+		super();
+
+		name = "Grenade Launcher - Inferno";
+		setInternalName(name);
+		addLookupName("InfantryGrenadeLauncherInferno");
+		addLookupName("InfantryInfernoGrenadeLauncher");
+		addLookupName("Infantry Inferno Grenade Launcher");
+		ammoType = AmmoType.T_NA;
+		cost = 465;
+		bv = 1.04;
+		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 0.34;
+		infantryRange = 1;
+		crew = 1;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_A, RATING_B, RATING_B, RATING_A);
+
+	}
 }

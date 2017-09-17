@@ -17,7 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -33,10 +33,11 @@ public class CLBALBX extends Weapon {
 
     public CLBALBX() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+
         name = "Battle Armor LB-X AC";
         setInternalName(name);
         addLookupName("CLBALBX");
+        addLookupName("Clan BA LBX");
         heat = 0;
         damage = 4;
         rackSize = 4;
@@ -44,17 +45,19 @@ public class CLBALBX extends Weapon {
         mediumRange = 5;
         longRange = 8;
         extremeRange = 10;
-        tonnage = 0.4f;
+        tonnage = 0.4;
         criticals = 2;
         toHitModifier = -1;
         ammoType = AmmoType.T_NA;
         bv = 20;
         cost = 70000;
-        introDate = 3075;
-        techLevel.put(3075, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        flags = flags.or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_BA_WEAPON);
-        techRating = RATING_F;
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "207,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setClanAdvancement(3075, 3085).setClanApproximate(false, false)
+            .setPrototypeFactions(F_CNC).setProductionFactions(F_CNC)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override

@@ -73,22 +73,22 @@ import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ArtilleryCannonWeapon;
-import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.ISBombastLaser;
-import megamek.common.weapons.ISHGaussRifle;
 import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.LRTWeapon;
-import megamek.common.weapons.LaserBayWeapon;
-import megamek.common.weapons.MekMortarWeapon;
-import megamek.common.weapons.PPCBayWeapon;
-import megamek.common.weapons.PulseLaserBayWeapon;
-import megamek.common.weapons.SRTWeapon;
-import megamek.common.weapons.ScreenLauncherBayWeapon;
-import megamek.common.weapons.TSEMPWeapon;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.bayweapons.LaserBayWeapon;
+import megamek.common.weapons.bayweapons.PPCBayWeapon;
+import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
+import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.gaussrifles.ISHGaussRifle;
+import megamek.common.weapons.lasers.ISBombastLaser;
+import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.lrms.LRTWeapon;
+import megamek.common.weapons.mortars.MekMortarWeapon;
+import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.common.weapons.srms.SRTWeapon;
 
 /**
  * Represents intention to fire a weapon at the target.

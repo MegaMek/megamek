@@ -18,35 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleClanMauserIICIASWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Laser Rifle (Mauser IIC IAS)";
-        setInternalName(name);
-        addLookupName("InfantryClanMauserIICIAS");
-        addLookupName("Infantry Clan Mauser IIC");
-        ammoType = AmmoType.T_NA;
-        tonnage = 0.0012;
-        cost = 18000;
-        bv = 9.82;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
-        infantryDamage = 1.37;
-        infantryRange = 3;
-        introDate = 3015;
-        techLevel.put(3015,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
-        techRating = RATING_F;
-    }
+	public InfantryRifleClanMauserIICIASWeapon() {
+		super();
+
+		name = "Laser Rifle (Mauser IIC IAS)";
+		setInternalName(name);
+		addLookupName("InfantryClanMauserIICIAS");
+		addLookupName("Infantry Clan Mauser IIC");
+		ammoType = AmmoType.T_NA;
+		tonnage = 0.0012;
+		cost = 18000;
+		bv = 9.82;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
+		infantryDamage = 1.37;
+		infantryRange = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
+		        .setProductionFactions(F_CHH).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+
+	}
 }

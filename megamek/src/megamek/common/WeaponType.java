@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.math.BigInteger;
 
-import megamek.common.weapons.ATMBayWeapon;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.ArtilleryBayWeapon;
@@ -80,6 +79,8 @@ import megamek.common.weapons.autocannons.ISUAC20;
 import megamek.common.weapons.autocannons.ISUAC5;
 import megamek.common.weapons.battlearmor.*;
 import megamek.common.weapons.bayweapons.ACBayWeapon;
+import megamek.common.weapons.bayweapons.AMSBayWeapon;
+import megamek.common.weapons.bayweapons.ATMBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalACBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalGaussBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
@@ -508,7 +509,9 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21);
     //Variable heat, heat is listed in dice, not points
     public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22);
+    //AMS and Point Defenses
     public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23);
+    public static final BigInteger F_PD = BigInteger.valueOf(1).shiftLeft(24);
 
     //may only target Infantry
     public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25);
@@ -606,7 +609,8 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SCREEN = 21;
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
-    public static final int NUM_CLASSES = 24;
+    public static final int CLASS_AMS = 24;
+    public static final int NUM_CLASSES = 25;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -627,7 +631,7 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_PLASMA = 15;
     
     public static String[] classNames =
-        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
+        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
 
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
@@ -959,6 +963,8 @@ public class WeaponType extends EquipmentType {
         switch (atClass) {
             case (CLASS_LASER):
                 return EquipmentType.get("Laser Bay");
+            case (CLASS_AMS):
+            	return EquipmentType.get("AMS Bay");
             case (CLASS_POINT_DEFENSE):
                 return EquipmentType.get("Point Defense Bay");
             case (CLASS_PPC):
@@ -2107,6 +2113,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapLaserBayWeapon());
         EquipmentType.addType(new SubCapitalMissileBayWeapon());
         EquipmentType.addType(new MiscBayWeapon());
+        EquipmentType.addType(new AMSBayWeapon());
 
         // Improved OS Weapons
         EquipmentType.addType(new ISLRM5IOS());

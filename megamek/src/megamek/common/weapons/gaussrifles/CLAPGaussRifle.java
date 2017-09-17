@@ -52,6 +52,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         cost = 8500;
         shortAV = 3;
         maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
         explosionDamage = 3;
         rulesRefs = "218,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

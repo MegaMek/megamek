@@ -44,6 +44,7 @@ public class RLBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.toHitModifier = 1;
         this.atClass = CLASS_ROCKET_LAUNCHER;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);

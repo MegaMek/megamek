@@ -14,7 +14,7 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
@@ -45,6 +45,7 @@ public class ATMBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_ATM;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);

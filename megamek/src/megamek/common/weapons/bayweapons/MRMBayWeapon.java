@@ -44,6 +44,7 @@ public class MRMBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_MRM;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);

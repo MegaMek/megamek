@@ -50,6 +50,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);

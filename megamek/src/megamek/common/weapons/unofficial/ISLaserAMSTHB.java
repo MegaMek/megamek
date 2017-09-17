@@ -41,14 +41,16 @@ public class ISLaserAMSTHB extends LaserWeapon {
         heat = 3;
         rackSize = 2;
         damage = 2; // # of d6 of missiles affected
+        shortAV = 3;
         ammoType = AmmoType.T_NA;
         tonnage = 1.5f;
         criticals = 2;
         bv = 105;
+        atClass = CLASS_AMS;
         // we need to remove the direct fire flag again, so TC weight is not
         // affected
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_AUTO_TARGET).or(F_HEATASDICE).or(F_AMS)
+                .or(F_AUTO_TARGET).or(F_HEATASDICE).or(F_AMS).or(F_ENERGY)
                 .and(F_DIRECT_FIRE.not());
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);

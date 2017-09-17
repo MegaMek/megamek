@@ -50,7 +50,7 @@ public class ISNarcOS extends NarcWeapon {
     	.setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2665, 26767, 3045, 2795, 3055)
+        .setISAdvancement(2665, 26767, 3045, 2795, 3035)
         .setISApproximate(true, false, false,false, false)
         .setClanAdvancement(2665, 26767, 3045, DATE_NONE, DATE_NONE)
         .setClanApproximate(true, false, false,false, false)

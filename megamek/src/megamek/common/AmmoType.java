@@ -1563,7 +1563,7 @@ public class AmmoType extends EquipmentType {
         		.setUnofficial(false)
 				.setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
-                .setISAdvancement(2520, 2587, 3049, 2795, 3055)
+                .setISAdvancement(2520, 2587, 3049, 2795, 3035)
                 .setISApproximate(true,false,false,true,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH), "142, TW"));
@@ -1986,7 +1986,7 @@ public class AmmoType extends EquipmentType {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
-                .setISAdvancement(2520, 2587, 3049, 2795, 3055)
+                .setISAdvancement(2520, 2587, 3049, 2795, 3035)
                 .setISApproximate(true,false,false,true,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH), "142, TW"));
@@ -9075,7 +9075,7 @@ public class AmmoType extends EquipmentType {
 	            	.setUnofficial(false)
 	                .setTechRating(RATING_E)
 	                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
-	                .setISAdvancement(2580, 2587, 3049, 2795, 3055)
+	                .setISAdvancement(2580, 2587, 3049, 2795, 3035)
 	                .setISApproximate(true, false, false,false, false)
 	                .setClanAdvancement(DATE_NONE, DATE_NONE, 2818, DATE_NONE, DATE_NONE)
 	                .setClanApproximate(true, false, false,false, false)

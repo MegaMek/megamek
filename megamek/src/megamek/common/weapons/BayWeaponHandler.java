@@ -93,6 +93,11 @@ public class BayWeaponHandler extends WeaponHandler {
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (int) Math.ceil(av);
     }
+    
+    // Return the attack value of any Point Defense bay weapons
+    protected int getCounterAV() {
+    	return 0;
+    }
 
     @Override
     protected void addHeat() {
@@ -139,8 +144,8 @@ public class BayWeaponHandler extends WeaponHandler {
         if ((((null == entityTarget) || entityTarget.isAirborne()) 
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
                 &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
-                || game.getBoard().inSpace()) {
+                &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
+        		|| game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -356,7 +361,7 @@ public class BayWeaponHandler extends WeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } // Handle the next weapon in the vay
+        } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
     }

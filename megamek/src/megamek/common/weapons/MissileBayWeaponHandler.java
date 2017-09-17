@@ -40,8 +40,6 @@ import megamek.server.Server;
 public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
     private static final long serialVersionUID = -1618484541772117621L;
-    boolean amsBayEngaged = false;
-    boolean pdBayEngaged = false;
     boolean advancedPD = false;
     
     protected MissileBayWeaponHandler() {
@@ -247,6 +245,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     } 
    
     // check for AMS and Point Defense Bay fire
+    @Override
     protected int getCounterAV () {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
@@ -359,22 +358,9 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         } // end check for counterfire
         return counterAV;
     } // end getAMSAV
-        
-    /**
-     * Sigh, according to the ruling linked below, when weapon bays are fired at
-     * ground targets, they should make one to-hit roll, but the AV of each
-     * weapon should be applied separately as damage - that needs a special
-     * handler
-     * 
-     * @return a <code>boolean</code> value indicating whether this should be
-     *         kept or not
-     */
+    
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-
-        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-            return handleAeroSanity(phase, vPhaseReport);
-        }
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
@@ -382,10 +368,10 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         if ((((null == entityTarget) || entityTarget.isAirborne()) 
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
                 &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
-                || game.getBoard().inSpace()) {
+                &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
+        		|| game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
-        }
+        } 
 
         // then we have a ground target, so we need to handle it in a special
         // way
@@ -456,7 +442,27 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
         // do we hit?
         bMissed = roll < toHit.getValue();
+        
+        int CounterAV = getCounterAV();
+        
+        // Report any AMS bay action.
+        if (amsBayEngaged) {
+            r = new Report(3352);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
 
+        // Report any Point Defense bay action.
+        if (pdBayEngaged) {
+            r = new Report(3353);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
         // are we a glancing hit?
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
@@ -517,27 +523,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             return false;
 
         } // End missed-target
-        
-        int CounterAV = getCounterAV();
 
-        // Report any AMS bay action.
-        if (amsBayEngaged) {
-            r = new Report(3352);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        // Report any Point Defense bay action.
-        if (pdBayEngaged) {
-            r = new Report(3353);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-        
         if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                 || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
             handleIgnitionDamage(vPhaseReport, bldg, 1);
@@ -619,7 +605,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } // Handle the next weapon in the vay
+        } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
     }

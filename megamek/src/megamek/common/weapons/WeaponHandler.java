@@ -70,6 +70,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
     protected boolean bDirect = false;
+    protected boolean amsBayEngaged = false;
+    protected boolean pdBayEngaged = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected String typeName;
@@ -80,6 +82,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nRange;
     protected int nDamPerHit;
     protected int attackValue;
+    protected int counterAV;
     protected boolean throughFront;
     protected boolean underWater;
     protected boolean announcedEntityFiring = false;
@@ -111,6 +114,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
+    
+    protected int getCounterAV() {
+    	return counterAV;
+    }
     
     /**
      * Used to store reports from calls to <code>calcDamagePerHit</code>.  This
@@ -468,8 +475,27 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 addHeat();
                 heatAdded = true;
             }
-
+	        
             attackValue = calcAttackValue();
+            
+	        // Report any AMS bay action.
+            counterAV = getCounterAV();
+	        if (amsBayEngaged) {
+	        	r = new Report(3352);
+	        	r.indent();
+	        	r.add(counterAV);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        }
+
+	        // Report any Point Defense bay action.
+	        if (pdBayEngaged) {
+	        	r = new Report(3353);
+	        	r.indent();
+	        	r.add(counterAV);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        }
 
             // Any necessary PSRs, jam checks, etc.
             // If this boolean is true, don't report

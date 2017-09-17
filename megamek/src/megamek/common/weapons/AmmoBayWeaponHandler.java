@@ -65,7 +65,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             // check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
-                // try loadinsg something else
+                // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinked();
             }

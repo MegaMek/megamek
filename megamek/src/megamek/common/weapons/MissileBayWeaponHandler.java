@@ -13,14 +13,25 @@
  */
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 import megamek.common.AmmoType;
+import megamek.common.Building;
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -29,7 +40,10 @@ import megamek.server.Server;
 public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
     private static final long serialVersionUID = -1618484541772117621L;
-
+    boolean amsBayEngaged = false;
+    boolean pdBayEngaged = false;
+    boolean advancedPD = false;
+    
     protected MissileBayWeaponHandler() {
         // deserialization only
     }
@@ -43,6 +57,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
+        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
 
     /**
@@ -58,6 +73,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     protected int calcAttackValue() {
 
         double av = 0;
+        double counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
 
         for (int wId : weapon.getBayWeapons()) {
@@ -65,7 +81,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             // check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
-                // try loadinsg something else
+                // try loading something else
                 ae.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinked();
             }
@@ -98,7 +114,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
-                            // try loadinsg something else
+                            // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinked();
                         }
@@ -118,24 +134,33 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 }
             }
         }
+        //Bracketing fire reduces the number of missiles that hit
+        av = (int) Math.floor(getBracketingMultiplier() * av);
+        
+        //Point Defenses engage the missiles still aimed at us
+        counterAV = getCounterAV();
+        av = av - counterAV;
+        
+        //Apply direct/glancing blow modifiers to the survivors
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
         if (bGlancing) {
             av = (int) Math.floor(av / 2.0);
 
-        }
-        av = (int) Math.floor(getBracketingMultiplier() * av);
+        }        
+
         return (int) Math.ceil(av);
+       
     }
 
     /*
-     * check for special munitions and their effect on av TODO: it might be
-     * better to have unique weapon handlers for these by bay, but I am lazy
+     * check for special munitions and their effect on av 
+     * 
      */
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
-
+        //TODO: At present, bays don't have linked artemis, so this old code doesn't trigger...
         // check for artemisIV
         Mounted mLinker = weapon.getLinkedBy();
         int bonus = 0;
@@ -163,18 +188,6 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 bonus = 2;
             }
         }
-        // check for Artemis IV Proto Type
-        if ((mLinker != null && mLinker.getType() instanceof MiscType
-                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS_PROTO))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if (atype.getAmmoType() == AmmoType.T_SRM) {
-                bonus = 2;
-            }
-            current_av = current_av + bonus;
-        }
 
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             current_av = Math.floor(0.6 * current_av);
@@ -193,7 +206,35 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             if (range > WeaponType.RANGE_SHORT) {
                 current_av = 0;
             }
-        } else if (atype.getAmmoType() == AmmoType.T_AR10) {
+        }
+        //MMLs get an AV bonus from Artemis V, but not Artemis IV
+        if (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE) {
+            if (atype.getRackSize() == 9) {
+                current_av = 1.4 * current_av;
+            } else if (atype.getRackSize() == 7) {
+                current_av = 1.5 * current_av;
+            } else if (atype.getRackSize() == 5) {
+                current_av = Math.ceil(1.33 * current_av);
+            } else if (atype.getRackSize() == 3) {
+                current_av = 1.5 * current_av;
+            }            
+
+       } else if (atype.getAmmoType() == AmmoType.T_LRM
+               && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
+                       || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {
+            current_av = Math.ceil(1.33 * current_av);
+       } else if (atype.getAmmoType() == AmmoType.T_SRM 
+               && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
+                       || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {
+        // Different SRM racks get different AV bonuses for Artemis IV and V.
+           if (atype.getRackSize() == 6) {
+            current_av = Math.ceil(1.25 * current_av);
+           } else if (atype.getRackSize() == 4) {
+               current_av = 1.5 * current_av;
+           } else if (atype.getRackSize() == 2) {
+               current_av = 2 * current_av;
+           }
+       } else if (atype.getAmmoType() == AmmoType.T_AR10) {
             if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                 current_av = 4;
             } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
@@ -203,5 +244,393 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             }
         }
         return current_av;
+    } 
+   
+    // check for AMS and Point Defense Bay fire
+    protected int getCounterAV () {
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+            return 0;
+        }
+        int counterAV = 0;
+        Entity entityTarget = (Entity) target;
+        // any AMS bay attacks by the target?
+        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        if (null != lCounters) {
+            for (Mounted counter : lCounters) {
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PD);
+                Entity pdEnt = counter.getEntity();
+                boolean isInArc;
+                // If the defending unit is the target, use attacker for arc
+                if (entityTarget.equals(pdEnt)) {
+                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                            pdEnt.getEquipmentNum(counter),
+                            ae);
+                } else { // Otherwise, the attack must pass through an escort unit's hex
+                	// TODO: We'll get here, eventually
+                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                            pdEnt.getEquipmentNum(counter),
+                            entityTarget);
+                }
+                if (isAMSBay) {
+                	int amsAV = 0;
+                    // Point defenses can't fire if they're not ready for any reason
+		            if (!(counter.getType() instanceof WeaponType)
+	                         || !counter.isReady() || counter.isMissing()
+	                            // shutdown means no Point defenses
+	                            || pdEnt.isShutDown()
+	                            // Point defenses only fire vs attacks in arc covered by ams
+	                            || !isInArc) {
+	                        continue;
+	                }
+		            // Now for heat, damage and ammo we need the individual weapons in the bay
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = pdEnt.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                        
+                        // build up some heat (assume target is ams owner)		            
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+		            		entityTarget.heatBuildup += Compute.d6(bayW
+		            				.getCurrentHeat());	                    
+		            	} else {
+	                        entityTarget.heatBuildup += bayW.getCurrentHeat();
+	                    }
+                        
+                        // decrement the ammo
+                        if (bayWAmmo != null) {
+                        	bayWAmmo.setShotsLeft(Math.max(0,
+                        		bayWAmmo.getBaseShotsLeft() - 1));
+                        }
+                        
+                        // get the attack value
+                        amsAV += bayWType.getShortAV();                                      
+            		}
+                    
+                    // set the ams as having fired
+                    amsBayEngaged = true;
+                    
+                    counterAV = amsAV;
+                } else if (isPDBay && !pdBayEngaged) {
+                	int pdAV = 0;
+                    // Point defenses can't fire if they're not ready for any reason
+		            if (!(counter.getType() instanceof WeaponType)
+	                         || !counter.isReady() || counter.isMissing()
+	                            // shutdown means no Point defenses
+	                            || pdEnt.isShutDown()
+	                            // Point defenses only fire vs attacks in arc covered by ams
+	                            || !isInArc) {
+	                        continue;
+	                }
+		            // Now for heat, damage and ammo we need the individual weapons in the bay
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = pdEnt.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                        
+                        // build up some heat (assume target is ams owner)		            
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+		            		entityTarget.heatBuildup += Compute.d6(bayW
+		            				.getCurrentHeat());	                    
+		            	} else {
+	                        entityTarget.heatBuildup += bayW.getCurrentHeat();
+	                    }
+                        
+                        // decrement the ammo
+                        if (bayWAmmo != null) {
+                        	bayWAmmo.setShotsLeft(Math.max(0,
+                        		bayWAmmo.getBaseShotsLeft() - 1));
+                        }
+                        
+                        // get the attack value
+                        pdAV += bayWType.getShortAV();                    
+            		}
+                    
+                    // set the ams as having fired
+                    counter.setUsedThisRound(true); //this only applies to PD bays. AMS bays can fire multiple times.
+                    pdBayEngaged = true;
+                    
+                    // non-AMS only add half their damage, rounded up
+                    counterAV = (int) Math.ceil(pdAV / 2);              
+                } //end PDBay fire 
+             
+            } //end "for Mounted counter"
+        } // end check for counterfire
+        return counterAV;
+    } // end getAMSAV
+    
+    @Override
+    protected boolean reportCounterfire(Entity entityTarget, Vector<Report> vPhaseReport) {
+        
+        int CounterAV = getCounterAV();
+
+        // Report any AMS bay action.
+        if (amsBayEngaged) {
+            Report r = new Report(3352);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+
+        // Report any Point Defense bay action.
+        if (pdBayEngaged) {
+            Report r = new Report(3353);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+
+        return true;
+    }
+    
+    /**
+     * Sigh, according to the ruling linked below, when weapon bays are fired at
+     * ground targets, they should make one to-hit roll, but the AV of each
+     * weapon should be applied separately as damage - that needs a special
+     * handler
+     * 
+     * @return a <code>boolean</code> value indicating whether this should be
+     *         kept or not
+     */
+    @Override
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+
+        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            return handleAeroSanity(phase, vPhaseReport);
+        }
+
+        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                : null;
+
+        if ((((null == entityTarget) || entityTarget.isAirborne()) 
+                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
+                &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
+                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
+                || game.getBoard().inSpace()) {
+            return super.handle(phase, vPhaseReport);
+        }
+
+        // then we have a ground target, so we need to handle it in a special
+        // way
+        insertAttacks(phase, vPhaseReport);
+
+        final boolean targetInBuilding = Compute.isInBuilding(game,
+                entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
+
+        if (entityTarget != null) {
+            ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+        }
+
+        // Which building takes the damage?
+        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+
+        // Report weapon attack and its to-hit value.
+        Report r = new Report(3115);
+        r.indent();
+        r.newlines = 0;
+        r.subject = subjectId;
+        r.add(wtype.getName() + number);
+        if (entityTarget != null) {
+            r.addDesc(entityTarget);
+        } else {
+            r.messageId = 3120;
+            r.add(target.getDisplayName(), true);
+        }
+
+        vPhaseReport.addElement(r);
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            r = new Report(3135);
+            r.subject = subjectId;
+            r.add(toHit.getDesc());
+            vPhaseReport.addElement(r);
+            return false;
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+            r = new Report(3140);
+            r.newlines = 0;
+            r.subject = subjectId;
+            r.add(toHit.getDesc());
+            vPhaseReport.addElement(r);
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            r = new Report(3145);
+            r.newlines = 0;
+            r.subject = subjectId;
+            r.add(toHit.getDesc());
+            vPhaseReport.addElement(r);
+        } else {
+            // roll to hit
+            r = new Report(3150);
+            r.newlines = 0;
+            r.subject = subjectId;
+            r.add(toHit.getValue());
+            vPhaseReport.addElement(r);
+        }
+
+        // dice have been rolled, thanks
+        r = new Report(3155);
+        r.newlines = 0;
+        r.subject = subjectId;
+        r.add(roll);
+        vPhaseReport.addElement(r);
+
+        // do we hit?
+        bMissed = roll < toHit.getValue();
+
+        // are we a glancing hit?
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
+            if (roll == toHit.getValue()) {
+                bGlancing = true;
+                r = new Report(3186);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else {
+                bGlancing = false;
+            }
+        } else {
+            bGlancing = false;
+        }
+
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+        if (bDirect) {
+            r = new Report(3189);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+
+        // Do this stuff first, because some weapon's miss report reference the
+        // amount of shots fired and stuff.
+        nDamPerHit = calcAttackValue();
+        addHeat();
+
+        // Any necessary PSRs, jam checks, etc.
+        // If this boolean is true, don't report
+        // the miss later, as we already reported
+        // it in doChecks
+        boolean missReported = doChecks(vPhaseReport);
+        if (missReported) {
+            bMissed = true;
+        }
+
+        // Do we need some sort of special resolution (minefields, artillery,
+        if (specialResolution(vPhaseReport, entityTarget)) {
+            return false;
+        }
+
+        if (bMissed && !missReported) {
+            reportMiss(vPhaseReport);
+
+            // Works out fire setting, AMS shots, and whether continuation is
+            // necessary.
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
+                    vPhaseReport)) {
+                return false;
+            }
+        }
+
+        if (bMissed) {
+            return false;
+
+        } // End missed-target
+        
+        if (reportCounterfire(entityTarget, vPhaseReport)) {
+        	reportCounterfire(entityTarget, vPhaseReport);        	
+        	return false;        	
+        }        
+        if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+            handleIgnitionDamage(vPhaseReport, bldg, 1);
+            return false;
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+            handleClearDamage(vPhaseReport, bldg, nDamPerHit);
+            return false;
+        }
+        // Targeting a building.
+        if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+            // The building takes the full brunt of the attack
+            handleBuildingDamage(vPhaseReport, bldg, nDamPerHit,
+                    target.getPosition());
+            return false;
+        }
+
+        Report.addNewline(vPhaseReport);
+        // loop through weapons in bay and do damage
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int hits = 1;
+        int nCluster = 1;
+        for (int wId : weapon.getBayWeapons()) {
+            double av = 0;
+            Mounted m = ae.getEquipment(wId);
+            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                WeaponType bayWType = ((WeaponType) m.getType());
+                // need to cycle through weapons and add av
+                if (range == WeaponType.RANGE_SHORT) {
+                    av = bayWType.getShortAV();
+                } else if (range == WeaponType.RANGE_MED) {
+                    av = bayWType.getMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    av = bayWType.getLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    av = bayWType.getExtAV();
+                }
+            }
+            nDamPerHit = (int) Math.ceil(av);
+            if (nDamPerHit <= 0) {
+                continue;
+            }
+            bSalvo = true;
+
+            // Buildings shield all units from a certain amount of damage.
+            // Amount is based upon the building's CF at the phase's start.
+            int bldgAbsorbs = 0;
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() == null)) {
+                bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            }
+            
+            // Attacking infantry in buildings from same building
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() != null)
+                    && (entityTarget instanceof Infantry)) {
+                // If elevation is the same, building doesn't absorb
+                if (ae.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = wtype.getInfantryDamageClass();
+                    int nDamage;
+                    if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                        nDamage = nDamPerHit * Math.min(nCluster, hits);
+                    } else {
+                        // Need to indicate to handleEntityDamage that the
+                        // absorbed damage shouldn't reduce incoming damage,
+                        // since the incoming damage was reduced in
+                        // Compute.directBlowInfantryDamage
+                        nDamage = -wtype.getDamage(nRange)
+                                * Math.min(nCluster, hits);
+                    }
+                    bldgAbsorbs = (int) Math.round(nDamage
+                            * bldg.getInfDmgFromInside());
+                } else {
+                    // Used later to indicate a special report
+                    bldgAbsorbs = Integer.MIN_VALUE;
+                }
+            }
+
+            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                    nCluster, bldgAbsorbs);
+            server.creditKill(entityTarget, ae);
+        } // Handle the next weapon in the vay
+        Report.addNewline(vPhaseReport);
+        return false;
     }
 }

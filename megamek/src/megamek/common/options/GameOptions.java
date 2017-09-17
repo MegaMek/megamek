@@ -256,6 +256,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false); //$NON-NLS-1$

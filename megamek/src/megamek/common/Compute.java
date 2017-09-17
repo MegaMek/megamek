@@ -2975,16 +2975,56 @@ public class Compute {
 
         } else {
             // Direct fire weapons (and LBX slug rounds) just do a single shot
-            // so they don't use the missile hits table
+            // so they don't use the missile hits table. Weapon bays also deal
+        	// damage in a single block
             if ((attacker.getPosition() != null)
                 && (g.getEntity(waa.getTargetId()).getPosition() != null)) {
                 // Damage may vary by range for some weapons, so let's see how
                 // far
                 // away we actually are and then set the damage accordingly.
                 int rangeToTarget = attacker.getPosition().distance(
-                        g.getEntity(waa.getTargetId()).getPosition());
+                        g.getEntity(waa.getTargetId()).getPosition());                
+                //Convert AV to fDamage for bay weapons
+                if (attacker.usesWeaponBays()){
+                	double av = 0;
+                	double threat = 1;
+                    for (int wId : weapon.getBayWeapons()) {
+                    	Mounted bayW = attacker.getEquipment(wId);
+                    	WeaponType bayWType = ((WeaponType) bayW.getType());
+                	//Capital weapons have a different range scale
+                        if (wt.isCapital()) {
+                        	// Capital missiles should have higher priority than standard missiles
+                        	threat *= 2;
+                        	if (rangeToTarget > 50) {
+                			av = 0;
+                        	} else if (rangeToTarget > 40) {
+                			av += bayWType.getExtAV();
+                        	} else if (rangeToTarget > 25) {
+                			av += bayWType.getLongAV();
+                        	} else if (rangeToTarget > 12) {
+                			av += bayWType.getMedAV();
+                        	} else {
+                			av += bayWType.getShortAV();
+                        	}              				
+                        } else {
+                        	if (rangeToTarget > 25) {
+                			av = 0;
+                        	} else if (rangeToTarget > 20) {
+                			av += bayWType.getExtAV();
+                        	} else if (rangeToTarget > 12) {
+                			av += bayWType.getLongAV();
+                        	} else if (rangeToTarget > 6) {
+                			av += bayWType.getMedAV();
+                        	} else {
+                			av += bayWType.getShortAV();
+                        	} 
+                        }
+                        fDamage = (float) (av * threat);
+                    }
+                } else {
                 fDamage = wt.getDamage(rangeToTarget);
-            }
+            	}
+            } 
 
             // Infantry follow some special rules, but do fixed amounts of
             // damage

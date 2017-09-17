@@ -16,7 +16,13 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.IGame;
 import megamek.common.TechAdvancement;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MissileBayWeaponHandler;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -55,5 +61,11 @@ public class MMLBayWeapon extends AmmoBayWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_MML;
+    }
+    
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new MissileBayWeaponHandler(toHit, waa, game, server);
     }
 }

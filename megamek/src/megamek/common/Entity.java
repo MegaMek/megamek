@@ -6132,8 +6132,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Large Spacecraft use this block
         if (usesWeaponBays()) {
             for (Mounted weapon : getWeaponBayList()) {
-                // Skip anything that's not an AMS or Point Defense Bay
-                if (!weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
+                if (!weapon.getType().hasFlag(WeaponType.F_AMS)
+                        && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
+                        && !weapon.getType().hasFlag(WeaponType.F_PDBAY))  {
                     continue;
                 }
 

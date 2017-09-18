@@ -509,9 +509,8 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21);
     //Variable heat, heat is listed in dice, not points
     public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22);
-    //AMS and Point Defenses
+    //AMS
     public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23);
-    public static final BigInteger F_PD = BigInteger.valueOf(1).shiftLeft(24);
 
     //may only target Infantry
     public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25);
@@ -557,7 +556,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_INF_SUPPORT = BigInteger.valueOf(1).shiftLeft(53);
     public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
     public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
-    public static final BigInteger F_INF_CLIMBINGCLAWS = BigInteger.valueOf(1).shiftLeft(62);   //TODO Add game rules IO pg 84
+    public static final BigInteger F_INF_CLIMBINGCLAWS = BigInteger.valueOf(1).shiftLeft(63);   //TODO Add game rules IO pg 84
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
@@ -577,6 +576,11 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_BOMB_WEAPON = BigInteger.valueOf(1).shiftLeft(61);
     
     public static final BigInteger F_BA_INDIVIDUAL = BigInteger.valueOf(1).shiftLeft(62);
+    //Next one's out of order. See F_INF_CLIMBINGCLAWS
+    
+    //AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
+    public static final BigInteger F_PDBAY = BigInteger.valueOf(1).shiftLeft(64);
+    public static final BigInteger F_AMSBAY = BigInteger.valueOf(1).shiftLeft(65);
     
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;

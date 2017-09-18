@@ -51,7 +51,7 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_POINT_DEFENSE;
-		flags = flags.or(F_AUTO_TARGET).or(F_PD).or(F_AERO_WEAPON);
+		flags = flags.or(F_PDBAY).or(F_AERO_WEAPON);
 		setModes(new String[] { "Point Defense", "Normal" });
 		setInstantModeSwitch(false);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);

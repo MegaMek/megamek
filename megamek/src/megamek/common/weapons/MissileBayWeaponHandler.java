@@ -257,9 +257,9 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         // any AMS bay attacks by the target?
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
         if (null != lCounters) {
-            for (Mounted counter : lCounters) {
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMS);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PD);
+            for (Mounted counter : lCounters) {               
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
                 Entity pdEnt = counter.getEntity();
                 boolean isInArc;
                 // If the defending unit is the target, use attacker for arc

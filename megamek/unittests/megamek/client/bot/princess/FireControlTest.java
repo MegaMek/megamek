@@ -2368,6 +2368,7 @@ public class FireControlTest {
         FiringPlan expected;
         Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         Mockito.when(mockShooter.isOffBoard()).thenReturn(false);
+        Mockito.when(mockShooter.getBombs(Mockito.any(BigInteger.class))).thenReturn(new Vector<>(0));
         Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockTarget.isOffBoard()).thenReturn(false);
         Mockito.when(mockBoard.contains(Mockito.eq(mockShooterCoords))).thenReturn(true);
@@ -2376,8 +2377,11 @@ public class FireControlTest {
                                                                    Mockito.anyBoolean());
 
         MovePath mockFlightPath = Mockito.mock(MovePath.class);
+        Mockito.when(mockFlightPath.getFinalAltitude()).thenReturn(5);
 
         // Test the normal case.
+        Mockito.when(mockPPCFireInfo.getExpectedDamage()).thenReturn(10.0);
+        Mockito.when(mockLRMFireInfo.getExpectedDamage()).thenReturn(5.0);
         expected = new FiringPlan(mockTarget);
         expected.add(mockPPCFireInfo);
         expected.add(mockLRMFireInfo);

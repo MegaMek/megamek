@@ -430,11 +430,11 @@ public class WeaponFireInfo {
 
         try {
             // Set up the attack action and calculate the chance to hit.
-            if(bombPayload.length == 0) {
+            if ((null == bombPayload) || (bombPayload.length == 0)) {
                 setAction(buildWeaponAttackAction());
             }
             else {
-                setAction(this.buildBombAttackAction(bombPayload));
+                setAction(buildBombAttackAction(bombPayload));
             }
             
             if (!guess) {

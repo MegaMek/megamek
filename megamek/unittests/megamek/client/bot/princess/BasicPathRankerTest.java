@@ -22,6 +22,7 @@ import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.IAero;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -35,6 +36,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.VTOL;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
@@ -99,7 +101,7 @@ public class BasicPathRankerTest {
     }
 
     private void assertRankedPathEquals(RankedPath expected, RankedPath actual) {
-        Assert.assertNotNull(actual);
+        Assert.assertNotNull("Actual path is null.", actual);
         StringBuilder failure = new StringBuilder();
         if (!expected.getReason().equals(actual.getReason())) {
             failure.append("\nExpected :").append(expected.getReason());
@@ -124,6 +126,11 @@ public class BasicPathRankerTest {
     public void testDoAeroSpecificRanking() {
 
         BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
+        
+        Aero mockAero = Mockito.mock(Aero.class);
+        Mockito.when(mockAero.isAero()).thenReturn(true);
+        Mockito.when(mockAero.isAirborne()).thenReturn(true);
+        Mockito.when(mockAero.isSpheroid()).thenReturn(false);
 
         // Test a normal flight.
         MoveStep mockLastStep = Mockito.mock(MoveStep.class);
@@ -132,6 +139,8 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
+        Mockito.when(mockPath.getEntity()).thenReturn(mockAero);
+        Mockito.when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
         Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath));
 
         // Test a stall
@@ -140,7 +149,6 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         RankedPath expected = new RankedPath(-1000d, mockPath, "stall");
         assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
-        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath));
 
         // Test a crash.
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
@@ -148,14 +156,19 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(0);
         expected = new RankedPath(-10000d, mockPath, "crash");
         assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
 
         // Test flying off the board.
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.RETURN);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
+        Mockito.when(mockPath.fliesOffBoard()).thenReturn(true);
         expected = new RankedPath(-5d, mockPath, "off-board");
         assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
+        
+        // VTOL flying off board.
+        VTOL mockVtol = Mockito.mock(VTOL.class);
+        Mockito.when(mockVtol.getEntityType()).thenReturn(Entity.ETYPE_VTOL);
+        Mockito.when(mockPath.getEntity()).thenReturn(mockVtol);
         expected = new RankedPath(-5000d, mockPath, "off-board");
         assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
     }
@@ -199,7 +212,7 @@ public class BasicPathRankerTest {
 
         // Add in a MASC roll.
         Mockito.when(mockPath.hasActiveMASC()).thenReturn(true);
-        expected = 0.336;
+        expected = 0.346;
         actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
         Assert.assertEquals(expected, actual, TOLERANCE);
     }

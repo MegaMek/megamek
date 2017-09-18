@@ -1669,13 +1669,23 @@ public class FireControl {
      * @param guess                 Whether we're just thinking about this firing plan or about to                              
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter is capable of dropping bombs.
      */
-    FiringPlan getDiveBombPlan(Entity shooter, MovePath flighPath, Targetable target, @Nullable EntityState targetState, 
-            IGame game, boolean passedOverTarget, boolean guess) {
+    private FiringPlan getDiveBombPlan(Entity shooter,
+                                       MovePath flighPath,
+                                       Targetable target,
+                                       @Nullable EntityState targetState,
+                                       IGame game,
+                                       boolean passedOverTarget,
+                                       boolean guess) {
         FiringPlan diveBombPlan = new FiringPlan(target);
         HexTarget hexToBomb = new HexTarget(target.getPosition(), game.getBoard(), 
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);
-        
-        for(Iterator<Mounted> weaponIter = shooter.getWeapons(); weaponIter.hasNext();) {
+
+        final Iterator<Mounted> weaponIter = shooter.getWeapons();
+        if (null == weaponIter) {
+            return diveBombPlan;
+        }
+
+        while (weaponIter.hasNext()) {
             Mounted weapon = weaponIter.next();
             if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 

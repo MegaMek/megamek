@@ -253,6 +253,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             return 0;
         }
         int counterAV = 0;
+        int amsAV = 0;
+        int pdAV = 0;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
@@ -274,7 +276,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                             entityTarget);
                 }
                 if (isAMSBay) {
-                	int amsAV = 0;
+                	amsAV = 0;
                     // Point defenses can't fire if they're not ready for any reason
 		            if (!(counter.getType() instanceof WeaponType)
 	                         || !counter.isReady() || counter.isMissing()
@@ -310,10 +312,9 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     
                     // set the ams as having fired
                     amsBayEngaged = true;
-                    
-                    counterAV = amsAV;
+                                        
                 } else if (isPDBay && !pdBayEngaged) {
-                	int pdAV = 0;
+                    pdAV = 0;
                     // Point defenses can't fire if they're not ready for any reason
 		            if (!(counter.getType() instanceof WeaponType)
 	                         || !counter.isReady() || counter.isMissing()
@@ -350,11 +351,13 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     // set the ams as having fired
                     counter.setUsedThisRound(true); //this only applies to PD bays. AMS bays can fire multiple times.
                     pdBayEngaged = true;
-                    
-                    // non-AMS only add half their damage, rounded up
-                    counterAV = (int) Math.ceil(pdAV / 2);              
+                                 
                 } //end PDBay fire 
-             
+                
+                // non-AMS only add half their damage, rounded up
+                counterAV += (int) Math.ceil(pdAV / 2); 
+                // AMS add their full damage
+                counterAV += amsAV;
             } //end "for Mounted counter"
         } // end check for counterfire
         CounterAV = (int) counterAV;

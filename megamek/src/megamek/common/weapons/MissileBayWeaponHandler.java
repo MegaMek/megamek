@@ -300,8 +300,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 	                        entityTarget.heatBuildup += bayW.getCurrentHeat();
 	                    }
                         
-                        // decrement the ammo
+                        //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
+                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
+                                continue;
+                            }
+                            // decrement the ammo
                         	bayWAmmo.setShotsLeft(Math.max(0,
                         		bayWAmmo.getBaseShotsLeft() - 1));
                         }
@@ -310,8 +314,10 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         amsAV += bayWType.getShortAV();                                      
             		}
                     
-                    // set the ams as having fired
-                    amsBayEngaged = true;
+                    // set the ams as having fired, if it did
+                    if (amsAV > 0) {
+                        amsBayEngaged = true;
+                    }
                                         
                 } else if (isPDBay && !pdBayEngaged) {
                     pdAV = 0;
@@ -338,19 +344,25 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 	                        entityTarget.heatBuildup += bayW.getCurrentHeat();
 	                    }
                         
-                        // decrement the ammo
+                        //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
-                        	bayWAmmo.setShotsLeft(Math.max(0,
-                        		bayWAmmo.getBaseShotsLeft() - 1));
+                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
+                                continue;
+                            }
+                            // decrement the ammo
+                            bayWAmmo.setShotsLeft(Math.max(0,
+                                bayWAmmo.getBaseShotsLeft() - 1));
                         }
                         
                         // get the attack value
                         pdAV += bayWType.getShortAV();                    
             		}
                     
-                    // set the ams as having fired
-                    counter.setUsedThisRound(true); //this only applies to PD bays. AMS bays can fire multiple times.
-                    pdBayEngaged = true;
+                    // set the pdbay as having fired, if it was able to
+                    if (pdAV >0 ) {
+                        counter.setUsedThisRound(true); 
+                        pdBayEngaged = true;
+                    }
                                  
                 } //end PDBay fire 
                 

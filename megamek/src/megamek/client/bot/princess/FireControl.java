@@ -1745,11 +1745,11 @@ public class FireControl {
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter is capable of dropping bombs.
      */
     private FiringPlan getDiveBombPlan(final Entity shooter,
-                                       final MovePath flighPath,
-                                       final Targetable target,
+                                      final MovePath flighPath,
+                                      final Targetable target,
                                        final IGame game,
-                                       final boolean passedOverTarget,
-                                       final boolean guess) {
+                                      final boolean passedOverTarget,
+                                      final boolean guess) {
         final FiringPlan diveBombPlan = new FiringPlan(target);
         final HexTarget hexToBomb = new HexTarget(target.getPosition(), game.getBoard(), 
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);

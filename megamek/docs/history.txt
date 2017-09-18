@@ -66,6 +66,7 @@ v0.43.4-git
 + PR #656: BA Quad turrets (displays equipment location correctly; no change in function)
 + Issue #657: Right click -> Set all MGs to burst fire doesn't work [also hotload and searchlight].
 + Issue #646: NPE in Compute canMoveOnPavement.
++ Data: New Sprites and some unit file fixes.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

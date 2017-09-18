@@ -2,70 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Myrmidon Medium Tank
 </Name>
+
 <Model>
 Type 2
 </Model>
-<Tonnage>
-40
-</Tonnage>
+
+<year>
+3075
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 6
 </cruiseMP>
-<Armor>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 35
 27
 27
 24
 35
-</Armor>
-<Turret Equipment>
-ISPlasmaRifle
-ISMine Launcher
-ISMine Launcher
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+</Body Equipment>
+
 <Front Equipment>
 </Front Equipment>
+
 <Right Equipment>
-ISMine Launcher
-ISMine Launcher
+ISVehicularMineDispenser
+ISVehicularMineDispenser
+ISVehicularMineDispenser
 </Right Equipment>
+
 <Left Equipment>
-ISMine Launcher
-ISMine Launcher
+ISVehicularMineDispenser
+ISVehicularMineDispenser
+ISVehicularMineDispenser
 </Left Equipment>
-<Body Equipment>
-ISPlasmaRifle Ammo
-ISPlasmaRifle Ammo
-ISPlasmaRifle Ammo
-</Body Equipment>
-<type>
-IS Level 3
-</type>
-<year>
-3075
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-6
-</armor_type>
-<engine_type>
-4
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISPlasmaRifle
+</Turret Equipment>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+40.0
+</tonnage>
+

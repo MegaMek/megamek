@@ -248,7 +248,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     @Override
     protected int calcCounterAV () {
         if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)
+                || !advancedPD) {
             return 0;
         }
         int counterAV = 0;

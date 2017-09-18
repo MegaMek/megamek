@@ -2983,8 +2983,8 @@ public class Compute {
                 // far
                 // away we actually are and then set the damage accordingly.
                 int rangeToTarget = attacker.getPosition().distance(
-                        g.getEntity(waa.getTargetId()).getPosition());                
-                //Convert AV to fDamage for bay weapons
+                        g.getEntity(waa.getTargetId()).getPosition());
+                //Convert AV to fDamage for bay weapons, fighters, etc
                 if (attacker.usesWeaponBays()){
                 	double av = 0;
                 	double threat = 1;
@@ -3021,6 +3021,40 @@ public class Compute {
                         }
                         fDamage = (float) (av * threat);
                     }
+                } else if (attacker.isCapitalFighter()) {
+                	double av = 0;
+                	double threat = 1;
+                	for (attacker.getWeaponList();;) {
+                	//Capital weapons have a different range scale
+                        if (wt.isCapital()) {
+                        	// Capital missiles should have higher priority than standard missiles
+                        	threat *= 2;
+                        	if (rangeToTarget > 50) {
+                			av = 0;
+                        	} else if (rangeToTarget > 40) {
+                			av += wt.getExtAV();
+                        	} else if (rangeToTarget > 25) {
+                			av += wt.getLongAV();
+                        	} else if (rangeToTarget > 12) {
+                			av += wt.getMedAV();
+                        	} else {
+                			av += wt.getShortAV();
+                        	}              				
+                        } else {
+                        	if (rangeToTarget > 25) {
+                			av = 0;
+                        	} else if (rangeToTarget > 20) {
+                			av += wt.getExtAV();
+                        	} else if (rangeToTarget > 12) {
+                			av += wt.getLongAV();
+                        	} else if (rangeToTarget > 6) {
+                			av += wt.getMedAV();
+                        	} else {
+                			av += wt.getShortAV();
+                        	} 
+                        }
+                        fDamage = (float) (av * threat);
+                	}
                 } else {
                 fDamage = wt.getDamage(rangeToTarget);
             	}

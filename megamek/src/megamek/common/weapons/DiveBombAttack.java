@@ -28,6 +28,9 @@ public class DiveBombAttack extends Weapon {
      *
      */
     private static final long serialVersionUID = -179884141546884171L;
+    
+    public static final int DIVE_BOMB_MIN_ALTITUDE = 3;
+    public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
 
     public DiveBombAttack() {
         name = "Dive Bomb";

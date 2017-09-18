@@ -101,19 +101,19 @@ public class BasicPathRankerTest {
     private void assertRankedPathEquals(RankedPath expected, RankedPath actual) {
         Assert.assertNotNull(actual);
         StringBuilder failure = new StringBuilder();
-        if (!expected.reason.equals(actual.reason)) {
-            failure.append("\nExpected :").append(expected.reason);
-            failure.append("\nActual   :").append(actual.reason);
+        if (!expected.getReason().equals(actual.getReason())) {
+            failure.append("\nExpected :").append(expected.getReason());
+            failure.append("\nActual   :").append(actual.getReason());
         }
-        if (!expected.path.equals(actual.path)) {
+        if (!expected.getPath().equals(actual.getPath())) {
             failure.append("\nExpected :").append(expected.toString());
             failure.append("\nActual   :").append(actual.toString());
         }
-        int expectedRank = (int) (expected.rank * (1 / TOLERANCE));
-        int actualRank = (int) (actual.rank * (1 / TOLERANCE));
+        int expectedRank = (int) (expected.getRank() * (1 / TOLERANCE));
+        int actualRank = (int) (actual.getRank() * (1 / TOLERANCE));
         if (expectedRank != actualRank) {
-            failure.append("\nExpected :").append(expected.rank);
-            failure.append("\nActual   :").append(actual.rank);
+            failure.append("\nExpected :").append(expected.getRank());
+            failure.append("\nActual   :").append(actual.getRank());
         }
         if (!StringUtil.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
@@ -132,32 +132,32 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
-        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, false, false));
+        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath));
 
         // Test a stall
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(0);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         RankedPath expected = new RankedPath(-1000d, mockPath, "stall");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false, false));
-        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, true, false));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
+        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath));
 
         // Test a crash.
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(0);
         expected = new RankedPath(-10000d, mockPath, "crash");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false, false));
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true, false));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
 
         // Test flying off the board.
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.RETURN);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         expected = new RankedPath(-5d, mockPath, "off-board");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false, false));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
         expected = new RankedPath(-5000d, mockPath, "off-board");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true, false));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
     }
 
     @Test
@@ -516,7 +516,7 @@ public class BasicPathRankerTest {
                                                      LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("Higher chance to fall should mean lower rank.");
         }
         Mockito.doReturn(0.75)
@@ -541,7 +541,7 @@ public class BasicPathRankerTest {
                                                       LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("Higher chance to fall should mean lower rank.");
         }
         Mockito.doReturn(1.0)
@@ -577,7 +577,7 @@ public class BasicPathRankerTest {
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank > actual.rank) {
+        if (baseRank > actual.getRank()) {
             Assert.fail("The more damage I do, the higher the path rank should be.");
         }
         evalForMockEnemyMech = new EntityEvaluationResponse();
@@ -608,7 +608,7 @@ public class BasicPathRankerTest {
                                                    LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("The less damage I do, the lower the path rank should be.");
         }
         evalForMockEnemyMech = new EntityEvaluationResponse();
@@ -648,7 +648,7 @@ public class BasicPathRankerTest {
                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("The more damage they do, the lower the path rank should be.");
         }
         assertRankedPathEquals(expected, actual);
@@ -680,7 +680,7 @@ public class BasicPathRankerTest {
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank > actual.rank) {
+        if (baseRank > actual.getRank()) {
             Assert.fail("The less damage they do, the higher the path rank should be.");
         }
         evalForMockEnemyMech = new EntityEvaluationResponse();
@@ -716,7 +716,7 @@ public class BasicPathRankerTest {
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank > actual.rank) {
+        if (baseRank > actual.getRank()) {
             Assert.fail("The closer I am to the enemy, the higher the path rank should be.");
         }
         Mockito.doReturn(22.0)
@@ -742,7 +742,7 @@ public class BasicPathRankerTest {
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("The further I am from the enemy, the lower the path rank should be.");
         }
         Mockito.doReturn(12.0)
@@ -771,7 +771,7 @@ public class BasicPathRankerTest {
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank > actual.rank) {
+        if (baseRank > actual.getRank()) {
             Assert.fail("The closer I am to my friends, the higher the path rank should be.");
         }
         friendsCoords = new Coords(20, 10);
@@ -795,7 +795,7 @@ public class BasicPathRankerTest {
                                                     LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("The further I am from my friends, the lower the path rank should be.");
         }
         expected = new RankedPath(-36.25, mockPath, "Calculation: " +
@@ -869,7 +869,7 @@ public class BasicPathRankerTest {
                                                      LOG_DECIMAL.format(15) + "]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseFleeingRank > actual.rank) {
+        if (baseFleeingRank > actual.getRank()) {
             Assert.fail("The closer I am to my home edge when fleeing, the higher the path rank should be.");
         }
         Mockito.doReturn(30)
@@ -898,7 +898,7 @@ public class BasicPathRankerTest {
                                                      LOG_DECIMAL.format(15) + "]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseFleeingRank < actual.rank) {
+        if (baseFleeingRank < actual.getRank()) {
             Assert.fail("The further I am from my home edge when fleeing, the lower the path rank should be.");
         }
         Mockito.doReturn(20)
@@ -928,7 +928,7 @@ public class BasicPathRankerTest {
                                                       LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank != actual.rank) {
+        if (baseRank != actual.getRank()) {
             Assert.fail("Being 1 hex off facing should make no difference in rank.");
         }
         Mockito.when(mockPath.getFinalFacing()).thenReturn(4);
@@ -952,7 +952,7 @@ public class BasicPathRankerTest {
                                                      LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("Being 2 or more hexes off facing should lower the path rank.");
         }
         Mockito.when(mockPath.getFinalFacing()).thenReturn(3);
@@ -976,7 +976,7 @@ public class BasicPathRankerTest {
                                                      LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, 20, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        if (baseRank < actual.rank) {
+        if (baseRank < actual.getRank()) {
             Assert.fail("Being 2 or more hexes off facing should lower the path rank.");
         }
         Mockito.when(mockPath.getFinalFacing()).thenReturn(0);

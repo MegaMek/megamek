@@ -1403,6 +1403,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         bombMounted = b;
     }
 
+    /**
+     * Convenience "property" to reduce typing, which returns true if the current
+     * piece of equipment is a bomb capable of striking ground targets.
+     * @return True if 
+     */
+    public boolean isGroundBomb() {
+        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
+                getType().hasFlag(AmmoType.F_GROUND_BOMB);
+    }
+    
     // is ammo in the same bay as the weapon
     public boolean ammoInBay(int mAmmoId) {
         for (int nextAmmoId : bayAmmo) {

@@ -127,9 +127,9 @@ public interface IGame {
     }
 
     // New accessors for external game id
-    public abstract int getExternalGameId();
+    abstract int getExternalGameId();
 
-    public abstract void setExternalGameId(int value);
+    abstract void setExternalGameId(int value);
 
     /**
      * @return the currently active context-object for victorycondition
@@ -139,38 +139,38 @@ public interface IGame {
      *         the start of the game this should be initialized to an empty
      *         hashmap
      */
-    public abstract HashMap<String, Object> getVictoryContext();
+    abstract HashMap<String, Object> getVictoryContext();
 
     /**
      * set the game victory state.
      */
-    public abstract void setVictoryContext(HashMap<String, Object> ctx);
+    abstract void setVictoryContext(HashMap<String, Object> ctx);
 
     /**
      * Adds the specified game listener to receive board events from this Game.
      *
      * @param listener the game listener.
      */
-    public abstract void addGameListener(GameListener listener);
+    abstract void addGameListener(GameListener listener);
 
     /**
      * Removes the specified game listener.
      *
      * @param listener the game listener.
      */
-    public abstract void removeGameListener(GameListener listener);
+    abstract void removeGameListener(GameListener listener);
 
     /**
      * Returns all the GameListeners.
      *
      * @return
      */
-    public abstract List<GameListener> getGameListeners();
+    abstract List<GameListener> getGameListeners();
 
     /**
      * purges all Game Listener objects.
      */
-    public abstract void purgeGameListeners();
+    abstract void purgeGameListeners();
 
     /**
      * Processes game events by dispatching them to any registered GameListener
@@ -178,7 +178,7 @@ public interface IGame {
      *
      * @param event the game event.
      */
-    public abstract void processGameEvent(GameEvent event);
+    abstract void processGameEvent(GameEvent event);
 
     /**
      * Check if there is a minefield at given coords
@@ -187,7 +187,7 @@ public interface IGame {
      * @return <code>true</code> if there is a minefield at given coords or
      *         <code>false</code> otherwise
      */
-    public abstract boolean containsMinefield(Coords coords);
+    abstract boolean containsMinefield(Coords coords);
 
     /**
      * Get the minefields at specified coords
@@ -195,7 +195,7 @@ public interface IGame {
      * @param coords
      * @return the <code>Vector</code> of minefields at specified coord
      */
-    public abstract Vector<Minefield> getMinefields(Coords coords);
+    abstract Vector<Minefield> getMinefields(Coords coords);
 
     /**
      * Get the number of the minefields at specified coords
@@ -203,7 +203,7 @@ public interface IGame {
      * @param coords
      * @return the number of the minefields at specified coord
      */
-    public abstract int getNbrMinefields(Coords coords);
+    abstract int getNbrMinefields(Coords coords);
 
     /**
      * Get the coordinates of all mined hexes in the game.
@@ -211,65 +211,65 @@ public interface IGame {
      * @return an <code>Enumeration</code> of the <code>Coords</code>
      *         containing minefilds. This will not be <code>null</code>.
      */
-    public abstract Enumeration<Coords> getMinedCoords();
+    abstract Enumeration<Coords> getMinedCoords();
 
     /**
      * Addds the specified minefield
      *
      * @param mf minefield to add
      */
-    public abstract void addMinefield(Minefield mf);
+    abstract void addMinefield(Minefield mf);
 
     /**
      * Adds a number of minefields
      *
      * @param minefields the <code>Vector</code> of the minefields to add
      */
-    public abstract void addMinefields(Vector<Minefield> minefields);
+    abstract void addMinefields(Vector<Minefield> minefields);
 
     /**
      * Sets the minefields to the given <code>Vector</code> of the minefields
      *
      * @param minefields
      */
-    public abstract void setMinefields(Vector<Minefield> minefields);
+    abstract void setMinefields(Vector<Minefield> minefields);
 
     /**
      * Resets the minefield density for a given <code>Vector</code> of minefields
      * @param newMinefields
      */
-    public abstract void resetMinefieldDensity(Vector<Minefield> newMinefields);
+    abstract void resetMinefieldDensity(Vector<Minefield> newMinefields);
 
     /**
      * Removes the specified minefield
      *
      * @param mf minefield to remove
      */
-    public abstract void removeMinefield(Minefield mf);
+    abstract void removeMinefield(Minefield mf);
 
     /**
      * Removes all minefields
      */
-    public abstract void clearMinefields();
+    abstract void clearMinefields();
 
     /**
      * @return the <code>Vector</code> of the vibrabombs
      */
-    public abstract Vector<Minefield> getVibrabombs();
+    abstract Vector<Minefield> getVibrabombs();
 
     /**
      * Addds the specified vibrabomb
      *
      * @param mf Vibrabomb to add
      */
-    public abstract void addVibrabomb(Minefield mf);
+    abstract void addVibrabomb(Minefield mf);
 
     /**
      * Removes the specified Vibrabomb
      *
      * @param mf Vibrabomb to remove
      */
-    public abstract void removeVibrabomb(Minefield mf);
+    abstract void removeVibrabomb(Minefield mf);
 
     /**
      * Checks if the game contains the specified Vibrabomb
@@ -277,178 +277,178 @@ public interface IGame {
      * @param mf the Vibrabomb to ceck
      * @return true iff the minefield contains a vibrabomb.
      */
-    public abstract boolean containsVibrabomb(Minefield mf);
+    abstract boolean containsVibrabomb(Minefield mf);
 
     /**
      * @return game options
      */
-    public abstract GameOptions getOptions();
+    abstract GameOptions getOptions();
 
     /**
      * sets the game options
      *
      * @param options
      */
-    public abstract void setOptions(GameOptions options);
+    abstract void setOptions(GameOptions options);
 
     /**
      * @return the game board
      */
-    public abstract IBoard getBoard();
+    abstract IBoard getBoard();
 
     /**
      * Sets the new game board
      *
      * @param board
      */
-    public abstract void setBoard(IBoard board);
+    abstract void setBoard(IBoard board);
 
     /**
      * Return an enumeration of teams in the game
      */
-    public abstract Enumeration<Team> getTeams();
+    abstract Enumeration<Team> getTeams();
 
     /**
      * Return the current number of teams in the game.
      */
-    public abstract int getNoOfTeams();
+    abstract int getNoOfTeams();
 
     /**
      * Return the immutable vector of teams
      */
-    public abstract List<Team> getTeamsVector();
+    abstract List<Team> getTeamsVector();
 
     /**
      * Return a players team Note: may return null if player has no team
      */
-    public abstract Team getTeamForPlayer(IPlayer p);
+    abstract Team getTeamForPlayer(IPlayer p);
 
     /**
      * Set up the teams vector. Each player on a team (Team 1 .. Team X) is
      * placed in the appropriate vector. Any player on 'No Team', is placed in
      * their own object
      */
-    public abstract void setupTeams();
+    abstract void setupTeams();
 
     /**
      * Return an enumeration of player in the game
      */
-    public abstract Enumeration<IPlayer> getPlayers();
+    abstract Enumeration<IPlayer> getPlayers();
 
     /**
      * Return the players vector
      */
-    public abstract Vector<IPlayer> getPlayersVector();
+    abstract Vector<IPlayer> getPlayersVector();
 
     /**
      * Return the current number of active players in the game.
      */
-    public abstract int getNoOfPlayers();
+    abstract int getNoOfPlayers();
 
     /**
      * Returns the individual player assigned the id parameter.
      */
-    public abstract IPlayer getPlayer(int id);
+    abstract IPlayer getPlayer(int id);
 
-    public abstract void addPlayer(int id, IPlayer player);
+    abstract void addPlayer(int id, IPlayer player);
 
-    public abstract void setPlayer(int id, IPlayer player);
+    abstract void setPlayer(int id, IPlayer player);
 
-    public abstract void removePlayer(int id);
+    abstract void removePlayer(int id);
 
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status, as long as they are in the game.
      * @param player
      */
-    public abstract int getEntitiesOwnedBy(IPlayer player);
+    abstract int getEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status.
      * @param player
      */
-    public abstract int getAllEntitiesOwnedBy(IPlayer player);
+    abstract int getAllEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of non-destroyed entityes owned by the player
      * @param player
      */
-    public abstract int getLiveEntitiesOwnedBy(IPlayer player);
+    abstract int getLiveEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of non-destroyed deployed entities owned by the
      * player. Ignore offboard units and captured Mek pilots.
      * @param player
      */
-    public abstract int getLiveDeployedEntitiesOwnedBy(IPlayer player);
+    abstract int getLiveDeployedEntitiesOwnedBy(IPlayer player);
 
     /**
      * Returns the number of non-destroyed deployed entities owned by the
      * player. Ignore offboard units and captured Mek pilots.
      * @param player
      */
-    public abstract int getLiveCommandersOwnedBy(IPlayer player);
+    abstract int getLiveCommandersOwnedBy(IPlayer player);
 
     /**
      * Returns true if the player has a valid unit with the Tactical Genius
      * pilot special ability.
      * @param player
      */
-    public abstract boolean hasTacticalGenius(IPlayer player);
+    abstract boolean hasTacticalGenius(IPlayer player);
 
     /**
      * Get a vector of entity objects that are "acceptable" to attack with this
      * entity
      */
-    public abstract List<Entity> getValidTargets(Entity entity);
+    abstract List<Entity> getValidTargets(Entity entity);
 
     /**
      * Returns true if this phase has turns. If false, the phase is simply
      * waiting for everybody to declare "done".
      */
-    public abstract boolean phaseHasTurns(IGame.Phase phase);
+    abstract boolean phaseHasTurns(IGame.Phase phase);
 
     /**
      * @return true if the current phase can be played simultaneously
      */
-    public abstract boolean isPhaseSimultaneous();
+    abstract boolean isPhaseSimultaneous();
 
     /**
      * Returns the current GameTurn object
      */
-    public abstract GameTurn getTurn();
+    abstract GameTurn getTurn();
 
     /**
      * @return the first GameTurn object for the specified player, or null
      * if the player has no turns to play
      */
-    public abstract GameTurn getTurnForPlayer(int pn);
+    abstract GameTurn getTurnForPlayer(int pn);
 
     /**
      * Changes to the next turn, returning it.
      */
-    public abstract GameTurn changeToNextTurn();
+    abstract GameTurn changeToNextTurn();
 
     /**
      * Resets the turn index to -1 (awaiting first turn)
      */
-    public abstract void resetTurnIndex();
+    abstract void resetTurnIndex();
 
     /**
      * Returns true if there is a turn after the current one
      */
-    public abstract boolean hasMoreTurns();
+    abstract boolean hasMoreTurns();
 
     /**
      * Inserts a turn that will come directly after the current one
      */
-    public abstract void insertNextTurn(GameTurn turn);
+    abstract void insertNextTurn(GameTurn turn);
     
     /**
      * Inserts a turn after the specific index
      */
-    public abstract void insertTurnAfter(GameTurn turn, int index);
+    abstract void insertTurnAfter(GameTurn turn, int index);
 
     /**
      * Swaps the turn at index 1 with the turn at index 2.
@@ -456,87 +456,87 @@ public interface IGame {
      * @param index1
      * @param index2
      */
-    public abstract void swapTurnOrder(int index1, int index2);
+    abstract void swapTurnOrder(int index1, int index2);
     /**
      * Returns an Enumeration of the current turn list
      */
-    public abstract Enumeration<GameTurn> getTurns();
+    abstract Enumeration<GameTurn> getTurns();
 
     /**
      * Returns the current turn index
      */
-    public abstract int getTurnIndex();
+    abstract int getTurnIndex();
 
     /**
      * Sets the current turn index
      */
-    public abstract void setTurnIndex(int turnIndex);
+    abstract void setTurnIndex(int turnIndex);
 
     /**
      * Returns the current turn vector
      */
-    public abstract List<GameTurn> getTurnVector();
+    abstract List<GameTurn> getTurnVector();
 
     /**
      * Sets the current turn vector
      */
-    public abstract void setTurnVector(List<GameTurn> turnVector);
+    abstract void setTurnVector(List<GameTurn> turnVector);
 
-    public abstract IGame.Phase getPhase();
+    abstract IGame.Phase getPhase();
 
-    public abstract void setPhase(IGame.Phase phase);
+    abstract void setPhase(IGame.Phase phase);
 
-    public abstract IGame.Phase getLastPhase();
+    abstract IGame.Phase getLastPhase();
 
-    public abstract void setLastPhase(IGame.Phase lastPhase);
+    abstract void setLastPhase(IGame.Phase lastPhase);
 
-    public abstract void setDeploymentComplete(boolean deploymentComplete);
+    abstract void setDeploymentComplete(boolean deploymentComplete);
 
-    public abstract boolean isDeploymentComplete();
+    abstract boolean isDeploymentComplete();
 
     /**
      * Sets up up the hashtable of who deploys when
      */
-    public abstract void setupRoundDeployment();
+    abstract void setupRoundDeployment();
 
     /**
      * Checks to see if we've past our deployment completion
      */
-    public abstract void checkForCompleteDeployment();
+    abstract void checkForCompleteDeployment();
 
     /**
      * Check to see if we should deploy this round
      */
-    public abstract boolean shouldDeployThisRound();
+    abstract boolean shouldDeployThisRound();
 
-    public abstract boolean shouldDeployForRound(int round);
+    abstract boolean shouldDeployForRound(int round);
 
     /**
      * Clear this round from this list of entities to deploy
      */
-    public abstract void clearDeploymentThisRound();
+    abstract void clearDeploymentThisRound();
 
     /**
      * Returns a vector of entities that have not yet deployed
      */
-    public abstract List<Entity> getUndeployedEntities();
+    abstract List<Entity> getUndeployedEntities();
 
     /**
      * Returns an enumeration of all the entites in the game.
      */
-    public abstract Iterator<Entity> getEntities();
+    abstract Iterator<Entity> getEntities();
 
     /**
      * Returns the actual vector for the entities
      */
-    public abstract List<Entity> getEntitiesVector();
+    abstract List<Entity> getEntitiesVector();
 
-    public abstract void setEntitiesVector(List<Entity> entities);
+    abstract void setEntitiesVector(List<Entity> entities);
 
     /**
      * Returns the actual vector for the out-of-game entities
      */
-    public abstract Vector<Entity> getOutOfGameEntitiesVector();
+    abstract Vector<Entity> getOutOfGameEntitiesVector();
 
     /**
      * Returns an out-of-game entity.
@@ -545,7 +545,7 @@ public interface IGame {
      * @return the out-of-game <code>Entity</code> with that ID. If no
      *         out-of-game entity has that ID, returns a <code>null</code>.
      */
-    public abstract Entity getOutOfGameEntity(int id);
+    abstract Entity getOutOfGameEntity(int id);
 
     /**
      * Swap out the current list of dead (or fled) units for a new one.
@@ -555,7 +555,7 @@ public interface IGame {
      * @throw <code>IllegalArgumentException</code> if the new list is
      *        <code>null</code>.
      */
-    public abstract void setOutOfGameEntitiesVector(List<Entity> vOutOfGame);
+    abstract void setOutOfGameEntitiesVector(List<Entity> vOutOfGame);
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s
@@ -572,7 +572,7 @@ public interface IGame {
      *         will not be <code>null</code>.
      * @see #getC3SubNetworkMembers(Entity)
      */
-    public abstract Vector<Entity> getC3NetworkMembers(Entity entity);
+    abstract Vector<Entity> getC3NetworkMembers(Entity entity);
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s
@@ -591,7 +591,7 @@ public interface IGame {
      *         will not be <code>null</code>.
      * @see #getC3NetworkMembers(Entity)
      */
-    public abstract Vector<Entity> getC3SubNetworkMembers(Entity entity);
+    abstract Vector<Entity> getC3SubNetworkMembers(Entity entity);
 
     /**
      * Returns a <code>Hashtable</code> that maps the <code>Coords</code> of
@@ -603,52 +603,52 @@ public interface IGame {
      *         positions or each unit in the game to a <code>Vector</code> of
      *         <code>Entity</code>s at that position.
      */
-    public abstract Hashtable<Coords, Vector<Entity>> getPositionMap();
+    abstract Hashtable<Coords, Vector<Entity>> getPositionMap();
 
     /**
      * Returns an enumeration of salvagable entities.
      */
-    public abstract Enumeration<Entity> getGraveyardEntities();
+    abstract Enumeration<Entity> getGraveyardEntities();
 
     /**
      * Returns an enumeration of wrecked entities.
      */
-    public abstract Enumeration<Entity> getWreckedEntities();
+    abstract Enumeration<Entity> getWreckedEntities();
 
     /**
      * Returns an enumeration of entities that have retreated
      */
-    public abstract Enumeration<Entity> getRetreatedEntities();
+    abstract Enumeration<Entity> getRetreatedEntities();
 
     /**
      * Returns an enumeration of entities that were utterly destroyed
      */
-    public abstract Enumeration<Entity> getDevastatedEntities();
+    abstract Enumeration<Entity> getDevastatedEntities();
 
     /**
      * Returns an enumeration of "carcass" entities, i.e., vehicles with dead
      * crews that are still on the map.
      */
-    public abstract Enumeration<Entity> getCarcassEntities();
+    abstract Enumeration<Entity> getCarcassEntities();
     /**
      * Return the current number of entities in the game.
      */
-    public abstract int getNoOfEntities();
+    abstract int getNoOfEntities();
 
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    public abstract Targetable getTarget(int nType, int nID);
+    abstract Targetable getTarget(int nType, int nID);
 
     /**
      * Returns the entity with the given id number, if any.
      */
-    public abstract Entity getEntity(int id);
+    abstract Entity getEntity(int id);
     
     /**
      * looks for an entity by id number even if out of the game
      */
-    public abstract Entity getEntityFromAllSources(int id);
+    abstract Entity getEntityFromAllSources(int id);
 
     /**
      * Adds a collection of new Entities.  Only one GameEntityNewEvent is
@@ -657,7 +657,7 @@ public interface IGame {
      * @param ids  A collection of ids for each Entity to be added.
      * @param entities  The Entity objects to be added.
      */
-    public abstract void addEntities(List<Entity> entities);
+    abstract void addEntities(List<Entity> entities);
 
     /**
      * Adds a new Entity to this Game object.
@@ -667,7 +667,7 @@ public interface IGame {
      * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is
      *                  generated.
      */
-    public abstract void addEntity(Entity entity, boolean genEvent);
+    abstract void addEntity(Entity entity, boolean genEvent);
 
     /**
      * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
@@ -675,7 +675,7 @@ public interface IGame {
      * @param id  The id of the Entity to be added.
      * @param entity The Entity to add.
      **/
-    public void addEntity(Entity entity);
+    void addEntity(Entity entity);
     
     /**
      * Adds a new Entity.  The id parameter is ignored and addEntity(Entity)
@@ -686,51 +686,51 @@ public interface IGame {
      *               Entity
      * @param entity The Entity to add to the game.
      */
-    public void addEntity(int id, Entity entity);
+    void addEntity(int id, Entity entity);
 
-    public abstract void setEntity(int id, Entity entity);
+    abstract void setEntity(int id, Entity entity);
 
-    public void setEntity(int id, Entity entity, Vector<UnitLocation> movePath);
+    void setEntity(int id, Entity entity, Vector<UnitLocation> movePath);
 
     /**
      * @return int containing an unused entity id
      */
-    public abstract int getNextEntityId();
+    abstract int getNextEntityId();
 
     /**
      * @return <code>true</code> if an entity with the specified id number
      *         exists in this game.
      */
-    public abstract boolean hasEntity(int entityId);
+    abstract boolean hasEntity(int entityId);
 
     /**
      * Remove an entity from the master list. If we can't find that entity,
      * (probably due to double-blind) ignore it.
      */
-    public abstract void removeEntity(int id, int condition);
+    abstract void removeEntity(int id, int condition);
 
-    public abstract void removeEntities(List<Integer> ids, int condition);
+    abstract void removeEntities(List<Integer> ids, int condition);
 
     /**
      * Resets this game by removing all entities.
      */
-    public abstract void reset();
+    abstract void reset();
 
     /**
      * add a smoke cloud to the list of smoke clouds
      */
-    public abstract void addSmokeCloud(SmokeCloud cloud);
+    abstract void addSmokeCloud(SmokeCloud cloud);
 
     /**
      * get the list of smokeclouds
      */
-    public abstract List<SmokeCloud> getSmokeCloudList();
+    abstract List<SmokeCloud> getSmokeCloudList();
     
     /**
      * Remove a list of smoke clouds
      * @param cloudsToRemove
      */
-    public abstract void removeSmokeClouds(List<SmokeCloud> cloudsToRemove);
+    abstract void removeSmokeClouds(List<SmokeCloud> cloudsToRemove);
 
     /**
      * Returns the first entity at the given coordinate, if any. Only returns
@@ -738,7 +738,7 @@ public interface IGame {
      *
      * @param c the coordinates to search at
      */
-    public abstract Entity getFirstEntity(Coords c);
+    abstract Entity getFirstEntity(Coords c);
 
     /**
      * Returns the first enemy entity at the given coordinate, if any. Only
@@ -747,32 +747,32 @@ public interface IGame {
      * @param c the coordinates to search at
      * @param currentEntity the entity that is firing
      */
-    public abstract Entity getFirstEnemyEntity(Coords c, Entity currentEntity);
+    abstract Entity getFirstEnemyEntity(Coords c, Entity currentEntity);
 
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Iterator<Entity> getEntities(Coords c);
+    abstract Iterator<Entity> getEntities(Coords c);
 
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Iterator<Entity> getEntities(Coords c, boolean ignore);
+    abstract Iterator<Entity> getEntities(Coords c, boolean ignore);
 
     /**
      * Returns a Vector of the active entities at the given coordinates.
      */
-    public abstract List<Entity> getEntitiesVector(Coords c);
+    abstract List<Entity> getEntitiesVector(Coords c);
     
     /**
      * Returns a Vector of the active entities at the given coordinates.
      */
-    public abstract List<Entity> getEntitiesVector(Coords c, boolean ignore);
+    abstract List<Entity> getEntitiesVector(Coords c, boolean ignore);
 
     /**
      * Returns a Vector of the gun emplacements at the given coordinates.
      */
-    public abstract Vector<GunEmplacement> getGunEmplacements(Coords c);
+    abstract Vector<GunEmplacement> getGunEmplacements(Coords c);
 
     /**
      * Returns a Target for an Accidental Fall From above, or null if no
@@ -783,7 +783,7 @@ public interface IGame {
      * @param ignore The entity who is falling, so shouldn't be returned
      * @return The <code>Entity</code> that should be an AFFA target.
      */
-    public abstract Entity getAffaTarget(Coords c, Entity ignore);
+    abstract Entity getAffaTarget(Coords c, Entity ignore);
 
     /**
      * Returns an <code>Enumeration</code> of the enemy's active entities at
@@ -794,8 +794,17 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are enemies of the given unit.
      */
-    public abstract Iterator<Entity> getEnemyEntities(final Coords c,
+    abstract Iterator<Entity> getEnemyEntities(final Coords c,
             final Entity currentEntity);
+    
+    /**
+     * Returns an <code>Enumeration</code> of active enemy entities
+     *
+     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the
+     *         given coordinates who are enemies of the given unit.
+     */
+    abstract Iterator<Entity> getAllEnemyEntities(final Entity currentEntity);
 
     /**
      * Returns an <code>Enumeration</code> of friendly active entities at the
@@ -806,14 +815,14 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are friends of the given unit.
      */
-    public abstract Iterator<Entity> getFriendlyEntities(final Coords c,
+    abstract Iterator<Entity> getFriendlyEntities(final Coords c,
             final Entity currentEntity);
 
     /**
      * Moves an entity into the graveyard so it stops getting sent out every
      * phase.
      */
-    public abstract void moveToGraveyard(int id);
+    abstract void moveToGraveyard(int id);
 
     /**
      * See if the <code>Entity</code> with the given ID is out of the game.
@@ -822,7 +831,7 @@ public interface IGame {
      * @return <code>true</code> if the <code>Entity</code> is in the
      *         graveyard, <code>false</code> otherwise.
      */
-    public abstract boolean isOutOfGame(int id);
+    abstract boolean isOutOfGame(int id);
 
     /**
      * See if the <code>Entity</code> is out of the game.
@@ -831,31 +840,31 @@ public interface IGame {
      * @return <code>true</code> if the <code>Entity</code> is in the
      *         graveyard, <code>false</code> otherwise.
      */
-    public abstract boolean isOutOfGame(Entity entity);
+    abstract boolean isOutOfGame(Entity entity);
 
     /**
      * Returns the first entity that can act in the present turn, or null if
      * none can.
      */
-    public abstract Entity getFirstEntity();
+    abstract Entity getFirstEntity();
 
     /**
      * Returns the first entity that can act in the specified turn, or null if
      * none can.33
      */
-    public abstract Entity getFirstEntity(GameTurn turn);
+    abstract Entity getFirstEntity(GameTurn turn);
 
     /**
      * Returns the id of the first entity that can act in the current turn, or
      * -1 if none can.
      */
-    public abstract int getFirstEntityNum();
+    abstract int getFirstEntityNum();
 
     /**
      * Returns the id of the first entity that can act in the specified turn, or
      * -1 if none can.
      */
-    public abstract int getFirstEntityNum(GameTurn turn);
+    abstract int getFirstEntityNum(GameTurn turn);
 
     /**
      * Returns the next selectable entity that can act this turn, or null if
@@ -864,7 +873,7 @@ public interface IGame {
      * @param start
      *            the index number to start at (not an Entity Id)
      */
-    public abstract Entity getNextEntity(int start);
+    abstract Entity getNextEntity(int start);
 
     /**
      * Returns the next selectable entity ID that can act this turn, or null if
@@ -873,7 +882,7 @@ public interface IGame {
      * @param start the index number to start at (and index into the entities
      *                  collection)
      */
-    public abstract int getNextEntityNum(int start);
+    abstract int getNextEntityNum(int start);
 
     /**
      * Returns the entity id of the next entity that can move during the
@@ -882,7 +891,7 @@ public interface IGame {
      * @param turn the turn to use
      * @param start the entity id to start at
      */
-    public abstract int getNextEntityNum(GameTurn turn, int start);
+    abstract int getNextEntityNum(GameTurn turn, int start);
     
     /**
      * Returns the entity id of the previous entity that can move during the
@@ -891,31 +900,21 @@ public interface IGame {
      * @param turn the turn to use
      * @param start the entity id to start at
      */
-    public abstract int getPrevEntityNum(GameTurn turn, int start);
+    abstract int getPrevEntityNum(GameTurn turn, int start);
 
     /**
      * Returns the number of the first deployable entity
      */
-    public abstract int getFirstDeployableEntityNum();
+    abstract int getFirstDeployableEntityNum();
 
-    public abstract int getFirstDeployableEntityNum(GameTurn turn);
+    abstract int getFirstDeployableEntityNum(GameTurn turn);
 
     /**
      * Returns the number of the next deployable entity
      */
-    public abstract int getNextDeployableEntityNum(int entityId);
+    abstract int getNextDeployableEntityNum(int entityId);
 
-    public abstract int getNextDeployableEntityNum(GameTurn turn, int start);
-
-    /**
-     * Get the entities for the player.
-     *
-     *
-     * @param player - the <code>Player</code> whose entities are required.
-     * @param hide - should fighters loaded into squadrons be excluded from this list?
-     * @return a <code>Vector</code> of <code>Entity</code>s.
-     */
-    public abstract ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide);
+    abstract int getNextDeployableEntityNum(GameTurn turn, int start);
 
     /**
      * Get the entities for the player.
@@ -925,7 +924,17 @@ public interface IGame {
      * @param hide - should fighters loaded into squadrons be excluded from this list?
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
-    public abstract ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
+    abstract ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide);
+
+    /**
+     * Get the entities for the player.
+     *
+     *
+     * @param player - the <code>Player</code> whose entities are required.
+     * @param hide - should fighters loaded into squadrons be excluded from this list?
+     * @return a <code>Vector</code> of <code>Entity</code>s.
+     */
+    abstract ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide);
 
     /**
      * Determines if the indicated entity is stranded on a transport that can't
@@ -938,39 +947,39 @@ public interface IGame {
      * @return <code>true</code> if the entity is stranded <code>false</code>
      *         otherwise.
      */
-    public abstract boolean isEntityStranded(Entity entity);
+    abstract boolean isEntityStranded(Entity entity);
 
     /**
      * Returns the number of remaining selectable infantry owned by a player.
      */
-    public abstract int getInfantryLeft(int playerId);
+    abstract int getInfantryLeft(int playerId);
 
     /**
      * Returns the number of remaining selectable Protomechs owned by a player.
      */
-    public abstract int getProtomechsLeft(int playerId);
+    abstract int getProtomechsLeft(int playerId);
 
     /**
      * Returns the number of remaining selectable Vehicles owned by a player.
      */
-    public abstract int getVehiclesLeft(int playerId);
+    abstract int getVehiclesLeft(int playerId);
     
     /**
      * Returns the number of remaining selectable Mechs owned by a player.
      */
-    public abstract int getMechsLeft(int playerId);
+    abstract int getMechsLeft(int playerId);
 
     /**
      * Removes the last, next turn found that the specified entity can move in.
      * Used when, say, an entity dies mid-phase.
      */
-    public abstract void removeTurnFor(Entity entity);
+    abstract void removeTurnFor(Entity entity);
 
     /**
      * Removes the first turn found that the specified entity can move in.
      * Used when a turn is played out of order
      */
-    public abstract GameTurn removeFirstTurnFor(Entity entity);
+    abstract GameTurn removeFirstTurnFor(Entity entity);
     
     /**
      * Removes any turns that can only be taken by the specified entity.  Useful
@@ -979,7 +988,7 @@ public interface IGame {
      * @param entity
      * @return The number of turns returned
      */
-    public abstract int removeSpecificEntityTurnsFor(Entity entity);
+    abstract int removeSpecificEntityTurnsFor(Entity entity);
 
     /**
      * Check each player for the presence of a Battle Armor squad equipped with
@@ -995,186 +1004,186 @@ public interface IGame {
     /* Taharqa: I am removing this function and instead I am simply adding clamp mounts to all
      * non omni/ none BA handled mechs in the game.addEntity routine - It should not be too much memory to
      * do this and it allows us to load these units in the lobby
-    public abstract boolean checkForMagneticClamp();
+    abstract boolean checkForMagneticClamp();
     */
 
     /** Adds the specified action to the actions list for this phase. */
-    public abstract void addAction(EntityAction ea);
+    abstract void addAction(EntityAction ea);
 
-    public abstract void addAttack(AttackHandler ah);
+    abstract void addAttack(AttackHandler ah);
 
-    public abstract void removeAttack(AttackHandler ah);
+    abstract void removeAttack(AttackHandler ah);
 
-    public abstract Enumeration<AttackHandler> getAttacks();
+    abstract Enumeration<AttackHandler> getAttacks();
 
-    public abstract Vector<AttackHandler> getAttacksVector();
+    abstract Vector<AttackHandler> getAttacksVector();
 
-    public abstract void resetAttacks();
+    abstract void resetAttacks();
 
-    public int getArtillerySize();
+    int getArtillerySize();
 
-    public void setArtilleryVector(Vector<ArtilleryAttackAction> v);
+    void setArtilleryVector(Vector<ArtilleryAttackAction> v);
 
-    public Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
+    Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
 
     // HACK.
-    public abstract void setAttacksVector(Vector<AttackHandler> v);
+    abstract void setAttacksVector(Vector<AttackHandler> v);
 
     /**
      * Returns an Enumeration of actions scheduled for this phase.
      */
-    public abstract Enumeration<EntityAction> getActions();
+    abstract Enumeration<EntityAction> getActions();
 
     /**
      * Resets the actions list.
      */
-    public abstract void resetActions();
+    abstract void resetActions();
 
     /**
      * Removes all actions by the specified entity
      */
-    public abstract void removeActionsFor(int entityId);
+    abstract void removeActionsFor(int entityId);
 
     /**
      * Remove a specified action
      *
      * @param o The action to remove.
      */
-    public abstract void removeAction(Object o);
+    abstract void removeAction(Object o);
 
-    public abstract int actionsSize();
+    abstract int actionsSize();
 
     /**
      * Returns the actions vector. Do not use to modify the actions; I will be
      * angry. >:[ Used for sending all actions to the client.
      */
-    public abstract List<EntityAction> getActionsVector();
+    abstract List<EntityAction> getActionsVector();
 
-    public abstract void addInitiativeRerollRequest(Team t);
+    abstract void addInitiativeRerollRequest(Team t);
 
-    public abstract void rollInitAndResolveTies();
+    abstract void rollInitAndResolveTies();
 
-    public abstract int getNoOfInitiativeRerollRequests();
+    abstract int getNoOfInitiativeRerollRequests();
 
     /**
      * Adds a pending displacement attack to the list for this phase.
      */
-    public abstract void addCharge(AttackAction ea);
+    abstract void addCharge(AttackAction ea);
 
     /**
      * Returns an Enumeration of displacement attacks scheduled for the end of
      * the physical phase.
      */
-    public abstract Enumeration<AttackAction> getCharges();
+    abstract Enumeration<AttackAction> getCharges();
 
     /**
      * Resets the pending charges list.
      */
-    public abstract void resetCharges();
+    abstract void resetCharges();
 
     /**
      * Returns the charges vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract List<AttackAction> getChargesVector();
+    abstract List<AttackAction> getChargesVector();
 
     /**
      * Adds a pending ram attack to the list for this phase.
      */
-    public abstract void addRam(AttackAction ea);
+    abstract void addRam(AttackAction ea);
 
     /**
      * Returns an Enumeration of ram attacks scheduled for the end of
      * the physical phase.
      */
-    public abstract Enumeration<AttackAction> getRams();
+    abstract Enumeration<AttackAction> getRams();
 
     /**
      * Resets the pending ram list.
      */
-    public abstract void resetRams();
+    abstract void resetRams();
 
     /**
      * Returns the ram vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract List<AttackAction> getRamsVector();
+    abstract List<AttackAction> getRamsVector();
 
     /**
      * Adds a pending tele-missile attack to the list for this phase.
      */
-    public abstract void addTeleMissileAttack(AttackAction ea);
+    abstract void addTeleMissileAttack(AttackAction ea);
 
     /**
      * Returns an Enumeration of telemissile attacks scheduled for the end of
      * the physical phase.
      */
-    public abstract Enumeration<AttackAction> getTeleMissileAttacks();
+    abstract Enumeration<AttackAction> getTeleMissileAttacks();
 
     /**
      * Resets the pending telemissile attack list.
      */
-    public abstract void resetTeleMissileAttacks();
+    abstract void resetTeleMissileAttacks();
 
     /**
      * Returns the telemissile attack vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract List<AttackAction> getTeleMissileAttacksVector();
+    abstract List<AttackAction> getTeleMissileAttacksVector();
 
     /**
      * Adds a pending PSR to the list for this phase.
      */
-    public abstract void addPSR(PilotingRollData psr);
+    abstract void addPSR(PilotingRollData psr);
 
     /**
      * Returns an Enumeration of pending PSRs.
      */
-    public abstract Enumeration<PilotingRollData> getPSRs();
+    abstract Enumeration<PilotingRollData> getPSRs();
 
     /**
      * Adds a pending extreme Gravity PSR to the list for this phase.
      */
-    public abstract void addExtremeGravityPSR(PilotingRollData psr);
+    abstract void addExtremeGravityPSR(PilotingRollData psr);
 
     /**
      * Returns an Enumeration of pending extreme GravityPSRs.
      */
-    public abstract Enumeration<PilotingRollData> getExtremeGravityPSRs();
+    abstract Enumeration<PilotingRollData> getExtremeGravityPSRs();
 
     /**
      * Resets the PSR list for a given entity.
      */
-    public abstract void resetPSRs(Entity entity);
+    abstract void resetPSRs(Entity entity);
 
     /**
      * Resets the extreme Gravity PSR list.
      */
-    public abstract void resetExtremeGravityPSRs();
+    abstract void resetExtremeGravityPSRs();
 
     /**
      * Resets the extreme Gravity PSR list for a given entity.
      */
-    public abstract void resetExtremeGravityPSRs(Entity entity);
+    abstract void resetExtremeGravityPSRs(Entity entity);
 
     /**
      * Resets the PSR list.
      */
-    public abstract void resetPSRs();
+    abstract void resetPSRs();
 
     /**
      * Getter for property roundCount.
      *
      * @return Value of property roundCount.
      */
-    public abstract int getRoundCount();
+    abstract int getRoundCount();
 
-    public abstract void setRoundCount(int roundCount);
+    abstract void setRoundCount(int roundCount);
 
     /**
      * Increments the round counter
      */
-    public abstract void incrementRoundCount();
+    abstract void incrementRoundCount();
 
     /**
      * Getter for property forceVictory. this tells us that a claim for victory
@@ -1182,46 +1191,46 @@ public interface IGame {
      *
      * @return Value of property forceVictory.
      */
-    public abstract boolean isForceVictory();
+    abstract boolean isForceVictory();
 
     /**
      * Setter for property forceVictory.
      *
      * @param forceVictory New value of property forceVictory.
      */
-    public abstract void setForceVictory(boolean forceVictory);
+    abstract void setForceVictory(boolean forceVictory);
 
     /**
      * Adds the given reports vector to the GameReport collection.
      *
      * @param v Vector of reports
      */
-    public abstract void addReports(Vector<Report> v);
+    abstract void addReports(Vector<Report> v);
 
     /**
      * Returns a vector of reports for the given round.
      *
      * @param r Round number
      */
-    public abstract Vector<Report> getReports(int r);
+    abstract Vector<Report> getReports(int r);
 
     /**
      * Returns a vector of all the reports.
      */
-    public abstract Vector<Vector<Report>> getAllReports();
+    abstract Vector<Vector<Report>> getAllReports();
 
     /**
      * Used to populate previous game reports, e.g. after a client connects to
      * an existing game.
      */
-    public void setAllReports(Vector<Vector<Report>> v);
+    void setAllReports(Vector<Vector<Report>> v);
 
     /**
      * Clears out all the current reports, paving the way for a new game.
      */
-    public void clearAllReports();
+    void clearAllReports();
 
-    public abstract void end(int winner, int winnerTeam);
+    abstract void end(int winner, int winnerTeam);
 
     /**
      * Getter for property victoryPlayerId. itmo: apparently this is the guy who
@@ -1230,14 +1239,14 @@ public interface IGame {
      *
      * @return Value of property victoryPlayerId.
      */
-    public abstract int getVictoryPlayerId();
+    abstract int getVictoryPlayerId();
 
     /**
      * Setter for property victoryPlayerId.
      *
      * @param victoryPlayerId New value of property victoryPlayerId.
      */
-    public abstract void setVictoryPlayerId(int victoryPlayerId);
+    abstract void setVictoryPlayerId(int victoryPlayerId);
 
     /**
      * Getter for property victoryTeam. corresponding claiming/winning team if
@@ -1245,26 +1254,26 @@ public interface IGame {
      *
      * @return Value of property victoryTeam.
      */
-    public abstract int getVictoryTeam();
+    abstract int getVictoryTeam();
 
     /**
      * Setter for property victoryTeam.
      *
      * @param victoryTeam New value of property victoryTeam.
      */
-    public abstract void setVictoryTeam(int victoryTeam);
+    abstract void setVictoryTeam(int victoryTeam);
 
     /**
      * Returns true if the specified player is either the victor, or is on the
      * winning team. Best to call during PHASE_VICTORY.
      * @param player
      */
-    public abstract boolean isPlayerVictor(IPlayer player);
+    abstract boolean isPlayerVictor(IPlayer player);
 
     /**
      * Shortcut to isPlayerVictor(Player player)
      */
-    public abstract boolean isPlayerVictor(int playerId);
+    abstract boolean isPlayerVictor(int playerId);
 
     /**
      * Get all <code>Entity</code>s that pass the given selection criteria.
@@ -1277,7 +1286,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public abstract Iterator<Entity> getSelectedEntities(
+    abstract Iterator<Entity> getSelectedEntities(
             EntitySelector selector);
 
     /**
@@ -1291,7 +1300,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public abstract int getSelectedEntityCount(EntitySelector selector);
+    abstract int getSelectedEntityCount(EntitySelector selector);
 
     /**
      * Get all out-of-game <code>Entity</code>s that pass the given selection
@@ -1305,7 +1314,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public abstract Enumeration<Entity> getSelectedOutOfGameEntities(
+    abstract Enumeration<Entity> getSelectedOutOfGameEntities(
             EntitySelector selector);
 
     /**
@@ -1320,7 +1329,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public abstract int getSelectedOutOfGameEntityCount(EntitySelector selector);
+    abstract int getSelectedOutOfGameEntityCount(EntitySelector selector);
 
     /**
      * Returns true if the player has any valid units this turn that are not
@@ -1329,7 +1338,7 @@ public interface IGame {
      * units", and "A players Protomechs move after that players other units"
      * options.
      */
-    public abstract boolean checkForValidNonInfantryAndOrProtomechs(int playerId);
+    abstract boolean checkForValidNonInfantryAndOrProtomechs(int playerId);
 
     /**
      * Get Entities that have have a iNarc Nemesis pod attached and are situated
@@ -1341,7 +1350,7 @@ public interface IGame {
      *         attached and are located between attacker and target and are
      *         friendly with the attacker.
      */
-    public abstract Enumeration<Entity> getNemesisTargets(Entity attacker,
+    abstract Enumeration<Entity> getNemesisTargets(Entity attacker,
             Coords target);
 
     /**
@@ -1352,7 +1361,7 @@ public interface IGame {
      *            start from.
      * @return The previous <code>Entity</code> in the list.
      */
-    public abstract Entity getPreviousEntityFromList(Entity current);
+    abstract Entity getPreviousEntityFromList(Entity current);
 
     /**
      * Returns the next entity from the master list of entities. Will wrap
@@ -1362,23 +1371,23 @@ public interface IGame {
      *            start from.
      * @return The next <code>Entity</code> in the list.
      */
-    public abstract Entity getNextEntityFromList(Entity current);
+    abstract Entity getNextEntityFromList(Entity current);
 
     /**
      * Returns this turn's tag information
      */
-    public abstract Vector<TagInfo> getTagInfo();
+    abstract Vector<TagInfo> getTagInfo();
 
     /**
      * add the results of one tag attack
      */
-    public abstract void addTagInfo(TagInfo info);
+    abstract void addTagInfo(TagInfo info);
 
     /**
      * clears the "shots" attribute of all TagInfos where attacker is on same
      * team as ae and target is on same mapsheet as tc
      */
-    public abstract void clearTagInfoShots(Entity ae, Coords tc);
+    abstract void clearTagInfoShots(Entity ae, Coords tc);
 
 
     /**
@@ -1388,28 +1397,28 @@ public interface IGame {
      * @param c2 The second coordinate
      * @return True if both coordinates are within 8 hexes of each other
      */
-    public boolean isIn8HexRadius(Coords c1, Coords c2);
+    boolean isIn8HexRadius(Coords c1, Coords c2);
 
 
     /**
      * Reset tag information
      */
-    public abstract void resetTagInfo();
+    abstract void resetTagInfo();
 
     /**
      * Get a list of flares
      */
-    public abstract Vector<Flare> getFlares();
+    abstract Vector<Flare> getFlares();
 
     /**
      * Set the list of flares
      */
-    public abstract void setFlares(Vector<Flare> flares);
+    abstract void setFlares(Vector<Flare> flares);
 
     /**
      * Add a new flare
      */
-    public abstract void addFlare(Flare flare);
+    abstract void addFlare(Flare flare);
 
     /**
      * Returns the level of illumination for a given coords.  Different light
@@ -1419,15 +1428,15 @@ public interface IGame {
      * are effected by spotlights, whereas this one considers searchlights as
      * well as other light sources.
      */
-    public abstract int isPositionIlluminated(Coords c);
+    abstract int isPositionIlluminated(Coords c);
 
     /**
      * Age the flare list and remove any which have burnt out Artillery flares
      * drift with wind. (called at end of turn)
      */
-    public abstract Vector<Report> ageFlares();
+    abstract Vector<Report> ageFlares();
 
-    public abstract boolean gameTimerIsExpired();
+    abstract boolean gameTimerIsExpired();
 
     /**
      * use victoryfactory to generate a new victorycondition checker provided
@@ -1435,45 +1444,45 @@ public interface IGame {
      * time is ok and should not affect anything unless the
      * victorycondition-configoptions have changed.
      */
-    public abstract void createVictoryConditions();
+    abstract void createVictoryConditions();
 
-    public abstract Victory getVictory();
+    abstract Victory getVictory();
 
-    public abstract boolean useVectorMove();
+    abstract boolean useVectorMove();
 
     /**
      * Adds a pending control roll to the list for this phase.
      */
-    public abstract void addControlRoll(PilotingRollData control);
+    abstract void addControlRoll(PilotingRollData control);
 
     /**
      * Returns an Enumeration of pending Control roll.
      */
-    public abstract Enumeration<PilotingRollData> getControlRolls();
+    abstract Enumeration<PilotingRollData> getControlRolls();
 
     /**
      * Resets the Control Roll list for a given entity.
      */
-    public abstract void resetControlRolls(Entity entity);
+    abstract void resetControlRolls(Entity entity);
 
     /**
      * Resets the Control Roll list.
      */
-    public abstract void resetControlRolls();
+    abstract void resetControlRolls();
 
-    public abstract boolean checkForValidSpaceStations(int playerId);
+    abstract boolean checkForValidSpaceStations(int playerId);
 
-    public abstract boolean checkForValidJumpships(int playerId);
+    abstract boolean checkForValidJumpships(int playerId);
 
-    public abstract boolean checkForValidWarships(int playerId);
+    abstract boolean checkForValidWarships(int playerId);
 
-    public abstract boolean checkForValidDropships(int playerId);
+    abstract boolean checkForValidDropships(int playerId);
 
-    public abstract boolean checkForValidSmallCraft(int playerId);
+    abstract boolean checkForValidSmallCraft(int playerId);
 
-    public abstract PlanetaryConditions getPlanetaryConditions();
+    abstract PlanetaryConditions getPlanetaryConditions();
 
-    public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
+    abstract void setPlanetaryConditions(PlanetaryConditions conditions);
     
     /**
      * Get a set of Coords illuminated by searchlights.
@@ -1482,17 +1491,17 @@ public interface IGame {
      * that IGame.isPositionIlluminated is desired unless the searchlighted hex
      * set is being sent to the client or server.
      */
-    public abstract HashSet<Coords> getIlluminatedPositions();
+    abstract HashSet<Coords> getIlluminatedPositions();
     
     /**
      * Clear the set of searchlight illuminated hexes.
      */
-    public abstract void clearIlluminatedPositions();
+    abstract void clearIlluminatedPositions();
 
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    public abstract void setIlluminatedPositions(HashSet<Coords> ip);
+    abstract void setIlluminatedPositions(HashSet<Coords> ip);
 
     /**
      * Add a new hex to the collection of Coords illuminated by searchlights.
@@ -1500,7 +1509,7 @@ public interface IGame {
      * @return True if a new hex was added, else false if the set already
      *      contained the input hex.
      */
-    public abstract boolean addIlluminatedPosition(Coords c);
+    abstract boolean addIlluminatedPosition(Coords c);
     
     /**
      * Updates the map that maps a position to the list of Entity's in that 
@@ -1508,7 +1517,7 @@ public interface IGame {
      *  
      * @param e
      */
-    public abstract void updateEntityPositionLookup(Entity e, 
+    abstract void updateEntityPositionLookup(Entity e, 
             HashSet<Coords> oldPositions);
 
 }

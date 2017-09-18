@@ -15,8 +15,12 @@ package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import megamek.common.BombType;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mech;
@@ -76,7 +80,7 @@ public class WeaponFireInfo {
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game, boolean guess, Princess owner) {
-        this(shooter, null, null, target, null, weapon, game, false, guess, owner);
+        this(shooter, null, null, target, null, weapon, game, false, guess, owner, new int[0]);
     }
 
     /**
@@ -92,7 +96,7 @@ public class WeaponFireInfo {
      */
     WeaponFireInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
                    Mounted weapon, IGame game, boolean guess, Princess owner) {
-        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner);
+        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner, new int[0]);
     }
 
     /**
@@ -106,10 +110,12 @@ public class WeaponFireInfo {
      * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param owner                 Instance of the princess owner
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
     WeaponFireInfo(Entity shooter, MovePath shooterPath, Targetable target, EntityState targetState,
-                   Mounted weapon, IGame game, boolean assumeUnderFlightPath, boolean guess, Princess owner) {
-        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner);
+                   Mounted weapon, IGame game, boolean assumeUnderFlightPath, boolean guess, Princess owner, int[] bombPayload) {
+        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner, bombPayload);
     }
 
     /**
@@ -124,12 +130,14 @@ public class WeaponFireInfo {
      * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
      * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
-     * @param guess                 Set TRUE to esitmate the chance to hit rather than going through the full
+     * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
+     * @param owner                 Instance of the princess owner
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
-    WeaponFireInfo(Entity shooter, EntityState shooterState, MovePath shooterPath, Targetable target,
+    private WeaponFireInfo(Entity shooter, EntityState shooterState, MovePath shooterPath, Targetable target,
                    EntityState targetState, Mounted weapon, IGame game, boolean assumeUnderFlightPath,
-                   boolean guess, Princess owner) {
+                   boolean guess, Princess owner, int[] bombPayload) {
         final String METHOD_NAME =
                 "WeaponFireInfo(Entity, EntityState, MovePath, Targetable, EntityState, Mounted, IGame, boolean)";
         owner.methodBegin(getClass(), METHOD_NAME);
@@ -142,7 +150,7 @@ public class WeaponFireInfo {
             setTargetState(targetState);
             setWeapon(weapon);
             setGame(game);
-            initDamage(shooterPath, assumeUnderFlightPath, guess);
+            initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
@@ -325,9 +333,22 @@ public class WeaponFireInfo {
         return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
                                       getShooter().getEquipmentNum(getWeapon()));
     }
+    
+    private WeaponAttackAction buildBombAttackAction(int[] bombPayload) {
+        WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+                getShooter().getEquipmentNum(getWeapon()));
+        
+        diveBomb.setBombPayload(bombPayload);
+        
+        return diveBomb;
+    }
 
     protected double computeExpectedDamage() {
-
+        // bombs require some special consideration
+        if(weapon.isGroundBomb()) {
+            return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
+        }
+        
         // For clan plasma cannon, assume 7 "damage".
         WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
@@ -345,6 +366,50 @@ public class WeaponFireInfo {
         }
         return weaponType.getDamage();
     }
+    
+    /**
+     * Worker function to compute expected bomb damage given the shooter
+     * @param shooter
+     * @param weapon
+     * @param bombedHex
+     * @return
+     */
+    private double computeExpectedBombDamage(Entity shooter, Mounted weapon, Coords bombedHex) {
+        double damage = 0D; //lol double damage I wish
+        
+        // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
+        if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            for(Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
+        
+                // HE, thunder, laser and inferno bombs just affect the target hex 
+                List<Coords> affectedHexes = new ArrayList<Coords>();
+                affectedHexes.add(bombedHex);
+                
+                // a cluster bomb affects all hexes around the target
+                if(((BombType) bomb.getType()).getBombType() == BombType.B_CLUSTER) {
+                    for(int dir = 0; dir <= 5; dir++) {
+                        affectedHexes.add(bombedHex.translated(dir));
+                    }
+                }
+                
+                // now we go through all affected hexes and add up the damage done
+                for(Coords coords : affectedHexes) {
+                    for(Entity currentVictim : game.getEntitiesVector(coords)) {                        
+                        if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
+                            damage += damagePerShot;
+                        } else { // we prefer not to blow up friendlies if we can help it
+                            damage -= damagePerShot;
+                        }                    
+                    }
+                }
+            }
+        }
+        
+        damage = damage * getProbabilityToHit();
+        
+        return damage;
+    }
 
     /*
      * Helper function that calculates expected damage
@@ -354,7 +419,7 @@ public class WeaponFireInfo {
      *                              path.
      * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
      */
-    protected void initDamage(@Nullable MovePath shooterPath, boolean assumeUnderFlightPath, boolean guess) {
+    void initDamage(@Nullable MovePath shooterPath, boolean assumeUnderFlightPath, boolean guess, int[] bombPayload) {
         final String METHOD_NAME = "initDamage(MovePath, boolean)";
 
         StringBuilder msg =
@@ -365,7 +430,13 @@ public class WeaponFireInfo {
 
         try {
             // Set up the attack action and calculate the chance to hit.
-            setAction(buildWeaponAttackAction());
+            if(bombPayload.length == 0) {
+                setAction(buildWeaponAttackAction());
+            }
+            else {
+                setAction(this.buildBombAttackAction(bombPayload));
+            }
+            
             if (!guess) {
                 setToHit(calcRealToHit(getWeaponAttackAction()));
             } else if (shooterPath != null) {

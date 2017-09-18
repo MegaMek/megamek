@@ -6238,12 +6238,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     vAttacksInArc.addElement(wr.waa);
                 }
             }
-            // find the most dangerous salvo by expected damage
+            //AMS Bays can fire at all incoming attacks each round
+            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
+                for (WeaponAttackAction waa : vAttacksInArc) {
+                    if (waa != null) {
+                        waa.addCounterEquipment(ams);
+                    }
+                }
+            } else {
+            //Otherwise, find the most dangerous salvo by expected damage and target it
             WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
                     vAttacksInArc, true);
-            if (waa != null) {
+                if (waa != null) {
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
+                }
             }
         }
     }

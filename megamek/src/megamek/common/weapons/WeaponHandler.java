@@ -490,16 +490,29 @@ public class WeaponHandler implements AttackHandler, Serializable {
             
 	        // Report any AMS bay action.
             CounterAV = getCounterAV();
-	        if (amsBayEngaged) {
-	        	r = new Report(3352);
+            //use this if counterfire destroys all the missiles
+	        if (amsBayEngaged && (attackValue == 0)) {
+	        	r = new Report(3356);
+	        	r.indent();
+	        	r.add(CounterAV);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        } else if (amsBayEngaged) {
+	        	r = new Report(3354);
 	        	r.indent();
 	        	r.add(CounterAV);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
 	        }
-
+	        
 	        // Report any Point Defense bay action.
-	        if (pdBayEngaged) {
+	        if (pdBayEngaged && (attackValue == 0)) {
+	        	r = new Report(3355);
+	        	r.indent();
+	        	r.add(CounterAV);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        } else if (pdBayEngaged) {
 	        	r = new Report(3353);
 	        	r.indent();
 	        	r.add(CounterAV);

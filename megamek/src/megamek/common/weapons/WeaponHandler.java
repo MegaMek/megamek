@@ -72,6 +72,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bDirect = false;
     protected boolean amsBayEngaged = false;
     protected boolean pdBayEngaged = false;
+    protected boolean amsBayEngagedCap = false;
+    protected boolean pdBayEngagedCap = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected String typeName;
@@ -504,7 +506,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        
             attackValue = calcAttackValue();
             
-	        // Report any AMS bay action.
+	        // Report any AMS bay action against standard missiles.
             CounterAV = getCounterAV();
             //use this if counterfire destroys all the missiles
 	        if (amsBayEngaged && (attackValue == 0)) {
@@ -520,7 +522,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        	vPhaseReport.addElement(r);
 	        }
 	        
-	        // Report any Point Defense bay action.
+	        // Report any AMS bay action against Capital missiles.
+	        CapMissileAMSMod = getCapMissileAMSMod(); 
+            //use this if counterfire destroys all the missiles
+            if (amsBayEngagedCap && (CapMissileArmor == 0)) {
+                r = new Report(3356);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (amsBayEngagedCap) {
+                r = new Report(3358);
+                r.indent();
+                r.add(CapMissileAMSMod);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+	        
+	        // Report any Point Defense bay action against standard missiles.
 	        if (pdBayEngaged && (attackValue == 0)) {
 	        	r = new Report(3355);
 	        	r.subject = subjectId;
@@ -531,6 +549,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
 	        }
+	        
+	        // Report any AMS bay action against Capital missiles.
+            //use this if counterfire destroys all the missiles
+            if (pdBayEngagedCap && (CapMissileArmor == 0)) {
+                r = new Report(3355);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (pdBayEngagedCap) {
+                r = new Report(3357);
+                r.indent();
+                r.add(CapMissileAMSMod);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
 
             // Any necessary PSRs, jam checks, etc.
             // If this boolean is true, don't report
@@ -581,6 +614,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
                 int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
                 hits = aeroResults[0];
+                if ((amsBayEngagedCap || pdBayEngagedCap) && (CapMissileArmor == 0)) {
+                    hits = 0;
+                }
                 nCluster = aeroResults[1];
             }
 

@@ -18,10 +18,10 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -53,31 +53,82 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
-    
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget) {
-        int counterAV = calcCounterAV();
-        int CapMissileArmor = calcAttackValue();
-        CapMissileAMSMod = calcCapMissileAMSMod();
-        if (amsBayEngaged) {            
-            if (counterAV >= CapMissileArmor) {
-                Report r = new Report(3256);
-                r.indent();
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (counterAV > 0) {   
-                Report r = new Report(3258);
-                r.indent();
-                r.add(CapMissileAMSMod);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);               
+    protected int calcAttackValue() {
+
+        double av = 0;
+        double counterAV = calcCounterAV();
+        int armor = 0;
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+            if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
+                // try loading something else
+                ae.loadWeaponWithSameAmmo(bayW);
+                bayWAmmo = bayW.getLinked();
             }
-            return true;
+            if (!bayW.isBreached()
+                    && !bayW.isDestroyed()
+                    && !bayW.isJammed()
+                    && bayWAmmo != null
+                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW
+                            .getCurrentShots()) {
+                WeaponType bayWType = ((WeaponType) bayW.getType());
+                // need to cycle through weapons and add av
+                double current_av = 0;
+                AmmoType atype = (AmmoType) bayWAmmo.getType();
+
+                if (range == WeaponType.RANGE_SHORT) {
+                    current_av = bayWType.getShortAV();
+                } else if (range == WeaponType.RANGE_MED) {
+                    current_av = bayWType.getMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    current_av = bayWType.getLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    current_av = bayWType.getExtAV();
+                }
+                current_av = updateAVforAmmo(current_av, atype, bayWType,
+                        range, wId);
+                av = av + current_av;
+                // now use the ammo that we had loaded
+                if (current_av > 0) {
+                    int shots = bayW.getCurrentShots();
+                    for (int i = 0; i < shots; i++) {
+                        if (null == bayWAmmo
+                                || bayWAmmo.getUsableShotsLeft() < 1) {
+                            // try loading something else
+                            ae.loadWeaponWithSameAmmo(bayW);
+                            bayWAmmo = bayW.getLinked();
+                        }
+                        if (null != bayWAmmo) {
+                            bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
+                        }
+                    }
+                }
+            }
         }
-        return false;
+        armor = (int) ((av * 10) - counterAV);
+        CapMissileAMSMod = calcCapMissileAMSMod();
+        CapMissileArmor = armor;
+        /* if (CapMissileArmor == 0) {
+            av = 0;
+            return (int) av;
+        } else { */
+        
+            if (bDirect) {
+                av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+            }
+            if (bGlancing) {
+                av = (int) Math.floor(av / 2.0);
+            }
+            av = (int) Math.floor(getBracketingMultiplier() * av);
+            return (int) Math.ceil(av);
+        // }
     }
-    
+        
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.floor(CounterAV / 10);
@@ -175,7 +226,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     
     // check for AMS and Point Defense Bay fire
     @Override
-    protected int calcCounterAV () {
+    protected int calcCounterAV() {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
                 || !advancedPD) {
@@ -245,7 +296,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     
                     // set the ams as having fired, if it did
                     if (amsAV > 0) {
-                        amsBayEngaged = true;
+                        amsBayEngagedCap = true;
                     }
                                         
                 } else if (isPDBay && !pdBayEngaged) {
@@ -290,7 +341,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     // set the pdbay as having fired, if it was able to
                     if (pdAV > 0 ) {
                         counter.setUsedThisRound(true); 
-                        pdBayEngaged = true;
+                        pdBayEngagedCap = true;
                     }
                                  
                 } //end PDBay fire 

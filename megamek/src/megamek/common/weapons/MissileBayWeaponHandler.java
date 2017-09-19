@@ -359,7 +359,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             		}
                     
                     // set the pdbay as having fired, if it was able to
-                    if (pdAV >0 ) {
+                    if (pdAV > 0 ) {
                         counter.setUsedThisRound(true); 
                         pdBayEngaged = true;
                     }

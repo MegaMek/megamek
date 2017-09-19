@@ -510,7 +510,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        if (amsBayEngaged && (attackValue == 0)) {
 	        	r = new Report(3356);
 	        	r.indent();
-	        	r.add(CounterAV);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
 	        } else if (amsBayEngaged) {
@@ -524,13 +523,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        // Report any Point Defense bay action.
 	        if (pdBayEngaged && (attackValue == 0)) {
 	        	r = new Report(3355);
-	        	r.indent();
-	        	r.add(CounterAV);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
 	        } else if (pdBayEngaged) {
 	        	r = new Report(3353);
-	        	r.indent();
 	        	r.add(CounterAV);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);

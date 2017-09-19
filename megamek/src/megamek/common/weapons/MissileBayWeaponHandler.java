@@ -232,15 +232,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
            } else if (atype.getRackSize() == 2) {
                current_av = 2 * current_av;
            }
-       } else if (atype.getAmmoType() == AmmoType.T_AR10) {
-            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-                current_av = 4;
-            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                current_av = 3;
-            } else {
-                current_av = 2;
-            }
-        }
+       } 
         return current_av;
     } 
    
@@ -302,7 +294,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         
                         //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
-                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
+                            if (bayWAmmo.getBaseShotsLeft() == 0) {
                                 continue;
                             }
                             // decrement the ammo
@@ -346,7 +338,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         
                         //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
-                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
+                            if (bayWAmmo.getBaseShotsLeft() == 0) {
                                 continue;
                             }
                             // decrement the ammo
@@ -395,7 +387,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             return super.handle(phase, vPhaseReport);
         } 
 
-        // then we have a ground target, so we need to handle it in a special
+       /* // then we have a ground target, so we need to handle it in a special
         // way
         insertAttacks(phase, vPhaseReport);
 
@@ -628,7 +620,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
         } // Handle the next weapon in the bay
-        Report.addNewline(vPhaseReport);
+        Report.addNewline(vPhaseReport); */
         return false;
     }
 }

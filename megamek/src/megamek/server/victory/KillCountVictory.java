@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -101,9 +102,8 @@ public class KillCountVictory implements Victory, Serializable {
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
             
             if (killer == null){
-                if (game.getNoOfTeams() == 2) {
-                    for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                        Team team = e.nextElement();
+                if (game.getNoOfTeams() == 2 && wreck.getOwner().getTeam() != Player.TEAM_NONE) {
+                    for (Team team : game.getTeamsVector()) {
                         if (team.getId() != wreck.getOwner().getTeam()) {
                             Integer kills = teamKills.get(team.getId());
                             if (kills == null){

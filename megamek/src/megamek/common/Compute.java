@@ -2993,8 +2993,9 @@ public class Compute {
                     	WeaponType bayWType = ((WeaponType) bayW.getType());
                 	//Capital weapons have a different range scale
                         if (wt.isCapital()) {
-                        	// Capital missiles should have higher priority than standard missiles
-                        	threat *= 2;
+                        	// Capital missiles get higher priority than standard missiles:
+                            // damage plus a bonus for the critical hit threat they represent
+                        	threat = 12;
                         	if (rangeToTarget > 50) {
                 			av = 0;
                         	} else if (rangeToTarget > 40) {

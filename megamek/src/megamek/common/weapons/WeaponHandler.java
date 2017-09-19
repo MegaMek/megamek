@@ -83,6 +83,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nDamPerHit;
     protected int attackValue;
     protected int CounterAV;
+    protected int CapMissileArmor;
+    protected int CapMissileAMSMod;
     protected boolean throughFront;
     protected boolean underWater;
     protected boolean announcedEntityFiring = false;
@@ -127,6 +129,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */ 
     protected int getCounterAV() {
     	return CounterAV;
+    }
+    
+    /**
+     * Calculates the to-hit penalty inflicted on a capital missile attack by point defense fire
+     */    
+    protected int calcCapMissileAMSMod() {
+    	return 0;
+    }
+    
+    /**
+     * Return the to-hit penalty inflicted on a capital missile attack by point defense fire
+     */ 
+    protected int getCapMissileAMSMod() {
+    	return CapMissileAMSMod;
     }
     
     /**

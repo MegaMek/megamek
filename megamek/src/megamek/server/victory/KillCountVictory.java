@@ -23,6 +23,7 @@ import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.Team;
 
 /**
  * Implements a kill count victory condition.  Victory is achieved if a team (or
@@ -100,6 +101,20 @@ public class KillCountVictory implements Victory, Serializable {
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
             
             if (killer == null){
+                if (game.getNoOfTeams() == 2) {
+                    for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
+                        Team team = e.nextElement();
+                        if (team.getId() != wreck.getOwner().getTeam()) {
+                            Integer kills = teamKills.get(team.getId());
+                            if (kills == null){
+                                kills = 1;
+                            } else {
+                                kills++;
+                            }
+                            teamKills.put(team.getId(), kills);
+                        }
+                    }
+                }
                 continue;
             }            
             

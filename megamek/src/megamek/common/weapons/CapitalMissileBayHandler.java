@@ -18,6 +18,7 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -26,18 +27,20 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class CapitalMissileBayHandler extends MissileBayWeaponHandler {
+public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     /**
      * 
      */
 
     private static final long serialVersionUID = -1618484541772117621L;
+    boolean advancedPD = false;
 
     /**
      * @param t
@@ -48,6 +51,42 @@ public class CapitalMissileBayHandler extends MissileBayWeaponHandler {
     public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
+        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+    }
+    
+    @Override
+    protected boolean specialResolution(Vector<Report> vPhaseReport,
+            Entity entityTarget) {
+        int counterAV = calcCounterAV();
+        int CapMissileArmor = calcAttackValue();
+        CapMissileAMSMod = calcCapMissileAMSMod();
+        if (amsBayEngaged) {            
+            if (counterAV >= CapMissileArmor) {
+                Report r = new Report(3256);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (counterAV > 0) {   
+                Report r = new Report(3258);
+                r.indent();
+                r.add(CapMissileAMSMod);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);               
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.floor(CounterAV / 10);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
     }
 
     @Override

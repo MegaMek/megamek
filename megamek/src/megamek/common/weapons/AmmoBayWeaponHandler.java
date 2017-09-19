@@ -98,7 +98,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
-                            // try loadinsg something else
+                            // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinked();
                         }

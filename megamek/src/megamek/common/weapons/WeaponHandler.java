@@ -509,7 +509,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        // Report any AMS bay action against standard missiles.
             CounterAV = getCounterAV();
             //use this if counterfire destroys all the missiles
-	        if (amsBayEngaged && (attackValue == 0)) {
+	        if (amsBayEngaged && (attackValue <= 0)) {
 	        	r = new Report(3356);
 	        	r.indent();
 	        	r.subject = subjectId;
@@ -525,7 +525,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        // Report any AMS bay action against Capital missiles.
 	        CapMissileAMSMod = getCapMissileAMSMod(); 
             //use this if counterfire destroys all the missiles
-            if (amsBayEngagedCap && (CapMissileArmor == 0)) {
+            if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
                 r = new Report(3356);
                 r.indent();
                 r.subject = subjectId;
@@ -539,7 +539,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 	        
 	        // Report any Point Defense bay action against standard missiles.
-	        if (pdBayEngaged && (attackValue == 0)) {
+	        if (pdBayEngaged && (attackValue <= 0)) {
 	        	r = new Report(3355);
 	        	r.subject = subjectId;
 	        	vPhaseReport.addElement(r);
@@ -552,7 +552,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        
 	        // Report any AMS bay action against Capital missiles.
             //use this if counterfire destroys all the missiles
-            if (pdBayEngagedCap && (CapMissileArmor == 0)) {
+            if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
                 r = new Report(3355);
                 r.indent();
                 r.subject = subjectId;
@@ -614,7 +614,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
                 int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
                 hits = aeroResults[0];
-                if ((amsBayEngagedCap || pdBayEngagedCap) && (CapMissileArmor == 0)) {
+                if ((amsBayEngagedCap || pdBayEngagedCap) && (CapMissileArmor <= 0)) {
                     hits = 0;
                 }
                 nCluster = aeroResults[1];

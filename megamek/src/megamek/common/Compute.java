@@ -3025,11 +3025,10 @@ public class Compute {
                 } else if (attacker.isCapitalFighter() || (attacker instanceof FighterSquadron)) {
                 	double av = 0;
                 	double threat = 1;
-                	for (Mounted wGroup : attacker.getWeaponGroupList()) {
                 	//Capital weapons have a different range scale
                         if (wt.isCapital()) {
                         	// Capital missiles should have higher priority than standard missiles
-                        	threat *= 2;
+                        	threat = 12;
                         	if (rangeToTarget > 50) {
                 			av = 0;
                         	} else if (rangeToTarget > 40) {
@@ -3054,8 +3053,8 @@ public class Compute {
                 			av += wt.getShortAV();
                         	} 
                         }
-                        fDamage = (float) (av * threat);
-                	}
+                    fDamage = (float) (av * threat);
+                	
                 } else {
                 fDamage = wt.getDamage(rangeToTarget);
             	}

@@ -14,7 +14,6 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.HashMap;
 
 import megamek.common.IGame;
@@ -37,8 +36,7 @@ public class LastManStandingVictory implements IVictoryConditions, Serializable 
         boolean oneTeamAlive = false;
         int lastTeam = IPlayer.TEAM_NONE;
         boolean unteamedAlive = false;
-        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements();) {
-            IPlayer player = e.nextElement();
+        for (IPlayer player : game.getPlayersVector()) {
             int team = player.getTeam();
             if (game.getLiveDeployedEntitiesOwnedBy(player) <= 0) {
                 continue;

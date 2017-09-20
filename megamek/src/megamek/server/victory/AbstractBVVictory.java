@@ -14,7 +14,6 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -30,8 +29,7 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
 
     public int getFriendlyBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (Enumeration<IPlayer> f = game.getPlayers(); f.hasMoreElements();) {
-            IPlayer other = f.nextElement();
+        for (IPlayer other : game.getPlayersVector()) {
             if (other.isObserver())
                 continue;
             if (!other.isEnemyOf(player)) {
@@ -43,8 +41,7 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
 
     public int getEnemyBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (Enumeration<IPlayer> f = game.getPlayers(); f.hasMoreElements();) {
-            IPlayer other = f.nextElement();
+        for (IPlayer other : game.getPlayersVector()) {
             if (other.isObserver())
                 continue;
             if (other.isEnemyOf(player)) {
@@ -56,8 +53,7 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
 
     public int getEnemyInitialBV(IGame game, IPlayer player) {
         int ret = 0;
-        for (Enumeration<IPlayer> f = game.getPlayers(); f.hasMoreElements();) {
-            IPlayer other = f.nextElement();
+        for (IPlayer other : game.getPlayersVector()) {
             if (other.isObserver())
                 continue;
             if (other.isEnemyOf(player)) {

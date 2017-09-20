@@ -13,7 +13,6 @@
  */
 package megamek.server.victory;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -45,8 +44,7 @@ public class BVRatioVictory extends AbstractBVVictory {
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<Integer>();
-        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements();) {
-            IPlayer player = e.nextElement();
+        for (IPlayer player : game.getPlayersVector()) {
             if (player.isObserver())
                 continue;
             int fbv = 0;

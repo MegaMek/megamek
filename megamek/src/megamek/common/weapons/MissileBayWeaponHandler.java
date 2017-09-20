@@ -387,7 +387,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             return super.handle(phase, vPhaseReport);
         } 
 
-       /* // then we have a ground target, so we need to handle it in a special
+        // then we have a ground target, so we need to handle it in a special
         // way
         insertAttacks(phase, vPhaseReport);
 
@@ -620,7 +620,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
         } // Handle the next weapon in the bay
-        Report.addNewline(vPhaseReport); */
+        Report.addNewline(vPhaseReport); 
         return false;
     }
 }

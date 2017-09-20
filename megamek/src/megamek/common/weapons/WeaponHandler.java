@@ -433,11 +433,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
             vPhaseReport.addElement(r);
             
-            //If the to-hit mod inflicted by Point Defense on a capital missile would have caused a miss
-            //Report it as such here. Yes, I know this is happening after the actual roll, but we need 
-            //info from damage calculation, so we'll just declare it a miss later on.
+            //Point Defense fire vs Capital Missiles
+            
+            // are we a glancing hit?  Check for this here, report it later
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
+                if (roll == toHit.getValue()) {
+                	bGlancing = true;
+                } else {
+                    bGlancing = false;
+                }
+            }
+            
+            // Set Margin of Success/Failure and check for Direct Blows
+            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
-	        //This has to be up here so that we don't get spurious glancing/direct blow reports
+	        //This has to be up here so that we don't screw up glancing/direct blow reports
 	        attackValue = calcAttackValue();
 	        
 	        //CalcAttackValue triggers counterfire, so now we can safely get this
@@ -453,7 +465,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
 	        if (amsBayEngagedCap && CapMissileArmor > 0) {
                 r = new Report(3358);
-                r.indent();
                 r.add(CapMissileAMSMod);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -461,7 +472,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        // Report any PD bay action against Capital missiles that doesn't destroy them all.
         	} else if (pdBayEngagedCap && CapMissileArmor > 0) {
                 r = new Report(3357);
-                r.indent();
                 r.add(CapMissileAMSMod);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -506,26 +516,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bMissed = roll < toHit.getValue();
        
 
-            // are we a glancing hit?
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                    r = new Report(3186);
-                    r.subject = ae.getId();
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else {
-                    bGlancing = false;
-                }
-            } else {
-                bGlancing = false;
-            }
+            //Report Glancing/Direct Blow here because of Capital Missile weirdness
+            //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
+            //when Advanced Point Defense is on, but they work correctly.
+            if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
+                r = new Report(3186);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } 
 
-            // Set Margin of Success/Failure.
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
-            if (bDirect) {
+            if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
                 r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;

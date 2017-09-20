@@ -113,10 +113,6 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         armor = (int) ((av * 10) - counterAV);
         CapMissileAMSMod = calcCapMissileAMSMod();
         CapMissileArmor = armor;
-        /* if (CapMissileArmor == 0) {
-            av = 0;
-            return (int) av;
-        } else { */
         
             if (bDirect) {
                 av = Math.min(av + (toHit.getMoS() / 3), av * 2);
@@ -262,8 +258,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 	                         || !counter.isReady() || counter.isMissing()
 	                            // shutdown means no Point defenses
 	                            || pdEnt.isShutDown()
-	                            // Point defenses only fire vs attacks in arc covered by ams
-	                            || !isInArc) {
+	                            // Point defenses only fire vs attacks in arc
+	                            || !isInArc
+	                            // Point defense bays must have at least 2 weapons to affect capital missiles
+	                            || (counter.getBayWeapons().size() < 2)) {
 	                        continue;
 	                }
 		            // Now for heat, damage and ammo we need the individual weapons in the bay
@@ -306,8 +304,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 	                         || !counter.isReady() || counter.isMissing()
 	                            // shutdown means no Point defenses
 	                            || pdEnt.isShutDown()
-	                            // Point defenses only fire vs attacks in arc covered by ams
-	                            || !isInArc) {
+	                            // Point defenses only fire vs attacks in arc
+	                            || !isInArc
+	                            // Point defense bays must have at least 2 weapons to affect capital missiles
+	                            || (counter.getBayWeapons().size() < 2)) {
 	                        continue;
 	                }
 		            // Now for heat, damage and ammo we need the individual weapons in the bay

@@ -99,14 +99,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        int attackerElevation = ae.getElevation() + attHex.getLevel();
-        int attackerHeight = ae.relHeight();
+        int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         if (ae.isHullDown()) {
             attackerHeight--;
         }
         final int targetElevation = target.getElevation()
-                                    + targHex.getLevel();
-        final int targetHeight = targetElevation + target.getHeight();
+                                    + targHex.getLevel();  // The absolute level of the target's base
+        final int targetHeight = targetElevation + target.getHeight(); // The absolute level of the target's top
         final int armLoc = (arm == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
                                                             : Mech.LOC_LARM;
         if (((ae.getGrappled() != Entity.NONE)
@@ -152,12 +151,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Weapons fired from arm this turn";
         }
 
-        // check elevation
-        if (target.isAirborneVTOLorWIGE()) {
-            if (((targetElevation - attackerElevation) > 2) || ((targetElevation - attackerElevation) < ae.height())) {
-                return "Target elevation not in range";
-            }
-        } else if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
+        // check elevation; if target base is above attacker's arms or target top is below, cannot punch
+        if ((targetElevation > attackerHeight) || (targetHeight < attackerHeight)) {
             return "Target elevation not in range";
         }
 
@@ -185,9 +180,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        final int attackerHeight = ae.relHeight() + attHex.getLevel();
+        final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
-                                    + targHex.getLevel();
+                                    + targHex.getLevel(); // The absolute level of the target's arms
         final int armArc = (arm == PunchAttackAction.RIGHT) ? Compute.ARC_RIGHTARM
                                                             : Compute.ARC_LEFTARM;
 

@@ -22,7 +22,7 @@ import megamek.common.IPlayer;
 /**
  * abstract baseclass for bv-checking victory implementations
  */
-public abstract class AbstractBVVictory implements Victory, Serializable {
+public abstract class AbstractBVVictory implements IVictoryConditions, Serializable {
     /**
      * 
      */

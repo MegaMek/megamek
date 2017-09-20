@@ -23,17 +23,14 @@ import megamek.common.IPlayer;
 /**
  * implementation of "last player/team standing"
  */
-public class LastManStandingVictory implements Victory, Serializable {
+public class LastManStandingVictory implements IVictoryConditions, Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3372431109525075853L;
 
     public LastManStandingVictory() {
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, HashMap<String, Object> ctx) {
         // check all players/teams for aliveness
         int playersAlive = 0;
         IPlayer lastPlayer = null;
@@ -65,20 +62,19 @@ public class LastManStandingVictory implements Victory, Serializable {
 
         // check if there's one player alive
         if (playersAlive < 1) {
-            return new SimpleDrawResult();
+            return VictoryResult.drawResult();
         } else if (playersAlive == 1) {
             if (lastPlayer != null && lastPlayer.getTeam() == IPlayer.TEAM_NONE) {
                 // individual victory
-                return new SimpleResult(true, lastPlayer.getId(),
-                        IPlayer.TEAM_NONE);
+                return new VictoryResult(true, lastPlayer.getId(), IPlayer.TEAM_NONE);
             }
         }
 
         // did we only find one live team?
         if (oneTeamAlive && !unteamedAlive) {
             // team victory
-            return new SimpleResult(true, IPlayer.PLAYER_NONE, lastTeam);
+            return new VictoryResult(true, IPlayer.PLAYER_NONE, lastTeam);
         }
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

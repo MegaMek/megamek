@@ -40,7 +40,7 @@ public class BVRatioVictory extends AbstractBVVictory {
         this.ratio = ratio;
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, HashMap<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
@@ -77,6 +77,6 @@ public class BVRatioVictory extends AbstractBVVictory {
         }// end for
         if (victory)
             return vr;
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

@@ -27,9 +27,7 @@ import megamek.common.Report;
  * more than required amount
  */
 public class BVDestroyedVictory extends AbstractBVVictory {
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -1807333576570154144L;
     protected int destroyedPercent;
 
@@ -37,7 +35,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         this.destroyedPercent = destroyedPercent;
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, HashMap<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
@@ -73,6 +71,6 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         }// end for
         if (victory)
             return vr;
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

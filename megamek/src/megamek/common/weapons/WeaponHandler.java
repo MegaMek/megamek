@@ -560,7 +560,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        	vPhaseReport.addElement(r);
 	        }
 	        
-            //use this if counterfire destroys all the missiles
+            //use this if AMS counterfire destroys all the Capital missiles
             if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
                 r = new Report(3356);
                 r.indent();

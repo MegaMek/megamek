@@ -297,7 +297,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         amsBayEngagedCap = true;
                     }
                                         
-                } else if (isPDBay && !pdBayEngaged) {
+                } else if (isPDBay && counter.isUsedThisRound() == false) {
                     pdAV = 0;
                     // Point defenses can't fire if they're not ready for any reason
 		            if (!(counter.getType() instanceof WeaponType)

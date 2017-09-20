@@ -2770,6 +2770,12 @@ public class Compute {
         if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
             use_table = true;
         }
+        
+        //Unless it's a fighter squadron, which uses a weird group of single weapons and should return mass AV
+        if (attacker instanceof FighterSquadron) {
+            use_table = false;
+        }
+        
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
             || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)
             || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)) {
@@ -3032,25 +3038,25 @@ public class Compute {
                         	if (rangeToTarget > 50) {
                 			av = 0;
                         	} else if (rangeToTarget > 40) {
-                			av += wt.getExtAV();
+                			av += (wt.getExtAV() * weapon.getNWeapons());
                         	} else if (rangeToTarget > 25) {
-                			av += wt.getLongAV();
+                			av += (wt.getLongAV() * weapon.getNWeapons());
                         	} else if (rangeToTarget > 12) {
-                			av += wt.getMedAV();
+                			av += (wt.getMedAV() * weapon.getNWeapons());
                         	} else {
-                			av += wt.getShortAV();
+                			av += (wt.getShortAV() * weapon.getNWeapons());
                         	}              				
                         } else {
                         	if (rangeToTarget > 25) {
                 			av = 0;
                         	} else if (rangeToTarget > 20) {
-                			av += wt.getExtAV();
+                			av += (wt.getExtAV() * weapon.getNWeapons());
                         	} else if (rangeToTarget > 12) {
-                			av += wt.getLongAV();
+                			av += (wt.getLongAV() * weapon.getNWeapons());
                         	} else if (rangeToTarget > 6) {
-                			av += wt.getMedAV();
+                			av += (wt.getMedAV() * weapon.getNWeapons());
                         	} else {
-                			av += wt.getShortAV();
+                			av += (wt.getShortAV() * weapon.getNWeapons());
                         	} 
                         }
                     fDamage = (float) (av * threat);

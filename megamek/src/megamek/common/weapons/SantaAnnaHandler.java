@@ -61,6 +61,6 @@ public class SantaAnnaHandler extends AmmoWeaponHandler {
 
     @Override
     protected int getCapMisMod() {
-        return 2;
+        return 9;
     }
 }

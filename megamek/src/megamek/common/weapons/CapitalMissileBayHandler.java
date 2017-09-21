@@ -108,6 +108,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         }
                     }
                 }
+                
+                // check for nukes and tele-missiles and if they are there then
+                // I will need to
+                // add them to an inserted attack list and reset the av
+                if (atype.hasFlag(AmmoType.F_NUCLEAR)
+                        || atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
+                    insertedAttacks.addElement(wId);
+                    av = av - current_av;
+                }
             }
         }
         armor = (int) ((av * 10) - counterAV);

@@ -320,7 +320,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 	                            || pdEnt.isShutDown()
 	                            // Point defenses only fire vs attacks in arc covered by ams
 	                            || !isInArc
-	                            || counter.isUsedThisRound() == true) {
+	                            // Point defense bays only fire once per round
+                                || counter.isUsedThisRound() == true) {
 	                        continue;
 	                }
 		            // Now for heat, damage and ammo we need the individual weapons in the bay

@@ -469,7 +469,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         amsBayEngaged = true;
                     }
                                         
-                } else if (isPDBay && counter.isUsedThisRound() == false) {
+                } else if (isPDBay) {
                     pdAV = 0;
                     // Point defenses can't fire if they're not ready for any reason
                     if (!(counter.getType() instanceof WeaponType)
@@ -477,7 +477,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                                 // shutdown means no Point defenses
                                 || pdEnt.isShutDown()
                                 // Point defenses only fire vs attacks in arc covered by ams
-                                || !isInArc) {
+                                || !isInArc
+                                // Point defense bays only fire once per round
+                                || counter.isUsedThisRound() == true) {
                             continue;
                     }
                     // Now for heat, damage and ammo we need the individual weapons in the bay

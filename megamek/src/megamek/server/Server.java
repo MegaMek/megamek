@@ -27165,11 +27165,11 @@ public class Server implements Runnable {
             vDesc.add(r);
             if (nukeroll >= capitalMissile) {
                 int nukeDamage = damage_orig;
-                a.setSI(a.getSI() - nukeDamage);
-                a.damageThisPhase += nukeDamage;
+                a.setSI(a.getSI() - (nukeDamage * 10));
+                a.damageThisPhase += (nukeDamage * 10);
                 r = new Report(9146);
                 r.subject = a.getId();
-                r.add(nukeDamage);
+                r.add((nukeDamage * 10));
                 r.indent(4);
                 r.add(Math.max(a.getSI(), 0));
                 vDesc.addElement(r);

@@ -246,7 +246,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         }
         int counterAV = 0;
         int amsAV = 0;
-        int pdAV = 0;
+        double pdAV = 0;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
@@ -311,7 +311,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         amsBayEngaged = true;
                     }
                                         
-                } else if (isPDBay && counter.isUsedThisRound() == false) {
+                } else if (isPDBay) {
                     pdAV = 0;
                     // Point defenses can't fire if they're not ready for any reason
 		            if (!(counter.getType() instanceof WeaponType)
@@ -319,7 +319,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 	                            // shutdown means no Point defenses
 	                            || pdEnt.isShutDown()
 	                            // Point defenses only fire vs attacks in arc covered by ams
-	                            || !isInArc) {
+	                            || !isInArc
+	                            || counter.isUsedThisRound() == true) {
 	                        continue;
 	                }
 		            // Now for heat, damage and ammo we need the individual weapons in the bay
@@ -359,7 +360,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 } //end PDBay fire 
                 
                 // non-AMS only add half their damage, rounded up
-                counterAV += (int) Math.ceil(pdAV / 2); 
+                counterAV += (int) Math.ceil(pdAV / 2.0); 
                 // AMS add their full damage
                 counterAV += amsAV;
             } //end "for Mounted counter"

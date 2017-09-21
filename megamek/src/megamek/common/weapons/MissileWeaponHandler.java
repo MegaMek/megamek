@@ -404,7 +404,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         int counterAV = 0;
         int amsAV = 0;
-        int pdAV = 0;
+        double pdAV = 0;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
@@ -517,7 +517,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 } //end PDBay fire 
                 
                 // non-AMS only add half their damage, rounded up
-                counterAV += (int) Math.ceil(pdAV / 2); 
+                counterAV += (int) Math.ceil(pdAV / 2.0); 
                 // AMS add their full damage
                 counterAV += amsAV;
             } //end "for Mounted counter"

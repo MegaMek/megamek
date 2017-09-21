@@ -2772,7 +2772,7 @@ public class Compute {
         }
         
         //Unless it's a fighter squadron, which uses a weird group of single weapons and should return mass AV
-        if (attacker instanceof FighterSquadron) {
+        if (attacker.isCapitalFighter()) {
             use_table = false;
         }
         
@@ -3028,7 +3028,7 @@ public class Compute {
                         }
                         fDamage = (float) (av * threat);
                     }
-                } else if (attacker.isCapitalFighter() || (attacker instanceof FighterSquadron)) {
+                } else if (attacker.isCapitalFighter()) {
                 	double av = 0;
                 	double threat = 1;
                 	//Capital weapons have a different range scale

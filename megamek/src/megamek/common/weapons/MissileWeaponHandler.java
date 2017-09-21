@@ -326,7 +326,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
-        int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
@@ -383,10 +382,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
-        
-        //Point Defenses engage the missiles
-        counterAV = calcCounterAV();
-        av = av - counterAV;
         
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
@@ -887,34 +882,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         attackValue = calcAttackValue();
         
-        // Report any AMS bay action against standard missiles.
-        CounterAV = getCounterAV();
-        //use this if counterfire destroys all the missiles
-        if (amsBayEngaged && (attackValue <= 0)) {
-            r = new Report(3356);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        } else if (amsBayEngaged) {
-            r = new Report(3354);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-        
-        // Report any Point Defense bay action against standard missiles.
-        if (pdBayEngaged && (attackValue <= 0)) {
-            r = new Report(3355);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        } else if (pdBayEngaged) {
-            r = new Report(3353);
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
@@ -950,7 +917,38 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.add(amsRoll);
                 vPhaseReport.add(r);
                 hits = Math.max(0, hits - amsRoll);
-            } else if (!bMissed) {
+            
+            // Report any AMS bay action against standard missiles.          
+            } else if (amsBayEngaged && (attackValue <= 0)) {
+            	//use this if AMS counterfire destroys all the missiles
+                r = new Report(3356);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (amsBayEngaged) {
+            	//use this if AMS counterfire destroys some of the missiles
+            	CounterAV = getCounterAV();
+                r = new Report(3354);
+                r.indent();
+                r.add(CounterAV);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                
+             // Report any Point Defense bay action against standard missiles.
+                
+            } else if (pdBayEngaged && (attackValue <= 0)) {
+            	//use this if PD counterfire destroys all the missiles
+                r = new Report(3355);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (pdBayEngaged) {
+            	//use this if PD counterfire destroys some of the missiles
+                r = new Report(3353);
+                r.add(CounterAV);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+            else if (!bMissed) {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

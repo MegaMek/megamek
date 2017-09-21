@@ -353,9 +353,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.newlines = 0;
                     vPhaseReport.add(r);
                 }
-                nDamPerHit = attackValue * nweaponsHit;
+                //Point Defenses engage the missiles
+                int counterAV = 0;
+                counterAV = calcCounterAV();
+                
+                nDamPerHit = attackValue * nweaponsHit - counterAV;
                 hits = 1;
-                nCluster = 1;
+                nCluster = 1;                
             } else if (nCluster > 1) {
                 bSalvo = true;
                 nDamPerHit = 1;

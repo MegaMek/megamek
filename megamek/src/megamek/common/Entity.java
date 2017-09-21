@@ -12507,7 +12507,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .hasMoreElements(); ) {
                 IOption quirk = j.nextElement();
 
-                if (quirk.booleanValue()) {
+                if (null != quirk && quirk.booleanValue()) {
                     count++;
                 }
             }

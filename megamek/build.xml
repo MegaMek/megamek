@@ -161,8 +161,6 @@
 
     <target depends="clean, compile, unit.test, jar" name="all" description="Clean, compile and build a jar"/>
 
-    <target depends="clean, compile, jar" name="all-no-test" description="Clean, compile and build a jar"/>
-
     <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
         <delete dir="${dir.build.test}"/>
         <mkdir dir="${dir.build.test}"/>
@@ -176,7 +174,8 @@
         </copy>
     </target>
 
-    <target depends="compileTests" name="unit.test" description="Execute unit tests">
+    <!-- Runs all the unit tests unless the skip.tests environment variable is set to "true" -->
+    <target depends="compileTests" name="unit.test" unless="${skip.tests}" description="Execute unit tests">
         <delete dir="${dir.build.teststaging}"/>
         <delete dir="${dir.build.testreport}"/>
         <mkdir dir="${dir.build.teststaging}"/>

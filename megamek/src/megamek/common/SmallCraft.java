@@ -114,9 +114,9 @@ public class SmallCraft extends Aero {
         return nOtherPassenger;
     }
     
+    @Override
     public double getStrategicFuelUse() {
-    	double tonsperday = 1.84;
-    	return tonsperday;
+    	return 1.84;
     }
 
     @Override

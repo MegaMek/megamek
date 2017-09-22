@@ -184,26 +184,6 @@ public class TestSmallCraft extends TestAero {
         return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALFTON);
     }
     
-    /**
-     * Computes and returns the number of days the unit can spend accelerating at 1G 
-     * 
-     * @param aero
-     * @return
-     */
-    public static double calculateDaysAt1G(SmallCraft sc) {
-        return sc.getFuel() / sc.getStrategicFuelUse();
-    }
-    
-    /**
-     * Computes and returns the number of days the unit can spend accelerating at maximum thrust. 
-     * 
-     * @param aero
-     * @return
-     */
-    public static double calculateDaysAtMax(SmallCraft sc) {
-        return sc.getFuel() / (sc.getStrategicFuelUse() * sc.getRunMP() / 2.0);
-    }
-    
     public static int weightFreeHeatSinks(SmallCraft sc) {
         double engineTonnage = calculateEngineTonnage(sc.isClan(), sc.getWeight(), sc.getWalkMP());
         if (sc.isSpheroid()) {
@@ -214,9 +194,9 @@ public class TestSmallCraft extends TestAero {
             }
         } else {
             if (sc.getDesignType() == SmallCraft.MILITARY) {
-                return (int)Math.floor(engineTonnage / 60.0);
-            } else {
                 return (int)Math.floor(engineTonnage / 20.0);
+            } else {
+                return (int)Math.floor(engineTonnage / 60.0);
             }
         }
     }
@@ -265,6 +245,10 @@ public class TestSmallCraft extends TestAero {
             weight += extra;
         }
         return weight;
+    }
+
+    public double getWeightEngine() {
+        return calculateEngineTonnage(smallCraft.isClan(), smallCraft.getWeight(), smallCraft.getOriginalWalkMP());
     }
     
     public double getWeightFuel() {

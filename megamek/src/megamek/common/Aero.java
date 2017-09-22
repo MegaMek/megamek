@@ -842,6 +842,15 @@ public class Aero extends Entity implements IAero, IBomber {
         return fuel / getFuelPointsPerTon();
     }
 
+    /**
+     * Used by SmallCraft and Jumpship and their child classes.
+     * 
+     * @return The tons of fuel burned in a day at 1G using strategic movement.
+     */
+    public double getStrategicFuelUse() {
+        return 0.0;
+    }
+
     public int getHeatType() {
         return heatType;
     }
@@ -4089,4 +4098,5 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getSpriteDrawPriority() {
         return 10;
     }
+
 }

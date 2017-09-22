@@ -295,6 +295,36 @@ public class TestAero extends TestEntity {
         }
     }
     
+    /**
+     * Computes and returns the number of days the unit can spend accelerating at 1G 
+     * 
+     * @param aero
+     * @return
+     */
+    public static double calculateDaysAt1G(Aero aero) {
+        double stratUse = aero.getStrategicFuelUse();
+        if (stratUse > 0) {
+            return aero.getFuel() / aero.getStrategicFuelUse();
+        } else {
+            return 0.0;
+        }
+    }
+    
+    /**
+     * Computes and returns the number of days the unit can spend accelerating at maximum thrust. 
+     * 
+     * @param aero
+     * @return
+     */
+    public static double calculateDaysAtMax(Aero aero) {
+        double stratUse = aero.getStrategicFuelUse();
+        if (stratUse > 0) {
+            return aero.getFuel() / (aero.getStrategicFuelUse() * aero.getRunMP() / 2.0);
+        } else {
+            return 0.0;
+        }
+    }
+    
     public TestAero(Aero a, TestEntityOption option, String fs) {
         super(option, a.getEngine(), getArmor(a), getStructure(a));
         aero = a;

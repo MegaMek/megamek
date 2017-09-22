@@ -304,23 +304,17 @@ public class Jumpship extends Aero {
         return nOtherCrew;
     }
     
+    @Override
     public double getStrategicFuelUse() {
-    	double tonsperday = 0;
-    	    	
     	if (weight >= 200000) {
-    		tonsperday = 3.95;
-    		return tonsperday;
+    		return 3.95;
     	} else if (weight >= 100000) {
-    		tonsperday = 1.98;
-    		return tonsperday;
+    		return 1.98;
     	} else if (weight >= 50000) {
-    		tonsperday = 0.98;
-    		return tonsperday;
-    	} else if (weight >= 2000) {
-    		tonsperday = 0.28;
-    		return tonsperday;
+    		return 0.98;
+    	} else {
+    		return 0.28;
     	}
-    	return tonsperday;
     }
 
     @Override

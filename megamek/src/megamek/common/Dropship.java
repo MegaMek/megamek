@@ -254,6 +254,7 @@ public class Dropship extends SmallCraft {
         return points;
     }
     
+    @Override
     public double getStrategicFuelUse() {
         if ((getDesignType() == MILITARY) || (getWeight() < 1000)) {
             return 1.84;

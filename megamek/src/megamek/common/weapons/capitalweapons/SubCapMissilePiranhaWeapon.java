@@ -54,6 +54,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         shortAV = 3;
         medAV = 3;
         longAV = 3;
+        this.missileArmor = 30;
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
         rulesRefs = "345,TO";

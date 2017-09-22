@@ -47,6 +47,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         cost = 0;
         shortAV = 10;
         medAV = 10;
+        missileArmor = 20;
         maxRange = RANGE_MED;
         ammoType = AmmoType.T_ALAMO;
         capital = true;

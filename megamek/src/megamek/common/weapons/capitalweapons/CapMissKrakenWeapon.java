@@ -22,8 +22,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileHandler;
-import megamek.common.weapons.KrakenHandler;
-import megamek.common.weapons.SantaAnnaHandler;
 import megamek.common.weapons.TeleMissileHandler;
 import megamek.server.Server;
 
@@ -58,6 +56,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
         this.medAV = 10;
         this.longAV = 10;
         this.extAV = 10;
+        this.missileArmor = 100;
         this.maxRange = RANGE_EXT;
         rulesRefs = "Unoffical";
         techAdvancement.setTechBase(TECH_BASE_IS)

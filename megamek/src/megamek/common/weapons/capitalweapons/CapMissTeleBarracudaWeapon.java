@@ -57,6 +57,7 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.medAV = 2;
         this.longAV = 2;
         this.extAV = 2;
+        this.missileArmor = 20;
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
         rulesRefs = "210,TM";

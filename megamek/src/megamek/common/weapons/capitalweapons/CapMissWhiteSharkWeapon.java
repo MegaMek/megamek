@@ -55,6 +55,7 @@ public class CapMissWhiteSharkWeapon extends CapitalMissileWeapon {
         this.medAV = 3;
         this.longAV = 3;
         this.extAV = 3;
+        this.missileArmor = 30;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)

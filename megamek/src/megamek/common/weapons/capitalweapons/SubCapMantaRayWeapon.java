@@ -52,6 +52,7 @@ public class SubCapMantaRayWeapon extends SubCapMissileWeapon {
         this.bv = 396;
         this.cost = 150000;
         this.shortAV = 5;
+        this.missileArmor = 50;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "345,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)

@@ -29,6 +29,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.ITechnology;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
@@ -914,5 +915,126 @@ public class TestAero extends TestEntity {
         return Math.ceil(tonnage * 2) / 2.0;
     }
 
-
+    /**
+     * Get the maximum tonnage for the type of unit. Primitive jumpships will use the maximum
+     * allowable value for the construction year (Terran Alliance/Hegemony)
+     * 
+     * @param aero      The unit
+     * @return          The maximum tonnage for the type of unit.
+     */
+    public static int getMaxTonnage(Aero aero) {
+        return getMaxTonnage(aero, ITechnology.F_NONE);
+    }
+    
+    /**
+     * Get the maximum tonnage for the type of unit
+     * 
+     * @param aero      The unit
+     * @param faction   An ITechnology faction constant used for primitive jumpships. A value
+     *                  of F_NONE will use the least restrictive values (TA/TH).
+     * @return          The maximum tonnage for the type of unit.
+     */
+    public static int getMaxTonnage(Aero aero, int faction) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            return 2500000;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            return 250000;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            if (aero.isPrimitive()) {
+                return getPrimitiveJumpshipMaxTonnage(aero, faction);
+            }
+            return 500000;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+            if (aero.isPrimitive()) {
+                return getPrimitiveDropshipMaxTonnage(aero);
+            }
+            return aero.isSpheroid()? 100000 : 35000;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
+                || aero.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
+            return 200;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            return 50;
+        } else {
+            return 100;
+        }
+    }
+    
+    /**
+     * @param jumpship
+     * @return Max tonnage allowed by construction rules.
+     */
+    public static int getPrimitiveJumpshipMaxTonnage(Aero jumpship, int faction) {
+        switch (faction) {
+            case ITechnology.F_TA:
+            case ITechnology.F_TH:
+            case ITechnology.F_NONE:
+                if (jumpship.getYear() < 2130) {
+                    return 100000;
+                } else if (jumpship.getYear() < 2150) {
+                    return 150000;
+                } else if (jumpship.getYear() < 2165) {
+                    return 200000;
+                } else if (jumpship.getYear() < 2175) {
+                    return 250000;
+                } else if (jumpship.getYear() < 2200) {
+                    return 350000;
+                } else if (jumpship.getYear() < 2300){
+                    return 500000;
+                } else if (jumpship.getYear() < 2350) {
+                    return 1000000;
+                } else if (jumpship.getYear() < 2400) {
+                    return 1600000;
+                } else {
+                    return 1800000;
+                }
+            case ITechnology.F_CC:
+            case ITechnology.F_DC:
+            case ITechnology.F_FS:
+            case ITechnology.F_FW:
+            case ITechnology.F_LC:
+                if (jumpship.getYear() < 2300){
+                    return 350000;
+                } else if (jumpship.getYear() < 2350) {
+                    return 600000;
+                } else if (jumpship.getYear() < 2400) {
+                    return 800000;
+                } else {
+                    return 1000000;
+                }
+            default:
+                if (jumpship.getYear() < 2300){
+                    return 300000;
+                } else if (jumpship.getYear() < 2350) {
+                    return 450000;
+                } else if (jumpship.getYear() < 2400) {
+                    return 600000;
+                } else {
+                    return 1000000;
+                }
+        }
+    }
+    
+    public static int getPrimitiveDropshipMaxTonnage(Aero dropship) {
+        if (dropship.getYear() < 2130) {
+            return dropship.isSpheroid()? 3000 : 1000; 
+        } else if (dropship.getYear() < 2150) {
+            return dropship.isSpheroid()? 4000 : 1500; 
+        } else if (dropship.getYear() < 2165) {
+            return dropship.isSpheroid()? 7000 : 2500; 
+        } else if (dropship.getYear() < 2175) {
+            return dropship.isSpheroid()? 10000 : 3000; 
+        } else if (dropship.getYear() < 2200) {
+            return dropship.isSpheroid()? 14000 : 5000; 
+        } else if (dropship.getYear() < 2250) {
+            return dropship.isSpheroid()? 15000 : 6000; 
+        } else if (dropship.getYear() < 2300) {
+            return dropship.isSpheroid()? 19000 : 7000; 
+        } else if (dropship.getYear() < 2350) {
+            return dropship.isSpheroid()? 23000 : 8000; 
+        } else if (dropship.getYear() < 2425) {
+            return dropship.isSpheroid()? 30000 : 10000; 
+        } else {
+            return dropship.isSpheroid()? 50000 : 20000; 
+        }
+    }
 }

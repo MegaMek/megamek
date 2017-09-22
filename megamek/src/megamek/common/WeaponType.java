@@ -692,6 +692,7 @@ public class WeaponType extends EquipmentType {
     public double medAV = 0;
     public double longAV = 0;
     public double extAV = 0;
+    public int missileArmor = 0;
     public int maxRange = RANGE_SHORT;
     public boolean capital = false;
     public boolean subCapital = false;
@@ -915,6 +916,9 @@ public class WeaponType extends EquipmentType {
         }
         return new int[]
             { Integer.MIN_VALUE, 6, 12, 20, 25 };
+    }
+    public int getMissileArmor() {
+        return missileArmor;
     }
 
     public double getShortAV() {

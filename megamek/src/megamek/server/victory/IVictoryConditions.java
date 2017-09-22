@@ -18,7 +18,7 @@ import java.util.HashMap;
 import megamek.common.IGame;
 
 /**
- * interface for classes judging whether a victory occurred or not. these
+ * Interface for classes judging whether a victory occurred or not. These
  * classes may not modify game state. Reporting must be done via the given
  * interface. classes also should not have any nasty internal state outside
  * methods this will guarantee them to act _only_ based on gamestate The only

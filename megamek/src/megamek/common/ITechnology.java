@@ -348,10 +348,12 @@ public interface ITechnology {
     }
     
     default int calcYearAvailability(int year, boolean clanUse, int faction) {
-        if (!clanUse && !isClan() && (faction != F_CS) && getTechEra(year) == ERA_SW
-                && getBaseAvailability(ERA_SW) >= RATING_E
-                && getExtinctionDate(false) != DATE_NONE
-                && getExtinctionDate(false) <= year) {
+        if (!clanUse && !isClan() && (faction != F_CS) && (getTechEra(year) == ERA_SW)
+                && (getBaseAvailability(ERA_SW) >= RATING_E)
+                && (getExtinctionDate(false) != DATE_NONE)
+                && (getExtinctionDate(false) <= year)
+                && ((getReintroductionDate(false) == DATE_NONE)
+                        || (getReintroductionDate() > year))) {
             return Math.min(getBaseAvailability(ERA_SW) + 1, RATING_X);
         }
         return calcEraAvailability(getTechEra(year), clanUse);

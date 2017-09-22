@@ -255,42 +255,27 @@ public class Dropship extends SmallCraft {
     }
     
     public double getStrategicFuelUse() {
-    	double tonsperday = 0;
-    	
-    	if (this.getDesignType() == 1) {
-    		tonsperday = 1.84;
-    		return tonsperday;
-    	} else if (weight >= 70000) {
-    		tonsperday = 8.83;
-    		return tonsperday;
-    	} else if (weight >= 50000) {
-    		tonsperday = 8.37;
-    		return tonsperday;
-    	} else if (weight >= 40000) {
-    		tonsperday = 7.71;
-    		return tonsperday;
-    	} else if (weight >= 30000) {
-    		tonsperday = 6.52;
-    		return tonsperday;
-    	} else if (weight >= 20000) {
-    		tonsperday = 5.19;
-    		return tonsperday;
-    	} else if (weight >= 9000) {
-    		tonsperday = 4.22;
-    		return tonsperday;
-    	} else if (weight >= 4000) {
-    		tonsperday = 3.37;
-    		return tonsperday;
-    	} else if (weight >= 1000) {
-    		tonsperday = 2.82;
-    		return tonsperday;
-    	} else if (weight >= 100) {
-    		tonsperday = 1.84;
-    		return tonsperday;
-    	}
-    	return tonsperday;
+        if ((getDesignType() == MILITARY) || (getWeight() < 1000)) {
+            return 1.84;
+        } else if (getWeight() < 4000) {
+            return 2.82;
+        } else if (getWeight() < 9000) {
+            return 3.37;
+        } else if (getWeight() < 20000) {
+            return 4.22;
+        } else if (getWeight() < 30000) {
+            return 5.19;
+        } else if (getWeight() < 40000) {
+            return 6.52;
+        } else if (getWeight() < 50000) {
+            return 7.71;
+        } else if (getWeight() < 70000) {
+            return 8.37;
+        } else {
+            return 8.83;
+        }
     }
-
+    
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];

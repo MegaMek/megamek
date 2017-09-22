@@ -161,9 +161,7 @@
 
     <target depends="clean, compile, unit.test, jar" name="all" description="Clean, compile and build a jar"/>
 
-    <target depends="clean, compile, jar" name="all-no-test" description="Clean, compile and build a jar"/>
-
-    <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
+    <target name="compileTests" depends="compile" unless="${skip.tests}" description="Compile unit tests">
         <delete dir="${dir.build.test}"/>
         <mkdir dir="${dir.build.test}"/>
         <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true" encoding="UTF-8">
@@ -176,7 +174,12 @@
         </copy>
     </target>
 
-    <target depends="compileTests" name="unit.test" description="Execute unit tests">
+    <!-- Runs all the unit tests unless the skip.tests variable is set to "true".  This can be done via the command 
+    line by inserting -Dskip.tests=true as a command-line argument.  Also, your IDE may allow you to set this variable. -->
+    <target depends="compileTests"
+            name="unit.test"
+            unless="${skip.tests}"
+            description="Execute unit tests unless skip.tests=true.">
         <delete dir="${dir.build.teststaging}"/>
         <delete dir="${dir.build.testreport}"/>
         <mkdir dir="${dir.build.teststaging}"/>

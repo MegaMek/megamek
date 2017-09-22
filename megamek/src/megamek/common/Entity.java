@@ -1212,13 +1212,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             ctl.addComponent(TA_PATCHWORK_ARMOR);
             for (int loc = 0; loc < locations(); loc++) {
                 ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
-                        TechConstants.isClan(armorTechLevel[loc]),
-                        hasETypeFlag(ETYPE_AERO)));
+                        TechConstants.isClan(armorTechLevel[loc])));
             }
         } else {
             ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
-                    TechConstants.isClan(armorTechLevel[0]),
-                    hasETypeFlag(ETYPE_AERO)));
+                    TechConstants.isClan(armorTechLevel[0])));
         }
         if (isMixedTech()) {
             ctl.addComponent(TA_MIXED_TECH);

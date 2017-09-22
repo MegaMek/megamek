@@ -157,11 +157,15 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
 
         a.setEngine(new Engine(400, 0, 0));
 
+        // Switch older files with standard armor to aerospace
+        int at = EquipmentType.T_ARMOR_AEROSPACE;
         if (dataFile.exists("armor_type")) {
-            a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-        } else {
-            a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+            at = dataFile.getDataAsInt("armor_type")[0];
+            if (at == EquipmentType.T_ARMOR_STANDARD) {
+                at = EquipmentType.T_ARMOR_AEROSPACE;
+            }
         }
+        a.setArmorType(at);
         if (dataFile.exists("armor_tech")) {
             a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }

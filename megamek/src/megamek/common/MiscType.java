@@ -1655,6 +1655,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createEnergyStorageBattery());
         EquipmentType.addType(MiscType.createImpFerroAluminumArmor());
         EquipmentType.addType(MiscType.createPrimitiveLCAerospaceArmor());
+        EquipmentType.addType(MiscType.createISAeroSpaceArmor());
+        EquipmentType.addType(MiscType.createClanAeroSpaceArmor());
         EquipmentType.addType(MiscType.createLCFerroCarbideArmor());
         EquipmentType.addType(MiscType.createLCLamellorFerroCarbideArmor());
 
@@ -2856,7 +2858,6 @@ public class MiscType extends EquipmentType {
 
     // Armor (Small Craft, and Large Aerospace Craft)
 
-    //TODO NEO to review.
     public static MiscType createPrimitiveLCAerospaceArmor() {
 
         MiscType misc = new MiscType();
@@ -2876,6 +2877,50 @@ public class MiscType extends EquipmentType {
                 .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
                 .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
                 .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+    
+    // Separate IS/Clan standard aerospace armor, which provides different points per ton.
+    public static MiscType createISAeroSpaceArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, false));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
+                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "205,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setISAdvancement(2460, 2470, 2470).setISApproximate(true, false, false)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+    
+    public static MiscType createClanAeroSpaceArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, true));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
+                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "205,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setClanAdvancement(DATE_NONE, DATE_NONE, 2470)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
     

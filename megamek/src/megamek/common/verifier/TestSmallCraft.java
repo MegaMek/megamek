@@ -26,14 +26,14 @@ public class TestSmallCraft extends TestAero {
     private final SmallCraft smallCraft;
 
     public static enum AerospaceArmor{
-        STANDARD(EquipmentType.T_ARMOR_STANDARD, false),   
-        CLAN_STANDARD(EquipmentType.T_ARMOR_STANDARD, true),
+        STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
+        CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
         IS_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, false),
         CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, true),
         FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false),        
         HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, false),
         LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, false),
-        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false);        
+        PRIMITIVE(EquipmentType.T_ARMOR_LC_PRIMITIVE_AERO, false);        
 
         /**
          * The type, corresponding to types defined in 
@@ -77,30 +77,30 @@ public class TestSmallCraft extends TestAero {
          * @return   The number of points of armor per ton
          */
         public double pointsPerTon(SmallCraft sc) {
-            double base = 16;
+            double base = 16.0;
             if (sc.isSpheroid()) {
                 if (sc.getWeight() >= 65000) {
-                    base = 6;
+                    base = 6.0;
                 } else if (sc.getWeight() >= 50000) {
-                    base = 8;
+                    base = 8.0;
                 } else if (sc.getWeight() >= 35000) {
-                    base = 10;
+                    base = 10.0;
                 } else if (sc.getWeight() >= 20000) {
-                    base = 12;
+                    base = 12.0;
                 } else if (sc.getWeight() >= 12500) {
-                    base = 14;
+                    base = 14.0;
                 }
             } else {
                 if (sc.getWeight() >= 25000) {
-                    base = 6;
+                    base = 6.0;
                 } else if (sc.getWeight() >= 17500) {
-                    base = 8;
+                    base = 8.0;
                 } else if (sc.getWeight() >= 12500) {
-                    base = 10;
+                    base = 10.0;
                 } else if (sc.getWeight() >= 9500) {
-                    base = 12;
+                    base = 12.0;
                 } else if (sc.getWeight() >= 6000) {
-                    base = 14;
+                    base = 14.0;
                 }
             }
             if (isClan) {

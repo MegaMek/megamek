@@ -90,7 +90,7 @@ public class EquipmentType implements ITechnology {
     public final static int T_ARMOR_BA_REACTIVE = 38;
     public static final int T_ARMOR_PRIMITIVE_AERO = 39;
     public static final int T_ARMOR_LC_PRIMITIVE_AERO = 40;
-
+    public static final int T_ARMOR_AEROSPACE = 41;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -116,7 +116,7 @@ public class EquipmentType implements ITechnology {
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
             "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
             "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Fighter","Lamellor Ferro-Carbide", "Primitive Armor"};
+            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
@@ -140,7 +140,7 @@ public class EquipmentType implements ITechnology {
             1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
             1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
             0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67,
-            0.66 };
+            1, 0.66 };
 
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
@@ -674,7 +674,7 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
-
+    
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -766,14 +766,6 @@ public class EquipmentType implements ITechnology {
             .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    protected final static TechAdvancement TA_STANDARD_AEROSPACE = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
-            .setTechRating(RATING_D).setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected final static TechAdvancement TA_CLAN_STANDARD_AEROSPACE = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(DATE_NONE, DATE_NONE, 2470)
-            .setTechRating(RATING_D).setAvailability(RATING_X, RATING_B, RATING_B, RATING_B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD); // Clan aerospace armor
     protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
@@ -785,29 +777,13 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Tech advancement for armor based on the armor type index and tech base
+     * 
      * @param at   The armor type constant
      * @param clan The armor tech base
      * @return     The tech advancement for the armor
      */
     public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
-        return getArmorTechAdvancement(at, clan, false);
-    }
-    
-    /**
-     * Tech advancement for armor based on the armor type index and tech base with special considerations
-     * for aerospace armor. Standard aerospace has different era availability codes and produces more
-     * points per ton for larger vessels. 
-     * 
-     * @param at         The armor type constant
-     * @param clan       The armor tech base
-     * @param aerospace  Standard aerospace armor 
-     * @return           The tech advancement for the armor
-     */
-    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan, boolean aerospace) {
         if (at == T_ARMOR_STANDARD) {
-            if (aerospace) {
-                return clan? TA_CLAN_STANDARD_AEROSPACE : TA_STANDARD_AEROSPACE;
-            }
             return TA_STANDARD_ARMOR;
         }
         String armorName = EquipmentType.getArmorTypeName(at, clan);

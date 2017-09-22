@@ -22,7 +22,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AR10Handler;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.SantaAnnaHandler;
 import megamek.common.weapons.TeleMissileHandler;
 import megamek.server.Server;
 

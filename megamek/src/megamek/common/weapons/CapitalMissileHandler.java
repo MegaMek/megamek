@@ -58,7 +58,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             return 0;
         }
         if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK
+                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
                 // Santa Anna, per IO rules
                 || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
@@ -69,6 +69,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             return 10;
         } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
                 || atype.getAmmoType() == AmmoType.T_KRAKENM
+                // Peacemaker, per IO rules
                 || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
             return 8;
         } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {

@@ -32,6 +32,7 @@ import megamek.common.EquipmentType;
 import megamek.common.ITechnology;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.SmallCraft;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -231,8 +232,9 @@ public class TestAero extends TestEntity {
      * Computes and returns the maximum number of turns the given unit could
      * fly at safe thrust given its fuel payload.  Aerospace fighters consume
      * 1 fuel point per thrust point spent up the the maximum safe thrust, 
-     * whereas conventional fighters consume 0.5 fuel points per thrust point 
-     * spent up to the maximum safe thrust.  See Strategic Operations pg 34. 
+     * whereas conventional fighters with turbine engines consume 0.5 fuel
+     * points per thrust point spent up to the maximum safe thrust.
+     * See Strategic Operations pg 34. 
      * 
      * @param aero
      * @return
@@ -240,7 +242,9 @@ public class TestAero extends TestEntity {
     public static float calculateMaxTurnsAtSafe(Aero aero){
         int fuelPoints = aero.getFuel();
         float fuelPerTurn;
-        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)
+                && aero.hasEngine()
+                && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
         } else {
             fuelPerTurn = aero.getWalkMP();
@@ -281,6 +285,16 @@ public class TestAero extends TestEntity {
         return fuelPoints/fuelPerTurn;       
     }    
 
+    public static int weightFreeHeatSinks(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return TestSmallCraft.weightFreeHeatSinks((SmallCraft)aero);
+        } else if (aero.hasEngine()) {
+            return aero.getEngine().getWeightFreeEngineHeatSinks();
+        } else {
+            return 0;
+        }
+    }
+    
     public TestAero(Aero a, TestEntityOption option, String fs) {
         super(option, a.getEngine(), getArmor(a), getStructure(a));
         aero = a;
@@ -323,6 +337,16 @@ public class TestAero extends TestEntity {
     @Override
     public boolean isAero() {
         return true;
+    }
+    
+    @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+    
+    @Override
+    public boolean isJumpship() {
+        return false;
     }
 
     @Override

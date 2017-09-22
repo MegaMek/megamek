@@ -72,6 +72,10 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isMech();
 
     public abstract boolean isAero();
+    
+    public abstract boolean isSmallCraft();
+    
+    public abstract boolean isJumpship();
 
     public abstract double getWeightControls();
 

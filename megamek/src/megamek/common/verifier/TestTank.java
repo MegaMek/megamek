@@ -117,6 +117,16 @@ public class TestTank extends TestEntity {
         return false;
     }
 
+    @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+    
+    @Override
+    public boolean isJumpship() {
+        return false;
+    }
+
     public double getTankWeightTurret() {
         double weight = 0;
 

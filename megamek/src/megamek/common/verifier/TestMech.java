@@ -170,6 +170,16 @@ public class TestMech extends TestEntity {
     }
 
     @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+    
+    @Override
+    public boolean isJumpship() {
+        return false;
+    }
+
+    @Override
     public double getWeightMisc() {
         if (mech instanceof LandAirMech || mech instanceof QuadVee) {
             // 10% of weight is conversion equipment

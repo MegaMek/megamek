@@ -179,6 +179,12 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(
             9); // Nuclear
     // missile
+    public static final BigInteger F_SANTA_ANNA = BigInteger.valueOf(1).shiftLeft(
+            14); // Santa Anna Missile
+    
+    public static final BigInteger F_PEACEMAKER = BigInteger.valueOf(1).shiftLeft(
+            14); // Peacemaker Missile
+
     public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1)
             .shiftLeft(10); // Tele-Missile
     public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1)
@@ -197,6 +203,8 @@ public class AmmoType extends EquipmentType {
     // to
     // ground
     // bomb
+    
+    // Numbers 14-15 out of order. See nuclear missiles, above
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -279,6 +287,8 @@ public class AmmoType extends EquipmentType {
     // Nuclear Munitions
     public static final long M_DAVY_CROCKETT_M = 1l << 45;
     public static final long M_SANTA_ANNA = 1l << 46;
+    public static final long M_PEACEMAKER = 1l << 62;
+    public static final long M_AMW = 1l << 63;
 
     // tele-missile
     public static final long M_TELE = 1l << 47;
@@ -312,6 +322,8 @@ public class AmmoType extends EquipmentType {
     
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
+    
+    // Numbers 62-63 are used for Nuclear munitions, above 
       
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -1180,14 +1192,17 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createHeavyNGaussAmmo());
         EquipmentType.addType(AmmoType.createKrakenAmmo());
         EquipmentType.addType(AmmoType.createKillerWhaleAmmo());
-        EquipmentType.addType(AmmoType.createSantaAnnaAmmo());
+        EquipmentType.addType(AmmoType.createPeacemakerAmmo());
+        EquipmentType.addType(AmmoType.createCLPeacemakerAmmo());
         EquipmentType.addType(AmmoType.createWhiteSharkAmmo());
-        EquipmentType.addType(AmmoType.createBarracudaAmmo());
+        EquipmentType.addType(AmmoType.createSantaAnnaAmmo());
         EquipmentType.addType(AmmoType.createCLSantaAnnaAmmo());
+        EquipmentType.addType(AmmoType.createBarracudaAmmo());        
         EquipmentType.addType(AmmoType.createKillerWhaleTAmmo());
         EquipmentType.addType(AmmoType.createWhiteSharkTAmmo());
         EquipmentType.addType(AmmoType.createBarracudaTAmmo());
         EquipmentType.addType(AmmoType.createAR10KillerWhaleAmmo());
+        EquipmentType.addType(AmmoType.createAR10PeacemakerAmmo());
         EquipmentType.addType(AmmoType.createAR10WhiteSharkAmmo());
         EquipmentType.addType(AmmoType.createAR10SantaAnnaAmmo());
         EquipmentType.addType(AmmoType.createAR10BarracudaAmmo());
@@ -14716,7 +14731,82 @@ public class AmmoType extends EquipmentType {
 
     
     //TODO - THINGS NUCLEAR
+    private static AmmoType createAR10PeacemakerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "AR10 Peacemaker Ammo";
+        ammo.setInternalName("Ammo AR10 Peacemaker");
+        ammo.addLookupName("AR10 Peacemaker Ammo");
+        ammo.shortName = "Peacemaker";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
+        ammo.damagePerShot = 1000;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.munitionType = AmmoType.M_PEACEMAKER;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
+                .or(F_CAP_MISSILE).or(F_PEACEMAKER);
+        ammo.capital = true;
+
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
+            .setISAdvancement(DATE_NONE, DATE_NONE, 3067)
+            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return ammo;
+    } 
+
+    private static AmmoType createPeacemakerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Peacemaker Ammo";
+        ammo.setInternalName("Ammo Peacemaker");
+        ammo.addLookupName("Peacemaker Ammo");
+        ammo.shortName = "Peacemaker";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
+        ammo.damagePerShot = 1000;
+        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.munitionType = AmmoType.M_PEACEMAKER;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_PEACEMAKER);
+        ammo.capital = true;
+
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
+            .setISAdvancement(DATE_NONE, 3067)
+            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return ammo;
+    }
     
+    private static AmmoType createCLPeacemakerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Clan Peacemaker Ammo";
+        ammo.setInternalName("Ammo Clan Peacemaker");
+        ammo.addLookupName("CLPeacemaker Ammo");
+        ammo.shortName = "Peacemaker";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
+        ammo.damagePerShot = 1000;
+        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.munitionType = AmmoType.M_PEACEMAKER;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_PEACEMAKER);
+        ammo.capital = true;
+
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_C)
+            .setClanAdvancement(DATE_NONE, 3067)
+            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
+        return ammo;
+    }   
 
     private static AmmoType createAR10SantaAnnaAmmo() {
         AmmoType ammo = new AmmoType();
@@ -14734,7 +14824,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 96;
         ammo.cost = 20000;
         ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
-                .or(F_CAP_MISSILE);
+                .or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
@@ -14759,7 +14849,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE);
+        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
@@ -14784,7 +14874,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
-        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE);
+        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_C)

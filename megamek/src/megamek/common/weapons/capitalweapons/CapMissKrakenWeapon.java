@@ -21,6 +21,7 @@ import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileHandler;
 import megamek.common.weapons.KrakenHandler;
 import megamek.common.weapons.SantaAnnaHandler;
 import megamek.common.weapons.TeleMissileHandler;
@@ -83,12 +84,9 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
-            return new SantaAnnaHandler(toHit, waa, game, server);
-        }
         if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
             return new TeleMissileHandler(toHit, waa, game, server);
         }
-        return new KrakenHandler(toHit, waa, game, server);
+        return new CapitalMissileHandler (toHit, waa, game, server);
     }
 }

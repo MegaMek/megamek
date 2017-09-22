@@ -459,7 +459,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        //CalcAttackValue triggers counterfire, so now we can safely get this
 	        CapMissileAMSMod = getCapMissileAMSMod();
 	        
-	        if (CapMissileAMSMod > 0) {
+	        //Only do this if the missile wasn't destroyed
+	        if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
 	        	toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
 	        	if (roll < toHit.getValue()) {
 	        		CapMissileMissed = true;
@@ -585,8 +586,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        }
 	        
             //use this if PD counterfire destroys all the Capital missiles
-            if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
-                r = new Report(3356);
+            if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
+                r = new Report(3355);
                 r.indent();
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

@@ -822,7 +822,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         switch (unitTypeFilter) {
         case 5: //UnitType.AERO: the aero index is out of order
             if (eq.hasFlag(WeaponType.F_AERO_WEAPON)
-                    || eq.hasFlag(MiscType.F_AERO_EQUIPMENT)) {
+                    || eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT)) {
                 return true;
             }
             break;

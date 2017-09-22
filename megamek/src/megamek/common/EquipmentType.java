@@ -60,9 +60,9 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_STEALTH = 8;
     public static final int T_ARMOR_FERRO_FIBROUS_PROTO = 9;
     public static final int T_ARMOR_COMMERCIAL = 10;
-    public static final int T_ARMOR_FERRO_CARBIDE = 11;
-    public static final int T_ARMOR_LAMELLOR_FERRO_CARBIDE = 12;
-    public static final int T_ARMOR_FERRO_IMP = 13;
+    public static final int T_ARMOR_LC_FERRO_CARBIDE = 11;  //Large Craft Only
+    public static final int T_ARMOR_LAMELLOR_FERRO_CARBIDE = 12; //This is the Mech version
+    public static final int T_ARMOR_LC_FERRO_IMP = 13; //Large Craft Only
     public static final int T_ARMOR_INDUSTRIAL = 14;
     public static final int T_ARMOR_HEAVY_INDUSTRIAL = 15;
     public static final int T_ARMOR_FERRO_LAMELLOR = 16;
@@ -89,6 +89,9 @@ public class EquipmentType implements ITechnology {
     public final static int T_ARMOR_BA_REFLECTIVE = 37;
     public final static int T_ARMOR_BA_REACTIVE = 38;
     public static final int T_ARMOR_PRIMITIVE_AERO = 39;
+    public static final int T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE = 40; //This is the Large Craft version
+    public static final int T_ARMOR_AEROSPACE = 41;
+    public static final int T_ARMOR_LC_PRIMITIVE_AERO = 42;
 
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
@@ -115,7 +118,7 @@ public class EquipmentType implements ITechnology {
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
             "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
             "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Aero"};
+            "Primitive Aerospace Fighter","Lamellor Ferro-Carbide","Aerospace Armor","Primitive Armor"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
@@ -131,13 +134,14 @@ public class EquipmentType implements ITechnology {
             10000, 20000, 30000, 30000, 15000, 15000, 25000, /* patchwork */0, 50000, 60000,
             3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
             25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
-            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000 };
+            12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 75000, 10000,  };
 
     public static final double[] armorPointMultipliers = {
             1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
             1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
             1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
-            0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67 };
+            0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67, 1, 1, .66 };
+    //TODO Neo - The last three are the armors I added need to confirm values.
 
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
@@ -942,7 +946,8 @@ public class EquipmentType implements ITechnology {
             return POINT_MULTIPLIER_CLAN_FF;
         }*/
         // Clan armors of these types have a multiplier exactly 0.08 higher than the I.S. variety
-        if (clanArmor && ((inArmor == EquipmentType.T_ARMOR_FERRO_CARBIDE) || (inArmor == EquipmentType.T_ARMOR_FERRO_IMP)
+        //TODO - NEO check this
+        if (clanArmor && ((inArmor == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) || (inArmor == EquipmentType.T_ARMOR_LC_FERRO_IMP)
                 || (inArmor == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) || (inArmor == T_ARMOR_ALUM) || (inArmor == T_ARMOR_FERRO_FIBROUS))) {
             return armorPointMultipliers[inArmor] + POINT_ADDITION_CLAN_FF;
 

@@ -545,6 +545,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_AERO_WEAPON = BigInteger.valueOf(1).shiftLeft(45);
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
+    
 
     public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
     public static final BigInteger F_INF_BURST = BigInteger.valueOf(1).shiftLeft(49);

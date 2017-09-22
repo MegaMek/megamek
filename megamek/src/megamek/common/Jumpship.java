@@ -987,11 +987,11 @@ public class Jumpship extends Aero {
             }
         }
 
-        if (armorType[0] == EquipmentType.T_ARMOR_FERRO_IMP) {
+        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
             baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
             baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
         }
 

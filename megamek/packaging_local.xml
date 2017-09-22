@@ -12,78 +12,79 @@
 
 <project default="release" name="MegaMek" basedir=".">
 
-	<!-- Global properties for this build -->
+    <!-- Global properties for this build -->
 
-	<property name="srcdir" value="src" />
-	<property name="propdir" value="i18n" />
-	<property name="confdir" value="mmconf" />
-	<property name="logdir" value="logs" />
-	<property name="builddir" value="classes" />
-	<property name="libdir" value="lib" />
-	<property name="datadir" value="data" />
-	<property name="apidocsdir" value="apidocs" />
-	<property name="docdir" value="docs" />
-	<property name="localdir" value="localdev" />
-	<property name="util" value="packaging_utils" />
+    <property name="srcdir" value="src"/>
+    <property name="propdir" value="i18n"/>
+    <property name="confdir" value="mmconf"/>
+    <property name="logdir" value="logs"/>
+    <property name="builddir" value="classes"/>
+    <property name="libdir" value="lib"/>
+    <property name="datadir" value="data"/>
+    <property name="apidocsdir" value="apidocs"/>
+    <property name="docdir" value="docs"/>
+    <property name="localdir" value="localdev"/>
+    <property name="util" value="packaging_utils"/>
 
-	<!-- Version and packaging properties -->
-	<property name="project.name" value="megamek" />
+    <!-- Version and packaging properties -->
+    <property name="project.name" value="megamek"/>
 
-	<!-- same as builddir but under local -->
-	<property name="localbuilddir" value="${localdir}/${builddir}" />
+    <!-- same as builddir but under local -->
+    <property name="localbuilddir" value="${localdir}/${builddir}"/>
 
-	<property name="timestampfile" value="${logdir}/timestamp" />
+    <property name="timestampfile" value="${logdir}/timestamp"/>
 
-	<!-- Name of the target jarfile and the class containing the main-Method -->
-	<property name="jarfile" value="MegaMek.jar" />
-	<property name="jarmainclass" value="megamek.MegaMek" />
+    <!-- Name of the target jarfile and the class containing the main-Method -->
+    <property name="jarfile" value="MegaMek.jar"/>
+    <property name="jarmainclass" value="megamek.MegaMek"/>
 
-	<!-- This is the relative path to the 'data' directory -->
-	<property name="dataclasspath" value="." />
+    <!-- This is the relative path to the 'data' directory -->
+    <property name="dataclasspath" value="."/>
 
-	<!-- The file that lists all of the files that are now packaged into an image atlas, and can hence be deleted -->
-	<property name="atlasedImages" value="${localdir}/atlasedImages.txt" />
+    <!-- The file that lists all of the files that are now packaged into an image atlas, and can hence be deleted -->
+    <property name="atlasedImages" value="${localdir}/atlasedImages.txt"/>
 
-	<!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
-	<pathconvert pathsep=" " property="jarclasspath">
-		<path>
-			<!-- We'll include the jars in the "lib" directory -->
-			<fileset dir="lib/">
-				<include name="*.jar" />
-			</fileset>
-		</path>
-		<mapper>
-			<chainedmapper>
-				<flattenmapper />
-				<globmapper from="*" to="lib/*" />
-			</chainedmapper>
-		</mapper>
-	</pathconvert>
+    <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
+    <pathconvert pathsep=" " property="jarclasspath">
+        <path>
+            <!-- We'll include the jars in the "lib" directory -->
+            <fileset dir="lib/">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+        <mapper>
+            <chainedmapper>
+                <flattenmapper/>
+                <globmapper from="*" to="lib/*"/>
+            </chainedmapper>
+        </mapper>
+    </pathconvert>
 
-	<condition property="isOsUnixLike">
-		<os family="unix" />
-	</condition>
+    <condition property="isOsUnixLike">
+        <os family="unix"/>
+    </condition>
 
-	<condition property="isOsWindows">
-		<os family="windows" />
-	</condition>
+    <condition property="isOsWindows">
+        <os family="windows"/>
+    </condition>
 
-	<condition property="isOsUnixNotMac">
-		<and>
-			<os family="unix" />
-			<not>
-				<os family="mac"/>
-			</not>
-		</and>
-	</condition>
+    <condition property="isOsUnixNotMac">
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
+    </condition>
 
-	<condition property="isOsMac">
-		<os family="mac" />
-	</condition>
+    <condition property="isOsMac">
+        <os family="mac"/>
+    </condition>
 
-	<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${util}/jarbundler-core-3.3.0.jar"/>
+    <taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler"
+             classpath="${util}/jarbundler-core-3.3.0.jar"/>
 
-	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
+    <!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
     <target name="checkOSMac" if="isOsMac">
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
     </target>
@@ -99,96 +100,99 @@
     </target>
 
     <target name="localdev-init" depends="checkOSMac, checkOSWindows, checkOSUNIX">
-		<tstamp />
-		<delete dir="${localdir}" />
-		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>
-		<property name="osxdist" value="${project.name}-${version}-mac" />
-		<property name="windist" value="${project.name}-${version}-windows" />
-		<property name="nixdist" value="${project.name}-${version}" />
-		<property name="srcdist" value="${project.name}-${version}-source" />
-	</target>
+        <tstamp/>
+        <delete dir="${localdir}"/>
+        <input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>
+        <property name="osxdist" value="${project.name}-${version}-mac"/>
+        <property name="windist" value="${project.name}-${version}-windows"/>
+        <property name="nixdist" value="${project.name}-${version}"/>
+        <property name="srcdist" value="${project.name}-${version}-source"/>
+    </target>
 
-	<!-- following localdev-* tasks get, build & package the current version from local sources -->
-	<target name="localdev-get" depends="localdev-init" description="get the local source">
-		<copy todir="${localdir}" encoding="UTF-8" >
-			<fileset dir="${basedir}">
-				<exclude name="${localdir}" />
-			</fileset>
-		</copy>
-	</target>
+    <!-- following localdev-* tasks get, build & package the current version from local sources -->
+    <target name="localdev-get" depends="localdev-init" description="get the local source">
+        <copy todir="${localdir}" encoding="UTF-8">
+            <fileset dir="${basedir}">
+                <exclude name="${localdir}"/>
+            </fileset>
+        </copy>
+    </target>
 
-	<target name="localdev-build" depends="localdev-get" description="compile project from local source and generate JAR file" >
-		<mkdir dir="${localbuilddir}" />
+    <target name="localdev-build" depends="localdev-get"
+            description="compile project from local source and generate JAR file">
+        <mkdir dir="${localbuilddir}"/>
 
-		<!-- compile -->
-		<echo message="building MegaMek from local sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${localbuilddir}" srcdir="${localdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
-			<classpath>
-				<pathelement location="${localdir}" />
-				<fileset dir="${localdir}/${libdir}" includes="*.jar" />
-			</classpath>
-		</javac>
+        <!-- compile -->
+        <echo message="building MegaMek from local sources"/>
+        <javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${localbuilddir}"
+               srcdir="${localdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true"
+               encoding="UTF-8">
+            <classpath>
+                <pathelement location="${localdir}"/>
+                <fileset dir="${localdir}/${libdir}" includes="*.jar"/>
+            </classpath>
+        </javac>
 
-		<echo message="Running unit tests."/>
-		<antcall target="test-run"/>
+        <echo message="Running unit tests."/>
+        <antcall target="test-run"/>
 
-		<!-- jar -->
-		<jar basedir="${localbuilddir}" jarfile="${localdir}/${jarfile}">
-			<fileset dir="${localdir}/${propdir}" includes="**/*.properties" />
-			<fileset dir="${localdir}/${srcdir}" includes="**/*.properties" />
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Class-Path" value=". ${jarclasspath}" />
-				<attribute name="Main-Class" value="${jarmainclass}" />
-			</manifest>
-		</jar>
-		<!-- generate current equipment.txt -->
-		<java jar="${localdir}/MegaMek.jar" fork="true">
-			<arg line="-eqdb docs/equipment.txt" />
-			<classpath>
-				<pathelement path="${localdir}" />
-				<fileset dir="${localdir}/${libdir}" includes="*.jar" />
-			</classpath>
-		</java>
-		<copy todir="${localdir}/docs" overwrite="true" encoding="UTF-8">
-			<fileset dir="${docdir}" includes="equipment.txt" />
-		</copy>
+        <!-- jar -->
+        <jar basedir="${localbuilddir}" jarfile="${localdir}/${jarfile}">
+            <fileset dir="${localdir}/${propdir}" includes="**/*.properties"/>
+            <fileset dir="${localdir}/${srcdir}" includes="**/*.properties"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Class-Path" value=". ${jarclasspath}"/>
+                <attribute name="Main-Class" value="${jarmainclass}"/>
+            </manifest>
+        </jar>
+        <!-- generate current equipment.txt -->
+        <java jar="${localdir}/MegaMek.jar" fork="true">
+            <arg line="-eqdb docs/equipment.txt"/>
+            <classpath>
+                <pathelement path="${localdir}"/>
+                <fileset dir="${localdir}/${libdir}" includes="*.jar"/>
+            </classpath>
+        </java>
+        <copy todir="${localdir}/docs" overwrite="true" encoding="UTF-8">
+            <fileset dir="${docdir}" includes="equipment.txt"/>
+        </copy>
 
-		<!-- Ensure that the log directory exists. -->
-		<mkdir dir="${localdir}/${logdir}" />
-		<touch file="${localdir}/${timestampfile}" />
+        <!-- Ensure that the log directory exists. -->
+        <mkdir dir="${localdir}/${logdir}"/>
+        <touch file="${localdir}/${timestampfile}"/>
 
-	</target>
+    </target>
 
-	<target name="localdev-clean" description="remove the local build directory">
-		<delete dir="${localbuilddir}" />
+    <target name="localdev-clean" description="remove the local build directory">
+        <delete dir="${localbuilddir}"/>
         <delete dir="${localdir}" />
-	</target>
+    </target>
 
-	<target name="mac-bundle" description="Bundle the project built from local source into an Mac OSX distribution">
-		<mkdir dir="${osxdist}" />
-		<copy todir="${osxdist}" encoding="UTF-8">
-			<fileset dir="${localdir}" >
-				<include name="${docdir}/" />
-				<include name="readme*.txt" />
-				<include name="license.txt" />
-				<include name="${logdir}/" />
-			    <include name="${datadir}/" />
-			    <include name="${confdir}/" />
-				<exclude name="**/*.psd"/>
-			</fileset>
-		</copy>
-		<jarbundler
-			dir="${osxdist}"
-			name="MegaMek"
-			mainclass="megamek.MegaMek"
-			stubfile="packaging_utils/JavaApplicationStub"
-			icon="data/images/misc/megamek.icns"
-			workingdirectory="$APP_PACKAGE/../"
-			useJavaXKey="true"
-			jvmversion="1.8+"
-			version="${version}"
-			vmoptions="-Xmx1024m">
+    <target name="mac-bundle" description="Bundle the project built from local source into an Mac OSX distribution">
+        <mkdir dir="${osxdist}"/>
+        <copy todir="${osxdist}" encoding="UTF-8">
+            <fileset dir="${localdir}">
+                <include name="${docdir}/"/>
+                <include name="readme*.txt"/>
+                <include name="license.txt"/>
+                <include name="${logdir}/"/>
+                <include name="${datadir}/"/>
+                <include name="${confdir}/"/>
+                <exclude name="**/*.psd"/>
+            </fileset>
+        </copy>
+        <jarbundler
+                dir="${osxdist}"
+                name="MegaMek"
+                mainclass="megamek.MegaMek"
+                stubfile="packaging_utils/JavaApplicationStub"
+                icon="data/images/misc/megamek.icns"
+                workingdirectory="$APP_PACKAGE/../"
+                useJavaXKey="true"
+                jvmversion="1.8+"
+                version="${version}"
+                vmoptions="-Xmx1024m">
             <jarfileset dir="${localdir}">
                 <include name="**/*.jar" />
                 <exclude name="${util}/" />
@@ -196,166 +200,183 @@
             <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
             <javaproperty name="apple.awt.brushMetal" value="true" />
         </jarbundler>
-	</target>
-
-	<!-- I think this will only work on OS X systems -->
-	<target name="mac-dmg" description="Create a dmg file from the OS X distribution (NOTE: only works on OSX)">
-		<exec executable="hdiutil">
-			<arg line="create -srcfolder ${osxdist} ${osxdist}.dmg -volname megamek-dev-local-mac-${DSTAMP}"/>
-		</exec>
-	</target>
-
-	<target name="mac-stub" if="isOsMac" description="Replace stubs if on OSX">
-		<!-- <delete file="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
-		<exec executable="ln">
-			<arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub" />
-			<arg value="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
-		</exec> -->
-	</target>
-
-	<target name="mac-zip">
-		<tar destfile="${osxdist}.tar.bz2" compression="bzip2" longfile="gnu">
-			<tarfileset dir="${osxdist}" mode="755" />
-		</tar>
-	</target>
-
-	<target name="mac-tar" depends="mac-stub,mac-zip" description="Create a compressed tar file of the OS X distribution"/>
-
-	<target name="mac-clean">
-		<delete dir="${osxdist}" />
-	</target>
-
-	<target name="mac-package" depends="mac-bundle, mac-tar, mac-clean" description="Package a Mac OS X distribution of the project built from local sources" />
-
-	<target name="nix-bundle" description="Bundle the project built from local sources into a unix distribution">
-		<mkdir dir="${nixdist}" />
-		<mkdir dir="${nixdist}/${nixdist}" />
-		<copy todir="${nixdist}/${nixdist}" encoding="UTF-8">
-			<fileset dir="${localdir}" >
-				<include name="${jarfile}" />
-				<include name="${libdir}/*.jar" />
-				<include name="${logdir}/" />
-				<include name="${datadir}/" />
-				<include name="${confdir}/" />
-				<include name="${docdir}/" />
-				<include name="readme*.txt" />
-				<include name="license.txt" />
-				<include name="startup.sh" />
-				<exclude name="**/*.psd"/>
-			</fileset>
-		</copy>
-		<fixcrlf srcdir="${nixdist}" eol="lf">
-			<include name="**/*.sh"/>
-		</fixcrlf>
-	</target>
-
-	<target name="nix-tar" description="Create a compressed tar file of the unix distribution">
-		<tar destfile="${nixdist}.tar.gz" compression="gzip"  longfile="gnu">
-			<tarfileset dir="${nixdist}" filemode="755">
-				<include name="**/*.sh"/>
-			</tarfileset>
-			<tarfileset dir="${nixdist}">
-				<exclude name="**/*.sh"/>
-			</tarfileset>
-		</tar>
-	</target>
-
-	<target name="nix-clean">
-		<delete dir="${nixdist}" />
-	</target>
-
-	<target name="nix-package" depends="nix-bundle, nix-tar, nix-clean" description="Package a Unix distribution of the project built from local sources"/>
-
-	<!-- Produce an EXE file -->
-	<target name="exe" description="Generate an EXE wrapper for MegaMek.jar">
-		<delete file="${localdir}/MegaMek.exe"/>
-		<launch4j configFile="${util}/megamek.4j_local.xml" />
-	</target>
-
-	<target name="win-bundle" depends="exe" description="Bundle the project built from local sources into a Windows distribution">
-		<mkdir dir="${windist}" />
-		<copy todir="${windist}" encoding="UTF-8">
-			<fileset dir="${localdir}" >
-				<include name="${libdir}/" />
-				<include name="${logdir}/" />
-				<include name="${datadir}/" />
-				<include name="${confdir}/" />
-				<include name="${docdir}/" />
-				<include name="readme*.txt" />
-				<include name="license.txt" />
-				<include name="MegaMek.exe" />
-				<exclude name="**/*.psd"/>
-			</fileset>
-		</copy>
-		<copy file="${util}/megamek.l4j.ini" todir="${windist}" encoding="UTF-8"/>
-		<copy file="${localdir}/MegaMek.jar" todir="${windist}/lib/" encoding="UTF-8" />
-	</target>
-
-	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">
-		<zip zipfile="${localdir}/${datadir}/mechfiles/battlearmor.zip" basedir="${localdir}/${datadir}/mechfiles/battlearmor"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/convfighter.zip" basedir="${localdir}/${datadir}/mechfiles/convfighter"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/dropships.zip" basedir="${localdir}/${datadir}/mechfiles/dropships"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/fighters.zip" basedir="${localdir}/${datadir}/mechfiles/fighters"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/ge.zip" basedir="${localdir}/${datadir}/mechfiles/ge"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/infantry.zip" basedir="${localdir}/${datadir}/mechfiles/infantry"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/jumpships.zip" basedir="${localdir}/${datadir}/mechfiles/jumpships"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/mechs.zip" basedir="${localdir}/${datadir}/mechfiles/mechs"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/protomechs.zip" basedir="${localdir}/${datadir}/mechfiles/protomechs"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/smallcraft.zip" basedir="${localdir}/${datadir}/mechfiles/smallcraft"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/spacestation.zip" basedir="${localdir}/${datadir}/mechfiles/spacestation"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/unofficial.zip" basedir="${localdir}/${datadir}/mechfiles/unofficial"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/vehicles.zip" basedir="${localdir}/${datadir}/mechfiles/vehicles"/>
-		<zip zipfile="${localdir}/${datadir}/mechfiles/warship.zip" basedir="${localdir}/${datadir}/mechfiles/warship"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/battlearmor"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/convfighter"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/dropships"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/fighters"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/ge"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/infantry"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/jumpships"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/mechs"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/protomechs"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/smallcraft"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/spacestation"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/unofficial"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/vehicles"/>
-		<delete dir="${localdir}/${datadir}/mechfiles/warship"/>
     </target>
 
-	<target name="rat-zip" description="Create a zipfile of the RAT files">
-		<zip zipfile="${localdir}/${datadir}/rat_default.zip" basedir="${localdir}/${datadir}/rat" />
-		<delete dir="${localdir}/${datadir}/rat" />
-		<sleep seconds="1" /> <!-- give the file system time to catch up -->
-		<mkdir dir="${localdir}/${datadir}/rat" />
-		<move file="${localdir}/${datadir}/rat_default.zip" tofile="${localdir}/${datadir}/rat/default.zip" />
-	</target>
-	
-	<target name="win-zip" description="Create a zipfile of the Windows distribution">
-		<zip zipfile="${basedir}/${windist}.zip" basedir="${windist}"  />
-	</target>
+    <!-- I think this will only work on OS X systems -->
+    <target name="mac-dmg" description="Create a dmg file from the OS X distribution (NOTE: only works on OSX)">
+        <exec executable="hdiutil">
+            <arg line="create -srcfolder ${osxdist} ${osxdist}.dmg -volname megamek-dev-local-mac-${DSTAMP}"/>
+        </exec>
+    </target>
 
-	<target name="win-clean">
-		<delete dir="${windist}" />
-	</target>
+    <target name="mac-stub" if="isOsMac" description="Replace stubs if on OSX">
+        <!-- <delete file="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
+        <exec executable="ln">
+            <arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub" />
+            <arg value="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
+        </exec> -->
+    </target>
 
-	<target name="win-package" depends="win-bundle, win-zip, win-clean" description="Package a Windows distribution of the project built from local sources"/>
+    <target name="mac-zip">
+        <tar destfile="${osxdist}.tar.bz2" compression="bzip2" longfile="gnu">
+            <tarfileset dir="${osxdist}" mode="755"/>
+        </tar>
+    </target>
 
-	<target name="source-package" description="Package a source-only distribution of the project built from local sources">
-		<mkdir dir="${srcdist}" />
-		<mkdir dir="${srcdist}/${srcdist}" />
-		<copy todir="${srcdist}/${srcdist}" encoding="UTF-8">
-			<fileset dir="${localdir}" >
-				<exclude name="${builddir}/**"/>
-				<exclude name="MegaMek.jar"/>
-			</fileset>
-		</copy>
-		<tar destfile="${srcdist}.tar.gz" basedir="${srcdist}" compression="gzip"  longfile="gnu">
-			<exclude name="${builddir}/**"/>
-			<exclude name="MegaMek.jar"/>
-			<exclude name="MegaMek.exe"/>
-		</tar>
-		<delete dir="${srcdist}" />
-	</target>
+    <target name="mac-tar" depends="mac-stub,mac-zip"
+            description="Create a compressed tar file of the OS X distribution"/>
+
+    <target name="mac-clean">
+        <delete dir="${osxdist}"/>
+    </target>
+
+    <target name="mac-package" depends="mac-bundle, mac-tar, mac-clean"
+            description="Package a Mac OS X distribution of the project built from local sources"/>
+
+    <target name="nix-bundle" description="Bundle the project built from local sources into a unix distribution">
+        <mkdir dir="${nixdist}"/>
+        <mkdir dir="${nixdist}/${nixdist}"/>
+        <copy todir="${nixdist}/${nixdist}" encoding="UTF-8">
+            <fileset dir="${localdir}">
+                <include name="${jarfile}"/>
+                <include name="${libdir}/*.jar"/>
+                <include name="${logdir}/"/>
+                <include name="${datadir}/"/>
+                <include name="${confdir}/"/>
+                <include name="${docdir}/"/>
+                <include name="readme*.txt"/>
+                <include name="license.txt"/>
+                <include name="startup.sh"/>
+                <exclude name="**/*.psd"/>
+            </fileset>
+        </copy>
+        <fixcrlf srcdir="${nixdist}" eol="lf">
+            <include name="**/*.sh"/>
+        </fixcrlf>
+    </target>
+
+    <target name="nix-tar" description="Create a compressed tar file of the unix distribution">
+        <tar destfile="${nixdist}.tar.gz" compression="gzip" longfile="gnu">
+            <tarfileset dir="${nixdist}" filemode="755">
+                <include name="**/*.sh"/>
+            </tarfileset>
+            <tarfileset dir="${nixdist}">
+                <exclude name="**/*.sh"/>
+            </tarfileset>
+        </tar>
+    </target>
+
+    <target name="nix-clean">
+        <delete dir="${nixdist}"/>
+    </target>
+
+    <target name="nix-package" depends="nix-bundle, nix-tar, nix-clean"
+            description="Package a Unix distribution of the project built from local sources"/>
+
+    <!-- Produce an EXE file -->
+    <target name="exe" description="Generate an EXE wrapper for MegaMek.jar">
+        <delete file="${localdir}/MegaMek.exe"/>
+        <launch4j configFile="${util}/megamek.4j_local.xml"/>
+    </target>
+
+    <target name="win-bundle" depends="exe"
+            description="Bundle the project built from local sources into a Windows distribution">
+        <mkdir dir="${windist}"/>
+        <copy todir="${windist}" encoding="UTF-8">
+            <fileset dir="${localdir}">
+                <include name="${libdir}/"/>
+                <include name="${logdir}/"/>
+                <include name="${datadir}/"/>
+                <include name="${confdir}/"/>
+                <include name="${docdir}/"/>
+                <include name="readme*.txt"/>
+                <include name="license.txt"/>
+                <include name="MegaMek.exe"/>
+                <exclude name="**/*.psd"/>
+            </fileset>
+        </copy>
+        <copy file="${util}/megamek.l4j.ini" todir="${windist}" encoding="UTF-8"/>
+        <copy file="${localdir}/MegaMek.jar" todir="${windist}/lib/" encoding="UTF-8"/>
+    </target>
+
+    <target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">
+        <zip zipfile="${localdir}/${datadir}/mechfiles/battlearmor.zip"
+             basedir="${localdir}/${datadir}/mechfiles/battlearmor"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/convfighter.zip"
+             basedir="${localdir}/${datadir}/mechfiles/convfighter"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/dropships.zip"
+             basedir="${localdir}/${datadir}/mechfiles/dropships"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/fighters.zip"
+             basedir="${localdir}/${datadir}/mechfiles/fighters"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/ge.zip" basedir="${localdir}/${datadir}/mechfiles/ge"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/infantry.zip"
+             basedir="${localdir}/${datadir}/mechfiles/infantry"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/jumpships.zip"
+             basedir="${localdir}/${datadir}/mechfiles/jumpships"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/mechs.zip" basedir="${localdir}/${datadir}/mechfiles/mechs"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/protomechs.zip"
+             basedir="${localdir}/${datadir}/mechfiles/protomechs"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/smallcraft.zip"
+             basedir="${localdir}/${datadir}/mechfiles/smallcraft"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/spacestation.zip"
+             basedir="${localdir}/${datadir}/mechfiles/spacestation"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/unofficial.zip"
+             basedir="${localdir}/${datadir}/mechfiles/unofficial"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/vehicles.zip"
+             basedir="${localdir}/${datadir}/mechfiles/vehicles"/>
+        <zip zipfile="${localdir}/${datadir}/mechfiles/warship.zip" basedir="${localdir}/${datadir}/mechfiles/warship"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/battlearmor"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/convfighter"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/dropships"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/fighters"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/ge"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/infantry"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/jumpships"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/mechs"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/protomechs"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/smallcraft"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/spacestation"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/unofficial"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/vehicles"/>
+        <delete dir="${localdir}/${datadir}/mechfiles/warship"/>
+    </target>
+
+    <target name="rat-zip" description="Create a zipfile of the RAT files">
+        <zip zipfile="${localdir}/${datadir}/rat_default.zip" basedir="${localdir}/${datadir}/rat"/>
+        <delete dir="${localdir}/${datadir}/rat"/>
+        <sleep seconds="1"/> <!-- give the file system time to catch up -->
+        <mkdir dir="${localdir}/${datadir}/rat"/>
+        <move file="${localdir}/${datadir}/rat_default.zip" tofile="${localdir}/${datadir}/rat/default.zip"/>
+    </target>
+
+    <target name="win-zip" description="Create a zipfile of the Windows distribution">
+        <zip zipfile="${basedir}/${windist}.zip" basedir="${windist}"/>
+    </target>
+
+    <target name="win-clean">
+        <delete dir="${windist}"/>
+    </target>
+
+    <target name="win-package" depends="win-bundle, win-zip, win-clean"
+            description="Package a Windows distribution of the project built from local sources"/>
+
+    <target name="source-package"
+            description="Package a source-only distribution of the project built from local sources">
+        <mkdir dir="${srcdist}"/>
+        <mkdir dir="${srcdist}/${srcdist}"/>
+        <copy todir="${srcdist}/${srcdist}" encoding="UTF-8">
+            <fileset dir="${localdir}">
+                <exclude name="${builddir}/**"/>
+                <exclude name="MegaMek.jar"/>
+            </fileset>
+        </copy>
+        <tar destfile="${srcdist}.tar.gz" basedir="${srcdist}" compression="gzip" longfile="gnu">
+            <exclude name="${builddir}/**"/>
+            <exclude name="MegaMek.jar"/>
+            <exclude name="MegaMek.exe"/>
+        </tar>
+        <delete dir="${srcdist}"/>
+    </target>
 
     <target name="release" depends="localdev-build, prepackagePrep, mac-package, nix-package, win-package, source-package, localdev-clean" description="Build the project from local sources and package it as Windows, Mac, Unix, and source-only" />
 
@@ -368,7 +389,7 @@
     <target name="src-release" depends="localdev-build, prepackagePrep, source-package, localdev-clean" description="Build the project from local source and package it as source-only" />
 
     <!-- Tasks to perform prior to packaing -->
-	<target name="prepackagePrep" depends="createImageAtlases, deleteAtlasedImages, unitfiles-zip, rat-zip"/>
+    <target name="prepackagePrep" depends="createImageAtlases, deleteAtlasedImages, unitfiles-zip, rat-zip"/>
 
     <!-- Run CreateImageAtlases -->
     <target name="createImageAtlases" description="Run the image atlas creator, which will package images in the units and hexes directories into atlases.">
@@ -381,73 +402,73 @@
         </java>
     </target>
 
-	<!-- Delete images that were packaged into an atlas -->
-	<target name="deleteAtlasedImages" description="Deletes images that are known to be packaged into an atlas.">
-		<delete>
-			<fileset dir="${localdir}" includesfile="${atlasedImages}"/>
-		</delete>
-	</target>
+    <!-- Delete images that were packaged into an atlas -->
+    <target name="deleteAtlasedImages" description="Deletes images that are known to be packaged into an atlas.">
+        <delete>
+            <fileset dir="${localdir}" includesfile="${atlasedImages}"/>
+        </delete>
+    </target>
 
-	<property name="dir.build.teststaging" location="${builddir}/teststaging"/>
-	<property name="dir.build.testreport" location="${builddir}/testreport"/>
-	<property name="dir.test.src" location="unittests"/>
-	<property name="dir.build.test" location="${builddir}/unittests"/>
-	<property name="libdir.test" location="lib-test"/>
+    <property name="dir.build.teststaging" location="${builddir}/teststaging"/>
+    <property name="dir.build.testreport" location="${builddir}/testreport"/>
+    <property name="dir.test.src" location="unittests"/>
+    <property name="dir.build.test" location="${builddir}/unittests"/>
+    <property name="libdir.test" location="lib-test"/>
 
-	<path id="classpath">
-		<fileset dir="${localdir}/${libdir}" includes="*.jar"/>
-	</path>
+    <path id="classpath">
+        <fileset dir="${localdir}/${libdir}" includes="*.jar"/>
+    </path>
 
-	<path id="classpath.compile-unittest">
-		<path refid="classpath"/>
-		<pathelement location="${builddir}"/>
-		<fileset dir="${libdir.test}"/>
-	</path>
+    <path id="classpath.compile-unittest">
+        <path refid="classpath"/>
+        <pathelement location="${builddir}"/>
+        <fileset dir="${libdir.test}"/>
+    </path>
 
-	<path id="classpath.run-unittest">
-		<path refid="classpath.compile-unittest"/>
-		<pathelement location="${dir.build.test}"/>
-	</path>
+    <path id="classpath.run-unittest">
+        <path refid="classpath.compile-unittest"/>
+        <pathelement location="${dir.build.test}"/>
+    </path>
 
-	<target name="tests-compile" unless="${skip.tests}" description="Compile the unit tests unless skip.tests=true.">
-		<delete dir="${dir.build.test}"/>
-		<mkdir dir="${dir.build.test}"/>
-		<javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true"
-			   encoding="UTF-8">
-			<classpath refid="classpath.compile-unittest"/>
-		</javac>
-		<copy todir="${dir.build.test}" encoding="UTF-8">
-			<fileset dir="${dir.test.src}">
-				<include name="**/*.xml"/>
-			</fileset>
-		</copy>
-	</target>
+    <target name="tests-compile" unless="${skip.tests}" description="Compile the unit tests unless skip.tests=true.">
+        <delete dir="${dir.build.test}"/>
+        <mkdir dir="${dir.build.test}"/>
+        <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true"
+               encoding="UTF-8">
+            <classpath refid="classpath.compile-unittest"/>
+        </javac>
+        <copy todir="${dir.build.test}" encoding="UTF-8">
+            <fileset dir="${dir.test.src}">
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
+    </target>
 
-	<!-- Runs all the unit tests unless the skip.tests variable is set to "true".  This can be done via the command 
+    <!-- Runs all the unit tests unless the skip.tests variable is set to "true".  This can be done via the command 
     line by inserting -Dskip.tests=true as a command-line argument.  Also, your IDE may allow you to set this variable. -->
-	<target depends="tests-compile" name="test-run" unless="${skip.tests}"
-			description="Execute unit tests unless skip.tests=true.">
-		<delete dir="${dir.build.teststaging}"/>
-		<delete dir="${dir.build.testreport}"/>
-		<mkdir dir="${dir.build.teststaging}"/>
-		<mkdir dir="${dir.build.testreport}"/>
+    <target depends="tests-compile" name="test-run" unless="${skip.tests}"
+            description="Execute unit tests unless skip.tests=true.">
+        <delete dir="${dir.build.teststaging}"/>
+        <delete dir="${dir.build.testreport}"/>
+        <mkdir dir="${dir.build.teststaging}"/>
+        <mkdir dir="${dir.build.testreport}"/>
 
-		<junit fork="true" maxmemory="256m" showoutput="true" printsummary="yes" forkmode="once" haltonfailure="true"
-			   haltonerror="true" failureproperty="tests.faile" dir=".">
-			<classpath refid="classpath.run-unittest"/>
-			<formatter type="xml" usefile="true"/>
-			<batchtest fork="true" todir="${dir.build.teststaging}">
-				<fileset dir="${dir.build.test}">
-					<include name="**/*Test.class"/>
-					<include name="**/*Tests.class"/>
-				</fileset>
-			</batchtest>
-		</junit>
+        <junit fork="true" maxmemory="256m" showoutput="true" printsummary="yes" forkmode="once" haltonfailure="true"
+               haltonerror="true" failureproperty="tests.faile" dir=".">
+            <classpath refid="classpath.run-unittest"/>
+            <formatter type="xml" usefile="true"/>
+            <batchtest fork="true" todir="${dir.build.teststaging}">
+                <fileset dir="${dir.build.test}">
+                    <include name="**/*Test.class"/>
+                    <include name="**/*Tests.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
 
-		<junitreport todir="${dir.build.testreport}">
-			<fileset dir="${dir.build.teststaging}">
-				<include name="TEST-*.xml"/>
-			</fileset>
-		</junitreport>
-	</target>
+        <junitreport todir="${dir.build.testreport}">
+            <fileset dir="${dir.build.teststaging}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+        </junitreport>
+    </target>
 </project>

@@ -17,12 +17,14 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.Team;
 
 /**
  * Implements a kill count victory condition.  Victory is achieved if a team (or
@@ -100,6 +102,19 @@ public class KillCountVictory implements Victory, Serializable {
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
             
             if (killer == null){
+                if (game.getNoOfTeams() == 2 && wreck.getOwner().getTeam() != Player.TEAM_NONE) {
+                    for (Team team : game.getTeamsVector()) {
+                        if (team.getId() != wreck.getOwner().getTeam()) {
+                            Integer kills = teamKills.get(team.getId());
+                            if (kills == null){
+                                kills = 1;
+                            } else {
+                                kills++;
+                            }
+                            teamKills.put(team.getId(), kills);
+                        }
+                    }
+                }
                 continue;
             }            
             

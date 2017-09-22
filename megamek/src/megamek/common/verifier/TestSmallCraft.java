@@ -53,7 +53,7 @@ public class TestSmallCraft extends TestAero {
          * 
          * @param t  The armor type.
          * @param c  Whether this armor type is Clan or not.
-         * @return   The <code>AeroArmor</code> that correspondes to the given 
+         * @return   The <code>AeroArmor</code> that corresponds to the given 
          *              type or null if no match was found.
          */
         public static AerospaceArmor getArmor(int t, boolean c){
@@ -63,6 +63,54 @@ public class TestSmallCraft extends TestAero {
                 }
             }
             return null;
+        }
+        
+        /**
+         * Calculates and returns the points per ton of the armor type given the
+         * weight and shape of a small craft/dropship
+         * 
+         * @param sc The small craft/dropship
+         * @return   The number of points of armor per ton
+         */
+        public double pointsPerTon(SmallCraft sc) {
+            double base = 16;
+            if (sc.isSpheroid()) {
+                if (sc.getWeight() >= 65000) {
+                    base = 6;
+                } else if (sc.getWeight() >= 50000) {
+                    base = 8;
+                } else if (sc.getWeight() >= 35000) {
+                    base = 10;
+                } else if (sc.getWeight() >= 20000) {
+                    base = 12;
+                } else if (sc.getWeight() >= 12500) {
+                    base = 14;
+                }
+            } else {
+                if (sc.getWeight() >= 25000) {
+                    base = 6;
+                } else if (sc.getWeight() >= 17500) {
+                    base = 8;
+                } else if (sc.getWeight() >= 12500) {
+                    base = 10;
+                } else if (sc.getWeight() >= 9500) {
+                    base = 12;
+                } else if (sc.getWeight() >= 6000) {
+                    base = 14;
+                }
+            }
+            if (isClan) {
+                if (base > 14) {
+                    base += 4;
+                } else if (base > 12) {
+                    base += 3;
+                } else if (base > 6) {
+                    base += 2;
+                } else {
+                    base += 1;
+                }
+            }
+            return base * EquipmentType.getArmorPointMultiplier(type, isClan);
         }
         
     }

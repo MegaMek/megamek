@@ -3,10 +3,14 @@
  */
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.Aero;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.util.StringUtil;
@@ -113,8 +117,32 @@ public class TestSmallCraft extends TestAero {
             return base * EquipmentType.getArmorPointMultiplier(type, isClan);
         }
         
+        /**
+         * @return The <code>MiscType</code> for this armor.
+         */
+        public EquipmentType getArmorEqType() {
+            String name = EquipmentType.getArmorTypeName(type, isClan);
+            return EquipmentType.get(name);
+        }
     }
 
+    /**
+     * Filters all small craft/dropship armor according to given tech constraints
+     * 
+     * @param techManager
+     * @return A list of all armors that meet the tech constraints
+     */
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+        List<EquipmentType> retVal = new ArrayList<>();
+        for (AerospaceArmor armor : AerospaceArmor.values()) {
+            final EquipmentType eq = armor.getArmorEqType();
+            if ((null != eq) && techManager.isLegal(eq)) {
+                retVal.add(eq);
+            }
+        }
+        return retVal;
+    }
+    
     /**
      * Defines how many spaces each arc has for weapons. More can be added by increasing weight
      * of master fire control systems.

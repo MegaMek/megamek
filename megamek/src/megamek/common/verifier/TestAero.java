@@ -20,7 +20,9 @@
 package megamek.common.verifier;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -29,6 +31,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
 import megamek.common.ITechnology;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -59,7 +62,6 @@ public class TestAero extends TestEntity {
      */
     public static enum AeroArmor{
         STANDARD(EquipmentType.T_ARMOR_STANDARD,0,false),   
-        CLAN_STANDARD(EquipmentType.T_ARMOR_STANDARD,0,true),
         CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM,1,true),
         FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR,2,true),
         CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE,1,true),
@@ -119,6 +121,31 @@ public class TestAero extends TestEntity {
             }
             return null;
         }
+        
+        /**
+         * @return The <code>MiscType</code> for this armor.
+         */
+        public EquipmentType getArmor() {
+            String name = EquipmentType.getArmorTypeName(type, isClan);
+            return EquipmentType.get(name);
+        }
+    }
+    
+    /**
+     * Filters all fighter armor according to given tech constraints
+     * 
+     * @param techManager
+     * @return A list of all armors that meet the tech constraints
+     */
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+        List<EquipmentType> retVal = new ArrayList<>();
+        for (AeroArmor armor : AeroArmor.values()) {
+            final EquipmentType eq = armor.getArmor();
+            if ((null != eq) && techManager.isLegal(eq)) {
+                retVal.add(eq);
+            }
+        }
+        return retVal;
     }
     
     /**

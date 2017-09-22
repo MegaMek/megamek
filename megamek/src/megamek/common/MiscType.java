@@ -1655,7 +1655,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createEnergyStorageBattery());
         EquipmentType.addType(MiscType.createImpFerroAluminumArmor());
         EquipmentType.addType(MiscType.createPrimitiveLCAerospaceArmor());
-        EquipmentType.addType(MiscType.createLCAeroSpaceArmor());
         EquipmentType.addType(MiscType.createLCFerroCarbideArmor());
         EquipmentType.addType(MiscType.createLCLamellorFerroCarbideArmor());
 
@@ -2877,29 +2876,6 @@ public class MiscType extends EquipmentType {
                 .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
                 .setISAdvancement(DATE_ES, 2300, 2315).setISApproximate(false, true, true)
                 .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
-        return misc;
-    }
-    
-    public static MiscType createLCAeroSpaceArmor() {
-        MiscType misc = new MiscType();
-
-        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE);
-        misc.setInternalName(misc.name);
-        misc.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, false));
-        misc.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, true));
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.hittable = false;
-        misc.spreadable = true;
-        misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        misc.omniFixedOnly = true;
-        misc.bv = 0;
-        misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-                .setISAdvancement(2460, 2470, 2470, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
     

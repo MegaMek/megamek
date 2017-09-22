@@ -33,6 +33,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
 import megamek.common.ITechnology;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -274,6 +275,33 @@ public abstract class TestEntity implements TestEntityOption {
     public static double setPrecision(double value, int precision) {
         return Math.round(value * Math.pow(10, precision))
                 / Math.pow(10, precision);
+    }
+    
+    /**
+     * Filters all armor according to given tech constraints
+     *
+     * @param etype         The entity type bit mask
+     * @param industrial    For mechs; industrial mechs can only use certain armor types
+     *                      unless allowing experimental rules
+     * @param movementMode  For vehicles; hardened armor is illegal for some movement modes 
+     * @param techManager   The constraints used to filter the armor types
+     * @return A list of all armors that meet the tech constraints
+     */
+    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial,
+            EntityMovementMode movementMode, ITechManager techManager) {
+        if ((etype & Entity.ETYPE_BATTLEARMOR) != 0) {
+            return TestBattleArmor.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_SMALL_CRAFT) != 0) {
+            return TestSmallCraft.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_AERO) != 0) {
+            return TestAero.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_TANK) != 0) {
+            return TestTank.legalArmorsFor(movementMode, techManager);
+        } else if ((etype & Entity.ETYPE_MECH) != 0) {
+            return TestMech.legalArmorsFor(etype, industrial, techManager);
+        } else {
+            return Collections.emptyList();
+        }
     }
     
     public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {

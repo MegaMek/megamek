@@ -52,6 +52,7 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.tonnage = 150.0f;
         this.bv = 769;
         this.cost = 150000;
+        this.flags = flags.or(F_MISSILE);
         this.shortAV = 4;
         this.medAV = 4;
         this.longAV = 4;

@@ -54,6 +54,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.tonnage = 250.0f;
         this.bv = 961;
         this.cost = 250000;
+        this.flags = flags.or(F_MISSILE);
         // assume Barracuda is loaded
         this.shortAV = 2;
         this.medAV = 2;

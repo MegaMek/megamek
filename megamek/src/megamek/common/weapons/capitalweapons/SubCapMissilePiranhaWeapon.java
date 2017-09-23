@@ -51,6 +51,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         tonnage = 100.0f;
         bv = 670;
         cost = 75000;
+        this.flags = flags.or(F_MISSILE);
         shortAV = 3;
         medAV = 3;
         longAV = 3;

@@ -51,6 +51,7 @@ public class CapMissWhiteSharkWeapon extends CapitalMissileWeapon {
         this.tonnage = 120.0f;
         this.bv = 577;
         this.cost = 130000;
+        this.flags = flags.or(F_MISSILE);
         this.shortAV = 3;
         this.medAV = 3;
         this.longAV = 3;

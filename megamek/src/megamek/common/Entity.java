@@ -6245,8 +6245,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         waa.addCounterEquipment(ams);
                     }
                 }
+            } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
+            	//Point defense bays are assigned to the attack with the greatest threat
+            	//Unlike single AMS, PD bays can gang up on 1 attack
+                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
+                        vAttacksInArc, true);
+                    if (waa != null) {
+                    	waa.addCounterEquipment(ams);
+                    }
             } else {
             //Otherwise, find the most dangerous salvo by expected damage and target it
+            // this ensures that only 1 AMS targets the strike. Use for non-bays. 
             WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
                     vAttacksInArc, true);
                 if (waa != null) {

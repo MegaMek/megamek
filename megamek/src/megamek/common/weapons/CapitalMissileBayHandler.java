@@ -80,6 +80,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 // need to cycle through weapons and add av
                 double current_av = 0;
+                if (bayWAmmo.equals (T_AR10)) {
+                	weaponarmor == 
+                }
+                bayWAmmo.
                 weaponarmor = bayWType.getMissileArmor();
                 AmmoType atype = (AmmoType) bayWAmmo.getType();
 

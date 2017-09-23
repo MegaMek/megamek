@@ -482,6 +482,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         addHeat();   
         
         // Report any AMS bay action against standard missiles.
+        // This only gets used in atmosphere/ground battles
         // Non AMS point defenses only work in space
         CounterAV = getCounterAV();
         //use this if counterfire destroys all the missiles

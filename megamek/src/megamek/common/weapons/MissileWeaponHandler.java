@@ -326,6 +326,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
+        int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
@@ -382,6 +383,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
+        
+        //Point Defenses engage the missiles still aimed at us
+        counterAV = calcCounterAV();
+        av = av - counterAV;
         
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
@@ -879,10 +884,17 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // the miss later, as we already reported
         // it in doChecks
         boolean missReported = doChecks(vPhaseReport);
-
-        nDamPerHit = calcDamagePerHit();
+        
+        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship
+        if (entityTarget.usesWeaponBays()) {
+        	nDamPerHit = calcAttackValue();
+        } else {
+        	//This is for all other targets in atmosphere
+        	nDamPerHit = calcDamagePerHit();
+        }        
 
         attackValue = calcAttackValue();
+        CounterAV = getCounterAV();
         
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {

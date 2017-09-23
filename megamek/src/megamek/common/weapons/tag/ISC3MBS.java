@@ -36,11 +36,12 @@ public class ISC3MBS extends TAGWeapon {
         addLookupName("C3 Master Boosted System with TAG");
         tonnage = 6;
         criticals = 6;
+        tankslots = 1;
         hittable = true;
         spreadable = false;
         cost = 3000000;
         bv = 0;
-        flags = flags.or(F_C3MBS);
+        flags = flags.or(F_C3MBS).or(F_MECH_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON);
         heat = 0;
         damage = 0;
         shortRange = 5;

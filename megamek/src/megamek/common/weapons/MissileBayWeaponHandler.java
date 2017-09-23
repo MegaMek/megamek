@@ -449,27 +449,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
         // do we hit?
         bMissed = roll < toHit.getValue();
-        
-        int CounterAV = getCounterAV();
-        
-        // Report any AMS bay action.
-        if (amsBayEngaged) {
-            r = new Report(3352);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        // Report any Point Defense bay action.
-        if (pdBayEngaged) {
-            r = new Report(3353);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-        
+                
         // are we a glancing hit?
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
@@ -499,7 +479,24 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
         nDamPerHit = calcAttackValue();
-        addHeat();
+        addHeat();   
+        
+        // Report any AMS bay action against standard missiles.
+        // Non AMS point defenses only work in space
+        CounterAV = getCounterAV();
+        //use this if counterfire destroys all the missiles
+        if (amsBayEngaged && (attackValue <= 0)) {
+        	r = new Report(3356);
+        	r.indent();
+        	r.subject = subjectId;
+        	vPhaseReport.addElement(r);
+        } else if (amsBayEngaged) {
+        	r = new Report(3354);
+        	r.indent();
+        	r.add(CounterAV);
+        	r.subject = subjectId;
+        	vPhaseReport.addElement(r);
+        }
 
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -569,7 +566,8 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                     av = bayWType.getExtAV();
                 }
             }
-            nDamPerHit = (int) Math.ceil(av);
+            
+            nDamPerHit = (int) (Math.ceil(av) - CounterAV);
             if (nDamPerHit <= 0) {
                 continue;
             }

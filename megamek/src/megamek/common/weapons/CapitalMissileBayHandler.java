@@ -80,13 +80,20 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 // need to cycle through weapons and add av
                 double current_av = 0;
-                if (bayWAmmo.equals (T_AR10)) {
-                	weaponarmor == 
-                }
-                bayWAmmo.
-                weaponarmor = bayWType.getMissileArmor();
-                AmmoType atype = (AmmoType) bayWAmmo.getType();
 
+                AmmoType atype = (AmmoType) bayWAmmo.getType();
+                if (bayWType.getAtClass() == (20)
+                		&& atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                	weaponarmor = 40;
+                } else if (bayWType.getAtClass() == (20)
+                		&& atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                	weaponarmor = 30;
+                } else if (bayWType.getAtClass() == (20)
+                		&& atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                	weaponarmor = 20;
+                } else {
+                weaponarmor = bayWType.getMissileArmor();
+                }
                 if (range == WeaponType.RANGE_SHORT) {
                     current_av = bayWType.getShortAV();
                 } else if (range == WeaponType.RANGE_MED) {

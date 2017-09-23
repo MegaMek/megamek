@@ -128,13 +128,14 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     }
                 }
                 
-                // check for nukes and tele-missiles and if they are there then
+                // check for tele-missiles and if they are there then
                 // I will need to
                 // add them to an inserted attack list and reset the av
-                if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
+                //TODO: Telemissiles are broken with the PD changes. I'll fix this soon.
+                /* if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
                     insertedAttacks.addElement(wId);
                     av = av - current_av;
-                }
+                } */
             }
         }
         

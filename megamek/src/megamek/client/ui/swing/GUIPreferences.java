@@ -345,7 +345,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
-        store.setDefault(SKIN_FILE, "BW - Default (font).xml");
+        store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
 
         store.setDefault(RAT_TECH_LEVEL, 0);

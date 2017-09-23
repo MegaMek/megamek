@@ -476,31 +476,36 @@ public class SmallCraft extends Aero {
         // first I need to subtract SI bonus from total armor
         int armorPoints = getTotalOArmor();
         armorPoints -= getSI() * locations();
-        boolean isClan = TechConstants.isClan(getArmorTechRating());
+        double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
+                getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
 
+        return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
+    }
+    
+    public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {
         double base = 16.0;
-        if (isSpheroid()) {
-            if (getWeight() >= 65000) {
+        if (spheroid) {
+            if (craftWeight >= 65000) {
                 base = 6.0;
-            } else if (getWeight() >= 50000) {
+            } else if (craftWeight >= 50000) {
                 base = 8.0;
-            } else if (getWeight() >= 35000) {
+            } else if (craftWeight >= 35000) {
                 base = 10.0;
-            } else if (getWeight() >= 20000) {
+            } else if (craftWeight >= 20000) {
                 base = 12.0;
-            } else if (getWeight() >= 12500) {
+            } else if (craftWeight >= 12500) {
                 base = 14.0;
             }
         } else {
-            if (getWeight() >= 25000) {
+            if (craftWeight >= 25000) {
                 base = 6.0;
-            } else if (getWeight() >= 17500) {
+            } else if (craftWeight >= 17500) {
                 base = 8.0;
-            } else if (getWeight() >= 12500) {
+            } else if (craftWeight >= 12500) {
                 base = 10.0;
-            } else if (getWeight() >= 9500) {
+            } else if (craftWeight >= 9500) {
                 base = 12.0;
-            } else if (getWeight() >= 6000) {
+            } else if (craftWeight >= 6000) {
                 base = 14.0;
             }
         }
@@ -516,8 +521,7 @@ public class SmallCraft extends Aero {
             }
         }
 
-        double armorPerTon = base * EquipmentType.getArmorPointMultiplier(armorType[0], techLevel);
-        return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
+        return base * EquipmentType.getArmorPointMultiplier(at, isClan);
     }
 
     /**

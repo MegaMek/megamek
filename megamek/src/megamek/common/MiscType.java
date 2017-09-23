@@ -280,6 +280,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_DTAC = BigInteger.valueOf(1).shiftLeft(218);
     public static final BigInteger F_SDS_DESTRUCT = BigInteger.valueOf(1).shiftLeft(219);
     public static final BigInteger F_SDS_JAMMER = BigInteger.valueOf(1).shiftLeft(220);
+    public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
     
 
     // Secondary Flags for Physical Weapons
@@ -760,6 +761,8 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(MiscType.F_LIGHT_SAIL)) {
             return (entity.getWeight() / 10f);
+        } else if (hasFlag(MiscType.F_LF_STORAGE_BATTERY)) {
+            return (entity.getWeight() / 100f);
         } else if (hasFlag(MiscType.F_NAVAL_C3)) {
             return (entity.getWeight() * .01);
         } else if (hasFlag(MiscType.F_SRCS) || hasFlag(F_SASRCS)) {
@@ -5364,7 +5367,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedSmartRoboticControlSystem() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Standard SRCS (Improved)";
+        misc.name = "Smart Robotic Control System (SRCS)(Improved)";
         misc.setInternalName("ImprovedSmartRoboticControlSystem");
         misc.addLookupName("ImprovedSRCS");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -5404,7 +5407,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedShieldedAeroSRCS() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Shielded Aero RCS (Improved)";
+        misc.name = "Shielded Aerospace Smart Robotic Control System (Improved)";
         misc.setInternalName("ImprovedShieldedAeroSRCS");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -5424,7 +5427,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createEliteShieldedAeroSRCS() {
         // TODO Game Rules.
         MiscType misc = new MiscType();
-        misc.name = "Shielded Aero RCS (Elite)";
+        misc.name = "Shielded Aerospace Smart Robotic Control System (Elite)";
         misc.setInternalName("EliteShieldedAeroSRCS");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -7336,7 +7339,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 100000;
         misc.criticals = 0;
         misc.cost = 1000000;
-        misc.flags = misc.flags.or(F_STORAGE_BATTERY).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_STORAGE_BATTERY).or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "306,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -7356,7 +7359,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_LIGHT_SAIL).or(F_SUPPORT_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_LIGHT_SAIL).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "323,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -7375,7 +7378,8 @@ public class MiscType extends EquipmentType {
         misc.name = "Naval Comm-Scanner Suite (Small)";
         misc.setInternalName("ISSmallNavalCommScannerSuite");
         misc.addLookupName("CLSmallNavalCommScannerSuite");
-        misc.flags = misc.flags.or(F_SMALL_COMM_SCANNER_SUITE).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_SMALL_COMM_SCANNER_SUITE).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT)
+                .or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.rulesRefs = "332,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
@@ -7394,7 +7398,8 @@ public class MiscType extends EquipmentType {
         misc.name = "Naval Comm-Scanner Suite (Large)";
         misc.setInternalName("ISLargeNavalCommScannerSuite");
         misc.addLookupName("CLLargeNavalCommScannerSuite");
-        misc.flags = misc.flags.or(F_LARGE_COMM_SCANNER_SUITE).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_LARGE_COMM_SCANNER_SUITE).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT)
+                .or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.rulesRefs = "332,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
@@ -7417,7 +7422,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_NAVAL_C3).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_NAVAL_C3).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT)
+                .or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "332,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
@@ -7434,8 +7440,8 @@ public class MiscType extends EquipmentType {
         misc.name = "Naval Tug Adaptor";
         misc.setInternalName("ISNavalTugAdaptor");
         misc.addLookupName("CLNavalTugAdaptor");
-        misc.flags = misc.flags.andNot(F_FIGHTER_EQUIPMENT).or(F_NAVAL_TUG_ADAPTOR);
-        misc.rulesRefs = "332,TO";
+        misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT);
+        misc.rulesRefs = "334,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                 .setISAdvancement(3065, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7445,11 +7451,12 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createPCMT() {
         MiscType misc = new MiscType();
+        //TODO Not direct game rules, but weight should be variable not just 10 tons.
         misc.tonnage = 10;
         misc.cost = 2000000;
         misc.name = "Power Collector and Microwave Transmitter (10 Tons)";
         misc.setInternalName("PCMT");
-        misc.flags = misc.flags.andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.and(F_SS_EQUIPMENT);
         misc.rulesRefs = "337,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
@@ -7462,13 +7469,14 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createLithiumFusionBattery() {
         MiscType misc = new MiscType();
-        // TODO - Games rules and Costs/Weights.
+        // TODO - Games rules and Costs (Cost of all K-F Drive components togetherx3)
         misc.name = "Lithium-Fusion Battery";
         misc.setInternalName("LithumFusion");
-        misc.tonnage = 0;
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
+        
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_STORAGE_BATTERY).andNot(F_FIGHTER_EQUIPMENT);
+        misc.flags = misc.flags.or(F_LF_STORAGE_BATTERY).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "323,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)

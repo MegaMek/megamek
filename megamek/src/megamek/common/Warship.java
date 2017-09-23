@@ -44,6 +44,7 @@ public class Warship extends Jumpship {
     public Warship() {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        setDriveCoreType(DRIVE_CORE_COMPACT);
     }
     
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
@@ -109,6 +110,12 @@ public class Warship extends Jumpship {
     @Override
     public boolean canJump() {
         return kf_integrity > 0;
+    }
+    
+    @Override
+    public double getJumpDriveWeight() {
+        double pct = 0.45; //TODO: compact
+        return Math.ceil(getWeight() * pct); 
     }
 
     // broadside weapon arcs

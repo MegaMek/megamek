@@ -354,6 +354,9 @@ public class MiscType extends EquipmentType {
     public static final long S_STANDARD = 1L << 0;
     public static final long S_IMPROVED = 1L << 1;
     public static final long S_PROTOTYPE = 1L << 2;
+    
+    // Secondary flag for robotic constrol systems; standard and improved borrow jj flags
+    public static final long S_ELITE = 1L << 2;
 
     // Secondary flags for infantry armor kits
     public static final long S_DEST = 1L << 0;
@@ -759,57 +762,73 @@ public class MiscType extends EquipmentType {
             return (entity.getWeight() / 10f);
         } else if (hasFlag(MiscType.F_NAVAL_C3)) {
             return (entity.getWeight() * .01);
-            
-//TODO NEO- review below for Drone Large Craft stuff.            
-        } else if (hasFlag(MiscType.F_SRCS) && (entity.getWeight() >10)) {
-            //TODO Neo - Improved weights 2% more not sure how to approach that.
-            if ((entity instanceof Dropship ) || (entity instanceof SpaceStation)) {
-                return Math.ceil((entity.getWeight() * 0.07) * 2) / 2.0;
-            } else if (entity instanceof Jumpship) {
-                //TODO this needs to be changed to Free mass left over for JS
-                return Math.ceil((entity.getWeight() * 0.1) * 2) / 2.0;
+        } else if (hasFlag(MiscType.F_SRCS) || hasFlag(F_SASRCS)) {
+            if (entity.getWeight() >= 10) {
+                double pct = 0.05;
+                if (entity.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                        || entity.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+                    pct = 0.07;
+                } else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                    pct = 0.1;
+                }
+                if (getSubType() == S_IMPROVED) {
+                    pct += hasFlag(F_SASRCS)? 0.01 : 0.02;
+                } else if (getSubType() == S_ELITE) { // only shielded
+                    pct += 0.03;
+                }
+                //Jumpship is based on non-drive weight and rounded to ton
+                if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                    return Math.ceil((entity.getWeight() - ((Jumpship)entity).getJumpDriveWeight()) * pct);
+                }
+                return Math.ceil(entity.getWeight() * pct * 2.0) / 2.0;
+            } else if (subType == S_IMPROVED) {
+                return 1.0; // no weight for the base system for units < 10 tons, +1 for improved, elite not allowed
             } else {
-                return Math.ceil((entity.getWeight() * 0.05) * 2) / 2.0;
-            }
-        } else if (hasFlag(MiscType.F_SASRCS) && (entity.getWeight() >10)) {
-            //TODO Neo - Improved weights 2% more not sure how to approach that.
-            if (entity instanceof SpaceStation) {
-                return Math.ceil((entity.getWeight() * 0.07) * 2) / 2.0;
-            } else {
-                return Math.ceil((entity.getWeight() * 0.05) * 2) / 2.0;
+                return 0;
             }
         } else if (hasFlag(MiscType.F_CASPAR)) {
-            //TODO Neo - Round will need to be changed to match contruction rules.
-            if (entity instanceof SmallCraft) {
-                return Math.ceil((entity.getWeight() * 0.05) * 2) / 2.0;
-            } else if (entity instanceof Dropship) {
-                return Math.ceil((entity.getWeight() * 0.04) * 2) / 2.0;               
-            } else if (entity instanceof SpaceStation) {                 
-                return Math.ceil((entity.getWeight() * 0.08) * 2) / 2.0;
-            } else if (entity instanceof Warship) {
-                return Math.ceil((entity.getWeight() * 0.06) * 2) / 2.0;                
+            double pct = 0.05; // Value for small craft
+            if (entity.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+                pct = 0.04;
+            } else if (entity.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+                pct = 0.08;
+            } else if (entity.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                pct = 0.06;
+            }
+            if (getSubType() == S_IMPROVED) {
+                // Add 2% for small craft, 4% for others
+                if (pct == 0.05) {
+                    pct = 0.07;
+                } else {
+                    pct += 0.04;
+                }
+            }
+            if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                return Math.ceil(entity.getWeight() * pct);
+            } else {
+                return Math.ceil((entity.getWeight() * pct) * 2.0) / 2.0;
             }
         } else if (hasFlag(MiscType.F_CASPARII)) {
-            //TODO Neo - Round will need to be changed to match construction rules.
-            double tWeight = 0;
-            if (entity instanceof SmallCraft) {
-                return Math.ceil((entity.getWeight() * 0.06) * 2) / 2.0;
-            } else if (entity instanceof Dropship) {
-                return Math.ceil((entity.getWeight() * 0.08) * 2) / 2.0;               
-            } else if (entity instanceof SpaceStation) {  
-                tWeight = Math.ceil((entity.getWeight() * 0.1));
-                if (tWeight>40000) {
-                    return 40000;
+            double pct = 0.06; // Value for small craft
+            if (entity.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+                pct = 0.08;
+            } else if (entity.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+                pct = 0.1;
+            } else if (entity.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                pct = 0.12;
+            }
+            if (getSubType() == S_IMPROVED) {
+                // Add 2% for small craft, 4% for others
+                if (pct == 0.06) {
+                    pct = 0.08;
                 } else {
-                    return Math.ceil((entity.getWeight() * 0.1) * 2) / 2.0; 
+                    pct += 0.04;
                 }
-            } else if (entity instanceof Warship) {  
-                tWeight = Math.ceil((entity.getWeight() * 0.12));
-                if (tWeight>40000) {
-                    return 40000;
-                } else {
-                    return Math.ceil((entity.getWeight() * 0.12) * 2) / 2.0; 
-                }
+            }
+            if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                return Math.ceil(entity.getWeight() * pct);
+            } else {
+                return Math.ceil((entity.getWeight() * pct) * 2.0) / 2.0;
             }
         } else if (hasFlag(MiscType.F_ATAC)) {
             //TODO Neo - pg IO 146 Each drone that it can control adds 150 ton to weight.
@@ -1734,12 +1753,17 @@ public class MiscType extends EquipmentType {
         // Drone and Robotic Systems
         EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
         EquipmentType.addType(MiscType.createSmartRoboticControlSystem());
+        EquipmentType.addType(MiscType.createImprovedSmartRoboticControlSystem());
         EquipmentType.addType(MiscType.createISDroneCarrierControlSystem());
         EquipmentType.addType(MiscType.createISDroneExtra());
         EquipmentType.addType(MiscType.createISDroneOperatingSystem());
         EquipmentType.addType(MiscType.createShieldedAeroSRCS());
+        EquipmentType.addType(MiscType.createImprovedShieldedAeroSRCS());
+        EquipmentType.addType(MiscType.createEliteShieldedAeroSRCS());
         EquipmentType.addType(MiscType.createCasparDroneControlSystem());
+        EquipmentType.addType(MiscType.createImprovedCasparDroneControlSystem());
         EquipmentType.addType(MiscType.createCasparIIDroneControlSystem());
+        EquipmentType.addType(MiscType.createImprovedCasparIIDroneControlSystem());
         EquipmentType.addType(MiscType.createAutoTacticalAnalysisComputer());
         EquipmentType.addType(MiscType.createAdvRoboticTransportSystem());
         EquipmentType.addType(MiscType.createDirectTacticalAnalysisSystem());
@@ -5329,12 +5353,30 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "140,IO";
         misc.flags = misc.flags.or(F_SRCS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+        misc.subType = S_STANDARD;
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+        .setAdvancement(DATE_ES, DATE_ES).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+        return misc;
+    }
+
+    public static MiscType createImprovedSmartRoboticControlSystem() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Standard SRCS (Improved)";
+        misc.setInternalName("ImprovedSmartRoboticControlSystem");
+        misc.addLookupName("ImprovedSRCS");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.rulesRefs = "140,IO";
+        misc.flags = misc.flags.or(F_SRCS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.subType = S_IMPROVED;
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
-                .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
+                .setAdvancement(DATE_ES, DATE_ES).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
     }
@@ -5347,15 +5389,54 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
-        //TODO Neo - Only Satellites but using the Support Tank Flag.
         misc.flags = misc.flags.or(F_SASRCS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.subType = S_STANDARD;
         misc.rulesRefs = "141,IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
                 .setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(2755, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setReintroductionFactions(F_WB);
+                .setClanAdvancement(2755, DATE_ES).setReintroductionFactions(F_WB)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
+        return misc;
+    }
+
+    public static MiscType createImprovedShieldedAeroSRCS() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Shielded Aero RCS (Improved)";
+        misc.setInternalName("ImprovedShieldedAeroSRCS");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SASRCS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.subType = S_IMPROVED;
+        misc.rulesRefs = "141,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+                .setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
+                .setClanAdvancement(2755, DATE_ES).setReintroductionFactions(F_WB)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
+        return misc;
+    }
+
+    public static MiscType createEliteShieldedAeroSRCS() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Shielded Aero RCS (Elite)";
+        misc.setInternalName("EliteShieldedAeroSRCS");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SASRCS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.subType = S_ELITE;
+        misc.rulesRefs = "141,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+                .setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
+                .setClanAdvancement(2755, DATE_ES).setReintroductionFactions(F_WB)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
     }
@@ -5369,13 +5450,33 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_CASPAR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_STANDARD;
         misc.rulesRefs = "142,IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_F).setAvailability(RATING_E, RATING_X, RATING_X, RATING_X)
-                .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(2695, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH);
+                .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780)
+                .setClanAdvancement(2695).setPrototypeFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
+        return misc;
+    }
+
+    public static MiscType createImprovedCasparDroneControlSystem() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "SDS (Caspar) Drone Control System (Improved)";
+        misc.setInternalName("ImprovedCasparDroneControlSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CASPAR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_IMPROVED;
+        misc.rulesRefs = "142,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+                .setTechRating(RATING_F).setAvailability(RATING_E, RATING_X, RATING_X, RATING_X)
+                .setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780)
+                .setClanAdvancement(2695).setPrototypeFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
     }
@@ -5389,12 +5490,33 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_CASPARII).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_STANDARD;
         misc.rulesRefs = "143,IO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
                 .setISAdvancement(3064, DATE_NONE, DATE_NONE, 3078, 3082)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_WB)
-                .setReintroductionFactions(F_RS);
+                .setPrototypeFactions(F_WB).setReintroductionFactions(F_RS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+
+        return misc;
+    }
+
+    public static MiscType createImprovedCasparIIDroneControlSystem() {
+        // TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Caspar II Advanced Smart Robotic Control System (Improved)";
+        misc.setInternalName("ImprovedCasparIIDroneControlSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CASPARII).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.subType = S_IMPROVED;
+        misc.rulesRefs = "143,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setISAdvancement(3064, DATE_NONE, DATE_NONE, 3078, 3082)
+                .setPrototypeFactions(F_WB).setReintroductionFactions(F_RS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
     }

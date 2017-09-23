@@ -476,76 +476,48 @@ public class SmallCraft extends Aero {
         // first I need to subtract SI bonus from total armor
         int armorPoints = getTotalOArmor();
         armorPoints -= getSI() * locations();
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
+        boolean isClan = TechConstants.isClan(getArmorTechRating());
 
-        double baseArmor = 16.0;
-        if (isClan()) {
-            baseArmor = 20.0;
-        }
+        double base = 16.0;
         if (isSpheroid()) {
-            if (weight >= 12500) {
-                baseArmor = 14.0;
-                if (isClan()) {
-                    baseArmor = 17.0;
-                }
-            } else if (weight >= 20000) {
-                baseArmor = 12.0;
-                if (isClan()) {
-                    baseArmor = 14.0;
-                }
-            } else if (weight >= 35000) {
-                baseArmor = 10.0;
-                if (isClan()) {
-                    baseArmor = 12.0;
-                }
-            } else if (weight >= 50000) {
-                baseArmor = 8.0;
-                if (isClan()) {
-                    baseArmor = 10.0;
-                }
-            } else if (weight >= 65000) {
-                baseArmor = 6.0;
-                if (isClan()) {
-                    baseArmor = 7.0;
-                }
+            if (getWeight() >= 65000) {
+                base = 6.0;
+            } else if (getWeight() >= 50000) {
+                base = 8.0;
+            } else if (getWeight() >= 35000) {
+                base = 10.0;
+            } else if (getWeight() >= 20000) {
+                base = 12.0;
+            } else if (getWeight() >= 12500) {
+                base = 14.0;
             }
         } else {
-            if (weight >= 6000) {
-                baseArmor = 14.0;
-                if (isClan()) {
-                    baseArmor = 17.0;
-                }
-            } else if (weight >= 9500) {
-                baseArmor = 12.0;
-                if (isClan()) {
-                    baseArmor = 14.0;
-                }
-            } else if (weight >= 12500) {
-                baseArmor = 10.0;
-                if (isClan()) {
-                    baseArmor = 12.0;
-                }
-            } else if (weight >= 17500) {
-                baseArmor = 8.0;
-                if (isClan()) {
-                    baseArmor = 10.0;
-                }
-            } else if (weight >= 25000) {
-                baseArmor = 6.0;
-                if (isClan()) {
-                    baseArmor = 7.0;
-                }
+            if (getWeight() >= 25000) {
+                base = 6.0;
+            } else if (getWeight() >= 17500) {
+                base = 8.0;
+            } else if (getWeight() >= 12500) {
+                base = 10.0;
+            } else if (getWeight() >= 9500) {
+                base = 12.0;
+            } else if (getWeight() >= 6000) {
+                base = 14.0;
+            }
+        }
+        if (isClan) {
+            if (base > 14) {
+                base += 4;
+            } else if (base > 12) {
+                base += 3;
+            } else if (base > 6) {
+                base += 2;
+            } else {
+                base += 1;
             }
         }
 
-        double armorPerTon = baseArmor * EquipmentType.getArmorPointMultiplier(armorType[0], techLevel);
-        double armWeight = 0.0;
-        for (; ((int) Math.round(armWeight * armorPerTon)) < armorPoints; armWeight += .5) {
-            // add armor weight in discrete batches
-        }
-        return armWeight;
+        double armorPerTon = base * EquipmentType.getArmorPointMultiplier(armorType[0], techLevel);
+        return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
     }
 
     /**

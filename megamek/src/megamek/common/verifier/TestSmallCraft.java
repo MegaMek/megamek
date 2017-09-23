@@ -13,6 +13,7 @@ import megamek.common.EquipmentType;
 import megamek.common.ITechManager;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
+import megamek.common.TechConstants;
 import megamek.common.util.StringUtil;
 
 /**
@@ -149,15 +150,26 @@ public class TestSmallCraft extends TestAero {
      */
     public static int SLOTS_PER_ARC = 12;
 
+    public static int maxArmorPoints(SmallCraft sc) {
+        AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
+                TechConstants.isClan(sc.getArmorTechLevel(0)));
+        if (null != a) {
+            return (int)Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc))
+                    + sc.get0SI() * 4;
+        } else {
+            return 0;
+        }
+    }
+    
     /**
      *  Computes the maximum number armor level in tons
      *   
      */
     public static double maxArmorWeight(SmallCraft smallCraft){
         if (smallCraft.isSpheroid()) {
-            return smallCraft.get0SI() * 4.5;
+            return floor(smallCraft.get0SI() * 3.6, Ceil.HALFTON);
         } else {
-            return smallCraft.get0SI() * 3.6;
+            return floor(smallCraft.get0SI() * 4.5, Ceil.HALFTON);
         }
     }
     

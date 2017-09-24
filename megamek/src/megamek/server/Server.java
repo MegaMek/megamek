@@ -13840,11 +13840,17 @@ public class Server implements Runnable {
 
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
+        
+        // Get all of the coords that would be protected by AMS Bays
+        Hashtable<Coords, List<Mounted>> amsBayCoords = getAMSBayProtectedCoords();
 
         // Map target to a list of missile attacks directed at it
         Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
         // Keep track of each APDS, and which attacks it could affect
         Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
+        // Keep track of each AMS Bay, and which attacks it could affect
+        Hashtable<Mounted, Vector<WeaponHandler>> amsBayTargets = new Hashtable<>();
+        
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
@@ -13893,6 +13899,22 @@ public class Server implements Runnable {
                     handlerList.add(wh);
                 }
             }
+            
+            // Keep track of what weapon attacks could be affected by AMS Bays
+            if (amsBayCoords.containsKey(target.getPosition())) {
+                for (Mounted amsbay : amsBayCoords.get(target.getPosition())) {
+                    // AMS Bays only affects attacks against friendly units
+                    if (target.isEnemyOf(amsbay.getEntity())) {
+                        continue;
+                    }
+                    Vector<WeaponHandler> handlerList = amsBayTargets.get(amsbay);
+                    if (handlerList == null) {
+                        handlerList = new Vector<>();
+                        amsBayTargets.put(amsbay, handlerList);
+                    }
+                    handlerList.add(wh);
+                }
+            }
         }
 
         // Let each target assign its AMS
@@ -13927,6 +13949,30 @@ public class Server implements Runnable {
             }
             if (targetedWAA != null) {
                 targetedAttacks.add(targetedWAA);
+            }
+        }
+        
+        // Let each AMS Bay assign itself to an attack
+        Set<WeaponAttackAction> amstargetedAttacks = new HashSet<>();
+        for (Mounted amsbay : amsBayTargets.keySet()) {
+            List<WeaponHandler> amspotentialTargets = amsBayTargets.get(amsbay);
+            /* // Ensure we only target each attack once
+            List<WeaponHandler> amstargetsToRemove = new ArrayList<>();
+            for (WeaponHandler wh : amspotentialTargets) {
+                if (amstargetedAttacks.contains(wh.getWaa())) {
+                	amstargetsToRemove.add(wh);
+                }
+            }
+            amspotentialTargets.removeAll(amstargetsToRemove); */
+            WeaponAttackAction amstargetedWAA;
+            // Assign AMSBay to an attack
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
+            	amstargetedWAA = amsbay.assignAMSBay(amspotentialTargets);
+            } else { // Allow user to manually assign targets
+            	amstargetedWAA = manuallyAssignAPDSTarget(amsbay, amspotentialTargets);
+            }
+            if (amstargetedWAA != null) {
+            	amstargetedAttacks.add(amstargetedWAA);
             }
         }
     }
@@ -14153,6 +14199,61 @@ public class Server implements Runnable {
             }
         }
         return apdsCoords;
+    }
+    
+    /**
+     * Convenience method for computing a mapping of which Coords are
+     * "protected" by an AMS Bay. Protection implies that the coords is within the
+     * range/arc of an active AMS bay. This is for the rules in StratOps Pg 97.
+     * We're assuming here that other types of point defense bay are being reserved
+     * for self-defense of the ship that mounts them. 
+     * @return
+     */
+    private Hashtable<Coords, List<Mounted>> getAMSBayProtectedCoords() {
+        // Get all of the coords that would be protected by AMS Bays
+        Hashtable<Coords, List<Mounted>> amsBayCoords = new Hashtable<>();
+        for (Entity e : game.getEntitiesVector()) {
+            // Ignore Entities without positions
+            if (e.getPosition() == null) {
+                continue;
+            }
+            Coords origPos = e.getPosition();
+            for (Mounted ams : e.getActiveAMS()) {
+            	boolean isAMSBay = ams.getType().hasFlag(WeaponType.F_AMSBAY);
+                // Ignore non-APDS AMS
+                if (isAMSBay == false) {
+                    continue;
+                }
+                // Add the current hex as a defended location
+                List<Mounted> escortAMSBayList = amsBayCoords.get(origPos);
+                if (escortAMSBayList == null) {
+                	escortAMSBayList = new ArrayList<>();
+                    amsBayCoords.put(origPos, escortAMSBayList);
+                }
+                escortAMSBayList.add(ams);
+                // Add each coords that is within arc/range as protected
+                int maxDist = 1;
+                for (int dist = 1; dist <= maxDist; dist++) {
+                    List<Coords> coords = Compute.coordsAtRange(e.getPosition(), dist);
+                    for (Coords pos : coords) {
+                        // Check that we're in the right arc
+                        if (Compute.isInArc(game, e.getId(), e
+                                .getEquipmentNum(ams),
+                                new HexTarget(pos, game.getBoard(),
+                                        HexTarget.TYPE_HEX_CLEAR))) {
+                            escortAMSBayList = amsBayCoords.get(pos);
+                            if (escortAMSBayList == null) {
+                                escortAMSBayList = new ArrayList<>();
+                                amsBayCoords.put(pos, escortAMSBayList);
+                            }
+                            escortAMSBayList.add(ams);
+                        }
+                    }
+                }
+
+            }
+        }
+        return amsBayCoords;
     }
 
     /**

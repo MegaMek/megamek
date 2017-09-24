@@ -1831,4 +1831,34 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return false;
         }
     }
+    
+    /**
+     * Assign AMS Bays to all incoming missile attacks that they can hit. 
+     * Hope you loaded lots of ammo!
+     */
+    public WeaponAttackAction assignAMSBay(List<WeaponHandler> vAttacks) {
+        // Shouldn't have null entity, but if we do...
+        if (getEntity() == null) {
+            return null;
+        }
+
+        // Ensure we only target attacks in our arc & range
+        List<WeaponAttackAction> vAttacksInArc = new Vector<>(vAttacks.size());
+        for (WeaponHandler wr : vAttacks) {
+            boolean isInArc = Compute.isInArc(getEntity().getGame(),
+                    getEntity().getId(), getEntity().getEquipmentNum(this),
+                    getEntity().getGame().getEntity(wr.waa.getEntityId()));
+            boolean isInRange = getEntity().getPosition().distance(
+                    wr.getWaa().getTarget(getEntity().getGame()).getPosition()) == 1;
+            if (isInArc && isInRange) {
+                vAttacksInArc.add(wr.waa);
+            }
+        }
+        for (WeaponAttackAction waa : vAttacksInArc) {
+            if (waa != null) {
+                waa.addCounterEquipment(this);
+            }
+        }
+        return null;
+    }
 }

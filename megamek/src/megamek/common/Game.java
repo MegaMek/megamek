@@ -1698,6 +1698,24 @@ public class Game implements Serializable, IGame {
             }
         });
     }
+    
+    /**
+     * Returns an <code>Enumeration</code> of all active enemy entities.
+     *
+     * @param currentEntity
+     *            the <code>Entity</code> whose enemies are needed.
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
+     *         coordinates who are enemies of the given unit.
+     */
+    public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
+    	return getSelectedEntities(new EntitySelector() {
+    		private Entity friendly = currentEntity;
+    		
+    		public boolean accept(Entity entity) {
+    			return entity.isTargetable() && entity.isEnemyOf(friendly);
+    		}
+    	});
+    }
 
     /**
      * Returns an <code>Enumeration</code> of friendly active entities at the

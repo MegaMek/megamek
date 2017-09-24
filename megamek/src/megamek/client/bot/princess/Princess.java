@@ -40,6 +40,7 @@ import megamek.common.Coords;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -48,6 +49,7 @@ import megamek.common.MechWarrior;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
@@ -62,6 +64,7 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -1114,9 +1117,12 @@ public class Princess extends BotClient {
                 Long.toString(stop_time - startTime) + " millis");
             RankedPath bestpath = getPathRanker().getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO,
-                "Best Path: " + bestpath.path.toString() + "  Rank: "
-                + bestpath.rank);
-            return bestpath.path;
+                "Best Path: " + bestpath.getPath().toString() + "  Rank: "
+                + bestpath.getRank());
+            
+            performPathPostProcessing(bestpath);
+            
+            return bestpath.getPath();
         } finally {
             precognition.unPause();
             methodEnd(getClass(), METHOD_NAME);
@@ -1566,5 +1572,22 @@ public class Princess extends BotClient {
             }
         }
         return highestEnemyInitiativeId;
+    }
+    
+    /**
+     * Helper function to perform some modifications to a given path
+     * Currently insinuates an "evasion" step for aircraft that will not be shooting.
+     * @param path The path to process
+     */
+    private void performPathPostProcessing(RankedPath path) {
+        // if we're an airborne aircraft
+        // and we're not going to do any damage anyway
+        // and we can do so without causing a PSR
+        // then evade
+        if(path.getPath().getEntity().isAirborne() &&
+                (path.getExpectedDamage() == 0) &&
+                (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath().getEntity()) - 2)) {
+            path.getPath().addStep(MoveStepType.EVADE);
+        }
     }
 }

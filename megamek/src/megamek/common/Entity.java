@@ -2212,6 +2212,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return getElevation() + height();
     }
 
+    /*
+     * Convenience method to determine whether this entity is on a ground map with an atmosphere
+     */
+    public boolean isOnAtmosphericGroundMap() {
+        return  ((getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_VACUUM) ||
+                (getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_TRACE)) &&
+                
+                (getGame().getBoard().onGround() || 
+                // doesn't make sense in english, but "atmospheric" map actually
+                // covers maps that are within a planet's gravity well
+                getGame().getBoard().inAtmosphere()); 
+    }
+    
     /**
      * Returns the display name for this entity.
      */
@@ -12536,7 +12549,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .hasMoreElements(); ) {
                 IOption partRep = j.nextElement();
 
-                if (partRep.booleanValue()) {
+                if (partRep != null && partRep.booleanValue()) {
                     count++;
                 }
             }
@@ -12565,7 +12578,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .hasMoreElements(); ) {
                 IOption quirk = j.nextElement();
 
-                if (quirk.booleanValue()) {
+                if (null != quirk && quirk.booleanValue()) {
                     count++;
                 }
             }

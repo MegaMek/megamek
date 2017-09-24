@@ -147,7 +147,7 @@ public class PathSearcher {
                     // ok, path is good, add it to the list and mark it in the
                     // treemap
                     PathSearcher.WeightedPath nextpath =
-                            new PathSearcher.WeightedPath(p, ranker.rankPath(p, game).rank);
+                            new PathSearcher.WeightedPath(p, ranker.rankPath(p, game).getRank());
                     pathmap.put(mystate, nextpath);
                     next_steps.add(nextpath);
                 }
@@ -175,7 +175,7 @@ public class PathSearcher {
             ArrayList<WeightedPath> start_path = new ArrayList<WeightedPath>();
 
             MovePath empty_path = new MovePath(game, entity);
-            double empty_rank = ranker.rankPath(empty_path, game).rank;
+            double empty_rank = ranker.rankPath(empty_path, game).getRank();
             WeightedPath start = new WeightedPath(empty_path, empty_rank);
             pathmap.put(new PathState(start.path), start);
             start_path.add(start);

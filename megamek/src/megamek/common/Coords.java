@@ -305,6 +305,16 @@ public class Coords implements Serializable {
         return other.getX() == this.getX() && other.getY() == this.getY();
     }
 
+    /* 
+     * Determines if this set of coordinates is on the edge of the board
+     */
+    public boolean isOnBoardEdge(IBoard board) {
+        return (getX() == 0) 
+                || (getY() == 0)
+                || (getX() == (board.getWidth() - 1)) 
+                || (getY() == (board.getHeight() - 1));
+    }
+    
     /**
      * Get the hash code for these coords.
      * 

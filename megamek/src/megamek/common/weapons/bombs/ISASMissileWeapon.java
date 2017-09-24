@@ -31,7 +31,7 @@ public class ISASMissileWeapon extends CapitalMissileWeapon {
         super();
 
         name = "AS Missile";
-        setInternalName("IS " + BombType.getBombWeaponName(BombType.B_AS));
+        setInternalName(BombType.getBombWeaponName(BombType.B_AS));
         heat = 0;
         damage = 30;
         rackSize = 1;

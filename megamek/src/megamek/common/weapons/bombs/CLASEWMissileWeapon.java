@@ -31,7 +31,7 @@ public class CLASEWMissileWeapon extends CapitalMissileWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName("Clan " + BombType.getBombWeaponName(BombType.B_ASEW));
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_ASEW));
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;

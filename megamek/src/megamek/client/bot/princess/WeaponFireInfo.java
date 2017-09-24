@@ -15,8 +15,12 @@ package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import megamek.common.BombType;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mech;
@@ -57,12 +61,12 @@ public class WeaponFireInfo {
     private IGame game;
     private EntityState shooterState = null;
     private EntityState targetState = null;
-    private Princess owner;
+    private final Princess owner;
 
     /**
      * For unit testing.
      */
-    protected WeaponFireInfo(Princess owner) {
+    protected WeaponFireInfo(final Princess owner) {
         this.owner = owner;
     }
 
@@ -75,8 +79,13 @@ public class WeaponFireInfo {
      * @param game    The {@link megamek.common.IGame} in progress.
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
-    WeaponFireInfo(Entity shooter, Targetable target, Mounted weapon, IGame game, boolean guess, Princess owner) {
-        this(shooter, null, null, target, null, weapon, game, false, guess, owner);
+    WeaponFireInfo(final Entity shooter,
+                   final Targetable target,
+                   final Mounted weapon,
+                   final IGame game,
+                   final boolean guess,
+                   final Princess owner) {
+        this(shooter, null, null, target, null, weapon, game, false, guess, owner, new int[0]);
     }
 
     /**
@@ -90,9 +99,15 @@ public class WeaponFireInfo {
      * @param game         The {@link megamek.common.IGame} in progress.
      * @param guess        Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
-    WeaponFireInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
-                   Mounted weapon, IGame game, boolean guess, Princess owner) {
-        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner);
+    WeaponFireInfo(final Entity shooter,
+                   final EntityState shooterState,
+                   final Targetable target,
+                   final EntityState targetState,
+                   final Mounted weapon,
+                   final IGame game,
+                   final boolean guess,
+                   final Princess owner) {
+        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner, new int[0]);
     }
 
     /**
@@ -106,10 +121,20 @@ public class WeaponFireInfo {
      * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
      * @param guess                 Set TRUE to estimate the chance to hit rather than doing the full calculation.
+     * @param owner                 Instance of the princess owner
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
-    WeaponFireInfo(Entity shooter, MovePath shooterPath, Targetable target, EntityState targetState,
-                   Mounted weapon, IGame game, boolean assumeUnderFlightPath, boolean guess, Princess owner) {
-        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner);
+    WeaponFireInfo(final Entity shooter,
+                   final MovePath shooterPath,
+                   final Targetable target,
+                   final EntityState targetState,
+                   final Mounted weapon,
+                   final IGame game,
+                   final boolean assumeUnderFlightPath,
+                   final boolean guess,
+                   final Princess owner,
+                   final int[] bombPayload) {
+        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner, bombPayload);
     }
 
     /**
@@ -124,12 +149,22 @@ public class WeaponFireInfo {
      * @param weapon                The {@link megamek.common.Mounted} weapon used for the attack.
      * @param game                  The {@link megamek.common.IGame} in progress.
      * @param assumeUnderFlightPath Set TRUE for aerial units performing air-to-ground attacks.
-     * @param guess                 Set TRUE to esitmate the chance to hit rather than going through the full
+     * @param guess                 Set TRUE to estimate the chance to hit rather than going through the full
      *                              calculation.
+     * @param owner                 Instance of the princess owner
+     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
      */
-    WeaponFireInfo(Entity shooter, EntityState shooterState, MovePath shooterPath, Targetable target,
-                   EntityState targetState, Mounted weapon, IGame game, boolean assumeUnderFlightPath,
-                   boolean guess, Princess owner) {
+    private WeaponFireInfo(final Entity shooter,
+                           final EntityState shooterState,
+                           final MovePath shooterPath,
+                           final Targetable target,
+                           final EntityState targetState,
+                           final Mounted weapon,
+                           final IGame game,
+                           final boolean assumeUnderFlightPath,
+                           final boolean guess,
+                           final Princess owner,
+                           final int[] bombPayload) {
         final String METHOD_NAME =
                 "WeaponFireInfo(Entity, EntityState, MovePath, Targetable, EntityState, Mounted, IGame, boolean)";
         owner.methodBegin(getClass(), METHOD_NAME);
@@ -142,88 +177,80 @@ public class WeaponFireInfo {
             setTargetState(targetState);
             setWeapon(weapon);
             setGame(game);
-            initDamage(shooterPath, assumeUnderFlightPath, guess);
+            initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
-    }
-
-    protected double calcExpectedDamage() {
-        return probabilityToHit * expectedDamageOnHit;
     }
 
     protected WeaponAttackAction getAction() {
         return action;
     }
 
-    protected void setAction(WeaponAttackAction action) {
+    protected void setAction(final WeaponAttackAction action) {
         this.action = action;
     }
 
-    public int getDamageDirection() {
-        if (damageDirection == -1) {
+    private int getDamageDirection() {
+        if (-1 == damageDirection) {
             damageDirection = calcDamageDirection();
         }
         return damageDirection;
     }
 
-    public int calcDamageDirection() {
+    private int calcDamageDirection() {
         return ((calcAttackDirection() - getTargetState().getFacing()) + 6) % 6;
-    }
-
-    protected void setDamageDirection(int damageDirection) {
-        this.damageDirection = damageDirection;
     }
 
     private int calcAttackDirection() {
         return getTargetState().getPosition().direction(getShooterState().getPosition());
     }
 
-    public double getExpectedCriticals() {
+    double getExpectedCriticals() {
         return expectedCriticals;
     }
 
-    protected void setExpectedCriticals(double expectedCriticals) {
+    private void setExpectedCriticals(final double expectedCriticals) {
         this.expectedCriticals = expectedCriticals;
     }
 
-    public double getExpectedDamageOnHit() {
+    double getExpectedDamageOnHit() {
         return expectedDamageOnHit;
     }
 
-    protected void setExpectedDamageOnHit(double expectedDamageOnHit) {
+    private void setExpectedDamageOnHit(final double expectedDamageOnHit) {
         this.expectedDamageOnHit = expectedDamageOnHit;
     }
 
-    public double getKillProbability() {
+    double getKillProbability() {
         return killProbability;
     }
 
-    protected void setKillProbability(double killProbability) {
+    private void setKillProbability(final double killProbability) {
         this.killProbability = killProbability;
     }
 
-    public double getMaxDamage() {
+    double getMaxDamage() {
         return maxDamage;
     }
 
-    protected void setMaxDamage(double maxDamage) {
+    private void setMaxDamage(final double maxDamage) {
         this.maxDamage = maxDamage;
     }
 
-    public double getProbabilityToHit() {
+    double getProbabilityToHit() {
         return probabilityToHit;
     }
 
-    protected void setProbabilityToHit(double probabilityToHit) {
+    private void setProbabilityToHit(final double probabilityToHit) {
         this.probabilityToHit = probabilityToHit;
     }
 
-    public Entity getShooter() {
+    Entity getShooter() {
         return shooter;
     }
 
-    protected void setShooter(Entity shooter) {
+    void setShooter(final Entity shooter) {
         this.shooter = shooter;
     }
 
@@ -231,42 +258,36 @@ public class WeaponFireInfo {
         return target;
     }
 
-    protected void setTarget(Targetable target) {
+    protected void setTarget(final Targetable target) {
         this.target = target;
     }
 
     public ToHitData getToHit() {
-        if (toHit == null) {
+        if (null == toHit) {
             setToHit(calcToHit());
         }
         return toHit;
     }
 
-    public ToHitData getToHit(MovePath shooterPath, boolean assumeUnderFlightPath) {
-        if (toHit == null) {
-            setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
-        }
-        return toHit;
-    }
-
-    protected void setToHit(ToHitData toHit) {
+    protected void setToHit(final ToHitData toHit) {
         this.toHit = toHit;
     }
 
-    protected ToHitData calcToHit() {
+    ToHitData calcToHit() {
         return owner.getFireControl().guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
                                                                   getTargetState(),
                                                                   getWeapon(), getGame());
     }
 
-    protected ToHitData calcToHit(MovePath shooterPath, boolean assumeUnderFlightPath) {
+    private ToHitData calcToHit(final MovePath shooterPath,
+                                final boolean assumeUnderFlightPath) {
         return owner.getFireControl().guessAirToGroundStrikeToHitModifier(getShooter(), null, getTarget(),
                                                                           getTargetState(),
                                                                           shooterPath, getWeapon(), getGame(),
                                                                           assumeUnderFlightPath);
     }
 
-    protected ToHitData calcRealToHit(WeaponAttackAction weaponAttackAction) {
+    private ToHitData calcRealToHit(final WeaponAttackAction weaponAttackAction) {
         return weaponAttackAction.toHit(getGame(), 
                 owner.getPrecognition().getECMInfo());
     }
@@ -275,37 +296,37 @@ public class WeaponFireInfo {
         return game;
     }
 
-    protected void setGame(IGame game) {
+    protected void setGame(final IGame game) {
         this.game = game;
     }
 
-    public EntityState getShooterState() {
-        if (shooterState == null) {
+    private EntityState getShooterState() {
+        if (null == shooterState) {
             shooterState = new EntityState(getShooter());
         }
         return shooterState;
     }
 
-    protected void setShooterState(EntityState shooterState) {
+    void setShooterState(final EntityState shooterState) {
         this.shooterState = shooterState;
     }
 
-    public EntityState getTargetState() {
-        if (targetState == null) {
+    private EntityState getTargetState() {
+        if (null == targetState) {
             targetState = new EntityState(target);
         }
         return targetState;
     }
 
-    protected void setTargetState(EntityState targetState) {
+    void setTargetState(final EntityState targetState) {
         this.targetState = targetState;
     }
 
-    protected void setWeapon(Mounted weapon) {
+    protected void setWeapon(final Mounted weapon) {
         this.weapon = weapon;
     }
 
-    protected void setHeat(int heat) {
+    protected void setHeat(final int heat) {
         this.heat = heat;
     }
 
@@ -321,17 +342,32 @@ public class WeaponFireInfo {
         return getProbabilityToHit() * getExpectedDamageOnHit();
     }
 
-    protected WeaponAttackAction buildWeaponAttackAction() {
+    WeaponAttackAction buildWeaponAttackAction() {
         return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
                                       getShooter().getEquipmentNum(getWeapon()));
     }
 
-    protected double computeExpectedDamage() {
+    private WeaponAttackAction buildBombAttackAction(final int[] bombPayload) {
+        final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
+                                                                   getTarget().getTargetType(),
+                                                                   getTarget().getTargetId(),
+                                                                   getShooter().getEquipmentNum(getWeapon()));
+        
+        diveBomb.setBombPayload(bombPayload);
+        
+        return diveBomb;
+    }
 
+    double computeExpectedDamage() {
+        // bombs require some special consideration
+        if(weapon.isGroundBomb()) {
+            return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
+        }
+        
         // For clan plasma cannon, assume 7 "damage".
-        WeaponType weaponType = (WeaponType) weapon.getType();
+        final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-                weaponType.getTechBase() == TechAdvancement.TECH_BASE_CLAN) {
+            TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
             return 7D;
         }
 
@@ -345,6 +381,52 @@ public class WeaponFireInfo {
         }
         return weaponType.getDamage();
     }
+    
+    /**
+     * Worker function to compute expected bomb damage given the shooter
+     * @param shooter The unit making the attack.
+     * @param weapon The weapon being used in the attack.
+     * @param bombedHex The target hex.
+     * @return The expected damage of the attack.
+     */
+    private double computeExpectedBombDamage(final Entity shooter,
+                                             final Mounted weapon,
+                                             final Coords bombedHex) {
+        double damage = 0D; //lol double damage I wish
+        
+        // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
+        if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
+                final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
+        
+                // HE, thunder, laser and inferno bombs just affect the target hex 
+                final List<Coords> affectedHexes = new ArrayList<>();
+                affectedHexes.add(bombedHex);
+                
+                // a cluster bomb affects all hexes around the target
+                if (BombType.B_CLUSTER == ((BombType) bomb.getType()).getBombType()) {
+                    for (int dir = 0; 5 >= dir; dir++) {
+                        affectedHexes.add(bombedHex.translated(dir));
+                    }
+                }
+                
+                // now we go through all affected hexes and add up the damage done
+                for (final Coords coords : affectedHexes) {
+                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {                        
+                        if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
+                            damage += damagePerShot;
+                        } else { // we prefer not to blow up friendlies if we can help it
+                            damage -= damagePerShot;
+                        }                    
+                    }
+                }
+            }
+        }
+        
+        damage = damage * getProbabilityToHit();
+        
+        return damage;
+    }
 
     /*
      * Helper function that calculates expected damage
@@ -354,10 +436,13 @@ public class WeaponFireInfo {
      *                              path.
      * @param guess Set TRUE to esitmate the chance to hit rather than doing the full calculation.
      */
-    protected void initDamage(@Nullable MovePath shooterPath, boolean assumeUnderFlightPath, boolean guess) {
+    void initDamage(@Nullable final MovePath shooterPath,
+                    final boolean assumeUnderFlightPath,
+                    final boolean guess,
+                    final int[] bombPayload) {
         final String METHOD_NAME = "initDamage(MovePath, boolean)";
 
-        StringBuilder msg =
+        final StringBuilder msg =
                 new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" firing ").append(getWeapon().getDesc())
                                                              .append(" at ").append(getTarget().getDisplayName())
@@ -365,17 +450,23 @@ public class WeaponFireInfo {
 
         try {
             // Set up the attack action and calculate the chance to hit.
-            setAction(buildWeaponAttackAction());
+            if ((null == bombPayload) || (0 == bombPayload.length)) {
+                setAction(buildWeaponAttackAction());
+            }
+            else {
+                setAction(buildBombAttackAction(bombPayload));
+            }
+            
             if (!guess) {
                 setToHit(calcRealToHit(getWeaponAttackAction()));
-            } else if (shooterPath != null) {
+            } else if (null != shooterPath) {
                 setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
             } else {
                 setToHit(calcToHit());
             }
 
             // If we can't hit, set everything zero and return..
-            if (getToHit().getValue() > 12) {
+            if (12 < getToHit().getValue()) {
                 owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
                                                                       .append(getToHit().getValue()).toString());
                 setProbabilityToHit(0);
@@ -400,7 +491,7 @@ public class WeaponFireInfo {
             setMaxDamage(getExpectedDamageOnHit());
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
 
-            double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
+            final double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
 
             // there's always the chance of rolling a '2'
             final double ROLL_TWO = 0.028;
@@ -412,21 +503,21 @@ public class WeaponFireInfo {
             }
 
             // now guess how many critical hits will be done
-            Mech targetMech = (Mech) getTarget();
+            final Mech targetMech = (Mech) getTarget();
 
             // A mech with a torso-mounted cockpit can survive losing its head.
             double headlessOdds = 0.0;
 
             // Loop through hit locations.
             // todo Targeting tripods.
-            for (int i = 0; i <= 7; i++) {
+            for (int i = 0; 7 >= i; i++) {
                 int hitLocation = i;
 
                 while (targetMech.isLocationBad(hitLocation) &&
-                       (hitLocation != Mech.LOC_CT)) {
+                       (Mech.LOC_CT != hitLocation)) {
 
                     // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
-                    if (hitLocation == Mech.LOC_HEAD) {
+                    if (Mech.LOC_HEAD == hitLocation) {
                         headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mech.LOC_HEAD);
                         break;
                     }
@@ -441,8 +532,8 @@ public class WeaponFireInfo {
                 hitLocationProbability += (hitLocationProbability * headlessOdds);
 
                 // Get the armor and internals for this location.
-                int targetArmor = Math.max(0, targetMech.getArmor(hitLocation, (getDamageDirection() == 3)));
-                int targetInternals = Math.max(0, targetMech.getInternal(hitLocation));
+                final int targetArmor = Math.max(0, targetMech.getArmor(hitLocation, (3 == getDamageDirection())));
+                final int targetInternals = Math.max(0, targetMech.getInternal(hitLocation));
 
                 // If the location could be destroyed outright...
                 if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
@@ -450,7 +541,7 @@ public class WeaponFireInfo {
                     if (Mech.LOC_CT == hitLocation) {
                         setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                     } else if ((Mech.LOC_HEAD == hitLocation) &&
-                               (targetMech.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) {
+                               (Mech.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType())) {
                         setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                     }
 
@@ -466,17 +557,17 @@ public class WeaponFireInfo {
         }
     }
 
-    public WeaponAttackAction getWeaponAttackAction() {
+    WeaponAttackAction getWeaponAttackAction() {
         final String METHOD_NAME = "getWeaponAttackAction(IGame)";
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            if (getAction() != null) {
+            if (null != getAction()) {
                 return getAction();
             }
             setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
                                              getShooter().getEquipmentNum(getWeapon())));
-            if (getAction() == null) {
+            if (null == getAction()) {
                 setProbabilityToHit(0);
                 return null;
             }

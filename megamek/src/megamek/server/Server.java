@@ -13841,15 +13841,15 @@ public class Server implements Runnable {
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
         
-        // Get all of the coords that would be protected by AMS Bays
-        Hashtable<Coords, List<Mounted>> amsBayCoords = getAMSBayProtectedCoords();
+        // Get all of the coords that would be protected by AMS Bays TODO: Not yet
+        //Hashtable<Coords, List<Mounted>> amsBayCoords = getAMSBayProtectedCoords();
 
         // Map target to a list of missile attacks directed at it
         Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
         // Keep track of each APDS, and which attacks it could affect
         Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
-        // Keep track of each AMS Bay, and which attacks it could affect
-        Hashtable<Mounted, Vector<WeaponHandler>> amsBayTargets = new Hashtable<>();
+        // Keep track of each AMS Bay, and which attacks it could affect TODO: Not yet
+        // Hashtable<Mounted, Vector<WeaponHandler>> amsBayTargets = new Hashtable<>();
         
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
@@ -13899,8 +13899,9 @@ public class Server implements Runnable {
                     handlerList.add(wh);
                 }
             }
-            
+            /*
             // Keep track of what weapon attacks could be affected by AMS Bays
+             * TODO: Fleet missile defense work in progress
             if (amsBayCoords.containsKey(target.getPosition())) {
                 for (Mounted amsbay : amsBayCoords.get(target.getPosition())) {
                     // AMS Bays only affects attacks against friendly units
@@ -13914,7 +13915,7 @@ public class Server implements Runnable {
                     }
                     handlerList.add(wh);
                 }
-            }
+            } */
         }
 
         // Let each target assign its AMS
@@ -13951,19 +13952,20 @@ public class Server implements Runnable {
                 targetedAttacks.add(targetedWAA);
             }
         }
-        
+        /*
         // Let each AMS Bay assign itself to an attack
+         * //TODO: Work in progress. Let's get self defense working before we do fleet defense.
         Set<WeaponAttackAction> amstargetedAttacks = new HashSet<>();
         for (Mounted amsbay : amsBayTargets.keySet()) {
             List<WeaponHandler> amspotentialTargets = amsBayTargets.get(amsbay);
-            /* // Ensure we only target each attack once
+            // Ensure we only target each attack once
             List<WeaponHandler> amstargetsToRemove = new ArrayList<>();
             for (WeaponHandler wh : amspotentialTargets) {
                 if (amstargetedAttacks.contains(wh.getWaa())) {
                 	amstargetsToRemove.add(wh);
                 }
             }
-            amspotentialTargets.removeAll(amstargetsToRemove); */
+            amspotentialTargets.removeAll(amstargetsToRemove); 
             WeaponAttackAction amstargetedWAA;
             // Assign AMSBay to an attack
             if (game.getOptions().booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
@@ -13974,7 +13976,8 @@ public class Server implements Runnable {
             if (amstargetedWAA != null) {
             	amstargetedAttacks.add(amstargetedWAA);
             }
-        }
+        } 
+    	*/
     }
 
     /**
@@ -14209,6 +14212,7 @@ public class Server implements Runnable {
      * for self-defense of the ship that mounts them. 
      * @return
      */
+    /*
     private Hashtable<Coords, List<Mounted>> getAMSBayProtectedCoords() {
         // Get all of the coords that would be protected by AMS Bays
         Hashtable<Coords, List<Mounted>> amsBayCoords = new Hashtable<>();
@@ -14254,7 +14258,7 @@ public class Server implements Runnable {
             }
         }
         return amsBayCoords;
-    }
+    } */
 
     /**
      * Checks to see if any units can detected hidden units.

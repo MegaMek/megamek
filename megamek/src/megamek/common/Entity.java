@@ -6228,10 +6228,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ams.isAPDS()) {
                 continue;
             }
-            //ignore AMS bays. They get assigned in Mounted
+            /*
+            //ignore AMS bays. They get assigned in Mounted 
+             * TODO: Fleet defense project
             if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
             	continue;
-            }
+            } */
+            
             // make a new vector of only incoming attacks in arc
             Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
                     vAttacks.size());
@@ -6242,14 +6245,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     vAttacksInArc.addElement(wr.waa);
                 }
             }
-            /* //AMS Bays can fire at all incoming attacks each round
+            //AMS Bays can fire at all incoming attacks each round
             if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
                 for (WeaponAttackAction waa : vAttacksInArc) {
                     if (waa != null) {
                         waa.addCounterEquipment(ams);
                     }
                 }
-            } else */ if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
+            } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
             	//Point defense bays are assigned to the attack with the greatest threat
             	//Unlike single AMS, PD bays can gang up on 1 attack
                 WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,

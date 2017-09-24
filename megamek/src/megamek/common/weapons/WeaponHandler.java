@@ -358,19 +358,78 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 //Point Defenses engage the missiles
                 int counterAV = 0;
                 counterAV = calcCounterAV();
+                //for Large, single missiles
+                if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                    Report r = new Report(3235);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    r = new Report(3230);
+                    r.indent(1);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    for (int i = 0; i < nweaponsHit; i++) {
+                    	int destroyRoll = Compute.d6();
+                    	if (destroyRoll <= 3) {
+                    		r = new Report(3240);
+                    		r.subject = subjectId;
+                    		r.add("missile");
+                    		r.add(destroyRoll);
+                    		vPhaseReport.add(r);
+                    		hits = 0;
+                    	} else {
+                    		r = new Report(3241);
+                    		r.add("missile");
+                    		r.add(destroyRoll);
+                    		r.subject = subjectId;
+                    		vPhaseReport.add(r);
+                    		hits = 1;
+                    	}
+                    }
+                } else { 
                 
                 nDamPerHit = attackValue * nweaponsHit - counterAV;
                 hits = 1;
-                nCluster = 1;                
+                nCluster = 1;
+                }
             } else if (nCluster > 1) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
             } else {
+            	//Point Defenses engage any Large, single missiles
+            	calcCounterAV();
+                if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                    Report r = new Report(3235);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    r = new Report(3230);
+                    r.indent(1);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    for (int i = 0; i < nweaponsHit; i++) {
+                    	int destroyRoll = Compute.d6();
+                    	if (destroyRoll <= 3) {
+                    		r = new Report(3240);
+                    		r.subject = subjectId;
+                    		r.add("missile");
+                    		r.add(destroyRoll);
+                    		vPhaseReport.add(r);
+                    		hits = 0;
+                    	} else {
+                    		r = new Report(3241);
+                    		r.add("missile");
+                    		r.add(destroyRoll);
+                    		r.subject = subjectId;
+                    		vPhaseReport.add(r);
+                    		hits = 1;
+                    	}
+                    }
+                } else {
                 bSalvo = false;
                 nDamPerHit = attackValue;
                 hits = 1;
                 nCluster = 1;
+                }
             }
             int[] results = new int[2];
             results[0] = hits;

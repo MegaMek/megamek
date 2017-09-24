@@ -40,7 +40,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
     public AR10Weapon() {
         super();
         // assume a barracuda is loaded
-        this.name = "Capital Missiel Launcher (AR10 Launcher)";
+        this.name = "Capital Missile Launcher (AR10 Launcher)";
         this.setInternalName(this.name);
         this.addLookupName("AR10");
         this.addLookupName("CLAR10");

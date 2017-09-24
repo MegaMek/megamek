@@ -64,6 +64,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         }
         int counterAV = 0;
         int amsAV = 0;
+        int countercount = 0;
         double pdAV = 0;
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
@@ -121,7 +122,9 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                         }
                         
                         // get the attack value
-                        amsAV += bayWType.getShortAV();                                      
+                        amsAV += bayWType.getShortAV();
+                        // for most bombs, we only care how many AMS are shooting
+                        countercount += counter.getBayWeapons().size();
             		}          
                                                             
                 } else if (isPDBay) {

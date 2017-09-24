@@ -88,7 +88,7 @@ public class EquipmentType implements ITechnology {
     public final static int T_ARMOR_BA_MIMETIC = 36;
     public final static int T_ARMOR_BA_REFLECTIVE = 37;
     public final static int T_ARMOR_BA_REACTIVE = 38;
-    public static final int T_ARMOR_PRIMITIVE_AERO = 39;
+    public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
     public static final int T_ARMOR_LC_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
 

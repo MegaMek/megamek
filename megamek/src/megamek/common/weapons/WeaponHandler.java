@@ -74,6 +74,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean pdBayEngaged = false;
     protected boolean amsBayEngagedCap = false;
     protected boolean pdBayEngagedCap = false;
+    protected boolean amsBayEngagedMissile = false;
+    protected boolean pdBayEngagedMissile = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected String typeName;

@@ -34,7 +34,7 @@ public class CLBombTAG extends TAGWeapon {
         super();
 
         this.name = "TAG Pod";
-        this.setInternalName("Clan " + BombType.getBombWeaponName(BombType.B_TAG));
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_TAG));
         this.tonnage = 0;
         this.criticals = 0;
         this.hittable = false;

@@ -31,7 +31,7 @@ public class CLASMissileWeapon extends CapitalMissileWeapon {
     public CLASMissileWeapon() {
         super();
         name = "AS Missile";
-        setInternalName("Clan " + BombType.getBombWeaponName(BombType.B_AS));
+        setInternalName(BombType.getBombWeaponName(BombType.B_AS));
         heat = 0;
         damage = 30;
         rackSize = 1;

@@ -33,7 +33,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
-import megamek.common.options.OptionsConstants;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -363,29 +362,6 @@ public class WeaponFireInfo {
         // bombs require some special consideration
         if(weapon.isGroundBomb()) {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
-        }
-        
-        // bay weapons require special consideration, by looping through all weapons and adding up the damage
-        // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
-        // varies with distance to target.
-        if((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
-            int bayDamage = 0;
-            for(int weaponID : weapon.getBayWeapons()) {
-                Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
-                WeaponType weaponType = (WeaponType) bayWeapon.getType();
-                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
-                        weaponType.getExtremeRange() : weaponType.getLongRange(); 
-                int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
-                
-                // if the particular weapon is within range or we're an aircraft strafing a ground unit
-                // then we can count it. Otherwise, it's not going to contribute to damage, and we want 
-                // to avoid grossly overestimating damage.
-                if(targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
-                    bayDamage += weaponType.getDamage();
-                }
-            }
-            
-            return bayDamage;
         }
         
         // For clan plasma cannon, assume 7 "damage".

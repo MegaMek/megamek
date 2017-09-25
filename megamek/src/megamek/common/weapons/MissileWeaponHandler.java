@@ -53,6 +53,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean apdsEngaged = false;
     boolean advancedAMS = false;
     boolean advancedPD = false;
+    
 
 
     /**
@@ -69,7 +70,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         sSalvoType = " missile(s) ";
     }
-
+    
     /*
      * (non-Javadoc)
      *
@@ -114,6 +115,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
+        
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
@@ -286,7 +288,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-
+    
     /*
      * (non-Javadoc)
      *
@@ -383,7 +385,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
-        
+                
         //Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
         av = av - counterAV;
@@ -925,8 +927,33 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];
-            // Need to report hit (normally reported in calcHits)
-            if (!bMissed && amsEngaged && !ae.isCapitalFighter()) {
+            if (!bMissed && amsEngaged && isTbolt && !ae.isCapitalFighter()) {
+                // handle single AMS action against thunderbolt missiles
+                r = new Report(3235);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                r = new Report(3230);
+                r.indent(1);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                int destroyRoll = Compute.d6();
+                if (destroyRoll <= 3) {
+                    r = new Report(3240);
+                    r.subject = subjectId;
+                    r.add("missile");
+                    r.add(destroyRoll);
+                    vPhaseReport.add(r);
+                    hits = 0;
+                }
+                r = new Report(3241);
+                r.add("missile");
+                r.add(destroyRoll);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                hits = 1;
+            
+            } else if (!bMissed && amsEngaged && !ae.isCapitalFighter()) {
+                // handle single AMS action against standard missiles
                 int amsRoll = Compute.d6();
                 r = new Report(3352);
                 r.subject = subjectId;

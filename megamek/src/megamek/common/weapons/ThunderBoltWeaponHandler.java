@@ -102,7 +102,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         } else if (range == WeaponType.RANGE_EXT) {
             av = wtype.getRoundExtAV();
         }
-                
+                        
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }

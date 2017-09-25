@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -74,6 +75,14 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
+    }
+    
+    //Check for Thunderbolt. We'll use this later for single AMS resolution
+    // AmmoType atype = (AmmoType) ammo.getType()
+    if (ammo.getAmmoType().hasFlag(F_LARGEMISSILE)) {
+        isTbolt = true;
+    } else {
+        isTbolt = false;
     }
 
     /**

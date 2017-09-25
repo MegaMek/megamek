@@ -91,6 +91,7 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_CRAMPED_COCKPIT= "cramped_cockpit"; //$NON-NLS-1$
     public static final String QUIRK_NEG_DIFFICULT_EJECT= "difficult_eject"; //$NON-NLS-1$
     public static final String QUIRK_NEG_DIFFICULT_MAINTAIN= "difficult_maintain"; //$NON-NLS-1$
+    public static final String QUIRK_NEG_EM_INTERFERENCE_WHOLE= "em_inter_whole"; //$NON-NLS-1$
     public static final String QUIRK_NEG_EXP_ACTUATOR= "exp_actuator"; //$NON-NLS-1$
     public static final String QUIRK_NEG_FLAWED_COOLING= "flawed_cooling"; //$NON-NLS-1$
     public static final String QUIRK_NEG_FRAGILE_FUEL= "fragile_fuel"; //$NON-NLS-1$

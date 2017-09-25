@@ -20,6 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.MiscType;
@@ -160,7 +161,8 @@ public class WeaponQuirks extends AbstractOptions {
             if (en instanceof Protomech
                 || en instanceof Aero
                 || en instanceof Jumpship
-                || en instanceof Dropship) {
+                || en instanceof Dropship
+                || en instanceof GunEmplacement)  {
 
                 return false;
             }
@@ -178,8 +180,11 @@ public class WeaponQuirks extends AbstractOptions {
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
             if (en instanceof Aero
+                || en instanceof BattleArmor
                 || en instanceof Jumpship
-                || en instanceof Dropship) {
+                || en instanceof Dropship
+                || en instanceof Tank
+                || en instanceof GunEmplacement) {
 
                 return false;
             }

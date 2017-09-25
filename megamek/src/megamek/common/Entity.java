@@ -3823,7 +3823,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && isFighter()
                     && game.getBoard().inSpace()) {
                 try {
-                    addEquipment(spaceBomb, m.getLocation(), false);
+                    Mounted bomb = addEquipment(spaceBomb, m.getLocation(), false);
+                    if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
+                        bomb.setWeaponGroup(true);
+                        weaponGroupList.add(bomb);
+                    }
                 } catch (LocationFullException ex) {
                     
                 }
@@ -3835,13 +3839,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
                 if (numGroundBombs < 1) {
                     try {
-                        addEquipment(diveBomb, m.getLocation(), false);
+                        Mounted bomb = addEquipment(diveBomb, m.getLocation(), false);
+                        if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
+                            bomb.setWeaponGroup(true);
+                            weaponGroupList.add(bomb);
+                        }
                     } catch (LocationFullException ex) {
                     }
                 }
                 if (numGroundBombs < 10 && isFighter()) {
                     try {
-                        addEquipment(altBomb, m.getLocation(), false);
+                        Mounted bomb = addEquipment(altBomb, m.getLocation(), false);
+                        if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
+                            bomb.setWeaponGroup(true);
+                            weaponGroupList.add(bomb);
+                        }
                     } catch (LocationFullException ex) {
                     }
                 }

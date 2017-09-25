@@ -8,5 +8,5 @@ SM1A Tank Destroyer SM1A, 6
 Maxim Mk II Transport (Standard), 5
 Joust Medium Tank BE701, 4
 SM1 Tank Destroyer SM1, 3
-Cizin (Standard), 2
+Cizin Hover Tank (Standard), 2
 Joust Medium Tank BE700, 1

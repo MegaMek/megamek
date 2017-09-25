@@ -32,7 +32,7 @@ public class CLLAAMissileWeapon extends CapitalMissileWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName("Clan " + BombType.getBombWeaponName(BombType.B_LAA));
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;

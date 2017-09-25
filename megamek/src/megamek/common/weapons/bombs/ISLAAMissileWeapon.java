@@ -31,7 +31,7 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_LAA));
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;

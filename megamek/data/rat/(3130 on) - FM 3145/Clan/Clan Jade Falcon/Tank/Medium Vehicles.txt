@@ -2,7 +2,7 @@
 Chalchiuhtotolin Support Tank (Chemical Laser), 1
 Hasek Mechanized Combat Vehicle (Standard), 2
 Sokar Urban Combat Unit (Standard), 3
-Cizin (Standard), 4
+Cizin Hover Tank (Standard), 4
 Chalchiuhtotolin Support Tank (Standard), 5
 Cardinal Transport (Standard), 6
 Sokar Urban Combat Unit (Standard), 5

@@ -347,57 +347,72 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 if (nweapons > 1) {
                     nweaponsHit = Compute.missilesHit(nweapons,
                             ((Aero) ae).getClusterMods());
-                    Report r = new Report(3325);
-                    r.subject = subjectId;
-                    r.add(nweaponsHit);
-                    r.add(" weapon(s) ");
-                    r.add(" ");
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
-                }
-                //Point Defenses engage the missiles
-                int counterAV = 0;
-                counterAV = calcCounterAV();
-                //for Large, single missiles
-                if (pdBayEngagedMissile || amsBayEngagedMissile) {
-                    Report r = new Report(3235);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    r = new Report(3230);
-                    r.indent(1);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    for (int i = 0; i < nweaponsHit; i++) {
-                    	int destroyRoll = Compute.d6();
-                    	if (destroyRoll <= 3) {
-                    		r = new Report(3240);
-                    		r.subject = subjectId;
-                    		r.add("missile");
-                    		r.add(destroyRoll);
-                    		vPhaseReport.add(r);
-                    		hits = 0;
-                    	} else {
-                    		r = new Report(3241);
-                    		r.add("missile");
-                    		r.add(destroyRoll);
-                    		r.subject = subjectId;
-                    		vPhaseReport.add(r);
-                    		hits = 1;
-                    	}
+                    //If point defenses engage Large, single missiles
+                    if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                        Report r = new Report(3327);
+                        r.subject = subjectId;
+                        r.add(nweaponsHit);
+                        r.add(" missile(s) ");
+                        r.add(" ");
+                        r = new Report(3235);
+                        r.subject = subjectId;
+                        vPhaseReport.add(r);
+                        r = new Report(3230);
+                        r.indent(1);
+                        r.subject = subjectId;
+                        vPhaseReport.add(r);
+                        for (int i = 0; i < nweaponsHit; i++) {
+                        	int destroyRoll = Compute.d6();
+                        	if (destroyRoll <= 3) {
+                        		r = new Report(3240);
+                        		r.subject = subjectId;
+                        		r.add("missile");
+                        		r.add(destroyRoll);
+                        		vPhaseReport.add(r);
+                        		//Remove a hit
+                        		nweaponsHit -= 1;
+                        	} else {
+                        		r = new Report(3241);
+                        		r.add("missile");
+                        		r.add(destroyRoll);
+                        		r.subject = subjectId;
+                        		vPhaseReport.add(r);                        		
+                        	}
+                        }
+                        if (nweaponsHit <= 0) {
+                        	hits = 0;
+                        } else {
+                        	hits = 1;
+                        }
+                    } else if (pdBayEngaged || amsBayEngaged) {
+                    	//Point Defenses engage standard (cluster) missiles
+                        int counterAV = 0;
+                        counterAV = getCounterAV();
+                        nDamPerHit = attackValue * nweaponsHit - counterAV;
+                        hits = 1;
+                        nCluster = 1;
+                    } else {
+                    	//If multiple non-missile weapons hit
+                    	Report r = new Report(3325);
+                    	r.subject = subjectId;
+                    	r.add(nweaponsHit);
+                    	r.add(" weapon(s) ");
+                    	r.add(" ");
+                    	r.newlines = 1;
+                    	vPhaseReport.add(r);
+                    	nDamPerHit = attackValue * nweaponsHit;
+                    	hits = 1;
+                    	nCluster = 1;
                     }
-                } else { 
-                
-                nDamPerHit = attackValue * nweaponsHit - counterAV;
-                hits = 1;
-                nCluster = 1;
-                }
+                } 
             } else if (nCluster > 1) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
             } else {
+            	//If we're not a capital fighter / squadron
             	//Point Defenses engage any Large, single missiles
-            	calcCounterAV();
+            	getCounterAV();
                 if (pdBayEngagedMissile || amsBayEngagedMissile) {
                     Report r = new Report(3235);
                     r.subject = subjectId;

@@ -3395,9 +3395,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
-        compositeTechLevel.addComponent(mounted.getType());
-        if (mounted.isArmored()) {
-            compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
+        
+        if(null != compositeTechLevel) {
+            compositeTechLevel.addComponent(mounted.getType());
+            if (mounted.isArmored()) {
+                compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
+            }
         }
 
         // add it to the proper sub-list

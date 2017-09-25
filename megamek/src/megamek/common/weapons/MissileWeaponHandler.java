@@ -963,8 +963,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.add(CounterAV);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
-            }
-            else if (!bMissed && !amsBayEngagedMissile && !pdBayEngagedMissile) {
+            } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
+             //This is reported elsewhere. Don't do anything else.   
+            } else if (!bMissed)  {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

@@ -83,6 +83,44 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         return (int) Math.ceil(toReturn);
     }
     
+    /**
+     * Calculate the attack value based on range
+     *
+     * @return an <code>int</code> representing the attack value at that range.
+     */
+    @Override
+    protected int calcAttackValue() {
+        calcCounterAV();
+        int av = 0;
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        if (range == WeaponType.RANGE_SHORT) {
+            av = wtype.getRoundShortAV();
+        } else if (range == WeaponType.RANGE_MED) {
+            av = wtype.getRoundMedAV();
+        } else if (range == WeaponType.RANGE_LONG) {
+            av = wtype.getRoundLongAV();
+        } else if (range == WeaponType.RANGE_EXT) {
+            av = wtype.getRoundExtAV();
+        }
+                
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+        }
+        if (bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int) Math.floor(getBracketingMultiplier() * av);
+        return (av);
+    }
+    
+    @Override
+    //Thunderbolts apply damage all in one block.
+    //This was referenced incorrectly for Aero damage.
+    protected boolean usesClusterTable() {
+        return false;
+    }
+    
     // check for AMS and Point Defense Bay fire
     @Override
     protected int calcCounterAV() {

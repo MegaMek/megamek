@@ -885,16 +885,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // it in doChecks
         boolean missReported = doChecks(vPhaseReport);
         
-        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship
-        if (entityTarget.usesWeaponBays()) {
-        	nDamPerHit = calcAttackValue();
-        } else {
-        	//This is for all other targets in atmosphere
-        	nDamPerHit = calcDamagePerHit();
-        }        
+       
 
         attackValue = calcAttackValue();
         CounterAV = getCounterAV();
+        
+        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship
+        if (entityTarget.usesWeaponBays()) {
+            nDamPerHit = attackValue;
+        } else {
+            //This is for all other targets in atmosphere
+            nDamPerHit = calcDamagePerHit();
+        } 
         
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {
@@ -962,7 +964,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
-            else if (!bMissed) {
+            else if (!bMissed && !amsBayEngagedMissile && !pdBayEngagedMissile) {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

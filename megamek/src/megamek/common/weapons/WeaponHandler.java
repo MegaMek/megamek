@@ -349,13 +349,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             ((Aero) ae).getClusterMods());
                     //If point defenses engage Large, single missiles
                     if (pdBayEngagedMissile || amsBayEngagedMissile) {
-                        Report r = new Report(3327);
+                        Report r = new Report(3236);
                         r.subject = subjectId;
                         r.add(nweaponsHit);
-                        r.add(" missile(s) ");
-                        r.add(" ");
-                        r = new Report(3235);
-                        r.subject = subjectId;
                         vPhaseReport.add(r);
                         r = new Report(3230);
                         r.indent(1);
@@ -414,6 +410,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             	//Point Defenses engage any Large, single missiles
             	getCounterAV();
                 if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                    bSalvo = false;
                     Report r = new Report(3235);
                     r.subject = subjectId;
                     vPhaseReport.add(r);

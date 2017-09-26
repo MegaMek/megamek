@@ -52,8 +52,8 @@ public class BombType extends AmmoType {
                                                       "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
                                                       "AlamoMissile Ammo"};
 
-    public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAAMissile",
-                                                    "ASMissile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
+    public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAA Missile",
+                                                    "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
                                                     null,"LAAMissile",null,null,"AlamoMissile"};
 
 

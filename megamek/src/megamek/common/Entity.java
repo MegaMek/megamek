@@ -3859,6 +3859,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 numGroundBombs++;
             }
+            if (m.getLinkedBy().getType() instanceof WeaponType) {
+                
+            }
         }
 
     }

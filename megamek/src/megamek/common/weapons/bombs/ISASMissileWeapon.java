@@ -64,7 +64,4 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         .setProductionFactions(F_FS);
     }
     
-    protected int getCritMod(AmmoType atype) {
-        return 11;
-    }
 }

@@ -1132,7 +1132,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected boolean canDoDirectBlowDamage() {
         return false;
     }
-
+    
     /**
      *
      * @return

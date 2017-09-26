@@ -62,7 +62,4 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
     
-    protected int getCritMod(AmmoType atype) {
-        return 11;
-    }
 }

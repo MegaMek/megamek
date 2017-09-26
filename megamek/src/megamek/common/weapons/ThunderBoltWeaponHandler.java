@@ -294,5 +294,11 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         return 1;
     }
+    
+    @Override
+    // For AntiShip missiles, which behave more like Thunderbolts than capital missiles except for this
+    protected int getCapMisMod() {
+        return 11;
+    }
 
 }

@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -105,4 +104,5 @@ public class AmmoWeaponHandler extends WeaponHandler {
         }
         return false;
     }
+    
 }

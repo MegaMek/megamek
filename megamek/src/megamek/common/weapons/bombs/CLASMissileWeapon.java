@@ -16,12 +16,12 @@ package megamek.common.weapons.bombs;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.SimpleTechLevel;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class CLASMissileWeapon extends CapitalMissileWeapon {
+public class CLASMissileWeapon extends ThunderBoltWeapon {
 
     /**
      *
@@ -60,5 +60,9 @@ public class CLASMissileWeapon extends CapitalMissileWeapon {
         .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+    
+    protected int getCritMod(AmmoType atype) {
+        return 11;
     }
 }

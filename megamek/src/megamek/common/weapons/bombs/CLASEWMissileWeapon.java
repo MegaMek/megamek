@@ -15,12 +15,12 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class CLASEWMissileWeapon extends CapitalMissileWeapon {
+public class CLASEWMissileWeapon extends ThunderBoltWeapon {
 
     /**
      * 

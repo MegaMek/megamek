@@ -15,12 +15,12 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class ISASMissileWeapon extends CapitalMissileWeapon {
+public class ISASMissileWeapon extends ThunderBoltWeapon {
 
     /**
      *
@@ -62,5 +62,9 @@ public class ISASMissileWeapon extends CapitalMissileWeapon {
         .setISApproximate(false, true, false, false, false)
         .setPrototypeFactions(F_FS)
         .setProductionFactions(F_FS);
+    }
+    
+    protected int getCritMod(AmmoType atype) {
+        return 11;
     }
 }

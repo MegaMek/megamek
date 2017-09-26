@@ -3860,6 +3860,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 numGroundBombs++;
             }
         }
+
     }
 
     /**

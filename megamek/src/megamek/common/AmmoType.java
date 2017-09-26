@@ -205,6 +205,10 @@ public class AmmoType extends EquipmentType {
     // bomb
     
     // Numbers 14-15 out of order. See nuclear missiles, above
+    
+    //For tag, rl pods, missiles and the like
+    public static final BigInteger F_OTHER_BOMB = BigInteger.valueOf(1)
+            .shiftLeft(16);
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"

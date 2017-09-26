@@ -223,7 +223,6 @@ public class BombType extends AmmoType {
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AAA_MISSILE;
 		bomb.bombType = BombType.B_AAA;
-		bomb.flags = bomb.flags.or(AmmoType.F_LARGEMISSILE);
 		bomb.shots = 1;
 		bomb.bv = 57;
 		bomb.cost = 9000;
@@ -275,7 +274,6 @@ public class BombType extends AmmoType {
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AS_MISSILE;
 		bomb.bombType = BombType.B_AS;
-		bomb.flags = bomb.flags.or(AmmoType.F_LARGEMISSILE);
 		bomb.shots = 1;
 		bomb.bv = 114;
 		bomb.cost = 0;
@@ -327,7 +325,6 @@ public class BombType extends AmmoType {
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_ASEW_MISSILE;
 		bomb.bombType = BombType.B_ASEW;
-		bomb.flags = bomb.flags.or(AmmoType.F_LARGEMISSILE);
 		bomb.shots = 1;
 		bomb.bv = 75;
 		bomb.cost = 0;
@@ -379,7 +376,7 @@ public class BombType extends AmmoType {
 		// Allow Homing munitions to instantly switch between modes
 		bomb.instantModeSwitch = true;
 		bomb.setModes(new String[] { "Homing", "Non-Homing" });
-		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_LARGEMISSILE);
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
 		bomb.shots = 1;
 		bomb.bv = 0;
 		bomb.cost = 0;
@@ -626,7 +623,6 @@ public class BombType extends AmmoType {
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_LAA_MISSILE;
 		bomb.bombType = BombType.B_LAA;
-		bomb.flags = bomb.flags.or(AmmoType.F_LARGEMISSILE);
 		bomb.shots = 1;
 		bomb.bv = 17;
 		bomb.cost = 0;

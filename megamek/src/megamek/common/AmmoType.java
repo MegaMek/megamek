@@ -205,9 +205,6 @@ public class AmmoType extends EquipmentType {
     // bomb
     
     // Numbers 14-15 out of order. See nuclear missiles, above
-    
-    //Thunderbolt and similar large missiles, for use with AMS resolution
-    public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(16);
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -11769,7 +11766,7 @@ public class AmmoType extends EquipmentType {
             ammo.shots = 12;
             ammo.bv = 8;
             ammo.cost = 50000;
-            ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_LARGEMISSILE);
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
             ammo.setModes(new String[]{"", "HotLoad"});
             ammo.rulesRefs = "347,TO";
             ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11799,7 +11796,7 @@ public class AmmoType extends EquipmentType {
             ammo.shots = 6;
             ammo.bv = 16;
             ammo.cost = 50000;
-            ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_LARGEMISSILE);
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
             ammo.setModes(new String[]{"", "HotLoad"});
             ammo.rulesRefs = "347,TO";
             ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11829,7 +11826,7 @@ public class AmmoType extends EquipmentType {
             ammo.shots = 4;
             ammo.bv = 29;
             ammo.cost = 50000;
-            ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_LARGEMISSILE);
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
             ammo.setModes(new String[]{"", "HotLoad"});
             ammo.rulesRefs = "347,TO";
             ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11859,7 +11856,7 @@ public class AmmoType extends EquipmentType {
             ammo.shots = 3;
             ammo.bv = 38;
             ammo.cost = 50000;
-            ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_LARGEMISSILE);
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
             ammo.setModes(new String[]{"", "HotLoad"});
             ammo.rulesRefs = "347,TO";
             ammo.techAdvancement.setTechBase(TECH_BASE_IS)

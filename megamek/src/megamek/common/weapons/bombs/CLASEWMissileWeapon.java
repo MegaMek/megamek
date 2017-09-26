@@ -45,7 +45,7 @@ public class CLASEWMissileWeapon extends CapitalMissileWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 20000;
-        this.flags = flags.or(F_MISSILE);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE);
         this.shortAV = 0;
         this.medAV = 0;
         this.longAV = 0;

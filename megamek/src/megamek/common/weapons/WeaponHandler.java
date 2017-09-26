@@ -77,7 +77,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean amsBayEngagedMissile = false;
     protected boolean pdBayEngagedMissile = false;
     protected boolean nukeS2S = false;
-    protected boolean isTbolt = false;
     protected WeaponType wtype;
     protected String typeName;
     protected Mounted weapon;
@@ -122,7 +121,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
-    
+       
     /**
      * Calculates the attack value of point defense weapons used against a missile bay attack
      */    

@@ -45,7 +45,7 @@ public class ISAAAMissileWeapon extends CapitalMissileWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 9000;
-        this.flags = flags.or(F_MISSILE);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE);
         this.shortAV = 20;
         this.medAV = 20;
         this.maxRange = RANGE_MED;

@@ -581,6 +581,9 @@ public class WeaponType extends EquipmentType {
     //AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
     public static final BigInteger F_PDBAY = BigInteger.valueOf(1).shiftLeft(64);
     public static final BigInteger F_AMSBAY = BigInteger.valueOf(1).shiftLeft(65);
+    
+    //Thunderbolt and similar large missiles, for use with AMS resolution
+    public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(66);
         
     
     // add maximum range for AT2

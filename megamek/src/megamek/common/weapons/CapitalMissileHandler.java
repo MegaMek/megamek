@@ -14,15 +14,12 @@
 package megamek.common.weapons;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -191,36 +188,6 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         CounterAV = (int) counterAV;
         return counterAV;
     } // end getAMSAV
-    
-    @Override
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        calcCounterAV();
-        bSalvo = true;
-        if (pdBayEngagedMissile || amsBayEngagedMissile) {
-            Report r = new Report(3235);
-            r.subject = subjectId;
-            vPhaseReport.add(r);
-            r = new Report(3230);
-            r.indent(1);
-            r.subject = subjectId;
-            vPhaseReport.add(r);
-            int destroyRoll = Compute.d6();
-            if (destroyRoll <= 3) {
-                r = new Report(3240);
-                r.subject = subjectId;
-                r.add("missile");
-                r.add(destroyRoll);
-                vPhaseReport.add(r);
-                return 0;
-            }
-            r = new Report(3241);
-            r.add("missile");
-            r.add(destroyRoll);
-            r.subject = subjectId;
-            vPhaseReport.add(r);
-        }
-        return 1;
-    }
     
     @Override
     protected int getCapMisMod() {

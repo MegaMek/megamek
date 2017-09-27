@@ -837,6 +837,13 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
+        if (hasFlag(WeaponType.F_PDBAY)) {
+        	if (hasModes() && weapon.curMode().equals("Point Defense")) {
+        		sRange = 1;
+        	} else {
+        		sRange = 6;
+        	}
+    	}
         int[] weaponRanges =
             { minRange, sRange, mRange, lRange, eRange };
         return weaponRanges;

@@ -3629,6 +3629,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((mounted != null)
             && (mounted.isReady())
             && (!mounted.getType().hasFlag(WeaponType.F_AMS))
+            && (!mounted.getType().hasFlag(WeaponType.F_AMSBAY))
+            && (!(mounted.getType().hasModes() && mounted.curMode().equals("Point Defense")))
             && ((mounted.getLinked() == null)
                 || mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)
                 || (mounted.getLinked().getUsableShotsLeft() > 0))) {
@@ -3813,6 +3815,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         weaponBayList.removeAll(bombAttacksToRemove);
         
         boolean foundSpaceBomb = false;
+        boolean foundMissile = false;
         int numGroundBombs = 0;
         
         for (Mounted m : getBombs()) {
@@ -3859,9 +3862,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 numGroundBombs++;
             }
-            if (m.getLinkedBy().getType() instanceof WeaponType) {
-                
-            }
+            /* if (m.getLinkedBy().getType().hasFlag(WeaponType.(F_MISSILE))) {
+            	if (!foundMissile && game.getBoard().inSpace()) {
+            		try {
+            			WeaponType launcher = (WeaponType) m.getLinkedBy().getType();
+            			Mounted missile = addEquipment(launcher, m.getLocation(), false);
+            			if (hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
+            				missile.setWeaponGroup(true);
+            				weaponGroupList.add(missile);
+            			}
+            		} catch (LocationFullException ex) {
+            		}
+            		foundMissile = true;
+            	}
+            } */ 
+    
         }
 
     }

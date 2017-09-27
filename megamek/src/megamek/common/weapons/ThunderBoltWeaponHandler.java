@@ -169,13 +169,17 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
                         Mounted bayWAmmo = bayW.getLinked();
                         WeaponType bayWType = ((WeaponType) bayW.getType());
                         
-                        // build up some heat (assume target is ams owner)		            
+                        // build up some heat
+                        //First Check to see if we have enough heat capacity to fire
+                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            continue;
+                        }
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-		            		entityTarget.heatBuildup += Compute.d6(bayW
-		            				.getCurrentHeat());	                    
-		            	} else {
-	                        entityTarget.heatBuildup += bayW.getCurrentHeat();
-	                    }
+                            pdEnt.heatBuildup += Compute.d6(bayW
+                                    .getCurrentHeat());                     
+                        } else {
+                            pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        }
                         
                         //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
@@ -210,13 +214,17 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
                         Mounted bayWAmmo = bayW.getLinked();
                         WeaponType bayWType = ((WeaponType) bayW.getType());
                         
-                        // build up some heat (assume target is ams owner)		            
+                        // build up some heat
+                        //First Check to see if we have enough heat capacity to fire
+                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            continue;
+                        }
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-		            		entityTarget.heatBuildup += Compute.d6(bayW
-		            				.getCurrentHeat());	                    
-		            	} else {
-	                        entityTarget.heatBuildup += bayW.getCurrentHeat();
-	                    }
+                            pdEnt.heatBuildup += Compute.d6(bayW
+                                    .getCurrentHeat());                     
+                        } else {
+                            pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        }
                         
                         //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {

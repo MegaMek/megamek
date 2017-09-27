@@ -3120,6 +3120,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%") && (weapon.getBayWeapons().size() < 4)) {
             return "not enough weapons to bracket at this level";
         }
+        
+        // If you're an aero, can't fire an AMS Bay or a Point Defense bay in PD Mode
+        if (wtype.hasFlag(WeaponType.F_AMSBAY)) {
+            return "Auto-firing weapon";
+        } else if (wtype.hasModes() && weapon.curMode().equals("Point Defense")) {
+            return "Weapon in Point Defense Mode";
+        }
 
         // Is the weapon blocked by a passenger?
         if (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {

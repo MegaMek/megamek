@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1114,6 +1115,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
         }
+    }
+
+    @Override
+    public void clearBombChoices() {
+        Arrays.fill(bombChoices, 0);
     }
 
     @Override

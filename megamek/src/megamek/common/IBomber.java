@@ -49,6 +49,11 @@ public interface IBomber {
     void setBombChoices(int[] bc);
     
     /**
+     * Sets the count of each bomb to zero
+     */
+    void clearBombChoices();
+    
+    /**
      * @param cost The cost of the bomb to be mounted
      * @return A location with sufficient space to mount the bomb, or Entity.LOC_NONE if the unit does not have the space.
      */
@@ -125,15 +130,12 @@ public interface IBomber {
                                     EquipmentType.get(BombType.getBombInternalName(type)));
                             ammo.setShotsLeft(1);
                             m.setLinked(ammo);
-                            // Oneshot ammo will be identified by having a location
-                            // of null. Other areas in the code will rely on this.
-                            ((Entity)this).addEquipment(ammo, Entity.LOC_NONE, false);
+                            ((Entity)this).addEquipment(ammo, loc, false);
+                                                        
                         }
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());
                     }
-                        
-                    
                 } else {
                     try {
                         ((Entity)this).addEquipment(EquipmentType.get(BombType
@@ -143,9 +145,8 @@ public interface IBomber {
                     }
                 }
             }
-            // Clear out the bomb choice once the bombs are loaded
-            getBombChoices()[type] = 0;
         }
+        clearBombChoices();
     }
 
 }

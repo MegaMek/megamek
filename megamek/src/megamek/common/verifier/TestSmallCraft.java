@@ -156,7 +156,10 @@ public class TestSmallCraft extends TestAero {
         for (Mounted m : sc.getEquipment()) {
             if (m.getType().getCriticals(sc) > 0) {
                 int arc = m.getLocation();
-                if (m.isRearMounted()) {
+                if (arc < 0) {
+                    continue;
+                }
+                if (sc.isSpheroid() && m.isRearMounted()) {
                     arc += 3;
                 }
                 weaponsPerArc[arc]++;

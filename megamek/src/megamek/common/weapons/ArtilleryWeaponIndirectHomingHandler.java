@@ -14,10 +14,12 @@
 
 package megamek.common.weapons;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -25,11 +27,13 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
@@ -43,6 +47,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      *
      */
     private static final long serialVersionUID = -7243477723032010917L;
+    boolean amsEngaged = false;
+    boolean apdsEngaged = false;
+    boolean advancedAMS = false;
+    boolean advancedPD = false;
 
     /**
      * @param t
@@ -225,8 +233,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
+            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV) 
+                    && (AmmoType) ammo.getMunitionType() == AmmoType.M_HOMING)) {
+                
+            }
         }
-
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
@@ -445,5 +456,280 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             boolean bldgDamagedOnMiss, Building bldg,
             Vector<Report> vPhaseReport) {
         return true;
+    }
+    
+    protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+            return 0;
+        }
+        int apdsMod = 0;
+        int amsMod = 0;
+        Entity entityTarget = (Entity) target;
+        // any AMS attacks by the target?
+        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        if (null != lCounters) {
+            // resolve AMS counter-fire
+            // for (int x = 0; x < lCounters.size(); x++) {
+            for (Mounted counter : lCounters) {
+                boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
+                if (isAMS && counter.isAPDS() && !apdsEngaged) {
+                    Mounted mAmmo = counter.getLinked();
+                    Entity apdsEnt = counter.getEntity();
+                    boolean isInArc;
+                    // If the apdsUnit is the target, use attacker for arc
+                    if (entityTarget.equals(apdsEnt)) {
+                        isInArc = Compute.isInArc(game, apdsEnt.getId(),
+                                apdsEnt.getEquipmentNum(counter),
+                                ae);
+                    } else { // Otherwise, the attack target must be in arc
+                        isInArc = Compute.isInArc(game, apdsEnt.getId(),
+                                apdsEnt.getEquipmentNum(counter),
+                                entityTarget);
+                    }
+                    if (!(counter.getType() instanceof WeaponType)
+                            || !counter.isReady() || counter.isMissing()
+                            // no AMS when a shield in the AMS location
+                            || (apdsEnt.hasShield() && apdsEnt.hasActiveShield(
+                                    counter.getLocation(), false))
+                            // shutdown means no AMS
+                            || apdsEnt.isShutDown()
+                            // AMS only fires vs attacks in arc covered by ams
+                            || !isInArc) {
+                        continue;
+                    }
+
+                    // build up some heat (assume target is ams owner)
+                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        entityTarget.heatBuildup += Compute.d6(counter
+                                .getCurrentHeat());
+                    } else {
+                        entityTarget.heatBuildup += counter.getCurrentHeat();
+                    }
+
+                    // decrement the ammo
+                    if (mAmmo != null) {
+                        mAmmo.setShotsLeft(Math.max(0,
+                                mAmmo.getBaseShotsLeft() - 1));
+                    }
+
+                    // Determine Modifier
+                    int dist = target.getPosition().distance(
+                            apdsEnt.getPosition());
+                    int minApdsMod = -4;
+                    if (apdsEnt instanceof BattleArmor) {
+                        int numTroopers = ((BattleArmor) apdsEnt)
+                                .getNumberActiverTroopers();
+                        switch (numTroopers) {
+                            case 1:
+                                minApdsMod = -2;
+                                break;
+                            case 2:
+                            case 3:
+                                minApdsMod = -3;
+                                break;
+                            default: // 4+
+                                minApdsMod = -4;
+                        }
+                    }
+                    apdsMod = Math.min(minApdsMod + dist, 0);
+
+                    // set the ams as having fired
+                    counter.setUsedThisRound(true);
+                    apdsEngaged = true;
+                    Report r = new Report(3351);
+                    r.subject = entityTarget.getId();
+                    r.add(apdsMod);
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                } else if (isAMS && !amsEngaged) {
+                    Mounted mAmmo = counter.getLinked();
+                    if (!(counter.getType() instanceof WeaponType)
+                            || !counter.isReady() || counter.isMissing()
+                            // no AMS when a shield in the AMS location
+                            || (entityTarget.hasShield() && entityTarget
+                                    .hasActiveShield(counter.getLocation(),
+                                            false))
+                            // shutdown means no AMS
+                            || entityTarget.isShutDown()
+                            // AMS only fires vs attacks in arc covered by ams
+                            || !Compute.isInArc(game, entityTarget.getId(),
+                                    entityTarget.getEquipmentNum(counter), ae)) {
+                        continue;
+                    }
+
+                    // build up some heat (assume target is ams owner)
+                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        entityTarget.heatBuildup += Compute.d6(counter
+                                .getCurrentHeat());
+                    } else {
+                        entityTarget.heatBuildup += counter.getCurrentHeat();
+                    }
+
+                    // decrement the ammo
+                    if (mAmmo != null) {
+                        mAmmo.setShotsLeft(Math.max(0,
+                                mAmmo.getBaseShotsLeft() - 1));
+                    }
+
+                    // set the ams as having fired
+                    counter.setUsedThisRound(true);
+                    amsEngaged = true;
+                    Report r = new Report(3350);
+                    r.subject = entityTarget.getId();
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                    amsMod = -4;
+                }
+            }
+        }
+        return apdsMod + amsMod;
+    }
+    
+    //If you're firing missiles at a capital ship...
+    @Override
+    protected int calcCounterAV () {
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)
+                || !advancedPD) {
+            return 0;
+        }
+        int counterAV = 0;
+        int amsAV = 0;
+        double pdAV = 0;
+        Entity entityTarget = (Entity) target;
+        // any AMS bay attacks by the target?
+        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        if (null != lCounters) {
+            for (Mounted counter : lCounters) {               
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                Entity pdEnt = counter.getEntity();
+                boolean isInArc;
+                // If the defending unit is the target, use attacker for arc
+                if (entityTarget.equals(pdEnt)) {
+                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                            pdEnt.getEquipmentNum(counter),
+                            ae);
+                } else { // Otherwise, the attack must pass through an escort unit's hex
+                    // TODO: We'll get here, eventually
+                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                            pdEnt.getEquipmentNum(counter),
+                            entityTarget);
+                }
+                if (isAMSBay) {
+                    amsAV = 0;
+                    // Point defenses can't fire if they're not ready for any reason
+                    if (!(counter.getType() instanceof WeaponType)
+                             || !counter.isReady() || counter.isMissing()
+                                // shutdown means no Point defenses
+                                || pdEnt.isShutDown()
+                                // Point defenses only fire vs attacks in arc covered by ams
+                                || !isInArc) {
+                            continue;
+                    }
+                    // Now for heat, damage and ammo we need the individual weapons in the bay
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = pdEnt.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                        
+                        // build up some heat
+                        //First Check to see if we have enough heat capacity to fire
+                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            continue;
+                        }
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                            pdEnt.heatBuildup += Compute.d6(bayW
+                                    .getCurrentHeat());                     
+                        } else {
+                            pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        }
+                        
+                        //Bays use lots of ammo. Check to make sure we haven't run out
+                        if (bayWAmmo != null) {
+                            if (bayWAmmo.getBaseShotsLeft() == 0) {
+                                continue;
+                            }
+                            // decrement the ammo
+                            bayWAmmo.setShotsLeft(Math.max(0,
+                                bayWAmmo.getBaseShotsLeft() - 1));
+                        }
+                        
+                        // get the attack value
+                        amsAV += bayWType.getShortAV();                                      
+                    }
+                    
+                    // set the ams as having fired, if it did
+                    if (amsAV > 0) {
+                        amsBayEngaged = true;
+                    }
+                                        
+                } else if (isPDBay) {
+                    pdAV = 0;
+                    // Point defenses can't fire if they're not ready for any reason
+                    if (!(counter.getType() instanceof WeaponType)
+                             || !counter.isReady() || counter.isMissing()
+                                // shutdown means no Point defenses
+                                || pdEnt.isShutDown()
+                                // Point defenses only fire vs attacks in arc covered by ams
+                                || !isInArc
+                                // Point defense bays only fire once per round
+                                || counter.isUsedThisRound() == true) {
+                            continue;
+                    }
+                    // Now for heat, damage and ammo we need the individual weapons in the bay
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = pdEnt.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                        
+                        // build up some heat
+                        //First Check to see if we have enough heat capacity to fire
+                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            continue;
+                        }
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                            pdEnt.heatBuildup += Compute.d6(bayW
+                                    .getCurrentHeat());                     
+                        } else {
+                            pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        }
+                        
+                        //Bays use lots of ammo. Check to make sure we haven't run out
+                        if (bayWAmmo != null) {
+                            if (bayWAmmo.getBaseShotsLeft() == 0) {
+                                continue;
+                            }
+                            // decrement the ammo
+                            bayWAmmo.setShotsLeft(Math.max(0,
+                                bayWAmmo.getBaseShotsLeft() - 1));
+                        }
+                        
+                        // get the attack value
+                        pdAV += bayWType.getShortAV();                    
+                    }
+                    
+                    // set the pdbay as having fired, if it was able to
+                    if (pdAV > 0 ) {
+                        counter.setUsedThisRound(true); 
+                        pdBayEngaged = true;
+                    }
+                                 
+                } //end PDBay fire 
+                
+                // non-AMS only add half their damage, rounded up
+                counterAV += (int) Math.ceil(pdAV / 2.0); 
+                // AMS add their full damage
+                counterAV += amsAV;
+            } //end "for Mounted counter"
+        } // end check for counterfire
+        CounterAV = (int) counterAV;
+        return counterAV;
+    } // end getAMSAV
+    
+    @Override
+    protected int getCounterAV() {
+        return CounterAV;
     }
 }

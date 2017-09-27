@@ -18,6 +18,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -278,6 +279,11 @@ public class VTOL extends Tank implements IBomber {
         }
     }
     
+    @Override
+    public void clearBombChoices() {
+        Arrays.fill(bombChoices, 0);
+    }
+
     @Override
     public Targetable getVTOLBombTarget() {
         return bombTarget;

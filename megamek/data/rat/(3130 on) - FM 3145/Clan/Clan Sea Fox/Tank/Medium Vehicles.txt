@@ -8,5 +8,5 @@ Joust Medium Tank BE700, 6
 Hachiman Fire Support Tank (Standard), 5
 Tyr Infantry Support Tank (Standard), 4
 Cardinal Transport (Standard), 3
-Cizin (Standard), 2
+Cizin Hover Tank (Standard), 2
 Garuda Heavy VTOL (Standard), 1

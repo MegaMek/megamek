@@ -31,7 +31,7 @@ public class ISAAAMissileWeapon extends CapitalMissileWeapon {
         super();
 
         this.name = "AAA Missile";
-        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_AAA));
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_AAA));
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;

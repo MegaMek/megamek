@@ -233,9 +233,34 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
-            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV 
-                    || ((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
-                gg
+            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV) {
+                server.assignAMS();
+                getAMSHitsMod(vPhaseReport);
+                calcCounterAV();
+                if (amsEngaged) {
+                    r = new Report(3235);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    r = new Report(3230);
+                    r.indent(1);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    int destroyRoll = Compute.d6();
+                    if (destroyRoll <= 3) {
+                        r = new Report(3240);
+                        r.subject = subjectId;
+                        r.add("missile");
+                        r.add(destroyRoll);
+                        vPhaseReport.add(r);
+                        hits = 0;
+                    }
+                    r = new Report(3241);
+                    r.add("missile");
+                    r.add(destroyRoll);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                }
+                hits = 1;
             }
         }
         // The building shields all units from a certain amount of damage.
@@ -340,7 +365,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      * target as decided by player. TAGs fired by the enemy aren't eligible, nor
      * are TAGs fired at a target on a different map sheet.
      */
-    protected void convertHomingShotToEntityTarget() {
+    public void convertHomingShotToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
@@ -470,7 +495,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
         if (null != lCounters) {
             // resolve AMS counter-fire
-            // for (int x = 0; x < lCounters.size(); x++) {
             for (Mounted counter : lCounters) {
                 boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
                 if (isAMS && counter.isAPDS() && !apdsEngaged) {

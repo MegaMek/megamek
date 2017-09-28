@@ -6257,12 +6257,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ams.isAPDS()) {
                 continue;
             }
-            /*
-            //ignore AMS bays. They get assigned in Mounted 
-             * TODO: Fleet defense project
-            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
-            	continue;
-            } */
             
             // make a new vector of only incoming attacks in arc
             Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(

@@ -48,6 +48,8 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
         this.criticals = 100;
         this.bv = 1530;
         this.cost = 1250000;
+        this.flags = flags.or(F_MISSILE);
+        this.missileArmor = 90;
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setTechRating(RATING_E)

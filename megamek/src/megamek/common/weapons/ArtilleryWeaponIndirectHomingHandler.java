@@ -233,9 +233,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
-            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV) 
-                    && (AmmoType) ammo.getMunitionType() == AmmoType.M_HOMING)) {
-                
+            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV 
+                    || ((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
+                gg
             }
         }
         // The building shields all units from a certain amount of damage.

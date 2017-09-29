@@ -3076,8 +3076,12 @@ public class Compute {
                         }
                     fDamage = (float) (av * threat);
                 	
-                } else {
-                fDamage = wt.getDamage(rangeToTarget);
+                } else if ((wt.getAmmoType() == AmmoType.T_ARROW_IV)
+                        || wt.getAmmoType() == BombType.B_HOMING) {
+                    //This is for arrow IV AMS threat processing
+                    fDamage = (float) wt.getRackSize();                    
+                } else {                
+                    fDamage = wt.getDamage(rangeToTarget);
             	}
             } 
 

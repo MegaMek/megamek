@@ -229,15 +229,21 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         int hits = 1;
         int nCluster = 1;
+        boolean missileDestroyed = false;
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
-            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV) {
+            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
+                    || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
+
+                //this has to be called here or it fires before the TAG shot and we have no target
                 server.assignAMS();
                 getAMSHitsMod(vPhaseReport);
-                calcCounterAV();
-                if (amsEngaged) {
+                calcCounterAV();                
+                //They all do the same thing in this case...             
+                if (amsEngaged || apdsEngaged || amsBayEngaged || pdBayEngaged) {
+                    bSalvo = true;
                     r = new Report(3235);
                     r.subject = subjectId;
                     vPhaseReport.add(r);
@@ -253,14 +259,15 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                         r.add(destroyRoll);
                         vPhaseReport.add(r);
                         hits = 0;
+                        missileDestroyed = true;                        
+                    } else {
+                        r = new Report(3241);
+                        r.add("missile");
+                        r.add(destroyRoll);
+                        r.subject = subjectId;
+                        vPhaseReport.add(r);
                     }
-                    r = new Report(3241);
-                    r.add("missile");
-                    r.add(destroyRoll);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
                 }
-                hits = 1;
             }
         }
         // The building shields all units from a certain amount of damage.
@@ -314,6 +321,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
+        if (missileDestroyed) {
+            ratedDamage = 0;
+        }
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
@@ -561,11 +571,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     // set the ams as having fired
                     counter.setUsedThisRound(true);
                     apdsEngaged = true;
-                    Report r = new Report(3351);
-                    r.subject = entityTarget.getId();
-                    r.add(apdsMod);
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
+
                 } else if (isAMS && !amsEngaged) {
                     Mounted mAmmo = counter.getLinked();
                     if (!(counter.getType() instanceof WeaponType)
@@ -599,10 +605,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     // set the ams as having fired
                     counter.setUsedThisRound(true);
                     amsEngaged = true;
-                    Report r = new Report(3350);
-                    r.subject = entityTarget.getId();
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
                     amsMod = -4;
                 }
             }

@@ -24,6 +24,16 @@ import megamek.common.util.StringUtil;
  */
 public class TestSmallCraft extends TestAero {
     
+    // Indices used to specify firing arcs with aliases for aerodyne and spheroid
+    public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
+    public static final int ARC_LWING = SmallCraft.LOC_LWING;
+    public static final int ARC_RWING = SmallCraft.LOC_RWING;
+    public static final int ARC_AFT = SmallCraft.LOC_AFT;
+    public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
+    public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
+    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 3;
+    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + 3;
+    
     private final SmallCraft smallCraft;
 
     public static enum AerospaceArmor{
@@ -154,7 +164,7 @@ public class TestSmallCraft extends TestAero {
         double weaponTonnage[] = new double[arcs];
 
         for (Mounted m : sc.getEquipment()) {
-            if (m.getType().getCriticals(sc) > 0) {
+            if (usesWeaponSlot(m.getType())) {
                 int arc = m.getLocation();
                 if (arc < 0) {
                     continue;

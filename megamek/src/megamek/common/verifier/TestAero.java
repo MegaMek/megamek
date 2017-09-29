@@ -38,6 +38,7 @@ import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
@@ -224,6 +225,29 @@ public class TestAero extends TestEntity {
             }
         }
         return availSpace;
+    }
+    
+    public static boolean usesWeaponSlot(EquipmentType eq) {
+        if (eq instanceof WeaponType) {
+            return !(eq instanceof BayWeapon);
+        }
+        if (eq instanceof MiscType) {
+            return eq.hasFlag(MiscType.F_BAP)
+                    || eq.hasFlag(MiscType.F_WATCHDOG)
+                    || eq.hasFlag(MiscType.F_ECM)
+                    || eq.hasFlag(MiscType.F_ANGEL_ECM)
+                    || eq.hasFlag(MiscType.F_NAVAL_C3)
+                    || eq.hasFlag(MiscType.F_EW_EQUIPMENT)
+                    || eq.hasFlag(MiscType.F_CHAFF_POD)
+                    || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
+                    || eq.hasFlag(MiscType.F_SENSOR_DISPENSER)
+                    || eq.hasFlag(MiscType.F_RECON_CAMERA)
+                    || eq.hasFlag(MiscType.F_HIRES_IMAGER)
+                    || eq.hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
+                    || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
+                    || eq.hasFlag(MiscType.F_LOOKDOWN_RADAR);
+        }
+        return false;
     }
     
     /**

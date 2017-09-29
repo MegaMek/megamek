@@ -2124,8 +2124,10 @@ public class Protomech extends Entity {
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
-            if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD))
+                    && (!hex.containsTerrain(Terrains.BUILDING)
+                            && !hex.containsTerrain(Terrains.RUBBLE))){
                 return true;
             }
             // Can't deploy on a bridge

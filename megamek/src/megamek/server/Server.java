@@ -13877,10 +13877,21 @@ public class Server implements Runnable {
             if (waa instanceof ArtilleryAttackAction) {
                 Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                         .getTarget(game) : null;
+                if (target == null) {
+                    //this will pick our TAG target back up and assign it to the waa
+                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
+                    hh.convertHomingShotToEntityTarget();
+                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                            .getTarget(game) : null;
+                    if (target == null) {
+                        //in case our target really is null. 
+                        continue;
+                    }
+                }
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {
                     v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
+                    htAttacks.put(target, v);                    
                 }
                 v.addElement(wh);
                 // Keep track of what weapon attacks could be affected by APDS
@@ -13897,6 +13908,7 @@ public class Server implements Runnable {
                         }
                         handlerList.add(wh);
                     }
+                
                 }
             } else {
                 Entity target = game.getEntity(waa.getTargetId());

@@ -2864,6 +2864,15 @@ public class Server implements Runnable {
     public void checkEntityExchange() {
         for (Iterator<Entity> entities = game.getEntities(); entities.hasNext();) {
             Entity entity = entities.next();
+            // apply bombs and santa annas
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)
+                    && ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
+                entity.applySantaAnna();
+            }
+            if (entity.isBomber()) {
+                ((IBomber)entity).applyBombs();
+            }
+
             if (entity.isAero()) {
                 IAero a = (IAero) entity;
                 if (game.getBoard().inSpace()) {
@@ -2883,17 +2892,6 @@ public class Server implements Runnable {
                 }
             }
             
-            if (entity instanceof IBomber) {
-                // apply bombs and santa annas
-                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)
-                    && ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
-                    entity.applySantaAnna();
-                }
-                if (!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
-                    ((IBomber)entity).applyBombs();
-                }
-            }
-
             // if units were loaded in the chat lounge, I need to keep track of
             // it here because they can get dumped in the deployment phase
             if (entity.getLoadedUnits().size() > 0) {

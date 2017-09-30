@@ -52,15 +52,6 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_SCREEN;
         this.capital = false;
         rulesRefs = "237,TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-            .setIntroLevel(false)
-            .setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3053, 3055, 3057, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_DC)
-            .setProductionFactions(F_DC);
     }
 
     /*

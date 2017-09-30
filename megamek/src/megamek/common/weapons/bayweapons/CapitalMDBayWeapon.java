@@ -16,8 +16,6 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Jay Lawson
  */
@@ -46,10 +44,6 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_MD;
         this.capital = true;
         this.flags = F_MASS_DRIVER;    
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2715, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
     }
     
     @Override

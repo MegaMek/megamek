@@ -1165,7 +1165,8 @@ public class Princess extends BotClient {
                         // inside them, since there's no other way to attack
                         // them.
                         if (isEnemyInfantry(entity, coords)
-                                && Compute.isInBuilding(game, entity)) {
+                                && Compute.isInBuilding(game, entity)
+                                && !entity.isHidden()) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex "
                                     + coords.toFriendlyString()

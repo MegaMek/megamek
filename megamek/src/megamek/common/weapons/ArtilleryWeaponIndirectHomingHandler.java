@@ -60,6 +60,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     public ArtilleryWeaponIndirectHomingHandler(ToHitData t,
             WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
+        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
 
     /*
@@ -615,9 +617,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     //If you're firing missiles at a capital ship...
     @Override
     protected int calcCounterAV () {
-        if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)
-                || !advancedPD) {
+        if ((target == null) || !advancedPD) {
             return 0;
         }
         int counterAV = 0;

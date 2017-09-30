@@ -15,8 +15,8 @@ package megamek.server.victory;
 
 import java.io.Serializable;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -41,7 +41,7 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         killCondition = kc;
     }
 
-    public VictoryResult victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // Stores the number of kills for each team

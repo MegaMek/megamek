@@ -14,8 +14,8 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -33,9 +33,10 @@ public class ForceVictory implements IVictoryConditions, Serializable {
     public ForceVictory() {
     }
 
-    public VictoryResult victory(IGame game, HashMap<String, Object> ctx) {
-        if (!game.isForceVictory())
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
+        if (!game.isForceVictory()) {
             return VictoryResult.noResult();
+        }
         int victoryPlayerId = game.getVictoryPlayerId();
         int victoryTeam = game.getVictoryTeam();
         List<IPlayer> players = game.getPlayersVector();

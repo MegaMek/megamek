@@ -41,10 +41,12 @@ public class VictoryResult implements IResult {
     protected VictoryResult(boolean win, int player, int team) {
     	this.victory = win;
     	tr = new Throwable();
-        if (player != IPlayer.PLAYER_NONE)
+        if (player != IPlayer.PLAYER_NONE) {
             addPlayerScore(player, 1.0);
-        if (team != IPlayer.TEAM_NONE)
+        }
+        if (team != IPlayer.TEAM_NONE) {
             addTeamScore(team, 1.0);
+        }
     }
     
     protected static VictoryResult noResult() {

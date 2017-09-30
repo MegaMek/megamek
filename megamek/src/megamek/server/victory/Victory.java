@@ -14,7 +14,8 @@
 package megamek.server.victory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.Report;
@@ -40,7 +41,7 @@ public class Victory {
 	
 	private IVictoryConditions[] buildVClist(GameOptions options) {
 	    neededVictoryConditions = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
-        ArrayList<IVictoryConditions> victories = new ArrayList<IVictoryConditions>();
+        List<IVictoryConditions> victories = new ArrayList<IVictoryConditions>();
         // BV related victory conditions
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
             victories.add(new BVDestroyedVictory(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));
@@ -61,7 +62,7 @@ public class Victory {
         return victories.toArray(new IVictoryConditions[0]);
 	}
 	
-    public VictoryResult checkForVictory(IGame game, HashMap<String, Object> context) {
+    public VictoryResult checkForVictory(IGame game, Map<String, Object> context) {
         VictoryResult reVal;
         
     	//Check for ForceVictory
@@ -90,7 +91,7 @@ public class Victory {
     	return reVal;
     }
     
-    private VictoryResult checkOptionalVictory(IGame game, HashMap<String, Object> context) {
+    private VictoryResult checkOptionalVictory(IGame game, Map<String, Object> context) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
 
@@ -100,8 +101,9 @@ public class Victory {
             for (Report r : res.getReports()) {
                 vr.addReport(r);
             }
-            if (res.victory())
+            if (res.victory()) {
                 victory = true;
+            }
             for (int pl : res.getPlayers()) {
                 vr.addPlayerScore(pl, vr.getPlayerScore(pl)
                         + res.getPlayerScore(pl));
@@ -116,18 +118,20 @@ public class Victory {
         for (int pl : vr.getPlayers()) {
             double sc = vr.getPlayerScore(pl);
             vr.addPlayerScore(pl, sc / VCs.length);
-            if (sc > highScore)
+            if (sc > highScore) {
                 highScore = sc;
+            }
         }
         for (int pl : vr.getTeams()) {
             double sc = vr.getTeamScore(pl);
             vr.addTeamScore(pl, sc / VCs.length);
-            if (sc > highScore)
+            if (sc > highScore) {
                 highScore = sc;
+            }
         }
-        if (highScore < neededVictoryConditions)
+        if (highScore < neededVictoryConditions) {
             victory = false;
-
+        }
         vr.setVictory(victory);
 
         if (vr.victory()) {

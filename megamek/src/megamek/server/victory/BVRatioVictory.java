@@ -13,8 +13,8 @@
  */
 package megamek.server.victory;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -39,7 +39,7 @@ public class BVRatioVictory extends AbstractBVVictory {
         this.ratio = ratio;
     }
 
-    public VictoryResult victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...

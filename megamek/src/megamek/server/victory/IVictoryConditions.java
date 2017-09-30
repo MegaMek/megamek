@@ -13,7 +13,7 @@
  */
 package megamek.server.victory;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import megamek.common.IGame;
 
@@ -49,5 +49,5 @@ public interface IVictoryConditions {
      * @return a result with true if victory occured, false if not must not
      *         return null MUST NOT modify game state!
      */
-    public VictoryResult victory(IGame game, HashMap<String, Object> context);
+    VictoryResult victory(IGame game, Map<String, Object> context);
 }

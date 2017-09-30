@@ -22,8 +22,7 @@ public interface IResult {
     int[] getPlayers();
 
     /**
-     * list team scores all teams which are not listed, can be assumed to be
-     * at 0.0
+     * return team score
      */
     double getTeamScore(int id);
 

@@ -255,4 +255,15 @@ public final class SmallCraftBay extends Bay {
         return "smallcraftbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return SmallCraftBay.techAdvancement();
+    }
+
 } // End package class TroopSpace implements Transporter

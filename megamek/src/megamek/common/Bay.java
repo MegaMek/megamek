@@ -23,7 +23,7 @@ import java.util.Vector;
  * aboard large spacecraft and mobile structures
  */
 
-public class Bay implements Transporter {
+public class Bay implements Transporter, ITechnology {
 
     // Private attributes and helper functions.
 
@@ -435,6 +435,103 @@ public class Bay implements Transporter {
     @Override
     public void setGame(IGame game) {
         this.game = game;
+    }
+    
+    // Use cargo/infantry for default tech advancement
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return Bay.techAdvancement();
+    }
+
+    @Override
+    public boolean isClan() {
+        return getTechAdvancement().isClan();
+    }
+
+    @Override
+    public boolean isMixedTech() {
+        return getTechAdvancement().isMixedTech();
+    }
+
+    @Override
+    public int getTechBase() {
+        return getTechAdvancement().getTechBase();
+    }
+
+    @Override
+    public int getIntroductionDate() {
+        return getTechAdvancement().getIntroductionDate();
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return getTechAdvancement().getPrototypeDate();
+    }
+
+    @Override
+    public int getProductionDate() {
+        return getTechAdvancement().getProductionDate();
+    }
+
+    @Override
+    public int getCommonDate() {
+        return getTechAdvancement().getCommonDate();
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        return getTechAdvancement().getExtinctionDate();
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return getTechAdvancement().getReintroductionDate();
+    }
+
+    @Override
+    public int getTechRating() {
+        return getTechAdvancement().getTechRating();
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        return getTechAdvancement().getBaseAvailability(era);
+    }
+
+    @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getIntroductionDate(clan, faction);
+    }
+
+    @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return getTechAdvancement().getPrototypeDate(clan, faction);
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getProductionDate(clan, faction);
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return getTechAdvancement().getExtinctionDate(clan, faction);
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getReintroductionDate(clan, faction);
+    }
+
+    @Override
+    public SimpleTechLevel getStaticTechLevel() {
+        return getTechAdvancement().getStaticTechLevel();
     }
 
 } // End package class TroopSpace implements Transporter

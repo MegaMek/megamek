@@ -115,5 +115,17 @@ public final class MechBay extends Bay {
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
     }
+    
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2445, 2470, 2500)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return MechBay.techAdvancement();
+    }
 
 } // End package class TroopSpace implements Transporter

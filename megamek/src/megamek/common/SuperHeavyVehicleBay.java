@@ -116,4 +116,16 @@ public final class SuperHeavyVehicleBay extends Bay {
         return "superheavyvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return SuperHeavyVehicleBay.techAdvancement();
+    }
+
 } // End package class TroopSpace implements Transporter

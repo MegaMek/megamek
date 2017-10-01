@@ -254,4 +254,16 @@ public final class ASFBay extends Bay {
     public String toString() {
         return "asfbay:" + totalSpace + ":" + doors + ":" + bayNumber;
     }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return ASFBay.techAdvancement();
+    }
+
 }

@@ -123,4 +123,23 @@ public final class BattleArmorBay extends Bay {
         return "battlearmorbay:" + totalSpace + ":" + doors + ":"+bayNumber+(isComStar?":C*":"");
     }
 
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setClanAdvancement(2867, 2868, 2870)
+                .setClanApproximate(true, false, false)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3050)
+                .setPrototypeFactions(F_CWF).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return BattleArmorBay.techAdvancement();
+    }
+    
+    @Override
+    public boolean isClan() {
+        return isClan;
+    }
+
 }

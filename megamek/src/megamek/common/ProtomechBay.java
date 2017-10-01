@@ -114,5 +114,17 @@ public final class ProtomechBay extends Bay {
     public String toString() {
         return "protomechbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
+    
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_CLAN).setAdvancement(3060, 3066, 3070)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return ProtomechBay.techAdvancement();
+    }
 
 } // End package class TroopSpace implements Transporter

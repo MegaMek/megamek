@@ -115,4 +115,17 @@ public final class LightVehicleBay extends Bay {
     public String toString() {
         return "lightvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return LightVehicleBay.techAdvancement();
+    }
+
 } // End package class TroopSpace implements Transporter

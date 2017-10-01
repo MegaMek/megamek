@@ -366,7 +366,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks
                             .hasMoreElements();) {
                         IOption quirk = quirks.nextElement();
-                        if (null != quirk && quirk.booleanValue()) {
+                        if (quirk.booleanValue()) {
                             quirksR[i++].setString("  "
                                     + quirk.getDisplayableNameWithValue());
                         }

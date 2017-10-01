@@ -2939,8 +2939,10 @@ public abstract class Mech extends Entity {
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted,
             int critSlot)
             throws LocationFullException {
-        // if there's no actual location or this is a LAM capital fighter weapons group, then don't add criticals
-        if (loc == LOC_NONE || mounted.isWeaponGroup()) {
+        // if there's no actual location or this is a LAM capital fighter weapons group,
+        // or ammo for a LAM bomb weapon then don't add criticals
+        if ((loc == LOC_NONE) || mounted.isWeaponGroup()
+                || (mounted.getType() instanceof BombType)) {
             super.addEquipment(mounted, loc, rearMounted);
             return;
         }
@@ -6378,8 +6380,10 @@ public abstract class Mech extends Entity {
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
-            if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD))
+                    && (!hex.containsTerrain(Terrains.BUILDING)
+                            && !hex.containsTerrain(Terrains.RUBBLE))){
                 return true;
             }
             // Can't deploy on a bridge

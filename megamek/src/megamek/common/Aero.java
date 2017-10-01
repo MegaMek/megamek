@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -451,6 +452,11 @@ public class Aero extends Entity implements IAero, IBomber {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
         }
+    }
+    
+    @Override
+    public void clearBombChoices() {
+        Arrays.fill(bombChoices, 0);
     }
 
     public void setWhoFirst() {

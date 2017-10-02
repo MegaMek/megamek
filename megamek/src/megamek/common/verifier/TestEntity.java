@@ -365,22 +365,20 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public double getWeightAllocatedArmor() {
-        double armorWeight = 0;
         if (!getEntity().hasPatchworkArmor()) {
-            armorWeight += armor[0].getWeightArmor(getTotalOArmor(),
-                    getWeightCeilingArmor());
+            return (armor[0].getWeightArmor(getTotalOArmor(), getWeightCeilingArmor()));
         } else {
+            double armorWeight = 0;
             for (int i = 0; i < armor.length; i++) {
                 int points = getEntity().getOArmor(i);
                 if (getEntity().hasRearArmor(i) &&
                         (getEntity().getOArmor(i, true) > 0)) {
                     points += getEntity().getOArmor(i, true);
                 }
-                armorWeight += armor[i].getWeightArmor(points,
-                        getWeightCeilingArmor());
+                armorWeight += armor[i].getRawWeightArmor(points);
             }
+            return TestEntity.ceilMaxHalf(armorWeight, getWeightCeilingArmor());
         }
-        return armorWeight;
     }
 
     public double getWeightMiscEquip() {
@@ -1108,14 +1106,18 @@ class Armor {
         this.armorType = armorType;
         this.armorFlags = armorFlags;
     }
-
+    
     public double getWeightArmor(int totalOArmor, TestEntity.Ceil roundWeight) {
         return Armor.getWeightArmor(armorType, armorFlags, totalOArmor,
                 roundWeight);
     }
-
-    public static double getWeightArmor(int armorType, int armorFlags,
-            int totalOArmor, TestEntity.Ceil roundWeight) {
+    
+    public double getRawWeightArmor(int totalOArmor) {
+        return Armor.getRawWeightArmor(armorType, armorFlags, totalOArmor);
+    }
+    
+    public static double getRawWeightArmor(int armorType, int armorFlags,
+            int totalOArmor) {
         double points = totalOArmor;
         int techLevel;
         if ((armorFlags & CLAN_ARMOR) != 0) {
@@ -1127,8 +1129,12 @@ class Armor {
                 techLevel);
         points /= multiplier;
         double pointsPerTon = 16.0f;
-        double armorWeight = points / pointsPerTon;
-        return TestEntity.ceilMaxHalf(armorWeight, roundWeight);
+        return points / pointsPerTon;
+    }
+
+    public static double getWeightArmor(int armorType, int armorFlags,
+            int totalOArmor, TestEntity.Ceil roundWeight) {
+        return TestEntity.ceilMaxHalf(getRawWeightArmor(armorType, armorFlags, totalOArmor), roundWeight);
     }
 
     public String getShortName() {

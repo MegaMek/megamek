@@ -1074,6 +1074,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getIntroductionDate(boolean clan, int faction) {
         return year;
     }
+    
+    /**
+     * @return The earliest date this unit could be built, based on the latest intro date
+     *         of the components.
+     */
+    public int getEarliestTechDate() {
+        return compositeTechLevel.getEarliestTechDate();
+    }
 
     @Override
     public int getPrototypeDate() {

@@ -51,9 +51,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
-import megamek.server.victory.SpaghettiVictoryFactory;
 import megamek.server.victory.Victory;
-import megamek.server.victory.VictoryFactory;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -165,7 +163,6 @@ public class Game implements Serializable, IGame {
 
     // victory condition related stuff
     private Victory victory = null;
-    private VictoryFactory vf = new SpaghettiVictoryFactory();
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
@@ -3350,15 +3347,8 @@ public class Game implements Serializable, IGame {
                 .intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT)));
     }
 
-    /**
-     * use victoryfactory to generate a new victorycondition checker provided
-     * that the victorycontext is saved properly, calling this method at any
-     * time is ok and should not affect anything unless the
-     * victorycondition-configoptions have changed.
-     */
     public void createVictoryConditions() {
-        victory = vf
-                .createVictory("this string should be taken from game options");
+        victory = new Victory(getOptions());
     }
 
     public Victory getVictory() {

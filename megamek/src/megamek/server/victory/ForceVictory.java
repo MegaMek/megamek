@@ -14,8 +14,8 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -23,7 +23,7 @@ import megamek.common.IPlayer;
 /**
  * implementation of player-agreed victory
  */
-public class ForceVictory implements Victory, Serializable {
+public class ForceVictory implements IVictoryConditions, Serializable {
 
     /**
      * 
@@ -33,9 +33,10 @@ public class ForceVictory implements Victory, Serializable {
     public ForceVictory() {
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
-        if (!game.isForceVictory())
-            return new SimpleNoResult();
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
+        if (!game.isForceVictory()) {
+            return VictoryResult.noResult();
+        }
         int victoryPlayerId = game.getVictoryPlayerId();
         int victoryTeam = game.getVictoryTeam();
         List<IPlayer> players = game.getPlayersVector();
@@ -69,14 +70,9 @@ public class ForceVictory implements Victory, Serializable {
         }
 
         if (forceVictory) {
-            return new SimpleResult(true, victoryPlayerId, victoryTeam);
+            return new VictoryResult(true, victoryPlayerId, victoryTeam);
         }
-        /*
-         * modifying state is naaastyy for (int i = 0; i < players.size(); i++) {
-         * Player player = players.elementAt(i); player.setAdmitsDefeat(false); }
-         */
 
-        // cancelVictory(); //modifying state is nasty
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

@@ -278,7 +278,7 @@ import megamek.server.commands.TeamCommand;
 import megamek.server.commands.TraitorCommand;
 import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
-import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * @author Ben Mazur
@@ -3503,8 +3503,7 @@ public class Server implements Runnable {
      * add some reports to reporting
      */
     public boolean victory() {
-        Victory.Result vr = game.getVictory().victory(game,
-                                                      game.getVictoryContext());
+        VictoryResult vr = game.getVictory().checkForVictory(game, game.getVictoryContext());
         for (Report r : vr.getReports()) {
             addReport(r);
         }

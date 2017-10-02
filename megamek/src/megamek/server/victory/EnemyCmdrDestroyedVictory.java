@@ -14,8 +14,8 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -24,7 +24,7 @@ import megamek.common.Report;
 /**
  * implements "enemy commander destroyed"
  */
-public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
+public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializable {
 
     /**
      * 
@@ -34,7 +34,7 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
     public EnemyCmdrDestroyedVictory() {
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
         VictoryResult vr = new VictoryResult(true);
         // check all players/teams for killing enemy commanders
         // score is 1.0 when enemy commanders are dead
@@ -76,6 +76,6 @@ public class EnemyCmdrDestroyedVictory implements Victory, Serializable {
         if (victory) {
             return vr;
         }
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

@@ -845,7 +845,7 @@ public class Engine implements Serializable, ITechnology {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     
     private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2995, 2470, 3078).setApproximate(true).setTechRating(RATING_D)
+            .setAdvancement(2300, 2470, 3078).setApproximate(true).setTechRating(RATING_D)
             .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
             .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);    

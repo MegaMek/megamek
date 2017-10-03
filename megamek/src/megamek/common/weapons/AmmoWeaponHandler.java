@@ -97,11 +97,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
                         / (double) weapon.getCurrentShots()));
     }
     
-    //Check for Thunderbolt. We'll use this later for single AMS resolution
+    //Check for Thunderbolt. We'll use this for single AMS resolution
     protected boolean isTbolt() {
-        if (wtype.hasFlag(WeaponType.F_LARGEMISSILE)) {
-            return true;
-        }
         return false;
     }
     

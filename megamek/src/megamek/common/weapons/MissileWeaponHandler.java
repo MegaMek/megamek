@@ -1150,4 +1150,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected boolean isAdvancedAMS() {
         return advancedAMS && (amsEngaged || apdsEngaged);
     }
+    
+    //Check for Thunderbolt. We'll use this for single AMS resolution
+    @Override
+    protected boolean isTbolt() {
+        if (wtype.hasFlag(WeaponType.F_LARGEMISSILE)) {
+            return true;
+        }
+        return false;
+    }
 }

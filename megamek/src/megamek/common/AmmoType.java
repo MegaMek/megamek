@@ -3200,7 +3200,7 @@ public class AmmoType extends EquipmentType {
 		ammo.rulesRefs = "284,TO";
 		ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_B)
 		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-		        .setISAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
+		        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 		        .setProductionFactions(F_TH);
 		return ammo;
@@ -3225,7 +3225,7 @@ public class AmmoType extends EquipmentType {
 		ammo.rulesRefs = "284,TO";
 		ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
 		        .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-		        .setClanAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
+		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 		        .setProductionFactions(F_TH);
 		return ammo;
@@ -3250,7 +3250,7 @@ public class AmmoType extends EquipmentType {
 		ammo.rulesRefs = "284,TO";
 		ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_B)
 		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-		        .setISAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
+		        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 		        .setProductionFactions(F_TH);
 		return ammo;
@@ -3275,7 +3275,7 @@ public class AmmoType extends EquipmentType {
 		ammo.rulesRefs = "284,TO";
 		ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
 		        .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-		        .setClanAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
+		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
 		        .setProductionFactions(F_TH);
 		return ammo;

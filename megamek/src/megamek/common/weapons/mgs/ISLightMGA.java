@@ -67,7 +67,7 @@ public class ISLightMGA extends AmmoWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
             .setISAdvancement(3066, 3068, 3070, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, true, false,false, false)
+            .setISApproximate(true, false, false, false, false)
             .setPrototypeFactions(F_FS)
             .setProductionFactions(F_TC);
     }

@@ -6158,7 +6158,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public List<Mounted> getActiveAMS() {
         ArrayList<Mounted> ams = new ArrayList<>();
-        //All other units use this block
         for (Mounted weapon : getWeaponList()) {
             // Skip anything that's not AMS
             if (!weapon.getType().hasFlag(WeaponType.F_AMS)) {

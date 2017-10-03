@@ -226,47 +226,16 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             }
         }
         int hits = 1;
-        int nCluster = 1;
-        boolean missileDestroyed = false;
+        int nCluster = 1;        
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
-            if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
-                    || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
 
-                //this has to be called here or it fires before the TAG shot and we have no target
-                server.assignAMS();
-                calcCounterAV();                
-                //They all do the same thing in this case...             
-                if (amsBayEngaged || pdBayEngaged) {
-                    bSalvo = true;
-                    r = new Report(3235);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    r = new Report(3230);
-                    r.indent(1);
-                    r.subject = subjectId;
-                    vPhaseReport.add(r);
-                    int destroyRoll = Compute.d6();
-                    if (destroyRoll <= 3) {
-                        r = new Report(3240);
-                        r.subject = subjectId;
-                        r.add("missile");
-                        r.add(destroyRoll);
-                        vPhaseReport.add(r);
-                        hits = 0;
-                        missileDestroyed = true;                        
-                    } else {
-                        r = new Report(3241);
-                        r.add("missile");
-                        r.add(destroyRoll);
-                        r.subject = subjectId;
-                        vPhaseReport.add(r);
-                    }
-                }
-            }
         }
+        
+        //Any AMS/Point Defense fire against homing rounds?
+        hits = handleAMS(vPhaseReport);
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -319,9 +288,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
-        if (missileDestroyed) {
+        
+        //If AMS shoots down a missile, it shouldn't deal any splash damage
+        if (hits == 0) {
             ratedDamage = 0;
         }
+        
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
@@ -633,5 +605,45 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
     @Override
     protected int getCounterAV() {
         return CounterAV;
+    }
+    
+    protected int handleAMS(Vector<Report> vPhaseReport) {
+        
+        int hits = 1;
+        if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
+                || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
+
+            //this has to be called here or it fires before the TAG shot and we have no target
+            server.assignAMS();
+            calcCounterAV();                
+            //They all do the same thing in this case...             
+            if (amsBayEngaged || pdBayEngaged) {
+                bSalvo = true;
+                Report r = new Report(3235);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                r = new Report(3230);
+                r.indent(1);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                int destroyRoll = Compute.d6();
+                if (destroyRoll <= 3) {
+                    r = new Report(3240);
+                    r.subject = subjectId;
+                    r.add("missile");
+                    r.add(destroyRoll);
+                    vPhaseReport.add(r);
+                    hits = 0;
+                                           
+                } else {
+                    r = new Report(3241);
+                    r.add("missile");
+                    r.add(destroyRoll);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                }
+            }
+        }
+        return hits;
     }
 }

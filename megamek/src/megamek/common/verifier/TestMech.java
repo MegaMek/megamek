@@ -142,7 +142,8 @@ public class TestMech extends TestEntity {
             return null;
         } else if (!mech.hasEngine() || (!mech.getEngine().isFusion() && (mech.getEngine().getEngineType() != Engine.FISSION))) {
             return 0;
-        } else if (mech.getJumpType() == Mech.JUMP_IMPROVED) {
+        } else if ((mech.getJumpType() == Mech.JUMP_IMPROVED)
+                || (mech.getJumpType() == Mech.JUMP_PROTOTYPE_IMPROVED)) {
             return (int)Math.ceil(mech.getOriginalWalkMP() * 1.5);
         } else {
             return mech.getOriginalWalkMP();

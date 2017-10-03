@@ -6158,51 +6158,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public List<Mounted> getActiveAMS() {
         ArrayList<Mounted> ams = new ArrayList<>();
-        // Large Spacecraft use this block
-        if (usesWeaponBays()) {
-            for (Mounted weapon : getWeaponBayList()) {
-                // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
-                if (!weapon.getType().hasFlag(WeaponType.F_AMS)
-                        && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
-                        && !weapon.getType().hasFlag(WeaponType.F_PDBAY))  {
-                    continue;
-                }
-
-                // Make sure the AMS is good to go
-                if (!weapon.isReady() || weapon.isMissing()
-                    || weapon.curMode().equals("Off")
-                    || weapon.curMode().equals("Normal")) {
-                    continue;
-                }
-
-                // AMS blocked by transported units can not fire
-                if (isWeaponBlockedAt(weapon.getLocation(),
-                                      weapon.isRearMounted())) {
-                    continue;
-                }
-
-                // Make sure ammo is loaded
-                for (int wId : weapon.getBayWeapons()) {
-                    Mounted bayW = getEquipment(wId);
-                    Mounted bayWAmmo = bayW.getLinked();
-                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) 
-                            && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
-                                    || bayWAmmo.isDumping())) {
-                        loadWeapon(weapon);
-                        bayWAmmo = weapon.getLinked();
-                    }
-                
-                    // try again
-                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) 
-                        && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
-                                || bayWAmmo.isDumping())) {
-                        // No ammo for this AMS.
-                        continue;
-                    }
-                }
-                ams.add(weapon);
-            }  
-        } else
         //All other units use this block
         for (Mounted weapon : getWeaponList()) {
             // Skip anything that's not AMS

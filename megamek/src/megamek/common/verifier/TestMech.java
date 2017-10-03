@@ -142,7 +142,8 @@ public class TestMech extends TestEntity {
             return null;
         } else if (!mech.hasEngine() || (!mech.getEngine().isFusion() && (mech.getEngine().getEngineType() != Engine.FISSION))) {
             return 0;
-        } else if (mech.getJumpType() == Mech.JUMP_IMPROVED) {
+        } else if ((mech.getJumpType() == Mech.JUMP_IMPROVED)
+                || (mech.getJumpType() == Mech.JUMP_PROTOTYPE_IMPROVED)) {
             return (int)Math.ceil(mech.getOriginalWalkMP() * 1.5);
         } else {
             return mech.getOriginalWalkMP();
@@ -740,6 +741,9 @@ public class TestMech extends TestEntity {
         if (hasIllegalTechLevels(buff, ammoTechLvl)) {
             correct = false;
         }
+        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+            correct = false;
+        }
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
         }
@@ -756,6 +760,7 @@ public class TestMech extends TestEntity {
         buff.append("Mech: ").append(mech.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
+        buff.append("Intro year: ").append(mech.getYear());
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

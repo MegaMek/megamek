@@ -14,8 +14,7 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -23,25 +22,21 @@ import megamek.common.IPlayer;
 /**
  * implementation of "last player/team standing"
  */
-public class LastManStandingVictory implements Victory, Serializable {
+public class LastManStandingVictory implements IVictoryConditions, Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3372431109525075853L;
 
     public LastManStandingVictory() {
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
         // check all players/teams for aliveness
         int playersAlive = 0;
         IPlayer lastPlayer = null;
         boolean oneTeamAlive = false;
         int lastTeam = IPlayer.TEAM_NONE;
         boolean unteamedAlive = false;
-        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements();) {
-            IPlayer player = e.nextElement();
+        for (IPlayer player : game.getPlayersVector()) {
             int team = player.getTeam();
             if (game.getLiveDeployedEntitiesOwnedBy(player) <= 0) {
                 continue;
@@ -65,20 +60,19 @@ public class LastManStandingVictory implements Victory, Serializable {
 
         // check if there's one player alive
         if (playersAlive < 1) {
-            return new SimpleDrawResult();
+            return VictoryResult.drawResult();
         } else if (playersAlive == 1) {
             if (lastPlayer != null && lastPlayer.getTeam() == IPlayer.TEAM_NONE) {
                 // individual victory
-                return new SimpleResult(true, lastPlayer.getId(),
-                        IPlayer.TEAM_NONE);
+                return new VictoryResult(true, lastPlayer.getId(), IPlayer.TEAM_NONE);
             }
         }
 
         // did we only find one live team?
         if (oneTeamAlive && !unteamedAlive) {
             // team victory
-            return new SimpleResult(true, IPlayer.PLAYER_NONE, lastTeam);
+            return new VictoryResult(true, IPlayer.PLAYER_NONE, lastTeam);
         }
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

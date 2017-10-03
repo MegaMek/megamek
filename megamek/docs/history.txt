@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.43.4-git
+v0.43.5-git
+
+v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.
 + Issue #414[MekHQ] - Longinus (WoB) not showing in Hanger
 + Fixing issues with sprite names in the mechset.

@@ -34,6 +34,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     private List<DateRange> extinct;
     private int techRating;
     private int[] availability;
+    private int earliest;
     
     // Provides a set tech level for non-era-based use.
     private SimpleTechLevel staticTechLevel = SimpleTechLevel.INTRO;
@@ -50,6 +51,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         this.clan = clan;
         this.mixed = mixed;
         this.introYear = introYear;
+        earliest = initialTA.getIntroductionDate(clan, techFaction);
         extinct = new ArrayList<>();
         int protoDate = mixed?initialTA.getPrototypeDate() : initialTA.getPrototypeDate(clan);
         int prodDate = mixed?initialTA.getProductionDate() : initialTA.getProductionDate(clan);
@@ -147,6 +149,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         int protoDate = mixed?tech.getPrototypeDate() : tech.getPrototypeDate(clan, techFaction);
         int prodDate = mixed?tech.getProductionDate() : tech.getProductionDate(clan, techFaction);
         int commonDate = mixed?tech.getCommonDate() : tech.getCommonDate(clan);
+        earliest = Math.max(earliest, tech.getIntroductionDate(clan, techFaction));
         
         staticTechLevel = SimpleTechLevel.max(staticTechLevel, tech.getStaticTechLevel());
         //If this record is blank we ignore it
@@ -376,6 +379,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     @Override
     public int getIntroductionDate() {
         return introYear;
+    }
+    
+    public int getEarliestTechDate() {
+        return earliest;
     }
 
     @Override

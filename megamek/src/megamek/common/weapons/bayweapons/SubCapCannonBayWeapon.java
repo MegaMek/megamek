@@ -16,8 +16,6 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Jay Lawson
  */
@@ -47,10 +45,6 @@ public class SubCapCannonBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_AC;
         this.capital = true;
         this.subCapital = true;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
     
     @Override

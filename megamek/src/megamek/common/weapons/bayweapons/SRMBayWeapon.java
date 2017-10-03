@@ -16,6 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
+<<<<<<< HEAD
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -24,6 +25,8 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileBayWeaponHandler;
 import megamek.server.Server;
 
+=======
+>>>>>>> branch 'master' of https://github.com/MegaMek/megamek
 /**
  * @author Jay Lawson
  */
@@ -52,10 +55,6 @@ public class SRMBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_SRM;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
     
     @Override

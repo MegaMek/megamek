@@ -17,7 +17,6 @@
 package megamek.common.weapons.bayweapons;
 
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -54,10 +53,6 @@ public class SubCapitalMissileBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
         this.subCapital = true;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 
     /*

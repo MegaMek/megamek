@@ -14,115 +14,134 @@
 package megamek.server.victory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.Report;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
-/**
- * interface for classes judging whether a victory occurred or not. these
- * classes may not modify game state. Reporting must be done via the given
- * interface. classes also should not have any nasty internal state outside
- * methods this will guarantee them to act _only_ based on gamestate The only
- * case where this should be done is in cases where you have to count occurances
- * of some action or duration of something. In this case the information should
- * be stored in the context-object NOTE: if you delegate from one victory-class
- * instance to other, they must be created in similar fashion (ie. constructed
- * at the same time and destroyed at the same time) to guarantee proper working
- * also , if you delegate, you should delegate each time to guarantee that
- * victorypoint-counting and duration-counting implementations get access to
- * game state every round. NOTE2: calling victory 1 time or n times per round
- * should not make a difference! victories counting rounds must not assume that
- * they are called only once per round NOTE3: dont even think about making
- * different victoryclasses communicate straight or via context-object ;) NOTE4:
- * victories should take into account in their reporting (adding reports to the
- * result-object) that their results might be filtered. So the reports should be
- * mostly of the "what is the score" -type (player A occupies the victory
- * location) or fact-type (Player A has destroyed player B's commander)
- */
-public interface Victory {
-    /**
-     * @param game - the game (state) we are playing
-     * @param context - a map Strings to simple serializable objects (preferably
-     *            Integers , Strings ,Doubles etc) which are used to store state
-     *            between executions if such feature is absolutely required.. as
-     *            a key you should use something atleast class- specific to
-     *            limit namespace collisions
-     * @return a result with true if victory occured, false if not must not
-     *         return null MUST NOT modify game state!
-     */
-    public Result victory(IGame game, HashMap<String, Object> context);
+public class Victory {
+    
+	private boolean checkForVictory;
+	private int neededVictoryConditions;
+	
+	private IVictoryConditions force = new ForceVictory();
+	private IVictoryConditions lastMan = new LastManStandingVictory();
+	private IVictoryConditions[] VCs = null;
+	
+	public Victory(GameOptions options) {
+		checkForVictory = options.booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
+		
+		if (checkForVictory) {
+		    VCs = buildVClist(options);
+		}
+	}
+	
+	private IVictoryConditions[] buildVClist(GameOptions options) {
+	    neededVictoryConditions = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
+        List<IVictoryConditions> victories = new ArrayList<IVictoryConditions>();
+        // BV related victory conditions
+        if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
+            victories.add(new BVDestroyedVictory(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));
+        }
+        if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_RATIO)) {
+            victories.add(new BVRatioVictory(options.intOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT)));
+        }
+        
+        // Kill count victory condition
+        if (options.booleanOption(OptionsConstants.VICTORY_USE_KILL_COUNT)) {
+            victories.add(new KillCountVictory(options.intOption(OptionsConstants.VICTORY_GAME_KILL_COUNT)));
+        }
 
-    /**
-     * result class which can be queried for winner and if victory occurred
-     * victory might be true and winner "None" if the players have drawn winner
-     * might be NONE and team set to winning team. NOTE: a player which is in a
-     * team, should not win by himself. so if there is a winning team and a
-     * winning player it is a draw this should actually be a victorypoint-like
-     * structure with boolean for "game end" (victory) and 0.0(loss) to
-     * 1.0(victory) score for each team and player
-     */
-    public static interface Result {
-        /**
-         * @return true if the game is about to end since someone has completed
-         *         the victory conditions
-         */
-        public boolean victory();
+        // Commander killed victory condition
+        if (options.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
+            victories.add(new EnemyCmdrDestroyedVictory());
+        }
+        return victories.toArray(new IVictoryConditions[0]);
+	}
+	
+    public VictoryResult checkForVictory(IGame game, Map<String, Object> context) {
+        VictoryResult reVal;
+        
+    	//Check for ForceVictory
+    	reVal = force.victory(game, context);
+    	if (reVal.victory()) {
+    	    return reVal;
+    	}
+    	
+    	//Check optional Victory conditions
+    	//These can have reports
+    	if (checkForVictory) {
+    	    if (VCs == null) {
+    	        VCs = buildVClist(game.getOptions());
+    	    }
+    	    reVal = checkOptionalVictory(game, context);
+    	    if (reVal.victory()) {
+    	        return reVal;
+    	    }
+    	}
+    	
+    	//Check for LastManStandingVictory
+    	VictoryResult lastManResult = lastMan.victory(game, context);
+    	if (!reVal.victory() && lastManResult.victory()) {
+    	    return lastManResult;
+    	}
+    	return reVal;
+    }
+    
+    private VictoryResult checkOptionalVictory(IGame game, Map<String, Object> context) {
+        boolean victory = false;
+        VictoryResult vr = new VictoryResult(true);
 
-        /**
-         * @return player victory level 0.0(total loss) to 1.0 (total victory)
-         *         anybody not listed can be assumed to be at 0.0 score
-         */
-        public double getPlayerScore(int id);
+        // combine scores
+        for (IVictoryConditions v : VCs) {
+            VictoryResult res = v.victory(game, context);
+            for (Report r : res.getReports()) {
+                vr.addReport(r);
+            }
+            if (res.victory()) {
+                victory = true;
+            }
+            for (int pl : res.getPlayers()) {
+                vr.addPlayerScore(pl, vr.getPlayerScore(pl)
+                        + res.getPlayerScore(pl));
+            }
+            for (int t : res.getTeams()) {
+                vr.addTeamScore(t, vr.getTeamScore(t) + res.getTeamScore(t));
+            }
+        }
+        // find highscore for thresholding, also divide the score
+        // to an average
+        double highScore = 0.0;
+        for (int pl : vr.getPlayers()) {
+            double sc = vr.getPlayerScore(pl);
+            vr.addPlayerScore(pl, sc / VCs.length);
+            if (sc > highScore) {
+                highScore = sc;
+            }
+        }
+        for (int pl : vr.getTeams()) {
+            double sc = vr.getTeamScore(pl);
+            vr.addTeamScore(pl, sc / VCs.length);
+            if (sc > highScore) {
+                highScore = sc;
+            }
+        }
+        if (highScore < neededVictoryConditions) {
+            victory = false;
+        }
+        vr.setVictory(victory);
 
-        /**
-         * list players
-         */
-        public int[] getPlayers();
+        if (vr.victory()) {
+            return vr;
+        }
 
-        /**
-         * list team scores all teams which are not listed, can be assumed to be
-         * at 0.0
-         */
-        public double getTeamScore(int id);
-
-        /**
-         * list teams
-         */
-        public int[] getTeams();
-
-        /**
-         * @return true if this is a winning team id (draw == win in this case)
-         */
-        public boolean isWinningTeam(int id);
-
-        /**
-         * @return true if this is a winning player id (draw == win in this
-         *         case)
-         */
-        public boolean isWinningPlayer(int id);
-
-        /**
-         * @return arrayList of reports generated by the victory checking.
-         *         Usually empty when no victory should never be null might
-         *         contain reports about victoryconditions which are about to be
-         *         filled or are time triggered
-         */
-        public ArrayList<Report> getReports();
-
-        /**
-         * @return id of the winning team, Player.TEAM_NONE if it's a draw
-         */
-        public int getWinningTeam();
-
-        /**
-         * @return id of the winning player, Player.TEAM_NONE if it's a draw
-         */
-        public int getWinningPlayer();
-
-        /**
-         * @return if this is a draw
-         */
-        public boolean isDraw();
+        if (!vr.victory() && game.gameTimerIsExpired()) {
+            return VictoryResult.drawResult();
+        }
+        
+        return vr;
     }
 }

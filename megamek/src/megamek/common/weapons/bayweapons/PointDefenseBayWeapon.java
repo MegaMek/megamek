@@ -16,6 +16,7 @@
  */
 package megamek.common.weapons.bayweapons;
 
+<<<<<<< HEAD
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
@@ -24,6 +25,8 @@ import megamek.common.weapons.AmmoBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.Server;
 
+=======
+>>>>>>> branch 'master' of https://github.com/MegaMek/megamek
 /**
  * @author Jay Lawson
  */
@@ -51,6 +54,7 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_POINT_DEFENSE;
+<<<<<<< HEAD
 		flags = flags.or(F_PDBAY).or(F_AERO_WEAPON);
 		setModes(new String[] { "Point Defense", "Normal" });
 		setInstantModeSwitch(false);
@@ -58,6 +62,8 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+=======
+>>>>>>> branch 'master' of https://github.com/MegaMek/megamek
     }
     
     @Override

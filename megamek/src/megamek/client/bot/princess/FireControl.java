@@ -2010,8 +2010,11 @@ public class FireControl {
         // between firing different weapons, because swarm/leg attacks are
         // mutually exclusive with normal firing, so we treat them similarly to
         // heat-tracking units.
+        
+        // conventional fighters can drop bombs
         if (DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
-            && !(shooter instanceof Infantry)) {
+            && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)
+            && ((shooter.getEntityType() & Entity.ETYPE_CONV_FIGHTER) == 0)) {
             return alphaStrike; // No need to worry about heat if the unit
                                 // doesn't track it.
         }

@@ -183,7 +183,7 @@ public class AmmoType extends EquipmentType {
             14); // Santa Anna Missile
     
     public static final BigInteger F_PEACEMAKER = BigInteger.valueOf(1).shiftLeft(
-            14); // Peacemaker Missile
+            15); // Peacemaker Missile
 
     public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1)
             .shiftLeft(10); // Tele-Missile

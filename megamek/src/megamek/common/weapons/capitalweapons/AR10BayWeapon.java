@@ -52,6 +52,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AR10;
         this.capital = true;

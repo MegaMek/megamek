@@ -51,7 +51,9 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
 		this.tonnage = 140.0f;
 		this.bv = 317;
 		this.cost = 110000;
+		this.flags = flags.or(F_MISSILE);
 		this.shortAV = 4;
+        this.missileArmor = 40;
 		this.maxRange = RANGE_SHORT;
         rulesRefs = "345,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)

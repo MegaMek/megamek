@@ -14,15 +14,20 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
+import megamek.common.IGame;
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.bayweapons.AmmoBayWeapon;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoBayWeaponHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class ATMBayWeapon extends AmmoBayWeapon {
+public class AMSBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -31,25 +36,30 @@ public class ATMBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public ATMBayWeapon() {
+    public AMSBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "ATM Bay";
+        this.name = "AMS Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 20;
-        this.extremeRange = 25;
+        this.shortRange = 1;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.maxRange = RANGE_SHORT;
-        this.atClass = CLASS_ATM;
+        this.atClass = CLASS_AMS;
+		flags = flags.or(F_AUTO_TARGET).or(F_AMSBAY).or(F_AERO_WEAPON);
+		setModes(new String[] { "On", "Off" });
+		setInstantModeSwitch(false);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+    }
+    
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new AmmoBayWeaponHandler(toHit, waa, game, server);
     }
 }

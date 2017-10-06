@@ -1741,6 +1741,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             mediumR = wtype.getWMediumRange();
             longR = wtype.getWLongRange();
             extremeR = wtype.getWExtremeRange();
+        } else if (wtype.hasFlag(WeaponType.F_PDBAY)) {
+        //Point Defense bays have a variable range, depending on the mode they're in
+            if (wtype.hasModes() && mounted.curMode().equals("Point Defense")) {
+                shortR = 1;
+                wShortR.setText("1"); //$NON-NLS-1$
+            } else {
+                shortR = 6;
+                wShortR.setText("1-6"); //$NON-NLS-1$
+            }
         }
         // We need to adjust the ranges for Centurion Weapon Systems: it's
         //  default range is 6/12/18 but that's only for units that are
@@ -2177,7 +2186,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wMedR.setText("6 - 10"); //$NON-NLS-1$
                 wLongR.setText("11 - 15"); //$NON-NLS-1$
                 wExtR.setText("16 - 20"); //$NON-NLS-1$
-            }
+            }           
         }
 
         // Min range 0 for hotload
@@ -2229,6 +2238,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wShortAVR.setText(Integer.toString(avShort));
         if (wtype.isCapital()) {
             wShortR.setText("1-12"); //$NON-NLS-1$
+        } else if (wtype.hasFlag(WeaponType.F_PDBAY)) {
+                //Point Defense bays have a variable range too, depending on the mode they're in
+                if (wtype.hasModes() && weapon.curMode().equals("Point Defense")) {
+                    wShortR.setText("1"); //$NON-NLS-1$
+                } else {
+                    wShortR.setText("1-6"); //$NON-NLS-1$
+                }
         } else {
             wShortR.setText("1-6"); //$NON-NLS-1$
         }

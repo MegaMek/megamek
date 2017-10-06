@@ -16,21 +16,19 @@
  */
 package megamek.common.weapons.bayweapons;
 
-<<<<<<< HEAD
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AmmoBayWeaponHandler;
+import megamek.common.weapons.MissileBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
-=======
->>>>>>> branch 'master' of https://github.com/MegaMek/megamek
 /**
  * @author Jay Lawson
  */
-public class PointDefenseBayWeapon extends AmmoBayWeapon {
+public class ATMBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -39,10 +37,10 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public PointDefenseBayWeapon() {
+    public ATMBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Point Defense Bay";
+        this.name = "ATM Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
@@ -53,22 +51,18 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_POINT_DEFENSE;
-<<<<<<< HEAD
-		flags = flags.or(F_PDBAY).or(F_AERO_WEAPON);
-		setModes(new String[] { "Point Defense", "Normal" });
-		setInstantModeSwitch(false);
+        this.flags = flags.or(F_MISSILE);
+        this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_ATM;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
-=======
->>>>>>> branch 'master' of https://github.com/MegaMek/megamek
     }
     
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new AmmoBayWeaponHandler(toHit, waa, game, server);
+        return new MissileBayWeaponHandler(toHit, waa, game, server);
     }
 }

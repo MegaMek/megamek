@@ -51,6 +51,9 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         criticals = 1;
         bv = 15;
         cost = 11250;
+        shortAV = 4;
+        maxRange = RANGE_SHORT;
+        atClass = CLASS_POINT_DEFENSE;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);
         rulesRefs = "312,TO";;

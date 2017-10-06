@@ -22,7 +22,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AR10Handler;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.SantaAnnaHandler;
 import megamek.common.weapons.TeleMissileHandler;
 import megamek.server.Server;
 
@@ -41,7 +40,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
     public AR10Weapon() {
         super();
         // assume a barracuda is loaded
-        this.name = "Capital Missiel Launcher (AR10 Launcher)";
+        this.name = "Capital Missile Launcher (AR10 Launcher)";
         this.setInternalName(this.name);
         this.addLookupName("AR10");
         this.addLookupName("CLAR10");
@@ -55,6 +54,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.tonnage = 250.0f;
         this.bv = 961;
         this.cost = 250000;
+        this.flags = flags.or(F_MISSILE);
         // assume Barracuda is loaded
         this.shortAV = 2;
         this.medAV = 2;
@@ -89,9 +89,10 @@ public class AR10Weapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
+        // Let's try not doing this. We should be able to deal with nuclear ammo from the cap missile handler.
+       /* if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
             return new SantaAnnaHandler(toHit, waa, game, server);
-        }
+        } */
         if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
             return new TeleMissileHandler(toHit, waa, game, server);
         }

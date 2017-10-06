@@ -131,7 +131,7 @@ public interface IBomber {
                             ammo.setShotsLeft(1);
                             m.setLinked(ammo);
                             ((Entity)this).addEquipment(ammo, loc, false);
-                            
+                                                        
                         }
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());

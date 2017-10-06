@@ -16,6 +16,17 @@
  */
 package megamek.common.weapons.bayweapons;
 
+<<<<<<< HEAD
+import megamek.common.IGame;
+import megamek.common.TechAdvancement;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MissileBayWeaponHandler;
+import megamek.server.Server;
+
+=======
+>>>>>>> branch 'master' of https://github.com/MegaMek/megamek
 /**
  * @author Jay Lawson
  */
@@ -42,7 +53,14 @@ public class RLBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.toHitModifier = 1;
         this.atClass = CLASS_ROCKET_LAUNCHER;
+    }
+    
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new MissileBayWeaponHandler(toHit, waa, game, server);
     }
 }

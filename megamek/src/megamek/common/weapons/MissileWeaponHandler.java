@@ -52,6 +52,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean amsEngaged = false;
     boolean apdsEngaged = false;
     boolean advancedAMS = false;
+    boolean advancedPD = false;
+    
 
 
     /**
@@ -65,9 +67,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
         advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
+        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         sSalvoType = " missile(s) ";
     }
-
+    
     /*
      * (non-Javadoc)
      *
@@ -112,6 +115,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
+        
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
@@ -284,7 +288,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-
+    
     /*
      * (non-Javadoc)
      *
@@ -324,6 +328,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
+        int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
@@ -380,6 +385,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
+                
+        //Point Defenses engage the missiles still aimed at us
+        counterAV = calcCounterAV();
+        av = av - counterAV;
+        
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -389,6 +399,153 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (av);
+    }
+    
+    //If you're firing missiles at a capital ship...
+    @Override
+    protected int calcCounterAV () {
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)
+                || !advancedPD) {
+            return 0;
+        }
+        int counterAV = 0;
+        int amsAV = 0;
+        double pdAV = 0;
+        Entity entityTarget = (Entity) target;
+        // any AMS bay attacks by the target?
+        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        if (null != lCounters) {
+            for (Mounted counter : lCounters) {               
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                Entity pdEnt = counter.getEntity();
+                boolean isInArc;
+                // If the defending unit is the target, use attacker for arc
+                if (entityTarget.equals(pdEnt)) {
+                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                            pdEnt.getEquipmentNum(counter),
+                            ae);
+                } else { // Otherwise, the attack must pass through an escort unit's hex
+                    // TODO: We'll get here, eventually
+                    isInArc = Compute.isInArc(game, pdEnt.getId(),
+                            pdEnt.getEquipmentNum(counter),
+                            entityTarget);
+                }
+                if (isAMSBay) {
+                    amsAV = 0;
+                    // Point defenses can't fire if they're not ready for any reason
+                    if (!(counter.getType() instanceof WeaponType)
+                             || !counter.isReady() || counter.isMissing()
+                                // shutdown means no Point defenses
+                                || pdEnt.isShutDown()
+                                // Point defenses only fire vs attacks in arc covered by ams
+                                || !isInArc) {
+                            continue;
+                    }
+                    // Now for heat, damage and ammo we need the individual weapons in the bay
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = pdEnt.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                        
+                        // build up some heat
+                        //First Check to see if we have enough heat capacity to fire
+                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            continue;
+                        }
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                            pdEnt.heatBuildup += Compute.d6(bayW
+                                    .getCurrentHeat());                     
+                        } else {
+                            pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        }
+                        
+                        //Bays use lots of ammo. Check to make sure we haven't run out
+                        if (bayWAmmo != null) {
+                            if (bayWAmmo.getBaseShotsLeft() == 0) {
+                                continue;
+                            }
+                            // decrement the ammo
+                            bayWAmmo.setShotsLeft(Math.max(0,
+                                bayWAmmo.getBaseShotsLeft() - 1));
+                        }
+                        
+                        // get the attack value
+                        amsAV += bayWType.getShortAV();                                      
+                    }
+                    
+                    // set the ams as having fired, if it did
+                    if (amsAV > 0) {
+                        amsBayEngaged = true;
+                    }
+                                        
+                } else if (isPDBay) {
+                    pdAV = 0;
+                    // Point defenses can't fire if they're not ready for any reason
+                    if (!(counter.getType() instanceof WeaponType)
+                             || !counter.isReady() || counter.isMissing()
+                                // shutdown means no Point defenses
+                                || pdEnt.isShutDown()
+                                // Point defenses only fire vs attacks in arc covered by ams
+                                || !isInArc
+                                // Point defense bays only fire once per round
+                                || counter.isUsedThisRound() == true) {
+                            continue;
+                    }
+                    // Now for heat, damage and ammo we need the individual weapons in the bay
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = pdEnt.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        WeaponType bayWType = ((WeaponType) bayW.getType());
+                        
+                        // build up some heat
+                        //First Check to see if we have enough heat capacity to fire
+                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            continue;
+                        }
+                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                            pdEnt.heatBuildup += Compute.d6(bayW
+                                    .getCurrentHeat());                     
+                        } else {
+                            pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        }
+                        
+                        //Bays use lots of ammo. Check to make sure we haven't run out
+                        if (bayWAmmo != null) {
+                            if (bayWAmmo.getBaseShotsLeft() == 0) {
+                                continue;
+                            }
+                            // decrement the ammo
+                            bayWAmmo.setShotsLeft(Math.max(0,
+                                bayWAmmo.getBaseShotsLeft() - 1));
+                        }
+                        
+                        // get the attack value
+                        pdAV += bayWType.getShortAV();                    
+                    }
+                    
+                    // set the pdbay as having fired, if it was able to
+                    if (pdAV > 0 ) {
+                        counter.setUsedThisRound(true); 
+                        pdBayEngaged = true;
+                    }
+                                 
+                } //end PDBay fire 
+                
+                // non-AMS only add half their damage, rounded up
+                counterAV += (int) Math.ceil(pdAV / 2.0); 
+                // AMS add their full damage
+                counterAV += amsAV;
+            } //end "for Mounted counter"
+        } // end check for counterfire
+        CounterAV = (int) counterAV;
+        return counterAV;
+    } // end getAMSAV
+    
+    @Override
+    protected int getCounterAV() {
+        return CounterAV;
     }
 
     /*
@@ -731,16 +888,26 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (!shotAtNemesisTarget) {
             addHeat();
         }
+                
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
         // it in doChecks
         boolean missReported = doChecks(vPhaseReport);
-
-        nDamPerHit = calcDamagePerHit();
+        
+       
 
         attackValue = calcAttackValue();
-
+        CounterAV = getCounterAV();
+        
+        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship
+        if (entityTarget.usesWeaponBays()) {
+            nDamPerHit = attackValue;
+        } else {
+            //This is for all other targets in atmosphere
+            nDamPerHit = calcDamagePerHit();
+        } 
+        
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
@@ -762,21 +929,58 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (target.isAirborne() || game.getBoard().inSpace()) {
+        if (target.isAirborne() 
+                || game.getBoard().inSpace() 
+                || (entityTarget.usesWeaponBays() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER))) {
             // Ensures AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];
-            // Need to report hit (normally reported in calcHits)
-            if (!bMissed && amsEngaged && !ae.isCapitalFighter()) {
+            if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
+                // handle single AMS action against standard missiles
+                // Thunderbolts get handled by calcHits below
                 int amsRoll = Compute.d6();
                 r = new Report(3352);
                 r.subject = subjectId;
                 r.add(amsRoll);
                 vPhaseReport.add(r);
                 hits = Math.max(0, hits - amsRoll);
-            } else if (!bMissed) {
+            
+            // Report any AMS bay action against standard missiles.          
+            } else if (amsBayEngaged && (attackValue <= 0)) {
+                //use this if AMS counterfire destroys all the missiles
+                r = new Report(3356);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (amsBayEngaged) {
+                //use this if AMS counterfire destroys some of the missiles
+                CounterAV = getCounterAV();
+                r = new Report(3354);
+                r.indent();
+                r.add(CounterAV);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                
+             // Report any Point Defense bay action against standard missiles.
+ 
+            } else if (pdBayEngaged && (attackValue <= 0)) {
+                //use this if PD counterfire destroys all the missiles
+                r = new Report(3355);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (pdBayEngaged) {
+                //use this if PD counterfire destroys some of the missiles
+                r = new Report(3353);
+                r.add(CounterAV);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
+            //This is reported elsewhere. Don't do anything else.   
+            } else if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
+                hits = calcHits(vPhaseReport);
+            } else if (!bMissed)  {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -938,12 +1142,21 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected boolean canDoDirectBlowDamage() {
         return false;
     }
-
+    
     /**
      *
      * @return
      */
     protected boolean isAdvancedAMS() {
         return advancedAMS && (amsEngaged || apdsEngaged);
+    }
+    
+    //Check for Thunderbolt. We'll use this for single AMS resolution
+    @Override
+    protected boolean isTbolt() {
+        if (wtype.hasFlag(WeaponType.F_LARGEMISSILE)) {
+            return true;
+        }
+        return false;
     }
 }

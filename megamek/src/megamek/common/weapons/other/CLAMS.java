@@ -44,6 +44,7 @@ public class CLAMS extends AmmoWeapon {
 		heat = 1;
 		rackSize = 2;
 		damage = 2; // # of d6 of missiles affected
+		shortAV = 3;
 		ammoType = AmmoType.T_AMS;
 		tonnage = 0.5f;
 		criticals = 1;
@@ -53,7 +54,7 @@ public class CLAMS extends AmmoWeapon {
 		setModes(new String[] { "On", "Off" });
 		setInstantModeSwitch(false);
 		cost = 100000;
-		atClass = CLASS_POINT_DEFENSE;
+		atClass = CLASS_AMS;
 		rulesRefs = "204,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
 		        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)

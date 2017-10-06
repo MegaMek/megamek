@@ -21,6 +21,7 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -75,7 +76,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
     }
-
+    
     /**
      * For ammo weapons, this number can be less than the full number if the
      * amount of ammo is not high enough
@@ -95,4 +96,10 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 (int) Math.floor((double) totalShots
                         / (double) weapon.getCurrentShots()));
     }
+    
+    //Check for Thunderbolt. We'll use this for single AMS resolution
+    protected boolean isTbolt() {
+        return false;
+    }
+    
 }

@@ -32,7 +32,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         super();
         name = "Alamo Missile";
         setInternalName(BombType.getBombWeaponName(BombType.B_ALAMO));
-        flags = flags.or(F_BOMB_WEAPON);
+        flags = flags.or(F_BOMB_WEAPON).or(F_MISSILE);
         heat = 0;
         damage = 10;
         rackSize = 1;
@@ -47,6 +47,7 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         cost = 0;
         shortAV = 10;
         medAV = 10;
+        missileArmor = 20;
         maxRange = RANGE_MED;
         ammoType = AmmoType.T_ALAMO;
         capital = true;

@@ -15,12 +15,12 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class ISLAAMissileWeapon extends CapitalMissileWeapon {
+public class ISLAAMissileWeapon extends ThunderBoltWeapon {
 
     /**
      * 
@@ -45,6 +45,7 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 6000;
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE);
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;

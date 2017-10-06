@@ -6,6 +6,7 @@ v0.43.5-git
 + PR #686: Expanded AMS functionality. Now works against Arrow IV Homing and LAA/AAA/AS missiles per the rules for
     large, single missiles in TW.
 + PR #686: Santa Anna S2S nuclear missiles now correctly deal *10 damage to SI on a successful cap missile roll.
++ PR #691: Princess controlled conventional fighters will now drop bombs
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

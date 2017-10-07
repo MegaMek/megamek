@@ -52,8 +52,10 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.tonnage = 120.0f;
         this.bv = 496;
         this.cost = 85000;
+        this.flags = flags.or(F_MISSILE);
         this.shortAV = 3.5;
         this.medAV = 3.5;
+        this.missileArmor = 35;
         this.maxRange = RANGE_MED;
         rulesRefs = "345,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)

@@ -1074,6 +1074,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getIntroductionDate(boolean clan, int faction) {
         return year;
     }
+    
+    /**
+     * @return The earliest date this unit could be built, based on the latest intro date
+     *         of the components.
+     */
+    public int getEarliestTechDate() {
+        return compositeTechLevel.getEarliestTechDate();
+    }
 
     @Override
     public int getPrototypeDate() {
@@ -3629,6 +3637,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((mounted != null)
             && (mounted.isReady())
             && (!mounted.getType().hasFlag(WeaponType.F_AMS))
+            && (!mounted.getType().hasFlag(WeaponType.F_AMSBAY))
+            && (!(mounted.getType().hasModes() && mounted.curMode().equals("Point Defense")))
             && ((mounted.getLinked() == null)
                 || mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)
                 || (mounted.getLinked().getUsableShotsLeft() > 0))) {
@@ -3859,7 +3869,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 numGroundBombs++;
             }
+    
         }
+
     }
 
     /**
@@ -6207,6 +6219,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ams.isAPDS()) {
                 continue;
             }
+            
             // make a new vector of only incoming attacks in arc
             Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
                     vAttacks.size());
@@ -6217,12 +6230,30 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     vAttacksInArc.addElement(wr.waa);
                 }
             }
-            // find the most dangerous salvo by expected damage
+            //AMS Bays can fire at all incoming attacks each round
+            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
+                for (WeaponAttackAction waa : vAttacksInArc) {
+                    if (waa != null) {
+                        waa.addCounterEquipment(ams);
+                    }
+                }
+            } else if (ams.getType().hasFlag(WeaponType.F_PDBAY)) {
+            	//Point defense bays are assigned to the attack with the greatest threat
+            	//Unlike single AMS, PD bays can gang up on 1 attack
+                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
+                        vAttacksInArc, true);
+                    if (waa != null) {
+                    	waa.addCounterEquipment(ams);
+                    }
+            } else {
+            //Otherwise, find the most dangerous salvo by expected damage and target it
+            // this ensures that only 1 AMS targets the strike. Use for non-bays. 
             WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
                     vAttacksInArc, true);
-            if (waa != null) {
+                if (waa != null) {
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
+                }
             }
         }
     }
@@ -10252,8 +10283,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract boolean doomedInSpace();
 
     /**
-     * The weight of the armor in a specific location, rounded up to the nearest
-     * half-ton for patchwork armor as per TacOps page 377 (Errata 3.1). Note:
+     * Prior to TacOps errata 3.3, armor was rounded up to the nearest half ton
+     * As of TacOps errata 3.3, patchwork armor is not rounded by location. Previous editions
+     * of the rules required it to be rounded up to the nearest half ton by location.
+     * Note:
      * Unless overridden, this should <em>only</em> be called on units with
      * patchwork armor, as rounding behavior is not guaranteed to be correct or
      * even the same for others and units with a single overall armor type have
@@ -10268,9 +10301,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 armorType[loc], armorTechLevel[loc]);
         double points = getOArmor(loc)
                         + (hasRearArmor(loc) ? getOArmor(loc, true) : 0);
-        double armorWeight = points / armorPerTon;
-        return Math.ceil(armorWeight * 2.0) / 2.0;
-
+        return points / armorPerTon;
     }
 
     /**
@@ -10289,12 +10320,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             double armorWeight = points / armorPerTon;
             armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
             return armorWeight;
+        } else {
+            double total = 0;
+            for (int loc = 0; loc < locations(); loc++) {
+                total += getArmorWeight(loc);
+            }
+            return Math.ceil(total * 2.0) / 2.0;
         }
-        double total = 0;
-        for (int loc = 0; loc < locations(); loc++) {
-            total += getArmorWeight(loc);
-        }
-        return total;
     }
 
     public boolean hasTAG() {

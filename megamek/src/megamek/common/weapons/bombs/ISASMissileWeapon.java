@@ -15,12 +15,12 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.missiles.ThunderBoltWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class ISASMissileWeapon extends CapitalMissileWeapon {
+public class ISASMissileWeapon extends ThunderBoltWeapon {
 
     /**
      *
@@ -48,7 +48,7 @@ public class ISASMissileWeapon extends CapitalMissileWeapon {
         shortAV = 30;
         medAV = 30;
         longAV = 30;
-        flags = flags.or(F_ANTI_SHIP);
+        flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE);
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
@@ -63,4 +63,5 @@ public class ISASMissileWeapon extends CapitalMissileWeapon {
         .setPrototypeFactions(F_FS)
         .setProductionFactions(F_FS);
     }
+    
 }

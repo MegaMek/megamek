@@ -1946,7 +1946,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+            			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$

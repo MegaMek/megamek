@@ -6972,9 +6972,10 @@ public abstract class Mech extends Entity {
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
      *
-     * @return false if insufficient critical space
+     * @param vrpp  if this is a VRPP rather than a standard torso-mounted cockpit
+     * @return      false if insufficient critical space
      */
-    public boolean addTorsoMountedCockpit() {
+    public boolean addTorsoMountedCockpit(boolean vrpp) {
         boolean success = true;
         if (getEmptyCriticals(LOC_HEAD) < 2) {
             success = false;
@@ -6990,8 +6991,13 @@ public abstract class Mech extends Entity {
         } else {
             addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
-                    CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            if (vrpp) {
+                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            } else {
+                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            }
         }
 
         if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1)
@@ -7005,7 +7011,11 @@ public abstract class Mech extends Entity {
         }
 
         if (success) {
-            setCockpitType(COCKPIT_TORSO_MOUNTED);
+            if (vrpp) {
+                setCockpitType(COCKPIT_VRRP);
+            } else {
+                setCockpitType(COCKPIT_TORSO_MOUNTED);
+            }
         }
         return success;
     }

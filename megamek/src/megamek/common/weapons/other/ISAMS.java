@@ -42,6 +42,7 @@ public class ISAMS extends AmmoWeapon {
         heat = 1;
         rackSize = 2;
         damage = 1; // # of d6 of missiles affected
+        shortAV = 3;
         ammoType = AmmoType.T_AMS;
         tonnage = 0.5f;
         criticals = 1;
@@ -51,7 +52,7 @@ public class ISAMS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-        atClass = CLASS_POINT_DEFENSE;
+        atClass = CLASS_AMS;
         rulesRefs = "204,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setTechRating(RATING_E)

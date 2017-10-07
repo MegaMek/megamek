@@ -4104,5 +4104,61 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getSpriteDrawPriority() {
         return 10;
     }
+    
+    @Override
+    public List<Mounted> getActiveAMS() {
+        //Large craft use AMS and Point Defense bays
+        if ((this instanceof Dropship) 
+                || (this instanceof Jumpship)
+                || (this instanceof Warship)
+                || (this instanceof SpaceStation)) {  		
 
+            ArrayList<Mounted> ams = new ArrayList<>();
+            for (Mounted weapon : getWeaponBayList()) {
+                // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
+                if (!weapon.getType().hasFlag(WeaponType.F_AMS)
+                        && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
+                        && !weapon.getType().hasFlag(WeaponType.F_PDBAY))  {
+                    continue;
+                }
+
+                // Make sure the AMS is good to go
+                if (!weapon.isReady() || weapon.isMissing()
+                        || weapon.curMode().equals("Off")
+                        || weapon.curMode().equals("Normal")) {
+                    continue;
+                }
+
+                // AMS blocked by transported units can not fire
+                if (isWeaponBlockedAt(weapon.getLocation(),
+                        weapon.isRearMounted())) {
+                    continue;
+                }
+
+                // Make sure ammo is loaded
+                for (int wId : weapon.getBayWeapons()) {
+                    Mounted bayW = getEquipment(wId);
+                    Mounted bayWAmmo = bayW.getLinked();
+                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) 
+                            && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
+                                    || bayWAmmo.isDumping())) {
+                        loadWeapon(weapon);
+                        bayWAmmo = weapon.getLinked();
+                    }
+
+                    // try again
+                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) 
+                            && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
+                                    || bayWAmmo.isDumping())) {
+                        // No ammo for this AMS.
+                        continue;
+                    }
+                }
+                ams.add(weapon);
+            }
+            return ams;
+        }
+        //ASFs and Small Craft should use regular old AMS...
+        return super.getActiveAMS();
+    }
 }

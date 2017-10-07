@@ -51,10 +51,12 @@ public class CapMissWhiteSharkWeapon extends CapitalMissileWeapon {
         this.tonnage = 120.0f;
         this.bv = 577;
         this.cost = 130000;
+        this.flags = flags.or(F_MISSILE);
         this.shortAV = 3;
         this.medAV = 3;
         this.longAV = 3;
         this.extAV = 3;
+        this.missileArmor = 30;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)

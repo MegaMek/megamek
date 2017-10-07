@@ -16,6 +16,13 @@
  */
 package megamek.common.weapons.bayweapons;
 
+import megamek.common.IGame;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MissileBayWeaponHandler;
+import megamek.server.Server;
+
 /**
  * @author Jay Lawson
  */
@@ -42,11 +49,18 @@ public class LRMBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_LRM;
     }
     
     @Override
     public int getBattleForceClass() {
         return BFCLASS_LRM;
+    }
+    
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new MissileBayWeaponHandler(toHit, waa, game, server);
     }
 }

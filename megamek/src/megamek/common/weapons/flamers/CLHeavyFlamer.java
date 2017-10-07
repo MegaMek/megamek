@@ -51,6 +51,9 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         tonnage = 1.5f;
         criticals = 1;
         bv = 15;
+        shortAV = 4;
+        maxRange = RANGE_SHORT;
+        atClass = CLASS_POINT_DEFENSE;
         cost = 11250;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);

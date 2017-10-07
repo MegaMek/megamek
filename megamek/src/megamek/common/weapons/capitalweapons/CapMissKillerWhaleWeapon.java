@@ -22,7 +22,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.KillerWhaleHandler;
-import megamek.common.weapons.SantaAnnaHandler;
 import megamek.common.weapons.TeleMissileHandler;
 import megamek.server.Server;
 
@@ -53,10 +52,12 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.tonnage = 150.0f;
         this.bv = 769;
         this.cost = 150000;
+        this.flags = flags.or(F_MISSILE);
         this.shortAV = 4;
         this.medAV = 4;
         this.longAV = 4;
         this.extAV = 4;
+        this.missileArmor = 40;
         this.maxRange = RANGE_EXT;
         rulesRefs = "210,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
@@ -85,9 +86,10 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
+        // Let's try not doing this. We should be able to deal with nuclear ammo from the cap missile handler.
+       /* if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
             return new SantaAnnaHandler(toHit, waa, game, server);
-        }
+        } */
         if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
             return new TeleMissileHandler(toHit, waa, game, server);
         }

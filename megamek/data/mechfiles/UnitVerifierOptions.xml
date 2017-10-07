@@ -43,6 +43,9 @@
     <showFailedEquip>
     true
     </showFailedEquip>
+    <showIncorrectIntroYear>
+    true
+    </showIncorrectIntroYear>
   </mech>
   <tank>
     <ceilWeight>

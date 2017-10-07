@@ -2785,6 +2785,12 @@ public class Compute {
         if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
             use_table = true;
         }
+        
+        //Unless it's a fighter squadron, which uses a weird group of single weapons and should return mass AV
+        if (attacker.isCapitalFighter()) {
+            use_table = false;
+        }
+        
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
             || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)
             || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)) {
@@ -2990,7 +2996,8 @@ public class Compute {
 
         } else {
             // Direct fire weapons (and LBX slug rounds) just do a single shot
-            // so they don't use the missile hits table
+            // so they don't use the missile hits table. Weapon bays also deal
+        	// damage in a single block
             if ((attacker.getPosition() != null)
                 && (g.getEntity(waa.getTargetId()).getPosition() != null)) {
                 // Damage may vary by range for some weapons, so let's see how
@@ -2998,8 +3005,85 @@ public class Compute {
                 // away we actually are and then set the damage accordingly.
                 int rangeToTarget = attacker.getPosition().distance(
                         g.getEntity(waa.getTargetId()).getPosition());
-                fDamage = wt.getDamage(rangeToTarget);
-            }
+                //Convert AV to fDamage for bay weapons, fighters, etc
+                if (attacker.usesWeaponBays()){
+                	double av = 0;
+                	double threat = 1;
+                    for (int wId : weapon.getBayWeapons()) {
+                    	Mounted bayW = attacker.getEquipment(wId);
+                    	WeaponType bayWType = ((WeaponType) bayW.getType());
+                	//Capital weapons have a different range scale
+                        if (wt.isCapital()) {
+                        	// Capital missiles get higher priority than standard missiles:
+                            // damage plus a bonus for the critical hit threat they represent
+                        	threat = 12;
+                        	if (rangeToTarget > 50) {
+                			av = 0;
+                        	} else if (rangeToTarget > 40) {
+                			av += bayWType.getExtAV();
+                        	} else if (rangeToTarget > 25) {
+                			av += bayWType.getLongAV();
+                        	} else if (rangeToTarget > 12) {
+                			av += bayWType.getMedAV();
+                        	} else {
+                			av += bayWType.getShortAV();
+                        	}              				
+                        } else {
+                        	if (rangeToTarget > 25) {
+                			av = 0;
+                        	} else if (rangeToTarget > 20) {
+                			av += bayWType.getExtAV();
+                        	} else if (rangeToTarget > 12) {
+                			av += bayWType.getLongAV();
+                        	} else if (rangeToTarget > 6) {
+                			av += bayWType.getMedAV();
+                        	} else {
+                			av += bayWType.getShortAV();
+                        	} 
+                        }
+                        fDamage = (float) (av * threat);
+                    }
+                } else if (attacker.isCapitalFighter()) {
+                	double av = 0;
+                	double threat = 1;
+                	//Capital weapons have a different range scale
+                        if (wt.isCapital()) {
+                        	// Capital missiles should have higher priority than standard missiles
+                        	threat = 12;
+                        	if (rangeToTarget > 50) {
+                			av = 0;
+                        	} else if (rangeToTarget > 40) {
+                			av += (wt.getExtAV() * weapon.getNWeapons());
+                        	} else if (rangeToTarget > 25) {
+                			av += (wt.getLongAV() * weapon.getNWeapons());
+                        	} else if (rangeToTarget > 12) {
+                			av += (wt.getMedAV() * weapon.getNWeapons());
+                        	} else {
+                			av += (wt.getShortAV() * weapon.getNWeapons());
+                        	}              				
+                        } else {
+                        	if (rangeToTarget > 25) {
+                			av = 0;
+                        	} else if (rangeToTarget > 20) {
+                			av += (wt.getExtAV() * weapon.getNWeapons());
+                        	} else if (rangeToTarget > 12) {
+                			av += (wt.getLongAV() * weapon.getNWeapons());
+                        	} else if (rangeToTarget > 6) {
+                			av += (wt.getMedAV() * weapon.getNWeapons());
+                        	} else {
+                			av += (wt.getShortAV() * weapon.getNWeapons());
+                        	} 
+                        }
+                    fDamage = (float) (av * threat);
+                	
+                } else if ((wt.getAmmoType() == AmmoType.T_ARROW_IV)
+                        || wt.getAmmoType() == BombType.B_HOMING) {
+                    //This is for arrow IV AMS threat processing
+                    fDamage = (float) wt.getRackSize();                    
+                } else {                
+                    fDamage = wt.getDamage(rangeToTarget);
+            	}
+            } 
 
             // Infantry follow some special rules, but do fixed amounts of
             // damage

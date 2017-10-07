@@ -51,6 +51,7 @@ Nephilim Assault Battle Armor (Narc)|
 Nephilim Assault Battle Armor (Seeker) [MG]|
 Nephilim Assault Battle Armor (Support)|
 Nephilim Assault Battle Armor (Standard)|
+Nighthawk PA(L) Mk. XXI (WoB)|
 Nighthawk PA(L) Mk. XXI|
 Nighthawk PA(L) Mk. XXII|
 Phalanx Battle Armor (A)|
@@ -377,9 +378,9 @@ Fa Shih Battle Armor 2 [MG]|
 Trinity Medium Battle Armor (Ying Long BC3)[David]|
 Longinus Battle Armor 'Hacked' [David]|
 Longinus Battle Armor 'Hacked' [MG]|
-Djinn Battle Armor (Reflective) 'Terrorizer' (Flamer)|
-Djinn Battle Armor (Reflective) 'Terrorizer' (MG)|
-Djinn Battle Armor (Reflective) 'Terrorizer' (SL)|
+Djinn Battle Armor (Reflective)'Terrorizer' (Flamer)|
+Djinn Battle Armor (Reflective)'Terrorizer' (MG)|
+Djinn Battle Armor (Reflective)'Terrorizer' (SL)|
 Groundhog Exoskeleton 'Master Thief'|
 Ailette Rescue PA(L)|
 Purifier Battle Armor Terra [AP Gauss]|
@@ -1105,13 +1106,12 @@ Long Tom Artillery Cannon Turret (Single)|
 Long Tom Artillery Turret (Dual)|
 Long Tom Artillery Turret (Triple)|
 Long Tom Artillery Turret (Single)|
-'Mech Mortar/1 Battery (Triple)|
 'Mech Mortar/1 Battery (Dual)|
-'Mech Mortar/1 Battery (Triple)|
 'Mech Mortar/1 Battery (Single)|
+'Mech Mortar/1 Battery (Triple)|
 'Mech Mortar/1 Battery (Dual)|
+'Mech Mortar/1 Battery (Single)|
 'Mech Mortar/2 Battery (Triple)|
-'Mech Mortar/1 Battery (Single)|
 'Mech Mortar/4 Battery (Dual)|
 'Mech Mortar/4 Battery (Triple)|
 'Mech Mortar/4 Battery (Single)|
@@ -1531,7 +1531,6 @@ LB-2-X Turret (Dual)|
 LB-2-X Turret (Single)|
 LB-2-X Turret (Triple)|
 LB-5-X Turret (Dual)|
-LB-5-X Turret (Dual)|
 LB-5-X Turret (Single)|
 LB-5-X Turret (Triple)|
 Light AC/2 Turret (Dual)|
@@ -1945,7 +1944,7 @@ Jump Support Infantry Star Corps Jump Assault Infantry|
 VTOL Infantry Hachiman Taro Enterprise Extraction Force|
 Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|
 Frogmen Blue Water Marine Response Teams (Frogmen)|
-Mountaineer 45th Cerulean Mountain Infantry, 2nd Davion Guards|
+Mountaineer 45th Cerulean Mountain Infantry, 3rd Davion Guards|
 SpecOps Paratrooper MI6 Extraction Team|
 Anti-'Mech Jump Infantry Third Ueda Infantry|
 Clan Assault Infantry Ghost Bear Heavy Solahma Infantry|
@@ -1973,6 +1972,7 @@ Assault Commando Ebon Magistrate Shock Troops|
 Field Medic Magistracy Medical Corp|
 Foot Infantry Raventhir's Infantry Guard|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
 Skaret Assassins JàrnFòlk|
 Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|
 Pirate Lady Death's 'Pacification' Squads|
@@ -1984,7 +1984,6 @@ Anti-Infantry Unit Second Lyran Armored Infantry|
 Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT|
 HALO Paratrooper Lyran Paratrooper Corps|
 Heavy Infantry Heavy Urban Response Platoon|
-Royal Engineers 1st Lyran Royal Guards RCT|
 Field Gun Infantry (Motorized Batteries)|
 Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|
 SRM Foot Infantry Taurian Citizens' Militia|
@@ -2075,6 +2074,7 @@ Clan Motorized Point (LRM)|
 Clan Motorized Point (MG)|
 Clan Motorized Point (Rifle)|
 Clan Motorized Point (SRM)|
+Foot Platoon (LRM)|
 Foot Platoon (Flamer)|
 Foot Platoon (Laser)|
 Foot Platoon (LRM)|
@@ -2147,6 +2147,11 @@ Motorized Squad (LRM)|
 Motorized Squad (MG)|
 Motorized Squad (Rifle)|
 Motorized Squad (SRM)|
+Jump Platoon (LRM)|
+Mechanized Hover Platoon (LRM)|
+Mechanized Tracked Platoon (LRM)|
+Mechanized Wheeled Platoon (LRM)|
+Motorized Platoon (LRM)|
 Comitatus JumpShip (Standard)|
 Hunter Jumpship (Lithium-Fusion)|
 Hunter Jumpship (Standard)|
@@ -2993,6 +2998,7 @@ Daimyo DMO-5K|
 Dart DRT-3S|
 Dart DRT-4S|
 Dart DRT-6S|
+Epimetheus Prime|
 Falconer FLC-8R|
 Fireball ALM-7D|
 Fireball ALM-8D|
@@ -4973,6 +4979,8 @@ Rock Hound ProspectorMech AM-PRM-RH7 'Rock Possum'|
 Rock Hound ProspectorMech AM-PRM-RH7|
 Rock Hound ProspectorMech AM-PRM-RH7A 'Rock Otter'|
 Space Hound ProspectorMech AM-PRM-SH1|
+Thunderbolt TDR-5L|
+Thunderbolt TDR-5LS|
 Dragoon AEM-01|
 Dragoon AEM-02|
 Dragoon AEM-03|
@@ -5208,6 +5216,7 @@ Uni ATAE-70 CargoMech (Standard)|
 Uni ATAE-70 MilitiaMech (Standard)|
 Uni ATAE-70T CargoMech (Standard)|
 Vampyr SC-V-1 SalvageMech (Standard)|
+Flea FLE-16|
 Dig Lord RCL-4M MiningMech MOD|
 Annihilator ANH-1E|
 Victor VTR-9B (Li)|
@@ -5522,7 +5531,8 @@ Hippogriff (Standard)|
 Minotaur P2|
 Procyon (Quad)|
 Satyr XP|
-Svartalfa Ultra|
+Svartalfa Ultra ProtoMech (LRM Variant)|
+Svartalfa Ultra ProtoMech (Standard)|
 Boggart (Quad) 2|
 Boggart (Quad) 1|
 Sprite 2|
@@ -6411,8 +6421,8 @@ Zibler Fast Strike Tank (B)|
 Zibler Fast Strike Tank (C)|
 Zibler Fast Strike Tank (D)|
 Zibler Fast Strike Tank (Prime)|
-Cizin (Standard)|
-Cizin (Support)|
+Cizin Hover Tank (Standard)|
+Cizin Hover Tank (Support)|
 Kamakiri Attack VTOL (Gauss)|
 Kamakiri Attack VTOL (Standard)|
 Mamono IFV (Standard)|

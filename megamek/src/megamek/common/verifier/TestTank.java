@@ -423,6 +423,9 @@ public class TestTank extends TestEntity {
         if (hasIllegalTechLevels(buff, ammoTechLvl)) {
             correct = false;
         }
+        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+            correct = false;
+        }
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
         }
@@ -484,6 +487,7 @@ public class TestTank extends TestEntity {
         buff.append("Tank: ").append(tank.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
+        buff.append("Intro year: ").append(tank.getYear());
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {

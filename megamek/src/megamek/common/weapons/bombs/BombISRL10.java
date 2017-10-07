@@ -45,6 +45,7 @@ public class BombISRL10 extends MissileWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_MISSILE);
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;

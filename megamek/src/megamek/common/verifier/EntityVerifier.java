@@ -162,6 +162,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             } else {
                 System.out.println(testEntity.getName());
                 System.out.println("Found in: " + testEntity.fileString);
+                System.out.println("Intro year: " + entity.getYear());
                 System.out.println("BV: " + entity.calculateBattleValue()
                 + "    Cost: " + entity.getCost(false));
                 System.out.println(buff);

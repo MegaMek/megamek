@@ -17,16 +17,18 @@
 package megamek.common.weapons.bayweapons;
 
 import megamek.common.IGame;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileBayWeaponHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class MRMBayWeapon extends AmmoBayWeapon {
+public class ATMBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -35,10 +37,10 @@ public class MRMBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public MRMBayWeapon() {
+    public ATMBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "MRM Bay";
+        this.name = "ATM Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
@@ -50,7 +52,12 @@ public class MRMBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
-        this.atClass = CLASS_MRM;
+        this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_ATM;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
     
     @Override

@@ -2414,8 +2414,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_VTOL_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_AERO_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "72,IO";

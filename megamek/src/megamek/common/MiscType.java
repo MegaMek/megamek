@@ -10856,7 +10856,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "271,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, 3050, DATE_NONE)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setProductionFactions(F_CWF);

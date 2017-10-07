@@ -52,8 +52,8 @@ public class BombType extends AmmoType {
                                                       "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
                                                       "AlamoMissile Ammo"};
 
-    public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAAMissile",
-                                                    "ASMissile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
+    public static final String[] bombWeaponNames = {null, null, null, "BombRL", "BombTAG", "AAA Missile",
+                                                    "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
                                                     null,"LAAMissile",null,null,"AlamoMissile"};
 
 
@@ -220,6 +220,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AAA));
 		bomb.addLookupName("AAAMissile Ammo");
 		bomb.damagePerShot = 20;
+		bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AAA_MISSILE;
 		bomb.bombType = BombType.B_AAA;
@@ -270,7 +271,8 @@ public class BombType extends AmmoType {
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_AS));
 		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AS));
 		bomb.addLookupName("ASMissile Ammo");
-		bomb.damagePerShot = 20;
+		bomb.damagePerShot = 30;
+		bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AS_MISSILE;
 		bomb.bombType = BombType.B_AS;
@@ -322,6 +324,7 @@ public class BombType extends AmmoType {
 //		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_ASEW)); Not available to the Clans
 		bomb.addLookupName("ASEWMissile Ammo");
 		bomb.damagePerShot = 0;
+		bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_ASEW_MISSILE;
 		bomb.bombType = BombType.B_ASEW;
@@ -620,10 +623,10 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LAA));
 		bomb.addLookupName("LAAMissile Ammo");
 		bomb.damagePerShot = 6;
+		bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_LAA_MISSILE;
 		bomb.bombType = BombType.B_LAA;
-		;
 		bomb.shots = 1;
 		bomb.bv = 17;
 		bomb.cost = 0;
@@ -668,6 +671,7 @@ public class BombType extends AmmoType {
 		bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
 		bomb.addLookupName("RL 10 (Bomb)");
 		bomb.damagePerShot = 1;
+		bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 10;
 		bomb.ammoType = AmmoType.T_RL_BOMB;
 		bomb.bombType = BombType.B_RL;
@@ -694,6 +698,7 @@ public class BombType extends AmmoType {
 		bomb.addLookupName("ISTAGBomb");
 		bomb.addLookupName("TAGBomb");
 		bomb.damagePerShot = 0;
+		bomb.flags.or(AmmoType.F_OTHER_BOMB);
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_BOMB;
 		bomb.bombType = BombType.B_TAG;
@@ -805,7 +810,7 @@ public class BombType extends AmmoType {
 		bomb.shots = 1;
 		bomb.bv = 0;
 		bomb.cost = 0;
-		bomb.flags = bomb.flags.or(F_NUCLEAR);
+		bomb.flags = bomb.flags.or(F_NUCLEAR).or(AmmoType.F_OTHER_BOMB);
 		bomb.capital = true;
 		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS).setTechRating(RATING_E)
 	        .setISAdvancement(2200).setPrototypeFactions(F_TA)

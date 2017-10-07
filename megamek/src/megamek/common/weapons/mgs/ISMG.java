@@ -50,6 +50,7 @@ public class ISMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)

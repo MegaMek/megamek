@@ -70,6 +70,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
     protected boolean bDirect = false;
+    protected boolean amsBayEngaged = false;
+    protected boolean pdBayEngaged = false;
+    protected boolean amsBayEngagedCap = false;
+    protected boolean pdBayEngagedCap = false;
+    protected boolean amsBayEngagedMissile = false;
+    protected boolean pdBayEngagedMissile = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
     protected String typeName;
@@ -80,6 +86,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nRange;
     protected int nDamPerHit;
     protected int attackValue;
+    protected int CounterAV;
+    protected int CapMissileArmor;
+    protected int CapMissileAMSMod;
+    protected boolean CapMissileMissed = false;
     protected boolean throughFront;
     protected boolean underWater;
     protected boolean announcedEntityFiring = false;
@@ -111,6 +121,34 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
+       
+    /**
+     * Calculates the attack value of point defense weapons used against a missile bay attack
+     */    
+    protected int calcCounterAV() {
+    	return 0;
+    }
+    
+    /**
+     * Return the attack value of point defense weapons used against a missile bay attack
+     */ 
+    protected int getCounterAV() {
+    	return CounterAV;
+    }
+    
+    /**
+     * Calculates the to-hit penalty inflicted on a capital missile attack by point defense fire
+     */    
+    protected int calcCapMissileAMSMod() {
+    	return 0;
+    }
+    
+    /**
+     * Return the to-hit penalty inflicted on a capital missile attack by point defense fire
+     */ 
+    protected int getCapMissileAMSMod() {
+    	return CapMissileAMSMod;
+    }
     
     /**
      * Used to store reports from calls to <code>calcDamagePerHit</code>.  This
@@ -309,26 +347,103 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 if (nweapons > 1) {
                     nweaponsHit = Compute.missilesHit(nweapons,
                             ((Aero) ae).getClusterMods());
-                    Report r = new Report(3325);
-                    r.subject = subjectId;
-                    r.add(nweaponsHit);
-                    r.add(" weapon(s) ");
-                    r.add(" ");
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
-                }
-                nDamPerHit = attackValue * nweaponsHit;
-                hits = 1;
-                nCluster = 1;
+                    //If point defenses engage Large, single missiles
+                    if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                        int AMSHits = 0;
+                        Report r = new Report(3236);
+                        r.subject = subjectId;
+                        r.add(nweaponsHit);
+                        vPhaseReport.add(r);
+                        r = new Report(3230);
+                        r.indent(1);
+                        r.subject = subjectId;
+                        vPhaseReport.add(r);
+                        for (int i = 0; i < nweaponsHit; i++) {
+                        	int destroyRoll = Compute.d6();
+                        	if (destroyRoll <= 3) {
+                        		r = new Report(3240);
+                        		r.subject = subjectId;
+                        		r.add("missile");
+                        		r.add(destroyRoll);
+                        		vPhaseReport.add(r);
+                        		AMSHits += 1;
+                        	} else {
+                        		r = new Report(3241);
+                        		r.add("missile");
+                        		r.add(destroyRoll);
+                        		r.subject = subjectId;
+                        		vPhaseReport.add(r);                        		
+                        	}
+                        }
+                        nweaponsHit = nweaponsHit - AMSHits;
+                        if (nweaponsHit <= 0) {
+                        	hits = 0;
+                        } else {
+                        	hits = 1;
+                        }
+                        nDamPerHit = attackValue * nweaponsHit;
+                    } else if (pdBayEngaged || amsBayEngaged) {
+                    	//Point Defenses engage standard (cluster) missiles
+                        int counterAV = 0;
+                        counterAV = getCounterAV();
+                        nDamPerHit = attackValue * nweaponsHit - counterAV;
+                        hits = 1;
+                        nCluster = 1;
+                    } else {
+                    	//If multiple non-missile weapons hit
+                    	Report r = new Report(3325);
+                    	r.subject = subjectId;
+                    	r.add(nweaponsHit);
+                    	r.add(" weapon(s) ");
+                    	r.add(" ");
+                    	r.newlines = 1;
+                    	vPhaseReport.add(r);
+                    	nDamPerHit = attackValue * nweaponsHit;
+                    	hits = 1;
+                    	nCluster = 1;
+                    }
+                } 
             } else if (nCluster > 1) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
             } else {
+            	//If we're not a capital fighter / squadron
+            	//Point Defenses engage any Large, single missiles
+            	getCounterAV();
+                if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                    bSalvo = false;
+                    Report r = new Report(3235);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    r = new Report(3230);
+                    r.indent(1);
+                    r.subject = subjectId;
+                    vPhaseReport.add(r);
+                    for (int i = 0; i < nweaponsHit; i++) {
+                    	int destroyRoll = Compute.d6();
+                    	if (destroyRoll <= 3) {
+                    		r = new Report(3240);
+                    		r.subject = subjectId;
+                    		r.add("missile");
+                    		r.add(destroyRoll);
+                    		vPhaseReport.add(r);
+                    		hits = 0;
+                    	} else {
+                    		r = new Report(3241);
+                    		r.add("missile");
+                    		r.add(destroyRoll);
+                    		r.subject = subjectId;
+                    		vPhaseReport.add(r);
+                    		hits = 1;
+                    	}
+                    }
+                } else {
                 bSalvo = false;
                 nDamPerHit = attackValue;
                 hits = 1;
                 nCluster = 1;
+                }
             }
             int[] results = new int[2];
             results[0] = hits;
@@ -396,6 +511,52 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 r.add(target.getDisplayName(), true);
             }
             vPhaseReport.addElement(r);
+            
+            //Point Defense fire vs Capital Missiles
+            
+            // are we a glancing hit?  Check for this here, report it later
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
+                if (roll == toHit.getValue()) {
+                	bGlancing = true;
+                } else {
+                    bGlancing = false;
+                }
+            }
+            
+            // Set Margin of Success/Failure and check for Direct Blows
+            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+
+	        //This has to be up here so that we don't screw up glancing/direct blow reports
+	        attackValue = calcAttackValue();
+	        
+	        //CalcAttackValue triggers counterfire, so now we can safely get this
+	        CapMissileAMSMod = getCapMissileAMSMod();
+	        
+	        //Only do this if the missile wasn't destroyed
+	        if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
+	        	toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
+	        	if (roll < toHit.getValue()) {
+	        		CapMissileMissed = true;
+	        	}
+	        }
+	        
+	        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
+	        if (amsBayEngagedCap && CapMissileArmor > 0) {
+                r = new Report(3358);
+                r.add(CapMissileAMSMod);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            	        
+	        // Report any PD bay action against Capital missiles that doesn't destroy them all.
+        	} else if (pdBayEngagedCap && CapMissileArmor > 0) {
+                r = new Report(3357);
+                r.add(CapMissileAMSMod);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+	        
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 r = new Report(3135);
                 r.subject = subjectId;
@@ -433,27 +594,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             // do we hit?
             bMissed = roll < toHit.getValue();
+       
 
-            // are we a glancing hit?
-            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-                if (roll == toHit.getValue()) {
-                    bGlancing = true;
-                    r = new Report(3186);
-                    r.subject = ae.getId();
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                } else {
-                    bGlancing = false;
-                }
-            } else {
-                bGlancing = false;
-            }
+            //Report Glancing/Direct Blow here because of Capital Missile weirdness
+            //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
+            //when Advanced Point Defense is on, but they work correctly.
+            if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
+                r = new Report(3186);
+                r.subject = ae.getId();
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } 
 
-            // Set Margin of Success/Failure.
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                    && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
-            if (bDirect) {
+            if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
                 r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
@@ -468,9 +621,53 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 addHeat();
                 heatAdded = true;
             }
-
-            attackValue = calcAttackValue();
-
+	        
+            
+            
+	        // Report any AMS bay action against standard missiles.
+            CounterAV = getCounterAV();
+            //use this if counterfire destroys all the missiles
+	        if (amsBayEngaged && (attackValue <= 0)) {
+	        	r = new Report(3356);
+	        	r.indent();
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        } else if (amsBayEngaged) {
+	        	r = new Report(3354);
+	        	r.indent();
+	        	r.add(CounterAV);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        }
+	        
+            //use this if AMS counterfire destroys all the Capital missiles
+            if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
+                r = new Report(3356);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            } 
+	        
+	        // Report any Point Defense bay action against standard missiles.
+	        if (pdBayEngaged && (attackValue <= 0)) {
+	        	r = new Report(3355);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        } else if (pdBayEngaged) {
+	        	r = new Report(3353);
+	        	r.add(CounterAV);
+	        	r.subject = subjectId;
+	        	vPhaseReport.addElement(r);
+	        }
+	        
+            //use this if PD counterfire destroys all the Capital missiles
+            if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
+                r = new Report(3355);
+                r.indent();
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+	        
             // Any necessary PSRs, jam checks, etc.
             // If this boolean is true, don't report
             // the miss later, as we already reported
@@ -512,7 +709,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
-            if (target.isAirborne() || game.getBoard().inSpace()) {
+            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -520,6 +717,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
                 int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
                 hits = aeroResults[0];
+                // If our capital missile was destroyed, it shouldn't hit
+                if ((amsBayEngagedCap || pdBayEngagedCap) && (CapMissileArmor <= 0)) {
+                    hits = 0;
+                }
                 nCluster = aeroResults[1];
             }
 

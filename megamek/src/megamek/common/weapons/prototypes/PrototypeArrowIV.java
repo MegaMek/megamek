@@ -49,6 +49,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
         criticals = 16;
         bv = 240;
         cost = 1800000;
+        this.flags = flags.or(F_MISSILE).or(F_PROTOTYPE).or(F_ARTILLERY);
         rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setIntroLevel(false)

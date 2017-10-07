@@ -237,6 +237,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
@@ -13833,28 +13834,32 @@ public class Server implements Runnable {
      * Determine which missile attack actions could be affected by AMS, and
      * assign AMS (and APDS) to those attacks.
      */
-    private void assignAMS() {
+    public void assignAMS() {
 
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
-
         // Map target to a list of missile attacks directed at it
         Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
         // Keep track of each APDS, and which attacks it could affect
         Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
+        
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
-            // ignore artillery attacks, here the attacking entity
-            // might no longer be in the game
-            if (waa instanceof ArtilleryAttackAction) {
+            
+            // for artillery attacks, the attacking entity
+            // might no longer be in the game.
+            //TODO: Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
+            if (game.getEntity(waa.getEntityId()) == null) {
+                System.out.println("Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
+            
             Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                     waa.getWeaponId());
-
-            // Only entities can have AMS.
-            if (Targetable.TYPE_ENTITY != waa.getTargetType()) {
+            
+            // Only entities can have AMS. Arrow IV doesn't target an entity until later, so we have to ignore them
+            if (!(waa instanceof ArtilleryAttackAction) && (Targetable.TYPE_ENTITY != waa.getTargetType())) {
                 continue;
             }
 
@@ -13867,29 +13872,67 @@ public class Server implements Runnable {
             if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                 continue;
             }
-
-            Entity target = game.getEntity(waa.getTargetId());
-            Vector<WeaponHandler> v = htAttacks.get(target);
-            if (v == null) {
-                v = new Vector<WeaponHandler>();
-                htAttacks.put(target, v);
-            }
-            v.addElement(wh);
-            // Keep track of what weapon attacks could be affected by APDS
-            if (apdsCoords.containsKey(target.getPosition())) {
-                for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                    // APDS only affects attacks against friendly units
-                    if (target.isEnemyOf(apds.getEntity())) {
+            
+            if (waa instanceof ArtilleryAttackAction) {
+                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                        .getTarget(game) : null;
+                if (target == null) {
+                    //this will pick our TAG target back up and assign it to the waa
+                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
+                    hh.convertHomingShotToEntityTarget();
+                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                            .getTarget(game) : null;
+                    if (target == null) {
+                        //in case our target really is null. 
                         continue;
                     }
-                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                    if (handlerList == null) {
-                        handlerList = new Vector<>();
-                        apdsTargets.put(apds, handlerList);
-                    }
-                    handlerList.add(wh);
                 }
-            }
+                Vector<WeaponHandler> v = htAttacks.get(target);
+                if (v == null) {
+                    v = new Vector<WeaponHandler>();
+                    htAttacks.put(target, v);                    
+                }
+                v.addElement(wh);
+                // Keep track of what weapon attacks could be affected by APDS
+                if (apdsCoords.containsKey(target.getPosition())) {
+                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                        // APDS only affects attacks against friendly units
+                        if (target.isEnemyOf(apds.getEntity())) {
+                            continue;
+                        }
+                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                        if (handlerList == null) {
+                            handlerList = new Vector<>();
+                            apdsTargets.put(apds, handlerList);
+                        }
+                        handlerList.add(wh);
+                    }
+                
+                }
+            } else {
+                Entity target = game.getEntity(waa.getTargetId());
+                Vector<WeaponHandler> v = htAttacks.get(target);
+                if (v == null) {
+                    v = new Vector<WeaponHandler>();
+                    htAttacks.put(target, v);
+                }
+                v.addElement(wh);
+                // Keep track of what weapon attacks could be affected by APDS
+                if (apdsCoords.containsKey(target.getPosition())) {
+                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                        // APDS only affects attacks against friendly units
+                        if (target.isEnemyOf(apds.getEntity())) {
+                            continue;
+                        }
+                        Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                        if (handlerList == null) {
+                            handlerList = new Vector<>();
+                            apdsTargets.put(apds, handlerList);
+                        }
+                        handlerList.add(wh);
+                    }
+                }
+            }            
         }
 
         // Let each target assign its AMS
@@ -13926,6 +13969,7 @@ public class Server implements Runnable {
                 targetedAttacks.add(targetedWAA);
             }
         }
+    	
     }
 
     /**
@@ -14151,6 +14195,7 @@ public class Server implements Runnable {
         }
         return apdsCoords;
     }
+    
 
     /**
      * Checks to see if any units can detected hidden units.
@@ -27162,11 +27207,11 @@ public class Server implements Runnable {
             vDesc.add(r);
             if (nukeroll >= capitalMissile) {
                 int nukeDamage = damage_orig;
-                a.setSI(a.getSI() - nukeDamage);
-                a.damageThisPhase += nukeDamage;
+                a.setSI(a.getSI() - (nukeDamage * 10));
+                a.damageThisPhase += (nukeDamage * 10);
                 r = new Report(9146);
                 r.subject = a.getId();
-                r.add(nukeDamage);
+                r.add((nukeDamage * 10));
                 r.indent(4);
                 r.add(Math.max(a.getSI(), 0));
                 vDesc.addElement(r);

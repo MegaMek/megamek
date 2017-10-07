@@ -954,6 +954,7 @@ public class BLKFile {
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
+                    InfantryBay.PlatoonType type = InfantryBay.PlatoonType.FOOT;
                     try {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
@@ -963,8 +964,32 @@ public class BLKFile {
                             i++;
                         }
                         bayNumber = i;
+                    } catch (NumberFormatException ex) {
+                        // if not a number, check for c* bay
+                        if (temp[2].equalsIgnoreCase("jump")) {
+                            type = InfantryBay.PlatoonType.JUMP;
+                        } else if (temp[2].equalsIgnoreCase("motorized")) {
+                            type = InfantryBay.PlatoonType.MOTORIZED;
+                        } else if (temp[2].equalsIgnoreCase("mechanized")) {
+                            type = InfantryBay.PlatoonType.MECHANIZED;
+                        }
+                        // Find an unused bay number and use it.
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
                     }
-                    e.addTransporter(new InfantryBay(size, doors, bayNumber));
+                    if (temp.length == 4) {
+                        if (temp[3].equalsIgnoreCase("jump")) {
+                            type = InfantryBay.PlatoonType.JUMP;
+                        } else if (temp[3].equalsIgnoreCase("motorized")) {
+                            type = InfantryBay.PlatoonType.MOTORIZED;
+                        } else if (temp[3].equalsIgnoreCase("mechanized")) {
+                            type = InfantryBay.PlatoonType.MECHANIZED;
+                        }
+                    }
+                    e.addTransporter(new InfantryBay(size, doors, bayNumber, type));
                 } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
                     String temp[] = numbers.split(":");

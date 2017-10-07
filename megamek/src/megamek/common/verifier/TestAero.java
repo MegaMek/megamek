@@ -173,8 +173,14 @@ public class TestAero extends TestEntity {
                 (size, num) -> new LightVehicleBay(size, 1, num)),
         VEHICLE_SH ("Superheavy Vehicle", 200.0, 15, SuperHeavyVehicleBay.techAdvancement(),
                 (size, num) -> new SuperHeavyVehicleBay(size, 1, num)),
-        INFANTRY ("Infantry", 1.0, 0, InfantryBay.techAdvancement(),
-                (size, num) -> new InfantryBay(size, 1, num)),
+        INFANTRY_FOOT ("Infantry (Foot)", 5.0, 0, InfantryBay.techAdvancement(),
+                (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.FOOT)),
+        INFANTRY_JUMP ("Infantry (Jump)", 6.0, 0, InfantryBay.techAdvancement(),
+                (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.JUMP)),
+        INFANTRY_MOTORIZED ("Infantry (Motorized)", 7.0, 0, InfantryBay.techAdvancement(),
+                (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MOTORIZED)),
+        INFANTRY_MECHANIZED ("Infantry (Mech. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
+                (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MECHANIZED)),
         IS_BATTLE_ARMOR ("BattleArmor (IS)", 8.0, 6, BattleArmorBay.techAdvancement(),
                 (size, num) -> new BattleArmorBay(size, 1, num, false, false)),
         CLAN_BATTLE_ARMOR ("BattleArmor (Clan)", 10.0, 6, BattleArmorBay.techAdvancement(),
@@ -235,7 +241,14 @@ public class TestAero extends TestEntity {
             } else if (bay instanceof SuperHeavyVehicleBay) {
                 return VEHICLE_SH;
             } else if (bay instanceof InfantryBay) {
-                return INFANTRY;
+                if (bay.getWeight() / bay.getCapacity() == INFANTRY_JUMP.getWeight()) {
+                    return INFANTRY_JUMP;
+                } else if (bay.getWeight() / bay.getCapacity() == INFANTRY_MOTORIZED.getWeight()) {
+                    return INFANTRY_MOTORIZED;
+                } else if (bay.getWeight() / bay.getCapacity() == INFANTRY_MECHANIZED.getWeight()) {
+                    return INFANTRY_MECHANIZED;
+                }
+                return INFANTRY_FOOT;
             } else if (bay instanceof BattleArmorBay) {
                 if (bay.getWeight() / bay.getCapacity() == 12) {
                     return CS_BATTLE_ARMOR;

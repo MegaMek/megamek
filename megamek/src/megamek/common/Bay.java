@@ -134,6 +134,17 @@ public class Bay implements Transporter, ITechnology {
         unloadedThisTurn = 0;
         loadedThisTurn = 0;
     }
+    
+    /**
+     * Most bay types track space by individual units. Infantry bays have variable space requirements
+     * and must track by cubicle tonnage.
+     * 
+     * @param unit The unit to load/unload.
+     * @return     The amount of bay space taken up by the unit.
+     */
+    public double spaceForUnit(Entity unit) {
+        return 1;
+    }
 
     @Override
     public void resetTransporter() {
@@ -157,7 +168,7 @@ public class Bay implements Transporter, ITechnology {
         boolean result = true;
 
         // We must have enough space for the new troops.
-        if (currentSpace < 1) {
+        if (currentSpace < spaceForUnit(unit)) {
             result = false;
         }
 
@@ -203,7 +214,7 @@ public class Bay implements Transporter, ITechnology {
             throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + currentSpace);
         }
 
-        currentSpace -= 1;
+        currentSpace -= spaceForUnit(unit);
         if((unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE)) {
                 loadedThisTurn += 1;
         }
@@ -297,7 +308,7 @@ public class Bay implements Transporter, ITechnology {
 
         // If we removed it, restore our space.
         if (retval) {
-            currentSpace += 1;
+            currentSpace += spaceForUnit(unit);
             unloadedThisTurn += 1;
         }
 
@@ -320,9 +331,30 @@ public class Bay implements Transporter, ITechnology {
         return getUnusedString(true);
     }
 
+    /**
+     * @return The amount of unused space in the bay.
+     */
     @Override
     public double getUnused() {
         return currentSpace;
+    }
+    
+    /**
+     * @return The amount of unused space in the bay expressed in slots. For most bays this is the
+     *         same as the the unused space, but bays for units that can take up a variable amount
+     *         of space (such as infantry bays) this calculates the number of the default unit size
+     *         that can fit into the remaining space.
+     */
+    public double getUnusedSlots() {
+        return currentSpace;
+    }
+    
+    /**
+     * @return A String that describes the default slot type. Only meaningful for bays with variable
+     *         space requirements (like infantry).
+     */
+    public String getDefaultSlotDescription() {
+        return "";
     }
 
     /**

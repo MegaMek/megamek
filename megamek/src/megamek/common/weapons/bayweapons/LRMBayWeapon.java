@@ -16,17 +16,13 @@
  */
 package megamek.common.weapons.bayweapons;
 
-<<<<<<< HEAD
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.MissileBayWeaponHandler;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MissileBayWeaponHandler;
 import megamek.server.Server;
 
-=======
->>>>>>> branch 'master' of https://github.com/MegaMek/megamek
 /**
  * @author Jay Lawson
  */

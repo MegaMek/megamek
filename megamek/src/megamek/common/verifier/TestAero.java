@@ -267,6 +267,24 @@ public class TestAero extends TestEntity {
     }
     
     /**
+     * @param aero A large craft
+     * @return     The maximum number of bay doors. Aerospace units that are not large craft have
+     *             a maximum of zero.
+     */
+    public static int maxBayDoors(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            return 8 + (int)Math.ceil(aero.getWeight() / 100000);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return 8 + (int)Math.ceil(aero.getWeight() / 75000);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                || (aero.hasETypeFlag(Entity.ETYPE_DROPSHIP))) {
+            return 7 + (int)Math.ceil(aero.getWeight() / 50000);
+        } else {
+            return 0;
+        }
+    }
+    
+    /**
      * Defines the maximum engine rating that an Aero can have.
      */
     public static int MAX_ENGINE_RATING = 400;

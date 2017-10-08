@@ -356,14 +356,15 @@ public class EquipmentType implements ITechnology {
 
         // special case. ACs only explode when firing incendiary ammo
         if ((mounted.getType() instanceof WeaponType)
-                && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC) || (((WeaponType) mounted
-                        .getType()).getAmmoType() == AmmoType.T_LAC))) {
+                && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC)
+                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_LAC)
+                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_IMP)
+                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_PAC))) {
             if (!mounted.isUsedThisRound()) {
                 return false;
             }
             Mounted ammo = mounted.getLinked();
-            if ((ammo == null)
-                    || !(ammo.getType() instanceof AmmoType)
+            if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
                     || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
                 return false;
             }

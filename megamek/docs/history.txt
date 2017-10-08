@@ -9,6 +9,8 @@ v0.43.5-git
 + PR #691: Princess controlled conventional fighters will now drop bombs
 + Bug - TP wrong for AP Mount (Inner Sphere)
 + Cleaning up the Docs folder, and adding some other files.
++ Issue #684: Alternative Proto-AC ammo
+	in the process of Implementing the Proto-AC Ammo, I noticed the Clan Improved AC's didn't have them implemented
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

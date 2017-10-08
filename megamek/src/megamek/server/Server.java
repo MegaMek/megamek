@@ -14798,11 +14798,13 @@ public class Server implements Runnable {
                 }
                 // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                     || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
-                     || (wtype.getAmmoType() == AmmoType.T_AC) || (wtype
-                                                                           .getAmmoType() == AmmoType.T_LAC))
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                        || (wtype.getAmmoType() == AmmoType.T_AC)
+                        || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
+                        || (wtype.getAmmoType() == AmmoType.T_PAC) 
+                        || (wtype.getAmmoType() == AmmoType.T_LAC))
+                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);
                     r.indent();
@@ -28309,9 +28311,11 @@ public class Server implements Runnable {
         // special case. ACs only explode if firing incendiary ammo or rapid
         // firing
         if ((mounted.getType() instanceof WeaponType)
-            && !mounted.curMode().equals("Rapid")
-            && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC) || (((WeaponType) mounted
-                .getType()).getAmmoType() == AmmoType.T_LAC))) {
+                && !mounted.curMode().equals("Rapid")
+                && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC)
+                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_LAC)
+                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_IMP)
+                        || (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_PAC))) {
             if (!mounted.isUsedThisRound()) {
                 return vDesc;
             }

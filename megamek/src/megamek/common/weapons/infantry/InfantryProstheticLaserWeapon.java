@@ -32,7 +32,7 @@ public class InfantryProstheticLaserWeapon extends InfantryWeapon {
     public InfantryProstheticLaserWeapon() {
         super();
 
-        name = "Prothetic Laser";
+        name = "Prosthetic Laser";
         setInternalName(name);
         addLookupName("ProstheticLaser");
         ammoType = AmmoType.T_NA;

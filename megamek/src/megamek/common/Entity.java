@@ -2392,7 +2392,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                  || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                  || (wtype.getAmmoType() == AmmoType.T_AC)
-                 || (wtype.getAmmoType() == AmmoType.T_LAC))
+                 || (wtype.getAmmoType() == AmmoType.T_LAC)
+                 || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
+                 || (wtype.getAmmoType() == AmmoType.T_PAC))
                 && mounted.isJammed()
                 && !mounted.isDestroyed()
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {

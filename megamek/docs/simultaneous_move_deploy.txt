@@ -1,9 +1,0 @@
-Simultaneous Movement and Deployment have been implemented at this time, with the following changes from the published rules:
-
-1.  Stacking Violations (TO 216) are no longer resolves with a separate roll. Whichever player placed a unit in a hex first occupies the hex.
-    While I would like to change this to follow canon behavior for a future release, this was a simpler way to add the feature in for the moment.
-    Arlith's client feedback code will allow the choice for the separate roll initiative winner to choose which player occupies the hex.
-    
-2.  This also affects physical attacks as described on page 216 also, since the stacking doesn't change charge and DFA will need to be declared
-    as normal for MegaMek's current implementation. However, the client feedback feature that Arlith implemented will come in handy for this as
-    the code gets adjusted to handle it exactly as the rules state.

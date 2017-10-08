@@ -1,6 +1,8 @@
 UNIT SHADING SCRIPTS
 Sept 17/2016
 
+The scripts are located in the megamek\data\images\widgets\Unit Shading Scripts folder.
+
 These are the new scripts used in GIMP to convert any of the sprites to the new shaded look.
 The original unshaded Sprites are located in the data\unused\units_original folder. As new units are added shaded units will be used in game and unshaded units will be added that folder.
 

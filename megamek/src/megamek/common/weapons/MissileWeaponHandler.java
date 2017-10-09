@@ -221,6 +221,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_SRM)
                     || (atype.getAmmoType() == AmmoType.T_MML)
                     || (atype.getAmmoType() == AmmoType.T_NLRM))
@@ -1111,19 +1112,20 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         MiscType.F_ARTEMIS) || mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS_V) || mLinker.getType().hasFlag(
                                 MiscType.F_ARTEMIS_PROTO)))) {
-            if ((!weapon.getType().hasModes() || !weapon.curMode().equals(
-                    "Indirect"))
-                    && (((atype.getAmmoType() == AmmoType.T_ATM) && ((atype
-                            .getMunitionType() == AmmoType.M_STANDARD)
-                            || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) || (atype
-                            .getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE))) || ((((atype
-                            .getAmmoType() == AmmoType.T_LRM) || (atype
-                            .getAmmoType() == AmmoType.T_SRM)) && (atype
-                            .getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) || (atype
-                            .getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)))) {
+            if ((!weapon.getType().hasModes() || !weapon.curMode().equals("Indirect"))
+                    && (((atype.getAmmoType() == AmmoType.T_ATM) && 
+                            ((atype.getMunitionType() == AmmoType.M_STANDARD)
+                            || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
+                            || (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE))) 
+                            || ((((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP)        
+                            || (atype.getAmmoType() == AmmoType.T_SRM)) && 
+                                    (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) 
+                                    || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)))) {
                 isNemesisConfusable = true;
             }
         } else if ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_SRM)) {
             if ((atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     || (atype.getMunitionType() == AmmoType.M_LISTEN_KILL)) {

@@ -212,6 +212,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
                        || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {
             current_av = Math.ceil(1.33 * current_av);
+            
+       } else if (atype.getAmmoType() == AmmoType.T_LRM_IMP
+               && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
+                       || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {
+            current_av = Math.ceil(1.33 * current_av);
+            
        } else if (atype.getAmmoType() == AmmoType.T_SRM 
                && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
                        || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {

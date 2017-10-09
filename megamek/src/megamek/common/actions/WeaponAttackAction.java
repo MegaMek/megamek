@@ -366,11 +366,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
         boolean bHeatSeeking = (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_MML)
-                        || (atype.getAmmoType() == AmmoType.T_LRM))
-                && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING);
+                && ((atype.getAmmoType() == AmmoType.T_SRM) 
+                        || (atype.getAmmoType() == AmmoType.T_MML)
+                        || (atype.getAmmoType() == AmmoType.T_LRM)
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING));
         boolean bFTL = (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_MML) || (atype.getAmmoType() == AmmoType.T_LRM))
+                && ((atype.getAmmoType() == AmmoType.T_MML) 
+                        || (atype.getAmmoType() == AmmoType.T_LRM)
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP))
                 && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
 
         Mounted mLinker = weapon.getLinkedBy();
@@ -392,8 +396,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (te != null) {
             if (!isTargetECMAffected && te.isINarcedBy(ae.getOwner().getTeam()) && (atype != null)
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
-                            || (atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_NLRM))
+                    && ((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                            || (atype.getAmmoType() == AmmoType.T_MML)
+                            || (atype.getAmmoType() == AmmoType.T_SRM) 
+                            || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 isINarcGuided = true;
             }
@@ -459,7 +466,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 spotter = Compute.findSpotter(game, ae, target);
             }
             if ((spotter == null) && (atype != null)
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
+                    && ((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                            || (atype.getAmmoType() == AmmoType.T_MML)
                             || (atype.getAmmoType() == AmmoType.T_NLRM)
                             || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
@@ -662,7 +671,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
             if (game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                    toHit = new ToHitData(ae.getCrew().getGunneryL(), "gunnery (L) skill");
+                    toHit = new ToHitData(ae.getCrew().getGunneryL(), "gunnery (E) skill");
                 }
                 if (wtype.hasFlag(WeaponType.F_MISSILE)) {
                     toHit = new ToHitData(ae.getCrew().getGunneryM(), "gunnery (M) skill");
@@ -2874,7 +2883,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "Weapon can't deliver minefields";
         }
         if ((target.getTargetType() == Targetable.TYPE_FLARE_DELIVER) && !(usesAmmo
-                && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
+                && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                        || (atype.getAmmoType() == AmmoType.T_MML)
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                 && (atype.getMunitionType() == AmmoType.M_FLARE))) {
             return "Weapon can't deliver flares";
@@ -2905,7 +2916,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
+                && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                 && ((atype.getMunitionType() == AmmoType.M_THUNDER)
                         || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
@@ -2915,7 +2928,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
             return "Weapon can only deliver minefields";
         }
-        if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML))
+        if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM)
+                || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                || (atype.getAmmoType() == AmmoType.T_MML))
                 && (atype.getMunitionType() == AmmoType.M_FLARE)
                 && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
             return "Weapon can only deliver flares";
@@ -3552,7 +3567,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             if ((spotter == null) && (atype != null)
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
+                    && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                            || (atype.getAmmoType() == AmmoType.T_MML)
                             || (atype.getAmmoType() == AmmoType.T_NLRM)
                             || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {

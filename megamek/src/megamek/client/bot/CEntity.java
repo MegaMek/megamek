@@ -1436,6 +1436,7 @@ public class CEntity {
 
             // LRMs, SRMs, which may have Artemis
             if ((linked_ammo == AmmoType.T_SRM)
+                    || (linked_ammo == AmmoType.T_LRM_IMP)
                     || (linked_ammo == AmmoType.T_LRM)) {
 
                 damage_value = hits_by_racksize[rack_size];

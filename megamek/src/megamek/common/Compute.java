@@ -895,25 +895,23 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isAttackerBA = (ae instanceof BattleArmor);
-        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon)
-        		&& !wtype.hasFlag(WeaponType.F_TAG);
+        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
-        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
-                               || (wtype.getAmmoType() == AmmoType.T_MML)
-                               || (wtype.getAmmoType() == AmmoType.T_EXLRM)
-                               || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
-                               || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
-                               || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
-                               || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
-                               || (wtype.getAmmoType() == AmmoType.T_IATM) 
-                               || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                               || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
-                               || (wtype instanceof ArtilleryCannonWeapon)) 
-                               && weapon.curMode().equals("Indirect");
-        boolean useExtremeRange = game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean useLOSRange = game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) 
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
+                || (wtype.getAmmoType() == AmmoType.T_MML) 
+                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5) 
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_15) 
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
+                || (wtype.getAmmoType() == AmmoType.T_IATM) 
+                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR) 
+                || (wtype instanceof ArtilleryCannonWeapon))
+                && weapon.curMode().equals("Indirect");
+        boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
+        boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
 
         if (ae.isAirborne()) {
             useExtremeRange = true;
@@ -2902,6 +2900,7 @@ public class Compute {
                 && (wt.hasFlag(WeaponType.F_MISSILE))) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoType.T_LRM)
+                    || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wt.getAmmoType() == AmmoType.T_MML)
                     || (wt.getAmmoType() == AmmoType.T_SRM)) {
                     lnk_guide = weapon.getLinkedBy();
@@ -3294,6 +3293,7 @@ public class Compute {
                             // Any further anti-personnel specialized rounds
                             // should be tested for here
                             if (((((abin_type.getAmmoType() == AmmoType.T_LRM)
+                                    || (abin_type.getAmmoType() == AmmoType.T_LRM_IMP)
                                     || (abin_type.getAmmoType() == AmmoType.T_MML)
                                     || (abin_type.getAmmoType() == AmmoType.T_SRM)))
                                     && (abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION))
@@ -6017,6 +6017,7 @@ public class Compute {
                     case AmmoType.T_SRM_STREAK:
                     case AmmoType.T_LRM_STREAK:
                     case AmmoType.T_LRM:
+                    case AmmoType.T_LRM_IMP:
                     case AmmoType.T_LRM_TORPEDO:
                     case AmmoType.T_SRM:
                     case AmmoType.T_SRM_TORPEDO:

@@ -2763,6 +2763,7 @@ public class Server implements Runnable {
             for (Mounted m : entity.getAmmo()) {
                 AmmoType atype = (AmmoType) m.getType();
                 if (((atype.getAmmoType() == AmmoType.T_LRM)
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_NLRM)
                         || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
@@ -28328,6 +28329,7 @@ public class Server implements Runnable {
 
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
@@ -28384,8 +28386,8 @@ public class Server implements Runnable {
 
         // Smoke ammo halves damage
         if ((mounted.getType() instanceof AmmoType)
-            && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || (((AmmoType) mounted
-                .getType()).getAmmoType() == AmmoType.T_LRM))
+            && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
+**                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM))
             && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
             && (mounted.getHittableShotsLeft() > 0)) {
             damage = ((mounted.getExplosionDamage()) / 2);

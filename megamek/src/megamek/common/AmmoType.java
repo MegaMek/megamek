@@ -782,7 +782,6 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createCLPROAC8Ammo();
         clanProtoAcAmmo.add(base);
         EquipmentType.addType(base);
-
         
         base = AmmoType.createCLImprovedLRM5Ammo();
         clanImprovedLrmsAmmo.add(base);
@@ -795,6 +794,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         base = AmmoType.createCLImprovedLRM20Ammo();
         clanImprovedLrmsAmmo.add(base);
+        EquipmentType.addType(base);
         
         base = AmmoType.createCLImprovedSRM2Ammo();
         clanImprovedSrmsAmmo.add(base);
@@ -1110,10 +1110,13 @@ public class AmmoType extends EquipmentType {
         clanLrmAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createCLLRM19Ammo();
+        
         clanLrmAmmos.add(base);
         EquipmentType.addType(base);
+        
         base = AmmoType.createCLLRM20Ammo();
         clanLrmAmmos.add(base);
+        
         EquipmentType.addType(base);
 
         // Start of BattleArmor ammo
@@ -1762,6 +1765,7 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanSrmAmmos, munitions);
+        AmmoType.createMunitions(clanImprovedSrmsAmmo, munitions);
         AmmoType.createMunitions(baSrmAmmos, munitions);
 
         // Create the munition types for CLAN BA SRM launchers.
@@ -2253,6 +2257,7 @@ public class AmmoType extends EquipmentType {
         // mutators, and create munition types.
         AmmoType.createMunitions(clanLrmAmmos, munitions);
         AmmoType.createMunitions(clanBaLrmAmmos, munitions);
+        AmmoType.createMunitions(clanImprovedLrmsAmmo, munitions);
 
         // Create the munition types for AC rounds.
         munitions.clear();
@@ -15587,9 +15592,10 @@ public class AmmoType extends EquipmentType {
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM)
+                    || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML)
-                    || (munition.getAmmoType() == AmmoType.T_SRM) || (munition
-                    .getAmmoType() == AmmoType.T_NLRM))
+                    || (munition.getAmmoType() == AmmoType.T_SRM) 
+                    || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && ((munition.getMunitionType() == AmmoType.M_HEAT_SEEKING) || (munition
                     .getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER))) {
                 cost *= 2;

@@ -10984,6 +10984,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 2;
 	            ammo.ammoType = AmmoType.T_BARRACUDA;
 	            ammo.shots = 1;
+                ammo.tonnage = 30.0;
 	            ammo.bv = 65;
 	            ammo.cost = 8000;
 	            ammo.toHitModifier = -2;
@@ -11015,6 +11016,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 3;
 	            ammo.ammoType = AmmoType.T_WHITE_SHARK;
 	            ammo.shots = 1;
+                ammo.tonnage = 40.0;
 	            ammo.bv = 72;
 	            ammo.cost = 14000;
 	            ammo.capital = true;
@@ -11045,6 +11047,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 4;
 	            ammo.ammoType = AmmoType.T_KILLER_WHALE;
 	            ammo.shots = 1;
+	            ammo.tonnage = 50.0;
 	            ammo.bv = 96;
 	            ammo.cost = 20000;
 	            ammo.capital = true;
@@ -11076,6 +11079,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 2;
 	            ammo.ammoType = AmmoType.T_BARRACUDA;
 	            ammo.shots = 1;
+                ammo.tonnage = 30.0;
 	            ammo.bv = 65;
 	            ammo.cost = 8000;
 	            ammo.toHitModifier = -2;
@@ -11105,6 +11109,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_WHITE_SHARK;
                 ammo.shots = 1;
+                ammo.tonnage = 40.0;
                 ammo.bv = 72;
                 ammo.cost = 14000;
                 ammo.capital = true;
@@ -11133,6 +11138,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 4;
                 ammo.ammoType = AmmoType.T_KILLER_WHALE;
                 ammo.shots = 1;
+                ammo.tonnage = 50.0;
                 ammo.bv = 96;
                 ammo.cost = 20000;
                 ammo.capital = true;
@@ -11160,6 +11166,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 10;
                 ammo.ammoType = AmmoType.T_KRAKEN_T;
                 ammo.shots = 1;
+                ammo.tonnage = 100.0;
                 ammo.bv = 288;
                 ammo.cost = 55000;
                 ammo.capital = true;
@@ -11213,6 +11220,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 0;
                 ammo.ammoType = AmmoType.T_SCREEN_LAUNCHER;
                 ammo.shots = 1;
+                ammo.tonnage = 10.0;
                 ammo.bv = 20;
                 ammo.cost = 10000;
                 ammo.rulesRefs = "237,TM";
@@ -11331,6 +11339,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 5;
                 ammo.ammoType = AmmoType.T_MANTA_RAY;
                 ammo.shots = 1;
+                ammo.tonnage = 18.0;
                 ammo.bv = 50;
                 ammo.cost = 30000;
                 ammo.ammoRatio = 18;
@@ -11360,6 +11369,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 4;
                 ammo.ammoType = AmmoType.T_SWORDFISH;
                 ammo.shots = 1;
+                ammo.tonnage = 15.0;
                 ammo.bv = 40;
                 ammo.cost = 25000;
                 ammo.capital = true;
@@ -11390,6 +11400,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_STINGRAY;
                 ammo.shots = 1;
+                ammo.tonnage = 12.0;
                 ammo.bv = 62;
                 ammo.cost = 19000;
                 ammo.ammoRatio = 12;
@@ -11420,6 +11431,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_PIRANHA;
                 ammo.shots = 1;
+                ammo.tonnage = 10.0;
                 ammo.bv = 84;
                 ammo.cost = 15000;
                 ammo.ammoRatio = 10;
@@ -11451,6 +11463,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 2;
                 ammo.ammoType = AmmoType.T_AR10;
                 ammo.shots = 1;
+                ammo.tonnage = 30.0;
                 ammo.bv = 65;
                 ammo.cost = 8000;
                 ammo.flags = ammo.flags.or(F_AR10_BARRACUDA).or(F_CAP_MISSILE);
@@ -11482,6 +11495,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 4;
                 ammo.ammoType = AmmoType.T_AR10;
                 ammo.shots = 1;
+                ammo.tonnage = 50.0;
                 ammo.bv = 96;
                 ammo.cost = 20000;
                 ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_CAP_MISSILE);
@@ -11513,6 +11527,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_AR10;
                 ammo.shots = 1;
+                ammo.tonnage = 40.0;
                 ammo.bv = 72;
                 ammo.cost = 14000;
                 ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_CAP_MISSILE);
@@ -11543,6 +11558,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 2;
                 ammo.ammoType = AmmoType.T_AR10;
                 ammo.shots = 1;
+                ammo.tonnage = 30.0;
                 ammo.bv = 65;
                 ammo.cost = 8000;
                 ammo.flags = ammo.flags.or(F_AR10_BARRACUDA).or(F_TELE_MISSILE)
@@ -11574,6 +11590,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 4;
                 ammo.ammoType = AmmoType.T_AR10;
                 ammo.shots = 1;
+                ammo.tonnage = 50.0;
                 ammo.bv = 96;
                 ammo.cost = 20000;
                 ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_TELE_MISSILE)
@@ -11604,6 +11621,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_AR10;
                 ammo.shots = 1;
+                ammo.tonnage = 40.0;
                 ammo.bv = 72;
                 ammo.cost = 14000;
                 ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_TELE_MISSILE)

@@ -386,6 +386,9 @@ public class BLKFile {
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
         blk.writeBlockData("year", t.getYear());
+        if (t.getOriginalBuildYear() >= 0) {
+            blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
+        }
         String type;
         if (t.isMixedTech()) {
             if (!t.isClan()) {

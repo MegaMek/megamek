@@ -215,6 +215,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the engine and structural tech ratings match.
      */
     protected int engineTechRating = USE_STRUCTURAL_RATING;
+    /**
+     * Year to use calculating engine and control system weight and fuel efficiency for primitive
+     * support vehicles and aerospace units. This needs to be tracked separately from intro year to
+     * account for refits that change the intro year but don't affect the structural components
+     */
+    private int originalBuildYear = -1;
+    
     private Engine engine;
     protected boolean mixedTech = false;
     protected boolean designValid = true;
@@ -14792,6 +14799,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+    
+    /**
+     * Units with construction data that varies by year (such as engine and control system weight
+     * for some primitive aerospace units) require tracking the original build year separately
+     * from the intro year for the model to account for refits that don't affect the core components.
+     *  
+     * @return The year to use for core component construction data.
+     */
+    public int getOriginalBuildYear() {
+        if (originalBuildYear < 0) {
+            return year;
+        }
+        return originalBuildYear;
+    }
+    
+    public void setOriginalBuildYear(int year) {
+        originalBuildYear = year;
     }
 
     /**

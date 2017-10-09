@@ -71,6 +71,10 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         setFluff(a);
         checkManualBV(a);
 
+        if (dataFile.exists("originalBuildYear")) {
+            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+        }
+
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find tonnage block.");
         }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -329,17 +330,16 @@ public class TestSmallCraft extends TestAero {
 
     @Override
     public double getWeightControls() {
-        double weight = smallCraft.getWeight();
+        // Non primitives use the multiplier for 2500+ even if they were built before that date
+        int year = smallCraft.isPrimitive()? smallCraft.getOriginalBuildYear() : 2500;
+        // Small craft round up to the half ton and dropships to the full ton
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            weight = ceil(weight * DropshipControlMultiplier(smallCraft.getOriginalBuildYear()), Ceil.TON);
+            return ceil(smallCraft.getWeight()
+                    * DropshipControlMultiplier(year), Ceil.TON);
         } else {
-            weight = ceil(weight * SmallCraftControlMultiplier(smallCraft.getOriginalBuildYear()), Ceil.HALFTON);
+            return ceil(smallCraft.getWeight()
+                    * SmallCraftControlMultiplier(year), Ceil.HALFTON);
         }
-        // Add in extra fire control system weight for exceeding base slot limit
-        for (double extra : extraSlotCost(smallCraft)) {
-            weight += extra;
-        }
-        return weight;
     }
 
     public double getWeightEngine() {
@@ -349,7 +349,8 @@ public class TestSmallCraft extends TestAero {
     }
     
     public double getWeightFuel() {
-        return smallCraft.getFuelTonnage();
+        // Add 2% for pumps and round up to the half ton
+        return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALFTON);
     }
 
     @Override
@@ -360,6 +361,34 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightHeatSinks() {
         return Math.max(smallCraft.getHeatSinks() - weightFreeHeatSinks(smallCraft), 0);        
+    }
+
+    // Bays can store multiple tons of ammo in a single slot.
+    @Override
+    public double getWeightAmmo() {
+        double weight = 0.0;
+        for (Mounted m : getEntity().getAmmo()) {
+
+            // One Shot Ammo
+            if (m.getLocation() == Entity.LOC_NONE) {
+                continue;
+            }
+
+            AmmoType mt = (AmmoType) m.getType();
+            int slots = (int)Math.ceil(m.getBaseShotsLeft() / mt.getShots());
+            weight += mt.getTonnage(getEntity()) * slots;
+        }
+        return weight;
+    }
+
+    @Override
+    public double getWeightMisc() {
+        double weight = 0.0;
+        // Add in extra fire control system weight for exceeding base slot limit
+        for (double extra : extraSlotCost(smallCraft)) {
+            weight += extra;
+        }
+        return weight;
     }
 
     @Override

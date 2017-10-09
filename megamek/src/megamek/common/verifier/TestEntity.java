@@ -503,7 +503,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getWeightWeapon() {
         double weight = 0.0;
-        for (Mounted m : getEntity().getWeaponList()) {
+        for (Mounted m : getEntity().getTotalWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if (m.isDWPMounted()){
                 weight += wt.getTonnage(getEntity()) * 0.75;

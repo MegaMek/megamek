@@ -428,7 +428,7 @@
     <property name="dir.build.testreport" location="${builddir}/testreport"/>
     <property name="dir.test.src" location="unittests"/>
     <property name="dir.build.test" location="${builddir}/unittests"/>
-    <property name="libdir.test" location="lib-test"/>
+    <property name="libdir.test" location="${pkgdir}/lib-test"/>
 
     <path id="classpath">
         <fileset dir="${pkgdir}/${libdir}" includes="*.jar"/>
@@ -436,7 +436,7 @@
 
     <path id="classpath.compile-unittest">
         <path refid="classpath"/>
-        <pathelement location="${builddir}"/>
+        <pathelement location="${pkgbuilddir}"/>
         <fileset dir="${libdir.test}"/>
     </path>
 

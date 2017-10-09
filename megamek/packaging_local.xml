@@ -421,7 +421,7 @@
 
     <path id="classpath.compile-unittest">
         <path refid="classpath"/>
-        <pathelement location="${builddir}"/>
+        <pathelement location="${localbuilddir}"/>
         <fileset dir="${libdir.test}"/>
     </path>
 

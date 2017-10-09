@@ -50,6 +50,7 @@ import megamek.common.SmallCraftBay;
 import megamek.common.SuperHeavyVehicleBay;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -229,7 +230,7 @@ public class TestAero extends TestEntity {
             return techAdvancement;
         }
 
-        public static TransportBay getBayType(Bay bay) {
+        public static @Nullable TransportBay getBayType(Bay bay) {
             if (bay instanceof MechBay) {
                 return MECH;
             } else if (bay instanceof ProtomechBay) {
@@ -260,8 +261,11 @@ public class TestAero extends TestEntity {
                 return FIGHTER;
             } else if (bay instanceof SmallCraftBay) {
                 return SMALL_CRAFT;
-            } else {
+            } else if (bay instanceof CargoBay) {
                 return CARGO;
+            } else {
+                // Crew quarters are implemented as bays and should not be mixed with transport bays
+                return null;
             }
         }
     }

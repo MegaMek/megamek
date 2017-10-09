@@ -223,6 +223,16 @@ public class Dropship extends SmallCraft {
     public int getLifeBoats() {
         return lifeBoats;
     }
+    
+    @Override
+    public int minimumCrew() {
+        int crew = 3 + minimumGunners();
+        if (getDesignType() == MILITARY) {
+            crew++;
+        }
+        crew += (int)Math.ceil(getWeight() / 5000);
+        return crew;
+    }
 
     public int getFuelPerTon() {
 

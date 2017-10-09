@@ -114,6 +114,29 @@ public class SmallCraft extends Aero {
         return nOtherPassenger;
     }
     
+    /**
+     * @return Minimum crew requirements based on unit type and number of weapons.
+     */
+    public int minimumCrew() {
+        return 3 + minimumGunners();
+    }
+        
+    /**
+     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
+     * @return The vessel's minimum gunner requirements.
+     */
+    public int minimumGunners() {
+        int stdWeapons = 0;
+        for (Mounted m : getWeaponList()) {
+            if (((WeaponType)m.getType()).isCapital()) {
+                stdWeapons += m.getBayWeapons().size() * 6;
+            } else {
+                stdWeapons += m.getBayWeapons().size();
+            }
+        }
+        return (int)Math.ceil(stdWeapons / 6.0);
+    }
+    
     @Override
     public double getStrategicFuelUse() {
     	return 1.84;

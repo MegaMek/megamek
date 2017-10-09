@@ -791,39 +791,10 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public double getFuelPointsPerTon() {
-        if (hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            return 160;
-        } else if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            if (getWeight() < 400) {
-                return 80;
-            } else if (getWeight() < 800) {
-                return 70;
-            } else if (getWeight() < 1200) {
-                return 60;
-            } else if (getWeight() < 1900) {
-                return 50;
-            } else if (getWeight() < 3000) {
-                return 40;
-            } else if (getWeight() < 20000) {
-                return 30;
-            } else if (getWeight() < 40000) {
-                return 20;
-            } else {
-                return 10;
-            }
-        } else if (hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            if (getWeight() < 110000) {
-                return 10;
-            } else if (getWeight() < 250000) {
-                return 5;
-            } else {
-                return 2.5;
-            }
-        } else if (hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return 80;
-        } else { // Entity.ETYPE_AERO
-            return 80;
+        if (isPrimitive()) {
+            return 80 * primitiveFuelFactor();
         }
+        return 80;
     }
 
     /**
@@ -855,6 +826,16 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public double getStrategicFuelUse() {
         return 0.0;
+    }
+    
+    /**
+     * Some primitve aerospace units have their fuel efficiency reduced by a factor based
+     * on construction year.
+     * 
+     * @return The primitive fuel factor for the build year.
+     */
+    public double primitiveFuelFactor() {
+        return 1.0;
     }
 
     public int getHeatType() {

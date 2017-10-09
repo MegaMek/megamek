@@ -317,16 +317,53 @@ public class Jumpship extends Aero {
     }
     
     @Override
+    public double getFuelPointsPerTon() {
+        double ppt;
+        if (getWeight() < 110000) {
+            ppt = 10;
+        } else if (getWeight() < 250000) {
+            ppt = 5;
+        } else {
+            ppt = 2.5;
+        }
+        if (isPrimitive()) {
+            return ppt / primitiveFuelFactor();
+        }
+        return ppt;
+    }
+
+    @Override
     public double getStrategicFuelUse() {
+        double fuelUse;
     	if (weight >= 200000) {
-    		return 3.95;
+    		fuelUse = 3.95;
     	} else if (weight >= 100000) {
-    		return 1.98;
+    	    fuelUse = 1.98;
     	} else if (weight >= 50000) {
-    		return 0.98;
+    	    fuelUse = 0.98;
     	} else {
-    		return 0.28;
+    	    fuelUse = 0.28;
     	}
+    	if (isPrimitive()) {
+    	    return fuelUse * primitiveFuelFactor();
+    	}
+    	return fuelUse;
+    }
+
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2300) {
+            return 1.0;
+        } else if (year >= 2251) {
+            return 1.1;
+        } else if (year >= 2201) {
+            return 1.4;
+        } else if (year >= 2151) {
+            return 1.7;
+        } else {
+            return 2.0;
+        }
     }
 
     @Override

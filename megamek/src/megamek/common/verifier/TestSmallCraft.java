@@ -189,31 +189,110 @@ public class TestSmallCraft extends TestAero {
     /**
      * Computes the weight of the engine.
      * 
-     * @param spheroid      Whether the unit is spheroid or aerodyne
+     * @param clan          Whether the unit is a Clan design
      * @param tonnage       The weight of the unit
      * @param desiredSafeThrust  The safe thrust value
+     * @param dropship      Whether the unit is a dropship (only relevant for primitives)
+     * @param year          The original construction year (only relevant for primitives)
      * @return              The weight of the engine in tons
      */
     public static double calculateEngineTonnage(boolean clan, double tonnage, 
-            int desiredSafeThrust) {
+            int desiredSafeThrust, boolean dropship, int year) {
         double multiplier = clan? 0.061 : 0.065;
         return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALFTON);
     }
     
     public static int weightFreeHeatSinks(SmallCraft sc) {
-        double engineTonnage = calculateEngineTonnage(sc.isClan(), sc.getWeight(), sc.getWalkMP());
+        double engineTonnage = calculateEngineTonnage(sc.isClan(), sc.getWeight(), sc.getWalkMP(),
+                sc.hasETypeFlag(Entity.ETYPE_DROPSHIP), sc.getOriginalBuildYear());
         if (sc.isSpheroid()) {
-            if (sc.getDesignType() == SmallCraft.MILITARY) {
+            if (sc.isPrimitive()) {
+                return (int)Math.floor(Math.sqrt(engineTonnage * 1.3));
+            } else if (sc.getDesignType() == SmallCraft.MILITARY) {
                 return (int)Math.floor(Math.sqrt(engineTonnage * 6.8));
             } else {
                 return (int)Math.floor(Math.sqrt(engineTonnage * 1.6));
             }
         } else {
-            if (sc.getDesignType() == SmallCraft.MILITARY) {
+            if (sc.isPrimitive()) {
+                return (int)Math.floor(engineTonnage / 75.0);
+            } else if (sc.getDesignType() == SmallCraft.MILITARY) {
                 return (int)Math.floor(engineTonnage / 20.0);
             } else {
                 return (int)Math.floor(engineTonnage / 60.0);
             }
+        }
+    }
+    
+    public static double SmallCraftEngineMultiplier(int year) {
+        if (year >= 2500) {
+            return 0.065;
+        } else if (year >= 2400) {
+            return 0.078;
+        } else if (year >= 2300) {
+            return 0.091;
+        } else if (year >= 2251) {
+            return 0.0975;
+        } else if (year >= 2201) {
+            return 0.1105;
+        } else if (year >= 2151) {
+            return 0.1235;
+        } else {
+            return 0.143;
+        }
+    }
+    
+    public static double SmallCraftControlMultiplier(int year) {
+        if (year >= 2500) {
+            return 0.0075;
+        } else if (year >= 2400) {
+            return 0.00825;
+        } else if (year >= 2300) {
+            return 0.00975;
+        } else if (year >= 2251) {
+            return 0.01125;
+        } else if (year >= 2201) {
+            return 0.01275;
+        } else if (year >= 2151) {
+            return 0.01245;
+        } else {
+            return 0.01575;
+        }
+    }
+    
+    public static double DropshipEngineMultiplier(int year) {
+        if (year >= 2500) {
+            return 0.065;
+        } else if (year >= 2400) {
+            return 0.0715;
+        } else if (year >= 2351) {
+            return 0.0845;
+        } else if (year >= 2251) {
+            return 0.091;
+        } else if (year >= 2201) {
+            return 0.1104;
+        } else if (year >= 2151) {
+            return 0.117;
+        } else {
+            return 0.13;
+        }
+    }
+    
+    public static double DropshipControlMultiplier(int year) {
+        if (year >= 2500) {
+            return 0.0075;
+        } else if (year >= 2400) {
+            return 0.009;
+        } else if (year >= 2351) {
+            return 0.00975;
+        } else if (year >= 2251) {
+            return 0.0105;
+        } else if (year >= 2201) {
+            return 0.0120;
+        } else if (year >= 2151) {
+            return 0.0135;
+        } else {
+            return 0.015;
         }
     }
     
@@ -250,11 +329,11 @@ public class TestSmallCraft extends TestAero {
 
     @Override
     public double getWeightControls() {
-        double weight = smallCraft.getWeight() * 0.0075;
+        double weight = smallCraft.getWeight();
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            weight = ceil(weight, Ceil.TON);
+            weight = ceil(weight * DropshipControlMultiplier(smallCraft.getOriginalBuildYear()), Ceil.TON);
         } else {
-            weight = ceil(weight, Ceil.HALFTON);
+            weight = ceil(weight * SmallCraftControlMultiplier(smallCraft.getOriginalBuildYear()), Ceil.HALFTON);
         }
         // Add in extra fire control system weight for exceeding base slot limit
         for (double extra : extraSlotCost(smallCraft)) {
@@ -264,7 +343,9 @@ public class TestSmallCraft extends TestAero {
     }
 
     public double getWeightEngine() {
-        return calculateEngineTonnage(smallCraft.isClan(), smallCraft.getWeight(), smallCraft.getOriginalWalkMP());
+        return calculateEngineTonnage(smallCraft.isClan(), smallCraft.getWeight(),
+                smallCraft.getOriginalWalkMP(), smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP),
+                smallCraft.getOriginalBuildYear());
     }
     
     public double getWeightFuel() {
@@ -278,7 +359,7 @@ public class TestSmallCraft extends TestAero {
 
     @Override
     public double getWeightHeatSinks() {
-        return smallCraft.getHeatSinks() - weightFreeHeatSinks(smallCraft);        
+        return Math.max(smallCraft.getHeatSinks() - weightFreeHeatSinks(smallCraft), 0);        
     }
 
     @Override

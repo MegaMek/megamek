@@ -233,60 +233,77 @@ public class Dropship extends SmallCraft {
         crew += (int)Math.ceil(getWeight() / 5000);
         return crew;
     }
-
-    public int getFuelPerTon() {
-
-        int points = 80;
-
-        if (weight >= 40000) {
-            points = 10;
-            return points;
-        } else if (weight >= 20000) {
-            points = 20;
-            return points;
-        } else if (weight >= 3000) {
-            points = 30;
-            return points;
-        } else if (weight >= 1900) {
-            points = 40;
-            return points;
-        } else if (weight >= 1200) {
-            points = 50;
-            return points;
-        } else if (weight >= 800) {
-            points = 60;
-            return points;
-        } else if (weight >= 400) {
-            points = 70;
-            return points;
+    
+    @Override
+    public double getFuelPointsPerTon() {
+        double ppt;
+        if (getWeight() < 400) {
+            ppt = 80;
+        } else if (getWeight() < 800) {
+            ppt = 70;
+        } else if (getWeight() < 1200) {
+            ppt = 60;
+        } else if (getWeight() < 1900) {
+            ppt = 50;
+        } else if (getWeight() < 3000) {
+            ppt = 40;
+        } else if (getWeight() < 20000) {
+            ppt = 30;
+        } else if (getWeight() < 40000) {
+            ppt = 20;
+        } else {
+            ppt = 10;
         }
+        if (isPrimitive()) {
+            return ppt / primitiveFuelFactor();
+        }
+        return ppt;
+    }
 
-        return points;
+    @Override
+    public double getStrategicFuelUse() {
+        double fuelUse = 1.84; // default for military designs and civilian < 1000
+        if (getWeight() >= 70000) {
+            fuelUse = 8.83;
+        } else if (getWeight() >= 50000) {
+            fuelUse = 8.37;
+        } else if (getWeight() >= 40000) {
+            fuelUse = 7.71;
+        } else if (getWeight() >= 30000) {
+            fuelUse = 6.52;
+        } else if (getWeight() >= 20000) {
+            fuelUse = 5.19;
+        } else if (getWeight() >= 9000) {
+            fuelUse = 4.22;
+        } else if (getWeight() >= 4000) {
+            fuelUse = 2.82;
+        }
+        if (isPrimitive()) {
+            return fuelUse * primitiveFuelFactor();
+        }
+        return fuelUse;
     }
     
     @Override
-    public double getStrategicFuelUse() {
-        if ((getDesignType() == MILITARY) || (getWeight() < 1000)) {
-            return 1.84;
-        } else if (getWeight() < 4000) {
-            return 2.82;
-        } else if (getWeight() < 9000) {
-            return 3.37;
-        } else if (getWeight() < 20000) {
-            return 4.22;
-        } else if (getWeight() < 30000) {
-            return 5.19;
-        } else if (getWeight() < 40000) {
-            return 6.52;
-        } else if (getWeight() < 50000) {
-            return 7.71;
-        } else if (getWeight() < 70000) {
-            return 8.37;
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2500) {
+            return 1.0;
+        } else if (year >= 2400) {
+            return 1.1;
+        } else if (year >= 2351) {
+            return 1.3;
+        } else if (year >= 2251) {
+            return 1.4;
+        } else if (year >= 2201) {
+            return 1.6;
+        } else if (year >= 2151) {
+            return 1.8;
         } else {
-            return 8.83;
+            return 2.0;
         }
     }
-    
+
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -329,7 +346,7 @@ public class Dropship extends SmallCraft {
         costs[costIdx++] += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // Fuel Tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
+        costs[costIdx++] += (200 * getFuel()) / getFuelPointsPerTon() * 1.02;
 
         // Armor
         costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);

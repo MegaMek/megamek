@@ -139,7 +139,30 @@ public class SmallCraft extends Aero {
     
     @Override
     public double getStrategicFuelUse() {
+        if (isPrimitive()) {
+            return 1.84 * primitiveFuelFactor();
+        }
     	return 1.84;
+    }
+
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2500) {
+            return 1.0;
+        } else if (year >= 2400) {
+            return 1.2;
+        } else if (year >= 2300) {
+            return 1.4;
+        } else if (year >= 2251) {
+            return 1.5;
+        } else if (year >= 2201) {
+            return 1.7;
+        } else if (year >= 2151) {
+            return 1.9;
+        } else {
+            return 2.2;
+        }
     }
 
     @Override

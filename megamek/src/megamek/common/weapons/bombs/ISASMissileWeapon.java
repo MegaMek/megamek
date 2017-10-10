@@ -48,7 +48,7 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         shortAV = 30;
         medAV = 30;
         longAV = 30;
-        flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE);
+        flags = flags.or(F_ANTI_SHIP).or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON);
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;

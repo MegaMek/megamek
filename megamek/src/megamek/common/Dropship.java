@@ -263,20 +263,22 @@ public class Dropship extends SmallCraft {
     @Override
     public double getStrategicFuelUse() {
         double fuelUse = 1.84; // default for military designs and civilian < 1000
-        if (getWeight() >= 70000) {
-            fuelUse = 8.83;
-        } else if (getWeight() >= 50000) {
-            fuelUse = 8.37;
-        } else if (getWeight() >= 40000) {
-            fuelUse = 7.71;
-        } else if (getWeight() >= 30000) {
-            fuelUse = 6.52;
-        } else if (getWeight() >= 20000) {
-            fuelUse = 5.19;
-        } else if (getWeight() >= 9000) {
-            fuelUse = 4.22;
-        } else if (getWeight() >= 4000) {
-            fuelUse = 2.82;
+        if (getDesignType() == CIVILIAN) {
+            if (getWeight() >= 70000) {
+                fuelUse = 8.83;
+            } else if (getWeight() >= 50000) {
+                fuelUse = 8.37;
+            } else if (getWeight() >= 40000) {
+                fuelUse = 7.71;
+            } else if (getWeight() >= 30000) {
+                fuelUse = 6.52;
+            } else if (getWeight() >= 20000) {
+                fuelUse = 5.19;
+            } else if (getWeight() >= 9000) {
+                fuelUse = 4.22;
+            } else if (getWeight() >= 4000) {
+                fuelUse = 2.82;
+            }
         }
         if (isPrimitive()) {
             return fuelUse * primitiveFuelFactor();

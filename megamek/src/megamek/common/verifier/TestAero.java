@@ -496,7 +496,7 @@ public class TestAero extends TestEntity {
     public static double calculateDaysAt1G(Aero aero) {
         double stratUse = aero.getStrategicFuelUse();
         if (stratUse > 0) {
-            return aero.getFuel() / aero.getStrategicFuelUse();
+            return aero.getFuelTonnage() / aero.getStrategicFuelUse();
         } else {
             return 0.0;
         }
@@ -511,7 +511,7 @@ public class TestAero extends TestEntity {
     public static double calculateDaysAtMax(Aero aero) {
         double stratUse = aero.getStrategicFuelUse();
         if (stratUse > 0) {
-            return aero.getFuel() / (aero.getStrategicFuelUse() * aero.getRunMP() / 2.0);
+            return aero.getFuelTonnage() / (aero.getStrategicFuelUse() * aero.getRunMP() / 2.0);
         } else {
             return 0.0;
         }

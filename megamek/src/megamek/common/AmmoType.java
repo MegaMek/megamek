@@ -1503,7 +1503,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH),"229,TM"));
         
         
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
 				new TechAdvancement(TECH_BASE_IS)
         		.setIntroLevel(false)
         		.setUnofficial(false)
@@ -1651,7 +1651,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH),"229,TM"));
         
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
           
 				new TechAdvancement(TECH_BASE_CLAN)
 				.setIntroLevel(false)
@@ -1864,7 +1864,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FW)
                 .setProductionFactions(F_FW),"231,TM"));
         
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -2067,7 +2067,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FW)
                 .setProductionFactions(F_FW),"231,TM"));
         
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE,
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -15461,6 +15461,7 @@ public class AmmoType extends EquipmentType {
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM)
+                    || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML)
                     || (munition.getAmmoType() == AmmoType.T_SRM) || (munition
                     .getAmmoType() == AmmoType.T_NLRM))

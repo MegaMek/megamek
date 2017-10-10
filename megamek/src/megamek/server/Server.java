@@ -28387,7 +28387,8 @@ public class Server implements Runnable {
         // Smoke ammo halves damage
         if ((mounted.getType() instanceof AmmoType)
             && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
-**                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM))
+                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM)
+                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM_IMP))
             && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
             && (mounted.getHittableShotsLeft() > 0)) {
             damage = ((mounted.getExplosionDamage()) / 2);

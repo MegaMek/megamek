@@ -529,6 +529,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double calculateWeight() {
         double weight = 0;
+        weight += getWeightStructure();
         weight += getWeightEngine();
         weight += getWeightControls();
         weight += getWeightFuel();

@@ -388,6 +388,9 @@ public class TestSmallCraft extends TestAero {
         for (double extra : extraSlotCost(smallCraft)) {
             weight += extra;
         }
+        // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
+        // 2-ton launch mechanism
+        weight += (smallCraft.getLifeBoats() + smallCraft.getEscapePods()) * 7;
         return weight;
     }
 

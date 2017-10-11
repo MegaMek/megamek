@@ -5748,7 +5748,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.bv = 0;
         misc.industrial = true;
-        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
+        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
         misc.rulesRefs = "227,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_A).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)

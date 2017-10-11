@@ -34,9 +34,6 @@ public class Dropship extends SmallCraft {
      *
      */
     private static final long serialVersionUID = 1528728632696989565L;
-    // escape pods and lifeboats
-    int escapePods = 0;
-    int lifeBoats = 0;
 
     protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
@@ -208,22 +205,6 @@ public class Dropship extends SmallCraft {
         kfBoomDamaged = b;
     }
 
-    public void setEscapePods(int n) {
-        escapePods = n;
-    }
-
-    public int getEscapePods() {
-        return escapePods;
-    }
-
-    public void setLifeBoats(int n) {
-        lifeBoats = n;
-    }
-
-    public int getLifeBoats() {
-        return lifeBoats;
-    }
-    
     @Override
     public int minimumCrew() {
         int crew = 3 + minimumGunners();

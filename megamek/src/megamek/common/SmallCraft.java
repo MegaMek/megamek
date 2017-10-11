@@ -44,6 +44,10 @@ public class SmallCraft extends Aero {
     public static final int MILITARY = 1;
     private int designType = 0;
     
+    // escape pods and lifeboats
+    private int escapePods = 0;
+    private int lifeBoats = 0;
+    
     private final static TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
             .setProductionFactions(F_TH).setTechRating(RATING_D)
@@ -112,6 +116,22 @@ public class SmallCraft extends Aero {
 
     public int getNOtherPassenger() {
         return nOtherPassenger;
+    }
+    
+    public void setEscapePods(int n) {
+        escapePods = n;
+    }
+
+    public int getEscapePods() {
+        return escapePods;
+    }
+
+    public void setLifeBoats(int n) {
+        lifeBoats = n;
+    }
+
+    public int getLifeBoats() {
+        return lifeBoats;
     }
     
     /**

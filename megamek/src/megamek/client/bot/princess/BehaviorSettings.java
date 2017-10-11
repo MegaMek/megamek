@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.util.StringUtil;
 import org.w3c.dom.Document;
@@ -108,6 +109,7 @@ public class BehaviorSettings {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
+    private LogLevel verbosity = LogLevel.WARNING; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
 
     private MMLogger logger = null;
 
@@ -141,6 +143,7 @@ public class BehaviorSettings {
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
         copy.setHyperAggressionIndex(getHyperAggressionIndex());
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
+        copy.setVerbosity(getVerbosity());
         for (String t : getStrategicBuildingTargets()) {
             copy.addStrategicTarget(t);
         }
@@ -148,6 +151,20 @@ public class BehaviorSettings {
             copy.addPriorityUnit(p);
         }
         return copy;
+    }
+
+    /**
+     * The verbosity of Princess chat messages.  This is separate from the megameklog.txt logging level.
+     */
+    public LogLevel getVerbosity() {
+        return verbosity;
+    }
+
+    /**
+     * The verbosity of Princess chat messages.  This is separate from the megameklog.txt logging level.
+     */
+    public void setVerbosity(final LogLevel verbosity) {
+        this.verbosity = verbosity;
     }
 
     /**
@@ -634,6 +651,8 @@ public class BehaviorSettings {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
                 setBraveryIndex(child.getTextContent());
+            } else if ("verbosity".equalsIgnoreCase(child.getNodeName())) {
+                setVerbosity(LogLevel.getLogLevel(child.getTextContent()));
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -708,6 +727,10 @@ public class BehaviorSettings {
             braveryNode.setTextContent("" + getBraveryIndex());
             behavior.appendChild(braveryNode);
 
+            Element verbosityNode = doc.createElement("verbosity");
+            verbosityNode.setTextContent(getVerbosity().toString());
+            behavior.appendChild(verbosityNode);
+
             Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (String t : getStrategicBuildingTargets()) {
@@ -744,6 +767,7 @@ public class BehaviorSettings {
         out += "\n\tFall Shame: " + getFallShameIndex();
         out += "\n\tBravery: " + getBraveryIndex();
         out += "\n\tHerd Mentality: " + getHerdMentalityIndex();
+        out += "\n\tVerbosity: " + getVerbosity();
         out += "\n\tTargets:";
         out += "\n\t\tCoords: ";
         for (String t : getStrategicBuildingTargets()) {

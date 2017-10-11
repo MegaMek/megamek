@@ -33,6 +33,7 @@ public class AddBotUtilTest {
 
     private static final String HUMAN_PLAYER_NAME = "MockHuman";
     private static final String BOT_PLAYER_NAME = "MockBot";
+    private static final String DEFAULT_VERBOSITY = LogLevel.WARNING.toString();
 
     private Client mockClient;
     private IGame mockGame;
@@ -108,14 +109,14 @@ public class AddBotUtilTest {
         // Test explicitly specifying Princess.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", BOT_PLAYER_NAME};
-        expected = "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+        expected = "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
         // Test specifying the config to be used with Princess.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-c:BERSERK", "-p:" + BOT_PLAYER_NAME};
-        expected = "Princess has replaced MockBot.  Config: BERSERK.  Verbosity: ERROR.\n";
+        expected = "Princess has replaced MockBot.  Config: BERSERK.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         BehaviorSettings expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("BERSERK");
@@ -125,7 +126,7 @@ public class AddBotUtilTest {
         // Because makeNewPrincessClient is mocked out, the log level is always going to be ERROR.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.INFO.toString(), "-p:" + BOT_PLAYER_NAME};
-        expected = "Verbosity set to 'INFO'.\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+        expected = "Verbosity set to 'INFO'.\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
@@ -134,7 +135,7 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "-c:ESCAPE",
                             "-p:" + BOT_PLAYER_NAME};
-        expected = "Verbosity set to 'WARNING'.\nPrincess has replaced MockBot.  Config: ESCAPE.  Verbosity: ERROR.\n";
+        expected = "Verbosity set to 'WARNING'.\nPrincess has replaced MockBot.  Config: ESCAPE.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("ESCAPE");
@@ -165,7 +166,7 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-c:invalid", "-p:" + BOT_PLAYER_NAME};
         expected = "Unrecognized Behavior Setting: 'invalid'.  Using DEFAULT.\n" +
-                   "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+                   "Princess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");
@@ -174,8 +175,9 @@ public class AddBotUtilTest {
         // Test an invalid verbosity level for Princess.
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:invalid", "-p:" + BOT_PLAYER_NAME};
-        expected = "Invalid Verbosity: 'invalid'.  Defaulting to ERROR.\nVerbosity set to 'ERROR'." +
-                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+        expected = "Invalid Verbosity: 'invalid'.  Defaulting to " + DEFAULT_VERBOSITY +
+                   ".\nVerbosity set to '" + DEFAULT_VERBOSITY + "'." +
+                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
 
@@ -183,7 +185,7 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", LogLevel.WARNING.toString(), "-c:ESCAPE",
                             "-p:" + BOT_PLAYER_NAME};
-        expected = "Princess has replaced MockBot.  Config: ESCAPE.  Verbosity: ERROR.\n";
+        expected = "Princess has replaced MockBot.  Config: ESCAPE.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("ESCAPE");
@@ -193,8 +195,9 @@ public class AddBotUtilTest {
         setUp();
         args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "ESCAPE",
                             "-p:" + BOT_PLAYER_NAME};
-        expected = "Invalid Verbosity: 'WARNING ESCAPE'.  Defaulting to ERROR.\nVerbosity set to 'ERROR'." +
-                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: ERROR.\n";
+        expected = "Invalid Verbosity: 'WARNING ESCAPE'.  Defaulting to " + DEFAULT_VERBOSITY +
+                   ".\nVerbosity set to '" + DEFAULT_VERBOSITY + "'." +
+                   "\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");

@@ -269,7 +269,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        Assert.assertEquals(logLevel, mockPrincess.getVerbosity());
+        Assert.assertEquals(LogLevel.WARNING, mockPrincess.getVerbosity());
 
         // Test the 'verbose' command with an invalid log level.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
@@ -284,7 +284,7 @@ public class ChatProcessorTest {
         Mockito.doReturn(MOCK_BOT_PLAYER_V_GER).when(mockPrincess).getLocalPlayer();
         Mockito.doNothing().when(mockPrincess).sendChat(Matchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        Assert.assertEquals(logLevel, mockPrincess.getVerbosity());
+        Assert.assertEquals(LogLevel.WARNING, mockPrincess.getVerbosity());
 
         // Test a good 'verbose' command with extra data after log level argument.
         mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);

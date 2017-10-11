@@ -100,10 +100,11 @@ public class AddBotUtil {
                 String verbose = arg.replaceFirst("v:", "").trim();
                 verbosity = LogLevel.getLogLevel(verbose);
                 if (verbosity == null) {
-                    results.add("Invalid Verbosity: '" + verbose + "'.  Defaulting to ERROR.");
-                    verbosity = LogLevel.ERROR;
+                    results.add("Invalid Verbosity: '" + verbose + "'.  " +
+                                "Defaulting to " + LogLevel.WARNING.toString() + ".");
+                    verbosity = LogLevel.WARNING;
                 }
-                results.add("Verbosity set to '" + verbosity.toString() + "'.");
+                results.add("Verbosity set to '" + verbosity + "'.");
                 parsingBot = false;
                 parsingConfig = false;
                 parsingPlayer = false;
@@ -150,6 +151,9 @@ public class AddBotUtil {
             if (!StringUtil.isNullOrEmpty(configName)) {
                 BehaviorSettings behavior = BehaviorSettingsFactory.getInstance().getBehavior(configName);
                 if (behavior != null) {
+                    if (null != verbosity) {
+                        behavior.setVerbosity(verbosity);
+                    }
                     ((Princess) botClient).setBehaviorSettings(behavior);
                 } else {
                     results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");

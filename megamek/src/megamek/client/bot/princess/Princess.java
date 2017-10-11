@@ -135,11 +135,11 @@ public class Princess extends BotClient {
     }
 
     public void setVerbosity(LogLevel level) {
-        getLogger().setLogLevel(LOGGING_CATEGORY, level);
+        getBehaviorSettings().setVerbosity(level);
     }
 
     public LogLevel getVerbosity() {
-        return getLogger().getLogLevel(LOGGING_CATEGORY);
+        return getBehaviorSettings().getVerbosity();
     }
 
     BasicPathRanker getPathRanker() {
@@ -280,7 +280,7 @@ public class Princess extends BotClient {
             // get the first unit
             int entityNum = game.getFirstDeployableEntityNum();
             if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() > LogLevel.WARNING.toInt()) {
-                sendChat("deploying unit " + getEntity(entityNum).getChassis());
+                sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
             }
 
             // on the list to be deployed get a set of all the
@@ -1036,7 +1036,7 @@ public class Princess extends BotClient {
                     msg += " is crippled and withdrawing.";
                 }
                 log(getClass(), METHOD_NAME, msg);
-                sendChat(msg);
+                sendChat(msg, LogLevel.WARNING);
 
                 // If this entity is falling back, able to flee the board, on 
                 // its home edge, and must flee, do so.
@@ -1051,7 +1051,7 @@ public class Princess extends BotClient {
                     msg = entity.getDisplayName() +
                           " is immobile.  Abandoning unit.";
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
-                    sendChat(msg);
+                    sendChat(msg, LogLevel.WARNING);
                     MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.EJECT);
                     return mp;
@@ -1082,7 +1082,7 @@ public class Princess extends BotClient {
                                  + Long.toString(paths.size())
                                  + " paths to consider.  Estimated time to completion: "
                                  + timeestimate;
-                sendChat(message);
+                sendChat(message, LogLevel.INFO);
             }
 
             long startTime = System.currentTimeMillis();
@@ -1169,9 +1169,9 @@ public class Princess extends BotClient {
                                 && !entity.isHidden()) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex "
-                                    + coords.toFriendlyString()
-                                    + " designated target due to"
-                                    + " infantry inside building.");
+                                     + coords.toFriendlyString()
+                                     + " designated target due to"
+                                     + " infantry inside building.", LogLevel.INFO);
                         }
                     }
                 }
@@ -1290,7 +1290,7 @@ public class Princess extends BotClient {
                 if (game.getBoard().getBuildingAt(strategicTarget) == null) {
                     sendChat("No building to target in Hex " +
                              strategicTarget.toFriendlyString() +
-                             ", ignoring.");
+                             ", ignoring.", LogLevel.INFO);
                 } else {
                     fireControl.getAdditionalTargets().add(
                             new BuildingTarget(strategicTarget,
@@ -1298,7 +1298,7 @@ public class Princess extends BotClient {
                                                false));
                     sendChat("Building in Hex " +
                              strategicTarget.toFriendlyString() +
-                             " designated strategic target.");
+                             " designated strategic target.", LogLevel.INFO);
                 }
             }
 
@@ -1318,7 +1318,7 @@ public class Princess extends BotClient {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +
                                      coords.toFriendlyString()
-                                     + " designated target due to Gun Emplacement.");
+                                     + " designated target due to Gun Emplacement.", LogLevel.INFO);
                         }
                     }
                 }
@@ -1380,7 +1380,7 @@ public class Princess extends BotClient {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " +
                                      coords.toFriendlyString() +
-                                     " designated target due to Gun Emplacement.");
+                                     " designated target due to Gun Emplacement.", LogLevel.INFO);
                         }
                     }
                 }
@@ -1590,5 +1590,13 @@ public class Princess extends BotClient {
                 (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath().getEntity()) - 2)) {
             path.getPath().addStep(MoveStepType.EVADE);
         }
+    }
+
+    public void sendChat(final String message,
+                         final LogLevel logLevel) {
+        if (logLevel.getLevel().isGreaterOrEqual(getVerbosity().getLevel())) {
+            return;
+        }
+        super.sendChat(message);
     }
 }

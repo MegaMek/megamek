@@ -42,19 +42,19 @@ public class AddBotUtilTest {
 
     @Before
     public void setUp() {
-        IPlayer mockHumanPlayer = Mockito.mock(IPlayer.class);
+        final IPlayer mockHumanPlayer = Mockito.mock(IPlayer.class);
         Mockito.when(mockHumanPlayer.getName()).thenReturn(HUMAN_PLAYER_NAME);
         Mockito.when(mockHumanPlayer.isGhost()).thenReturn(false);
 
-        IPlayer mockBotPlayer = Mockito.mock(IPlayer.class);
+        final IPlayer mockBotPlayer = Mockito.mock(IPlayer.class);
         Mockito.when(mockBotPlayer.getName()).thenReturn(BOT_PLAYER_NAME);
         Mockito.when(mockBotPlayer.isGhost()).thenReturn(true);
 
-        Vector<IPlayer> playerVector = new Vector<IPlayer>(2);
+        final Vector<IPlayer> playerVector = new Vector<>(2);
         playerVector.add(mockHumanPlayer);
         playerVector.add(mockBotPlayer);
 
-        Enumeration<IPlayer> playerEnumeration = playerVector.elements();
+        final Enumeration<IPlayer> playerEnumeration = playerVector.elements();
 
         mockGame = Mockito.mock(IGame.class);
         Mockito.when(mockGame.getPlayersVector()).thenReturn(playerVector);
@@ -76,7 +76,7 @@ public class AddBotUtilTest {
         Mockito.doCallRealMethod().when(mockPrincess).getBehaviorSettings();
         Mockito.doCallRealMethod().when(mockPrincess).getVerbosity();
 
-        TestBot mockTestBot = Mockito.mock(TestBot.class);
+        final TestBot mockTestBot = Mockito.mock(TestBot.class);
         Mockito.when(mockTestBot.connect()).thenReturn(true);
         Mockito.when(mockTestBot.getGame()).thenReturn(mockGame);
 
@@ -94,7 +94,7 @@ public class AddBotUtilTest {
     public void testRun() {
 
         // Test most basic version of command.
-        String[] args = new String[]{"/replacePlayer", BOT_PLAYER_NAME};
+        String[] args = { "/replacePlayer", BOT_PLAYER_NAME };
         String expected = "TestBot has replaced MockBot.\n";
         String actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
@@ -125,7 +125,7 @@ public class AddBotUtilTest {
         // Test setting the verbosity level for Princess.
         // Because makeNewPrincessClient is mocked out, the log level is always going to be ERROR.
         setUp();
-        args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.INFO.toString(), "-p:" + BOT_PLAYER_NAME};
+        args = new String[] { "/replacePlayer", "-b:Princess", "-v:" + LogLevel.INFO, "-p:" + BOT_PLAYER_NAME };
         expected = "Verbosity set to 'INFO'.\nPrincess has replaced MockBot.  Config: DEFAULT.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
@@ -133,7 +133,8 @@ public class AddBotUtilTest {
         // Test setting both config and verbosity for Princess.
         // Because makeNewPrincessClient is mocked out, the log level is always going to be ERROR.
         setUp();
-        args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "-c:ESCAPE",
+        args = new String[] {
+                "/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING, "-c:ESCAPE",
                             "-p:" + BOT_PLAYER_NAME};
         expected = "Verbosity set to 'WARNING'.\nPrincess has replaced MockBot.  Config: ESCAPE.  Verbosity: " + DEFAULT_VERBOSITY + ".\n";
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
@@ -193,7 +194,8 @@ public class AddBotUtilTest {
 
         // Test leaving out a different delimiter.
         setUp();
-        args = new String[]{"/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING.toString(), "ESCAPE",
+        args = new String[] {
+                "/replacePlayer", "-b:Princess", "-v:" + LogLevel.WARNING, "ESCAPE",
                             "-p:" + BOT_PLAYER_NAME};
         expected = "Invalid Verbosity: 'WARNING ESCAPE'.  Defaulting to " + DEFAULT_VERBOSITY +
                    ".\nVerbosity set to '" + DEFAULT_VERBOSITY + "'." +

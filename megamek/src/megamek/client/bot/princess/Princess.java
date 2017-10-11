@@ -72,6 +72,9 @@ public class Princess extends BotClient {
 
     private static final String LOGGING_CATEGORY = "megamek.client.bot.princess";
 
+    private static final char PLUS = '+';
+    private static final char MINUS = '-';
+
     private final IHonorUtil honorUtil = new HonorUtil();
 
     private boolean initialized = false;
@@ -81,27 +84,30 @@ public class Princess extends BotClient {
     private FireControl fireControl;
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
-    private Precognition precognition;
-    private Thread precogThread;
+    private final Precognition precognition;
+    private final Thread precogThread;
     /**
      * Mapping to hold the damage allocated to each targetable, stored by ID.
      * Used to allocate damage more intelligently and avoid overkill.
      */
-    private ConcurrentHashMap<Integer, Double> damageMap =
+    private final ConcurrentHashMap<Integer, Double> damageMap =
             new ConcurrentHashMap<>(); 
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
-    private ChatProcessor chatProcessor = new ChatProcessor();
+    private final ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
-    private IMoralUtil moralUtil = new MoralUtil(getLogger());
+    private final IMoralUtil moralUtil = new MoralUtil(getLogger());
     private final Set<Integer> attackedWhileFleeing =
             Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private final Set<Integer> myFleeingEntities =
             Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private MMLogger logger = null;
 
-    
-    public Princess(String name, String host, int port, LogLevel verbosity) {
+
+    public Princess(final String name,
+                    final String host,
+                    final int port,
+                    final LogLevel verbosity) {
         super(name, host, port);
         getLogger().setLogLevel(LOGGING_CATEGORY, verbosity);
         setBehaviorSettings(BehaviorSettingsFactory.getInstance(getLogger())
@@ -134,7 +140,7 @@ public class Princess extends BotClient {
         this.logger = logger;
     }
 
-    public void setVerbosity(LogLevel level) {
+    public void setVerbosity(final LogLevel level) {
         getBehaviorSettings().setVerbosity(level);
     }
 
@@ -158,7 +164,8 @@ public class Princess extends BotClient {
         return getBehaviorSettings().isForcedWithdrawal();
     }
 
-    private void setFleeBoard(boolean fleeBoard, String reason) {
+    private void setFleeBoard(final boolean fleeBoard,
+                              @SuppressWarnings("SameParameterValue") final String reason) {
         log(getClass(), "setFleeBoard(boolean, String)",
             LogLevel.DEBUG,
             "Setting Flee Board " + fleeBoard + " because: " + reason);
@@ -170,14 +177,15 @@ public class Princess extends BotClient {
         return precognition;
     }
 
-    public void setFallBack(boolean fallBack, String reason) {
+    public void setFallBack(final boolean fallBack,
+                            final String reason) {
         log(getClass(), "setFallBack(boolean, String)",
             LogLevel.DEBUG,
             "Setting Fall Back " + fallBack + " because: " + reason);
         this.fallBack = fallBack;
     }
 
-    public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
+    public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
         log(getClass(),
             "setBehaviorSettings(BehaviorSettings)",
             LogLevel.INFO,
@@ -185,7 +193,7 @@ public class Princess extends BotClient {
             "\n" + behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
-        } catch (PrincessException e) {
+        } catch (final PrincessException e) {
             log(getClass(),
                 "setBehaviorSettings(BehaviorSettings)",
                 e);
@@ -200,16 +208,16 @@ public class Princess extends BotClient {
             return;
         }
 
-        for (String targetCoords : behaviorSettings.getStrategicBuildingTargets()) {
+        for (final String targetCoords : behaviorSettings.getStrategicBuildingTargets()) {
             if (!StringUtil.isPositiveInteger(targetCoords) ||
-                (targetCoords.length() != 4)) {
+                (4 != targetCoords.length())) {
                 continue;
             }
-            String x = targetCoords.substring(0, 2);
-            String y = targetCoords.replaceFirst(x, "");
+            final String x = targetCoords.substring(0, 2);
+            final String y = targetCoords.replaceFirst(x, "");
             // Need to subtract 1, since we are given a Hex number string, 
             // which is Coords X+1Y+1 
-            Coords coords = new Coords(Integer.parseInt(x) - 1,
+            final Coords coords = new Coords(Integer.parseInt(x) - 1,
                                        Integer.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
         }
@@ -219,8 +227,8 @@ public class Princess extends BotClient {
         return fireControl;
     }
 
-    double getDamageAlreadyAssigned(Targetable target) {
-        Integer targetId = target.getTargetId();
+    double getDamageAlreadyAssigned(final Targetable target) {
+        final Integer targetId = target.getTargetId();
         if(damageMap.containsKey(targetId)) {
             return damageMap.get(targetId);
         }
@@ -235,8 +243,8 @@ public class Princess extends BotClient {
         return strategicBuildingTargets;
     }
 
-    public void addStrategicBuildingTarget(Coords coords) {
-        if (coords == null) {
+    public void addStrategicBuildingTarget(final Coords coords) {
+        if (null == coords) {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
@@ -261,7 +269,7 @@ public class Princess extends BotClient {
         try {
             // currently returns no artillery hit spots
             // make an empty list
-            PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
+            final PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
             // attach my player id to it
             artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
             return artyAutoHitHexes;
@@ -278,23 +286,23 @@ public class Princess extends BotClient {
         try {
 
             // get the first unit
-            int entityNum = game.getFirstDeployableEntityNum();
+            final int entityNum = game.getFirstDeployableEntityNum();
             if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() > LogLevel.WARNING.toInt()) {
                 sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
             }
 
             // on the list to be deployed get a set of all the
-            List<Coords> startingCoords = getStartingCoordsArray();
-            if (startingCoords.size() == 0) {
+            final List<Coords> startingCoords = getStartingCoordsArray();
+            if (0 == startingCoords.size()) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
                     "No valid locations to deploy " +
                     getEntity(entityNum).getDisplayName());
             }
 
             // get the coordinates I can deploy on
-            Coords deployCoords = getFirstValidCoords(getEntity(entityNum),
-                                                      startingCoords);
-            if (deployCoords == null) {
+            final Coords deployCoords = getFirstValidCoords(getEntity(entityNum),
+                                                            startingCoords);
+            if (null == deployCoords) {
                 // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business                
                 log(getClass(),
                         METHOD_NAME,
@@ -312,7 +320,7 @@ public class Princess extends BotClient {
             
             // specifically, face the last deployed enemy.
             int decentFacing = -1;
-            for (Entity e : getEnemyEntities()) {
+            for (final Entity e : getEnemyEntities()) {
                 if (e.isDeployed() && (!e.isOffBoard())) {
                     decentFacing = deployCoords.direction(e.getPosition());
                     break;
@@ -321,14 +329,14 @@ public class Princess extends BotClient {
 
             // if I haven't found a decent facing, then at least face towards 
             // the center of the board
-            if (decentFacing == -1) {
-                Coords center = new Coords(game.getBoard().getWidth() / 2,
+            if (-1 == decentFacing) {
+                final Coords center = new Coords(game.getBoard().getWidth() / 2,
                                            game.getBoard().getHeight() / 2);
                 decentFacing = deployCoords.direction(center);
             }
 
-            Entity deployEntity = game.getEntity(entityNum);
-            IHex deployHex = game.getBoard().getHex(deployCoords);
+            final Entity deployEntity = game.getEntity(entityNum);
+            final IHex deployHex = game.getBoard().getHex(deployCoords);
 
             // Entity.elevatoinOccupied performs a null check on IHex
             int deployElevation = deployEntity.elevationOccupied(deployHex);
@@ -347,10 +355,12 @@ public class Princess extends BotClient {
      */
     @Nullable
     @Override
-    protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
-        if ((deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT) {
-            List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit, possibleDeployCoords);
-            if (validCoords.size() > 0) {            
+    protected Coords getFirstValidCoords(final Entity deployedUnit,
+                                         final List<Coords> possibleDeployCoords) {
+        if (Entity.ETYPE_GUN_EMPLACEMENT == (deployedUnit.getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT)) {
+            final List<Coords> validCoords = calculateTurretDeploymentLocations((GunEmplacement) deployedUnit,
+                                                                                possibleDeployCoords);
+            if (0 < validCoords.size()) {            
                 return validCoords.get(0);
             }
             
@@ -364,26 +374,31 @@ public class Princess extends BotClient {
      * Helper function that calculates the possible locations where a given gun emplacement can be deployed
      * @param deployedUnit The unit to check
      * @param possibleDeployCoords The list of possible deployment coordinates
-     * @return
      */
-    private List<Coords> calculateTurretDeploymentLocations(GunEmplacement deployedUnit, List<Coords> possibleDeployCoords) {
+    private List<Coords> calculateTurretDeploymentLocations(final GunEmplacement deployedUnit,
+                                                            final List<Coords> possibleDeployCoords) {
         // algorithm:
         // get all hexes in deployment zone with buildings
         // for each building, if deploying on the roof does not cause a stacking violation, add it to the list
         // sort the list in decreasing order based on CF then height
-        List<Coords> turretDeploymentLocations = new Vector<>();
-        
-        for (Coords coords : possibleDeployCoords) {
-            Building building = game.getBoard().getBuildingAt(coords);
-            IHex hex = game.getBoard().getHex(coords);
-            
-            if (building != null) {
-                int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
+        final List<Coords> turretDeploymentLocations = new Vector<>();
+
+        for (final Coords coords : possibleDeployCoords) {
+            final Building building = game.getBoard().getBuildingAt(coords);
+            final IHex hex = game.getBoard().getHex(coords);
+
+            if (null != building) {
+                final int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
                 
                 // check stacking violation at the roof level
-                Entity violation = Compute.stackingViolation(game, deployedUnit, coords, buildingHeight, coords, null);
+                final Entity violation = Compute.stackingViolation(game,
+                                                                   deployedUnit,
+                                                                   coords,
+                                                                   buildingHeight,
+                                                                   coords,
+                                                                   null);
                 // Ignore coords that could cause a stacking violation
-                if (violation == null) {
+                if (null == violation) {
                     turretDeploymentLocations.add(coords);
                 }
             }
@@ -391,7 +406,8 @@ public class Princess extends BotClient {
         
         turretDeploymentLocations.sort(new Comparator<Coords>() {
             @Override
-            public int compare(Coords arg0, Coords arg1) {
+            public int compare(final Coords arg0,
+                               final Coords arg1) {
                 return calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(arg0);
             }
         });        
@@ -400,20 +416,19 @@ public class Princess extends BotClient {
     
     /**
      * Helper function that calculates the "utility" of placing a turret at the given coords
-     * @param coords
+     * @param coords The location of the building being considered.
      * @return An "arbitrary" utility number
      */
-    private int calculateTurretDeploymentValue(Coords coords) {
+    private int calculateTurretDeploymentValue(final Coords coords) {
         // algorithm: a building is valued by the following formula:
         //      (CF + height * 2) / # turrets placed on the roof
         //      This way, we will generally favor unpopulated higher CF buildings, 
         //      but have some wiggle room in case of a really tall high CF building
-        Building building = game.getBoard().getBuildingAt(coords);
-        IHex hex = game.getBoard().getHex(coords);
-        int turretCount = 1 + game.getGunEmplacements(coords).size();
-        
-        int value = (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
-        return value;
+        final Building building = game.getBoard().getBuildingAt(coords);
+        final IHex hex = game.getBoard().getHex(coords);
+        final int turretCount = 1 + game.getGunEmplacements(coords).size();
+
+        return (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
     }
     
     @Override
@@ -424,12 +439,12 @@ public class Princess extends BotClient {
         try {
             // get the first entity that can act this turn make sure weapons 
             // are loaded
-            Entity shooter = game.getFirstEntity(getMyTurn());
+            final Entity shooter = game.getFirstEntity(getMyTurn());
 
             // If my unit is forced to withdraw, don't fire unless I've been 
             // fired on.
             if (getForcedWithdrawal() && shooter.isCrippled()) {
-                StringBuilder msg = new StringBuilder(shooter.getDisplayName())
+                final StringBuilder msg = new StringBuilder(shooter.getDisplayName())
                         .append(" is crippled and withdrawing.");
                 try {
                     if (attackedWhileFleeing.contains(shooter.getId())) {
@@ -448,14 +463,14 @@ public class Princess extends BotClient {
             }
 
             // Set up ammo conservation.
-            Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
+            final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
 
             // entity that can act this turn make sure weapons are loaded
-            FiringPlan plan = fireControl.getBestFiringPlan(shooter,
-                                                            getHonorUtil(),
-                                                            game,
-                                                            ammoConservation);
-            if (plan != null) {
+            final FiringPlan plan = fireControl.getBestFiringPlan(shooter,
+                                                                  getHonorUtil(),
+                                                                  game,
+                                                                  ammoConservation);
+            if (null != plan) {
                 fireControl.loadAmmo(shooter, plan);
                 plan.sortPlan();
 
@@ -469,8 +484,8 @@ public class Princess extends BotClient {
 
                 // Add expected damage from the chosen FiringPlan to the 
                 // damageMap for the target enemy.
-                Integer targetId = plan.getTarget().getTargetId();
-                Double newDamage = damageMap.get(targetId)+plan.getExpectedDamage();
+                final Integer targetId = plan.getTarget().getTargetId();
+                final Double newDamage = damageMap.get(targetId) + plan.getExpectedDamage();
                 damageMap.replace(targetId,newDamage);
 
                 // tell the game I want to fire
@@ -486,21 +501,21 @@ public class Princess extends BotClient {
         }
     }
 
-    private Map<Mounted, Double> calcAmmoConservation(Entity shooter) {
+    private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
         final String METHOD_NAME = "calcAmmoConservation(Entity)";
         final double aggroFactor =
                 (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
-        StringBuilder msg =
+        final StringBuilder msg =
                 new StringBuilder("\nCalculating ammo conservation for ")
                         .append(shooter.getDisplayName());
         msg.append("\nAggression Factor = ").append(aggroFactor);
 
         try {
-            Map<AmmoType, Integer> ammoCounts = new HashMap<>();
+            final Map<AmmoType, Integer> ammoCounts = new HashMap<>();
             msg.append("\nPooling Ammo:");
-            for (Mounted ammo : shooter.getAmmo()) {
-                AmmoType ammoType = (AmmoType) ammo.getType();
-                msg.append("\n\t").append(ammoType.toString());
+            for (final Mounted ammo : shooter.getAmmo()) {
+                final AmmoType ammoType = (AmmoType) ammo.getType();
+                msg.append("\n\t").append(ammoType);
                 if (ammoCounts.containsKey(ammoType)) {
                     ammoCounts.put(ammoType, ammoCounts.get(ammoType) +
                                              ammo.getUsableShotsLeft());
@@ -513,11 +528,11 @@ public class Princess extends BotClient {
                    .append(" = ").append(ammoCounts.get(ammoType));
             }
 
-            Map<Mounted, Double> ammoConservation = new HashMap<>();
+            final Map<Mounted, Double> ammoConservation = new HashMap<>();
             msg.append("\nCalculating conservation for each weapon");
-            for (Mounted weapon : shooter.getWeaponList()) {
-                WeaponType weaponType = (WeaponType) weapon.getType();
-                msg.append("\n\t").append(weaponType.toString());
+            for (final Mounted weapon : shooter.getWeaponList()) {
+                final WeaponType weaponType = (WeaponType) weapon.getType();
+                msg.append("\n\t").append(weaponType);
                 if (!(weaponType instanceof AmmoWeapon)) {
                     ammoConservation.put(weapon, 0.0);
                     msg.append(" doesn't use ammo.");
@@ -525,14 +540,14 @@ public class Princess extends BotClient {
                 }
 
                 int ammoCount = 0;
-                for (AmmoType ammoType : ammoCounts.keySet()) {
+                for (final AmmoType ammoType : ammoCounts.keySet()) {
                     if (!AmmoType.isAmmoValid(ammoType, weaponType)) {
                         continue;
                     }
                     ammoCount += ammoCounts.get(ammoType);
                 }
                 msg.append(" has ").append(ammoCount).append(" shots left");
-                double toHitThreshold =
+                final double toHitThreshold =
                         Math.max(0.0, 1 - (ammoCount / aggroFactor));
                 msg.append("; To Hit Threshold = ")
                    .append(new DecimalFormat("0.000")
@@ -568,11 +583,22 @@ public class Princess extends BotClient {
      * @param entity The unit to be indexed.
      * @return The movement index of this unit.  May be positive or negative.  Higher index values should move first.
      */
-    double calculateMoveIndex(Entity entity, StringBuilder msg) {
+    double calculateMoveIndex(final Entity entity,
+                              final StringBuilder msg) {
+
+        final double PRIORITY_PRONE = 1.1;
+        final double PRIORITY_TANK = 1.5;
+        final double PRIORITY_BA = 2;
+        final double PRIORITY_INF = 3;
+        final double PRIORITY_FALLBACK = 2;
+        final double PRIORITY_COMMANDER = 0.5;
+        final double PRIORITY_CIVILIAN = 5;
+        final double PRIORITY_STEALTH = 1.0 / 3;
+
         msg.append("\n\tCalculating move index for ")
            .append(entity.getDisplayName());
-        StringBuilder modifiers = new StringBuilder();
-        NumberFormat numberFormat = DecimalFormat.getInstance();
+        final StringBuilder modifiers = new StringBuilder();
+        final NumberFormat numberFormat = DecimalFormat.getInstance();
         double total = 0;
         try {
             // Find out how fast this unit can move.
@@ -584,7 +610,7 @@ public class Princess extends BotClient {
             msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
             // Get the distance to the nearest enemy.
-            double distance =
+            final double distance =
                     getPathRanker().distanceToClosestEnemy(entity,
                                                            entity.getPosition(),
                                                            game);
@@ -593,7 +619,7 @@ public class Princess extends BotClient {
 
             // Get the ratio of distance to speed.
             // Faster units that are closer to the enemy should move later.
-            if (fastestMove == 0) {
+            if (0 == fastestMove) {
                 // This unit should have already moved due to the isImmobilized 
                 // check.
                 total = distance * 2;
@@ -605,45 +631,45 @@ public class Princess extends BotClient {
 
             // Prone enemies move sooner.
             if (entity.isProne()) {
-                total *= 1.1;
+                total *= PRIORITY_PRONE;
                 modifiers.append("\tx1.1 (Is Prone)");
             }
 
             // If all else is equal, Infantry before Battle Armor before Tanks 
             // before Mechs.
             if (entity instanceof BattleArmor) {
-                total *= 2;
+                total *= PRIORITY_BA;
                 modifiers.append("\tx2.0 (is BA)");
             } else if (entity instanceof Infantry) {
-                total *= 3;
+                total *= PRIORITY_INF;
                 modifiers.append("\tx3.0 (is Inf)");
             } else if (entity instanceof Tank) {
-                total *= 1.5;
+                total *= PRIORITY_TANK;
                 modifiers.append("\tx1.5 (is Tank)");
             }
 
             // Fleeing entities should move before those not fleeing.
             if (isFallingBack(entity)) {
-                total *= 2;
+                total *= PRIORITY_FALLBACK;
                 modifiers.append("\tx2.0 (is Fleeing)");
             }
 
             // Move commanders after other units.
             if (entity.isCommander()) {
-                total /= 2;
+                total *= PRIORITY_COMMANDER;
                 modifiers.append("\tx0.5 (is Commander)");
             }
 
             // Move civilian units before military.
             if (!entity.isMilitary()) {
-                total *= 5;
+                total *= PRIORITY_CIVILIAN;
                 modifiers.append("\tx5.0 (is Civilian)");
             }
 
             // Move stealthy units later.
             if (entity.isStealthActive() || entity.isStealthOn() ||
                 entity.isVoidSigActive() || entity.isVoidSigOn()) {
-                total /= 3;
+                total *= PRIORITY_STEALTH;
                 modifiers.append("\tx1/3 (is Stealthed)");
             }
 
@@ -669,12 +695,12 @@ public class Princess extends BotClient {
 
         // first move useless units: immobile units, ejected mechwarrior, etc
         Entity movingEntity = null;
-        List<Entity> myEntities = getEntitiesOwned();
-        double highestIndex = -10000.0;
-        StringBuilder msg = new StringBuilder("Deciding who to move next.");
-        for (Entity entity : myEntities) {
+        final List<Entity> myEntities = getEntitiesOwned();
+        double highestIndex = Double.MIN_VALUE;
+        final StringBuilder msg = new StringBuilder("Deciding who to move next.");
+        for (final Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
-            if (entity.isOffBoard() || (entity.getPosition() == null)
+            if (entity.isOffBoard() || (null == entity.getPosition())
                 || !entity.isSelectableThisTurn()
                 || !getGame().getTurn().isValidEntity(entity, getGame())) {
                 msg.append("cannot be moved.");
@@ -694,14 +720,14 @@ public class Princess extends BotClient {
             }
 
             // If I only have 1 unit, no need to calculate an index.
-            if (myEntities.size() == 1) {
+            if (1 == myEntities.size()) {
                 msg.append("is my only unit.");
                 movingEntity = entity;
                 break;
             }
 
             // We will move the entity with the highest index.
-            double moveIndex = calculateMoveIndex(entity, msg);
+            final double moveIndex = calculateMoveIndex(entity, msg);
             msg.append("\n\thas index ").append(moveIndex).append(" vs ")
                .append(highestIndex);
             if (moveIndex >= highestIndex) {
@@ -710,8 +736,8 @@ public class Princess extends BotClient {
             }
         }
 
-        LogLevel level = (movingEntity == null ? LogLevel.WARNING :
-                          LogLevel.DEBUG);
+        final LogLevel level = (null == movingEntity ? LogLevel.WARNING :
+                                LogLevel.DEBUG);
         log(getClass(), "getEntityToMove()", level, msg.toString());
 
         return movingEntity;
@@ -735,14 +761,14 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
-        	initialize();
+            initialize();
             // get the first entity that can act this turn
-            Entity attacker = game.getFirstEntity(getMyTurn());
+            final Entity attacker = game.getFirstEntity(getMyTurn());
 
             // If my unit is forced to withdraw, don't attack unless I've been 
             // attacked.
             if (getForcedWithdrawal() && attacker.isCrippled()) {
-                StringBuilder msg =
+                final StringBuilder msg =
                         new StringBuilder(attacker.getDisplayName())
                                 .append(" is crippled and withdrawing.");
                 if (attackedWhileFleeing.contains(attacker.getId())) {
@@ -755,17 +781,17 @@ public class Princess extends BotClient {
             }
 
             PhysicalInfo best_attack = null;
-            int firstEntityId = attacker.getId();
+            final int firstEntityId = attacker.getId();
             int nextEntityId = firstEntityId;
 
             // this is an array of all my enemies
-            List<Entity> enemies = getEnemyEntities();
+            final List<Entity> enemies = getEnemyEntities();
 
             do {
-                Entity hitter = game.getEntity(nextEntityId);
+                final Entity hitter = game.getEntity(nextEntityId);
                 nextEntityId = game.getNextEntityNum(hitter.getId());
 
-                if (hitter.getPosition() == null) {
+                if (null == hitter.getPosition()) {
                     continue;
                 }
 
@@ -774,11 +800,11 @@ public class Princess extends BotClient {
                     hitter.getDisplayName());
 
                 // cycle through potential enemies
-                for (Entity e : enemies) {
-                    if (e.getPosition() == null) {
+                for (final Entity e : enemies) {
+                    if (null == e.getPosition()) {
                         continue; // Skip enemies not on the board.
                     }
-                    if (hitter.getPosition().distance(e.getPosition()) > 1) {
+                    if (1 < hitter.getPosition().distance(e.getPosition())) {
                         continue;
                     }
                     if (getHonorUtil().isEnemyBroken(e.getTargetId(),
@@ -787,7 +813,7 @@ public class Princess extends BotClient {
                         continue;
                     }
 
-                    PhysicalInfo right_punch =
+                    final PhysicalInfo right_punch =
                             new PhysicalInfo(hitter,
                                              e,
                                              PhysicalAttackType.RIGHT_PUNCH,
@@ -796,13 +822,13 @@ public class Princess extends BotClient {
 
                                              false);
                     fireControl.calculateUtility(right_punch);
-                    if (right_punch.getUtility() > 0) {
-                        if ((best_attack == null) ||
+                    if (0 < right_punch.getUtility()) {
+                        if ((null == best_attack) ||
                             (right_punch.getUtility() > best_attack.getUtility())) {
                             best_attack = right_punch;
                         }
                     }
-                    PhysicalInfo left_punch = new PhysicalInfo(
+                    final PhysicalInfo left_punch = new PhysicalInfo(
                             hitter,
                             e,
                             PhysicalAttackType.LEFT_PUNCH,
@@ -810,14 +836,14 @@ public class Princess extends BotClient {
                             this,
                             false);
                     fireControl.calculateUtility(left_punch);
-                    if (left_punch.getUtility() > 0) {
-                        if ((best_attack == null)
+                    if (0 < left_punch.getUtility()) {
+                        if ((null == best_attack)
                             || (left_punch.getUtility() >
                                 best_attack.getUtility())) {
                             best_attack = left_punch;
                         }
                     }
-                    PhysicalInfo right_kick = new PhysicalInfo(
+                    final PhysicalInfo right_kick = new PhysicalInfo(
                             hitter,
                             e,
                             PhysicalAttackType.RIGHT_KICK,
@@ -825,14 +851,14 @@ public class Princess extends BotClient {
                             this,
                             false);
                     fireControl.calculateUtility(right_kick);
-                    if (right_kick.getUtility() > 0) {
-                        if ((best_attack == null)
+                    if (0 < right_kick.getUtility()) {
+                        if ((null == best_attack)
                             || (right_kick.getUtility() >
                                 best_attack.getUtility())) {
                             best_attack = right_kick;
                         }
                     }
-                    PhysicalInfo left_kick = new PhysicalInfo(
+                    final PhysicalInfo left_kick = new PhysicalInfo(
                             hitter,
                             e,
                             PhysicalAttackType.LEFT_KICK,
@@ -840,8 +866,8 @@ public class Princess extends BotClient {
                             this,
                             false);
                     fireControl.calculateUtility(left_kick);
-                    if (left_kick.getUtility() > 0) {
-                        if ((best_attack == null)
+                    if (0 < left_kick.getUtility()) {
+                        if ((null == best_attack)
                             || (left_kick.getUtility() >
                                 best_attack.getUtility())) {
                             best_attack = left_kick;
@@ -849,7 +875,7 @@ public class Princess extends BotClient {
                     }
 
                 }
-                if (best_attack != null) {
+                if (null != best_attack) {
                     log(getClass(), METHOD_NAME, LogLevel.INFO,
                         "Best Physical Attack is " +
                         best_attack.getDebugDescription());
@@ -857,7 +883,7 @@ public class Princess extends BotClient {
                     log(getClass(), METHOD_NAME, LogLevel.INFO,
                         "No useful physical attack to be made");
                 }
-                if (best_attack != null) {
+                if (null != best_attack) {
                     return best_attack.getAsPhysicalOption();
                 }
             } while (nextEntityId != firstEntityId);
@@ -869,7 +895,7 @@ public class Princess extends BotClient {
         }
     }
 
-    boolean wantsToFallBack(Entity entity) {
+    boolean wantsToFallBack(final Entity entity) {
         return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
 
@@ -877,19 +903,19 @@ public class Princess extends BotClient {
         return moralUtil;
     }
 
-    boolean isFallingBack(Entity entity) {
+    boolean isFallingBack(final Entity entity) {
         return getMyFleeingEntities().contains(entity.getId());
     }
 
-    boolean mustFleeBoard(Entity entity) {
+    boolean mustFleeBoard(final Entity entity) {
         if (!isFallingBack(entity)) {
             return false;
         }
         if (!entity.canFlee()) {
             return false;
         }
-        if (getPathRanker().distanceToHomeEdge(entity.getPosition(),
-                                               getHomeEdge(), getGame()) > 0) {
+        if (0 < getPathRanker().distanceToHomeEdge(entity.getPosition(),
+                                                   getHomeEdge(), getGame())) {
             return false;
         }
         //noinspection RedundantIfStatement
@@ -899,14 +925,14 @@ public class Princess extends BotClient {
         return true;
     }
 
-    boolean isImmobilized(Entity mover) {
+    boolean isImmobilized(final Entity mover) {
         final String METHOD_NAME = "isImmobilized(Entity, MovePath)";
         if (mover.isImmobile() && !mover.isShutDown()) {
             log(getClass(), METHOD_NAME, LogLevel.INFO,
                 "Is truly immobile.");
             return true;
         }
-        if (mover.getRunMP() < 1) {
+        if (1 > mover.getRunMP()) {
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Has 0 movement.");
             return true;
         }
@@ -914,16 +940,16 @@ public class Princess extends BotClient {
             return false;
         }
 
-        Mech mech = (Mech) mover;
+        final Mech mech = (Mech) mover;
         if (!mech.isProne() && !mech.isStuck() && !mech.isStalled()) {
             return false;
         }
 
-        MovePath movePath = new MovePath(getGame(), mover);
+        final MovePath movePath = new MovePath(getGame(), mover);
 
         // For a normal fall-shame setting (index 5), our threshold should be 
         // a 10+ piloting roll.
-        int threshold;
+        final int threshold;
         switch (getBehaviorSettings().getFallShameIndex()) {
             case 10:
                 threshold = 7;
@@ -957,15 +983,15 @@ public class Princess extends BotClient {
                 return true;
             }
 
-            MovePath.MoveStepType type = (getBooleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) ?
-                                          MovePath.MoveStepType.CAREFUL_STAND :
-                                          MovePath.MoveStepType.GET_UP);
-            MoveStep getUp = new MoveStep(movePath, type);
+            final MovePath.MoveStepType type = (getBooleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) ?
+                                                MovePath.MoveStepType.CAREFUL_STAND :
+                                                MovePath.MoveStepType.GET_UP);
+            final MoveStep getUp = new MoveStep(movePath, type);
 
             // If our odds to get up are equal to or worse than the threshold, 
             // consider ourselves immobile.
-            PilotingRollData target = mech.checkGetUp(getUp,
-                    movePath.getLastStepMovementType());
+            final PilotingRollData target = mech.checkGetUp(getUp,
+                                                            movePath.getLastStepMovementType());
             log(getClass(), METHOD_NAME, LogLevel.INFO,
                 "Need to roll " + target.getValue() +
                 " to stand and our tolerance is " + threshold);
@@ -973,33 +999,33 @@ public class Princess extends BotClient {
         }
 
         // How likely are we to get unstuck.
-        MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
-        MoveStep walk = new MoveStep(movePath, type);
-        IHex hex = getHex(mech.getPosition());
-        PilotingRollData target = mech.checkBogDown(walk,
-                movePath.getLastStepMovementType(), hex,
-                mech.getPriorPosition(), mech.getPosition(), hex.getLevel(),
-                false);
+        final MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
+        final MoveStep walk = new MoveStep(movePath, type);
+        final IHex hex = getHex(mech.getPosition());
+        final PilotingRollData target = mech.checkBogDown(walk,
+                                                          movePath.getLastStepMovementType(), hex,
+                                                          mech.getPriorPosition(), mech.getPosition(), hex.getLevel(),
+                                                          false);
         log(getClass(), METHOD_NAME, LogLevel.INFO,
             "Need to roll " + target.getValue() +
             " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
     }
 
-    boolean getBooleanOption(String name) {
+    boolean getBooleanOption(final String name) {
         return getGame().getOptions().booleanOption(name);
     }
 
-    protected IHex getHex(Coords coords) {
+    protected IHex getHex(final Coords coords) {
         return getBoard().getHex(coords);
     }
 
-    private ArrayList<RankedPath> rankPaths(List<MovePath> paths,
-                                            int maxRange,
-                                            double fallTollerance,
-                                            int startingHomeDistance,
-                                            List<Entity> enemies,
-                                            List<Entity> friends) {
+    private ArrayList<RankedPath> rankPaths(final List<MovePath> paths,
+                                            final int maxRange,
+                                            final double fallTollerance,
+                                            final int startingHomeDistance,
+                                            final List<Entity> enemies,
+                                            final List<Entity> friends) {
         return getPathRanker().rankPaths(paths,
                                          getGame(),
                                          maxRange,
@@ -1010,11 +1036,11 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected MovePath continueMovementFor(Entity entity) {
+    protected MovePath continueMovementFor(final Entity entity) {
         final String METHOD_NAME = "continueMovementFor(Entity)";
         methodBegin(getClass(), METHOD_NAME);
 
-        if (entity == null) {
+        if (null == entity) {
             throw new NullPointerException("Entity is null.");
         }
 
@@ -1041,7 +1067,7 @@ public class Princess extends BotClient {
                 // If this entity is falling back, able to flee the board, on 
                 // its home edge, and must flee, do so.
                 if (mustFleeBoard(entity)) {
-                    MovePath mp = new MovePath(game, entity);
+                    final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.FLEE);
                     return mp;
                 }
@@ -1052,72 +1078,72 @@ public class Princess extends BotClient {
                           " is immobile.  Abandoning unit.";
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
                     sendChat(msg, LogLevel.WARNING);
-                    MovePath mp = new MovePath(game, entity);
+                    final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MovePath.MoveStepType.EJECT);
                     return mp;
                 }
             }
 
-            List<MovePath> paths =
+            final List<MovePath> paths =
                     getPrecognition().getPathEnumerator()
                                      .getUnitPaths()
                                      .get(entity.getId());
 
-            if (paths == null) {
+            if (null == paths) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
                     "No valid paths found.");
                 return new MovePath(game, entity);
             }
 
-            double thisTimeEstimate =
+            final double thisTimeEstimate =
                     (paths.size() * moveEvaluationTimeEstimate) / 1e3;
             if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() >
                 LogLevel.WARNING.toInt()) {
                 String timeestimate = "unknown.";
-                if (thisTimeEstimate != 0) {
+                if (0 != thisTimeEstimate) {
                     timeestimate = Integer.toString((int) thisTimeEstimate)
                                    + " seconds";
                 }
-                String message = "Moving " + entity.getChassis() + ". "
-                                 + Long.toString(paths.size())
-                                 + " paths to consider.  Estimated time to completion: "
-                                 + timeestimate;
+                final String message = "Moving " + entity.getChassis() + ". "
+                                       + Long.toString(paths.size())
+                                       + " paths to consider.  Estimated time to completion: "
+                                       + timeestimate;
                 sendChat(message, LogLevel.INFO);
             }
 
-            long startTime = System.currentTimeMillis();
+            final long startTime = System.currentTimeMillis();
             getPathRanker().initUnitTurn(entity, getGame());
-            double fallTolerance =
+            final double fallTolerance =
                     getBehaviorSettings().getFallShameIndex() / 10d;
-            int startingHomeDistance = getPathRanker().distanceToHomeEdge(
+            final int startingHomeDistance = getPathRanker().distanceToHomeEdge(
                     entity.getPosition(),
                     getBehaviorSettings().getHomeEdge(),
                     getGame());
-            List<RankedPath> rankedpaths = rankPaths(paths,
-                                                     entity.getMaxWeaponRange(),
-                                                     fallTolerance,
-                                                     startingHomeDistance,
-                                                     getEnemyEntities(),
-                                                     getFriendEntities());
-            long stop_time = System.currentTimeMillis();
+            final List<RankedPath> rankedpaths = rankPaths(paths,
+                                                           entity.getMaxWeaponRange(),
+                                                           fallTolerance,
+                                                           startingHomeDistance,
+                                                           getEnemyEntities(),
+                                                           getFriendEntities());
+            final long stop_time = System.currentTimeMillis();
 
             // update path evaluation time estimate
-            double updatedEstimate =
+            final double updatedEstimate =
                     ((double) (stop_time - startTime)) / ((double) paths.size());
-            if (moveEvaluationTimeEstimate == 0) {
+            if (0 == moveEvaluationTimeEstimate) {
                 moveEvaluationTimeEstimate = updatedEstimate;
             }
             moveEvaluationTimeEstimate =
                     0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
-            if (rankedpaths.size() == 0) {
+            if (0 == rankedpaths.size()) {
                 return new MovePath(game, entity);
             }
             log(getClass(), METHOD_NAME,
                 "Path ranking took " +
                 Long.toString(stop_time - startTime) + " millis");
-            RankedPath bestpath = getPathRanker().getBestPath(rankedpaths);
+            final RankedPath bestpath = getPathRanker().getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO,
-                "Best Path: " + bestpath.getPath().toString() + "  Rank: "
+                "Best Path: " + bestpath.getPath() + "  Rank: "
                 + bestpath.getRank());
             
             performPathPostProcessing(bestpath);
@@ -1139,9 +1165,9 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            List<Entity> ents = game.getEntitiesVector();
-            for (Entity ent : ents) {
-                String errors = fireControl.checkAllGuesses(ent, game);
+            final List<Entity> ents = game.getEntitiesVector();
+            for (final Entity ent : ents) {
+                final String errors = fireControl.checkAllGuesses(ent, game);
                 if (!StringUtil.isNullOrEmpty(errors)) {
                     log(getClass(), METHOD_NAME, LogLevel.WARNING, errors);
                 }
@@ -1152,15 +1178,15 @@ public class Princess extends BotClient {
             // their buildings, similar to the turret check
             // pre-movement(infantry can move so we only set target buildings
             // after they do).
-            Enumeration<Building> buildings = game.getBoard().getBuildings();
+            final Enumeration<Building> buildings = game.getBoard().getBuildings();
             while (buildings.hasMoreElements()) {
-                Building bldg = buildings.nextElement();
-                Enumeration<Coords> bldgCoords = bldg.getCoords();
+                final Building bldg = buildings.nextElement();
+                final Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
-                    Coords coords = bldgCoords.nextElement();
-                    for (Entity entity : game.getEntitiesVector(coords)) {
-                        BuildingTarget bt = new BuildingTarget(coords,
-                                game.getBoard(), false);
+                    final Coords coords = bldgCoords.nextElement();
+                    for (final Entity entity : game.getEntitiesVector(coords)) {
+                        final BuildingTarget bt = new BuildingTarget(coords,
+                                                                     game.getBoard(), false);
                         // Want to target buildings with hostile infantry/BA
                         // inside them, since there's no other way to attack
                         // them.
@@ -1185,10 +1211,10 @@ public class Princess extends BotClient {
             // fleeing, etc).
             damageMap.clear();
             //Now add an ID for each possible target.
-            List<Targetable> potentialTargets =
+            final List<Targetable> potentialTargets =
                     fireControl.getAllTargetableEnemyEntities(getLocalPlayer(),
                                                               getGame());
-            for (Targetable target : potentialTargets) {
+            for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getTargetId(), 0d);
             }
 
@@ -1200,7 +1226,7 @@ public class Princess extends BotClient {
     private void checkForDishonoredEnemies() {
         final String METHOD_NAME = "checkForDishonoredEnemies()";
 
-        StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
+        final StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
 
         try {
             // If the Forced Withdrawal rule is not turned on, then it's a 
@@ -1210,20 +1236,20 @@ public class Princess extends BotClient {
                 return;
             }
 
-            for (Entity mine : getEntitiesOwned()) {
+            for (final Entity mine : getEntitiesOwned()) {
 
                 // Who just attacked me?
-                Collection<Integer> attackedBy = mine.getAttackedByThisTurn();
+                final Collection<Integer> attackedBy = mine.getAttackedByThisTurn();
                 if (attackedBy.isEmpty()) {
                     continue;
                 }
 
                 // Is my unit trying to withdraw?
-                boolean fleeing = getMyFleeingEntities().contains(mine.getId());
+                final boolean fleeing = getMyFleeingEntities().contains(mine.getId());
 
-                for (int id : attackedBy) {
-                    Entity entity = getGame().getEntity(id);
-                    if (entity == null) {
+                for (final int id : attackedBy) {
+                    final Entity entity = getGame().getEntity(id);
+                    if (null == entity) {
                         continue;
                     }
 
@@ -1270,7 +1296,7 @@ public class Princess extends BotClient {
             return;
         }
 
-        for (Entity entity : getEnemyEntities()) {
+        for (final Entity entity : getEnemyEntities()) {
             getHonorUtil().checkEnemyBroken(entity, getForcedWithdrawal());
         }
     }
@@ -1286,8 +1312,8 @@ public class Princess extends BotClient {
 
             // reset strategic targets
             fireControl.setAdditionalTargets(new ArrayList<>());
-            for (Coords strategicTarget : getStrategicBuildingTargets()) {
-                if (game.getBoard().getBuildingAt(strategicTarget) == null) {
+            for (final Coords strategicTarget : getStrategicBuildingTargets()) {
+                if (null == game.getBoard().getBuildingAt(strategicTarget)) {
                     sendChat("No building to target in Hex " +
                              strategicTarget.toFriendlyString() +
                              ", ignoring.", LogLevel.INFO);
@@ -1303,17 +1329,17 @@ public class Princess extends BotClient {
             }
 
             // Pick up on any turrets and shoot their buildings as well.
-            Enumeration<Building> buildings = game.getBoard().getBuildings();
+            final Enumeration<Building> buildings = game.getBoard().getBuildings();
             while (buildings.hasMoreElements()) {
-                Building bldg = buildings.nextElement();
-                Enumeration<Coords> bldgCoords = bldg.getCoords();
+                final Building bldg = buildings.nextElement();
+                final Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
-                    Coords coords = bldgCoords.nextElement();
-                    for (Entity entity : game.getEntitiesVector(coords,
-                                                                true)) {
-                        BuildingTarget bt = new BuildingTarget(coords,
-                                                               game.getBoard(),
-                                                               false);
+                    final Coords coords = bldgCoords.nextElement();
+                    for (final Entity entity : game.getEntitiesVector(coords,
+                                                                      true)) {
+                        final BuildingTarget bt = new BuildingTarget(coords,
+                                                                     game.getBoard(),
+                                                                     false);
                         if (isEnemyGunEmplacement(entity, coords)) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " +
@@ -1333,10 +1359,10 @@ public class Princess extends BotClient {
             //Reset last round's damageMap
             damageMap.clear();
             //Now add an ID for each possible target.
-            List<Targetable> potentialTargets =
+            final List<Targetable> potentialTargets =
                     fireControl.getAllTargetableEnemyEntities(getLocalPlayer(),
                                                               getGame());
-            for (Targetable target : potentialTargets) {
+            for (final Targetable target : potentialTargets) {
                 damageMap.put(target.getTargetId(), 0d);
             }
 
@@ -1358,7 +1384,7 @@ public class Princess extends BotClient {
             if (initialized) {
                 return; // no need to initialize twice
             }
-            PathSearcher pathSearcher = new PathSearcher(this);
+            final PathSearcher pathSearcher = new PathSearcher(this);
             pathRanker = new BasicPathRanker(this);
             pathSearcher.ranker = pathRanker;
             fireControl = new FireControl(this);
@@ -1367,15 +1393,15 @@ public class Princess extends BotClient {
 
             // Pick up any turrets and add their buildings to the strategic 
             // targets list.
-            Enumeration<Building> buildings = getGame().getBoard()
-                                                       .getBuildings();
+            final Enumeration<Building> buildings = getGame().getBoard()
+                                                             .getBuildings();
             while (buildings.hasMoreElements()) {
-                Building bldg = buildings.nextElement();
-                Enumeration<Coords> bldgCoords = bldg.getCoords();
+                final Building bldg = buildings.nextElement();
+                final Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
-                    Coords coords = bldgCoords.nextElement();
-                    for (Entity entity : game.getEntitiesVector(coords,
-                                                                true)) {
+                    final Coords coords = bldgCoords.nextElement();
+                    for (final Entity entity : game.getEntitiesVector(coords,
+                                                                      true)) {
                         if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " +
@@ -1393,14 +1419,16 @@ public class Princess extends BotClient {
         }
     }
 
-    private boolean isEnemyGunEmplacement(Entity entity, Coords coords) {
+    private boolean isEnemyGunEmplacement(final Entity entity,
+                                          final Coords coords) {
         return entity instanceof GunEmplacement
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
-               && (entity.getCrew() != null) && !entity.getCrew().isDead();
+               && (null != entity.getCrew()) && !entity.getCrew().isDead();
     }
 
-    private boolean isEnemyInfantry(Entity entity, Coords coords) {
+    private boolean isEnemyInfantry(final Entity entity,
+                                    final Coords coords) {
         return (entity instanceof Infantry)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords);
@@ -1409,48 +1437,60 @@ public class Princess extends BotClient {
     @Override
     public synchronized void die() {
         super.die();
-        if (precognition != null) {
+        if (null != precognition) {
             precognition.signalDone();
             precogThread.interrupt();
         }
     }
 
     @Override
-    protected void processChat(GamePlayerChatEvent ge) {
+    protected void processChat(final GamePlayerChatEvent ge) {
         chatProcessor.processChat(ge, this);
     }
 
-    public void log(Class<?> callingClass, String methodName, LogLevel level,
-                    String msg) {
+    public void log(final Class<?> callingClass,
+                    final String methodName,
+                    final LogLevel level,
+                    final String msg) {
         getLogger().log(callingClass, methodName, level, msg);
     }
 
-    public void log(Class<?> callingClass, String methodName, LogLevel level,
-                    StringBuilder msg) {
-        if (msg == null) {
+    public void log(final Class<?> callingClass,
+                    final String methodName,
+                    final LogLevel level,
+                    final StringBuilder msg) {
+        if (null == msg) {
             return;
         }
         log(callingClass, methodName, level, msg.toString());
     }
 
-    public void log(Class<?> callingClass, String methodName, String msg) {
+    public void log(final Class<?> callingClass,
+                    final String methodName,
+                    final String msg) {
         log(callingClass, methodName, LogLevel.DEBUG, msg);
     }
 
-    public void log(Class<?> callingClass, String methodName, LogLevel level,
-                    Throwable t) {
+    public void log(final Class<?> callingClass,
+                    final String methodName,
+                    final LogLevel level,
+                    final Throwable t) {
         getLogger().log(callingClass, methodName, level, t);
     }
 
-    public void log(Class<?> callingClass, String methodName, Throwable t) {
+    public void log(final Class<?> callingClass,
+                    final String methodName,
+                    final Throwable t) {
         log(callingClass, methodName, LogLevel.ERROR, t);
     }
 
-    public void methodBegin(Class<?> callingClass, String methodName) {
+    public void methodBegin(final Class<?> callingClass,
+                            final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, "method begin");
     }
 
-    public void methodEnd(Class<?> callingClass, String methodName) {
+    public void methodEnd(final Class<?> callingClass,
+                          final String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, "method end");
     }
 
@@ -1458,15 +1498,16 @@ public class Princess extends BotClient {
         return getBehaviorSettings().getHomeEdge();
     }
 
-    public int calculateAdjustment(String ticks) {
+    public int calculateAdjustment(final String ticks) {
+        
         int adjustment = 0;
         if (StringUtil.isNullOrEmpty(ticks)) {
             return 0;
         }
-        for (char tick : ticks.toCharArray()) {
-            if ('+' == tick) {
+        for (final char tick : ticks.toCharArray()) {
+            if (PLUS == tick) {
                 adjustment++;
-            } else if ('-' == tick) {
+            } else if (MINUS == tick) {
                 adjustment--;
             } else {
                 log(getClass(),
@@ -1507,7 +1548,7 @@ public class Princess extends BotClient {
     private void updateMyFleeingEntities() {
         final String METHOD_NAME = "updateMyFleeingEntities()";
 
-        StringBuilder msg =
+        final StringBuilder msg =
                 new StringBuilder("Updating my list of falling back units.");
 
         try {
@@ -1518,7 +1559,7 @@ public class Princess extends BotClient {
                 return;
             }
 
-            for (Entity mine : getEntitiesOwned()) {
+            for (final Entity mine : getEntitiesOwned()) {
                 if (myFleeingEntities.contains(mine.getId())) {
                     continue;
                 }
@@ -1531,11 +1572,11 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
         }
     }
-    
-    protected void handlePacket(Packet c) {
+
+    protected void handlePacket(final Packet c) {
         final String METHOD_NAME = "handlePacket()";
-        StringBuilder msg = new StringBuilder("Received packet, cmd: "
-                + c.getCommand());
+        final StringBuilder msg = new StringBuilder("Received packet, cmd: "
+                                                    + c.getCommand());
         try {
             super.handlePacket(c);
             getPrecognition().handlePacket(c);
@@ -1548,13 +1589,13 @@ public class Princess extends BotClient {
     /**
      * sends a load game file to the server
      */
-    public void sendLoadGame(File f) {
+    public void sendLoadGame(final File f) {
         precognition.resetGame();
         super.sendLoadGame(f);
     }
     
     protected void disconnected() {
-        if (precognition != null) {
+        if (null != precognition) {
             precognition.signalDone();
             precogThread.interrupt();
         }
@@ -1564,9 +1605,9 @@ public class Princess extends BotClient {
     int getHighestEnemyInitiativeId() {
         int highestEnemyInitiativeBonus = -1;
         int highestEnemyInitiativeId = -1;
-        for (Entity entity : getEnemyEntities()) {
-            int initBonus = entity.getHQIniBonus() +
-                            entity.getQuirkIniBonus();
+        for (final Entity entity : getEnemyEntities()) {
+            final int initBonus = entity.getHQIniBonus() +
+                                  entity.getQuirkIniBonus();
             if (initBonus > highestEnemyInitiativeBonus) {
                 highestEnemyInitiativeBonus = initBonus;
                 highestEnemyInitiativeId = entity.getId();
@@ -1580,14 +1621,15 @@ public class Princess extends BotClient {
      * Currently insinuates an "evasion" step for aircraft that will not be shooting.
      * @param path The path to process
      */
-    private void performPathPostProcessing(RankedPath path) {
+    private void performPathPostProcessing(final RankedPath path) {
         // if we're an airborne aircraft
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR
         // then evade
         if(path.getPath().getEntity().isAirborne() &&
-                (path.getExpectedDamage() == 0) &&
-                (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath().getEntity()) - 2)) {
+           (0 == path.getExpectedDamage()) &&
+           (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath()
+                                                                                                  .getEntity()) - 2)) {
             path.getPath().addStep(MoveStepType.EVADE);
         }
     }

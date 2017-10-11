@@ -2845,8 +2845,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "280,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3061, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_CJF)
+                .setClanAdvancement(3061, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CJF)
                 .setProductionFactions(F_CJF).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         return misc;
@@ -2919,8 +2919,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "282,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3065, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_CGB)
+                .setClanAdvancement(3065, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CGB)
                 .setProductionFactions(F_CGB).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -10408,8 +10408,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "254,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
-                .setISAdvancement(2718, 2720, 3060, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+                .setClanAdvancement(2718, 2720, 3060, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH);
         return misc;
     }
@@ -11253,7 +11253,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "271,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, 3050, DATE_NONE)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setProductionFactions(F_CWF);

@@ -172,7 +172,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         // Certain ammunitions reduce the penalty
         else if (atype != null) {
             if (((atype.getAmmoType() == AmmoType.T_AC) 
-                    || (atype.getAmmoType() == AmmoType.T_LAC))
+                    || (atype.getAmmoType() == AmmoType.T_LAC)
+                    || (atype.getAmmoType() == AmmoType.T_AC_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_PAC))
                     && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) 
                             || (atype.getMunitionType() 
                                     == AmmoType.M_TRACER))) {

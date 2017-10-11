@@ -3687,10 +3687,11 @@ public abstract class Mech extends Entity {
             }
 
             // RACs, LACs and ACs don't really count
-            if ((etype instanceof WeaponType)
-                    && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
-                            || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype)
-                            .getAmmoType() == AmmoType.T_LAC))) {
+            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC))) {
                 toSubtract = 0;
             }
 

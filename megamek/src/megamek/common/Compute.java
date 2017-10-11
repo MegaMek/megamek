@@ -3294,14 +3294,14 @@ public class Compute {
                             // Any further anti-personnel specialized rounds
                             // should be tested for here
                             if (((((abin_type.getAmmoType() == AmmoType.T_LRM)
-                                   || (abin_type.getAmmoType() == AmmoType.T_MML) || (abin_type
-                                                                                              .getAmmoType() ==
-                                                                                      AmmoType.T_SRM))) && (abin_type
-                                                                                                                    .getMunitionType() == AmmoType.M_FRAGMENTATION))
-                                || (((abin_type.getAmmoType() == AmmoType.T_AC) || (abin_type
-                                                                                            .getAmmoType() ==
-                                                                                    AmmoType.T_LAC)) && (abin_type
-                                                                                                                 .getMunitionType() == AmmoType.M_FLECHETTE))) {
+                                    || (abin_type.getAmmoType() == AmmoType.T_MML)
+                                    || (abin_type.getAmmoType() == AmmoType.T_SRM)))
+                                    && (abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION))
+                                    || (((abin_type.getAmmoType() == AmmoType.T_AC)
+                                            || (abin_type.getAmmoType() == AmmoType.T_LAC)
+                                            || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
+                                            || (abin_type.getAmmoType() == AmmoType.T_PAC))
+                                            && (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
                                 ammo_multiple = 0.0;
                                 if (target instanceof Infantry) {
                                     if (!(target instanceof BattleArmor)) {
@@ -3334,9 +3334,10 @@ public class Compute {
                             // to reflect scaled crit chance
                             // Other armor-penetrating ammo types should be
                             // tested here, such as Tandem-charge SRMs
-                            if (((abin_type.getAmmoType() == AmmoType.T_AC) || (abin_type
-                                                                                        .getAmmoType() == AmmoType
-                                                                                        .T_LAC))
+                            if (((abin_type.getAmmoType() == AmmoType.T_AC)
+                                    || (abin_type.getAmmoType() == AmmoType.T_LAC)
+                                    || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
+                                    || (abin_type.getAmmoType() == AmmoType.T_PAC))
                                 && (abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING)) {
                                 if ((target instanceof Mech)
                                     || (target instanceof Tank)) {
@@ -3351,9 +3352,8 @@ public class Compute {
                             // Meks that are not/almost not on fire,
                             // and against vehicles and protos if allowed by
                             // game option
-                            if (((abin_type.getAmmoType() == AmmoType.T_SRM) || (abin_type
-                                                                                         .getAmmoType() == AmmoType
-                                                                                         .T_MML))
+                            if (((abin_type.getAmmoType() == AmmoType.T_SRM)
+                                    || (abin_type.getAmmoType() == AmmoType.T_MML))
                                 && (abin_type.getMunitionType() == AmmoType.M_INFERNO)) {
                                 ammo_multiple = 0.5;
                                 if (target instanceof Mech) {
@@ -6053,7 +6053,7 @@ public class Compute {
                     return false;
                 }
                 // Flak Ammo can't make aimed shots
-                if (((atype.getAmmoType() == AmmoType.T_AC)
+                if (((atype.getAmmoType() == AmmoType.T_AC)                    
                      || (atype.getAmmoType() == AmmoType.T_AC_ULTRA)
                      || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                     && (atype.getMunitionType() == AmmoType.M_FLAK)) {

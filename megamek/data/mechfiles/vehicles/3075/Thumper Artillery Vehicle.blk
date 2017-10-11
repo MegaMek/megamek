@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Thumper Artillery Vehicle
@@ -24,46 +24,37 @@ Thumper Artillery Vehicle
 2734
 </year>
 
-<source>
-Star League
-</source>
-
 <type>
 IS Level 3
 </type>
-
-<tonnage>
-60.0
-</tonnage>
 
 <motion_type>
 Wheeled
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
 4
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <internal_type>
 -1
 </internal_type>
 
 <armor>
-60
-40
-40
-27
-33
+64
+42
+42
+28
+0
 </armor>
 
 <Body Equipment>
 IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
-ISGuardianECMSuite
 ISThumperAmmo
 ISThumperAmmo
 </Body Equipment>
@@ -81,16 +72,18 @@ Machine Gun
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 Machine Gun
 Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
-ISERSmallLaser
-ISERSmallLaser
 </Turret Equipment>
 
-<armor_type>
-0
-</armor_type>
+<source>
+Star League
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

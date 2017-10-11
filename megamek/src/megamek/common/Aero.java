@@ -1579,6 +1579,7 @@ public class Aero extends Entity implements IAero, IBomber {
             // RACs, LACs and ACs don't really count
             if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
                 toSubtract = 0;
             }

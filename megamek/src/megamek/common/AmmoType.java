@@ -558,6 +558,7 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanImprovedSrmsAmmo = new ArrayList<AmmoType>();
         ArrayList<AmmoType> clanImprovedAcAmmo = new ArrayList<AmmoType>();
         ArrayList<AmmoType> primLongTomAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> clanProtoAcAmmo = new ArrayList<AmmoType>();
 
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
 
@@ -746,18 +747,18 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISMekTaserAmmo());
         
         //IO Equipment
-        EquipmentType.addType(AmmoType.createCLImprovedAC2Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedAC5Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedAC10Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedAC20Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedAC2Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedAC5Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedAC10Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedAC20Ammo());
         EquipmentType.addType(AmmoType.createCLImprovedGaussAmmo());
-        EquipmentType.addType(AmmoType.createCLImprovedSRM2Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedSRM4Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedSRM6Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedLRM5Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedLRM10Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedLRM15Ammo());
-        EquipmentType.addType(AmmoType.createCLImprovedLRM20Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedSRM2Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedSRM4Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedSRM6Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedLRM5Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedLRM10Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedLRM15Ammo());
+        //EquipmentType.addType(AmmoType.createCLImprovedLRM20Ammo());
         
         //TESTING
         base = AmmoType.createCLImprovedAC2Ammo();
@@ -771,6 +772,17 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         base = AmmoType.createCLImprovedAC20Ammo();
         clanImprovedAcAmmo.add(base);
+        
+        base = AmmoType.createCLPROAC2Ammo();
+        clanProtoAcAmmo.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createCLPROAC4Ammo();
+        clanProtoAcAmmo.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createCLPROAC8Ammo();
+        clanProtoAcAmmo.add(base);
+        EquipmentType.addType(base);
+
         
         base = AmmoType.createCLImprovedLRM5Ammo();
         clanImprovedLrmsAmmo.add(base);
@@ -1180,9 +1192,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLPROHeavyMGAmmo());
         EquipmentType.addType(AmmoType.createCLPROMGAmmo());
         EquipmentType.addType(AmmoType.createCLPROLightMGAmmo());
-        EquipmentType.addType(AmmoType.createCLPROAC2Ammo());
-        EquipmentType.addType(AmmoType.createCLPROAC4Ammo());
-        EquipmentType.addType(AmmoType.createCLPROAC8Ammo());
+        //EquipmentType.addType(AmmoType.createCLPROAC2Ammo());
+        //EquipmentType.addType(AmmoType.createCLPROAC4Ammo());
+        //EquipmentType.addType(AmmoType.createCLPROAC8Ammo());
 
         // naval ammo
         EquipmentType.addType(AmmoType.createNAC10Ammo());
@@ -2378,6 +2390,74 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.     
         AmmoType.createMunitions(clanImprovedAcAmmo, munitions);
+        
+        // Create the munition types for Clan Protomek AC rounds. Ammo Tech Ratings based off the weapon itself  
+        munitions.clear();      
+        munitions.add(new MunitionMutator("Armor-Piercing", 2, M_ARMOR_PIERCING,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false,false, false)
+                .setProductionFactions(F_CJF),"208,TM"));
+        
+        //TODO - Implement for play
+/*      munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
+                new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
+                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                        .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                        .setProductionFactions(F_FS),
+                "352,TO"));*/
+        
+        munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CBS)
+                .setProductionFactions(F_CBS),"352,TO"));
+        
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3105, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false,false, false)
+                .setProductionFactions(F_CHH),"208,TM"));
+        
+        munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(true)
+                .setTechRating(RATING_F)
+                .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setClanApproximate(false, false, false,false, false)
+                .setPrototypeFactions(F_CBS)
+                .setProductionFactions(F_CBS),"208,TM"));
+        
+        munitions.add(new MunitionMutator("Tracer", 1, M_TRACER,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CBS)
+                .setProductionFactions(F_CBS),"208,TM"));
+        
+        // Walk through both the base types and the
+        // mutators, and create munition types. 
+         AmmoType.createMunitions(clanProtoAcAmmo, munitions);
            
         // Create the munition types for IS Arrow IV launchers.
         munitions.clear();
@@ -15175,6 +15255,32 @@ public class AmmoType extends EquipmentType {
                     munition.addBeforeString(base, "Ammo", name + " ");
                     nameBuf = null;
                     break;
+                case AmmoType.T_PAC:
+                    // Add the munition name to the beginning of the display
+                    // name.
+                    nameBuf = new StringBuffer(name);
+                    nameBuf.append(" ");
+                    munition.subMunitionBegin = 0;
+                    munition.subMunitionLength = nameBuf.length();
+                    nameBuf.append(base.name);
+                    munition.name = nameBuf.toString();
+
+                    // Add the munition name to the end of the TDB ammo name.
+                    nameBuf = new StringBuffer(" - ");
+                    nameBuf.append(name);
+                    munition.addToEnd(base, " - " + name);
+
+                    // The munition name appears in the middle of the other
+                    // names.
+                    nameBuf = new StringBuffer(base.internalName);
+                    index = base.internalName.lastIndexOf("Ammo");
+                    nameBuf.insert(index, ' ');
+                    nameBuf.insert(index, name);
+                    munition.setInternalName(nameBuf.toString());
+                    munition.shortName = munition.name;
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    nameBuf = null;
+                    break;
                 case AmmoType.T_ARROWIV_PROTO:
                 case AmmoType.T_ARROW_IV:
                     // The munition name appears in the middle of all names.
@@ -15334,8 +15440,8 @@ public class AmmoType extends EquipmentType {
             double cost = base.cost;
             double bv = base.bv;
 
-            if ((munition.getAmmoType() == T_AC)
-                    || (munition.getAmmoType() == T_LAC)) {
+            if ((munition.getAmmoType() == T_AC) || (munition.getAmmoType() == T_LAC)
+                    || (munition.getAmmoType() == T_PAC)) {
                 if (munition.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
                     cost *= 4;
                 }

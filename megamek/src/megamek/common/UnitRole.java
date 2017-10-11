@@ -80,6 +80,51 @@ public enum UnitRole {
 		}
 	}
 	
+    /**
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit
+     * qualifies for a particular role. As the canon unit roles do not themselves adhere
+     * strictly to the guidelines, there is some allowance for fuzziness in applying the
+     * criteria by computing a score. Stats outside the given ranges lower the score, and
+     * special abilities that are useful for a role raise the score.
+     * 
+     * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
+     * 
+     * @param entity      The unit to be checked for role qualification
+     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     */
+    public boolean qualifiesForRole(Entity entity) {
+        return qualifiesForRole(new AlphaStrikeElement(entity), 0);
+    }
+    
+    /**
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit
+     * qualifies for a particular role. As the canon unit roles do not themselves adhere
+     * strictly to the guidelines, there is some allowance for fuzziness in applying the
+     * criteria by computing a score. Stats outside the given ranges lower the score, and
+     * special abilities that are useful for a role raise the score.
+     * 
+     * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
+     * 
+     * @param entity      The unit to be checked for role qualification
+     * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
+     *                  more or less by the book, while values < 0 are more liberal and > 0 are
+     *                  more strict.
+     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     */
+    public boolean qualifiesForRole(Entity entity, double tolerance) {
+        return qualifiesForRole(new AlphaStrikeElement(entity), tolerance);
+    }
+    
+    /**
+     * Applies the criteria from Alpha Strike Companion to determine whether a unit
+     * qualifies for a particular role. As the canon unit roles do not themselves adhere
+     * strictly to the guidelines, there is some allowance for fuzziness in applying the
+     * criteria by computing a score. Stats outside the given ranges lower the score, and
+     * special abilities that are useful for a role raise the score.
+     * 
+     * @param unit      The unit to be checked for role qualification
+     * @return          Boolean value indicating whether the unit meets the qualifications for this role.
+     */
 	public boolean qualifiesForRole(AlphaStrikeElement unit) {
 		return qualifiesForRole(unit, 0);
 	}

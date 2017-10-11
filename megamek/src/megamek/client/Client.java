@@ -80,6 +80,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.UnitLocation;
+import megamek.common.UnitRoleHandler;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -495,6 +496,7 @@ public class Client implements IClientCommandHandler {
                 System.out.println(e);
                 e.printStackTrace();
             }
+            UnitRoleHandler.initialize();
             RandomNameGenerator.initialize();
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {

@@ -747,6 +747,18 @@ public class BLKFile {
                 blk.writeBlockData("hasNoControlSystems", 1);
             }
         }
+        
+        if (t instanceof SmallCraft) {
+            SmallCraft sc = (SmallCraft) t;
+            blk.writeBlockData("crew", sc.getNCrew());
+            blk.writeBlockData("officers", sc.getNOfficers());
+            blk.writeBlockData("passengers", sc.getNPassenger());
+            blk.writeBlockData("marines", sc.getNMarines());
+            blk.writeBlockData("battlearmor", sc.getNBattleArmor());
+            blk.writeBlockData("otherpassenger", sc.getNOtherPassenger());
+            blk.writeBlockData("life_boat", sc.getLifeBoats());
+            blk.writeBlockData("escape_pod", sc.getEscapePods());
+        }
 
         return blk;
     }

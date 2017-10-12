@@ -4044,10 +4044,17 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
 
+    /**
+     * @return The total number of crew available to supplement marines on boarding actions.
+     *         Includes officers, enlisted, and bay personnel, but not marines/ba or passengers.
+     */
     public int getNCrew() {
         return 1;
     }
 
+    /**
+     * @return The total passenger capacity.
+     */
     public int getNPassenger() {
         return 0;
     }

@@ -15,7 +15,10 @@ import megamek.common.ITechManager;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 
 /**
  * Class for testing and validating instantiations for Small Craft and Dropships.
@@ -295,6 +298,42 @@ public class TestSmallCraft extends TestAero {
         } else {
             return 0.015;
         }
+    }
+    
+    /**
+     * @return Minimum crew requirements based on unit type and number of weapons.
+     */
+    public static int minimumBaseCrew(SmallCraft sc) {
+        int crew = 3;
+        if (sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+            crew += (int)Math.ceil(sc.getWeight() / 5000);
+            if (sc.getDesignType() == SmallCraft.MILITARY) {
+                crew++;
+            }
+        }
+        return crew;
+    }
+        
+    /**
+     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
+     * @return The vessel's minimum gunner requirements.
+     */
+    public static int requiredGunners(SmallCraft sc) {
+        int capitalWeapons = 0;
+        int stdWeapons = 0;
+        for (Mounted m : sc.getTotalWeaponList()) {
+            if ((m.getType() instanceof BayWeapon)
+                    || (((WeaponType)m.getType()).getMaxRange(m) <= 1)) {
+                continue;
+            }
+            if (((WeaponType)m.getType()).isCapital()
+                    || (m.getType() instanceof ScreenLauncherWeapon)) {
+                capitalWeapons++;
+            } else {
+                stdWeapons++;
+            }
+        }
+        return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
     }
     
     public TestSmallCraft(SmallCraft sc, TestEntityOption option, String fs) {

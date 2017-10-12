@@ -35,6 +35,7 @@ public class SmallCraft extends Aero {
     // crew and passengers
     private int nCrew = 0;
     private int nPassenger = 0;
+    private int nOfficers = 0;
     private int nBattleArmor = 0;
     private int nMarines = 0;
     private int nOtherPassenger = 0;
@@ -76,10 +77,15 @@ public class SmallCraft extends Aero {
     public int getDesignType() {
         return designType;
     }
+    
     public void setNCrew(int crew) {
         nCrew = crew;
     }
-
+    
+    public void setNOfficers(int officer) {
+        nOfficers = officer;
+    }
+    
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -105,11 +111,24 @@ public class SmallCraft extends Aero {
     public int getNPassenger() {
         return nPassenger;
     }
-
+    
+    /**
+     * @return The number of officers among the crew.
+     */
+    public int getNOfficers() {
+        return nOfficers;
+    }
+    
+    /**
+     * @return The number battlearmored marines available for boarding actions.
+     */
     public int getNBattleArmor() {
         return nBattleArmor;
     }
 
+    /**
+     * @return The number conventional marines available for boarding actions.
+     */
     public int getNMarines() {
         return nMarines;
     }
@@ -132,29 +151,6 @@ public class SmallCraft extends Aero {
 
     public int getLifeBoats() {
         return lifeBoats;
-    }
-    
-    /**
-     * @return Minimum crew requirements based on unit type and number of weapons.
-     */
-    public int minimumCrew() {
-        return 3 + minimumGunners();
-    }
-        
-    /**
-     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
-     * @return The vessel's minimum gunner requirements.
-     */
-    public int minimumGunners() {
-        int stdWeapons = 0;
-        for (Mounted m : getWeaponList()) {
-            if (((WeaponType)m.getType()).isCapital()) {
-                stdWeapons += m.getBayWeapons().size() * 6;
-            } else {
-                stdWeapons += m.getBayWeapons().size();
-            }
-        }
-        return (int)Math.ceil(stdWeapons / 6.0);
     }
     
     @Override

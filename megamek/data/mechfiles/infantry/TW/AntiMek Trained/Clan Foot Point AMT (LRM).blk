@@ -13,19 +13,19 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Foot Point
+Clan Foot Point (Anti-’Mech)
 </Name>
 
 <Model>
-(MG)
+(LRM)
 </Model>
 
 <year>
-2815
+3065
 </year>
 
 <type>
-Clan Level 2
+Clan Level 5
 </type>
 
 <motion_type>
@@ -56,14 +56,16 @@ Auto-Rifle
 </Primary>
 
 <Secondary>
-Machine Gun (Portable)
+LRM Launcher (FarShot)
 </Secondary>
 
 <antimek>
-8
+5
 </antimek>
 
 <armorKit>
 ClanKit
 </armorKit>
+
+
 

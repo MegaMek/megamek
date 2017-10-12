@@ -13,7 +13,7 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Foot Point
+Clan Foot Point (Anti-’Mech)
 </Name>
 
 <Model>
@@ -60,7 +60,7 @@ Machine Gun (Portable)
 </Secondary>
 
 <antimek>
-8
+5
 </antimek>
 
 <armorKit>

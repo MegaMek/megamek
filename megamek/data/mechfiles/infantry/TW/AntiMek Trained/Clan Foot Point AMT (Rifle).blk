@@ -13,11 +13,11 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Foot Point
+Clan Foot Point (Anti-’Mech)
 </Name>
 
 <Model>
-(MG)
+(Rifle)
 </Model>
 
 <year>
@@ -47,20 +47,12 @@ Total Warfare - Succession Wars
 5
 </squadn>
 
-<secondn>
-2
-</secondn>
-
 <Primary>
 Auto-Rifle
 </Primary>
 
-<Secondary>
-Machine Gun (Portable)
-</Secondary>
-
 <antimek>
-8
+5
 </antimek>
 
 <armorKit>

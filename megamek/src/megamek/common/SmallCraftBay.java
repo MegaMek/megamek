@@ -251,6 +251,11 @@ public final class SmallCraftBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 5;
+    }
+
+    @Override
     public String toString() {
         return "smallcraftbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }

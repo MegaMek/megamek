@@ -112,6 +112,11 @@ public final class HeavyVehicleBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 8;
+    }
+
+    @Override
     public String toString() {
         return "heavyvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }

@@ -111,6 +111,11 @@ public final class ProtomechBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 6;
+    }
+
+    @Override
     public String toString() {
         return "protomechbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }

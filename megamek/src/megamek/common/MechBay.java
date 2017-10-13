@@ -112,6 +112,11 @@ public final class MechBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 2;
+    }
+
+    @Override
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
     }

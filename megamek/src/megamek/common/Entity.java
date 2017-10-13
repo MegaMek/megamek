@@ -8461,6 +8461,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             loadedThisTurn = true;
         }
     }
+    
+    /**
+     * @return The number of additional crew capacity provided by quarters in transport bays.
+     */
+    public int getBayPersonnel() {
+        int count = 0;
+        for (Bay bay : this.getTransportBays()) {
+            count += bay.getPersonnel(isClan());
+        }
+        return count;
+    }
 
     /**
      * Get the ID <code>Entity</code> that has loaded this one.

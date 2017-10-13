@@ -323,7 +323,7 @@ public class TestSmallCraft extends TestAero {
         int stdWeapons = 0;
         for (Mounted m : sc.getTotalWeaponList()) {
             if ((m.getType() instanceof BayWeapon)
-                    || (((WeaponType)m.getType()).getMaxRange(m) <= 1)) {
+                    || (((WeaponType)m.getType()).getLongRange() <= 1)) {
                 continue;
             }
             if (((WeaponType)m.getType()).isCapital()

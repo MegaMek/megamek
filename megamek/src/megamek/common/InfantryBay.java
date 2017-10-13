@@ -185,6 +185,12 @@ public final class InfantryBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)(totalSpace / bayType.getWeight())
+                * (clan? bayType.getISPersonnel() : bayType.getClanPersonnel());
+    }
+
+    @Override
     public String getDefaultSlotDescription() {
         return " (" + bayType.toString() + ")";
     }

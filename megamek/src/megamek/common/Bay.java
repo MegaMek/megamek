@@ -450,6 +450,15 @@ public class Bay implements Transporter, ITechnology {
     public double getWeight() {
         return totalSpace;
     }
+    
+    /**
+     * @param clan  Whether the bay is installed in a Clan unit. Needed for infantry bays.
+     * @return      The number of additional crew provided by the bay. This includes transport bays only;
+     *              crew quarters are already accounted for in the crew total.
+     */
+    public int getPersonnel(boolean clan) {
+        return 0;
+    }
 
     @Override
     public String toString() {

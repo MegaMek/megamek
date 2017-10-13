@@ -251,6 +251,11 @@ public final class ASFBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 2;
+    }
+
+    @Override
     public String toString() {
         return "asfbay:" + totalSpace + ":" + doors + ":" + bayNumber;
     }

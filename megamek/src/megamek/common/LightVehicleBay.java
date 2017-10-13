@@ -112,6 +112,11 @@ public final class LightVehicleBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 5;
+    }
+
+    @Override
     public String toString() {
         return "lightvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }

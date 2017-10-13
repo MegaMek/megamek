@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import megamek.common.ASFBay;
 import megamek.common.Aero;
@@ -32,10 +33,12 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.CargoBay;
+import megamek.common.CrewQuartersCargoBay;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.FirstClassQuartersCargoBay;
 import megamek.common.HeavyVehicleBay;
 import megamek.common.ITechManager;
 import megamek.common.ITechnology;
@@ -45,8 +48,10 @@ import megamek.common.MechBay;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ProtomechBay;
+import megamek.common.SecondClassQuartersCargoBay;
 import megamek.common.SmallCraft;
 import megamek.common.SmallCraftBay;
+import megamek.common.SteerageQuartersCargoBay;
 import megamek.common.SuperHeavyVehicleBay;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
@@ -285,6 +290,40 @@ public class TestAero extends TestEntity {
             return 7 + (int)Math.ceil(aero.getWeight() / 50000);
         } else {
             return 0;
+        }
+    }
+    
+    public enum Quarters {
+        FIRST_CLASS (10, FirstClassQuartersCargoBay.class, size -> new FirstClassQuartersCargoBay(size, 0)),
+        STANDARD (7, CrewQuartersCargoBay.class, size -> new CrewQuartersCargoBay(size, 0)),
+        SECOND_CLASS (7, SecondClassQuartersCargoBay.class, size -> new SecondClassQuartersCargoBay(size, 0)),
+        STEERAGE (5, SteerageQuartersCargoBay.class, size -> new SteerageQuartersCargoBay(size, 0));
+        
+        private int tonnage;
+        private Class<? extends Bay> bayClass;
+        private Function<Integer, Bay> init;
+        
+        Quarters(int tonnage, Class<? extends Bay> bayClass, Function<Integer, Bay> init) {
+            this.tonnage = tonnage;
+            this.bayClass = bayClass;
+            this.init = init;
+        }
+        
+        public int getTonnage() {
+            return tonnage;
+        }
+        
+        public static @Nullable Quarters getQuartersForBay(Bay bay) {
+            for (Quarters q : values()) {
+                if (bay.getClass() == q.bayClass) {
+                    return q;
+                }
+            }
+            return null;
+        }
+        
+        public Bay newQuarters(int size) {
+            return init.apply(size * tonnage);
         }
     }
     

@@ -459,7 +459,7 @@ public class BLKFile {
         // Aeros have an extra special location called "wings" that we
         //  don't want to consider, but Fixed Wing Support vehicles have a "Body" location that will
         // not index right if the wings locations is removed.
-        if (t instanceof Aero && !(t instanceof FixedWingSupport)){
+        if (t instanceof Aero && t.isFighter() && !(t instanceof FixedWingSupport)) {
             numLocs--;
         }
 

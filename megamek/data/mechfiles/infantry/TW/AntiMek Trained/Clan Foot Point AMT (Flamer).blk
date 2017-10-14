@@ -13,11 +13,11 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Foot Point
+Clan Foot Point (Anti-’Mech)
 </Name>
 
 <Model>
-(MG)
+(Flamer)
 </Model>
 
 <year>
@@ -56,11 +56,11 @@ Auto-Rifle
 </Primary>
 
 <Secondary>
-Machine Gun (Portable)
+Flamer (Man-Pack)
 </Secondary>
 
 <antimek>
-8
+5
 </antimek>
 
 <armorKit>

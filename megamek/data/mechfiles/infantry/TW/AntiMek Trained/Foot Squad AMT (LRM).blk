@@ -13,19 +13,19 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Foot Point
+Foot Squad
 </Name>
 
 <Model>
-(MG)
+(LRM)
 </Model>
 
 <year>
-2815
+3065
 </year>
 
 <type>
-Clan Level 2
+IS Level 2
 </type>
 
 <motion_type>
@@ -44,7 +44,7 @@ Total Warfare - Succession Wars
 </squad_size>
 
 <squadn>
-5
+1
 </squadn>
 
 <secondn>
@@ -56,14 +56,14 @@ Auto-Rifle
 </Primary>
 
 <Secondary>
-Machine Gun (Portable)
+LRM Launcher (FarShot)
 </Secondary>
 
 <antimek>
-8
+5
 </antimek>
 
 <armorKit>
-ClanKit
+GenericKit
 </armorKit>
 

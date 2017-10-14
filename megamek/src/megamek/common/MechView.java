@@ -168,11 +168,12 @@ public class MechView {
         sHead.append("</td><br/>"); //$NON-NLS-1$//
         sHead.append("<br/>");                //$NON-NLS-1$//
             
-        sHead.append(Messages.getString("MechView.TechRating")).append(": ") //$NON-NLS-1$//
+        sHead.append(Messages.getString("MechView.TechRating")) //$NON-NLS-1$//
             .append(entity.getFullRatingName())
             .append("<br/>");
             
         if (!isInf) {
+            sHead.append(Messages.getString("MechView.Weight")); //$NON-NLS-1$//
             sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
             sHead.append("<br>"); //$NON-NLS-1$
@@ -181,12 +182,12 @@ public class MechView {
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
         DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols);
-        sHead.append("BV: ");
+        sHead.append(Messages.getString("MechView.BV")); //$NON-NLS-1$//
         sHead.append(dFormatter.format(entity.calculateBattleValue(false,
                 null == entity.getCrew())));
         sHead.append("<br>"); //$NON-NLS-1$
         double cost = entity.getCost(false);
-        sHead.append("Cost: ");
+        sHead.append(Messages.getString("MechView.Cost")); //$NON-NLS-1$//
         if(useAlternateCost && entity.getAlternateCost() > 0) {
             cost = entity.getAlternateCost();
         }
@@ -194,10 +195,17 @@ public class MechView {
         sHead.append(" C-bills");
         sHead.append("<br>"); //$NON-NLS-1$
         if (!entity.getSource().equals("")){
-            sHead.append("Source: "); //$NON-NLS-1$
+            sHead.append(Messages.getString("MechView.Source")); //$NON-NLS-1$//
             sHead.append(entity.getSource());
             sHead.append("<br>"); //$NON-NLS-1$
         }
+        UnitRole role = UnitRoleHandler.getRoleFor(entity);
+        if (role != UnitRole.UNDETERMINED) {
+            sHead.append("\n<b>Role:</b> ");
+            sHead.append(role.toString());
+            sHead.append("<br/>");
+        }
+        
 
         //We may have altered the starting mode during configuration, so we save the current one here to restore it
         int originalMode = entity.getConversionMode();
@@ -317,8 +325,8 @@ public class MechView {
 
         if (isMech) {
             Mech aMech = (Mech) entity;
-            sBasic.append(aMech.getHeatSinkTypeName() + "s: ").append(
-                    aMech.heatSinks());
+            sBasic.append("<b>").append(aMech.getHeatSinkTypeName() + "s:</b> ")
+                .append(aMech.heatSinks());
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {
                 sBasic.append(" [") //$NON-NLS-1$
                         .append(aMech.getHeatCapacity()).append("]"); //$NON-NLS-1$
@@ -356,16 +364,16 @@ public class MechView {
         
         //Display Strategic Fuel Use for Small Craft and up
         if (isSmallCraft) {
-        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
         					+ ((SmallCraft) entity).getStrategicFuelUse());
         } else if (isDropship) {
-        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
         					+ ((Dropship) entity).getStrategicFuelUse());
         } else if (isJumpship) {
-        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
         					+ ((Jumpship) entity).getStrategicFuelUse());
         } else if (isWarship) {
-        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
+        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
         					+ ((Warship) entity).getStrategicFuelUse());
         }
         
@@ -381,7 +389,6 @@ public class MechView {
             }
         }
         
-
         if (entity.getFluff().getOverview() != "") {
             sFluff.append("<br>");
             sFluff.append("\n<b>Overview:</b> <br>\n");

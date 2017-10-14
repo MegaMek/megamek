@@ -11,6 +11,9 @@ v0.43.5-git
 + Cleaning up the Docs folder, and adding some other files.
 + Issue #684: Alternative Proto-AC ammo
 	in the process of Implementing the Proto-AC Ammo, I noticed the Clan Improved AC's didn't have them implemented
++ PR #693: Show unit roles in summary view.
++ Bug: Infantry weights calculated wrong, due to double adding of AntiMek training. 
+	Fixing unit files to include standard Foot infantry and AntiMek Trained one.
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

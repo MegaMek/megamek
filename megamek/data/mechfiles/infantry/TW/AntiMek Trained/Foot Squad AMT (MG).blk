@@ -13,7 +13,7 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Foot Point
+Foot Squad
 </Name>
 
 <Model>
@@ -21,11 +21,11 @@ Clan Foot Point
 </Model>
 
 <year>
-2815
+1940
 </year>
 
 <type>
-Clan Level 2
+IS Level 2
 </type>
 
 <motion_type>
@@ -40,11 +40,11 @@ Total Warfare - Succession Wars
 </source>
 
 <squad_size>
-5
+7
 </squad_size>
 
 <squadn>
-5
+1
 </squadn>
 
 <secondn>
@@ -60,10 +60,10 @@ Machine Gun (Portable)
 </Secondary>
 
 <antimek>
-8
+5
 </antimek>
 
 <armorKit>
-ClanKit
+GenericKit
 </armorKit>
 

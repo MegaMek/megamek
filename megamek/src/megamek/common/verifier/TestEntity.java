@@ -854,7 +854,7 @@ public abstract class TestEntity implements TestEntityOption {
         // Check cockpit TL
         ITechnology cockpit = null;
         String cockpitName = null;
-        if (getEntity().getEntityType() == UnitType.AERO) {
+        if (getEntity().getEntityType() == Entity.ETYPE_AERO) {
             cockpit = ((Aero)getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Aero)getEntity()).getCockpitTypeString();
         } else if (getEntity() instanceof Mech) {

@@ -1841,6 +1841,17 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH),"369,TO"));
         
         //TODO Incendiary LRMs - IO pg 61, TO pg 369
+        
+/*        munitions.add(new MunitionMutator("Incendiary", 2, M_INCENDIARY_LRM,
+                new TechAdvancement(TECH_BASE_IS)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+                .setClanAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH),"369,TO"));*/
                 
         munitions.add(new MunitionMutator("Semi-guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_IS)
@@ -2046,7 +2057,18 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH),"369,TO"));
         
         //TODO Incendiary LRMs - IO pg 61, TO pg 369
-                
+        
+/*        munitions.add(new MunitionMutator("(Clan) Incendiary", 2, M_INCENDIARY_LRM,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+                .setClanAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH),"369,TO"));*/
+                        
         munitions.add(new MunitionMutator("(Clan) Semi-guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
@@ -2264,13 +2286,15 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_FS),"208,TM"));
         
         //TODO - Implement for play
-/*		munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
-		        new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-		                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-		                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
-		                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-		                .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
-		        "352,TO"));*/
+		munitions.add(new MunitionMutator("Caseless", 1 , M_CASELESS,
+		        new TechAdvancement(TECH_BASE_ALL)
+		        .setIntroLevel(false)
+		        .setUnofficial(false)
+		        .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
 				new TechAdvancement(TECH_BASE_IS)
@@ -15451,6 +15475,7 @@ public class AmmoType extends EquipmentType {
                 }
                 if (munition.getMunitionType() == AmmoType.M_CASELESS) {
                     cost *= 1.5;
+                    bv *= 1.0;
                 }
             }
             if (((munition.getAmmoType() == AmmoType.T_LRM) 

@@ -1436,6 +1436,7 @@ public class CEntity {
 
             // LRMs, SRMs, which may have Artemis
             if ((linked_ammo == AmmoType.T_SRM)
+                    || (linked_ammo == AmmoType.T_SRM_IMP) 
                     || (linked_ammo == AmmoType.T_LRM_IMP)
                     || (linked_ammo == AmmoType.T_LRM)) {
 
@@ -1457,7 +1458,7 @@ public class CEntity {
 
                 }
 
-                if (linked_ammo == AmmoType.T_SRM) {
+                if ((linked_ammo == AmmoType.T_SRM) || (linked_ammo == AmmoType.T_SRM_IMP)) {
                     damage_value *= 2.0;
                 }
 

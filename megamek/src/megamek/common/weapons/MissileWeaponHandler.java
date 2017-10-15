@@ -223,6 +223,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (((atype.getAmmoType() == AmmoType.T_LRM)
                     || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_SRM)
+                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_MML)
                     || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
@@ -351,7 +352,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (atype.getRackSize() > 3) {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if (atype.getAmmoType() == AmmoType.T_SRM) {
+                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
                     bonus = 2;
                 }
             }
@@ -364,7 +365,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 gets no bonus from Artemis IV (how sad)
             if (atype.getRackSize() > 3) {
                 bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if (atype.getAmmoType() == AmmoType.T_SRM) {
+                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
                     bonus = 1;
                 }
             }
@@ -377,7 +378,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if (atype.getAmmoType() == AmmoType.T_SRM) {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
                 bonus = 2;
             }
         }
@@ -1120,14 +1121,16 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                             || (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE))) 
                             || ((((atype.getAmmoType() == AmmoType.T_LRM)
                             || (atype.getAmmoType() == AmmoType.T_LRM_IMP)        
-                            || (atype.getAmmoType() == AmmoType.T_SRM)) && 
+                            || (atype.getAmmoType() == AmmoType.T_SRM)
+                            || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) && 
                                     (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) 
                                     || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)))) {
                 isNemesisConfusable = true;
             }
         } else if ((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                || (wtype.getAmmoType() == AmmoType.T_SRM)) {
+                || (wtype.getAmmoType() == AmmoType.T_SRM)
+                || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)) {
             if ((atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     || (atype.getMunitionType() == AmmoType.M_LISTEN_KILL)) {
                 isNemesisConfusable = true;

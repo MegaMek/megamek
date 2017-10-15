@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
@@ -19,6 +19,8 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AdvancedSRMHandler;
+import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.server.Server;
 

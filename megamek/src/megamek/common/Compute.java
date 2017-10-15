@@ -999,8 +999,10 @@ public class Compute {
             weaponRanges = wtype.getWRanges();
             boolean MPM = false;
             if ((wtype.getAmmoType() == AmmoType.T_SRM)
+                || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)                    
                 || (wtype.getAmmoType() == AmmoType.T_MRM)
                 || (wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_MML)) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
                 if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
@@ -2902,7 +2904,8 @@ public class Compute {
                 if ((wt.getAmmoType() == AmmoType.T_LRM) 
                         || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (wt.getAmmoType() == AmmoType.T_MML) 
-                        || (wt.getAmmoType() == AmmoType.T_SRM)) {
+                        || (wt.getAmmoType() == AmmoType.T_SRM)
+                        || (wt.getAmmoType() == AmmoType.T_SRM_IMP)) {
                     lnk_guide = weapon.getLinkedBy();
                     if ((lnk_guide != null) && (lnk_guide.getType() instanceof MiscType) && !lnk_guide.isDestroyed()
                             && !lnk_guide.isMissing() && !lnk_guide.isBreached()
@@ -2935,8 +2938,9 @@ public class Compute {
                                 attacker.getOwner().getTeam())) {
                     if (((at.getAmmoType() == AmmoType.T_LRM)
                             || (at.getAmmoType() == AmmoType.T_LRM_IMP)
-                            || (at.getAmmoType() == AmmoType.T_MML) || (at
-                            .getAmmoType() == AmmoType.T_SRM))
+                            || (at.getAmmoType() == AmmoType.T_MML) 
+                            || (at.getAmmoType() == AmmoType.T_SRM)
+                            || (at.getAmmoType() == AmmoType.T_SRM_IMP))
                             && (at.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                         fHits *= 1.2f;
                     }
@@ -3291,7 +3295,8 @@ public class Compute {
                             if (((((abin_type.getAmmoType() == AmmoType.T_LRM)
                                     || (abin_type.getAmmoType() == AmmoType.T_LRM_IMP)
                                     || (abin_type.getAmmoType() == AmmoType.T_MML)
-                                    || (abin_type.getAmmoType() == AmmoType.T_SRM)))
+                                    || (abin_type.getAmmoType() == AmmoType.T_SRM)
+                                    || (abin_type.getAmmoType() == AmmoType.T_SRM_IMP)))
                                     && (abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION))
                                     || (((abin_type.getAmmoType() == AmmoType.T_AC)
                                             || (abin_type.getAmmoType() == AmmoType.T_LAC)
@@ -3349,6 +3354,7 @@ public class Compute {
                             // and against vehicles and protos if allowed by
                             // game option
                             if (((abin_type.getAmmoType() == AmmoType.T_SRM)
+                                    || (abin_type.getAmmoType() == AmmoType.T_SRM_IMP)
                                     || (abin_type.getAmmoType() == AmmoType.T_MML))
                                 && (abin_type.getMunitionType() == AmmoType.M_INFERNO)) {
                                 ammo_multiple = 0.5;
@@ -3375,10 +3381,9 @@ public class Compute {
                             // one, give 'em one by making it an attractive
                             // option
                             if ((wtype.getAmmoType() == AmmoType.T_NARC)
-                                && (abin_type.getMunitionType() == AmmoType.M_STANDARD)) {
-                                if (!(target.isNarcedBy(shooter.getOwner()
-                                                               .getTeam()))
-                                    && !(target instanceof Infantry)) {
+                                    && (abin_type.getMunitionType() == AmmoType.M_STANDARD)) {
+                                if (!(target.isNarcedBy(shooter.getOwner().getTeam()))
+                                        && !(target instanceof Infantry)) {
                                     ex_damage = 5.0;
                                 } else {
                                     ex_damage = 0.5;
@@ -3391,9 +3396,8 @@ public class Compute {
                             // option
                             if (wtype.getAmmoType() == AmmoType.T_INARC) {
                                 if ((abin_type.getMunitionType() == AmmoType.M_STANDARD)
-                                    && !(target instanceof Infantry)) {
-                                    if (!(target.isINarcedBy(shooter.getOwner()
-                                                                    .getTeam()))) {
+                                        && !(target instanceof Infantry)) {
+                                    if (!(target.isINarcedBy(shooter.getOwner().getTeam()))) {
                                         ex_damage = 7.0;
                                     } else {
                                         ex_damage = 1.0;
@@ -3409,29 +3413,25 @@ public class Compute {
                                 // loads
                                 // when "true" double blind is implemented
                                 if ((abin_type.getAmmoType() == AmmoType.T_INARC)
-                                    && (abin_type.getMunitionType() == AmmoType.M_ECM)
-                                    && !(target instanceof Infantry)) {
+                                        && (abin_type.getMunitionType() == AmmoType.M_ECM)
+                                        && !(target instanceof Infantry)) {
                                     if (!target.isINarcedWith(AmmoType.M_ECM)) {
-                                        if (!(target.getC3MasterId() == Entity.NONE)
-                                            || target.hasC3M()
-                                            || target.hasC3MM()
-                                            || target.hasC3i()) {
+                                        if (!(target.getC3MasterId() == Entity.NONE) 
+                                                || target.hasC3M()
+                                                || target.hasC3MM() 
+                                                || target.hasC3i()) {
                                             ex_damage = 8.0;
                                         } else {
                                             ex_damage = 0.5;
                                         }
-                                        for (Mounted weapon : shooter
-                                                .getWeaponList()) {
-                                            target_weapon = (WeaponType) weapon
-                                                    .getType();
+                                        for (Mounted weapon : shooter.getWeaponList()) {
+                                            target_weapon = (WeaponType) weapon.getType();
                                             if ((target_weapon.getAmmoType() == AmmoType.T_LRM)
-                                                || (target_weapon
-                                                            .getAmmoType() == AmmoType.T_MML)
-                                                || (target_weapon
-                                                            .getAmmoType() == AmmoType.T_SRM)) {
-                                                ex_damage = ex_damage
-                                                            + (target_weapon
-                                                                       .getRackSize() / 2);
+                                                    || (target_weapon.getAmmoType() == AmmoType.T_LRM_IMP)
+                                                    || (target_weapon.getAmmoType() == AmmoType.T_MML)
+                                                    || (target_weapon.getAmmoType() == AmmoType.T_SRM)
+                                                    || (target_weapon.getAmmoType() == AmmoType.T_SRM_IMP)) {
+                                                ex_damage = ex_damage + (target_weapon.getRackSize() / 2);
                                             }
                                         }
                                     }
@@ -3444,13 +3444,10 @@ public class Compute {
                                 // priority because they are usually out
                                 // front
                                 if ((abin_type.getAmmoType() == AmmoType.T_INARC)
-                                    && (abin_type.getMunitionType() == AmmoType.M_NEMESIS)
-                                    && !(target instanceof Infantry)) {
-                                    if (!target
-                                            .isINarcedWith(AmmoType.M_NEMESIS)) {
-                                        ex_damage = (double) (target
-                                                                      .getWalkMP() + target
-                                                                      .getJumpMP()) / 2;
+                                        && (abin_type.getMunitionType() == AmmoType.M_NEMESIS)
+                                        && !(target instanceof Infantry)) {
+                                    if (!target.isINarcedWith(AmmoType.M_NEMESIS)) {
+                                        ex_damage = (double) (target.getWalkMP() + target.getJumpMP()) / 2;
                                     } else {
                                         ex_damage = 0.5;
                                     }
@@ -6016,6 +6013,7 @@ public class Compute {
                     case AmmoType.T_LRM_IMP:
                     case AmmoType.T_LRM_TORPEDO:
                     case AmmoType.T_SRM:
+                    case AmmoType.T_SRM_IMP:
                     case AmmoType.T_SRM_TORPEDO:
                     case AmmoType.T_MRM:
                     case AmmoType.T_NARC:

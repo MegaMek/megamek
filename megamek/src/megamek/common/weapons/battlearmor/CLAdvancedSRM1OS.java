@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.weapons.AdvancedSRMWeapon;
 /**
  * @author Sebastian Brocks
  */

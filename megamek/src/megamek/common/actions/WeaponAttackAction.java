@@ -328,49 +328,71 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             te = (Entity) target;
         }
         boolean isAttackerInfantry = ae instanceof Infantry;
+        
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        
         boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
         // 2002-09-16 Infantry weapons have unlimited ammo.
+        
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
+        
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+        
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
+        
         boolean bMekTankStealthActive = false;
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect"));
+        
         boolean isInferno = ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_MML))
+                && ((atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
+                        || (atype.getAmmoType() == AmmoType.T_MML))
                 && (atype.getMunitionType() == AmmoType.M_INFERNO))
                 || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
+        
         boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
                 && (game.getPhase() == IGame.Phase.PHASE_FIRING);
+        
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
+        
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
                 && ((((te.getMovementMode() == EntityMovementMode.VTOL)
                         || (te.getMovementMode() == EntityMovementMode.WIGE)) && te.isAirborneVTOLorWIGE())
                         || (te.isAirborne()))
                 && (atype != null) && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
+        
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
+        
         boolean isINarcGuided = false;
         // for attacks where ECM along flight path makes a difference
+        
         boolean isECMAffected = ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition(), allECMInfo);
         // for attacks where only ECM on the target hex makes a difference
+        
         boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae, target.getPosition(), target.getPosition(),
                 allECMInfo);
+        
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
+        
         boolean isHoming = false;
+        
         boolean bHeatSeeking = (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_SRM) 
+                && ((atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_LRM)
-                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING));
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP))
+                && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING);
+        
         boolean bFTL = (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_MML) 
                         || (atype.getAmmoType() == AmmoType.T_LRM)
@@ -378,13 +400,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
 
         Mounted mLinker = weapon.getLinkedBy();
+        
         boolean bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
                 && (atype != null) && (atype.getAmmoType() == AmmoType.T_MRM);
+        
         boolean bArtemisV = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
                 && !isECMAffected && !bMekTankStealthActive && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+        
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         // is this attack originating from underwater
@@ -399,7 +424,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && ((atype.getAmmoType() == AmmoType.T_LRM)
                             || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                             || (atype.getAmmoType() == AmmoType.T_MML)
-                            || (atype.getAmmoType() == AmmoType.T_SRM) 
+                            || (atype.getAmmoType() == AmmoType.T_SRM)
+                            || (atype.getAmmoType() == AmmoType.T_SRM_IMP) 
                             || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 isINarcGuided = true;
@@ -528,14 +554,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             losMods = los.losModifiers(game, eistatus, underWater);
-            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
-                    || (((atype.getAmmoType() == AmmoType.T_SRM) 
-                            || (atype.getAmmoType() == AmmoType.T_MRM)
-                            || (atype.getAmmoType() == AmmoType.T_LRM)
-                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP) 
-                            || (atype.getAmmoType() == AmmoType.T_MML))
-                            && (munition == AmmoType.M_TORPEDO)))
+            if ((atype != null)
+                    && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                            || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
+                            || (((atype.getAmmoType() == AmmoType.T_SRM)
+                                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
+                                    || (atype.getAmmoType() == AmmoType.T_MRM)
+                                    || (atype.getAmmoType() == AmmoType.T_LRM)
+                                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                                    || (atype.getAmmoType() == AmmoType.T_MML)) && (munition == AmmoType.M_TORPEDO)))
                     && (los.getMinimumWaterDepth() < 1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
             }
@@ -1248,7 +1275,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((atype.getAmmoType() == AmmoType.T_LRM) 
                         || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MML)
-                        || (atype.getAmmoType() == AmmoType.T_SRM))
+                        || (atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_SRM_IMP))
                 && (atype.getMunitionType() == AmmoType.M_LISTEN_KILL) && !((te != null) && te.isClan())) {
             toHit.addModifier(-1, "Listen-Kill ammo");
         }
@@ -1366,6 +1394,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         atype.getSubMunitionName()
                                 + " ammunition to-hit modifier");
             }
+            
             if (isHoming) {
                 return new ToHitData(4, "Homing shot");
             }

@@ -44,6 +44,7 @@ import megamek.common.Protomech;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
+import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 
@@ -853,7 +854,7 @@ public abstract class TestEntity implements TestEntityOption {
         // Check cockpit TL
         ITechnology cockpit = null;
         String cockpitName = null;
-        if (getEntity() instanceof Aero) {
+        if (getEntity().getEntityType() == UnitType.AERO) {
             cockpit = ((Aero)getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Aero)getEntity()).getCockpitTypeString();
         } else if (getEntity() instanceof Mech) {

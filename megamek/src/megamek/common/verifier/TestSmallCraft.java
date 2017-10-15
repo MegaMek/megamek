@@ -3,15 +3,20 @@
  */
 package megamek.common.verifier;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.Bay;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.ITechManager;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
@@ -503,11 +508,6 @@ public class TestSmallCraft extends TestAero {
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, smallCraft.getTechLevel());
-    }
-
-    @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         
@@ -530,19 +530,176 @@ public class TestSmallCraft extends TestAero {
         if (showCorrectArmor() && !correctArmor(buff)) {
             correct = false;
         }
-        if (showCorrectCritical() && !correctCriticals(buff)) {
-            correct = false;
-        }
         if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
         }
         
-        correct &= correctControlSystems(buff);
         correct &= !hasIllegalTechLevels(buff, ammoTechLvl);
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
+        correct &= correctCrew(buff);
         
         return correct;
+    }
+
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = false;
+        
+        // For dropships, make sure all bays have at least one weapon and that there are at least
+        // ten shots of ammo for each ammo-using weapon in the bay.
+        for (Mounted bay : smallCraft.getWeaponBayList()) {
+            if (bay.getBayWeapons().size() == 0) {
+                buff.append("Bay " + bay.getName() + " has no weapons\n");
+                illegal = true;
+            }
+            Map<Integer,Integer> ammoWeaponCount = new HashMap<>();
+            Map<Integer,Integer> ammoTypeCount = new HashMap<>();
+            for (Integer wNum : bay.getBayWeapons()) {
+                final Mounted w = smallCraft.getEquipment(wNum);
+                if (w.getType() instanceof WeaponType) {
+                    ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
+                } else {
+                    buff.append(w.getName() + " in bay " + bay.getName() + " is not a weapon\n");
+                    illegal = true;
+                }
+            }
+            for (Integer aNum : bay.getBayAmmo()) {
+                final Mounted a = smallCraft.getEquipment(aNum);
+                if (a.getType() instanceof AmmoType) {
+                    ammoTypeCount.merge(((AmmoType)a.getType()).getAmmoType(), a.getUsableShotsLeft(),
+                            Integer::sum);
+                } else {
+                    buff.append(a.getName() + " in bay " + bay.getName() + " is not ammo\n");
+                    illegal = true;
+                }
+            }
+            for (Integer at : ammoWeaponCount.keySet()) {
+                if (at != AmmoType.T_NA) {
+                    int needed = ammoWeaponCount.get(at) * 10;
+                    if (!ammoTypeCount.containsKey(at)
+                            || ammoTypeCount.get(at) < needed) {
+                        buff.append("Bay " + bay.getName() + " does not have the minimum 10 shots of ammo for each weapon\n");
+                        illegal = true;
+                        break;
+                    }
+                }
+            }
+            for (Integer at : ammoTypeCount.keySet()) {
+                if (!ammoWeaponCount.containsKey(at)) {
+                    buff.append("Bay " + bay.getName() + " has ammo for a weapon not in the bay\n");
+                    illegal = true;
+                    break;
+                }
+            }
+        }
+        
+        // Count lateral weapons to make sure both sides match
+        Map<EquipmentType,Integer> leftFwd = new HashMap<>();
+        Map<EquipmentType,Integer> leftAft = new HashMap<>();
+        Map<EquipmentType,Integer> rightFwd = new HashMap<>();
+        Map<EquipmentType,Integer> rightAft = new HashMap<>();
+        BigInteger typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)?
+                MiscType.F_DS_EQUIPMENT : MiscType.F_SC_EQUIPMENT;
+        for (Mounted m : smallCraft.getEquipment()) {
+            if (m.getType() instanceof MiscType) {
+                if (!m.getType().hasFlag(typeFlag)) {
+                    buff.append("Cannot mount " + m.getType().getName() + "\n");
+                    illegal = true;
+                }
+            } else if ((m.getType() instanceof AmmoType)
+                    && (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP))
+                    && (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD)) {
+                buff.append("Cannot mount " + m.getType().getName() + "\n");
+                illegal = true;
+            } else if (m.getType() instanceof WeaponType) {
+                if (m.getLocation() == SmallCraft.LOC_LWING) {
+                    if (m.isRearMounted()) {
+                        leftAft.merge(m.getType(), 1, Integer::sum);
+                    } else {
+                        leftFwd.merge(m.getType(), 1, Integer::sum);
+                    }
+                } else if (m.getLocation() == SmallCraft.LOC_RWING) {
+                    if (m.isRearMounted()) {
+                        rightAft.merge(m.getType(), 1, Integer::sum);
+                    } else {
+                        rightFwd.merge(m.getType(), 1, Integer::sum);
+                    }
+                }
+                if (!isAeroWeapon(m.getType(), smallCraft)) {
+                    buff.append("Cannot mount " + m.getType().getName() + "\n");
+                    illegal = true;
+                }
+            }
+        }
+        boolean lateralMatch = true;
+        for (EquipmentType eq : leftFwd.keySet()) {
+            if (!rightFwd.containsKey(eq) || (leftFwd.get(eq) != rightFwd.get(eq))) {
+                lateralMatch = false;
+                break;
+            }
+        }
+        if (lateralMatch) {
+            //We've already checked counts, so in the reverse direction we only need to see if there's
+            //anything not found on the other side.
+            for (EquipmentType eq : rightFwd.keySet()) {
+                if (!leftFwd.containsKey(eq)) {
+                    lateralMatch = false;
+                    break;
+                }
+            }
+        }
+        if (lateralMatch) {
+            for (EquipmentType eq : leftAft.keySet()) {
+                if (!rightAft.containsKey(eq) || (leftAft.get(eq) != rightAft.get(eq))) {
+                    lateralMatch = false;
+                    break;
+                }
+            }
+        }
+        if (lateralMatch) {
+            for (EquipmentType eq : rightAft.keySet()) {
+                if (!leftAft.containsKey(eq)) {
+                    lateralMatch = false;
+                    break;
+                }
+            }
+        }
+        if (!lateralMatch) {
+            buff.append("Left and right side weapon loads do not match.\n");
+            illegal = true;
+        }
+
+        return illegal;
+    }
+    
+    public boolean correctCrew(StringBuffer buffer) {
+        boolean illegal = false;
+        int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
+        int reqCrew = minimumBaseCrew(getSmallCraft()) + requiredGunners(getSmallCraft());
+        if (crewSize < reqCrew) {
+            buffer.append("Requires " + reqCrew + " crew and only has " + crewSize + "\n");
+            illegal = true;
+        }
+        if (getSmallCraft().getNOfficers() * 5 < reqCrew) {
+            buffer.append("Requires at least " + (int)Math.ceil(reqCrew / 5.0) + " officers\n");
+            illegal = true;
+        }
+        crewSize += getSmallCraft().getNPassenger();
+        crewSize += getSmallCraft().getNMarines();
+        crewSize += getSmallCraft().getNBattleArmor();
+        int quarters = 0;
+        for (Bay bay : getSmallCraft().getTransportBays()) {
+            Quarters q = Quarters.getQuartersForBay(bay);
+            if (null != q) {
+                quarters += bay.getCapacity();
+            }
+        }
+        if (quarters < crewSize) {
+            buffer.append("Requires quarters for " + crewSize + " crew but only has " + quarters + "\n");
+            illegal = true;
+        }
+        return illegal;
     }
 
     @Override
@@ -633,6 +790,7 @@ public class TestSmallCraft extends TestAero {
             return "Small Craft: " + smallCraft.getDisplayName();
         }
     }
+
 
 
 }

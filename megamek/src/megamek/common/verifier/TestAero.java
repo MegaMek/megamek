@@ -58,8 +58,16 @@ import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import megamek.common.weapons.lrms.LRMWeapon;
+import megamek.common.weapons.lrms.LRTWeapon;
+import megamek.common.weapons.missiles.MRMWeapon;
+import megamek.common.weapons.missiles.RLWeapon;
+import megamek.common.weapons.srms.SRMWeapon;
+import megamek.common.weapons.srms.SRTWeapon;
 
 /**
  * Class for testing and validating instantiations for Conventional Fighters and
@@ -1085,6 +1093,77 @@ public class TestAero extends TestEntity {
         correct &= correctHeatSinks(buff);
         
         return correct;
+    }
+
+    public boolean isAeroWeapon(EquipmentType eq, Entity en) {
+        if (eq instanceof InfantryWeapon) {
+            return false;
+        }
+
+        WeaponType weapon = (WeaponType) eq;
+        
+        // small craft only; lacks aero weapon flag
+        if (weapon.getAmmoType() == AmmoType.T_C3_REMOTE_SENSOR) {
+            return en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
+                    && !en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
+        }
+
+        if (weapon.hasFlag(WeaponType.F_ARTILLERY) && !weapon.hasFlag(WeaponType.F_BA_WEAPON)) {
+            return (weapon.getAmmoType() == AmmoType.T_ARROW_IV)
+                    || en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
+                    || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
+        }
+        
+        if (weapon.isSubCapital() || (weapon instanceof CapitalMissileWeapon)
+                || (weapon.getAtClass() == WeaponType.CLASS_SCREEN)) {
+            return en.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                    || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
+        }
+
+        if (weapon.isCapital()) {
+            return en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
+        }
+        
+        if (weapon instanceof BayWeapon) {
+            return en.usesWeaponBays();
+        }
+
+        if (!weapon.hasFlag(WeaponType.F_AERO_WEAPON)) {
+            return false;
+        }
+
+        if (((weapon instanceof LRMWeapon) || (weapon instanceof LRTWeapon))
+                && (weapon.getRackSize() != 5)
+                && (weapon.getRackSize() != 10)
+                && (weapon.getRackSize() != 15)
+                && (weapon.getRackSize() != 20)) {
+            return false;
+        }
+        if (((weapon instanceof SRMWeapon) || (weapon instanceof SRTWeapon))
+                && (weapon.getRackSize() != 2)
+                && (weapon.getRackSize() != 4)
+                && (weapon.getRackSize() != 6)) {
+            return false;
+        }
+        if ((weapon instanceof MRMWeapon) && (weapon.getRackSize() < 10)) {
+            return false;
+        }
+
+        if ((weapon instanceof RLWeapon) && (weapon.getRackSize() < 10)) {
+            return false;
+        }
+        
+        if (weapon.hasFlag(WeaponType.F_ENERGY)
+                || (weapon.hasFlag(WeaponType.F_PLASMA) && (weapon
+                        .getAmmoType() == AmmoType.T_PLASMA))) {
+
+            if (weapon.hasFlag(WeaponType.F_ENERGY)
+                    && weapon.hasFlag(WeaponType.F_PLASMA)
+                    && (weapon.getAmmoType() == AmmoType.T_NA)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

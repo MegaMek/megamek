@@ -90,7 +90,7 @@ public final class CrewQuartersCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "crewquarters:" + totalSpace + ":" + doors;
+        return "crewquarters:" + weight + ":" + doors;
     }
 
 }

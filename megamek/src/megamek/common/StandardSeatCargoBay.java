@@ -90,7 +90,7 @@ public final class StandardSeatCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "standardseats:" + totalSpace + ":" + doors;
+        return "standardseats:" + weight + ":" + doors;
     }
 
 }

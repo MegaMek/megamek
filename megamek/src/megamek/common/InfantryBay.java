@@ -187,7 +187,7 @@ public final class InfantryBay extends Bay {
     @Override
     public int getPersonnel(boolean clan) {
         return (int)(totalSpace / bayType.getWeight())
-                * (clan? bayType.getISPersonnel() : bayType.getClanPersonnel());
+                * (clan? bayType.getClanPersonnel() : bayType.getISPersonnel());
     }
 
     @Override
@@ -202,7 +202,7 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String toString() {
-        return "infantrybay:" + totalSpace + ":" + doors + ":"+ bayNumber + ":" + bayType.toString();
+        return "infantrybay:" + (totalSpace / bayType.getWeight()) + ":" + doors + ":"+ bayNumber + ":" + bayType.toString();
     }
 
 } // End package class TroopSpace implements Transporter

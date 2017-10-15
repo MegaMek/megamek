@@ -90,7 +90,7 @@ public final class PillionSeatCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "pillionseats:" + totalSpace + ":" + doors;
+        return "pillionseats:" + weight + ":" + doors;
     }
 
 }

@@ -446,7 +446,7 @@ public class AmmoType extends EquipmentType {
     public int getShots() {
         return shots;
     }
-
+    
     public double getAmmoRatio() {
         return ammoRatio;
     }

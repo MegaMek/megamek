@@ -81,6 +81,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private final Entity entity;
 
     private int[] entityCorrespondance;
+    
+    //This allows us to set the number of shots for aero munitions where we can't also change the munition type
+    private boolean aeroShotsOnly = false;
 
     private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
     
@@ -613,7 +616,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
-
+        
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
@@ -624,17 +627,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, and NARC
-            // TODO: need a better way to customize munitions on Aeros
-            // currently this doesn't allow AR10 and tele-missile launchers
-            // to switch back and forth between tele and regular missiles
-            // also would be better to not have to add Santa Anna's in such
-            // an idiosyncratic fashion
+            // allow only MML, ATM, NARC, and capital missiles
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC))) {
-                continue;
+                            || (at.getAmmoType() == AmmoType.T_NARC)
+                            || (at.getAmmoType() == AmmoType.T_AR10)
+                            || (at.getAmmoType() == AmmoType.T_KILLER_WHALE)
+                            || (at.getAmmoType() == AmmoType.T_WHITE_SHARK)
+                            || (at.getAmmoType() == AmmoType.T_BARRACUDA)
+                            || (at.getAmmoType() == AmmoType.T_MANTA_RAY)
+                            || (at.getAmmoType() == AmmoType.T_STINGRAY)
+                            || (at.getAmmoType() == AmmoType.T_SWORDFISH)
+                            || (at.getAmmoType() == AmmoType.T_PIRANHA))) {
+                aeroShotsOnly = true;
             }
 
             for (AmmoType atCheck : vAllTypes) {
@@ -1009,7 +1015,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
 
             JCheckBox chHotLoad = new JCheckBox();
-            
+                       
             @SuppressWarnings("unchecked")
             MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
                 m_vTypes = vTypes;
@@ -1017,16 +1023,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 AmmoType curType = (AmmoType) m.getType();
                 m_choice = new JComboBox<String>();
                 Iterator<AmmoType> e = m_vTypes.iterator();
-                for (int x = 0; e.hasNext(); x++) {
+                if (aeroShotsOnly) {
+                    m_choice.setVisible(false);
+                } else {
+                    for (int x = 0; e.hasNext(); x++) {
                     AmmoType at = e.next();
                     m_choice.addItem(at.getName());
-                    if (at.getInternalName() == curType.getInternalName()) {
+                        if (at.getInternalName() == curType.getInternalName()) {
                         m_choice.setSelectedIndex(x);
+                        }
                     }
                 }
-
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = curType.getShots();
+                JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
                 if (entity instanceof BattleArmor){
@@ -1081,7 +1091,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
                 add(lLoc, GBC.std());
+                if (aeroShotsOnly) {
+                add(labAeroMunitionType, GBC.std());
+                } else {
                 add(m_choice, GBC.std());
+                }
                 add(m_num_shots, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
@@ -1197,6 +1211,52 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 m_choice.setEnabled(enabled);
             }
         }
+        
+        // a choice panel for determining number of shots for aero weapons that can't change munitions
+        /* class AeroAmmoChoicePanel extends JPanel {
+           
+            private static final long serialVersionUID = -1645895479085898410L;
+
+            private JComboBox<String> m_choice;
+
+            private Mounted m_mounted;
+
+            public AeroAmmoChoicePanel(Mounted m) {
+                m_mounted = m;
+                m_choice = new JComboBox<String>();
+                for (int i = 0; i <= m_mounted.getBaseShotsLeft(); i++) {
+                    m_choice.addItem(Integer.toString(i));
+                }
+                int loc;
+                loc = m.getLocation();
+                String sDesc = m_mounted.getName() + " (" + entity.getLocationAbbr(loc) + "):"; //$NON-NLS-1$ //$NON-NLS-2$
+                JLabel lLoc = new JLabel(sDesc);
+                GridBagLayout g = new GridBagLayout();
+                setLayout(g);
+                add(lLoc, GBC.std());
+                m_choice.setSelectedIndex(m.getNSantaAnna());
+                add(m_choice, GBC.eol());
+            }
+
+            public void applyChoice() {
+                int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
+                AmmoType at = m_vTypes.get(n);
+                m_mounted.changeAmmoType(at);
+                m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                if (chDump.isSelected()) {
+                    m_mounted.setShotsLeft(0);
+                }
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                m_choice.setEnabled(enabled);
+            }
+        } */
 
         /**
      * When a Protomech selects ammo, you need to adjust the shots on the unit

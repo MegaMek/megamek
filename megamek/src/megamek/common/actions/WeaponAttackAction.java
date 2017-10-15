@@ -488,8 +488,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean mpMelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) && (atype != null)
-                && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) && (ae.getElevation() == -1)
+        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)  
+                && (atype != null)
+                && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) 
+                && (ae.getElevation() == -1)
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
             mpMelevationHack = true;
             // surface to fire
@@ -527,8 +530,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             losMods = los.losModifiers(game, eistatus, underWater);
             if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                     || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
-                    || (((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_MRM)
-                            || (atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML))
+                    || (((atype.getAmmoType() == AmmoType.T_SRM) 
+                            || (atype.getAmmoType() == AmmoType.T_MRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM_IMP) 
+                            || (atype.getAmmoType() == AmmoType.T_MML))
                             && (munition == AmmoType.M_TORPEDO)))
                     && (los.getMinimumWaterDepth() < 1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
@@ -1239,7 +1245,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
+                && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_SRM))
                 && (atype.getMunitionType() == AmmoType.M_LISTEN_KILL) && !((te != null) && te.isClan())) {
             toHit.addModifier(-1, "Listen-Kill ammo");
@@ -1533,8 +1541,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toSubtract += thTemp.getValue();
 
             // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM) || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_NLRM) 
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) && (te.getTaggedBy() != -1)) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
@@ -1571,8 +1582,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // spotter movement, if applicable
         if (isIndirect) {
             // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM) || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_NLRM) 
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 boolean targetTagged = false;
                 // If this is an entity, we can see if it's tagged
@@ -3589,7 +3603,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean multiPurposeelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE)
+        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP) 
+                && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE)
                 && (ae.getElevation() == -1)
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
             multiPurposeelevationHack = true;

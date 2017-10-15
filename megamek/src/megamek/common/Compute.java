@@ -2899,31 +2899,26 @@ public class Compute {
                 && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
                 && (wt.hasFlag(WeaponType.F_MISSILE))) {
                 // Check for linked artemis guidance system
-                if ((wt.getAmmoType() == AmmoType.T_LRM)
-                    || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (wt.getAmmoType() == AmmoType.T_MML)
-                    || (wt.getAmmoType() == AmmoType.T_SRM)) {
+                if ((wt.getAmmoType() == AmmoType.T_LRM) 
+                        || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (wt.getAmmoType() == AmmoType.T_MML) 
+                        || (wt.getAmmoType() == AmmoType.T_SRM)) {
                     lnk_guide = weapon.getLinkedBy();
-                    if ((lnk_guide != null)
-                        && (lnk_guide.getType() instanceof MiscType)
-                        && !lnk_guide.isDestroyed()
-                        && !lnk_guide.isMissing()
-                        && !lnk_guide.isBreached()
-                        && lnk_guide.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    if ((lnk_guide != null) && (lnk_guide.getType() instanceof MiscType) && !lnk_guide.isDestroyed()
+                            && !lnk_guide.isMissing() && !lnk_guide.isBreached()
+                            && lnk_guide.getType().hasFlag(MiscType.F_ARTEMIS)) {
 
                         // Don't use artemis if this is indirect fire
                         // -> Hook for Artemis V Level 3 Clan tech here; use
                         // 1.30f multiplier when implemented
-                        if (((weapon.curMode() == null) || !weapon.curMode()
-                                                                  .equals("Indirect"))
-                            && (at.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                        if (((weapon.curMode() == null) || !weapon.curMode().equals("Indirect"))
+                                && (at.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                             fHits *= 1.2f;
                         }
-                        if (((weapon.curMode() == null) || !weapon.curMode()
-                                                            .equals("Indirect"))
-                            && (at.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                        if (((weapon.curMode() == null) || !weapon.curMode().equals("Indirect"))
+                                && (at.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
                             fHits *= 1.3f;
-                            }                      
+                        }
                     }
                 }
 
@@ -2939,6 +2934,7 @@ public class Compute {
                         || g.getEntity(waa.getTargetId()).isINarcedBy(
                                 attacker.getOwner().getTeam())) {
                     if (((at.getAmmoType() == AmmoType.T_LRM)
+                            || (at.getAmmoType() == AmmoType.T_LRM_IMP)
                             || (at.getAmmoType() == AmmoType.T_MML) || (at
                             .getAmmoType() == AmmoType.T_SRM))
                             && (at.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {

@@ -135,7 +135,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
             throw new EntityLoadingException(
-                    "Could not find structual integrity block.");
+                    "Could not find structural integrity block.");
         }
         a.set0SI(dataFile.getDataAsInt("structural_integrity")[0]);
 

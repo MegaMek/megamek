@@ -62,7 +62,6 @@ import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
-import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.Warship;
@@ -70,6 +69,7 @@ import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 public class BLKFile {
 
@@ -443,9 +443,11 @@ public class BLKFile {
 
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
 
-        for (Transporter tran : t.getTransports()) {
-            blk.writeBlockData("transporters", tran.toString());
+        String[] transporter_array = new String[t.getTransports().size()];
+        for (int i = 0; i < t.getTransports().size(); i++) {
+            transporter_array[i] = t.getTransports().get(i).toString();
         }
+        blk.writeBlockData("transporters", transporter_array);
 
         if (!((t instanceof Infantry) && !(t instanceof BattleArmor))) {
             if (t instanceof Aero){
@@ -561,7 +563,41 @@ public class BLKFile {
                     && m.getLinkedBy().isOneShot()){
                 continue;
             }
+            
+            if (m.getType() instanceof BayWeapon) {
+                int loc = m.getLocation();
+                if (loc == Entity.LOC_NONE) {
+                    continue;
+                }
+                boolean rear = m.isRearMounted();
+                for (int i = 0; i < m.getBayWeapons().size(); i++) {
+                    Mounted w = t.getEquipment(m.getBayWeapons().get(i));
+                    String name = w.getType().getInternalName();
+                    if (i == 0) {
+                        name = "(B) " + name;
+                    }
+                    if (rear) {
+                        name = "(R) " + name;
+                    }
+                    eq.get(loc).add(name);
+                }
+                for (Integer aNum : m.getBayAmmo()) {
+                    Mounted a = t.getEquipment(aNum);
+                    String name = a.getType().getInternalName();
+                    name += ":" + a.getBaseShotsLeft();
+                    if (rear) {
+                        name = "(R) " + name;
+                    }
+                    eq.get(loc).add(name);
+                }
+                continue;
+            }
 
+            if (t.usesWeaponBays() && ((m.getType() instanceof WeaponType)
+                    || (m.getType() instanceof AmmoType))) {
+                continue;
+            }
+            
             String name = m.getType().getInternalName();
             if (m.isSponsonTurretMounted()) {
                 name = name + "(ST)";
@@ -619,6 +655,11 @@ public class BLKFile {
         
         if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
+        }
+        
+        if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
+                || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            blk.writeBlockData("structural_integrity", ((Aero)t).get0SI());
         }
 
         if (t.getFluff().getCapabilities().trim().length() > 0) {

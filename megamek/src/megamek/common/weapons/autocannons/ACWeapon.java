@@ -26,6 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ACAPHandler;
+import megamek.common.weapons.ACCaseLessHandler;
 import megamek.common.weapons.ACFlakHandler;
 import megamek.common.weapons.ACFlechetteHandler;
 import megamek.common.weapons.ACIncendiaryHandler;
@@ -104,9 +105,9 @@ public abstract class ACWeapon extends AmmoWeapon {
             return new ACFlakHandler(toHit, waa, game, server);
         }
         
-/*        if (atype.getMunitionType() == AmmoType.M_CASELESS) {
+        if (atype.getMunitionType() == AmmoType.M_CASELESS) {
             return new ACCaseLessHandler (toHit, waa, game, server);
-        }*/
+        }
 
         return new ACWeaponHandler(toHit, waa, game, server);
 

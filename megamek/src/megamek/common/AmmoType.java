@@ -327,10 +327,8 @@ public class AmmoType extends EquipmentType {
     
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
-    
-    //Used for Caseless Ammunition.
-    private static final int HALF = -1;
-    
+  
+  
     // Numbers 62-63 are used for Nuclear munitions, above 
       
     /*
@@ -2290,7 +2288,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_FS),"208,TM"));
         
         //TODO - Implement for play
-		munitions.add(new MunitionMutator("Caseless", HALF , M_CASELESS,
+		munitions.add(new MunitionMutator("Caseless", 1 , M_CASELESS,
 		        new TechAdvancement(TECH_BASE_ALL)
 		        .setIntroLevel(false)
 		        .setUnofficial(false)
@@ -15448,7 +15446,7 @@ public class AmmoType extends EquipmentType {
             munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.
-            if (munition.shots == HALF) {
+            if (munition.getMunitionType() == AmmoType.M_CASELESS) {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight/2);        
             } else {
@@ -15732,7 +15730,7 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * Checks to ensure that the given ammunition type is compatable with the given weapon type.  Performs the following
+     * Checks to ensure that the given ammunition type is compatible with the given weapon type.  Performs the following
      * tests:<br/>
      * {@code ammoType} != null<br/>
      * {@link AmmoType#getAmmoType()} == {@link WeaponType#getAmmoType()}<br/>

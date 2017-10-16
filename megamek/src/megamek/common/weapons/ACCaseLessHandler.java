@@ -51,28 +51,29 @@ public class ACCaseLessHandler extends ACWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if ((roll <= 2) && !(ae instanceof Infantry)) {
-                Report r = new Report(3161);
-                r.subject = subjectId;
-                weapon.setJammed(true);
-                weapon.setHit(true);
-                int wloc = weapon.getLocation();
-                for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
-                    CriticalSlot slot1 = ae.getCritical(wloc, i);
-                    if ((slot1 == null) || 
-                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        continue;
-                    }
-                    Mounted mounted = slot1.getMount();
-                    if (mounted.equals(weapon)) {
-                        ae.hitAllCriticals(wloc, i);
-                        break;
-                    }
+            Report r = new Report(3161);
+            r.subject = subjectId;
+            weapon.setJammed(true);
+            weapon.setHit(true);
+            weapon.setFired(false);
+            
+            int wloc = weapon.getLocation();
+            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
+                CriticalSlot slot1 = ae.getCritical(wloc, i);
+                if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                    continue;
                 }
-                r.choose(false);
-                vPhaseReport.addElement(r);
-                vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+                Mounted mounted = slot1.getMount();
+                if (mounted.equals(weapon)) {
+                    ae.hitAllCriticals(wloc, i);
+                    break;
+                }
             }
-            return false;
+            r.choose(false);
+            vPhaseReport.addElement(r);
         }
+
+        return false;
     }
+}
 

@@ -119,6 +119,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
     private JPanel panMines = new JPanel();
+    
+    private ArrayList<CapMissileChoicePanel> m_vCapMissile = new ArrayList<CapMissileChoicePanel>();
+    private JPanel panCapMissile = new JPanel();
 
     private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<SantaAnnaChoicePanel>();
     private JPanel panSantaAnna = new JPanel();
@@ -368,6 +371,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // update mines setting
         for (final Object newVar : m_vMines) {
             ((MineChoicePanel) newVar).applyChoice();
+        }
+        // update Capital Missile setting
+        for (final Object newVar : m_vSantaAnna) {
+            ((CapMissileChoicePanel) newVar).applyChoice();
         }
         // update Santa Anna setting
         for (final Object newVar : m_vSantaAnna) {
@@ -627,19 +634,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, NARC, and capital missiles
+            // allow only MML, ATM, NARC
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC)
-                            || (at.getAmmoType() == AmmoType.T_AR10)
-                            || (at.getAmmoType() == AmmoType.T_KILLER_WHALE)
-                            || (at.getAmmoType() == AmmoType.T_WHITE_SHARK)
-                            || (at.getAmmoType() == AmmoType.T_BARRACUDA)
-                            || (at.getAmmoType() == AmmoType.T_MANTA_RAY)
-                            || (at.getAmmoType() == AmmoType.T_STINGRAY)
-                            || (at.getAmmoType() == AmmoType.T_SWORDFISH)
-                            || (at.getAmmoType() == AmmoType.T_PIRANHA))) {
+                            || (at.getAmmoType() == AmmoType.T_NARC))) {
                 aeroShotsOnly = true;
             }
 
@@ -709,10 +708,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
                 continue;
             }
-            MunitionChoicePanel mcp;
-            mcp = new MunitionChoicePanel(m, vTypes);
-            panMunitions.add(mcp, GBC.eol());
-            m_vMunitions.add(mcp);
+            if (at.hasFlag(AmmoType.F_CAP_MISSILE)) {
+                CapMissileChoicePanel cmcp;
+                cmcp = new CapMissileChoicePanel(m);
+                panCapMissile.add(cmcp, GBC.eol());
+                m_vCapMissile.add(cmcp);
+            } else {
+                MunitionChoicePanel mcp;
+                mcp = new MunitionChoicePanel(m, vTypes);
+                panMunitions.add(mcp, GBC.eol());
+                m_vMunitions.add(mcp);
+            }
         }
         }
 
@@ -1178,6 +1184,184 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 m_mounted.setShotsLeft(shots);
             }
         }
+        
+        class CapMissileChoicePanel extends JPanel {
+
+            private static final long serialVersionUID = 3401126035583995327L;
+
+            private ArrayList<AmmoType> m_vTypes;
+
+            private JLabel barracuda = new JLabel ("Barracuda Missiles: ");
+            private JLabel whiteshark = new JLabel ("White Shark Missiles: ");
+            private JLabel killerwhale = new JLabel ("Killer Whale Missiles: ");
+            private JLabel santaanna = new JLabel ("Santa Anna Missiles: ");
+            private JLabel peacemaker = new JLabel ("Peacemaker Missiles: ");
+
+            @SuppressWarnings("rawtypes")
+            private JComboBox b_num_shots;
+            private JComboBox w_num_shots;
+            private JComboBox k_num_shots;
+            private JComboBox s_num_shots;
+            private JComboBox p_num_shots;
+
+            private Mounted m_mounted;
+
+            JLabel labDump = new JLabel(
+                    Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
+
+            JCheckBox chDump = new JCheckBox();
+                       
+            @SuppressWarnings("unchecked")
+            CapMissileChoicePanel(Mounted m) {
+                m_mounted = m;
+                AmmoType curType = (AmmoType) m.getType();
+                if (m.getType().getName() == "Barracuda Ammo") {
+                    barracuda.setVisible(true);
+                    whiteshark.setVisible(false);
+                    killerwhale.setVisible(false);
+                    santaanna.setVisible(false);
+                    peacemaker.setVisible(false);
+                    //b_num_shots.setVisible(true);
+                    //w_num_shots.setVisible(false);
+                    //k_num_shots.setVisible(false);
+                    //s_num_shots.setVisible(false);
+                    //p_num_shots.setVisible(false);
+                } else if (m.getType().getName() == "White Shark Ammo") {                    
+                    whiteshark.setVisible(true);
+                    santaanna.setVisible(true);
+                    barracuda.setVisible(false);
+                    killerwhale.setVisible(false);                   
+                    peacemaker.setVisible(false);
+                    //w_num_shots.setVisible(true);
+                    //s_num_shots.setVisible(true);
+                    //b_num_shots.setVisible(false);
+                    //k_num_shots.setVisible(false);
+                    //p_num_shots.setVisible(false);
+                } else if (m.getType().getName() == "Killer Whale Ammo") {                    
+                    killerwhale.setVisible(true);                   
+                    peacemaker.setVisible(true);
+                    whiteshark.setVisible(false);
+                    santaanna.setVisible(false);
+                    barracuda.setVisible(false);
+                    //k_num_shots.setVisible(true);
+                    //p_num_shots.setVisible(true);
+                    //b_num_shots.setVisible(false);
+                    //w_num_shots.setVisible(false);
+                    //s_num_shots.setVisible(false);
+                } else if (m.getType().getName() == "Capital Missile Launcher (AR10 Launcher)") {                    
+                    killerwhale.setVisible(true);                   
+                    peacemaker.setVisible(true);
+                    whiteshark.setVisible(true);
+                    santaanna.setVisible(true);
+                    barracuda.setVisible(true);
+                    //k_num_shots.setVisible(true);
+                    //p_num_shots.setVisible(true);
+                    //b_num_shots.setVisible(true);
+                    //w_num_shots.setVisible(true);
+                    //s_num_shots.setVisible(true);
+                }
+                b_num_shots = new JComboBox<String>();
+                //w_num_shots = new JComboBox<String>();
+                //k_num_shots = new JComboBox<String>();
+                //s_num_shots = new JComboBox<String>();
+                //p_num_shots = new JComboBox<String>();
+                int shotsPerTon = 0;
+                if (entity.usesWeaponBays()) {
+                    shotsPerTon = m.getBaseShotsLeft();
+                } else {
+                    shotsPerTon = curType.getShots();
+                }
+                JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
+                int stepSize = 1;
+                
+                for (int i = 0; i <= shotsPerTon; i += stepSize){
+                    b_num_shots.addItem(i);
+                }
+                b_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
+
+               /* m_choice.addItemListener(new ItemListener(){
+                @Override
+                public void itemStateChanged(ItemEvent evt) {
+                        int currShots = (Integer)b_num_shots.getSelectedItem();
+                        b_num_shots.removeAllItems();
+                        int shotsPerTon = m_vTypes.get(
+                                m_choice.getSelectedIndex()).getShots();
+                        for (int i = 0; i <= shotsPerTon; i++){
+                            b_num_shots.addItem(i);
+                        }
+                        if (currShots <= shotsPerTon){
+                            b_num_shots.setSelectedItem(currShots);
+                        } else {
+                            b_num_shots.setSelectedItem(shotsPerTon);
+                        }
+
+                    }}); */
+
+
+                int loc;
+                if (m.getLocation() == Entity.LOC_NONE) {
+                    // oneshot weapons don't have a location of their own
+                    Mounted linkedBy = m.getLinkedBy();
+                    loc = linkedBy.getLocation();
+                } else {
+                    loc = m.getLocation();
+                }
+                
+                String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
+                JLabel lLoc = new JLabel(sDesc);
+                GridBagLayout g = new GridBagLayout();
+                setLayout(g);
+                add(lLoc, GBC.std());
+                add(b_num_shots, GBC.eol());
+                //add(w_num_shots, GBC.eol());
+                //add(k_num_shots, GBC.eol());
+                //add(s_num_shots, GBC.eol());
+                //add(p_num_shots, GBC.eol());
+                if (clientgui.getClient().getGame().getOptions().booleanOption(
+                        OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
+                    add(labDump, GBC.std());
+                    add(chDump, GBC.eol());
+                } 
+            }
+
+            public void applyChoice() {
+                int n = 0;
+                // If there's no selection, there's nothing we can do
+                if (n == -1) {
+                    return;
+                }
+                AmmoType at = m_vTypes.get(n);
+                m_mounted.changeAmmoType(at);
+                m_mounted.setShotsLeft((Integer)b_num_shots.getSelectedItem());
+                if (chDump.isSelected()) {
+                    m_mounted.setShotsLeft(0);
+                }
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                b_num_shots.setEnabled(enabled);
+            }
+
+            /**
+             * Get the number of shots in the mount.
+             *
+             * @return the <code>int</code> number of shots in the mount.
+             */
+            int getShotsLeft() {
+                return m_mounted.getBaseShotsLeft();
+            }
+
+            /**
+             * Set the number of shots in the mount.
+             *
+             * @param shots
+             *            the <code>int</code> number of shots for the mount.
+             */
+            void setShotsLeft(int shots) {
+                m_mounted.setShotsLeft(shots);
+            }
+        } 
 
         // a choice panel for determining number of santa anna warheads
         class SantaAnnaChoicePanel extends JPanel {

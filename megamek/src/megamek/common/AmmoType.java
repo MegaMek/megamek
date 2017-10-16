@@ -354,6 +354,7 @@ public class AmmoType extends EquipmentType {
 
     // ratio for capital ammo
     private double ammoRatio;
+
     /**
      * Used for returning the submunition name for a submunition, such as
      * precision AC-10. The submunition name is pre-pended onto the
@@ -445,6 +446,10 @@ public class AmmoType extends EquipmentType {
 
     public int getShots() {
         return shots;
+    }
+    
+    public double getTonnage() {
+        return tonnage;
     }
     
     public double getAmmoRatio() {

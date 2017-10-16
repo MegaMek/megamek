@@ -987,6 +987,33 @@ public class MechView {
             sMisc.append("<br><b>").append(Messages.getString("MechView.CarryingCapacity")).append("</b><br>") //$NON-NLS-1$
                     .append(capacity).append("<br>"); //$NON-NLS-1$
         }
+        
+        if (isSmallCraft || isJumpship) {
+            Aero a = (Aero)entity;
+            sMisc.append("<br><b>").append(Messages.getString("MechView.Crew")).append("</b><br/>\n"); //$NON-NLS-1$  $NON-NLS-2$ $NON-NLS-3$
+            sMisc.append("<table>\n"); //$NON-NLS-1$
+            sMisc.append("<tr><td>").append(Messages.getString("MechView.Officers")) //$NON-NLS-1$  $NON-NLS-2$
+            .append("</td><td>").append(a.getNOfficers()).append("</td></tr>\n"); //$NON-NLS-1$  $NON-NLS-2$
+            sMisc.append("<tr><td>").append(Messages.getString("MechView.Enlisted")) //$NON-NLS-1$  $NON-NLS-2$
+                .append("</td><td>").append(Math.max(a.getNCrew() //$NON-NLS-1$
+                        - a.getBayPersonnel() - a.getNGunners() - a.getNOfficers(), 0)).append("</td></tr>\n"); //$NON-NLS-1$
+            sMisc.append("<tr><td>").append(Messages.getString("MechView.Gunners")) //$NON-NLS-1$  $NON-NLS-2$
+                .append("</td><td>").append(a.getNGunners()).append("</td></tr>\n"); //$NON-NLS-1$  $NON-NLS-2$
+            sMisc.append("<tr><td>").append(Messages.getString("MechView.BayPersonnel")) //$NON-NLS-1$  $NON-NLS-2$
+                .append("</td><td>").append(a.getBayPersonnel()).append("</td></tr>\n"); //$NON-NLS-1$  $NON-NLS-2$
+            if (a.getNPassenger() > 0) {
+                sMisc.append("<tr><td>").append(Messages.getString("MechView.Passengers")) //$NON-NLS-1$  $NON-NLS-2$
+                    .append("</td><td>").append(a.getNPassenger()).append("</td></tr>\n"); //$NON-NLS-1$  $NON-NLS-2$
+            }
+            if (a.getNMarines() > 0) {
+                sMisc.append("<tr><td>").append(Messages.getString("MechView.Marines")) //$NON-NLS-1$  $NON-NLS-2$
+                    .append("</td><td>").append(a.getNMarines()).append("</td></tr>\n"); //$NON-NLS-1$  $NON-NLS-2$
+            }
+            if (a.getNBattleArmor() > 0) {
+                sMisc.append("<tr><td>").append(Messages.getString("MechView.BAMarines")) //$NON-NLS-1$  $NON-NLS-2$
+                    .append("</td><td>").append(a.getNBattleArmor()).append("</td></tr>\n"); //$NON-NLS-1$  $NON-NLS-2$
+            }
+        }
         return sMisc.toString();
     }
 

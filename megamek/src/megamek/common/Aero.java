@@ -4051,11 +4051,40 @@ public class Aero extends Entity implements IAero, IBomber {
     public int getNCrew() {
         return 1;
     }
+    
+    
+    /**
+     * @return The total number of officers for vessels.
+     */
+    public int getNOfficers() {
+        return 0;
+    }
+    
+    /**
+     * @return The total number of gunners for vessels.
+     */
+    public int getNGunners() {
+        return 0;
+    }
 
     /**
      * @return The total passenger capacity.
      */
     public int getNPassenger() {
+        return 0;
+    }
+
+    /**
+     * @return The number battlearmored marines available to vessels for boarding actions.
+     */
+    public int getNBattleArmor() {
+        return 0;
+    }
+
+    /**
+     * @return The number conventional marines available to vessels for boarding actions.
+     */
+    public int getNMarines() {
         return 0;
     }
 

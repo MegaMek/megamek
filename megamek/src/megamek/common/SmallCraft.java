@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
+import megamek.common.verifier.TestSmallCraft;
 
 /**
  * @author Jay Lawson
@@ -112,23 +113,22 @@ public class SmallCraft extends Aero {
         return nPassenger;
     }
     
-    /**
-     * @return The number of officers among the crew.
-     */
+    @Override
     public int getNOfficers() {
         return nOfficers;
     }
     
-    /**
-     * @return The number battlearmored marines available for boarding actions.
-     */
+    @Override
+    public int getNGunners() {
+        return TestSmallCraft.requiredGunners(this);
+    }
+    
+    @Override
     public int getNBattleArmor() {
         return nBattleArmor;
     }
 
-    /**
-     * @return The number conventional marines available for boarding actions.
-     */
+    @Override
     public int getNMarines() {
         return nMarines;
     }

@@ -15448,7 +15448,7 @@ public class AmmoType extends EquipmentType {
             munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.
-            if (munition.shots == -1) {
+            if (munition.shots == HALF) {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight/2);        
             } else {

@@ -708,7 +708,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
                 continue;
             }
-            if (at.hasFlag(AmmoType.F_CAP_MISSILE)) {
+            if (at.hasFlag(AmmoType.F_CAP_MISSILE)
+                    && !((at.getAmmoType() == AmmoType.T_KRAKEN_T)
+                            || (at.getAmmoType() == AmmoType.T_KRAKENM)
+                            || (at.getAmmoType() == AmmoType.T_PIRANHA)
+                            || (at.getAmmoType() == AmmoType.T_STINGRAY) 
+                            || (at.getAmmoType() == AmmoType.T_SWORDFISH) 
+                            || (at.getAmmoType() == AmmoType.T_MANTA_RAY))) {
                 CapMissileChoicePanel cmcp;
                 cmcp = new CapMissileChoicePanel(m);
                 panCapMissile.add(cmcp, GBC.eol());
@@ -1265,16 +1271,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 //k_num_shots = new JComboBox<String>();
                 //s_num_shots = new JComboBox<String>();
                 //p_num_shots = new JComboBox<String>();
-                int shotsPerTon = 0;
-                if (entity.usesWeaponBays()) {
-                    shotsPerTon = m.getBaseShotsLeft();
-                } else {
-                    shotsPerTon = curType.getShots();
-                }
-                JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
+
+                int shots = m.getBaseShotsLeft();
+                int magazineSize = (int) (curType.getTonnage() * shots);
                 int stepSize = 1;
                 
-                for (int i = 0; i <= shotsPerTon; i += stepSize){
+                for (int i = 0; i <= shots; i += stepSize){
                     b_num_shots.addItem(i);
                 }
                 b_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
@@ -1284,7 +1286,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 public void itemStateChanged(ItemEvent evt) {
                         int currShots = (Integer)b_num_shots.getSelectedItem();
                         b_num_shots.removeAllItems();
-                        int shotsPerTon = m_vTypes.get(
+                        int shots = m_vTypes.get(
                                 m_choice.getSelectedIndex()).getShots();
                         for (int i = 0; i <= shotsPerTon; i++){
                             b_num_shots.addItem(i);
@@ -1292,7 +1294,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         if (currShots <= shotsPerTon){
                             b_num_shots.setSelectedItem(currShots);
                         } else {
-                            b_num_shots.setSelectedItem(shotsPerTon);
+                            b_num_shots.setSelectedItem(shots);
                         }
 
                     }}); */

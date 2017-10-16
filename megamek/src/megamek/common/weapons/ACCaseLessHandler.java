@@ -20,7 +20,10 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.CriticalSlot;
 import megamek.common.IGame;
+import megamek.common.Infantry;
+import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -29,12 +32,11 @@ import megamek.server.Server;
 /**
  * @author Dave Nawton
  */
+
+
 public class ACCaseLessHandler extends ACWeaponHandler {
 
-    /**
-     *
-     */
-    //private static final long serialVersionUID = ;
+    private static final long serialVersionUID = -6614562346449113878L;
 
     /**
      * @param t
@@ -46,25 +48,31 @@ public class ACCaseLessHandler extends ACWeaponHandler {
         super(t, w, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
-     */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if ((roll <= 2)) {
-            Report r = new Report();
-            r.subject = subjectId;
-            weapon.setJammed(true);
-          
-            if (wtype.getAmmoType() == AmmoType.M_CASELESS) {
-                r.messageId = 3160;
+        if ((roll <= 2) && !(ae instanceof Infantry)) {
+                Report r = new Report(3161);
+                r.subject = subjectId;
+                weapon.setJammed(true);
                 weapon.setHit(true);
+                int wloc = weapon.getLocation();
+                for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
+                    CriticalSlot slot1 = ae.getCritical(wloc, i);
+                    if ((slot1 == null) || 
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                    Mounted mounted = slot1.getMount();
+                    if (mounted.equals(weapon)) {
+                        ae.hitAllCriticals(wloc, i);
+                        break;
+                    }
+                }
+                r.choose(false);
+                vPhaseReport.addElement(r);
+                vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
             }
-            vPhaseReport.addElement(r);
-            return true;
+            return false;
         }
-        return false;
     }
-}
+

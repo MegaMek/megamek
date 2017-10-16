@@ -23,6 +23,7 @@ import java.util.Vector;
 
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
+    
     // ammo types
     public static final int T_NA = -1;
     public static final int T_AC = 1;
@@ -326,6 +327,9 @@ public class AmmoType extends EquipmentType {
     
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
+    
+    //Used for Caseless Ammunition.
+    private static final int HALF = -1;
     
     // Numbers 62-63 are used for Nuclear munitions, above 
       
@@ -2286,7 +2290,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_FS),"208,TM"));
         
         //TODO - Implement for play
-		munitions.add(new MunitionMutator("Caseless", 1 , M_CASELESS,
+		munitions.add(new MunitionMutator("Caseless", HALF , M_CASELESS,
 		        new TechAdvancement(TECH_BASE_ALL)
 		        .setIntroLevel(false)
 		        .setUnofficial(false)
@@ -15444,8 +15448,13 @@ public class AmmoType extends EquipmentType {
             munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.
-            munition.shots = Math.max(1, base.shots / weight);
-            munition.kgPerShot = base.kgPerShot * weight;
+            if (munition.shots == -1) {
+                munition.shots = Math.max(1, base.shots * 2);
+                munition.kgPerShot = base.kgPerShot * (weight/2);        
+            } else {
+                munition.shots = Math.max(1, base.shots / weight);
+                munition.kgPerShot = base.kgPerShot * weight;
+            }
 
             // copy base ammoType
             munition.ammoType = base.ammoType;
@@ -15731,7 +15740,7 @@ public class AmmoType extends EquipmentType {
      *
      * @param ammoType   The type of ammo to be tested.
      * @param weaponType The type of weapon the ammo is to be used with.
-     * @return TRUE if the ammo type and wepaon type are compatable.
+     * @return TRUE if the ammo type and weapon type are compatible.
      */
     public static boolean isAmmoValid(AmmoType ammoType, WeaponType weaponType) {
         if (ammoType == null) {

@@ -96,7 +96,7 @@ public final class SuperHeavyVehicleBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Superheavy Vehicle Bay (" + getCurrentDoors() + " doors) - "
+        return "Superheavy Vehicle Bay " + numDoorsString() + " - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

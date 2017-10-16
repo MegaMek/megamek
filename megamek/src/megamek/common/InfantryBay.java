@@ -165,8 +165,8 @@ public final class InfantryBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Infantry Bay (").append(getCurrentDoors()).append(" doors) - ")
-            .append((int)(currentSpace / bayType.getWeight()))
+        sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
+                .append((int)(currentSpace / bayType.getWeight()))
             .append(" ").append(bayType.toString());
         if (bayType != PlatoonType.MECHANIZED) {
             sb.append(" platoon");

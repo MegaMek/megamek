@@ -73,8 +73,8 @@ public final class LiquidCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Liquid Cargo Space ("
-                + getCurrentDoors() + " doors) - ");
+        StringBuffer returnString = new StringBuffer("Liquid Cargo Space "
+                + numDoorsString() + " - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.3f", currentSpace));

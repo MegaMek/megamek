@@ -75,7 +75,7 @@ public final class RefrigeratedCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer(
-                "Refrigerated Cargo Space (" + getCurrentDoors() + " doors) - ");
+                "Refrigerated Cargo Space " + numDoorsString() + " - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.3f", currentSpace));

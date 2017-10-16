@@ -575,4 +575,11 @@ public class Bay implements Transporter, ITechnology {
         return getTechAdvancement().getStaticTechLevel();
     }
 
+    /**
+     * @return true if this bay represents crew quarters or seating rather than a unit transport bay.
+     */
+    public boolean isQuarters() {
+        return false;
+    }
+
 } // End package class TroopSpace implements Transporter

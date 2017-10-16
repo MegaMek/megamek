@@ -79,6 +79,11 @@ public final class CrewQuartersCargoBay extends Bay {
     }
 
     @Override
+    public boolean isQuarters() {
+        return true;
+    }
+
+    @Override
     public String getType() {
         return "Crew Quarters";
     }

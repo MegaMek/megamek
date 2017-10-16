@@ -89,6 +89,11 @@ public final class StandardSeatCargoBay extends Bay {
     }
 
     @Override
+    public boolean isQuarters() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "standardseats:" + weight + ":" + doors;
     }

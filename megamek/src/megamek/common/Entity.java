@@ -8340,6 +8340,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
+            if ((next instanceof Bay) && ((Bay)next).isQuarters()) {
+                continue;
+            }
             result.append(next.getUnusedString());
             if (next instanceof TroopSpace && isOmni()) {
             	if (omniPodTransports.contains(next)) {

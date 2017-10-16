@@ -89,6 +89,11 @@ public final class SteerageQuartersCargoBay extends Bay {
     }
 
     @Override
+    public boolean isQuarters() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "steeragequarters:" + weight + ":" + doors;
     }

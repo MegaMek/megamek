@@ -577,6 +577,11 @@ public class TestSmallCraft extends TestAero {
             for (Integer at : ammoWeaponCount.keySet()) {
                 if (at != AmmoType.T_NA) {
                     int needed = ammoWeaponCount.get(at) * 10;
+                    if ((at == AmmoType.T_AC_ULTRA) || (at == AmmoType.T_AC_ULTRA_THB)) {
+                        needed *= 2;
+                    } else if ((at == AmmoType.T_AC_ROTARY)) {
+                        needed *= 6;
+                    }
                     if (!ammoTypeCount.containsKey(at)
                             || ammoTypeCount.get(at) < needed) {
                         buff.append("Bay " + bay.getName() + " does not have the minimum 10 shots of ammo for each weapon\n");

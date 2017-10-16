@@ -44,7 +44,6 @@ import megamek.common.Protomech;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
-import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 

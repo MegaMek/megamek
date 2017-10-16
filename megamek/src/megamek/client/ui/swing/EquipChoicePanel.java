@@ -1035,7 +1035,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     }
                 }
                 m_num_shots = new JComboBox<String>();
-                int shotsPerTon = curType.getShots();
+                int shotsPerTon = 0;
+                if (entity.usesWeaponBays()) {
+                    shotsPerTon = m.getBaseShotsLeft();
+                } else {
+                    shotsPerTon = curType.getShots();
+                }
                 JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
@@ -1117,9 +1122,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             public void applyChoice() {
-                int n = m_choice.getSelectedIndex();
+                int n;
+                if (aeroShotsOnly) {
+                    n = 0;
+                } else {
+                    n = m_choice.getSelectedIndex();
+                }
                 // If there's no selection, there's nothing we can do
-                if (n == -1){
+                if (n == -1) {
                     return;
                 }
                 AmmoType at = m_vTypes.get(n);

@@ -196,7 +196,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         this.type = type;
         typeName = type.getInternalName();
 
-        if (type instanceof AmmoType) {
+        if ((type instanceof AmmoType)
+                && (type.hasFlag(AmmoType.F_SANTA_ANNA)
+                        || (type.hasFlag(AmmoType.F_PEACEMAKER)))) {
+            shotsLeft = 0;
+        } else if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType) type).getShots();
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {

@@ -14855,7 +14855,7 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 40;
         ammo.bv = 1000;
         ammo.cost = 15000000;
-        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
+        ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_NUCLEAR)
                 .or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
@@ -14876,7 +14876,7 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionBegin = 0;
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
-        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.ammoType = AmmoType.T_WHITE_SHARK;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
         ammo.shots = 1;
         ammo.tonnage = 40;
@@ -14902,7 +14902,7 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionBegin = 0;
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
-        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.ammoType = AmmoType.T_WHITE_SHARK;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
         ammo.shots = 1;
         ammo.tonnage = 40;

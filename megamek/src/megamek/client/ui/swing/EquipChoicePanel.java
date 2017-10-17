@@ -373,7 +373,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             ((MineChoicePanel) newVar).applyChoice();
         }
         // update Capital Missile setting
-        for (final Object newVar : m_vSantaAnna) {
+        for (final Object newVar : m_vCapMissile) {
             ((CapMissileChoicePanel) newVar).applyChoice();
         }
         // update Santa Anna setting
@@ -635,10 +635,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             // don't allow ammo switching of most things for Aeros
             // allow only MML, ATM, NARC
+            aeroShotsOnly = false;
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC))) {
+                            || (at.getAmmoType() == AmmoType.T_NARC)
+                            || (at.getAmmoType() == AmmoType.T_AR10)
+                            || (at.getAmmoType() == AmmoType.T_WHITE_SHARK)
+                            || (at.getAmmoType() == AmmoType.T_KILLER_WHALE))) {
                 aeroShotsOnly = true;
             }
 
@@ -707,24 +711,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     && !client.getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
                 continue;
-            }
-            if (at.hasFlag(AmmoType.F_CAP_MISSILE)
-                    && !((at.getAmmoType() == AmmoType.T_KRAKEN_T)
-                            || (at.getAmmoType() == AmmoType.T_KRAKENM)
-                            || (at.getAmmoType() == AmmoType.T_PIRANHA)
-                            || (at.getAmmoType() == AmmoType.T_STINGRAY) 
-                            || (at.getAmmoType() == AmmoType.T_SWORDFISH) 
-                            || (at.getAmmoType() == AmmoType.T_MANTA_RAY))) {
-                CapMissileChoicePanel cmcp;
-                cmcp = new CapMissileChoicePanel(m);
-                panCapMissile.add(cmcp, GBC.eol());
-                m_vCapMissile.add(cmcp);
-            } else {
+            }           
                 MunitionChoicePanel mcp;
                 mcp = new MunitionChoicePanel(m, vTypes);
                 panMunitions.add(mcp, GBC.eol());
                 m_vMunitions.add(mcp);
-            }
+            // }
         }
         }
 
@@ -1221,56 +1213,58 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             CapMissileChoicePanel(Mounted m) {
                 m_mounted = m;
                 AmmoType curType = (AmmoType) m.getType();
+                b_num_shots = new JComboBox<String>();
+                w_num_shots = new JComboBox<String>();
+                k_num_shots = new JComboBox<String>();
+                s_num_shots = new JComboBox<String>();
+                p_num_shots = new JComboBox<String>();
                 if (m.getType().getName() == "Barracuda Ammo") {
                     barracuda.setVisible(true);
                     whiteshark.setVisible(false);
                     killerwhale.setVisible(false);
                     santaanna.setVisible(false);
                     peacemaker.setVisible(false);
-                    //b_num_shots.setVisible(true);
-                    //w_num_shots.setVisible(false);
-                    //k_num_shots.setVisible(false);
-                    //s_num_shots.setVisible(false);
-                    //p_num_shots.setVisible(false);
+                    b_num_shots.setVisible(true);
+                    w_num_shots.setVisible(false);
+                    k_num_shots.setVisible(false);
+                    s_num_shots.setVisible(false);
+                    p_num_shots.setVisible(false);
                 } else if (m.getType().getName() == "White Shark Ammo") {                    
                     whiteshark.setVisible(true);
                     santaanna.setVisible(true);
                     barracuda.setVisible(false);
                     killerwhale.setVisible(false);                   
                     peacemaker.setVisible(false);
-                    //w_num_shots.setVisible(true);
-                    //s_num_shots.setVisible(true);
-                    //b_num_shots.setVisible(false);
-                    //k_num_shots.setVisible(false);
-                    //p_num_shots.setVisible(false);
+                    w_num_shots.setVisible(true);
+                    s_num_shots.setVisible(true);
+                    b_num_shots.setVisible(false);
+                    k_num_shots.setVisible(false);
+                    p_num_shots.setVisible(false);
                 } else if (m.getType().getName() == "Killer Whale Ammo") {                    
                     killerwhale.setVisible(true);                   
                     peacemaker.setVisible(true);
                     whiteshark.setVisible(false);
                     santaanna.setVisible(false);
                     barracuda.setVisible(false);
-                    //k_num_shots.setVisible(true);
-                    //p_num_shots.setVisible(true);
-                    //b_num_shots.setVisible(false);
-                    //w_num_shots.setVisible(false);
-                    //s_num_shots.setVisible(false);
-                } else if (m.getType().getName() == "Capital Missile Launcher (AR10 Launcher)") {                    
+                    k_num_shots.setVisible(true);
+                    p_num_shots.setVisible(true);
+                    b_num_shots.setVisible(false);
+                    w_num_shots.setVisible(false);
+                    s_num_shots.setVisible(false);
+                } else if ((m.getType().getName() == "AR10 Barracuda Ammo")
+                        || (m.getType().getName() == "AR10 White Shark Ammo")
+                        || (m.getType().getName() == "AR10 Killer Whale Ammo")) {                    
                     killerwhale.setVisible(true);                   
                     peacemaker.setVisible(true);
                     whiteshark.setVisible(true);
                     santaanna.setVisible(true);
                     barracuda.setVisible(true);
-                    //k_num_shots.setVisible(true);
-                    //p_num_shots.setVisible(true);
-                    //b_num_shots.setVisible(true);
-                    //w_num_shots.setVisible(true);
-                    //s_num_shots.setVisible(true);
+                    k_num_shots.setVisible(true);
+                    p_num_shots.setVisible(true);
+                    b_num_shots.setVisible(true);
+                    w_num_shots.setVisible(true);
+                    s_num_shots.setVisible(true);
                 }
-                b_num_shots = new JComboBox<String>();
-                //w_num_shots = new JComboBox<String>();
-                //k_num_shots = new JComboBox<String>();
-                //s_num_shots = new JComboBox<String>();
-                //p_num_shots = new JComboBox<String>();
 
                 int shots = m.getBaseShotsLeft();
                 int magazineSize = (int) (curType.getTonnage() * shots);
@@ -1281,23 +1275,23 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
                 b_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
 
-               /* m_choice.addItemListener(new ItemListener(){
+                b_num_shots.addItemListener(new ItemListener(){
                 @Override
                 public void itemStateChanged(ItemEvent evt) {
                         int currShots = (Integer)b_num_shots.getSelectedItem();
                         b_num_shots.removeAllItems();
                         int shots = m_vTypes.get(
-                                m_choice.getSelectedIndex()).getShots();
-                        for (int i = 0; i <= shotsPerTon; i++){
+                                b_num_shots.getSelectedIndex()).getShots();
+                        for (int i = 0; i <= shots; i++){
                             b_num_shots.addItem(i);
                         }
-                        if (currShots <= shotsPerTon){
+                        if (currShots <= shots){
                             b_num_shots.setSelectedItem(currShots);
                         } else {
                             b_num_shots.setSelectedItem(shots);
                         }
 
-                    }}); */
+                    }}); 
 
 
                 int loc;

@@ -246,7 +246,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         }
 
         boolean rearMount = false;
-        int nAmmo = 1;
+        int nAmmo = 0;
         // set up a new weapons bay mount
         Mounted bayMount = null;
         // set up a new bay type
@@ -255,7 +255,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         if (saEquip[0] != null) {
             for (String element : saEquip) {
                 rearMount = false;
-                nAmmo = 1;
+                nAmmo = 0;
                 newBay = false;
                 String equipName = element.trim();
 

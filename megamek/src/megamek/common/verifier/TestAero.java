@@ -414,20 +414,27 @@ public class TestAero extends TestEntity {
         return availSpace;
     }
     
-    public static boolean usesWeaponSlot(EquipmentType eq) {
+    public static boolean usesWeaponSlot(Entity en, EquipmentType eq) {
         if (eq instanceof WeaponType) {
             return !(eq instanceof BayWeapon);
         }
         if (eq instanceof MiscType) {
-            return eq.hasFlag(MiscType.F_BAP)
-                    || eq.hasFlag(MiscType.F_WATCHDOG)
-                    || eq.hasFlag(MiscType.F_ECM)
-                    || eq.hasFlag(MiscType.F_ANGEL_ECM)
-                    || eq.hasFlag(MiscType.F_NAVAL_C3)
-                    || eq.hasFlag(MiscType.F_EW_EQUIPMENT)
-                    || eq.hasFlag(MiscType.F_CHAFF_POD)
+            // Equipment that takes up a slot on fighters and small craft, but not large craft.
+            if (!en.hasETypeFlag(Entity.ETYPE_DROPSHIP) && !en.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                    && (eq.hasFlag(MiscType.F_BAP)
+                            || eq.hasFlag(MiscType.F_WATCHDOG)
+                            || eq.hasFlag(MiscType.F_ECM)
+                            || eq.hasFlag(MiscType.F_ANGEL_ECM)
+                            || eq.hasFlag(MiscType.F_EW_EQUIPMENT)
+                            || eq.hasFlag(MiscType.F_BOOBY_TRAP)
+                            || eq.hasFlag(MiscType.F_SENSOR_DISPENSER))) {
+                return true;
+                
+            }
+            // Equipment that takes a slot on all aerospace units
+            return  eq.hasFlag(MiscType.F_CHAFF_POD)
                     || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
-                    || eq.hasFlag(MiscType.F_SENSOR_DISPENSER)
+                    || eq.hasFlag(MiscType.F_MOBILE_HPG)
                     || eq.hasFlag(MiscType.F_RECON_CAMERA)
                     || eq.hasFlag(MiscType.F_HIRES_IMAGER)
                     || eq.hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)

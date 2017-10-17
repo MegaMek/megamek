@@ -173,7 +173,7 @@ public class TestSmallCraft extends TestAero {
         double weaponTonnage[] = new double[arcs];
 
         for (Mounted m : sc.getEquipment()) {
-            if (usesWeaponSlot(m.getType())) {
+            if (usesWeaponSlot(sc, m.getType())) {
                 int arc = m.getLocation();
                 if (arc < 0) {
                     continue;

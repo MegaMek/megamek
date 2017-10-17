@@ -483,7 +483,7 @@ public class TestSmallCraft extends TestAero {
         double maxArmor = maxArmorWeight(smallCraft);
         if (smallCraft.getLabArmorTonnage() > maxArmor) {
             buff.append("Total armor," + smallCraft.getLabArmorTonnage() + 
-                    " tons, is greater than the maximum: " + maxArmor);
+                    " tons, is greater than the maximum: " + maxArmor + "\n");
             correct = false;
         }
 

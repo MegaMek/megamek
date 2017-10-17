@@ -150,7 +150,7 @@ import megamek.common.weapons.capitalweapons.SubCapCannonWeaponMedium;
 import megamek.common.weapons.capitalweapons.SubCapLaserWeapon1;
 import megamek.common.weapons.capitalweapons.SubCapLaserWeapon2;
 import megamek.common.weapons.capitalweapons.SubCapLaserWeapon3;
-import megamek.common.weapons.capitalweapons.SubCapMantaRayWeapon;
+import megamek.common.weapons.capitalweapons.SubCapMissileMantaRayWeapon;
 import megamek.common.weapons.capitalweapons.SubCapMissilePiranhaWeapon;
 import megamek.common.weapons.capitalweapons.SubCapMissileStingrayWeapon;
 import megamek.common.weapons.capitalweapons.SubCapMissileSwordfishWeapon;
@@ -2081,7 +2081,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapMissilePiranhaWeapon());
         EquipmentType.addType(new SubCapMissileStingrayWeapon());
         EquipmentType.addType(new SubCapMissileSwordfishWeapon());
-        EquipmentType.addType(new SubCapMantaRayWeapon());
+        EquipmentType.addType(new SubCapMissileMantaRayWeapon());
         EquipmentType.addType(new MassDriverHeavy());
         EquipmentType.addType(new MassDriverMedium());
         EquipmentType.addType(new MassDriverLight());

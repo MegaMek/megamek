@@ -60,6 +60,6 @@ public class CLAMS extends AmmoWeapon {
 		        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
 		        .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
-		        .setProductionFactions(F_CSA).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+		        .setProductionFactions(F_CSA).setStaticTechLevel(SimpleTechLevel.STANDARD);
 	}
 }

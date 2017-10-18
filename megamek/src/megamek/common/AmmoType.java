@@ -328,6 +328,11 @@ public class AmmoType extends EquipmentType {
     public static final long M_MINE_CLEARANCE = 1l << 61;
     
     // Numbers 62-63 are used for Nuclear munitions, above 
+    
+    // AR10 Munitions
+    public static final long M_BARRACUDA = 1l << 64;
+    public static final long M_WHITE_SHARK = 1l << 65;
+    public static final long M_KILLER_WHALE = 1l << 66;
       
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -395,7 +400,7 @@ public class AmmoType extends EquipmentType {
                 return false;
             }
         }
-        if (getAmmoType() == T_AR10) {
+        /* if (getAmmoType() == T_AR10) {
             if (hasFlag(F_AR10_BARRACUDA) != ((AmmoType) other)
                     .hasFlag(F_AR10_BARRACUDA)) {
                 return false;
@@ -408,7 +413,7 @@ public class AmmoType extends EquipmentType {
                     .hasFlag(F_AR10_KILLER_WHALE)) {
                 return false;
             }
-        }
+        } */
         return ((getAmmoType() == ((AmmoType) other).getAmmoType()) && (getRackSize() == ((AmmoType) other)
                 .getRackSize()));
     }
@@ -1220,10 +1225,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createKrakenAmmo());
         EquipmentType.addType(AmmoType.createKillerWhaleAmmo());
         EquipmentType.addType(AmmoType.createPeacemakerAmmo());
-        EquipmentType.addType(AmmoType.createCLPeacemakerAmmo());
         EquipmentType.addType(AmmoType.createWhiteSharkAmmo());
         EquipmentType.addType(AmmoType.createSantaAnnaAmmo());
-        EquipmentType.addType(AmmoType.createCLSantaAnnaAmmo());
         EquipmentType.addType(AmmoType.createBarracudaAmmo());        
         EquipmentType.addType(AmmoType.createKillerWhaleTAmmo());
         EquipmentType.addType(AmmoType.createWhiteSharkTAmmo());
@@ -11554,11 +11557,12 @@ public class AmmoType extends EquipmentType {
                 ammo.addLookupName("AR10 Barracuda Ammo");
                 ammo.damagePerShot = 2;
                 ammo.ammoType = AmmoType.T_AR10;
+                ammo.munitionType = AmmoType.M_BARRACUDA;
                 ammo.shots = 1;
                 ammo.tonnage = 30;
                 ammo.bv = 65;
                 ammo.cost = 8000;
-                ammo.flags = ammo.flags.or(F_AR10_BARRACUDA).or(F_CAP_MISSILE);
+                ammo.flags = ammo.flags.or(F_CAP_MISSILE);
                 ammo.toHitModifier = -2;
                 ammo.capital = true;
                 //Set the date TP of these weapons to match the AR10 and the ratings to match the missiles
@@ -11586,11 +11590,12 @@ public class AmmoType extends EquipmentType {
                 ammo.addLookupName("AR10 KillerWhale Ammo");
                 ammo.damagePerShot = 4;
                 ammo.ammoType = AmmoType.T_AR10;
+                ammo.munitionType = AmmoType.M_KILLER_WHALE;
                 ammo.shots = 1;
                 ammo.tonnage = 50;
                 ammo.bv = 96;
                 ammo.cost = 20000;
-                ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_CAP_MISSILE);
+                ammo.flags = ammo.flags.or(F_CAP_MISSILE);
                 ammo.capital = true;
                 //Set the date TP of these weapons to match the AR10 and the ratings to match the missiles
                 ammo.rulesRefs = "210,TM";
@@ -11618,11 +11623,12 @@ public class AmmoType extends EquipmentType {
                 ammo.addLookupName("AR10 WhiteShark Ammo");
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_AR10;
+                ammo.munitionType = AmmoType.M_WHITE_SHARK;
                 ammo.shots = 1;
                 ammo.tonnage = 40;
                 ammo.bv = 72;
                 ammo.cost = 14000;
-                ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_CAP_MISSILE);
+                ammo.flags = ammo.flags.or(F_CAP_MISSILE);
                 ammo.capital = true;
                 //Set the date TP of these weapons to match the AR10 and the ratings to match the missiles
                 ammo.rulesRefs = "210,TM";
@@ -14775,14 +14781,20 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 50;
         ammo.bv = 10000;
         ammo.cost = 40000000;
-        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
+        ammo.flags = ammo.flags.or(F_NUCLEAR)
                 .or(F_CAP_MISSILE).or(F_PEACEMAKER);
         ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+        .setISAdvancement(2540, DATE_NONE, DATE_NONE, 2950, 3051)
+        .setISApproximate(true, false, false, true, true)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_TH)
+        .setReintroductionFactions(F_FS,F_LC);
         return ammo;
     } 
 
@@ -14804,40 +14816,19 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 40000000;
         ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_PEACEMAKER);
         ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+        .setISAdvancement(2220, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_TH)
+        .setReintroductionFactions(F_FS,F_LC);
         return ammo;
-    }
-    
-    private static AmmoType createCLPeacemakerAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Clan Peacemaker Ammo";
-        ammo.setInternalName("Ammo Clan Peacemaker");
-        ammo.addLookupName("CLPeacemaker Ammo");
-        ammo.shortName = "Peacemaker";
-        ammo.subMunitionBegin = 0;
-        ammo.subMunitionLength = ammo.shortName.length();
-        ammo.damagePerShot = 1000;
-        ammo.ammoType = AmmoType.T_KILLER_WHALE;
-        ammo.munitionType = AmmoType.M_PEACEMAKER;
-        ammo.shots = 1;
-        ammo.tonnage = 50;
-        ammo.bv = 10000;
-        ammo.cost = 40000000;
-        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_PEACEMAKER);
-        ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_C)
-            .setClanAdvancement(DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-
-        return ammo;
-    }   
+    } 
 
     private static AmmoType createAR10SantaAnnaAmmo() {
         AmmoType ammo = new AmmoType();
@@ -14855,14 +14846,20 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 40;
         ammo.bv = 1000;
         ammo.cost = 15000000;
-        ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_NUCLEAR)
+        ammo.flags = ammo.flags.or(F_NUCLEAR)
                 .or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+        .setISAdvancement(2540, DATE_NONE, DATE_NONE, 2950, 3051)
+        .setISApproximate(true, false, false, true, true)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_TH)
+        .setReintroductionFactions(F_FS,F_LC);
         return ammo;
     } 
 
@@ -14884,41 +14881,18 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 15000000;
         ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+        .setISAdvancement(2300, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_TH);
         return ammo;
     }
-    
-    private static AmmoType createCLSantaAnnaAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Clan Santa Anna Ammo";
-        ammo.setInternalName("Ammo Clan Santa Anna");
-        ammo.addLookupName("CLSantaAnna Ammo");
-        ammo.shortName = "Santa Anna";
-        ammo.subMunitionBegin = 0;
-        ammo.subMunitionLength = ammo.shortName.length();
-        ammo.damagePerShot = 100;
-        ammo.ammoType = AmmoType.T_WHITE_SHARK;
-        ammo.munitionType = AmmoType.M_SANTA_ANNA;
-        ammo.shots = 1;
-        ammo.tonnage = 40;
-        ammo.bv = 1000;
-        ammo.cost = 15000000;
-        ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_SANTA_ANNA);
-        ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_C)
-            .setClanAdvancement(DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-
-        return ammo;
-    }
-
 
     private static AmmoType createAlamoAmmo() {
         AmmoType ammo = new AmmoType();
@@ -14934,10 +14908,16 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000000;
         ammo.flags = ammo.flags.or(F_NUCLEAR);
         ammo.capital = true;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(DATE_NONE, DATE_NONE, 3067)
-            .setTechRating(RATING_C).setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+        .setISAdvancement(2200, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_TH);
         return ammo;
     }
 

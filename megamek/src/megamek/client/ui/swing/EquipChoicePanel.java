@@ -120,9 +120,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
     private JPanel panMines = new JPanel();
     
-    private ArrayList<CapMissileChoicePanel> m_vCapMissile = new ArrayList<CapMissileChoicePanel>();
-    private JPanel panCapMissile = new JPanel();
-
     private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<SantaAnnaChoicePanel>();
     private JPanel panSantaAnna = new JPanel();
 
@@ -371,10 +368,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // update mines setting
         for (final Object newVar : m_vMines) {
             ((MineChoicePanel) newVar).applyChoice();
-        }
-        // update Capital Missile setting
-        for (final Object newVar : m_vCapMissile) {
-            ((CapMissileChoicePanel) newVar).applyChoice();
         }
         // update Santa Anna setting
         for (final Object newVar : m_vSantaAnna) {
@@ -684,6 +677,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         && !(entity instanceof Protomech)) {
                     continue;
                 }
+                
+                // Can't use Nuclear munitions unless the option is on
+                if (atCheck.hasFlag(AmmoType.F_NUCLEAR) &&
+                        !(gameOpts.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES))) {
+                    continue;
+                }
 
                 // When dealing with machine guns, Protos can only
                 // use proto-specific machine gun ammo
@@ -695,13 +694,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 // Battle Armor ammo can't be selected at all.
                 // All other ammo types need to match on rack size and tech.
-                if (bTechMatch
+                // AR10 ammo is a little different as the missiles have different weights.
+                if ((bTechMatch
                         && (atCheck.getRackSize() == at.getRackSize())
                         && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
                                 .hasFlag(AmmoType.F_BATTLEARMOR))
                         && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
                                 .hasFlag(AmmoType.F_ENCUMBERING))
-                        && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                        && (atCheck.getTonnage(entity) == at.getTonnage(entity)))
+                    || (bTechMatch 
+                        && ((atCheck.getAmmoType() == AmmoType.T_AR10) == (at.getAmmoType() == AmmoType.T_AR10)))) {
                     vTypes.add(atCheck);
                 }
             }
@@ -1100,6 +1102,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
                 add(lLoc, GBC.std());
+                if (curType.getAmmoType() == AmmoType.T_AR10) {    
+                    double magazineSize = curType.getTonnage() * m.getBaseShotsLeft();
+                    double magazineUse = curType.getTonnage() * m.getCurrentShots();
+                    String Desc = " " + magazineUse + " / " + magazineSize + "tons left ";
+                    JLabel lMag = new JLabel(Desc);
+                    add (lMag, GBC.std());
+                }
                 if (aeroShotsOnly) {
                 add(labAeroMunitionType, GBC.std());
                 } else {
@@ -1183,182 +1192,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
         }
         
-        class CapMissileChoicePanel extends JPanel {
-
-            private static final long serialVersionUID = 3401126035583995327L;
-
-            private ArrayList<AmmoType> m_vTypes;
-
-            private JLabel barracuda = new JLabel ("Barracuda Missiles: ");
-            private JLabel whiteshark = new JLabel ("White Shark Missiles: ");
-            private JLabel killerwhale = new JLabel ("Killer Whale Missiles: ");
-            private JLabel santaanna = new JLabel ("Santa Anna Missiles: ");
-            private JLabel peacemaker = new JLabel ("Peacemaker Missiles: ");
-
-            @SuppressWarnings("rawtypes")
-            private JComboBox b_num_shots;
-            private JComboBox w_num_shots;
-            private JComboBox k_num_shots;
-            private JComboBox s_num_shots;
-            private JComboBox p_num_shots;
-
-            private Mounted m_mounted;
-
-            JLabel labDump = new JLabel(
-                    Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
-
-            JCheckBox chDump = new JCheckBox();
-                       
-            @SuppressWarnings("unchecked")
-            CapMissileChoicePanel(Mounted m) {
-                m_mounted = m;
-                AmmoType curType = (AmmoType) m.getType();
-                b_num_shots = new JComboBox<String>();
-                w_num_shots = new JComboBox<String>();
-                k_num_shots = new JComboBox<String>();
-                s_num_shots = new JComboBox<String>();
-                p_num_shots = new JComboBox<String>();
-                if (m.getType().getName() == "Barracuda Ammo") {
-                    barracuda.setVisible(true);
-                    whiteshark.setVisible(false);
-                    killerwhale.setVisible(false);
-                    santaanna.setVisible(false);
-                    peacemaker.setVisible(false);
-                    b_num_shots.setVisible(true);
-                    w_num_shots.setVisible(false);
-                    k_num_shots.setVisible(false);
-                    s_num_shots.setVisible(false);
-                    p_num_shots.setVisible(false);
-                } else if (m.getType().getName() == "White Shark Ammo") {                    
-                    whiteshark.setVisible(true);
-                    santaanna.setVisible(true);
-                    barracuda.setVisible(false);
-                    killerwhale.setVisible(false);                   
-                    peacemaker.setVisible(false);
-                    w_num_shots.setVisible(true);
-                    s_num_shots.setVisible(true);
-                    b_num_shots.setVisible(false);
-                    k_num_shots.setVisible(false);
-                    p_num_shots.setVisible(false);
-                } else if (m.getType().getName() == "Killer Whale Ammo") {                    
-                    killerwhale.setVisible(true);                   
-                    peacemaker.setVisible(true);
-                    whiteshark.setVisible(false);
-                    santaanna.setVisible(false);
-                    barracuda.setVisible(false);
-                    k_num_shots.setVisible(true);
-                    p_num_shots.setVisible(true);
-                    b_num_shots.setVisible(false);
-                    w_num_shots.setVisible(false);
-                    s_num_shots.setVisible(false);
-                } else if ((m.getType().getName() == "AR10 Barracuda Ammo")
-                        || (m.getType().getName() == "AR10 White Shark Ammo")
-                        || (m.getType().getName() == "AR10 Killer Whale Ammo")) {                    
-                    killerwhale.setVisible(true);                   
-                    peacemaker.setVisible(true);
-                    whiteshark.setVisible(true);
-                    santaanna.setVisible(true);
-                    barracuda.setVisible(true);
-                    k_num_shots.setVisible(true);
-                    p_num_shots.setVisible(true);
-                    b_num_shots.setVisible(true);
-                    w_num_shots.setVisible(true);
-                    s_num_shots.setVisible(true);
-                }
-
-                int shots = m.getBaseShotsLeft();
-                int magazineSize = (int) (curType.getTonnage() * shots);
-                int stepSize = 1;
-                
-                for (int i = 0; i <= shots; i += stepSize){
-                    b_num_shots.addItem(i);
-                }
-                b_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
-
-                b_num_shots.addItemListener(new ItemListener(){
-                @Override
-                public void itemStateChanged(ItemEvent evt) {
-                        int currShots = (Integer)b_num_shots.getSelectedItem();
-                        b_num_shots.removeAllItems();
-                        int shots = m_vTypes.get(
-                                b_num_shots.getSelectedIndex()).getShots();
-                        for (int i = 0; i <= shots; i++){
-                            b_num_shots.addItem(i);
-                        }
-                        if (currShots <= shots){
-                            b_num_shots.setSelectedItem(currShots);
-                        } else {
-                            b_num_shots.setSelectedItem(shots);
-                        }
-
-                    }}); 
-
-
-                int loc;
-                if (m.getLocation() == Entity.LOC_NONE) {
-                    // oneshot weapons don't have a location of their own
-                    Mounted linkedBy = m.getLinkedBy();
-                    loc = linkedBy.getLocation();
-                } else {
-                    loc = m.getLocation();
-                }
-                
-                String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
-                JLabel lLoc = new JLabel(sDesc);
-                GridBagLayout g = new GridBagLayout();
-                setLayout(g);
-                add(lLoc, GBC.std());
-                add(b_num_shots, GBC.eol());
-                //add(w_num_shots, GBC.eol());
-                //add(k_num_shots, GBC.eol());
-                //add(s_num_shots, GBC.eol());
-                //add(p_num_shots, GBC.eol());
-                if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
-                    add(labDump, GBC.std());
-                    add(chDump, GBC.eol());
-                } 
-            }
-
-            public void applyChoice() {
-                int n = 0;
-                // If there's no selection, there's nothing we can do
-                if (n == -1) {
-                    return;
-                }
-                AmmoType at = m_vTypes.get(n);
-                m_mounted.changeAmmoType(at);
-                m_mounted.setShotsLeft((Integer)b_num_shots.getSelectedItem());
-                if (chDump.isSelected()) {
-                    m_mounted.setShotsLeft(0);
-                }
-            }
-
-            @Override
-            public void setEnabled(boolean enabled) {
-                b_num_shots.setEnabled(enabled);
-            }
-
-            /**
-             * Get the number of shots in the mount.
-             *
-             * @return the <code>int</code> number of shots in the mount.
-             */
-            int getShotsLeft() {
-                return m_mounted.getBaseShotsLeft();
-            }
-
-            /**
-             * Set the number of shots in the mount.
-             *
-             * @param shots
-             *            the <code>int</code> number of shots for the mount.
-             */
-            void setShotsLeft(int shots) {
-                m_mounted.setShotsLeft(shots);
-            }
-        } 
-
         // a choice panel for determining number of santa anna warheads
         class SantaAnnaChoicePanel extends JPanel {
             /**

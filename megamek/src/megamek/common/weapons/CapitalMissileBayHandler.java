@@ -83,13 +83,13 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
                 AmmoType atype = (AmmoType) bayWAmmo.getType();
                 if (bayWType.getAtClass() == (20)
-                		&& atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                		&& atype.getMunitionType() == AmmoType.M_KILLER_WHALE) {
                 	weaponarmor = 40;
                 } else if (bayWType.getAtClass() == (20)
-                		&& atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                		&& atype.getMunitionType() == AmmoType.M_WHITE_SHARK) {
                 	weaponarmor = 30;
                 } else if (bayWType.getAtClass() == (20)
-                		&& atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                		&& atype.getMunitionType() == AmmoType.M_BARRACUDA) {
                 	weaponarmor = 20;
                 } else {
                 weaponarmor = bayWType.getMissileArmor();
@@ -190,12 +190,12 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 0;
         }
         if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
-                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                || atype.getMunitionType() == AmmoType.M_WHITE_SHARK
                 // Santa Anna, per IO rules
                 || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
-                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                || atype.getMunitionType() == AmmoType.M_KILLER_WHALE
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY
                 || atype.getAmmoType() == AmmoType.T_ALAMO) {
             return 10;
@@ -216,11 +216,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             WeaponType bayWType, int range, int wId) {
         //AR10 munitions
     	if (atype.getAmmoType() == AmmoType.T_AR10) {
-            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+            if (atype.getMunitionType() == AmmoType.M_KILLER_WHALE) {
                 current_av = 4;
-            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+            } else if (atype.getMunitionType() == AmmoType.M_WHITE_SHARK) {
                 current_av = 3;
-            } else {
+            } else if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+                current_av = 1000;
+            }else if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+                current_av = 100;
+            }else {
                 current_av = 2;
             }
         }

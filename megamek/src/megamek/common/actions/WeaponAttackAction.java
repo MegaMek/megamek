@@ -932,7 +932,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         Mounted bammo = bweap.getLinked();
                         if (bammo != null) {
                             AmmoType batype = (AmmoType) bammo.getType();
-                            if (!batype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                            if (!(batype.getMunitionType() == AmmoType.M_BARRACUDA)) {
                                 onlyBarracuda = false;
                             }
                         }

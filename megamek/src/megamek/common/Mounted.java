@@ -196,11 +196,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         this.type = type;
         typeName = type.getInternalName();
 
-        if ((type instanceof AmmoType)
-                && (type.hasFlag(AmmoType.F_SANTA_ANNA)
-                        || (type.hasFlag(AmmoType.F_PEACEMAKER)))) {
-            shotsLeft = 0;
-        } else if (type instanceof AmmoType) {
+        if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType) type).getShots();
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
@@ -1441,11 +1437,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             // AR10's have heat based upon the loaded missile
             if (wtype.getName().equals("AR10")){
                 AmmoType ammoType = (AmmoType)getLinked().getType();
-                if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)){
+                if (ammoType.getMunitionType() == AmmoType.M_BARRACUDA){
                     return 10;
-                }else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)){
+                }else if (ammoType.getMunitionType() ==AmmoType.M_WHITE_SHARK){
                     return 15;
-                } else { // AmmoType.F_AR10_KILLER_WHALTE
+                } else { // AmmoType.getMunitionType() == AmmoType.M_KILLER_WHALE
                     return 20;
                 }
             }

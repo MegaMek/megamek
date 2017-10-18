@@ -89,6 +89,10 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
         }
 
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+        }
+
         if (dataFile.exists("battlearmor")) {
             a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
         }

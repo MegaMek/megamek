@@ -86,6 +86,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
         }
 
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+        }
+
         if (dataFile.exists("passengers")) {
             a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
         }

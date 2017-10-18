@@ -797,6 +797,7 @@ public class BLKFile {
             SmallCraft sc = (SmallCraft) t;
             blk.writeBlockData("crew", sc.getNCrew());
             blk.writeBlockData("officers", sc.getNOfficers());
+            blk.writeBlockData("gunners", sc.getNGunners());
             blk.writeBlockData("passengers", sc.getNPassenger());
             blk.writeBlockData("marines", sc.getNMarines());
             blk.writeBlockData("battlearmor", sc.getNBattleArmor());

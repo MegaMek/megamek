@@ -17,7 +17,6 @@ package megamek.common;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.verifier.TestSmallCraft;
 
 /**
  * @author Jay Lawson
@@ -37,6 +36,7 @@ public class SmallCraft extends Aero {
     private int nCrew = 0;
     private int nPassenger = 0;
     private int nOfficers = 0;
+    private int nGunners = 0;
     private int nBattleArmor = 0;
     private int nMarines = 0;
     private int nOtherPassenger = 0;
@@ -92,6 +92,10 @@ public class SmallCraft extends Aero {
         nOfficers = officer;
     }
     
+    public void setNGunners(int gunners) {
+        nGunners = gunners;
+    }
+    
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -125,7 +129,7 @@ public class SmallCraft extends Aero {
     
     @Override
     public int getNGunners() {
-        return TestSmallCraft.requiredGunners(this);
+        return nGunners;
     }
     
     @Override

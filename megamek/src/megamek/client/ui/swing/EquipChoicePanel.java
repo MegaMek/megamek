@@ -1042,10 +1042,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = 0;
+                int magazineSize = 0;
+                int magazineLoadout = 0;
                 if (entity.usesWeaponBays()) {
                     shotsPerTon = m.getBaseShotsLeft();
                 } else {
                     shotsPerTon = curType.getShots();
+                }
+                if (curType.getAmmoType() == AmmoType.T_AR10) {
+                    magazineSize = (int) curType.getTonnage() * m.getOriginalShots();
+                    magazineLoadout = (int) curType.getTonnage() * m.getBaseShotsLeft();
                 }
                 JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
                 // BattleArmor always have a certain number of shots per slot
@@ -1067,21 +1073,37 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
                         int currShots = (Integer)m_num_shots.getSelectedItem();
+                        int magazineSize = (int) curType.getTonnage() * m.getOriginalShots();
+                        int shots = 0;
                         m_num_shots.removeAllItems();
+                        if (curType.getAmmoType() == AmmoType.T_AR10) {
+                            shots = magazineSize / (int) m_vTypes.get(
+                                m_choice.getSelectedIndex()).getTonnage();
+                        }
                         int shotsPerTon = m_vTypes.get(
                                 m_choice.getSelectedIndex()).getShots();
+                        
                         // BA always have a certain number of shots per slot
                         if (entity instanceof BattleArmor){
                             shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                         }
-                        for (int i = 0; i <= shotsPerTon; i++){
-                            m_num_shots.addItem(i);
-                        }
-                        if (currShots <= shotsPerTon){
-                            m_num_shots.setSelectedItem(currShots);
+                        if (curType.getAmmoType() == AmmoType.T_AR10) {
+                            for (int i = 0; i <= shots; i++){
+                                m_num_shots.addItem(i);                                
+                            }
+                            m_num_shots.setSelectedItem(shots);
                         } else {
-                            m_num_shots.setSelectedItem(shotsPerTon);
+                            for (int i = 0; i <= shotsPerTon; i++){
+                                m_num_shots.addItem(i);
+                            }
+                            if (currShots <= shotsPerTon){
+                                m_num_shots.setSelectedItem(currShots);
+                            } else {
+                                m_num_shots.setSelectedItem(shotsPerTon);
+                            }
                         }
+                        
+                            
 
                     }});
 
@@ -1103,9 +1125,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 setLayout(g);
                 add(lLoc, GBC.std());
                 if (curType.getAmmoType() == AmmoType.T_AR10) {    
-                    double magazineSize = curType.getTonnage() * m.getBaseShotsLeft();
-                    double magazineUse = curType.getTonnage() * m.getCurrentShots();
-                    String Desc = " " + magazineUse + " / " + magazineSize + "tons left ";
+                    String Desc =  (magazineSize - magazineLoadout) + " " + " / " + magazineSize + " tons left ";
                     JLabel lMag = new JLabel(Desc);
                     add (lMag, GBC.std());
                 }

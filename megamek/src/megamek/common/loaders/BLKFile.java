@@ -467,7 +467,11 @@ public class BLKFile {
 
         if (!(t instanceof Infantry)) {
             if (t instanceof Aero){
-                blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                if (t.isFighter()) {
+                    blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                } else if ((t instanceof Dropship) && ((Aero)t).isPrimitive()) {
+                    blk.writeBlockData("collartype", ((Dropship)t).getCollarType());
+                }
                 blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
                 blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
                 if (((Aero)t).getPodHeatSinks() > 0) {

@@ -139,6 +139,9 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         }
         a.set0SI(dataFile.getDataAsInt("structural_integrity")[0]);
 
+        if (dataFile.exists("collartype")) {
+            a.setCollarType(dataFile.getDataAsInt("collartype")[0]);
+        }
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find heatsink block.");

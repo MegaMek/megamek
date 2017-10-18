@@ -53,7 +53,7 @@ public class TestSmallCraft extends TestAero {
         FERRO_PROTO(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false),        
         HEAVY_FERRO_ALUM(EquipmentType.T_ARMOR_HEAVY_ALUM, false),
         LIGHT_FERRO_ALUM(EquipmentType.T_ARMOR_LIGHT_ALUM, false),
-        PRIMITIVE(EquipmentType.T_ARMOR_LC_PRIMITIVE_AERO, false);        
+        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false);        
 
         /**
          * The type, corresponding to types defined in 

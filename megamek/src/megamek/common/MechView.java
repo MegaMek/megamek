@@ -377,6 +377,10 @@ public class MechView {
         					+ ((Warship) entity).getStrategicFuelUse());
         }
         
+        if (isDropship && ((Dropship) entity).isPrimitive()) {
+            sBasic.append(Messages.getString("MechView.DropshipCollar") //$NON-NLS-1$
+                    + Dropship.getCollarName(((Dropship)entity).getCollarType())); //$NON-NLS-1$
+        }
 
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {

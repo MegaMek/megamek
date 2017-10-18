@@ -34,28 +34,24 @@ public class Dropship extends SmallCraft {
      *
      */
     private static final long serialVersionUID = 1528728632696989565L;
-
-    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
-            .setISApproximate(false, true, false, false)
-            .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
-    @Override
-    public TechAdvancement getConstructionTechAdvancement() {
-        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
-    }
+    /**
+     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
+     * 
+     */
+    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_PROTOTYPE = 1;
+    public static final int COLLAR_NO_BOOM   = 2;
+    
+    private static final String[] COLLAR_NAMES = {
+            "KF-Boom", "Prototype KF-Boom", "No Boom"
+    };
     
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
     private boolean kfBoomDamaged = false;
+    private int collarType = COLLAR_STANDARD;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -67,6 +63,29 @@ public class Dropship extends SmallCraft {
     
     public boolean isKFBoomDamaged() {
         return kfBoomDamaged;
+    }
+    
+    public int getCollarType() {
+        return collarType;
+    }
+    
+    public void setCollarType(int collarType) {
+        this.collarType = collarType;
+    }
+    
+    public String getCollarName() {
+        return COLLAR_NAMES[collarType];
+    }
+    
+    public static String getCollarName(int type) {
+        return COLLAR_NAMES[type];
+    }
+    
+    public static TechAdvancement getCollarTA() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2458, 2470, 2500)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public String getCritDamageString() {
@@ -234,7 +253,7 @@ public class Dropship extends SmallCraft {
     @Override
     public double getStrategicFuelUse() {
         double fuelUse = 1.84; // default for military designs and civilian < 1000
-        if (getDesignType() == CIVILIAN) {
+        if ((getDesignType() == CIVILIAN) || isPrimitive()) {
             if (getWeight() >= 70000) {
                 fuelUse = 8.83;
             } else if (getWeight() >= 50000) {
@@ -277,6 +296,31 @@ public class Dropship extends SmallCraft {
         }
     }
 
+    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+            .setISApproximate(false, true, false, false)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        if (collarType != COLLAR_NO_BOOM) {
+            ctl.addComponent(getCollarTA());
+        }
+    }
+    
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -306,7 +350,11 @@ public class Dropship extends SmallCraft {
         // Landing Gear
         costs[costIdx++] += 10 * getWeight();
         // Docking Collar
-        costs[costIdx++] += 10000;
+        if (collarType == COLLAR_STANDARD) {
+            costs[costIdx++] += 10000;
+        } else if (collarType == COLLAR_PROTOTYPE) {
+            costs[costIdx++] += 1010000;
+        }
 
         // Engine
         double engineMultiplier = 0.065;
@@ -1758,11 +1806,6 @@ public class Dropship extends SmallCraft {
         } else {
             return super.rollHitLocation(table, side);
         }
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE;
     }
 
     @Override

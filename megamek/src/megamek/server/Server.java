@@ -8816,6 +8816,9 @@ public class Server implements Runnable {
                 if (entity.getPartialRepairs().booleanOption("aero_collar_crit")) {
                 	rollTarget.addModifier(2, "misrepaired docking collar");
                 }
+                if (isDS && (((Dropship)entity).getCollarType() == Dropship.COLLAR_PROTOTYPE)) {
+                    rollTarget.addModifier(2, "prototype kf-boom");
+                }
                 int ctrlroll = Compute.d6(2);
                 if (isDS) {
                     r = new Report(9388);
@@ -26219,12 +26222,12 @@ public class Server implements Runnable {
             case Aero.CRIT_KF_BOOM:
                 // KF boom hit
                 // no real effect yet
-            	if (aero instanceof Dropship) {
-            		((Dropship)aero).setDamageKFBoom(true);
-                r = new Report(9180);
-                r.subject = aero.getId();
-                reports.add(r);
-            	}
+                if (aero instanceof Dropship) {
+                    ((Dropship)aero).setDamageKFBoom(true);
+                    r = new Report(9180);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
                 break;
             case Aero.CRIT_CIC:
                 if (js == null) {

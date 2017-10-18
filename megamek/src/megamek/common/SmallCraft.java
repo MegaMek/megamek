@@ -60,7 +60,7 @@ public class SmallCraft extends Aero {
             .setISApproximate(false, true, false, false)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -71,6 +71,11 @@ public class SmallCraft extends Aero {
         }
     }
     
+    @Override
+    public boolean isPrimitive() {
+        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
+    }
+
     public void setDesignType(int design) {
         designType = design;
     }
@@ -309,6 +314,11 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 12:
                     setPotCrit(CRIT_KF_BOOM);
+                    // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
+                    if ((this instanceof Dropship)
+                            && (((Dropship)this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
+                        setPotCrit(CRIT_AVIONICS);
+                    }
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {

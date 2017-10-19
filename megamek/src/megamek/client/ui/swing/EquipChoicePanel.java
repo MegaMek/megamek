@@ -995,20 +995,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 Iterator<AmmoType> e = m_vTypes.iterator();
                 if (aeroShotsOnly) {
                     m_choice.setVisible(false);
-                } else {
-                    for (int x = 0; e.hasNext(); x++) {
+                }
+                for (int x = 0; e.hasNext(); x++) {
                     AmmoType at = e.next();
                     m_choice.addItem(at.getName());
-                        if (at.getInternalName() == curType.getInternalName()) {
+                    if (at.getInternalName() == curType.getInternalName()) {
                         m_choice.setSelectedIndex(x);
-                        }
                     }
                 }
+                
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = 0;
                 int magazineSize = 0;
                 int magazineLoadout = 0;
-                if (entity.usesWeaponBays()) {
+                if (m.byShot()) {
                     shotsPerTon = m.getOriginalShots();                
                 } else {
                     shotsPerTon = curType.getShots();
@@ -1132,9 +1132,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
-                if (m_choice.isVisible() == false) {
-                    n = 0;
-                } 
+
                 // If there's no selection, there's nothing we can do
                 if (n == -1) {
                     return;

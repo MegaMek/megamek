@@ -808,8 +808,8 @@ public class BombType extends AmmoType {
 		bomb.ammoType = AmmoType.T_ALAMO;
 		bomb.bombType = BombType.B_ALAMO;
 		bomb.shots = 1;
-		bomb.bv = 0;
-		bomb.cost = 0;
+		bomb.bv = 100;
+		bomb.cost = 1000000;
 		bomb.flags = bomb.flags.or(F_NUCLEAR).or(AmmoType.F_OTHER_BOMB);
 		bomb.capital = true;
 		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS).setTechRating(RATING_E)

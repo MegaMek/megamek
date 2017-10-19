@@ -1045,13 +1045,15 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 int magazineSize = 0;
                 int magazineLoadout = 0;
                 if (entity.usesWeaponBays()) {
-                    shotsPerTon = m.getOriginalShots();
+                    shotsPerTon = m.getOriginalShots();                
                 } else {
                     shotsPerTon = curType.getShots();
                 }
                 if (curType.getAmmoType() == AmmoType.T_AR10) {
-                    magazineSize = (int) curType.getTonnage() * m.getOriginalShots();
+                    magazineSize = (int) m.getOriginalAmmoTons() * m.getOriginalShots();
                     magazineLoadout = (int) curType.getTonnage() * m.getBaseShotsLeft();
+                    shotsPerTon = magazineSize / (int) m_vTypes.get(
+                            m_choice.getSelectedIndex()).getTonnage();
                 }
                 JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
                 // BattleArmor always have a certain number of shots per slot
@@ -1073,21 +1075,27 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
                         int currShots = (Integer)m_num_shots.getSelectedItem();
-                        int magazineSize = (int) curType.getTonnage() * m.getOriginalShots();
+                        int magazineSize = (int) m.getOriginalAmmoTons() * m.getOriginalShots();
                         int shots = 0;
+                        int shotsPerTon = 0;
                         m_num_shots.removeAllItems();
                         if (curType.getAmmoType() == AmmoType.T_AR10) {
                             shots = magazineSize / (int) m_vTypes.get(
                                 m_choice.getSelectedIndex()).getTonnage();
-                        }
-                        int shotsPerTon = m_vTypes.get(
+                        } else if ((curType.getAmmoType() == AmmoType.T_KILLER_WHALE)
+                                    || (curType.getAmmoType() == AmmoType.T_WHITE_SHARK)) {
+                            shots = m.getOriginalShots();
+                        } else {
+                            shotsPerTon = m_vTypes.get(
                                 m_choice.getSelectedIndex()).getShots();
-                        
+                        }
                         // BA always have a certain number of shots per slot
                         if (entity instanceof BattleArmor){
                             shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                         }
-                        if (curType.getAmmoType() == AmmoType.T_AR10) {
+                        if ((curType.getAmmoType() == AmmoType.T_AR10)
+                                || (curType.getAmmoType() == AmmoType.T_KILLER_WHALE)
+                                || (curType.getAmmoType() == AmmoType.T_WHITE_SHARK)){    
                             for (int i = 0; i <= shots; i++){
                                 m_num_shots.addItem(i);                                
                             }

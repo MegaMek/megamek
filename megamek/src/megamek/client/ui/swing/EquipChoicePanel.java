@@ -1045,7 +1045,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 int magazineSize = 0;
                 int magazineLoadout = 0;
                 if (entity.usesWeaponBays()) {
-                    shotsPerTon = m.getBaseShotsLeft();
+                    shotsPerTon = m.getOriginalShots();
                 } else {
                     shotsPerTon = curType.getShots();
                 }
@@ -1091,7 +1091,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             for (int i = 0; i <= shots; i++){
                                 m_num_shots.addItem(i);                                
                             }
-                            m_num_shots.setSelectedItem(shots);
+                            if (currShots <= shots){
+                                m_num_shots.setSelectedItem(currShots);
+                            } else {
+                                m_num_shots.setSelectedItem(shots);
+                            }
                         } else {
                             for (int i = 0; i <= shotsPerTon; i++){
                                 m_num_shots.addItem(i);
@@ -1130,9 +1134,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     add (lMag, GBC.std());
                 }
                 if (aeroShotsOnly) {
-                add(labAeroMunitionType, GBC.std());
+                    add(labAeroMunitionType, GBC.std());
                 } else {
-                add(m_choice, GBC.std());
+                    add(m_choice, GBC.std());
                 }
                 add(m_num_shots, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
@@ -1155,12 +1159,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             public void applyChoice() {
-                int n;
-                if (aeroShotsOnly) {
+                int n = m_choice.getSelectedIndex();
+                if (m_choice.isVisible() == false) {
                     n = 0;
-                } else {
-                    n = m_choice.getSelectedIndex();
-                }
+                } 
                 // If there's no selection, there's nothing we can do
                 if (n == -1) {
                     return;

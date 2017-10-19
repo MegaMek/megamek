@@ -45,13 +45,11 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -119,9 +117,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
     private JPanel panMines = new JPanel();
-    
-    private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<SantaAnnaChoicePanel>();
-    private JPanel panSantaAnna = new JPanel();
 
     private BombChoicePanel m_bombs;
     private JPanel panBombs = new JPanel();
@@ -272,15 +267,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // set up Santa Annas if using nukes
-        if (((entity instanceof Dropship) || (entity instanceof Jumpship))
-                && clientgui.getClient().getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVAERORULES_AT2_NUKES)) { //$NON-NLS-1$
-            setupSantaAnna();
-            add(panSantaAnna,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
-        }
-
         if (entity.isBomber()) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -368,10 +354,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // update mines setting
         for (final Object newVar : m_vMines) {
             ((MineChoicePanel) newVar).applyChoice();
-        }
-        // update Santa Anna setting
-        for (final Object newVar : m_vSantaAnna) {
-            ((SantaAnnaChoicePanel) newVar).applyChoice();
         }
         // update bomb setting
         if (null != m_bombs) {
@@ -462,24 +444,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             gbl.setConstraints(mcp, gbc);
             panMines.add(mcp);
             m_vMines.add(mcp);
-        }
-    }
-
-    private void setupSantaAnna() {
-        GridBagLayout gbl = new GridBagLayout();
-        panSantaAnna.setLayout(gbl);
-        for (Mounted m : entity.getAmmo()) {
-            AmmoType at = (AmmoType) m.getType();
-            // Santa Annas?
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    OptionsConstants.ADVAERORULES_AT2_NUKES)
-                    && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
-                            .getAmmoType() == AmmoType.T_AR10) && at
-                            .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
-                SantaAnnaChoicePanel sacp = new SantaAnnaChoicePanel(m);
-                panSantaAnna.add(sacp, GBC.eol());
-                m_vSantaAnna.add(sacp);
-            }
         }
     }
     

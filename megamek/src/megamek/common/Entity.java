@@ -3389,6 +3389,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
+            AmmoType atype = (AmmoType) mounted.getType();
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                mounted.setOriginalAmmoTons(atype.getTonnage());
+            } 
         }
 
         addEquipment(mounted, loc, rearMounted);

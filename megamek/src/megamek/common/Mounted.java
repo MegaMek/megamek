@@ -96,6 +96,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
+    
+    //For AR10 magazines, we need to store the original ammo tonnage
+    private double originalAmmoTons;
 
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
@@ -1720,6 +1723,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setOriginalShots(int shots) {
         originalShots = shots;
+    }
+    
+    public double getOriginalAmmoTons() {
+        return originalAmmoTons;
+    }
+    
+    public void setOriginalAmmoTons(double atons) {
+        originalAmmoTons = atons;
     }
 
     public boolean isModeSwitchable() {

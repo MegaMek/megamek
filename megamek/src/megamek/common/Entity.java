@@ -3405,6 +3405,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
+        
         compositeTechLevel.addComponent(mounted.getType());
         if (mounted.isArmored()) {
             compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
@@ -12490,7 +12491,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .hasMoreElements(); ) {
                 IOption quirk = j.nextElement();
 
-                if (quirk.booleanValue()) {
+                if (quirk != null && quirk.booleanValue()) {
                     count++;
                 }
             }
@@ -12582,7 +12583,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements(); ) {
                 IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
+                if (quirk != null && quirk.booleanValue()) {
                     if (qrk.length() > 0) {
                         qrk.append(sep);
                     }

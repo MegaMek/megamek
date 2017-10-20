@@ -708,7 +708,7 @@ public class TestAero extends TestEntity {
     public String printWeightMisc() {
         double weight = getWeightMisc();
         if (weight > 0){
-            return "VSTOL equipment: " + weight;
+            return "VSTOL equipment: " + weight + "\n";
         }
         return "";
     }
@@ -1256,6 +1256,28 @@ public class TestAero extends TestEntity {
         return buff.toString();
     }
     
+    public double getWeightQuarters() {
+        double quartersWeight = 0;
+        for (Bay bay : getEntity().getTransportBays()) {
+            if (bay.isQuarters()) {
+                quartersWeight += bay.getWeight();
+            }
+        }
+        return quartersWeight;
+    }
+
+    public String printWeightQuarters() {
+        double weight = 0.0;
+        for (Bay bay : aero.getTransportBays()) {
+            if (bay.isQuarters()) {
+                weight += bay.getWeight();
+            }
+        }
+        if (weight > 0) {
+            return StringUtil.makeLength("Crew quarters: ", getPrintSize() - 5) + weight + "\n";
+        }
+        return "";
+    }
 
     @Override
     public String getName() {

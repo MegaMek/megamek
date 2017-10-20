@@ -581,7 +581,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             buff.append(StringUtil.makeLength(mt.getName(), 20));
-            buff.append(
+            buff.append(" ").append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(mt
@@ -1265,7 +1265,9 @@ public abstract class TestEntity implements TestEntityOption {
         double carryingSpace = getEntity().getTroopCarryingSpace();
         double cargoWeight = 0;
         for (Bay bay : getEntity().getTransportBays()) {
-            cargoWeight += bay.getWeight();
+            if (!bay.isQuarters()) {
+                cargoWeight += bay.getWeight();
+            }
         }
         return carryingSpace + cargoWeight;
     }

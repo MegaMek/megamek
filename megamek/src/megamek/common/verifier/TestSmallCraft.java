@@ -392,6 +392,11 @@ public class TestSmallCraft extends TestAero {
                 smallCraft.getOriginalBuildYear());
     }
     
+    public String printWeightEngine() {
+        return StringUtil.makeLength("Engine: ", getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightEngine()) + "\n";
+    }
+
     public double getWeightFuel() {
         // Add 2% for pumps and round up to the half ton
         return ceil(smallCraft.getFuelTonnage() * 1.02, Ceil.HALFTON);
@@ -436,6 +441,54 @@ public class TestSmallCraft extends TestAero {
         // 2-ton launch mechanism
         weight += (smallCraft.getLifeBoats() + smallCraft.getEscapePods()) * 7;
         return weight;
+    }
+
+    @Override
+    public String printWeightMisc() {
+        double weight = getWeightMisc();
+        if (weight > 0){
+            return StringUtil.makeLength(
+                    "Escape pods/Life boats: ", getPrintSize() - 5) + weight + "\n";
+        }
+        return "";
+    }
+    
+    @Override
+    public StringBuffer printWeapon() {
+        if (!getEntity().usesWeaponBays()) {
+            return super.printWeapon();
+        }
+        StringBuffer buffer = new StringBuffer();
+        for (Mounted m : getEntity().getWeaponBayList()) {
+            buffer.append(m.getName()).append(" ")
+                .append(getLocationAbbr(m.getLocation()));
+            if (m.isRearMounted()) {
+                buffer.append(" (R)");
+            }
+            buffer.append("\n");
+            for (Integer wNum : m.getBayWeapons()) {
+                final Mounted w = getEntity().getEquipment(wNum);
+                buffer.append("   ").append(StringUtil.makeLength(w.getName(),
+                        getPrintSize() - 25)).append(w.getType().getTonnage(getEntity()))
+                    .append("\n");
+            }
+            for (Integer aNum : m.getBayAmmo()) {
+                final Mounted a = getEntity().getEquipment(aNum);
+                double weight = a.getType().getTonnage(getEntity())
+                        * a.getBaseShotsLeft() / ((AmmoType)a.getType()).getShots();
+                buffer.append("   ").append(StringUtil.makeLength(a.getName(),
+                        getPrintSize() - 25)).append(weight).append("\n");
+            }
+        }
+        return buffer;
+    }
+
+    @Override
+    public StringBuffer printAmmo() {
+        if (!smallCraft.usesWeaponBays()) {
+            return super.printAmmo();
+        }
+        return new StringBuffer();
     }
 
     @Override
@@ -746,6 +799,7 @@ public class TestSmallCraft extends TestAero {
         weight += getWeightAmmo();
 
         weight += getWeightCarryingSpace();
+        weight += getWeightQuarters();
 
         return weight;
     }
@@ -756,7 +810,9 @@ public class TestSmallCraft extends TestAero {
                 + printWeightControls() + printWeightFuel() 
                 + printWeightHeatSinks()
                 + printWeightArmor() + printWeightMisc()
-                + printWeightCarryingSpace() + "Equipment:\n"
+                + printWeightCarryingSpace()
+                + printWeightQuarters()
+                + "Equipment:\n"
                 + printMiscEquip() + printWeapon() + printAmmo();
     }
     
@@ -786,7 +842,22 @@ public class TestSmallCraft extends TestAero {
         return buff.toString();
     }
     
-
+    public boolean correctCriticals(StringBuffer buff) {
+        double[] extra = extraSlotCost(getSmallCraft());
+        
+        for (int i = 0; i < extra.length; i++) {
+            if (extra[i] > 0) {
+                if (i < getEntity().locations()) {
+                    buff.append(getLocationAbbr(i));
+                } else {
+                    buff.append(getLocationAbbr(i - 3)).append(" (R)");
+                }
+                buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
+            }
+        }
+        return true;
+    }
+    
     @Override
     public String getName() {
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {

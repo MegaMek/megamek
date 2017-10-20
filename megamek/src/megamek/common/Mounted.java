@@ -1608,7 +1608,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
+                if (quirk != null && quirk.booleanValue()) {
                     count++;
                 }
             }
@@ -1639,7 +1639,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
+                if (quirk != null && quirk.booleanValue()) {
                     if (qrk.length() > 0) {
                         qrk.append(sep);
                     }

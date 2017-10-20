@@ -40,6 +40,7 @@ import megamek.common.Mech;
 import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.Warship;
+import megamek.common.options.AbstractOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -358,36 +359,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         int i = 0;
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups
-                    .hasMoreElements();) {
-                IOptionGroup qGroup = qGroups.nextElement();
-                if (en.countQuirks(qGroup.getKey()) > 0) {
-                    quirksR[i++].setString(qGroup.getDisplayableName());
-                    for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks
-                            .hasMoreElements();) {
-                        IOption quirk = quirks.nextElement();
-                        if (quirk != null && quirk.booleanValue()) {
-                            quirksR[i++].setString("  "
-                                    + quirk.getDisplayableNameWithValue());
-                        }
-                    }
-                }
-            }
+            addOptionsToList(i, en.getQuirks(), quirksR);
         }
-        for (Enumeration<IOptionGroup> repGroups = en.getPartialRepairs()
-                .getGroups(); repGroups.hasMoreElements();) {
-            IOptionGroup repGroup = repGroups.nextElement();
-            if (en.countPartialRepairs() > 0) {
-                partRepsR[i++].setString(repGroup.getDisplayableName());
-                for (Enumeration<IOption> partreps = repGroup.getOptions(); partreps
-                        .hasMoreElements();) {
-                    IOption partrep = partreps.nextElement();
-                    if (partrep.booleanValue()) {
-                        partRepsR[i++].setString("  "
-                                + partrep.getDisplayableNameWithValue());
-                    }
-                }
-            }
+        
+        if ((null != en.getGame())
+                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+            addOptionsToList(i, en.getPartialRepairs(), partRepsR);
         }
 
         if (en.mpUsed > 0) {
@@ -596,6 +573,22 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
     }
 
+    public void addOptionsToList(int index, AbstractOptions optionsInstance, PMSimpleLabel[] labels) {
+        for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
+            IOptionGroup group = optionGroups.nextElement();
+            if (optionsInstance.count(group.getKey()) > 0) {
+                labels[index++].setString(group.getDisplayableName());
+                
+                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    IOption option = options.nextElement();
+                    if (option != null && option.booleanValue()) {
+                        labels[index++].setString("  " + option.getDisplayableNameWithValue());
+                    }
+                }
+            }
+        }
+    }
+    
     public PMAreasGroup getContentGroup() {
         return content;
     }

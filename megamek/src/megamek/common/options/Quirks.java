@@ -15,6 +15,8 @@
 package megamek.common.options;
 
 
+import java.util.Enumeration;
+
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;

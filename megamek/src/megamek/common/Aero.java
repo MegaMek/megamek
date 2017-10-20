@@ -205,6 +205,9 @@ public class Aero extends Entity implements IAero, IBomber {
     private int whoFirst = 0;
 
     private int eccmRoll = 0;
+    
+    //ASEW Missile Effects, per firing arc
+    protected int asewAffectedTurns[] = {0, 0};
 
     public Aero() {
         super();
@@ -421,6 +424,16 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setRandomMove(boolean randmove) {
         randomMove = randmove;
+    }
+    
+    @Override
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    @Override
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
     }
 
     @Override

@@ -3212,6 +3212,8 @@ public class Server implements Runnable {
                         changePhase(IGame.Phase.PHASE_INITIATIVE);
                     }
                 }
+                // Decrement the ASEWAffected counter
+                
                 break;
             case PHASE_END_REPORT:
                 if (changePlayersTeam) {
@@ -22714,7 +22716,7 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
             }
         }
-
+        
         // infantry armor can reduce damage
         if (isPlatoon && (((Infantry) te).getDamageDivisor() != 1.0)) {
             r = new Report(6074);

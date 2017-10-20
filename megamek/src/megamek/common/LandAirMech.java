@@ -142,6 +142,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int fatalThresh = 0;
     private int currentDamage = 0;
     private Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
+    
+    //ASEW Missile Effects
+    protected int asewAffectedTurns = 0;
 
     public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
@@ -1205,6 +1208,16 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public void setRandomMove(boolean randmove) {
         randomMove = randmove;
+    }
+    
+    @Override
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns = turns;
+    }
+    
+    @Override
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns;
     }
 
     @Override

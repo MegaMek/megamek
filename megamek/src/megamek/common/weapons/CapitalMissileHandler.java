@@ -255,7 +255,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
     
     @Override
     protected int calcCapMissileAMSMod() {
-        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        CapMissileAMSMod = (int) Math.floor(CounterAV / 10.0);
         return CapMissileAMSMod;
     }
     

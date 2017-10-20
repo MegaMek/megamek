@@ -15,7 +15,14 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.IGame;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.ASEWMissileWeaponHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MissileBayWeaponHandler;
 import megamek.common.weapons.missiles.ThunderBoltWeapon;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -60,5 +67,11 @@ public class CLASEWMissileWeapon extends ThunderBoltWeapon {
         .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
         .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
         .setISApproximate(false, false, false, false, false);
+    }
+    
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new ASEWMissileWeaponHandler(toHit, waa, game, server);
     }
 }

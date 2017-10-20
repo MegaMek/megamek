@@ -68,6 +68,10 @@ public interface IAero {
     boolean isRandomMove();
 
     void setRandomMove(boolean randmove);
+    
+    void setASEWAffected(int arc, int turns);
+    
+    public int getASEWAffected(int arc);
 
     boolean didAccLast();
 

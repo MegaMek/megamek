@@ -2763,6 +2763,7 @@ public class Server implements Runnable {
             for (Mounted m : entity.getAmmo()) {
                 AmmoType atype = (AmmoType) m.getType();
                 if (((atype.getAmmoType() == AmmoType.T_LRM)
+                        || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_NLRM)
                         || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
@@ -22422,11 +22423,9 @@ public class Server implements Runnable {
         if (ammoExplosion) {
             if (te instanceof Mech) {
                 Mech mech = (Mech) te;
-                if (mech.isAutoEject()
-                    && (!game.getOptions().booleanOption(
-                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game.getOptions()
-                                                        .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
-                                                            .isCondEjectAmmo()))) {
+                if (mech.isAutoEject() && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                        || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                                && mech.isCondEjectAmmo()))) {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
                 }
@@ -22531,10 +22530,9 @@ public class Server implements Runnable {
                     + te.getArmor(hit.getLocation()), damage);
         }
 
-        if ((te.getArmor(hit) > 0)
-            && ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS)
-                || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO) || (te
-                                                                                                         .getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
+        if ((te.getArmor(hit) > 0) && ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS)
+                || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO)
+                || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
             isFerroFibrousTarget = true;
         }
 
@@ -23760,15 +23758,11 @@ public class Server implements Runnable {
                             for (Mounted m : te.getEquipment()) {
                                 if (m.getType() instanceof AmmoType) {
                                     AmmoType at = (AmmoType) m.getType();
-                                    if (((at.getAmmoType() == AmmoType.T_SRM) || (at
-                                                                                          .getAmmoType() == AmmoType
-                                                                                          .T_MML))
-                                        && (at.getMunitionType() == AmmoType.M_INFERNO)) {
-                                        infernos += at.getRackSize()
-                                                    * m.getHittableShotsLeft();
+                                    if (((at.getAmmoType() == AmmoType.T_SRM) || (at.getAmmoType() == AmmoType.T_MML))
+                                            && (at.getMunitionType() == AmmoType.M_INFERNO)) {
+                                        infernos += at.getRackSize() * m.getHittableShotsLeft();
                                     }
-                                } else if (m.getType().hasFlag(
-                                        MiscType.F_FIRE_RESISTANT)) {
+                                } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
                                     // immune to inferno explosion
                                     infernos = 0;
                                     break;
@@ -23782,24 +23776,16 @@ public class Server implements Runnable {
                                 if (roll >= 8) {
                                     Coords c = te.getPosition();
                                     if (c == null) {
-                                        Entity transport = game.getEntity(te
-                                                                                  .getTransportId());
+                                        Entity transport = game.getEntity(te.getTransportId());
                                         if (transport != null) {
                                             c = transport.getPosition();
                                         }
-                                        vPhaseReport
-                                                .addAll(deliverInfernoMissiles(
-                                                        te, te, infernos));
+                                        vPhaseReport.addAll(deliverInfernoMissiles(te, te, infernos));
                                     }
                                     if (c != null) {
-                                        vPhaseReport
-                                                .addAll(deliverInfernoMissiles(
-                                                        te,
-                                                        new HexTarget(
-                                                                c,
-                                                                game.getBoard(),
-                                                                Targetable.TYPE_HEX_ARTILLERY),
-                                                        infernos));
+                                        vPhaseReport.addAll(deliverInfernoMissiles(te,
+                                                new HexTarget(c, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY),
+                                                infernos));
                                     }
                                 }
                             }
@@ -28331,6 +28317,7 @@ public class Server implements Runnable {
 
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
@@ -28369,8 +28356,9 @@ public class Server implements Runnable {
         // Inferno ammo causes heat buildup as well as the damage
         if ((mounted.getType() instanceof AmmoType)
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
-                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM) || (((AmmoType) mounted
-                                .getType()).getAmmoType() == AmmoType.T_MML))
+                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP) 
+                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM) 
+                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
                 && (mounted.getHittableShotsLeft() > 0)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
@@ -28387,8 +28375,10 @@ public class Server implements Runnable {
 
         // Smoke ammo halves damage
         if ((mounted.getType() instanceof AmmoType)
-            && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || (((AmmoType) mounted
-                .getType()).getAmmoType() == AmmoType.T_LRM))
+            && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
+                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP)
+                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM)
+                    || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM_IMP))
             && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
             && (mounted.getHittableShotsLeft() > 0)) {
             damage = ((mounted.getExplosionDamage()) / 2);

@@ -1935,8 +1935,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         ranges[1] = wtype.getWRanges();
         if (atype != null) {
             if ((wtype.getAmmoType() == AmmoType.T_SRM)
+                    || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MRM)
                     || (wtype.getAmmoType() == AmmoType.T_LRM)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MML)) {
                 if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
                     ranges[1] = wtype.getRanges(mounted);
@@ -2316,17 +2318,19 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avExt = 0;
             }
         } // end weapon is MML
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                 || (atype.getAmmoType() == AmmoType.T_SRM)) {
+        else if ((atype.getAmmoType() == AmmoType.T_LRM) 
+                || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                || (atype.getAmmoType() == AmmoType.T_SRM)
+                || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
 
             if (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-                if (atype.getAmmoType() == AmmoType.T_LRM) {
+                if ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_LRM_IMP)) {
                     int bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
                     avShort = avShort + bonus;
                     avMed = avMed + bonus;
                     avLong = avLong + bonus;
                 }
-                if (atype.getAmmoType() == AmmoType.T_SRM) {
+                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
                     avShort = avShort + 2;
                 }
             }

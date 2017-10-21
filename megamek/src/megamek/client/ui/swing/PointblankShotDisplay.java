@@ -718,9 +718,10 @@ public class PointblankShotDisplay extends FiringDisplay implements
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && ((ammoType
-                    .getAmmoType() == AmmoType.T_LRM) || (ammoType
-                    .getAmmoType() == AmmoType.T_MML)))
+            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) 
+                    && ((ammoType.getAmmoType() == AmmoType.T_LRM)
+                            || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
+                            || (ammoType.getAmmoType() == AmmoType.T_MML)))
                     || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                         clientgui.frame);

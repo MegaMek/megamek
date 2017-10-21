@@ -3163,12 +3163,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "252,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2868, 3054, 3050, DATE_NONE)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, DATE_NONE, 3054, 2800, 3050)
                 .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2680, 2868, 3054, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH, F_FS, F_LC, F_DC)
-                .setProductionFactions(F_CWF).setTechRating(RATING_E)
-                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
+                .setClanAdvancement(2680, 2868, 3054).setClanApproximate(true, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_CWF)
+                .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
+                .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         return misc;
     }

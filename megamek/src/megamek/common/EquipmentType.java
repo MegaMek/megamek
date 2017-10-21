@@ -374,6 +374,7 @@ public class EquipmentType implements ITechnology {
 
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype.getAmmoType() == AmmoType.T_LRM)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {

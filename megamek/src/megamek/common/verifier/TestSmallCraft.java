@@ -306,7 +306,7 @@ public class TestSmallCraft extends TestAero {
     }
     
     /**
-     * @return Minimum crew requirements based on unit type and number of weapons.
+     * @return Minimum crew requirements based on unit type and equipment crew requirements.
      */
     public static int minimumBaseCrew(SmallCraft sc) {
         int crew = 3;
@@ -315,6 +315,9 @@ public class TestSmallCraft extends TestAero {
             if (sc.getDesignType() == SmallCraft.MILITARY) {
                 crew++;
             }
+        }
+        for (Mounted m : sc.getMisc()) {
+            crew += equipmentCrewRequirements(m.getType());
         }
         return crew;
     }

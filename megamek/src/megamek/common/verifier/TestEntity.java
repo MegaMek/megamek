@@ -327,6 +327,31 @@ public abstract class TestEntity implements TestEntityOption {
             return Collections.emptyList();
         }
     }
+    
+    /**
+     * Additional crew requirements for vehicles and aerospace vessels for certain types of
+     * equipment.
+     */
+    public static int equipmentCrewRequirements(EquipmentType eq) {
+        if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_MASH)
+                    || eq.hasFlag(MiscType.F_MASH_EXTRA)
+                    || eq.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                return 5;
+            }
+            if (eq.hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                return 3;
+            }
+            if (eq.hasFlag(MiscType.F_COMMUNICATIONS)) {
+                return (int) eq.getTonnage(null);
+            }
+            if (eq.hasFlag(MiscType.F_MOBILE_HPG)) {
+                // Mobile HPG has crew requirement of 10; ground-mobile has requirement of 1.
+                return eq.hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
+            }
+        }
+        return 0;
+    }
 
     private boolean hasMASC() {
         if (getEntity() instanceof Mech) {
@@ -334,7 +359,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return false;
     }
-
+    
     public String printShortMovement() {
         return "Movement: "
                 + Integer.toString(getEntity().getOriginalWalkMP())

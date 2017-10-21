@@ -8581,10 +8581,10 @@ public class MiscType extends EquipmentType {
                 .or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        misc.rulesRefs = "217,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -8839,12 +8839,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH);
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+        misc.rulesRefs = "228,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_B).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
+                .setISAdvancement(DATE_PS, DATE_PS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -8860,12 +8858,10 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
                 .or(F_SS_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH_EXTRA);
         misc.industrial = true;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+        misc.rulesRefs = "228,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_B).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
-                .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
+                .setISAdvancement(DATE_PS, DATE_PS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 

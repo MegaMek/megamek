@@ -8577,7 +8577,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.cost = 25000;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_FIELD_KITCHEN).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FIELD_KITCHEN).or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
+                .or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -8813,7 +8814,8 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLMobileFieldBase");
         misc.tonnage = 20;
         misc.cost = 150000;
-        misc.flags = misc.flags.or(F_MOBILE_FIELD_BASE).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MOBILE_FIELD_BASE).or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
+                .or(F_SS_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "330,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -8834,7 +8836,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3.5;
         misc.criticals = 1;
         misc.cost = 35000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH);
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
+                .or(F_SS_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH);
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_B).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
@@ -8854,7 +8857,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tankslots = 0;
         misc.cost = 10000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH_EXTRA);
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT)
+                .or(F_SS_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT).or(F_MASH_EXTRA);
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_B).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
@@ -8922,7 +8926,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.005;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_BA_EQUIPMENT);
+        misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).andNot(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
         misc.rulesRefs = "230,TM";
@@ -8942,7 +8946,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Searchlight");
         misc.tonnage = 0.5;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 2000;
         misc.industrial = true;

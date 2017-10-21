@@ -752,7 +752,7 @@ public class MiscType extends EquipmentType {
             // 10% of the weight, plus 0.5 tons for the extra sensors
             return (entity.getWeight() / 10f) + 0.5f;
         } else if (hasFlag(MiscType.F_NAVAL_TUG_ADAPTOR)) {
-            return (100 + ((entity.getWeight() * 0.1f)));
+            return (100 + ((entity.getWeight() * 0.1)));
         } else if (hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
             if (entity instanceof Tank) {
                 return 0.015f;

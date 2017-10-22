@@ -207,7 +207,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int eccmRoll = 0;
     
     //ASEW Missile Effects, per firing arc
-    protected int asewAffectedTurns[] = {0, 0};
+    protected int asewAffectedTurns[] = {0,0,0,0};
 
     public Aero() {
         super();

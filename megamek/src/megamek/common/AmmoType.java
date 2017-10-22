@@ -2358,14 +2358,15 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_CLAN)
                 .setProductionFactions(F_CLAN),"208,TM"));
         
-        //TODO - Implement for play
-/*      munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
-                new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                        .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
-                        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                        .setProductionFactions(F_FS),
-                "352,TO"));*/
+        munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2426,13 +2427,15 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CJF),"208,TM"));
         
         //TODO - Implement for play
-/*      munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
-                new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                        .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
-                        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                        .setProductionFactions(F_FS),
-                "352,TO"));*/
+        munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
                 new TechAdvancement(TECH_BASE_CLAN)

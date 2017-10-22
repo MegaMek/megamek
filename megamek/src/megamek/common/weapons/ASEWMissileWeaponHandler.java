@@ -16,16 +16,14 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
+import megamek.common.LandAirMech;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author MKerensky
@@ -47,6 +45,8 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             Server s) {
         super(t, w, g, s);
     }
+    
+    boolean badTarget = false;
 
     /*
      * (non-Javadoc)
@@ -59,7 +59,6 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        int nDamage;
         missed = false;
 
         hit = entityTarget.rollHitLocation(toHit.getHitTable(),
@@ -74,120 +73,50 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         if (weapon.isWeaponGroup()) {
             hit.setSingleAV(attackValue);
         }
-        if (entityTarget instanceof Aero) {
-            Aero a = (Aero) entityTarget;
-                a.setASEWAffected(hit.getLocation(), 2);
-        }
-        
-        if (!bSalvo) {
-            // Each hit in the salvo get's its own hit location.
-            Report r = new Report(3405);
+        Report r = new Report(3405);
+        r.subject = subjectId;
+        r.add(toHit.getTableDesc());
+        r.add(entityTarget.getLocationAbbr(hit));
+        vPhaseReport.addElement(r);
+        if (nweaponsHit > 1) {
+            r.newlines = 1;
+            r = new Report(3471);
             r.subject = subjectId;
-            r.add(toHit.getTableDesc());
-            r.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.addElement(r);
-            if (weapon.isRapidfire()) {
-                r.newlines = 0;
-                r = new Report(3225);
-                r.subject = subjectId;
-                r.add(numRapidFireHits * 3);
-                vPhaseReport.add(r);
-            }
-        } else {
-            Report.addNewline(vPhaseReport);
-        }
-
-        // for non-salvo shots, report that the aimed shot was successfull
-        // before applying damage
-        if (hit.hitAimedLocation() && !bSalvo) {
-            Report r = new Report(3410);
-            r.subject = subjectId;
-            vPhaseReport.lastElement().newlines = 0;
-            vPhaseReport.addElement(r);
-        }
-        // Resolve damage normally.
-        nDamage = nDamPerHit * Math.min(nCluster, hits);
-
-        if (bDirect) {
-            hit.makeDirectBlow(toHit.getMoS() / 3);
-        }
-        
-        // Report calcDmgPerHitReports here
-        if (calcDmgPerHitReport.size() > 0) {
-            vPhaseReport.addAll(calcDmgPerHitReport);
-        }
-    
-        // A building may be damaged, even if the squad is not.
-        if (bldgAbsorbs > 0) {
-            int toBldg = Math.min(bldgAbsorbs, nDamage);
-            nDamage -= toBldg;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        // Units on same level, report building absorbs no damage
-        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
-            Report.addNewline(vPhaseReport);
-            Report r = new Report(9976);
-            r.subject = ae.getId();
-            r.indent(2);
-            vPhaseReport.add(r);
-        // Cases where absorbed damage doesn't reduce incoming damage
-        } else if (bldgAbsorbs < 0) {
-            int toBldg = -bldgAbsorbs;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
-
-        nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
-        nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
-
-        // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
-        if (null != bldg) {
-            nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
-        }
-
-        // A building may absorb the entire shot.
-        if (nDamage == 0) {
-            Report r = new Report(3415);
-            r.subject = subjectId;
-            r.indent(2);
             r.addDesc(entityTarget);
-            vPhaseReport.addElement(r);
-            missed = true;
+            r.add(nweaponsHit);
+            vPhaseReport.add(r);
         } else {
-            if (bGlancing) {
-                hit.makeGlancingBlow();
-            }
-            vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater, nukeS2S));
-            // for salvo shots, report that the aimed location was hit after
-            // applying damage, because the location is first reported when
-            // dealing the damage
-            if (hit.hitAimedLocation() && bSalvo) {
-                Report r = new Report(3410);
-                r.subject = subjectId;
-                vPhaseReport.lastElement().newlines = 0;
-                vPhaseReport.addElement(r);
-            }
+            r.newlines = 1;
+            r = new Report(3470);
+            r.subject = subjectId;
+            r.addDesc(entityTarget);
+            vPhaseReport.add(r); 
         }
-        // If a BA squad is shooting at infantry, damage may be random and need
-        // to be rerolled for the next hit (if any) from the same attack.
-        if ((ae instanceof BattleArmor) && (target instanceof Infantry)) {
-            nDamPerHit = calcDamagePerHit();
+        //Large craft suffer a to-hit penalty for the location struck. Other units just suffer a flat +4 penalty until the effects expire
+        if ((entityTarget instanceof Aero) 
+                || (entityTarget instanceof LandAirMech 
+                        && entityTarget.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
+            Aero a = (Aero) entityTarget;
+            int loc = hit.getLocation();
+            if (a.getASEWAffected(loc) > 0) {
+                a.setASEWAffected(loc, (a.getASEWAffected(loc) + nweaponsHit));
+                r = new Report(3473);
+                r.subject = subjectId;
+                r.add(entityTarget.getLocationAbbr(hit));
+                r.add(nweaponsHit);
+                vPhaseReport.add(r); 
+            } else {
+                a.setASEWAffected(loc, 2);
+                r = new Report(3472);
+                r.subject = subjectId;
+                r.add(entityTarget.getLocationAbbr(hit));
+                vPhaseReport.add(r); 
+            }
+        } else {
+            // The rules don't say that you can't hit a mech standing on the hull of a dropship
+            // with one of these, but they don't say what it would do if you did, either...
+            // We'll assume it has no effect for now, though it probably should do something.
+            badTarget = true;
         }
     }
     

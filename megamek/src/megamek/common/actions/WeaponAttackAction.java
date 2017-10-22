@@ -311,6 +311,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch bomb in mech mode."));
         }
         
+        // ASEW Missiles cannot be launched in an atmosphere
+        if ((wtype.getAmmoType() == BombType.B_ASEW)
+                && !game.getBoard().inSpace()) {
+            return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch ASEW missile in an atmosphere."));
+        }
+        
+        
+        
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
         if (exchangeSwarmTarget) {
@@ -733,7 +741,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.isSufferingEMI()) {
             toHit.addModifier(+2, "electromagnetic interference");
         }
-
+        
+        //ASEW Missiles
+        // +4 for trying to fire one at a target of < 500 tons
+        if (wtype.getAmmoType() == BombType.B_ASEW && te.getWeight() < 500.0) {
+            toHit.addModifier(4, "target is less than 500 tons");
+        }
+        // +4 attack penalty for ASEW affected locations
+        if (ae instanceof Aero) {
+            Aero a = (Aero) ae;
+            for (int loc = 0; loc <= ae.locations(); loc++) {
+                if (weapon.getFacing() == loc && a.getASEWAffected(loc) > 0) {
+                    toHit.addModifier(4, "location affected by ASEW missile");
+                }
+            }
+        }
         // evading bonuses (
         if ((te != null) && te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");

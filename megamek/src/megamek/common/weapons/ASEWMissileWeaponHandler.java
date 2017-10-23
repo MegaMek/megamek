@@ -15,13 +15,14 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.Building;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.LandAirMech;
+import megamek.common.Jumpship;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.Warship;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -46,8 +47,6 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         super(t, w, g, s);
     }
     
-    boolean badTarget = false;
-
     /*
      * (non-Javadoc)
      * 
@@ -92,31 +91,37 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             r.addDesc(entityTarget);
             vPhaseReport.add(r); 
         }
-        //Large craft suffer a to-hit penalty for the location struck. Other units just suffer a flat +4 penalty until the effects expire
-        if ((entityTarget instanceof Aero) 
-                || (entityTarget instanceof LandAirMech 
-                        && entityTarget.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
-            Aero a = (Aero) entityTarget;
+        //Large craft suffer a to-hit penalty for the location struck. 
+        if (entityTarget instanceof Dropship) { 
+            Dropship d = (Dropship) entityTarget;
             int loc = hit.getLocation();
-            if (a.getASEWAffected(loc) > 0) {
-                a.setASEWAffected(loc, (a.getASEWAffected(loc) + nweaponsHit));
-                r = new Report(3473);
-                r.subject = subjectId;
-                r.add(entityTarget.getLocationAbbr(hit));
-                r.add(nweaponsHit);
-                vPhaseReport.add(r); 
-            } else {
-                a.setASEWAffected(loc, 2);
-                r = new Report(3472);
-                r.subject = subjectId;
-                r.add(entityTarget.getLocationAbbr(hit));
-                vPhaseReport.add(r); 
+            d.setASEWAffected(loc, 2);
+            r = new Report(3472);
+            r.subject = subjectId;
+            r.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.add(r);             
+        } else if (entityTarget instanceof Jumpship) {
+            Jumpship j = (Jumpship) entityTarget;
+            int loc = hit.getLocation();
+            j.setASEWAffected(loc, 2);
+            //If a Warship is hit in the fore or aft side, the broadside arc is also affected
+            if ((j instanceof Warship) 
+                    && (loc == Jumpship.LOC_FLS || loc == Jumpship.LOC_ALS)) {
+                j.setASEWAffected(Warship.LOC_LBS, 2); 
+            } else if ((j instanceof Warship) 
+                    && (loc == Jumpship.LOC_FRS || loc == Jumpship.LOC_ARS)) {
+                j.setASEWAffected(Warship.LOC_RBS, 2);
             }
+            r = new Report(3472);
+            r.subject = subjectId;
+            r.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.add(r);
         } else {
-            // The rules don't say that you can't hit a mech standing on the hull of a dropship
-            // with one of these, but they don't say what it would do if you did, either...
-            // We'll assume it has no effect for now, though it probably should do something.
-            badTarget = true;
+            // Other units just suffer a flat +4 penalty until the effects expire
+            entityTarget.setASEWAffected(2);
+            r = new Report(3473);
+            r.subject = subjectId;
+            vPhaseReport.add(r);
         }
     }
     

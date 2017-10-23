@@ -744,18 +744,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         //ASEW Missiles
         // +4 for trying to fire one at a target of < 500 tons
-        if (wtype.getAmmoType() == BombType.B_ASEW && te.getWeight() < 500.0) {
+        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te.getWeight() < 500.0) {
             toHit.addModifier(4, "target is less than 500 tons");
         }
         // +4 attack penalty for ASEW affected locations
-        if (ae instanceof Aero) {
-            Aero a = (Aero) ae;
-            for (int loc = 0; loc <= ae.locations(); loc++) {
-                if (weapon.getFacing() == loc && a.getASEWAffected(loc) > 0) {
-                    toHit.addModifier(4, "location affected by ASEW missile");
-                }
+        if (ae instanceof Dropship) {
+            Dropship d = (Dropship) ae;
+            int loc = weapon.getLocation();
+            if (d.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, "weapon arc affected by ASEW missile");
+            }            
+        } else if (ae instanceof Jumpship) {
+            Jumpship j = (Jumpship) ae;
+            int loc = weapon.getLocation();
+            if (j.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, "weapon arc affected by ASEW missile");
+            } 
+        } else {
+            if (ae.getASEWAffected() > 0) {
+                toHit.addModifier(4, "attacker affected by ASEW missile");
             }
         }
+        
         // evading bonuses (
         if ((te != null) && te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");

@@ -40,15 +40,15 @@ import megamek.common.Mech;
 import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.Warship;
-import megamek.common.options.AbstractOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.MegaMekFile;
 
 /**
- * Set of elements to reperesent general unit information in MechDisplay
+ * Set of elements to represent general unit information in MechDisplay
  */
 
 public class GeneralInfoMapSet implements DisplayMapSet {
@@ -356,15 +356,18 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             element.setString(""); //$NON-NLS-1$
         }
 
-        int i = 0;
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            addOptionsToList(i, en.getQuirks(), quirksR);
+            addOptionsToList(en.getQuirks(), quirksR);
         }
         
+        // Note that, due to the fact that the quirks display is hardcoded to 40 labels in height,
+        // unless you're running at 1024x12000 resolution, you're never going to see partial repairs on the unit info card.
+        // That fix will require changing the data types of partRepsR and quirksR to a dynamically allocated list,
+        // which is not a very simple change, so I'm leaving it for another time.
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
-            addOptionsToList(i, en.getPartialRepairs(), partRepsR);
+            addOptionsToList(en.getPartialRepairs(), partRepsR);
         }
 
         if (en.mpUsed > 0) {
@@ -573,13 +576,26 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
     }
 
-    public void addOptionsToList(int index, AbstractOptions optionsInstance, PMSimpleLabel[] labels) {
+    /**
+     * Add all options from the given IOptions instance into an array of PMSimpleLabel elements.
+     * @param optionsInstance IOptions instance
+     * @param labels label array
+     */
+    public void addOptionsToList(IOptions optionsInstance, PMSimpleLabel[] labels) {
+        int index = 0;
+        
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {
                 labels[index++].setString(group.getDisplayableName());
                 
                 for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    // safety feature: because the labels are fixed-length arrays
+                    // we should not add more options than there are elements in the array.
+                    if(index >= labels.length) {
+                        return;
+                    }
+                    
                     IOption option = options.nextElement();
                     if (option != null && option.booleanValue()) {
                         labels[index++].setString("  " + option.getDisplayableNameWithValue());

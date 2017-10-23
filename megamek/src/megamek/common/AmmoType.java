@@ -471,6 +471,7 @@ public class AmmoType extends EquipmentType {
         case T_AC_LBX:
             return munitionType == M_CLUSTER;
         case T_ATM:
+        case T_IATM:
             return (munitionType == M_STANDARD)
                     || (munitionType == M_HIGH_EXPLOSIVE)
                     || (munitionType == M_EXTENDED_RANGE);

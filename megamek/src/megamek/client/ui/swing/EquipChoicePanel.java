@@ -358,6 +358,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         for (final Object newVar2 : m_vMunitions) {
             ((MunitionChoicePanel) newVar2).applyChoice();
         }
+        if (panMunitions instanceof BayMunitionsChoicePanel) {
+            ((BayMunitionsChoicePanel)panMunitions).apply();
+        }
         // update MG rapid fire settings
         for (final Object newVar1 : m_vMGs) {
             ((RapidfireMGPanel) newVar1).applyChoice();
@@ -609,6 +612,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private void setupMunitions() {
         GridBagLayout gbl = new GridBagLayout();
+        if (entity.usesWeaponBays()) {
+            panMunitions = new BayMunitionsChoicePanel(entity);
+            return;
+        }
         panMunitions.setLayout(gbl);
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
@@ -624,7 +631,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, and NARC
+            // allow only MML, ATM, and NARC. LRM/SRM can switch between Artemis and standard,
+            // but not other munitions. Same with MRM.
             // TODO: need a better way to customize munitions on Aeros
             // currently this doesn't allow AR10 and tele-missile launchers
             // to switch back and forth between tele and regular missiles
@@ -632,12 +640,19 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // an idiosyncratic fashion
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
+                            || (at.getAmmoType() == AmmoType.T_SRM)
+                            || (at.getAmmoType() == AmmoType.T_LRM)
+                            || (at.getAmmoType() == AmmoType.T_MRM)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC))) {
+                            || (at.getAmmoType() == AmmoType.T_IATM))) {
                 continue;
             }
 
             for (AmmoType atCheck : vAllTypes) {
+                if (entity.hasETypeFlag(Entity.ETYPE_AERO)
+                        && !atCheck.canAeroUse()) {
+                    continue;
+                }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
                 boolean bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
                         entity.isMixedTech());
@@ -663,6 +678,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                                 || (muniType == AmmoType.M_DEAD_FIRE) 
                                 || (muniType == AmmoType.M_MINE_CLEARANCE))) {
                     bTechMatch = false;
+                }
+                
+                if ((muniType == AmmoType.M_ARTEMIS_CAPABLE)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                    continue;
+                }
+                if ((muniType == AmmoType.M_ARTEMIS_V_CAPABLE)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                    continue;
                 }
 
                 if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) && //$NON-NLS-1$

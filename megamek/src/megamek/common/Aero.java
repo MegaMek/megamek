@@ -206,9 +206,6 @@ public class Aero extends Entity implements IAero, IBomber {
 
     private int eccmRoll = 0;
     
-    //ASEW Missile Effects, per firing arc
-    protected int asewAffectedTurns[] = {0,0,0,0};
-
     public Aero() {
         super();
         // need to set altitude to something different than entity
@@ -426,16 +423,6 @@ public class Aero extends Entity implements IAero, IBomber {
         randomMove = randmove;
     }
     
-    @Override
-    public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
-    }
-    
-    @Override
-    public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
-    }
-
     @Override
     public void setRolled(boolean roll) {
         rolled = roll;

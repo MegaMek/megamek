@@ -589,7 +589,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     //If you're firing missiles at a capital ship...
     @Override
     protected int calcCounterAV () {
-        if ((target == null) || !advancedPD) {
+        if (!(target instanceof Entity) || !advancedPD) {
             return 0;
         }
         int counterAV = 0;

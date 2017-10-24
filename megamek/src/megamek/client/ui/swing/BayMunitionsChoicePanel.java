@@ -48,16 +48,16 @@ public class BayMunitionsChoicePanel extends JPanel {
     private final static int ATM_STD = 0;
     private final static int ATM_HE  = 1;
     private final static int ATM_ER  = 2;
-    private final static int NUM_ATM       = 3;
+    private final static int NUM_ATM = 3;
     
     private final static int MML_SRM = 0;
     private final static int MML_LRM = 1;
-    private final static int NUM_MML       = 2;
+    private final static int NUM_MML = 2;
 
-    private final static int AR10_KW = 0;
-    private final static int AR10_WS = 1;
-    private final static int AR10_B  = 2;
-    private final static int NUM_AR10      = 3;
+    private final static int AR10_KW  = 0;
+    private final static int AR10_WS  = 1;
+    private final static int AR10_B   = 2;
+    private final static int NUM_AR10 = 3;
 
     private final Entity entity;
     private final Map<Integer,List<AmmoRow>> rows = new HashMap<>();
@@ -267,8 +267,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                     addAR10Spinners();
                     break;
             }
-            tonnage = ammoMounts.stream().mapToDouble(m -> m.getType().getTonnage(entity)
-                    * m.getBaseShotsLeft() / ((AmmoType) m.getType()).getShots()).sum();
+            tonnage = ammoMounts.stream().mapToDouble(m -> m.getAmmoCapacity()).sum();
             recalcMaxValues();
         }
         

@@ -96,6 +96,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
+    private double ammoCapacity;
 
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
@@ -198,6 +199,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType) type).getShots();
+            ammoCapacity = type.getTonnage(entity);
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
@@ -796,6 +798,25 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setDumping(boolean b) {
         m_bDumping = b;
+    }
+    
+    /**
+     * The capacity of an ammo bin may be different than the weight of the original shots
+     * in the case of AR10s due to variable missile weight.
+     * 
+     * @return The capacity of a mounted ammo bin in tons.
+     */
+    public double getAmmoCapacity() {
+        return ammoCapacity;
+    }
+
+    /**
+     * Sets the maximum tonnage of ammo for a mounted ammo bin.
+     * 
+     * @param capacity The capacity of the bin in tons.
+     */
+    public void setAmmoCapacity(double capacity) {
+        ammoCapacity = capacity;
     }
 
     public boolean isRapidfire() {

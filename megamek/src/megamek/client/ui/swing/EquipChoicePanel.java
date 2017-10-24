@@ -997,6 +997,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             @SuppressWarnings("rawtypes")
             private JComboBox m_num_shots;
+            private ItemListener numShotsListener;
+
+            boolean numShotsChanged = false;
 
             private Mounted m_mounted;
 
@@ -1025,6 +1028,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     }
                 }
 
+                numShotsListener = new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent evt) {
+                        numShotsChanged = true;
+                    }
+                };
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = curType.getShots();
                 // BattleArmor always have a certain number of shots per slot
@@ -1041,10 +1050,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     m_num_shots.addItem(i);
                 }
                 m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());
+                m_num_shots.addItemListener(numShotsListener);
 
                 m_choice.addItemListener(new ItemListener(){
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
+                        m_num_shots.removeItemListener(numShotsListener);
                         int currShots = (Integer)m_num_shots.getSelectedItem();
                         m_num_shots.removeAllItems();
                         int shotsPerTon = m_vTypes.get(
@@ -1056,12 +1067,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
                         }
-                        if (currShots <= shotsPerTon){
+                        // If the shots selection was changed, try to set that value, unless it's too large
+                        if (numShotsChanged && currShots <= shotsPerTon){
                             m_num_shots.setSelectedItem(currShots);
                         } else {
                             m_num_shots.setSelectedItem(shotsPerTon);
                         }
-
+                        m_num_shots.addItemListener(numShotsListener);
                     }});
 
 

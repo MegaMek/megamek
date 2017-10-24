@@ -2346,12 +2346,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_AR10) {
-            if (atype.getMunitionType() == AmmoType.M_KILLER_WHALE) {
+            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                 avShort = 4;
                 avMed = 4;
                 avLong = 4;
                 avExt = 4;
-            } else if (atype.getMunitionType() == AmmoType.M_WHITE_SHARK) {
+            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                 avShort = 3;
                 avMed = 3;
                 avLong = 3;

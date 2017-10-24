@@ -331,12 +331,7 @@ public class AmmoType extends EquipmentType {
     public static final long M_MINE_CLEARANCE = 1l << 61;
     
     // Numbers 62-63 are used for Nuclear munitions, above 
-    
-    // AR10 Munitions
-    public static final long M_BARRACUDA = 1l << 64;
-    public static final long M_WHITE_SHARK = 1l << 65;
-    public static final long M_KILLER_WHALE = 1l << 66;
-      
+          
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
      * "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -11547,12 +11542,11 @@ public class AmmoType extends EquipmentType {
                 ammo.addLookupName("AR10 Barracuda Ammo");
                 ammo.damagePerShot = 2;
                 ammo.ammoType = AmmoType.T_AR10;
-                ammo.munitionType = AmmoType.M_BARRACUDA;
                 ammo.shots = 1;
                 ammo.tonnage = 30;
                 ammo.bv = 65;
                 ammo.cost = 8000;
-                ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+                ammo.flags = ammo.flags.or(F_CAP_MISSILE).or(F_AR10_BARRACUDA);
                 ammo.toHitModifier = -2;
                 ammo.capital = true;
                 //Set the date TP of these weapons to match the AR10 and the ratings to match the missiles
@@ -11580,12 +11574,11 @@ public class AmmoType extends EquipmentType {
                 ammo.addLookupName("AR10 KillerWhale Ammo");
                 ammo.damagePerShot = 4;
                 ammo.ammoType = AmmoType.T_AR10;
-                ammo.munitionType = AmmoType.M_KILLER_WHALE;
                 ammo.shots = 1;
                 ammo.tonnage = 50;
                 ammo.bv = 96;
                 ammo.cost = 20000;
-                ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+                ammo.flags = ammo.flags.or(F_CAP_MISSILE).or(F_AR10_KILLER_WHALE);
                 ammo.capital = true;
                 //Set the date TP of these weapons to match the AR10 and the ratings to match the missiles
                 ammo.rulesRefs = "210,TM";
@@ -11613,12 +11606,11 @@ public class AmmoType extends EquipmentType {
                 ammo.addLookupName("AR10 WhiteShark Ammo");
                 ammo.damagePerShot = 3;
                 ammo.ammoType = AmmoType.T_AR10;
-                ammo.munitionType = AmmoType.M_WHITE_SHARK;
                 ammo.shots = 1;
                 ammo.tonnage = 40;
                 ammo.bv = 72;
                 ammo.cost = 14000;
-                ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+                ammo.flags = ammo.flags.or(F_CAP_MISSILE).or(F_AR10_WHITE_SHARK);
                 ammo.capital = true;
                 //Set the date TP of these weapons to match the AR10 and the ratings to match the missiles
                 ammo.rulesRefs = "210,TM";

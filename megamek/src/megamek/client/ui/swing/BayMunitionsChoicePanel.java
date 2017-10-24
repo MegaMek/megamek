@@ -78,7 +78,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             || (atype.getAmmoType() == AmmoType.T_IATM)
                             || (atype.getAmmoType() == AmmoType.T_MML)
                             || (atype.getAmmoType() == AmmoType.T_AR10)) {
-                        List<Integer> key = new ArrayList(2);
+                        List<Integer> key = new ArrayList<>(2);
                         key.add(atype.getAmmoType());
                         key.add(atype.getRackSize());
                         ammoByType.putIfAbsent(key, new ArrayList<>());
@@ -193,6 +193,7 @@ public class BayMunitionsChoicePanel extends JPanel {
         for (List<AmmoRow> list : rows.values()) {
             for (AmmoRow row : list) {
                 int mountIndex = 0;
+                double remainingWeight = row.tonnage;
                 for (int i = 0; i < row.munitions.length; i++) {
                     int shots = (Integer) row.spinners[i].getValue();
                     if (shots > 0) {
@@ -212,7 +213,10 @@ public class BayMunitionsChoicePanel extends JPanel {
                             mounted.changeAmmoType(row.munitions[i]);
                         }
                         mounted.setShotsLeft(shots);
-                        mounted.setOriginalShots(shots);
+                        int slots = (int) Math.ceil((double) shots / row.munitions[i].getShots());
+                        mounted.setOriginalShots(slots * row.munitions[i].getShots());
+                        mounted.setAmmoCapacity(slots * row.munitions[i].getTonnage(entity));
+                        remainingWeight -= mounted.getAmmoCapacity();
                         mountIndex++;
                     }
                 }
@@ -233,6 +237,14 @@ public class BayMunitionsChoicePanel extends JPanel {
                     entity.getAmmo().remove(mount);
                     row.bay.getBayAmmo().removeElement(eqNum);
                     mountIndex++;
+                }
+                // If the unit is assigned less ammo than the capacity, assign remaining weight to first mount
+                // and adjust original shots.
+                if (remainingWeight > 0) {
+                    Mounted m = row.ammoMounts.get(0);
+                    AmmoType at = (AmmoType) m.getType();
+                    m.setAmmoCapacity(m.getAmmoCapacity() + remainingWeight);
+                    m.setOriginalShots((int) Math.floor(m.getAmmoCapacity() / (at.getShots() * at.getTonnage(entity))));
                 }
             }
         }

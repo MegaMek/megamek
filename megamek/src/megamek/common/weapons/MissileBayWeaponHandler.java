@@ -149,53 +149,53 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
-            Mounted bayW = ae.getEquipment(wId);
-            Mounted mLinker = bayW.getLinkedBy();
-            int bonus = 0;
-            if ((mLinker != null && mLinker.getType() instanceof MiscType
-                    && !mLinker.isDestroyed() && !mLinker.isMissing()
-                    && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                            MiscType.F_ARTEMIS))
-                    && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-                bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
-                    bonus = 2;
-                }
-                current_av = current_av + bonus;
+        Mounted bayW = ae.getEquipment(wId);
+        Mounted mLinker = bayW.getLinkedBy();
+        int bonus = 0;
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                        MiscType.F_ARTEMIS))
+                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
+                bonus = 2;
             }
-            // check for Artemis V
-            if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-                    && !mLinker.isDestroyed() && !mLinker.isMissing()
-                    && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                            MiscType.F_ARTEMIS_V))
-                    && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
-                // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
-                // to cross-tech it
-                bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
-                    bonus = 2;
-                }
+            current_av = current_av + bonus;
+        }
+        // check for Artemis V
+        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                        MiscType.F_ARTEMIS_V))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+            // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
+            // to cross-tech it
+            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
+                bonus = 2;
             }
+        }
 
-            if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
-                current_av = Math.floor(0.6 * current_av);
-            } else if (AmmoType.T_ATM == atype.getAmmoType()) {
-                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                    current_av = bayWType.getShortAV() / 2;
-                } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-                    current_av = 1.5 * current_av;
-                    if (range > WeaponType.RANGE_SHORT) {
-                        current_av = 0.0;
-                    }
-                }
-            } else if (atype.getAmmoType() == AmmoType.T_MML
-                    && !atype.hasFlag(AmmoType.F_MML_LRM)) {
-                current_av = 2 * current_av;
+        if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
+            current_av = Math.floor(0.6 * current_av);
+        } else if (AmmoType.T_ATM == atype.getAmmoType()) {
+            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                current_av = bayWType.getShortAV() / 2;
+            } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                current_av = 1.5 * current_av;
                 if (range > WeaponType.RANGE_SHORT) {
-                    current_av = 0;
+                    current_av = 0.0;
                 }
-            } 
-            return current_av;
+            }
+        } else if (atype.getAmmoType() == AmmoType.T_MML
+                && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+            current_av = 2 * current_av;
+            if (range > WeaponType.RANGE_SHORT) {
+                current_av = 0;
+            }
+        } 
+        return current_av;
         
     }     
    

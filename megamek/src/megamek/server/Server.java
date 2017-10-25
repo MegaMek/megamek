@@ -7549,7 +7549,7 @@ public class Server implements Runnable {
                                     continue;
                                 }
                                 // you can't collide with yourself
-                                if (ce.equals(a)) {
+                                if (ce.equals((Entity) a)) {
                                     continue;
                                 }
                                 if (ce instanceof SpaceStation) {

@@ -77,7 +77,7 @@ public class MegamekTable extends JTable {
         searchBuffer = new StringBuffer();
     }
 
-    public MegamekTable(Vector<String> rowData, Vector<String> columnNames) {
+    public MegamekTable(Vector<Vector<String>> rowData, Vector<String> columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
         searchColumn = 0;

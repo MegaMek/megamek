@@ -1047,7 +1047,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals(a)
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
                             && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
@@ -2385,7 +2385,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf((Entity)a) && en.isLargeCraft() && !en.equals(a)
+                    if (!en.isEnemyOf((Entity)a) && en.isLargeCraft() && !en.equals((Entity) a)
                             && ((en.getWeight() - ((Entity)a).getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;

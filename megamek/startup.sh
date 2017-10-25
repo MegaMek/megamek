@@ -149,10 +149,21 @@ done
 # Build a classpath containing all JARs.
 RUNPATH=`ls -1 $MEGAMEK_CLASSPATH/*.jar | awk 'BEGIN {ORS=":"} {print $1}' | sed 's/:$//'`
 
+# Check for Java 9, and set additional modules
+# Java 9 may report version as 9.x, instead of 1.8
+# We'll just test both versions to see if they are greater than 8
+JAVA_VERSION1=`java -version 2>&1 | grep "version" | awk '{print $3}' | tr -d \" | awk '{split($0, array, ".")} END{print array[1]}'`
+JAVA_VERSION2=`java -version 2>&1 | grep "version" | awk '{print $3}' | tr -d \" | awk '{split($0, array, ".")} END{print array[2]}'`
+if [ $JAVA_VERSION1 -gt 8 -o $JAVA_VERSION2 -gt 8 ]; then
+    JAVA_MODULES="--add-modules java.se.ee"
+else
+    JAVA_MODULES=""
+fi
+
 # Run MegaMek.
 if ! test $PWD -ef $MEGAMEK_CONFPATH; then
     echo "Switching directory to $MEGAMEK_CONFPATH."
     cd $MEGAMEK_CONFPATH
 fi
 #Change the number in -Xmx to the amount of memory available to MegaMek
-$JAVA -Xmx1024m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@
+$JAVA $JAVA_MODULES -Xmx1024m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@

@@ -740,11 +740,11 @@ public class MechView {
             }
             sWeapons.append("<td>").append(mounted.getDesc()); //$NON-NLS-1$
             if (entity.isClan()
-                    && !TechConstants.isClan(mounted.getType().getTechLevel(entity.getYear()))) {
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
             if (!entity.isClan()
-                    && TechConstants.isClan(mounted.getType().getTechLevel(entity.getYear()))) {
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                 sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             /*
@@ -816,11 +816,11 @@ public class MechView {
                     }
                     sWeapons.append("<td>").append("&nbsp;&nbsp;>" + m.getDesc()); //$NON-NLS-1$
                     if (entity.isClan()
-                            && !TechConstants.isClan(m.getType().getTechLevel(entity.getYear()))) {
+                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                         sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
                     }
                     if (!entity.isClan()
-                            && TechConstants.isClan(m.getType().getTechLevel(entity.getYear()))) {
+                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                         sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
                     }
                     sWeapons.append("</td>");    
@@ -955,13 +955,11 @@ public class MechView {
             }
             sMisc.append("<td>").append(mounted.getDesc()).append("</td>"); //$NON-NLS-1$            	
             if (entity.isClan()
-                    && mounted.getType().getInternalName().substring(0, 2)
-                            .equals("IS")) { //$NON-NLS-1$
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 sMisc.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
             if (!entity.isClan()
-                    && mounted.getType().getInternalName().substring(0, 2)
-                            .equals("CL")) { //$NON-NLS-1$
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                 sMisc.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             sMisc.append("</td><td align='right'>")

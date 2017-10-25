@@ -878,6 +878,10 @@ public class MechView {
                     && mounted.getLinkedBy().isOneShot()){
                 continue;
             }
+            // Ignore bay ammo bins for unused munition types
+            if (mounted.getAmmoCapacity() == 0) {
+                continue;
+            }
             if (mounted.isDestroyed()) {
                 sAmmo.append("<tr bgcolor='red'>");
             } else if (mounted.getUsableShotsLeft() < 1) {

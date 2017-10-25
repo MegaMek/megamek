@@ -220,22 +220,12 @@ public class BayMunitionsChoicePanel extends JPanel {
                         mountIndex++;
                     }
                 }
+                // Zero out any remaining unused bins.
                 while (mountIndex < row.ammoMounts.size()) {
                     Mounted mount = row.ammoMounts.get(mountIndex);
-                    int eqNum = entity.getEquipmentNum(mount);
-                    for (int slot = 0; slot < entity.getNumberOfCriticals(row.bay.getLocation()); slot++) {
-                        CriticalSlot cs = entity.getCritical(row.bay.getLocation(), slot);
-                        if ((cs != null)
-                                && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
-                            if (cs.getMount().equals(row.ammoMounts.get(mountIndex))) {
-                                cs = null;
-                                entity.setCritical(row.bay.getLocation(), slot, cs);
-                                break;
-                            }
-                        }
-                    }
-                    entity.getAmmo().remove(mount);
-                    row.bay.getBayAmmo().removeElement(eqNum);
+                    mount.setAmmoCapacity(0);
+                    mount.setOriginalShots(0);
+                    mount.setShotsLeft(0);
                     mountIndex++;
                 }
                 // If the unit is assigned less ammo than the capacity, assign remaining weight to first mount

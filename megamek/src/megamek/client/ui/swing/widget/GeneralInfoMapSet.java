@@ -63,8 +63,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMSimpleLabel statusR, pilotR, playerR, teamR, weightR, bvR, mpR0,
             mpR1, mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR,
             elevationR, fuelR, curSensorsR, visualRangeR;
-    private PMSimpleLabel[] quirksR;
-    private PMSimpleLabel[] partRepsR;
+    private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
@@ -248,20 +247,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 visualRangeL.getSize().width + 10, getYCoord());
         content.addArea(visualRangeR);
 
-        quirksR = new PMSimpleLabel[40];
-        for (int i = 0; i < quirksR.length; i++) {
-            quirksR[i] = createLabel(new Integer(i).toString(), fm, 0,
-                    getNewYCoord());
-            content.addArea(quirksR[i]);
-        }
-
-        partRepsR = new PMSimpleLabel[20];
-        for (int i = 0; i < partRepsR.length; i++) {
-            partRepsR[i] = createLabel(new Integer(i).toString(), fm, 0,
-                    getNewYCoord());
-            content.addArea(partRepsR[i]);
-        }
-
+        getNewYCoord(); // skip a line for readability
+        
+        quirksAndPartReps = new PMMultiLineLabel(fm, Color.white);
+        quirksAndPartReps.moveTo(0, getNewYCoord());
+        content.addArea(quirksAndPartReps);
     }
 
     /**
@@ -349,25 +339,19 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     .getString("GeneralInfoMapSet.elevationL"));
         }
 
-        for (PMSimpleLabel element : quirksR) {
-            element.setString(""); //$NON-NLS-1$
-        }
-        for (PMSimpleLabel element : partRepsR) {
-            element.setString(""); //$NON-NLS-1$
-        }
+        quirksAndPartReps.clear();
 
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            addOptionsToList(en.getQuirks(), quirksR);
+            addOptionsToList(en.getQuirks(), quirksAndPartReps);
         }
         
-        // Note that, due to the fact that the quirks display is hardcoded to 40 labels in height,
-        // unless you're running at 1024x12000 resolution, you're never going to see partial repairs on the unit info card.
-        // That fix will require changing the data types of partRepsR and quirksR to a dynamically allocated list,
-        // which is not a very simple change, so I'm leaving it for another time.
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
-            addOptionsToList(en.getPartialRepairs(), partRepsR);
+            // skip a line for readability
+            quirksAndPartReps.addString("");
+                        
+            addOptionsToList(en.getPartialRepairs(), quirksAndPartReps);
         }
 
         if (en.mpUsed > 0) {
@@ -581,24 +565,16 @@ public class GeneralInfoMapSet implements DisplayMapSet {
      * @param optionsInstance IOptions instance
      * @param labels label array
      */
-    public void addOptionsToList(IOptions optionsInstance, PMSimpleLabel[] labels) {
-        int index = 0;
-        
+    public void addOptionsToList(IOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {
-                labels[index++].setString(group.getDisplayableName());
+                quirksAndPartReps.addString(group.getDisplayableName());
                 
                 for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
-                    // safety feature: because the labels are fixed-length arrays
-                    // we should not add more options than there are elements in the array.
-                    if(index >= labels.length) {
-                        return;
-                    }
-                    
                     IOption option = options.nextElement();
                     if (option != null && option.booleanValue()) {
-                        labels[index++].setString("  " + option.getDisplayableNameWithValue());
+                        quirksAndPartReps.addString("  " + option.getDisplayableNameWithValue());
                     }
                 }
             }

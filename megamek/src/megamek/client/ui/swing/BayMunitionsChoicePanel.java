@@ -100,11 +100,11 @@ public class BayMunitionsChoicePanel extends JPanel {
             int mountIndex = 0;
             double remainingWeight = row.tonnage;
             for (int i = 0; i < row.munitions.size(); i++) {
-                int shots = (Integer) row.spinners.get(0).getValue();
+                int shots = (Integer) row.spinners.get(i).getValue();
                 if (shots > 0) {
                     Mounted mounted = null;
                     if (mountIndex >= row.ammoMounts.size()) {
-                        mounted = new Mounted(entity, row.munitions.get(0));
+                        mounted = new Mounted(entity, row.munitions.get(i));
                         try {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
@@ -115,12 +115,12 @@ public class BayMunitionsChoicePanel extends JPanel {
 
                     } else {
                         mounted = row.ammoMounts.get(mountIndex);
-                        mounted.changeAmmoType(row.munitions.get(0));
+                        mounted.changeAmmoType(row.munitions.get(i));
                     }
                     mounted.setShotsLeft(shots);
-                    int slots = (int) Math.ceil((double) shots / row.munitions.get(0).getShots());
-                    mounted.setOriginalShots(slots * row.munitions.get(0).getShots());
-                    mounted.setAmmoCapacity(slots * row.munitions.get(0).getTonnage(entity));
+                    int slots = (int) Math.ceil((double) shots / row.munitions.get(i).getShots());
+                    mounted.setOriginalShots(slots * row.munitions.get(i).getShots());
+                    mounted.setAmmoCapacity(slots * row.munitions.get(i).getTonnage(entity));
                     remainingWeight -= mounted.getAmmoCapacity();
                     mountIndex++;
                 }

@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -33,14 +31,17 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.LocationFullException;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Neoancient
@@ -49,10 +50,12 @@ import megamek.common.logging.DefaultMmLogger;
 public class BayMunitionsChoicePanel extends JPanel {
     
     private final Entity entity;
+    private final IGame game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
     
-    public BayMunitionsChoicePanel(Entity entity) {
+    public BayMunitionsChoicePanel(Entity entity, IGame game) {
         this.entity = entity;
+        this.game = game;
         
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -68,12 +71,13 @@ public class BayMunitionsChoicePanel extends JPanel {
                     List<Integer> key = new ArrayList<>(2);
                     key.add(atype.getAmmoType());
                     key.add(atype.getRackSize());
+                    key.add(atype.getTechBase());
                     ammoByType.putIfAbsent(key, new ArrayList<>());
                     ammoByType.get(key).add(ammo);
                 }
             }
             for (List<Integer> key : ammoByType.keySet()) {
-                AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), ammoByType.get(key));
+                AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), key.get(2), ammoByType.get(key));
                 gbc.gridy++;
                 add(row, gbc);
                 rows.add(row);
@@ -137,6 +141,9 @@ public class BayMunitionsChoicePanel extends JPanel {
     
     class AmmoRowPanel extends JPanel implements ChangeListener {
         private final Mounted bay;
+        private final int at;
+        private final int rackSize;
+        private final int techBase;
         private final List<Mounted> ammoMounts;
         
         private final List<JSpinner> spinners;
@@ -144,15 +151,17 @@ public class BayMunitionsChoicePanel extends JPanel {
         
         private double tonnage = 0;
         
-        AmmoRowPanel(Mounted bay, int at, int rackSize, List<Mounted> ammoMounts) {
+        AmmoRowPanel(Mounted bay, int at, int rackSize, int techBase, List<Mounted> ammoMounts) {
             this.bay = bay;
+            this.at = at;
+            this.rackSize = rackSize;
+            this.techBase = techBase;
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
             Dimension spinnerSize =new Dimension(55, 25);
             
             munitions = AmmoType.getMunitionsFor(at).stream()
-                    .filter(atype -> atype.canAeroUse() && (atype.getRackSize() == rackSize))
-                    .collect(Collectors.toList());
+                    .filter(this::includeMunition).collect(Collectors.toList());
             tonnage = ammoMounts.stream().mapToDouble(m -> m.getAmmoCapacity()).sum();
             Map<String,Integer> starting = new HashMap<>();
             ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
@@ -206,6 +215,32 @@ public class BayMunitionsChoicePanel extends JPanel {
             recalcMaxValues();
         }
         
+        private boolean includeMunition(AmmoType atype) {
+            if (!atype.canAeroUse()
+                    || (atype.getAmmoType() != at)
+                    || (atype.getRackSize() != rackSize)
+                    || ((atype.getTechBase() != techBase)
+                            && (atype.getTechBase() != AmmoType.TECH_BASE_ALL)
+                            && (techBase != AmmoType.TECH_BASE_ALL))
+                    || !atype.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
+                            SimpleTechLevel.getGameTechLevel(game), techBase == AmmoType.TECH_BASE_CLAN, false)) {
+                return false;
+            }
+            if (atype.hasFlag(AmmoType.F_NUCLEAR)
+                    && !game.getOptions().booleanOption(
+                            OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                return false;
+            }
+            if ((atype.getMunitionType() & AmmoType.M_ARTEMIS_CAPABLE) != 0) {
+                return entity.hasWorkingMisc(MiscType.F_ARTEMIS)
+                        || entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO);
+            }
+            if ((atype.getMunitionType() & AmmoType.M_ARTEMIS_V_CAPABLE) != 0) {
+                return entity.hasWorkingMisc(MiscType.F_ARTEMIS_V);
+            }
+            return true;
+        }
+        
         private String createMunitionLabel(AmmoType atype) {
             if (atype.getAmmoType() == AmmoType.T_MML) {
                 if ((atype.getMunitionType() & (AmmoType.M_ARTEMIS_CAPABLE | AmmoType.M_ARTEMIS_V_CAPABLE))
@@ -219,18 +254,16 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
             
             if (atype.getAmmoType() == AmmoType.T_AR10) {
-                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    return Messages.getString("CustomMechDialog.Peacemaker"); //$NON-NLS-1$
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    return Messages.getString("CustomMechDialog.SantaAnna"); //$NON-NLS-1$
+                } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                     return Messages.getString("CustomMechDialog.KillerWhale"); //$NON-NLS-1$
                 } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                     return Messages.getString("CustomMechDialog.WhiteShark"); //$NON-NLS-1$
                 } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                     return Messages.getString("CustomMechDialog.Barracuda"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-                    return Messages.getString("CustomMechDialog.Peacemaker"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-                    return Messages.getString("CustomMechDialog.Peacemaker"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-                    return Messages.getString("CustomMechDialog.SantaAnna"); //$NON-NLS-1$
                 }
             }
             

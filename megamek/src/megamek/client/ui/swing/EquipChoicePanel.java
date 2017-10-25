@@ -612,14 +612,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private void setupMunitions() {
         GridBagLayout gbl = new GridBagLayout();
-        if (entity.usesWeaponBays()) {
-            panMunitions = new BayMunitionsChoicePanel(entity);
-            return;
-        }
-        panMunitions.setLayout(gbl);
+
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
+
+        if (entity.usesWeaponBays()) {
+            panMunitions = new BayMunitionsChoicePanel(entity, game);
+            return;
+        }
+        panMunitions.setLayout(gbl);
 
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();

@@ -49,6 +49,11 @@ import megamek.common.options.OptionsConstants;
  */
 public class BayMunitionsChoicePanel extends JPanel {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7741380967676720496L;
+    
     private final Entity entity;
     private final IGame game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
@@ -140,6 +145,13 @@ public class BayMunitionsChoicePanel extends JPanel {
     }
     
     class AmmoRowPanel extends JPanel implements ChangeListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7251618728823971065L;
+        
+        private final JLabel lblTonnage = new JLabel();
+        
         private final Mounted bay;
         private final int at;
         private final int rackSize;
@@ -196,7 +208,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
-            add(new JLabel(String.format("%.1f tons", tonnage)), gbc);
+            add(lblTonnage, gbc);
 
             gbc.gridx = 0;
             gbc.gridy = 1;
@@ -253,16 +265,19 @@ public class BayMunitionsChoicePanel extends JPanel {
                 }
             }
             
-            if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-                return Messages.getString("CustomMechDialog.Peacemaker"); //$NON-NLS-1$
-            } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-                return Messages.getString("CustomMechDialog.SantaAnna"); //$NON-NLS-1$
-            } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-                return Messages.getString("CustomMechDialog.KillerWhale"); //$NON-NLS-1$
-            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                return Messages.getString("CustomMechDialog.WhiteShark"); //$NON-NLS-1$
-            } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                return Messages.getString("CustomMechDialog.Barracuda"); //$NON-NLS-1$
+            if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
+                String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE)? "-T":"";
+                if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    return Messages.getString("CustomMechDialog.Peacemaker") + tele; //$NON-NLS-1$
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    return Messages.getString("CustomMechDialog.SantaAnna") + tele; //$NON-NLS-1$
+                } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                    return Messages.getString("CustomMechDialog.KillerWhale") + tele; //$NON-NLS-1$
+                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                    return Messages.getString("CustomMechDialog.WhiteShark") + tele; //$NON-NLS-1$
+                } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                    return Messages.getString("CustomMechDialog.Barracuda") + tele; //$NON-NLS-1$
+                }
             }
             
             if ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
@@ -277,8 +292,8 @@ public class BayMunitionsChoicePanel extends JPanel {
             double[] currentWeight = new double[spinners.size()];
             double remaining = tonnage;
             for (int i = 0; i < spinners.size(); i++) {
-                currentWeight[i] += munitions.get(i).getTonnage(entity)
-                        * ((Integer) spinners.get(i).getValue() / munitions.get(i).getShots());
+                currentWeight[i] += Math.ceil(munitions.get(i).getTonnage(entity)
+                        * ((Integer) spinners.get(i).getValue() / (double) munitions.get(i).getShots()));
                 remaining -= currentWeight[i];
             }
             for (int i = 0; i < spinners.size(); i++) {
@@ -288,6 +303,8 @@ public class BayMunitionsChoicePanel extends JPanel {
                 ((SpinnerNumberModel) spinners.get(i).getModel()).setMaximum(max);
                 spinners.get(i).addChangeListener(this);
             }
+            lblTonnage.setText(String.format(Messages.getString("CustomMechDialog.formatAmmoTonnage"), //$NON-NLS-1$
+                    tonnage - remaining, tonnage));
         }
 
         @Override

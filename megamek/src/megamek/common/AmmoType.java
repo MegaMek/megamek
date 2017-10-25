@@ -135,7 +135,10 @@ public class AmmoType extends EquipmentType {
 	public static final int T_LRM_IMP = 107;
 	public static final int T_LONG_TOM_PRIM = 108;
 	public static final int T_ARROWIV_PROTO = 109;
-    public static final int NUM_TYPES = 110;  //Should always be at the end with the highest number
+    public static final int T_KILLER_WHALE_T = 110;
+    public static final int T_WHITE_SHARK_T = 111;
+    public static final int T_BARRACUDA_T = 112;
+    public static final int NUM_TYPES = 113;  //Should always be at the end with the highest number
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -11150,7 +11153,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.setInternalName("Ammo Barracuda-T");
 	            ammo.addLookupName("BarracudaT Ammo");
 	            ammo.damagePerShot = 2;
-	            ammo.ammoType = AmmoType.T_BARRACUDA;
+	            ammo.ammoType = AmmoType.T_BARRACUDA_T;
 	            ammo.shots = 1;
                 ammo.tonnage = 30.0;
 	            ammo.bv = 65;
@@ -11180,7 +11183,7 @@ public class AmmoType extends EquipmentType {
                 ammo.setInternalName("Ammo White Shark-T");
                 ammo.addLookupName("WhiteSharkT Ammo");
                 ammo.damagePerShot = 3;
-                ammo.ammoType = AmmoType.T_WHITE_SHARK;
+                ammo.ammoType = AmmoType.T_WHITE_SHARK_T;
                 ammo.shots = 1;
                 ammo.tonnage = 40.0;
                 ammo.bv = 72;
@@ -11209,7 +11212,7 @@ public class AmmoType extends EquipmentType {
                 ammo.setInternalName("Ammo Killer Whale-T");
                 ammo.addLookupName("KillerWhaleT Ammo");
                 ammo.damagePerShot = 4;
-                ammo.ammoType = AmmoType.T_KILLER_WHALE;
+                ammo.ammoType = AmmoType.T_KILLER_WHALE_T;
                 ammo.shots = 1;
                 ammo.tonnage = 50.0;
                 ammo.bv = 96;
@@ -14871,6 +14874,7 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.tonnage = 50.0;
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
@@ -14921,6 +14925,7 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.tonnage = 50.0;
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;

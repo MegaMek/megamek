@@ -253,18 +253,16 @@ public class BayMunitionsChoicePanel extends JPanel {
                 }
             }
             
-            if (atype.getAmmoType() == AmmoType.T_AR10) {
-                if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-                    return Messages.getString("CustomMechDialog.Peacemaker"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
-                    return Messages.getString("CustomMechDialog.SantaAnna"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-                    return Messages.getString("CustomMechDialog.KillerWhale"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-                    return Messages.getString("CustomMechDialog.WhiteShark"); //$NON-NLS-1$
-                } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
-                    return Messages.getString("CustomMechDialog.Barracuda"); //$NON-NLS-1$
-                }
+            if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                return Messages.getString("CustomMechDialog.Peacemaker"); //$NON-NLS-1$
+            } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                return Messages.getString("CustomMechDialog.SantaAnna"); //$NON-NLS-1$
+            } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                return Messages.getString("CustomMechDialog.KillerWhale"); //$NON-NLS-1$
+            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                return Messages.getString("CustomMechDialog.WhiteShark"); //$NON-NLS-1$
+            } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                return Messages.getString("CustomMechDialog.Barracuda"); //$NON-NLS-1$
             }
             
             if ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)

@@ -215,11 +215,13 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             return 0;
         }
         if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
+                || atype.getAmmoType() == AmmoType.T_WHITE_SHARK_T
                 || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
                 // Santa Anna, per IO rules
                 || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
+                || atype.getAmmoType() == AmmoType.T_KILLER_WHALE_T
                 || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY
                 || atype.getAmmoType() == AmmoType.T_ALAMO) {

@@ -44,7 +44,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.addLookupName("WhiteSharkT");
         this.heat = 15;
         this.damage = 3;
-        this.ammoType = AmmoType.T_WHITE_SHARK;
+        this.ammoType = AmmoType.T_WHITE_SHARK_T;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 36;

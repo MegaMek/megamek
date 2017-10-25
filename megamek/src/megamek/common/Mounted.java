@@ -153,10 +153,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     protected int baseDamageCapacity = 0;
     protected int damageTaken = 0;
 
-    // this is a hack but in the case of Killer Whale ammo
-    // I need some way of tracking how many missiles are Santa Annas
-    private int nSantaAnna = 0;
-
     /**
      * BA use locations for troopers, so we need a way to keep track of where
      *  a piece of equipment is moutned on BA
@@ -1501,14 +1497,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return heat;
         }
         return 0;
-    }
-
-    public int getNSantaAnna() {
-        return nSantaAnna;
-    }
-
-    public void setNSantaAnna(int n) {
-        nSantaAnna = n;
     }
 
     public boolean isBodyMounted() {

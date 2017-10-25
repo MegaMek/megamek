@@ -12104,66 +12104,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Apply any pending Santa Anna allocations to Killer Whale ammo bins
-     * effectively "splitting" the ammo bins in two This is a hack that I should
-     * really creat a general method of "splitting" ammo bins for
-     */
-    public void applySantaAnna() {
-
-        // I can't add the ammo while I am iterating through the ammo list
-        // so collect vectors containing number of shots and location
-        Vector<Integer> locations = new Vector<Integer>();
-        Vector<Integer> ammo = new Vector<Integer>();
-        Vector<Mounted> baymounts = new Vector<Mounted>();
-        Vector<String> name = new Vector<String>();
-
-        for (Mounted amounted : getAmmo()) {
-            if (amounted.getNSantaAnna() > 0) {
-                // first reduce the current ammo load by number of santa annas
-                int nSantaAnna = amounted.getNSantaAnna();
-                amounted.setShotsLeft(Math.max(amounted.getBaseShotsLeft()
-                                               - nSantaAnna, 0));
-                // save the new ammo information
-                locations.add(amounted.getLocation());
-                ammo.add(nSantaAnna);
-                // name depends on type
-                if (amounted.getType().getInternalName().indexOf("AR10") != -1) {
-                    name.add("AR10 SantaAnna Ammo");
-                } else {
-                    name.add("SantaAnna Ammo");
-                }
-                if (null == getBayByAmmo(amounted)) {
-                    System.err
-                            .println("cannot find the right bay for Santa Anna ammo");
-                    return;
-                }
-                baymounts.add(getBayByAmmo(amounted));
-                // now make sure santa anna loadout is reset
-                amounted.setNSantaAnna(0);
-            }
-        }
-
-        // now iterate through to get new mounts
-        if ((ammo.size() != locations.size()) || (ammo.size() != name.size())
-            || (ammo.size() != baymounts.size())) {
-            // this shouldn't happen
-            System.err.println("cannot load santa anna ammo");
-            return;
-        }
-        for (int i = 0; i < ammo.size(); i++) {
-            try {
-                Mounted newmount = addEquipment(
-                        EquipmentType.get(name.elementAt(i)),
-                        locations.elementAt(i), false, ammo.elementAt(i));
-                // add this mount to the ammo for the bay
-                baymounts.elementAt(i).addAmmoToBay(getEquipmentNum(newmount));
-            } catch (LocationFullException ex) {
-                // throw new LocationFullException(ex.getMessage());
-            }
-        }
-    }
-
-    /**
      * get the bay that ammo is associated with
      *
      * @param mammo

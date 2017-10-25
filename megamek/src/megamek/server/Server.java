@@ -2866,11 +2866,7 @@ public class Server implements Runnable {
     public void checkEntityExchange() {
         for (Iterator<Entity> entities = game.getEntities(); entities.hasNext();) {
             Entity entity = entities.next();
-            // apply bombs and santa annas
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)
-                    && ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
-                entity.applySantaAnna();
-            }
+            // apply bombs
             if (entity.isBomber()) {
                 ((IBomber)entity).applyBombs();
             }

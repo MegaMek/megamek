@@ -295,9 +295,6 @@ public class AmmoType extends EquipmentType {
     public static final long M_DAVY_CROCKETT_M = 1l << 45;
 //    public static final long M_SANTA_ANNA = 1l << 46;
 
-    // tele-missile
-    public static final long M_TELE = 1l << 47;
-
     // fluid gun
     // TODO: implement all of these except coolant
     // water should also be used for vehicle flamers
@@ -11160,7 +11157,6 @@ public class AmmoType extends EquipmentType {
 	            ammo.cost = 8000;
 	            ammo.toHitModifier = -2;
 	            ammo.capital = true;
-	            ammo.munitionType = AmmoType.M_TELE;
 	            ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
                 ammo.rulesRefs = "251,TM";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11189,7 +11185,6 @@ public class AmmoType extends EquipmentType {
                 ammo.bv = 72;
                 ammo.cost = 14000;
                 ammo.capital = true;
-                ammo.munitionType = AmmoType.M_TELE;
                 ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
                 ammo.rulesRefs = "251,TM";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11218,7 +11213,6 @@ public class AmmoType extends EquipmentType {
                 ammo.bv = 96;
                 ammo.cost = 20000;
                 ammo.capital = true;
-                ammo.munitionType = AmmoType.M_TELE;
                 ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
                 ammo.rulesRefs = "251,TM";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11643,7 +11637,6 @@ public class AmmoType extends EquipmentType {
                         .or(F_CAP_MISSILE);
                 ammo.toHitModifier = -2;
                 ammo.capital = true;
-                ammo.munitionType = AmmoType.M_TELE;
                 //Set the date of these weapons to match the Tele Missile itself
                 ammo.rulesRefs = "251,TW";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11673,7 +11666,6 @@ public class AmmoType extends EquipmentType {
                 ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_TELE_MISSILE)
                         .or(F_CAP_MISSILE);
                 ammo.capital = true;
-                ammo.munitionType = AmmoType.M_TELE;
                 //Set the date of these weapons to match the Tele Missile itself
                 ammo.rulesRefs = "251,TW";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -11703,7 +11695,6 @@ public class AmmoType extends EquipmentType {
                 ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_TELE_MISSILE)
                         .or(F_CAP_MISSILE);
                 ammo.capital = true;
-                ammo.munitionType = AmmoType.M_TELE;
                 //Set the date of these weapons to match the Tele Missile itself
                 ammo.rulesRefs = "251,TW";
                 ammo.techAdvancement.setTechBase(TECH_BASE_IS)

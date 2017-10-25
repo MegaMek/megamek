@@ -36,6 +36,7 @@ public abstract class LRTWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.T_LRM_TORPEDO;
         setModes(new String[] { "", "Indirect" });
+        flags = flags.andNot(F_AERO_WEAPON);
     }
 
     /*

@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
 import megamek.common.CriticalSlot;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -34,7 +33,7 @@ import megamek.server.Server;
  */
 
 
-public class ACCaseLessHandler extends ACWeaponHandler {
+public class ACCaselessHandler extends ACWeaponHandler {
 
     private static final long serialVersionUID = -6614562346449113878L;
 
@@ -43,7 +42,7 @@ public class ACCaseLessHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public ACCaseLessHandler (ToHitData t, WeaponAttackAction w,
+    public ACCaselessHandler (ToHitData t, WeaponAttackAction w,
             IGame g, Server s) {
         super(t, w, g, s);
     }

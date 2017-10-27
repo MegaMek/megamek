@@ -126,6 +126,7 @@ public class MULParser {
     private static final String POINTS = "points";
     private static final String TYPE = "type";
     private static final String SHOTS = "shots";
+    private static final String CAPACITY = "capacity";
     private static final String IS_HIT = "isHit";
     private static final String MUNITION = "munition";
     private static final String DIRECTION = "direction";
@@ -1332,6 +1333,7 @@ public class MULParser {
         String type = slotTag.getAttribute(TYPE);
         // String rear = slotTag.getAttribute( IS_REAR ); // is never read.
         String shots = slotTag.getAttribute(SHOTS);
+        String capacity = slotTag.getAttribute(CAPACITY);
         String hit = slotTag.getAttribute(IS_HIT);
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
         String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
@@ -1578,6 +1580,24 @@ public class MULParser {
                             mounted.setShotsLeft(shotsVal);
 
                         } // End have-good-shots-value
+                        try {
+                            double capVal = Double.parseDouble(capacity);
+                            mounted.setAmmoCapacity(capVal);
+                        } catch (NumberFormatException excep) {
+                            // Handled by the next if test.
+                        }
+                        if (capacity.equals(NA)) {
+                            if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                                    || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                                mounted.setAmmoCapacity(mounted.getOriginalShots()
+                                         * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
+                            } else {
+                                mounted.setAmmoCapacity(mounted.getOriginalShots()
+                                        * mounted.getType().getTonnage(entity)
+                                        / ((AmmoType) mounted.getType()).getShots());
+                            }
+                        }
+                        
 
                     } else {
                         // Bad XML equipment.

@@ -105,6 +105,10 @@ public class EntityListFile {
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getBaseShotsLeft()));
+                if (mount.getEntity().usesWeaponBays()) {
+                    output.append("\" capacity=\"")
+                        .append(String.valueOf(mount.getAmmoCapacity()));
+                }
             }
             if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {

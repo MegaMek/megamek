@@ -3242,6 +3242,8 @@ public class Server implements Runnable {
                     } else {
                         changePhase(IGame.Phase.PHASE_INITIATIVE);
                     }
+                // Decrement the ASEWAffected counter
+                decrementASEWTurns();    
                 }
                 break;
             case PHASE_END_REPORT:

@@ -86,6 +86,18 @@ public class Jumpship extends Aero {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
     }
+    
+    
+    //ASEW Missile Effects, per location
+    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)

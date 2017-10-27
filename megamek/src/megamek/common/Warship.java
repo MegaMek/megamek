@@ -46,6 +46,20 @@ public class Warship extends Jumpship {
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
     }
     
+    //ASEW Missile Effects, per location
+    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};
+    
+    @Override
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    @Override
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
+ 
+    
     @Override
     public double getStrategicFuelUse() {
     	double tonsperday = 0;

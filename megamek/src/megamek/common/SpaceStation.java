@@ -27,6 +27,18 @@ public class SpaceStation extends Jumpship {
      *
      */
     private static final long serialVersionUID = -3160156173650960985L;
+    
+    
+    //ASEW Missile Effects, per location
+    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
 
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES)

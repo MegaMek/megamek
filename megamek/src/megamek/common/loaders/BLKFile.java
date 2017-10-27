@@ -995,7 +995,7 @@ public class BLKFile {
                     }
                     e.addTransporter(new HeavyVehicleBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("superheavyvehiclebay:", 0)) {
-                    String numbers = transporter.substring(16);
+                    String numbers = transporter.substring(21);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);

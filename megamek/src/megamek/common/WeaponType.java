@@ -87,6 +87,7 @@ import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMDBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalPPCBayWeapon;
+import megamek.common.weapons.bayweapons.GaussBayWeapon;
 import megamek.common.weapons.bayweapons.LBXBayWeapon;
 import megamek.common.weapons.bayweapons.LRMBayWeapon;
 import megamek.common.weapons.bayweapons.LaserBayWeapon;
@@ -103,6 +104,7 @@ import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapCannonBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapitalMissileBayWeapon;
+import megamek.common.weapons.bayweapons.ThunderboltBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
@@ -619,7 +621,9 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
     public static final int CLASS_AMS = 24;
-    public static final int NUM_CLASSES = 25;
+    public static final int CLASS_GAUSS = 25;
+    public static final int CLASS_THUNDERBOLT = 26;
+    public static final int NUM_CLASSES = 27;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -997,6 +1001,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Plasma Bay");
             case (CLASS_AC):
                 return EquipmentType.get("AC Bay");
+            case (CLASS_GAUSS):
+                return EquipmentType.get("Gauss Bay");
             case (CLASS_LBX_AC):
                 return EquipmentType.get("LBX AC Bay");
             case (CLASS_LRM):
@@ -1007,6 +1013,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("MRM Bay");
             case (CLASS_MML):
                 return EquipmentType.get("MML Bay");
+            case (CLASS_THUNDERBOLT):
+                return EquipmentType.get("Thunderbolt Bay");
             case (CLASS_ATM):
                 return EquipmentType.get("ATM Bay");
             case (CLASS_ROCKET_LAUNCHER):
@@ -2113,6 +2121,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ArtilleryBayWeapon());
         EquipmentType.addType(new PlasmaBayWeapon());
         EquipmentType.addType(new ACBayWeapon());
+        EquipmentType.addType(new GaussBayWeapon());
+        EquipmentType.addType(new ThunderboltBayWeapon());
         EquipmentType.addType(new LBXBayWeapon());
         EquipmentType.addType(new LRMBayWeapon());
         EquipmentType.addType(new SRMBayWeapon());

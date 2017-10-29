@@ -38,6 +38,7 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
         super();
         this.setModes(new String[] { "", "Indirect" });
         this.rackSize = 1;
+        atClass = CLASS_THUNDERBOLT;
     }
 
     /*

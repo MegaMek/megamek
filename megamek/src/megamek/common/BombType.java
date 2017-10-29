@@ -278,7 +278,7 @@ public class BombType extends AmmoType {
 		bomb.bombType = BombType.B_AS;
 		bomb.shots = 1;
 		bomb.bv = 114;
-		bomb.cost = 0;
+		bomb.cost = 15000;
 		bomb.rulesRefs = "358,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
 		.setIntroLevel(false)
@@ -330,7 +330,7 @@ public class BombType extends AmmoType {
 		bomb.bombType = BombType.B_ASEW;
 		bomb.shots = 1;
 		bomb.bv = 75;
-		bomb.cost = 0;
+		bomb.cost = 20000;
 		bomb.rulesRefs = "358,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
 		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
@@ -382,7 +382,7 @@ public class BombType extends AmmoType {
 		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
 		bomb.shots = 1;
 		bomb.bv = 0;
-		bomb.cost = 0;
+		bomb.cost = 3000;
 		bomb.rulesRefs = "358,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
 		.setIntroLevel(false)
@@ -443,7 +443,7 @@ public class BombType extends AmmoType {
 		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
 		bomb.shots = 1;
 		bomb.bv = 34;
-		bomb.cost = 0;
+		bomb.cost = 2000;
 		bomb.rulesRefs = "359,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
 		.setIntroLevel(false)
@@ -549,7 +549,7 @@ public class BombType extends AmmoType {
 		bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
 		bomb.shots = 1;
 		bomb.bv = 16;
-		bomb.cost = 0;
+		bomb.cost = 6000;
 		bomb.rulesRefs = "359,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 		        .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
@@ -629,7 +629,7 @@ public class BombType extends AmmoType {
 		bomb.bombType = BombType.B_LAA;
 		bomb.shots = 1;
 		bomb.bv = 17;
-		bomb.cost = 0;
+		bomb.cost = 6000;
 		bomb.rulesRefs = "359,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
 		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
@@ -759,7 +759,7 @@ public class BombType extends AmmoType {
 		bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
 		bomb.shots = 1;
 		bomb.bv = 0;
-		bomb.cost = 0;
+		bomb.cost = 12000;
 		bomb.rulesRefs = "360,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 		        .setTechRating(RATING_C).setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
@@ -786,7 +786,7 @@ public class BombType extends AmmoType {
 		bomb.bombType = BombType.B_TORPEDO;
 		bomb.shots = 1;
 		bomb.bv = 10;
-		bomb.cost = 0;
+		bomb.cost = 7000;
 		bomb.rulesRefs = "360,TO";
 		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 		        .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
@@ -808,8 +808,8 @@ public class BombType extends AmmoType {
 		bomb.ammoType = AmmoType.T_ALAMO;
 		bomb.bombType = BombType.B_ALAMO;
 		bomb.shots = 1;
-		bomb.bv = 0;
-		bomb.cost = 0;
+		bomb.bv = 100;
+		bomb.cost = 1000000;
 		bomb.flags = bomb.flags.or(F_NUCLEAR).or(AmmoType.F_OTHER_BOMB);
 		bomb.capital = true;
 		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS).setTechRating(RATING_E)

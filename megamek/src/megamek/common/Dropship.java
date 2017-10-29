@@ -34,6 +34,18 @@ public class Dropship extends SmallCraft {
      *
      */
     private static final long serialVersionUID = 1528728632696989565L;
+    
+    //ASEW Missile Effects, per location
+    private int asewAffectedTurns[] = {0,0,0,0};
+    
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
+    
     // escape pods and lifeboats
     int escapePods = 0;
     int lifeBoats = 0;

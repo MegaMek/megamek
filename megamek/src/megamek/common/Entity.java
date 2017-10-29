@@ -399,6 +399,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Keeps track of the current TSEMP effect on this entity
      */
     private int tsempEffect = TSEMPWeapon.TSEMP_EFFECT_NONE;
+    
+    /**
+     * Keeps track of the current ASEW effect on this entity
+     */
+    protected int asewAffectedTurns = 0;
 
     /**
      * Keeps track of whether this Entity fired a TSEMP this turn
@@ -3389,6 +3394,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
+            AmmoType atype = (AmmoType) mounted.getType();
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                mounted.setOriginalAmmoTons(atype.getTonnage());
+            } 
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -14535,6 +14544,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setHasFiredTsemp(boolean hasFiredTSEMP) {
         hasFiredTsemp = hasFiredTSEMP;
+    }
+    
+    public void setASEWAffected(int turns) {
+        asewAffectedTurns = turns;
+    }
+    
+    public int getASEWAffected() {
+        return asewAffectedTurns;
     }
 
     public boolean hasActivatedRadicalHS() {

@@ -96,6 +96,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
+    
+    //For AR10 magazines, we need to store the original ammo tonnage
+    private double originalAmmoTons;
 
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
@@ -1439,9 +1442,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 AmmoType ammoType = (AmmoType)getLinked().getType();
                 if (ammoType.hasFlag(AmmoType.F_AR10_BARRACUDA)){
                     return 10;
-                }else if (ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK)){
+                }else if ((ammoType.hasFlag(AmmoType.F_AR10_WHITE_SHARK))
+                            || (ammoType.hasFlag(AmmoType.F_SANTA_ANNA))){
                     return 15;
-                } else { // AmmoType.F_AR10_KILLER_WHALTE
+                } else { // AmmoType.getMunitionType() == AmmoType.M_KILLER_WHALE
                     return 20;
                 }
             }
@@ -1681,6 +1685,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setOriginalShots(int shots) {
         originalShots = shots;
+    }
+    
+    public double getOriginalAmmoTons() {
+        return originalAmmoTons;
+    }
+    
+    public void setOriginalAmmoTons(double atons) {
+        originalAmmoTons = atons;
     }
 
     public boolean isModeSwitchable() {

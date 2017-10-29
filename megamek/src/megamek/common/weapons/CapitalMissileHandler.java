@@ -20,6 +20,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -49,6 +50,61 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             Server s) {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+    }
+    
+    /**
+     * Calculate the attack value based on range
+     *
+     * @return an <code>int</code> representing the attack value at that range.
+     */
+    @Override
+    protected int calcAttackValue() {
+        int av = 0;
+        double counterAV = calcCounterAV();
+        int armor = wtype.getMissileArmor();
+        // if we have a ground firing unit, then AV should not be determined by
+        // aero range brackets
+        if (!ae.isAirborne() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)) {
+            if (usesClusterTable()) {
+                // for cluster weapons just use the short range AV
+                av = wtype.getRoundShortAV();
+            } else {
+                // otherwise just use the full weapon damage by range
+                av = wtype.getDamage(nRange);
+            }
+        } else {
+            // we have an airborne attacker, so we need to use aero range
+            // brackets
+            int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
+                    true, false);
+            if (range == WeaponType.RANGE_SHORT) {
+                av = wtype.getRoundShortAV();
+            } else if (range == WeaponType.RANGE_MED) {
+                av = wtype.getRoundMedAV();
+            } else if (range == WeaponType.RANGE_LONG) {
+                av = wtype.getRoundLongAV();
+            } else if (range == WeaponType.RANGE_EXT) {
+                av = wtype.getRoundExtAV();
+            }
+        }
+        
+        if (ammo.getType().hasFlag(AmmoType.F_NUCLEAR)) {
+            nukeS2S = true;
+        }
+        
+        CapMissileArmor = armor - (int) counterAV;
+        CapMissileAMSMod = calcCapMissileAMSMod();
+        
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+        }
+        if (bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int) Math.floor(getBracketingMultiplier() * av);
+        
+        return av;
     }
     
     // check for AMS and Point Defense Bay fire
@@ -181,13 +237,13 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 
                 // set the pdbay as having fired, if it did
                 if (pdAV > 0) {
-                    pdBayEngagedMissile = true;
+                    pdBayEngagedCap = true;
                 }
                 counterAV += (int) Math.ceil(pdAV / 2.0);
                 
                 // set the ams as having fired, if it did
                 if (amsAV > 0) {
-                    amsBayEngagedMissile = true;
+                    amsBayEngagedCap = true;
                 }
                 // AMS add their full damage
                 counterAV += amsAV;
@@ -196,6 +252,17 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         CounterAV = (int) counterAV;
         return counterAV;
     } // end getAMSAV
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.floor(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
+    }
     
     @Override
     protected int getCapMisMod() {

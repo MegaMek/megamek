@@ -205,7 +205,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int whoFirst = 0;
 
     private int eccmRoll = 0;
-
+    
     public Aero() {
         super();
         // need to set altitude to something different than entity
@@ -422,7 +422,7 @@ public class Aero extends Entity implements IAero, IBomber {
     public void setRandomMove(boolean randmove) {
         randomMove = randmove;
     }
-
+    
     @Override
     public void setRolled(boolean roll) {
         rolled = roll;

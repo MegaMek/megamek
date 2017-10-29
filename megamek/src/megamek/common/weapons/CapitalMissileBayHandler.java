@@ -82,13 +82,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 double current_av = 0;
 
                 AmmoType atype = (AmmoType) bayWAmmo.getType();
-                if (bayWType.getAtClass() == (20)
-                		&& atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                		&& (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                		        || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
                 	weaponarmor = 40;
-                } else if (bayWType.getAtClass() == (20)
-                		&& atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                		&& (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                                || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
                 	weaponarmor = 30;
-                } else if (bayWType.getAtClass() == (20)
+                } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
                 		&& atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
                 	weaponarmor = 20;
                 } else {
@@ -220,7 +222,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 current_av = 4;
             } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                 current_av = 3;
-            } else {
+            } else if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+                current_av = 1000;
+            }else if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+                current_av = 100;
+            }else {
                 current_av = 2;
             }
         }

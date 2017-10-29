@@ -2359,6 +2359,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avMed = 3;
                 avLong = 3;
                 avExt = 3;
+            } else if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA){
+                avShort = 100;
+                avMed = 100;
+                avLong = 100;
+                avExt = 100;
+            } else if (atype.getMunitionType() == AmmoType.M_PEACEMAKER){
+                avShort = 1000;
+                avMed = 1000;
+                avLong = 1000;
+                avExt = 1000;
             } else {
                 avShort = 2;
                 avMed = 2;

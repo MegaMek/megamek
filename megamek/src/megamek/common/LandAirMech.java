@@ -142,7 +142,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int fatalThresh = 0;
     private int currentDamage = 0;
     private Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
-
+    
     public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
         lamType = inLAMType;
@@ -1206,7 +1206,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setRandomMove(boolean randmove) {
         randomMove = randmove;
     }
-
+    
     @Override
     public void setRolled(boolean roll) {
         rolled = roll;

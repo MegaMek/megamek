@@ -68,7 +68,7 @@ public interface IAero {
     boolean isRandomMove();
 
     void setRandomMove(boolean randmove);
-
+    
     boolean didAccLast();
 
     void setAccLast(boolean b);

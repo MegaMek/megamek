@@ -45,13 +45,11 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -81,6 +79,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private final Entity entity;
 
     private int[] entityCorrespondance;
+    
+    //This allows us to set the number of shots for aero munitions where we can't also change the munition type
+    private boolean aeroShotsOnly = false;
 
     private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
     
@@ -116,9 +117,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
     private JPanel panMines = new JPanel();
-
-    private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<SantaAnnaChoicePanel>();
-    private JPanel panSantaAnna = new JPanel();
 
     private BombChoicePanel m_bombs;
     private JPanel panBombs = new JPanel();
@@ -269,15 +267,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // set up Santa Annas if using nukes
-        if (((entity instanceof Dropship) || (entity instanceof Jumpship))
-                && clientgui.getClient().getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVAERORULES_AT2_NUKES)) { //$NON-NLS-1$
-            setupSantaAnna();
-            add(panSantaAnna,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
-        }
-
         if (entity.isBomber()) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -365,10 +354,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // update mines setting
         for (final Object newVar : m_vMines) {
             ((MineChoicePanel) newVar).applyChoice();
-        }
-        // update Santa Anna setting
-        for (final Object newVar : m_vSantaAnna) {
-            ((SantaAnnaChoicePanel) newVar).applyChoice();
         }
         // update bomb setting
         if (null != m_bombs) {
@@ -459,24 +444,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             gbl.setConstraints(mcp, gbc);
             panMines.add(mcp);
             m_vMines.add(mcp);
-        }
-    }
-
-    private void setupSantaAnna() {
-        GridBagLayout gbl = new GridBagLayout();
-        panSantaAnna.setLayout(gbl);
-        for (Mounted m : entity.getAmmo()) {
-            AmmoType at = (AmmoType) m.getType();
-            // Santa Annas?
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    OptionsConstants.ADVAERORULES_AT2_NUKES)
-                    && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
-                            .getAmmoType() == AmmoType.T_AR10) && at
-                            .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
-                SantaAnnaChoicePanel sacp = new SantaAnnaChoicePanel(m);
-                panSantaAnna.add(sacp, GBC.eol());
-                m_vSantaAnna.add(sacp);
-            }
         }
     }
     
@@ -613,7 +580,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
-
+        
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
@@ -624,17 +591,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, and NARC
-            // TODO: need a better way to customize munitions on Aeros
-            // currently this doesn't allow AR10 and tele-missile launchers
-            // to switch back and forth between tele and regular missiles
-            // also would be better to not have to add Santa Anna's in such
-            // an idiosyncratic fashion
+            // allow only MML, ATM, NARC
+            aeroShotsOnly = false;
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC))) {
-                continue;
+                            || (at.getAmmoType() == AmmoType.T_NARC)
+                            || (at.getAmmoType() == AmmoType.T_AR10)
+                            || (at.getAmmoType() == AmmoType.T_WHITE_SHARK)
+                            || (at.getAmmoType() == AmmoType.T_KILLER_WHALE))) {
+                aeroShotsOnly = true;
             }
 
             for (AmmoType atCheck : vAllTypes) {
@@ -675,6 +641,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         && !(entity instanceof Protomech)) {
                     continue;
                 }
+                
+                // Can't use Nuclear munitions unless the option is on
+                if (atCheck.hasFlag(AmmoType.F_NUCLEAR) &&
+                        !(gameOpts.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES))) {
+                    continue;
+                }
 
                 // When dealing with machine guns, Protos can only
                 // use proto-specific machine gun ammo
@@ -686,13 +658,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
                 // Battle Armor ammo can't be selected at all.
                 // All other ammo types need to match on rack size and tech.
-                if (bTechMatch
+                // AR10 ammo is a little different as the missiles have different weights.
+                if ((bTechMatch
                         && (atCheck.getRackSize() == at.getRackSize())
                         && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
                                 .hasFlag(AmmoType.F_BATTLEARMOR))
                         && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
                                 .hasFlag(AmmoType.F_ENCUMBERING))
-                        && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
+                        && (atCheck.getTonnage(entity) == at.getTonnage(entity)))
+                    || (bTechMatch 
+                        && ((atCheck.getAmmoType() == AmmoType.T_AR10) == (at.getAmmoType() == AmmoType.T_AR10)))) {
                     vTypes.add(atCheck);
                 }
             }
@@ -702,11 +677,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     && !client.getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
                 continue;
-            }
-            MunitionChoicePanel mcp;
-            mcp = new MunitionChoicePanel(m, vTypes);
-            panMunitions.add(mcp, GBC.eol());
-            m_vMunitions.add(mcp);
+            }           
+                MunitionChoicePanel mcp;
+                mcp = new MunitionChoicePanel(m, vTypes);
+                panMunitions.add(mcp, GBC.eol());
+                m_vMunitions.add(mcp);
+            // }
         }
         }
 
@@ -1009,7 +985,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
 
             JCheckBox chHotLoad = new JCheckBox();
-            
+                       
             @SuppressWarnings("unchecked")
             MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
                 m_vTypes = vTypes;
@@ -1017,6 +993,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 AmmoType curType = (AmmoType) m.getType();
                 m_choice = new JComboBox<String>();
                 Iterator<AmmoType> e = m_vTypes.iterator();
+                if (aeroShotsOnly) {
+                    m_choice.setVisible(false);
+                }
                 for (int x = 0; e.hasNext(); x++) {
                     AmmoType at = e.next();
                     m_choice.addItem(at.getName());
@@ -1024,9 +1003,23 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         m_choice.setSelectedIndex(x);
                     }
                 }
-
+                
                 m_num_shots = new JComboBox<String>();
-                int shotsPerTon = curType.getShots();
+                int shotsPerTon = 0;
+                int magazineSize = 0;
+                int magazineLoadout = 0;
+                if (m.byShot()) {
+                    shotsPerTon = m.getOriginalShots();                
+                } else {
+                    shotsPerTon = curType.getShots();
+                }
+                if (curType.getAmmoType() == AmmoType.T_AR10) {
+                    magazineSize = (int) m.getOriginalAmmoTons() * m.getOriginalShots();
+                    magazineLoadout = (int) curType.getTonnage() * m.getBaseShotsLeft();
+                    shotsPerTon = magazineSize / (int) m_vTypes.get(
+                            m_choice.getSelectedIndex()).getTonnage();
+                }
+                JLabel labAeroMunitionType = new JLabel(curType.getName() + " : "); //$NON-NLS-1$
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
                 if (entity instanceof BattleArmor){
@@ -1046,21 +1039,47 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
                         int currShots = (Integer)m_num_shots.getSelectedItem();
+                        int magazineSize = (int) m.getOriginalAmmoTons() * m.getOriginalShots();
+                        int shots = 0;
+                        int shotsPerTon = 0;
                         m_num_shots.removeAllItems();
-                        int shotsPerTon = m_vTypes.get(
+                        if (curType.getAmmoType() == AmmoType.T_AR10) {
+                            shots = magazineSize / (int) m_vTypes.get(
+                                m_choice.getSelectedIndex()).getTonnage();
+                        } else if ((curType.getAmmoType() == AmmoType.T_KILLER_WHALE)
+                                    || (curType.getAmmoType() == AmmoType.T_WHITE_SHARK)) {
+                            shots = m.getOriginalShots();
+                        } else {
+                            shotsPerTon = m_vTypes.get(
                                 m_choice.getSelectedIndex()).getShots();
+                        }
                         // BA always have a certain number of shots per slot
                         if (entity instanceof BattleArmor){
                             shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                         }
-                        for (int i = 0; i <= shotsPerTon; i++){
-                            m_num_shots.addItem(i);
-                        }
-                        if (currShots <= shotsPerTon){
-                            m_num_shots.setSelectedItem(currShots);
+                        if ((curType.getAmmoType() == AmmoType.T_AR10)
+                                || (curType.getAmmoType() == AmmoType.T_KILLER_WHALE)
+                                || (curType.getAmmoType() == AmmoType.T_WHITE_SHARK)){    
+                            for (int i = 0; i <= shots; i++){
+                                m_num_shots.addItem(i);                                
+                            }
+                            if (currShots <= shots){
+                                m_num_shots.setSelectedItem(currShots);
+                            } else {
+                                m_num_shots.setSelectedItem(shots);
+                            }
                         } else {
-                            m_num_shots.setSelectedItem(shotsPerTon);
+                            for (int i = 0; i <= shotsPerTon; i++){
+                                m_num_shots.addItem(i);
+                            }
+                            if (currShots <= shotsPerTon){
+                                m_num_shots.setSelectedItem(currShots);
+                            } else {
+                                m_num_shots.setSelectedItem(shotsPerTon);
+                            }
                         }
+                        
+                            
 
                     }});
 
@@ -1081,7 +1100,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
                 add(lLoc, GBC.std());
-                add(m_choice, GBC.std());
+                if (curType.getAmmoType() == AmmoType.T_AR10) {    
+                    String Desc =  (magazineSize - magazineLoadout) + " " + " / " + magazineSize + " tons left ";
+                    JLabel lMag = new JLabel(Desc);
+                    add (lMag, GBC.std());
+                }
+                if (aeroShotsOnly) {
+                    add(labAeroMunitionType, GBC.std());
+                } else {
+                    add(m_choice, GBC.std());
+                }
                 add(m_num_shots, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
@@ -1104,8 +1132,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void applyChoice() {
                 int n = m_choice.getSelectedIndex();
+
                 // If there's no selection, there's nothing we can do
-                if (n == -1){
+                if (n == -1) {
                     return;
                 }
                 AmmoType at = m_vTypes.get(n);
@@ -1154,7 +1183,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 m_mounted.setShotsLeft(shots);
             }
         }
-
+        
         // a choice panel for determining number of santa anna warheads
         class SantaAnnaChoicePanel extends JPanel {
             /**
@@ -1197,6 +1226,52 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 m_choice.setEnabled(enabled);
             }
         }
+        
+        // a choice panel for determining number of shots for aero weapons that can't change munitions
+        /* class AeroAmmoChoicePanel extends JPanel {
+           
+            private static final long serialVersionUID = -1645895479085898410L;
+
+            private JComboBox<String> m_choice;
+
+            private Mounted m_mounted;
+
+            public AeroAmmoChoicePanel(Mounted m) {
+                m_mounted = m;
+                m_choice = new JComboBox<String>();
+                for (int i = 0; i <= m_mounted.getBaseShotsLeft(); i++) {
+                    m_choice.addItem(Integer.toString(i));
+                }
+                int loc;
+                loc = m.getLocation();
+                String sDesc = m_mounted.getName() + " (" + entity.getLocationAbbr(loc) + "):"; //$NON-NLS-1$ //$NON-NLS-2$
+                JLabel lLoc = new JLabel(sDesc);
+                GridBagLayout g = new GridBagLayout();
+                setLayout(g);
+                add(lLoc, GBC.std());
+                m_choice.setSelectedIndex(m.getNSantaAnna());
+                add(m_choice, GBC.eol());
+            }
+
+            public void applyChoice() {
+                int n = m_choice.getSelectedIndex();
+                // If there's no selection, there's nothing we can do
+                if (n == -1){
+                    return;
+                }
+                AmmoType at = m_vTypes.get(n);
+                m_mounted.changeAmmoType(at);
+                m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                if (chDump.isSelected()) {
+                    m_mounted.setShotsLeft(0);
+                }
+            }
+
+            @Override
+            public void setEnabled(boolean enabled) {
+                m_choice.setEnabled(enabled);
+            }
+        } */
 
         /**
      * When a Protomech selects ammo, you need to adjust the shots on the unit

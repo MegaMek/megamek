@@ -24,7 +24,6 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -470,24 +469,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         if ((target == null)
-                || !((target.getTargetType() == Targetable.TYPE_ENTITY)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_TAG))) {
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
             return 0;
         }
         int apdsMod = 0;
         int amsMod = 0;
-        Entity entityTarget;
-        if (target.getTargetType() == Targetable.TYPE_BLDG_TAG) {
-            ArrayList<Entity> turrets = new ArrayList<Entity>();
-            for (Entity turret : game.getEntitiesVector(target.getPosition())) {
-                if (turret instanceof GunEmplacement) {
-                    turrets.add(turret); 
-                }
-            }
-        } else {
-            
-        }
-        entityTarget = (Entity) target;
+        Entity entityTarget = (Entity) target;
         // any AMS attacks by the target?
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
         if (null != lCounters) {

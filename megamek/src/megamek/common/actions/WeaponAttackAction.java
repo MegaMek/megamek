@@ -3013,8 +3013,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.isAirborne()) {
                 if (isArtilleryDirect) {
                     return "Airborne aerospace units can't make direct-fire artillery attacks";
-                } else if (isArtilleryIndirect && (wtype.getAmmoType() != AmmoType.T_ARROW_IV)) {
-                    return "Airborne aerospace units can't fire non-Arrow-IV artillery.";
+                } else if (isArtilleryIndirect) {
+                    if (ae.getAltitude() > 9) {
+                        return "Airborne aerospace units can't make artillery attacks from above Altitude 9.";
+                    }
+                    if (ae.usesWeaponBays()) {
+                        //For Dropships
+                        for (int wId : weapon.getBayWeapons()) {
+                            Mounted bayW = ae.getEquipment(wId);
+                            // check the loaded ammo for the Arrow IV flag
+                            Mounted bayWAmmo = bayW.getLinked();
+                            AmmoType bAType = (AmmoType) bayWAmmo.getType();
+                            if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
+                                return "Airborne aerospace units can't fire non-Arrow-IV artillery.";
+                            }
+                        }
+                    } else if ((wtype.getAmmoType() != BombType.B_ARROW)
+                            || (wtype.getAmmoType() != BombType.B_HOMING)
+                            || (wtype.getAmmoType() != AmmoType.T_ARROW_IV)) {
+                        //For Fighters, LAMs, Small Craft and VTOLs
+                        return "Airborne aerospace units can't make non-Arrow-IV artillery/bomb attacks.";
+                    }
                 }
             }
         } else {

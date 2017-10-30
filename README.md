@@ -1,1 +1,1 @@
-megamek/docs/readme.txt
+megamek/docs/1-Readme/readme.txt

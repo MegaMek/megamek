@@ -14543,11 +14543,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         hasFiredTsemp = hasFiredTSEMP;
     }
     
-    
+    /*
+     * Sets the number of rounds that the entity is affected by an ASEW missile
+     * @param turns - integer specifying the number of end phases that the effects last through
+     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
+     */
     public void setASEWAffected(int turns) {
         asewAffectedTurns = turns;
     }
     
+    /*
+     * Returns the number of rounds that the entity is affected by an ASEW missile
+     */
     public int getASEWAffected() {
         return asewAffectedTurns;
     }

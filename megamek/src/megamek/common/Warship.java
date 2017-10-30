@@ -47,13 +47,25 @@ public class Warship extends Jumpship {
     }
     
     //ASEW Missile Effects, per location
+    //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};
     
+    /*
+     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     * @param turns - integer specifying the number of end phases that the effects last through
+     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
+     * Because Warships have 8 arcs instead of 6, this overrides the method in Jumpship
+     */
     @Override
     public void setASEWAffected(int arc, int turns) {
         asewAffectedTurns[arc] = turns;
     }
     
+    /*
+     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     */
     @Override
     public int getASEWAffected(int arc) {
         return asewAffectedTurns[arc];

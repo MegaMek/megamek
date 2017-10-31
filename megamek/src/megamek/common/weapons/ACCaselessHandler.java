@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -50,26 +51,26 @@ public class ACCaselessHandler extends ACWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if ((roll <= 2) && !(ae instanceof Infantry)) {
-            Report r = new Report(3161);
-            r.subject = subjectId;
+            int caselesscrit = Compute.d6(2);
+
+            bMissed = true;
             weapon.setJammed(true);
-            weapon.setHit(true);
-            weapon.setFired(false);
-            
-            int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
-                if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                    continue;
-                }
-                Mounted mounted = slot1.getMount();
-                if (mounted.equals(weapon)) {
-                    ae.hitAllCriticals(wloc, i);
-                    break;
-                }
+
+            if (caselesscrit >= 8) {
+                weapon.setDestroyed(true);
+                Report r = new Report(3163);
+                r.subject = subjectId;
+                r.choose(false);
+                vPhaseReport.addElement(r);
+
+            } else {
+                Report r = new Report(3160);
+                r.subject = subjectId;
+                r.choose(false);
+                vPhaseReport.addElement(r);
+
             }
-            r.choose(false);
-            vPhaseReport.addElement(r);
+
         }
 
         return false;

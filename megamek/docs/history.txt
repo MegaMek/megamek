@@ -17,6 +17,8 @@ v0.43.5-git
 + PR #699: Errata: Mechs should not become stuck in mud
 + PR #701: Space stations now require 2 pilots, which fixes issues in MHQ
 + Issue #680: Updated startup.sh to handle Java 9
++ PR #706: Fixed several quirk-related NPEs. Implemented display of partial repairs on unit info card.
++ Issue #704, #299: Bot units will now scamper out of disabled transports.
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

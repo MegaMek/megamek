@@ -3982,7 +3982,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return "Target is too low for nose weapons";
             }
-            if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)) {
+            if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)
+                    && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return "Target is too low for front-side weapons";
             }
             if ((weapon.getLocation() == Aero.LOC_AFT)) {

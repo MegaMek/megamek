@@ -43,13 +43,13 @@ public class SharedConfiguration {
         final MMLogger logger = DefaultMmLogger.getInstance();
         
         try {
-            InputStream is = new FileInputStream("mmconf/megamekshared.properties");
+            InputStream is = new FileInputStream("mmconf/shared.properties");
             properties.load(is);
         } catch (Exception e) {
             logger.log(SharedConfiguration.class, 
                        "SharedConfiguration()", 
                        LogLevel.ERROR, 
-                       "Error trying to load megamekshared.properties", 
+                       "Error trying to load shared.properties", 
                        e);
         }
     }

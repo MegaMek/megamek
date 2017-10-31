@@ -115,6 +115,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
@@ -152,7 +153,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
     private String helpFileName = 
-            Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
+            SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
+                                                          Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
 
     public MegaMekController controller = null;
     // keep me
@@ -572,15 +574,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
-            File file = new File(helpFileName);
-            
-            if (!file.isFile()) {
-                // If the file wasn't found, then we're running megamek
-                // from MekHQ or some other program, so let's try and pull 
-                // the help file from a different location.
-                // TODO: There is probably a better way to implement this.
-                file = new File("docs/docs-mm/readme.txt");
-            }
             help = new CommonHelpDialog(frame, new File(helpFileName));
         }
         // Show the help dialog.

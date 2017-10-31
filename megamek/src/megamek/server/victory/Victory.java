@@ -66,6 +66,7 @@ public class Victory {
         VictoryResult reVal;
         
     	//Check for ForceVictory
+        // Always check for forced victory, so games without victory conditions can be completed
     	reVal = force.victory(game, context);
     	if (reVal.victory()) {
     	    return reVal;
@@ -85,7 +86,7 @@ public class Victory {
     	
     	//Check for LastManStandingVictory
     	VictoryResult lastManResult = lastMan.victory(game, context);
-    	if (!reVal.victory() && lastManResult.victory()) {
+    	if (checkForVictory && !reVal.victory() && lastManResult.victory()) {
     	    return lastManResult;
     	}
     	return reVal;

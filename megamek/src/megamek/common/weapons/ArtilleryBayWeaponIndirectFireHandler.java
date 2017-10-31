@@ -149,6 +149,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             return true;
         }
         Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        //TODO: Not sure why atype is defined the way it is here. 
+        //I'm removing most of the references to it in order to handle bay ammo.
         final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
                 .getType();
         // Are there any valid spotters?
@@ -373,49 +375,53 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 return !bMissed;
             }
         }
-
-        if (atype.getMunitionType() == AmmoType.M_FLARE) {
-            int radius;
-            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
-                radius = 4;
-            } else if (atype.getAmmoType() == AmmoType.T_LONG_TOM) {
-                radius = 3;
-            } else if (atype.getAmmoType() == AmmoType.T_SNIPER) {
-                radius = 2;
-            } else {
-                radius = 1;
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            Mounted bayWAmmo = bayW.getLinked();
+            AmmoType bayAmmoType = (AmmoType) bayWAmmo.getType();
+            if (bayAmmoType.getMunitionType() == AmmoType.M_FLARE) {
+                int radius;
+                if (bayAmmoType.getAmmoType() == AmmoType.T_ARROW_IV) {
+                    radius = 4;
+                } else if (bayAmmoType.getAmmoType() == AmmoType.T_LONG_TOM) {
+                    radius = 3;
+                } else if (bayAmmoType.getAmmoType() == AmmoType.T_SNIPER) {
+                    radius = 2;
+                } else {
+                    radius = 1;
+                }
+                server.deliverArtilleryFlare(targetPos, radius);
+                return false;
             }
-            server.deliverArtilleryFlare(targetPos, radius);
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
-            // The appropriate term here is "Bwahahahahaha..."
-            server.doNuclearExplosion(targetPos, 1, vPhaseReport);
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                    atype.getRackSize(), ae.getId());
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(targetPos, ae, subjectId,
-                    vPhaseReport);
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-            server.deliverThunderVibraMinefield(targetPos, ae.getOwner()
-                    .getId(), atype.getRackSize(), waa.getOtherAttackInfo(), ae
-                    .getId());
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_SMOKE) {
-            server.deliverArtillerySmoke(targetPos, vPhaseReport);
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_LASER_INHIB) {
-            server.deliverLIsmoke(targetPos, vPhaseReport);
-            return false;
+            if (bayAmmoType.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
+                // The appropriate term here is "Bwahahahahaha..."
+                server.doNuclearExplosion(targetPos, 1, vPhaseReport);
+                return false;
+            }
+            if (bayAmmoType.getMunitionType() == AmmoType.M_FASCAM) {
+                server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
+                        bayAmmoType.getRackSize(), ae.getId());
+                return false;
+            }
+            if (bayAmmoType.getMunitionType() == AmmoType.M_INFERNO_IV) {
+                server.deliverArtilleryInferno(targetPos, ae, subjectId,
+                        vPhaseReport);
+                return false;
+            }
+            if (bayAmmoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+                server.deliverThunderVibraMinefield(targetPos, ae.getOwner()
+                        .getId(), bayAmmoType.getRackSize(), waa.getOtherAttackInfo(), ae
+                        .getId());
+                return false;
+            }
+            if (bayAmmoType.getMunitionType() == AmmoType.M_SMOKE) {
+                server.deliverArtillerySmoke(targetPos, vPhaseReport);
+                return false;
+            }
+            if (bayAmmoType.getMunitionType() == AmmoType.M_LASER_INHIB) {
+                server.deliverLIsmoke(targetPos, vPhaseReport);
+                return false;
+            }
         }
         int altitude = 0;
         if (isFlak) {
@@ -448,12 +454,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 server.removeMinefield(mf);
             }
         }
-
-        server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak, -1);
-
-        // artillery may unintentially clear minefields, but only if it wasn't
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            Mounted bayWAmmo = bayW.getLinked();
+            AmmoType bayAmmoType = (AmmoType) bayWAmmo.getType();
+            
+            server.artilleryDamageArea(targetPos, aaa.getCoords(), bayAmmoType,
+                    subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                    asfFlak, -1);
+        }
+        // artillery may unintentionally clear minefields, but only if it wasn't
         // trying to
         if (!mineClear && game.containsMinefield(targetPos)) {
             Enumeration<Minefield> minefields = game.getMinefields(targetPos)

@@ -148,7 +148,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             System.err.println("Artillery Entity is null!");
             return true;
         }
-        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now

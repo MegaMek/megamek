@@ -149,10 +149,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             return true;
         }
         Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
-        //TODO: Not sure why atype is defined the way it is here. 
-        //I'm removing most of the references to it in order to handle bay ammo.
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now

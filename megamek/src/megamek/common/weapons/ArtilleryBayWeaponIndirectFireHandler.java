@@ -86,6 +86,33 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         return false;
     }
+        
+    @Override
+    protected void useAmmo() {
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+
+            if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
+                // *shouldn't* fire.
+                System.out.println("Handler can't find any ammo!  Oh no!");
+            }
+
+            int shots = bayW.getCurrentShots();
+            for (int i = 0; i < shots; i++) {
+                if (null == bayWAmmo
+                        || bayWAmmo.getUsableShotsLeft() < 1) {
+                    // try loading something else
+                    ae.loadWeaponWithSameAmmo(bayW);
+                    bayWAmmo = bayW.getLinked();
+                }
+                if (null != bayWAmmo) {
+                    bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
+                }
+            }
+        }
+    }
 
     /*
      * (non-Javadoc)

@@ -69,15 +69,15 @@ public abstract class ACWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
-                waa.getWeaponId());
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked()
+                .getType();
+
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+
         if (weapon.curMode().equals("Rapid")) {
-            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit,
-                    waa, game, server);
+            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
             if (weapon.isKindRapidFire()) {
                 ah.setKindRapidFire(true);
             } else {

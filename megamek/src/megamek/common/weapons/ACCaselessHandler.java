@@ -20,10 +20,8 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Compute;
-import megamek.common.CriticalSlot;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -72,7 +70,6 @@ public class ACCaselessHandler extends ACWeaponHandler {
             }
 
         }
-
         return false;
     }
 }

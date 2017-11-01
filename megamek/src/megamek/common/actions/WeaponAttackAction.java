@@ -3028,11 +3028,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                 return "Airborne aerospace units can't fire non-Arrow-IV artillery.";
                             }
                         }
-                    } else if ((wtype.getAmmoType() != BombType.B_ARROW)
-                            || (wtype.getAmmoType() != BombType.B_HOMING)
-                            || (wtype.getAmmoType() != AmmoType.T_ARROW_IV)) {
+                    } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
                         //For Fighters, LAMs, Small Craft and VTOLs
-                        return "Airborne aerospace units can't make non-Arrow-IV artillery/bomb attacks.";
+                        return "Airborne aerospace units can't make non-Arrow-IV artillery attacks.";
                     }
                 }
             }

@@ -1890,14 +1890,14 @@ public class Server implements Runnable {
         for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
             final Entity entity = e.next();
             // Decrement ASEW effects
-            if (entity instanceof Dropship) {
+            if ((entity.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP) {
                 Dropship d = (Dropship) entity;
                 for (int loc = 0; loc < d.locations(); loc++) {
                     if (d.getASEWAffected(loc) > 0) {
                         d.setASEWAffected(loc, d.getASEWAffected(loc) - 1);
                     } 
                 }
-            } else if (entity instanceof Jumpship) {
+            } else if ((entity.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
                 Jumpship j = (Jumpship) entity;
                 for (int loc = 0; loc < j.locations(); loc++) {
                     if (j.getASEWAffected(loc) > 0) {
@@ -3242,9 +3242,10 @@ public class Server implements Runnable {
                     } else {
                         changePhase(IGame.Phase.PHASE_INITIATIVE);
                     }
+                }
                 // Decrement the ASEWAffected counter
                 decrementASEWTurns();    
-                }
+                
                 break;
             case PHASE_END_REPORT:
                 if (changePlayersTeam) {

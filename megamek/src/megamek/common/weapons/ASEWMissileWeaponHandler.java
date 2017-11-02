@@ -37,10 +37,12 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
     private static final long serialVersionUID = 6359291710822171023L;
 
     /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
+     * Weapon handler for Anti Ship Electronic Warfare Missiles
+     * Single, large missile - behaves like a thunderbolt except for damage.
+     * @param t - ToHit roll data
+     * @param w - The weapon attack action for this ASEW missile
+     * @param g - The current game
+     * @param s - The current server instance
      */
     public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {

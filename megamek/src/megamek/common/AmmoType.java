@@ -14838,6 +14838,7 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_AR10;
+        ammo.tonnage = 50.0;
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
@@ -14890,6 +14891,7 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
+        ammo.tonnage = 50.0;
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;

@@ -1,4 +1,4 @@
-VERSION HISTORY:
+﻿VERSION HISTORY:
 ----------------
 v0.43.5-git
 + Tech Progression Fixes.
@@ -20,6 +20,8 @@ v0.43.5-git
 + PR #706: Fixed several quirk-related NPEs. Implemented display of partial repairs on unit info card.
 + Issue #704, #299: Bot units will now scamper out of disabled transports.
 + Issue: Last man standing victory could fire even when checking for victory is disabled
++ Feature: Adds ASEW missile functionality
++ Feature: "OUR WORDS ARE BACKED BY NUCLEAR WEAPONS" -Mahatma Ghandi (adds Alamo, Santa Anna and Peacemaker warheads)
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

@@ -26158,6 +26158,11 @@ public class Server implements Runnable {
                         if (units.size() > 0) {
                             Entity target = units.get(Compute.randomInt(units
                                                                                 .size()));
+                            // damage the cargo bay itself
+                            Bay targetBay = aero.getBay(target);
+                            targetBay.setBayDamaged();
+                            
+                            //This dooms the selected transported unit
                             reports.addAll(destroyEntity(target, "cargo damage",
                                                        false, false));
                         }

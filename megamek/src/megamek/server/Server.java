@@ -1881,6 +1881,37 @@ public class Server implements Runnable {
         game.clearIlluminatedPositions();
         send(new Packet(Packet.COMMAND_CLEAR_ILLUM_HEXES));
     }
+    
+    /*
+     *  Called during the end phase. Checks each entity for ASEW effects counters and decrements them by 1 if > 0
+     */
+    
+    public void decrementASEWTurns() {
+        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
+            final Entity entity = e.next();
+            // Decrement ASEW effects
+            if ((entity.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP) {
+                Dropship d = (Dropship) entity;
+                for (int loc = 0; loc < d.locations(); loc++) {
+                    if (d.getASEWAffected(loc) > 0) {
+                        d.setASEWAffected(loc, d.getASEWAffected(loc) - 1);
+                    } 
+                }
+            } else if ((entity.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
+                Jumpship j = (Jumpship) entity;
+                for (int loc = 0; loc < j.locations(); loc++) {
+                    if (j.getASEWAffected(loc) > 0) {
+                        j.setASEWAffected(loc, j.getASEWAffected(loc) - 1);
+                    } 
+                }
+            } else {
+                if (entity.getASEWAffected() > 0) {
+                    entity.setASEWAffected(entity.getASEWAffected() - 1);
+                }
+            }
+        }        
+    }    
+    
 
     /**
      * are we currently in a reporting phase
@@ -3212,6 +3243,9 @@ public class Server implements Runnable {
                         changePhase(IGame.Phase.PHASE_INITIATIVE);
                     }
                 }
+                // Decrement the ASEWAffected counter
+                decrementASEWTurns();    
+                
                 break;
             case PHASE_END_REPORT:
                 if (changePlayersTeam) {

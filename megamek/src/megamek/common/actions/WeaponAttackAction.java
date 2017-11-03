@@ -311,6 +311,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch bomb in mech mode."));
         }
         
+        // ASEW Missiles cannot be launched in an atmosphere
+        if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
+                && !game.getBoard().inSpace()) {
+            return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch ASEW missile in an atmosphere."));
+        }
+        
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
         if (exchangeSwarmTarget) {
@@ -760,6 +766,31 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.isSufferingEMI()) {
             toHit.addModifier(+2, "electromagnetic interference");
         }
+        
+        //ASEW Missiles
+        // +4 for trying to fire one at a target of < 500 tons
+        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te.getWeight() < 500.0) {
+            toHit.addModifier(4, "target is less than 500 tons");
+        }
+        // +4 attack penalty for ASEW affected locations
+        if (ae instanceof Dropship) {
+            Dropship d = (Dropship) ae;
+            int loc = weapon.getLocation();
+            if (d.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, "weapon arc affected by ASEW missile");
+            }            
+        } else if (ae instanceof Jumpship) {
+            Jumpship j = (Jumpship) ae;
+            int loc = weapon.getLocation();
+            if (j.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, "weapon arc affected by ASEW missile");
+            } 
+        } else {
+            if (ae.getASEWAffected() > 0) {
+                toHit.addModifier(4, "attacker affected by ASEW missile");
+            }
+        }
+            
 
         // evading bonuses (
         if ((te != null) && te.isEvading()) {

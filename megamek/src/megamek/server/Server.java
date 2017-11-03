@@ -72,108 +72,11 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Bay;
-import megamek.common.BipedMech;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
-import megamek.common.BombType;
-import megamek.common.Building;
+import megamek.common.*;
 import megamek.common.Building.BasementType;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.BuildingTarget;
-import megamek.common.CalledShot;
-import megamek.common.CommonConstants;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Configuration;
-import megamek.common.ConvFighter;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.ECMInfo;
-import megamek.common.EjectedCrew;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.EntitySelector;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
-import megamek.common.Flare;
-import megamek.common.FuelTank;
-import megamek.common.Game;
-import megamek.common.GameTurn;
-import megamek.common.GunEmplacement;
-import megamek.common.HexTarget;
-import megamek.common.HitData;
-import megamek.common.IAero;
-import megamek.common.IArmorState;
-import megamek.common.IBoard;
-import megamek.common.IBomber;
-import megamek.common.IEntityRemovalConditions;
-import megamek.common.IGame;
 import megamek.common.IGame.Phase;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.ITerrain;
-import megamek.common.Infantry;
-import megamek.common.InfernoTracker;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.LargeSupportTank;
-import megamek.common.LocationFullException;
-import megamek.common.LosEffects;
-import megamek.common.MapSettings;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.OffBoardDirection;
-import megamek.common.PhysicalResult;
-import megamek.common.PilotingRollData;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.Report;
-import megamek.common.Roll;
-import megamek.common.SmallCraft;
-import megamek.common.SpaceStation;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.SuperHeavyTank;
-import megamek.common.SupportTank;
-import megamek.common.SupportVTOL;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.TargetRollModifier;
-import megamek.common.Targetable;
-import megamek.common.Team;
-import megamek.common.TechConstants;
-import megamek.common.TeleMissile;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.TripodMech;
-import megamek.common.TurnOrdered;
-import megamek.common.TurnVectors;
-import megamek.common.UnitLocation;
-import megamek.common.VTOL;
-import megamek.common.Warship;
-import megamek.common.WeaponComparatorBV;
-import megamek.common.WeaponType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -26141,6 +26044,19 @@ public class Server implements Runnable {
                     r.subject = aero.getId();
                     r.add((int) (percentDestroyed * 100));
                     reports.add(r);
+                    Vector<Bay> cargoBays = new Vector<Bay>();
+                    for (Bay next : aero.getTransportBays()) {
+                        if ((next instanceof CargoBay)
+                                || (next instanceof InsulatedCargoBay)
+                                || (next instanceof LiquidCargoBay)
+                                || (next instanceof LivestockCargoBay)
+                                || (next instanceof RefrigeratedCargoBay)) {
+                            cargoBays.add(next);
+                        }
+                        
+                    }
+                    Bay targetBay = cargoBays.get(Compute.randomInt(cargoBays.size()));
+                    targetBay.setBayDamaged();
                 } else {
                     // units were hit
                     // get a list of units

@@ -3415,6 +3415,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
+        
         compositeTechLevel.addComponent(mounted.getType());
         if (mounted.isArmored()) {
             compositeTechLevel.addComponent(TA_ARMORED_COMPONENT);
@@ -12440,27 +12441,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * count all the quirks for this unit, positive and negative
      */
     public int countQuirks() {
-        int count = 0;
-
         if ((null == game)
             || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return count;
+            return 0;
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements(); ) {
-                IOption quirk = j.nextElement();
-
-                if (quirk.booleanValue()) {
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        return quirks.count();
     }
     
     public int countWeaponQuirks() {
@@ -12478,50 +12464,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int countPartialRepairs() {
-        int count = 0;
-        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i
-                .hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements(); ) {
-                IOption partRep = j.nextElement();
-
-                if (partRep != null && partRep.booleanValue()) {
-                    count++;
-                }
-            }
+        if((null == game) ||
+                !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+            return 0;
         }
-        return count;
+        
+        return partReps.count();
     }
 
     /**
      * count the quirks for this unit, for a given group name
      */
     public int countQuirks(String grpKey) {
-        int count = 0;
-
         if ((null == game)
             || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return count;
+            return 0;
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-            if (!group.getKey().equalsIgnoreCase(grpKey)) {
-                continue;
-            }
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements(); ) {
-                IOption quirk = j.nextElement();
-
-                if (null != quirk && quirk.booleanValue()) {
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        return quirks.count(grpKey);
     }
 
     /**
@@ -12529,37 +12489,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the separator
      */
     public String getQuirkList(String sep) {
-        StringBuffer qrk = new StringBuffer();
-
         if ((null == game)
             || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return qrk.toString();
+            return "";
         }
 
-        if (null == sep) {
-            sep = "";
-        }
-
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements(); ) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements(); ) {
-                IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
-                    if (qrk.length() > 0) {
-                        qrk.append(sep);
-                    }
-                    qrk.append(quirk.getName());
-                    if ((quirk.getType() == IOption.STRING)
-                        || (quirk.getType() == IOption.CHOICE)
-                        || (quirk.getType() == IOption.INTEGER)) {
-                        qrk.append(" ").append(quirk.stringValue());
-                    }
-                }
-            }
-        }
-        return qrk.toString();
+        return quirks.getOptionList(sep);
     }
 
     /**

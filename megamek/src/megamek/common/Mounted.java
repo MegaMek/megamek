@@ -1601,29 +1601,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * count all the quirks for this unit, positive and negative
+     * Count all the quirks for this "mounted" object, positive and negative
      */
     public int countQuirks() {
-        int count = 0;
-
         if ((null == entity) || (null == entity.game)
                 || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return count;
+            return 0;
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        return quirks.count();
     }
 
     /**
@@ -1631,37 +1617,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * the separator
      */
     public String getQuirkList(String sep) {
-        StringBuffer qrk = new StringBuffer();
-
         if ((null == entity) || (null == entity.game)
                 || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return qrk.toString();
+            return "";
         }
 
-        if (null == sep) {
-            sep = "";
-        }
-
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
-                    if (qrk.length() > 0) {
-                        qrk.append(sep);
-                    }
-                    qrk.append(quirk.getName());
-                    if ((quirk.getType() == IOption.STRING)
-                            || (quirk.getType() == IOption.CHOICE)
-                            || (quirk.getType() == IOption.INTEGER)) {
-                        qrk.append(" ").append(quirk.stringValue());
-                    }
-                }
-            }
-        }
-        return qrk.toString();
+        return quirks.getOptionList(sep);
     }
 
     public CalledShot getCalledShot() {

@@ -23,45 +23,51 @@ import java.util.function.Predicate;
  *
  */
 public enum BayType implements ITechnologyDelegator {
-    STANDARD_CARGO (true, 1.0, 1.0, 0, 0, e -> false, CargoBay.techAdvancement()),
-    LIQUID_CARGO (true, 1.0, 0.91, 0, 0, e -> false, LiquidCargoBay.techAdvancement()),
-    REFRIGERATED_CARGO (true, 1.0, 0.87, 0, 0, e -> false, RefrigeratedCargoBay.techAdvancement()),
-    LIVESTOCK_CARGO (true, 1.0, 0.83, 0, 0, e -> false, LivestockCargoBay.techAdvancement()),
-    INFANTRY_FOOT (false, 5.0, 1.0, 28, 0, e -> 
+    STANDARD_CARGO (BayType.CATEGORY_CARGO, 1.0, 1.0, 0, 0, e -> false, CargoBay.techAdvancement()),
+    LIQUID_CARGO (BayType.CATEGORY_CARGO, 1.0, 0.91, 0, 100, e -> false, LiquidCargoBay.techAdvancement()),
+    REFRIGERATED_CARGO (BayType.CATEGORY_CARGO, 1.0, 0.87, 0, 250, e -> false, RefrigeratedCargoBay.techAdvancement()),
+    INSULATED_CARGO (BayType.CATEGORY_CARGO, 1.0, 0.87, 0, 200, e -> false, RefrigeratedCargoBay.techAdvancement()),
+    LIVESTOCK_CARGO (BayType.CATEGORY_CARGO, 1.0, 0.83, 0, 2500, e -> false, LivestockCargoBay.techAdvancement()),
+    INFANTRY_FOOT (BayType.CATEGORY_INFANTRY, 5.0, 1.0, 28, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_INFANTRY)
             && !e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
             && (e.getMovementMode() == EntityMovementMode.INF_LEG), InfantryBay.techAdvancement()),
-    INFANTRY_JUMP (false, 6.0, 1.0, 21, 0, e -> 
+    INFANTRY_JUMP (BayType.CATEGORY_INFANTRY, 6.0, 1.0, 21, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_INFANTRY)
             && !e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
             && (e.getMovementMode() == EntityMovementMode.INF_JUMP), InfantryBay.techAdvancement()),
-    INFANTRY_MOTORIZED (false, 7.0, 1.0, 28, 0, e -> 
+    INFANTRY_MOTORIZED (BayType.CATEGORY_INFANTRY, 7.0, 1.0, 28, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_INFANTRY)
             && (e.getMovementMode() == EntityMovementMode.INF_MOTORIZED), InfantryBay.techAdvancement()),
-    INFANTRY_MECHANIZED (false, 8.0, 1.0, 5, 0, e -> 
+    INFANTRY_MECHANIZED (BayType.CATEGORY_INFANTRY, 8.0, 1.0, 5, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_INFANTRY)
             && ((Infantry) e).isMechanized(), InfantryBay.techAdvancement()),
-    BATTLEARMOR_IS (false, 8.0, 1.0, 6, 0, e -> 
+    BATTLEARMOR_IS (BayType.CATEGORY_INFANTRY, 8.0, 1.0, 6, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
             && (((BattleArmor) e).getSquadSize() <= 4), BattleArmorBay.techAdvancement()),
-    BATTLEARMOR_CLAN (false, 10.0, 1.0, 6, 0, e -> 
+    BATTLEARMOR_CLAN (BayType.CATEGORY_INFANTRY, 10.0, 1.0, 6, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
             && (((BattleArmor) e).getSquadSize() <= 5), BattleArmorBay.techAdvancement()),
-    BATTLEARMOR_CS (false, 12.0, 1.0, 6, 0, e -> 
+    BATTLEARMOR_CS (BayType.CATEGORY_INFANTRY, 12.0, 1.0, 6, 15000, e -> 
         e.hasETypeFlag(Entity.ETYPE_BATTLEARMOR), BattleArmorBay.techAdvancement()),
-    MECH (false, 150.0, 1.0, 2, 0, e -> e.hasETypeFlag(Entity.ETYPE_MECH), MechBay.techAdvancement()),
-    FIGHTER (false, 150.0, 1.0, 2, 0, e -> e.isFighter(), ASFBay.techAdvancement()),
-    PROTOMECH (false, 50.0, 5.0, 6, 0, e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH), ProtomechBay.techAdvancement()),
-    SMALL_CRAFT (false, 200.0, 1.0, 5, 0, e -> e.hasETypeFlag(Entity.ETYPE_AERO)
+    MECH (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000,
+            e -> e.hasETypeFlag(Entity.ETYPE_MECH), MechBay.techAdvancement()),
+    FIGHTER (BayType.CATEGORY_NON_INFANTRY, 150.0, 1.0, 2, 20000, e -> e.isFighter(), ASFBay.techAdvancement()),
+    PROTOMECH (BayType.CATEGORY_NON_INFANTRY, 50.0, 5.0, 6, 10000, e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH), ProtomechBay.techAdvancement()),
+    SMALL_CRAFT (BayType.CATEGORY_NON_INFANTRY, 200.0, 1.0, 5, 20000, e -> e.hasETypeFlag(Entity.ETYPE_AERO)
             && (e.getWeight() <= 200.0), SmallCraftBay.techAdvancement()),
-    VEHICLE_LIGHT (false, 50.0, 1.0, 5, 0, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
+    VEHICLE_LIGHT (BayType.CATEGORY_NON_INFANTRY, 50.0, 1.0, 5, 10000, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
             && (e.getWeight() <= 50.0), LightVehicleBay.techAdvancement()),
-    VEHICLE_HEAVY (false, 100.0, 1.0, 8, 0, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
+    VEHICLE_HEAVY (BayType.CATEGORY_NON_INFANTRY, 100.0, 1.0, 8, 10000, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
             && (e.getWeight() <= 100.0), HeavyVehicleBay.techAdvancement()),
-    VEHICLE_SH (false, 200.0, 1.0, 15, 0, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
+    VEHICLE_SH (BayType.CATEGORY_NON_INFANTRY, 200.0, 1.0, 15, 20000, e -> e.hasETypeFlag(Entity.ETYPE_TANK)
             && (e.getWeight() <= 200.0), SuperHeavyVehicleBay.techAdvancement());
     
-    private boolean cargo;
+    public static final int CATEGORY_CARGO        = 0;
+    public static final int CATEGORY_INFANTRY     = 1;
+    public static final int CATEGORY_NON_INFANTRY = 2;
+    
+    private int category;
     private double weight;
     private double capacity;
     private int personnel;
@@ -69,9 +75,9 @@ public enum BayType implements ITechnologyDelegator {
     private Predicate<Entity> canLoad;
     private TechAdvancement techAdvancement;
     
-    BayType(boolean cargo, double weight, double capacity, int personnel, long cost,
+    BayType(int category, double weight, double capacity, int personnel, long cost,
             Predicate<Entity> canLoad, TechAdvancement techAdvancement) {
-        this.cargo = cargo;
+        this.category = category;
         this.weight = weight;
         this.capacity = capacity;
         this.personnel = personnel;
@@ -80,27 +86,56 @@ public enum BayType implements ITechnologyDelegator {
         this.techAdvancement = techAdvancement;
     }
     
-    
-    public boolean isCargo() {
-        return cargo;
+    /**
+     * Bays fall into three basic categories:
+     * CATEGORY_CARGO is for bulk transport and can be sized in fractional increments (usually half ton).
+     *                Capacity is the fraction of bay tonnage that is available for storage.
+     * CATEGORY_INFANTRY calculates cost based on tonnage rather than unit capacity and has no cost for aerospace units.
+     * CATEGORY_NON_INFANTRY calculates cost per cubicle. Capacity is the number of entities that can fit
+     *                       in a single cubicle.
+     * @return The category index.
+     */
+    public int getCategory() {
+        return category;
     }
 
+    /**
+     * @return The tonnage weight of a single unit of the bay type. For cargo the base unit is a single ton;
+     *         for units the base unit is a number of Entity units equal to the capacity.
+     */
     public double getWeight() {
         return weight;
     }
     
+    /**
+     * @return The capacity of a single unit of the bay type. For cargo the is the number of tons of cargo
+     *         that can be stored in a single ton of bay capacity. For unit transport bays this is the Entity
+     *         count for the cubicle (usually one).
+     */
     public double getCapacity() {
         return capacity;
     }
     
+    /**
+     * @return The number of personnel that can be housed in by each unit of the bay.
+     */
     public int getPersonnel() {
         return personnel;
     }
     
+    /**
+     * @return The base cost of a single unit of the bay type. Note that the cost for infantry units
+     *         (conventional and battlearmor) is per ton and not per platoon/squad and aerospace units
+     *         do not pay for the cost of infantry transport bays.
+     */
     public long getCost() {
         return cost;
     }
     
+    /**
+     * @param en An entity to load into a bay.
+     * @return   true if the Entity can be housed in the type of bay.
+     */
     public boolean canLoad(Entity en) {
         return canLoad.test(en);
     }

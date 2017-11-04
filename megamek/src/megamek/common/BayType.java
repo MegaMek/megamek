@@ -145,4 +145,11 @@ public enum BayType implements ITechnologyDelegator {
         return techAdvancement;
     }
     
+    /**
+     * @return The name of the type of bay.
+     */
+    public String getDisplayName() {
+        return EquipmentMessages.getString("BayType." + name()); //$NON-NLS-1$
+    }
+    
 }

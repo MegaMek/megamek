@@ -8336,7 +8336,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean useBRTag) {
+    public String getUnusedString(boolean ishtml) {
         StringBuffer result = new StringBuffer();
 
         // Walk through this entity's transport components;
@@ -8347,7 +8347,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((next instanceof Bay) && ((Bay)next).isQuarters()) {
                 continue;
             }
-            result.append(next.getUnusedString());
+            if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+                result.append("<font color='red'>")
+                    .append(next.getUnusedString())
+                    .append("</font>");
+            } else {
+                result.append(next.getUnusedString());
+            }
             if (next instanceof TroopSpace && isOmni()) {
             	if (omniPodTransports.contains(next)) {
             		result.append(" (Pod)");
@@ -8357,7 +8363,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                if (useBRTag) {
+                if (ishtml) {
                     result.append("<br>");
                 } else {
                     result.append("\n");

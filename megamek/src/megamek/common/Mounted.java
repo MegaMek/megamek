@@ -73,7 +73,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
-
+    private boolean ammoChangeable = true; // Some ammo's like Caseless can't be changed in game.
+    
     private int location;
     private boolean rearMounted;
 
@@ -371,7 +372,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 pendingMode = newMode;
             }
         }
-        // all communicationsequipment mounteds need to have the same mode at
+        // all communications equipment mounteds need to have the same mode at
         // all times
         if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
@@ -805,7 +806,39 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setRapidfire(boolean rapidfire) {
         this.rapidfire = rapidfire;
     }
+    
+    /**
+     * Checks to see if the current ammo for this weapon is changable to use another
+     * Ammo Bin. Caseless can't switch in Combat.
+     * 
+     * @return <code>true</code> if ammo is changeabel or <code>false</code> if
+     *         Caseless and not.
+     */
 
+    public boolean isAmmoChangeable() {
+        boolean isAmmoChangeable = true;
+
+        if (getType() instanceof WeaponType) {
+            Mounted link = getLinked();
+            if ((link == null) || !(link.getType() instanceof AmmoType)) {
+                return true;
+            }
+
+            isAmmoChangeable = link.ammoChangeable;
+            if (((AmmoType) link.getType()).getMunitionType() == AmmoType.M_CASELESS) {
+                return false;
+            }
+
+            return isAmmoChangeable;
+        }
+
+        return true;
+    }
+
+    public void setAmmoChangeable(boolean b) {
+        ammoChangeable = b;
+    }
+        
     /**
      * Checks to see if the current ammo for this weapon is hotloaded
      *
@@ -1690,7 +1723,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
     }
-
+    
     public int getBaMountLoc() {
         return baMountLoc;
     }

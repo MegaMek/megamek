@@ -829,10 +829,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 return false;
             }
 
-            return isAmmoChangeable;
         }
-
-        return true;
+        return isAmmoChangeable;
     }
 
     public void setAmmoChangeable(boolean b) {

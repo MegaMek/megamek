@@ -643,8 +643,9 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
     
-    public static String[] classNames =
-        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
+    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS",
+            "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
+            "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
 
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
@@ -1001,8 +1002,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Plasma Bay");
             case (CLASS_AC):
                 return EquipmentType.get("AC Bay");
-            case (CLASS_GAUSS):
-                return EquipmentType.get("Gauss Bay");
+/*            case (CLASS_GAUSS):
+                return EquipmentType.get("Gauss Bay");*/
             case (CLASS_LBX_AC):
                 return EquipmentType.get("LBX AC Bay");
             case (CLASS_LRM):

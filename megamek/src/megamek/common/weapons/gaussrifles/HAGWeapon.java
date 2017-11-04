@@ -41,7 +41,7 @@ public abstract class HAGWeapon extends GaussWeapon {
         damage = DAMAGE_BY_CLUSTERTABLE;
         ammoType = AmmoType.T_HAG;
         flags = flags.or(F_NO_AIM);
-        atClass = CLASS_GAUSS;
+        atClass = CLASS_AC;
         infDamageClass = WEAPON_CLUSTER_BALLISTIC;
     }
 

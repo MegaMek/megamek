@@ -144,11 +144,9 @@ public class MULParser {
     private static final String GEAR = "gear";
     private static final String DOCKING_COLLAR = "dockingcollar";
     private static final String KFBOOM = "kfboom";
-    private static final String BAYDOORS = "BayDoors";
-    private static final String DOORS = "doors";
-    private static final String BAY = "TransportBay";
-    private static final String BAYDAMAGED = "BayDamaged";
-    private static final String DAMAGED = "damaged";
+    private static final String BAYDOORS = "doors";
+    private static final String BAY = "transportBay";
+    private static final String BAYDAMAGE = "damage";
     private static final String MDAMAGE = "damage";
     private static final String MPENALTY = "penalty";
     private static final String C3MASTERIS = "c3MasterIs";
@@ -1929,18 +1927,11 @@ public class MULParser {
     		}
     		int nodeType = currNode.getNodeType();
     		if (nodeType == Node.ELEMENT_NODE) {
-    			Element currEle = (Element) currNode;
     			String nodeName = currNode.getNodeName();
-    			if (nodeName.equalsIgnoreCase(BAYDAMAGED)) {
-    				String bayhit = currEle.getAttribute(DAMAGED);
-    				if (bayhit.equals("true")) {
-    					currentbay.setBayDamaged();
-    				}
-    			}
-    			if (nodeName.equalsIgnoreCase(BAYDOORS)) {
-    				String currentdoors = currEle.getAttribute(DOORS);
-    				int doors = Integer.parseInt(currentdoors);
-    				currentbay.setCurrentDoors(doors);
+    			if (nodeName.equalsIgnoreCase(BAYDAMAGE)) {
+    				currentbay.setBayDamage(Double.parseDouble(currNode.getTextContent()));
+    			} else if (nodeName.equalsIgnoreCase(BAYDOORS)) {
+                    currentbay.setCurrentDoors(Integer.parseInt(currNode.getTextContent()));
     		    }
     	    }
         }

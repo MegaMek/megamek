@@ -144,7 +144,7 @@ public final class InfantryBay extends Bay {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < spaceForUnit(unit)) {
+        if (getUnused() < spaceForUnit(unit)) {
             result = false;
         }
 
@@ -153,11 +153,6 @@ public final class InfantryBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
@@ -166,14 +161,14 @@ public final class InfantryBay extends Bay {
     public String getUnusedString(boolean showrecovery) {
         StringBuilder sb = new StringBuilder();
         sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
-                .append((int)(currentSpace / bayType.getWeight()))
+                .append(getUnusedSlots())
             .append(" ").append(bayType.toString());
         if (bayType != PlatoonType.MECHANIZED) {
             sb.append(" platoon");
         } else {
             sb.append(" squad");
         }
-        if (currentSpace / bayType.getWeight() != 1) {
+        if (getUnusedSlots() != 1) {
             sb.append("s");
         }
         return sb.toString();
@@ -181,7 +176,7 @@ public final class InfantryBay extends Bay {
     
     @Override
     public double getUnusedSlots() {
-        return currentSpace / bayType.getWeight();
+        return currentSpace / bayType.getWeight() - getBayDamage();
     }
 
     @Override

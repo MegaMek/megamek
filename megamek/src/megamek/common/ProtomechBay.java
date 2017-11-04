@@ -75,7 +75,7 @@ public final class ProtomechBay extends Bay {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -84,11 +84,6 @@ public final class ProtomechBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
@@ -96,8 +91,8 @@ public final class ProtomechBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         return "Protomech " + numDoorsString() + " - "
-                + String.format("%1$,.0f", currentSpace)
-                + (currentSpace > 1 ? " units" : " unit");
+                + String.format("%1$,.0f", getUnused())
+                + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override

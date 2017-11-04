@@ -39,7 +39,7 @@ public class Bay implements Transporter, ITechnology {
     Vector<Integer> recoverySlots = new Vector<Integer>();
     int bayNumber = 0;
     transient IGame game = null;
-    protected int damaged = 0;
+    private double damage;
 
     /**
      * The troops being carried.
@@ -52,7 +52,7 @@ public class Bay implements Transporter, ITechnology {
     /* package */double totalSpace;
 
     /**
-     * The current amount of space available for troops.
+     * The current amount of space not occupied by troops or cargo.
      */
     /* package */double currentSpace;
 
@@ -64,6 +64,7 @@ public class Bay implements Transporter, ITechnology {
     protected Bay() {
         totalSpace = 0;
         currentSpace = 0;
+        damage = 0;
     }
 
     // Public constructors and methods.
@@ -83,19 +84,27 @@ public class Bay implements Transporter, ITechnology {
         this.doors = doors;
         doorsNext = currentdoors;
         this.bayNumber = bayNumber;
+        damage = 0;
     }
     
-    // For tracking damage to the bay itself, not the cargo it carries
-    public int getBayDamaged() {
-    	return damaged;
+    /**
+     * Bay damage to unit transport bays is tracked by number of cubicles/units. Damage
+     * to cargo bays is tracked by cargo tonnage.
+     * 
+     * @return The reduction of bay capacity due to damage.
+     */
+    public double getBayDamage() {
+    	return damage;
     }
     
-    public void setBayDamaged() {
-    	damaged = 1;
-    }
-    
-    public void clearBayDamaged() {
-    	damaged = 0;
+    /**
+     * Bay damage to unit transport bays is tracked by number of cubicles/units. Damage
+     * to cargo bays is tracked by cargo tonnage.
+     *
+     * @param damage The total amount of bay capacity reduced due to damage.
+     */
+    public void setBayDamage(double damage) {
+    	this.damage = Math.min(damage, totalSpace);
     }
     
     // the starting number of doors for the bay.
@@ -168,7 +177,7 @@ public class Bay implements Transporter, ITechnology {
         boolean result = true;
 
         // We must have enough space for the new troops.
-        if (currentSpace < spaceForUnit(unit)) {
+        if (getUnused() < spaceForUnit(unit)) {
             result = false;
         }
 
@@ -177,11 +186,6 @@ public class Bay implements Transporter, ITechnology {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
@@ -211,7 +215,7 @@ public class Bay implements Transporter, ITechnology {
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= spaceForUnit(unit);
@@ -322,8 +326,8 @@ public class Bay implements Transporter, ITechnology {
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString(boolean showrecovery) {
-        return numDoorsString() + "  - " + currentSpace
-                + (currentSpace > 1 ? " units" : " unit");
+        return numDoorsString() + "  - " + getUnused()
+                + (getUnused() > 1 ? " units" : " unit");
     }
     
     protected String numDoorsString() {
@@ -341,7 +345,7 @@ public class Bay implements Transporter, ITechnology {
      */
     @Override
     public double getUnused() {
-        return currentSpace;
+        return currentSpace - damage;
     }
     
     /**
@@ -470,10 +474,13 @@ public class Bay implements Transporter, ITechnology {
         return "bay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
+    /**
+     * @return The total size of the bay.
+     */
     public double getCapacity() {
         return totalSpace;
     }
-
+    
     public int getBayNumber() {
         return bayNumber;
     }
@@ -584,6 +591,13 @@ public class Bay implements Transporter, ITechnology {
      * @return true if this bay represents crew quarters or seating rather than a unit transport bay.
      */
     public boolean isQuarters() {
+        return false;
+    }
+    
+    /**
+     * @return true if this bay represents cargo capacity rather than unit transport or crew quarters.
+     */
+    public boolean isCargo() {
         return false;
     }
 

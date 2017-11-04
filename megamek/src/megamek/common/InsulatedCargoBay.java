@@ -75,10 +75,10 @@ public final class InsulatedCargoBay extends Bay {
         StringBuffer returnString = new StringBuffer("Insulated Cargo Space "
                 + numDoorsString() + " - ");
 
-        if (currentSpace != Math.round(currentSpace)) {
-            returnString.append(String.format("%1$,.3f", currentSpace));
+        if (getUnused() != Math.round(getUnused())) {
+            returnString.append(String.format("%1$,.3f", getUnused()));
         } else {
-            returnString.append(String.format("%1$,.0f", currentSpace));
+            returnString.append(String.format("%1$,.0f", getUnused()));
         }
 
         returnString.append(" tons");
@@ -99,4 +99,11 @@ public final class InsulatedCargoBay extends Bay {
     public String toString() {
         return "insulatedcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
+    
+    
+    @Override
+    public boolean isCargo() {
+        return true;
+    }
+
 }

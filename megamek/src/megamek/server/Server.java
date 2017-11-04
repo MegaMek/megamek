@@ -26134,8 +26134,26 @@ public class Server implements Runnable {
                 // did it hit cargo or units
                 int roll = Compute.d6(1);
                 if (roll < 4) {
-                    // cargo was hit
-                    // just report; no game effect
+                    List<Bay> cargoBays = new ArrayList<>();
+                    double load = 0;
+                    for (Bay bay : aero.getTransportBays()) {
+                        if (bay.isCargo()) {
+                            cargoBays.add(bay);
+                            load += bay.getCapacity() - bay.getBayDamage();
+                        }
+                    }
+                    double destroyed = load * percentDestroyed;
+                    while ((destroyed > 0) && !cargoBays.isEmpty()) {
+                        Bay bay = cargoBays.get(Compute.randomInt(cargoBays.size()));
+                        if (bay.getCapacity() - bay.getBayDamage() <= destroyed) {
+                            bay.setBayDamage(bay.getBayDamage() + destroyed);
+                            destroyed = 0;
+                        } else {
+                            destroyed -= bay.getCapacity() - bay.getBayDamage();
+                            bay.setBayDamage(bay.getCapacity());
+                        }
+                    }
+                    
                     r = new Report(9165);
                     r.subject = aero.getId();
                     r.add((int) (percentDestroyed * 100));
@@ -26155,8 +26173,11 @@ public class Server implements Runnable {
                         // already destroyed
                         List<Entity> units = aero.getLoadedUnits();
                         if (units.size() > 0) {
-                            Entity target = units.get(Compute.randomInt(units
-                                                                                .size()));
+                            Entity target = units.get(Compute.randomInt(units.size()));
+                            Bay bay = aero.getBay(target);
+                            if (null != bay) {
+                                bay.setBayDamage(bay.getBayDamage() + 1);
+                            }
                             reports.addAll(destroyEntity(target, "cargo damage",
                                                        false, false));
                         }

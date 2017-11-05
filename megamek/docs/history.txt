@@ -22,6 +22,10 @@ v0.43.5-git
 + Issue: Last man standing victory could fire even when checking for victory is disabled
 + Feature: Adds ASEW missile functionality
 + Feature: "OUR WORDS ARE BACKED BY NUCLEAR WEAPONS" -Mahatma Ghandi (adds Alamo, Santa Anna and Peacemaker warheads)
++ Issue #530: MegaMek Help->Contents now points at Readme.txt
++ Issue #711: Aeros and spacecraft with destroyed fire control system or combat information center now count as crippled
++ Issue #716: Targeting a non-Entity with Arrow IV Homing Missile no longer causes NPE
++ Issue #666: Linked equipment now works with bay weapons
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

@@ -406,7 +406,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
 
         Mounted mLinker = weapon.getLinkedBy();
-        
+               
         boolean bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
                 && (atype != null) && (atype.getAmmoType() == AmmoType.T_MRM);
@@ -415,6 +415,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
                 && !isECMAffected && !bMekTankStealthActive && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+        
+        if (ae.usesWeaponBays()) {
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted bayW = ae.getEquipment(wId);
+                Mounted bayWAmmo = bayW.getLinked();
+                AmmoType bAmmo = (AmmoType) bayWAmmo.getType();
+                mLinker = bayW.getLinkedBy();
+                bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
+                        && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
+                        && (bAmmo != null) && (bAmmo.getAmmoType() == AmmoType.T_MRM);
+                
+                bArtemisV = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
+                        && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
+                        && !isECMAffected && !bMekTankStealthActive && (atype != null)
+                        && (bAmmo.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+            }
+        }
         
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 

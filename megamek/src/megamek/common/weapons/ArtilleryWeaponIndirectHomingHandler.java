@@ -466,7 +466,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             Vector<Report> vPhaseReport) {
         return true;
     }
-    
+        
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
@@ -509,10 +509,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
                     // build up some heat (assume target is ams owner)
                     if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                        entityTarget.heatBuildup += Compute.d6(counter
+                        apdsEnt.heatBuildup += Compute.d6(counter
                                 .getCurrentHeat());
                     } else {
-                        entityTarget.heatBuildup += counter.getCurrentHeat();
+                        apdsEnt.heatBuildup += counter.getCurrentHeat();
                     }
 
                     // decrement the ammo
@@ -589,7 +589,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     //If you're firing missiles at a capital ship...
     @Override
     protected int calcCounterAV () {
-        if ((target == null) || !advancedPD) {
+        if (!(target instanceof Entity) || !advancedPD) {
             return 0;
         }
         int counterAV = 0;

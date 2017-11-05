@@ -620,6 +620,9 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public void setCICHits(int hits) {
+        if (hits > 3) {
+            hits = 3;
+        }
         cicHits = hits;
     }
 
@@ -3882,6 +3885,14 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
             System.out.println(msg + getCrew().getHits() + " Crew Hits.");
+            return true;
+        }
+        if (getFCSHits() >= 3) {
+            System.out.println(msg + fcsHits + " Fire Control Destroyed.");
+            return true;
+        }
+        if (getCICHits() >= 3) {
+            System.out.println(msg + cicHits + " Combat Information Center Destroyed.");
             return true;
         }
 

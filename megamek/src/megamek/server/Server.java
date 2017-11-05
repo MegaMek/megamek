@@ -26044,19 +26044,27 @@ public class Server implements Runnable {
                     r.subject = aero.getId();
                     r.add((int) (percentDestroyed * 100));
                     reports.add(r);
-                    Vector<Bay> cargoBays = new Vector<Bay>();
-                    for (Bay next : aero.getTransportBays()) {
-                        if ((next instanceof CargoBay)
-                                || (next instanceof InsulatedCargoBay)
-                                || (next instanceof LiquidCargoBay)
-                                || (next instanceof LivestockCargoBay)
-                                || (next instanceof RefrigeratedCargoBay)) {
-                            cargoBays.add(next);
-                        }
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CARGO_BAY_DAMAGE)) {
+                        Vector<Bay> cargoBays = new Vector<Bay>();
+                        for (Bay next : aero.getTransportBays()) {
+                            if ((next instanceof CargoBay)
+                                    || (next instanceof InsulatedCargoBay)
+                                    || (next instanceof LiquidCargoBay)
+                                    || (next instanceof LivestockCargoBay)
+                                    || (next instanceof RefrigeratedCargoBay)) {
+                                cargoBays.add(next);
+                            }
                         
+                        }
+                        Bay targetBay = cargoBays.get(Compute.randomInt(cargoBays.size()));
+                        targetBay.setBayDamaged();
+                        //report the damage
+                        r = new Report(9167);
+                        r.subject = aero.getId();
+                        r.add(targetBay.getType());
+                        r.add(targetBay.getBayNumber());
+                        reports.add(r);
                     }
-                    Bay targetBay = cargoBays.get(Compute.randomInt(cargoBays.size()));
-                    targetBay.setBayDamaged();
                 } else {
                     // units were hit
                     // get a list of units
@@ -26074,10 +26082,17 @@ public class Server implements Runnable {
                         if (units.size() > 0) {
                             Entity target = units.get(Compute.randomInt(units
                                                                                 .size()));
-                            // damage the cargo bay itself
-                            Bay targetBay = aero.getBay(target);
-                            targetBay.setBayDamaged();
-                            
+                            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CARGO_BAY_DAMAGE)) {
+                                // damage the cargo bay itself
+                                Bay targetBay = aero.getBay(target);
+                                targetBay.setBayDamaged();
+                                //report the damage
+                                r = new Report(9167);
+                                r.subject = aero.getId();
+                                r.add(targetBay.getType());
+                                r.add(targetBay.getBayNumber());
+                                reports.add(r);
+                            }
                             //This dooms the selected transported unit
                             reports.addAll(destroyEntity(target, "cargo damage",
                                                        false, false));
@@ -26105,13 +26120,14 @@ public class Server implements Runnable {
                 // docking collar hit
                 // different effect for dropships and jumpships
                 if (aero instanceof Dropship) {
+                    //damage the docking collar. There isn't but one...
                     ((Dropship)aero).setDamageDockCollar(true);
                     r = new Report(9175);
                     r.subject = aero.getId();
                     reports.add(r);
                 }
                 if (aero instanceof Jumpship) {
-                    // damage the docking collar
+                    // damage a random docking collar
                     if (aero.damageDockCollar()) {
                         r = new Report(9176);
                         r.subject = aero.getId();

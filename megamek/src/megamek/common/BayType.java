@@ -15,6 +15,8 @@ package megamek.common;
 
 import java.util.function.Predicate;
 
+import megamek.common.annotations.Nullable;
+
 /**
  * Data for various transport bay types. This is used by MekHQ for cubicle parts, but can also be
  * used in the future for a generic bay that hold multiple types of units.
@@ -152,4 +154,68 @@ public enum BayType implements ITechnologyDelegator {
         return EquipmentMessages.getString("BayType." + name()); //$NON-NLS-1$
     }
     
+    public static @Nullable BayType parse(String name) {
+        if (null != name) {
+            for (BayType bt : values()) {
+                if (bt.toString().toLowerCase().equals(name.toLowerCase())) {
+                    return bt;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Finds the BayType that matches an existing bay.
+     * 
+     * @param bay A transport bay object
+     * @return    The BayType for the bay.
+     */
+    public static BayType getTypeForBay(Bay bay) {
+        if (bay instanceof CargoBay) {
+            return STANDARD_CARGO;
+        } else if (bay instanceof LiquidCargoBay) {
+            return LIQUID_CARGO;
+        } else if (bay instanceof RefrigeratedCargoBay) {
+            return REFRIGERATED_CARGO;
+        } else if (bay instanceof InsulatedCargoBay) {
+            return INSULATED_CARGO;
+        } else if (bay instanceof LivestockCargoBay) {
+            return LIVESTOCK_CARGO;
+        } else if (bay instanceof InfantryBay) {
+            InfantryBay.PlatoonType ptype = ((InfantryBay) bay).getPlatoonType();
+            if (ptype == InfantryBay.PlatoonType.JUMP) {
+                return INFANTRY_JUMP;
+            } else if (ptype == InfantryBay.PlatoonType.MOTORIZED) {
+                return INFANTRY_MOTORIZED;
+            } else if (ptype == InfantryBay.PlatoonType.MECHANIZED) {
+                return INFANTRY_MECHANIZED;
+            } else 
+                return INFANTRY_FOOT;
+        } else if (bay instanceof BattleArmorBay) {
+            if (bay.isClan()) {
+                return BATTLEARMOR_CLAN;
+            } else if (bay.toString().contains("C*")) {
+                return BATTLEARMOR_CS;
+            } else {
+                return BATTLEARMOR_IS;
+            }
+        } else if (bay instanceof MechBay) {
+            return MECH;
+        } else if (bay instanceof ASFBay) {
+            return FIGHTER;
+        } else if (bay instanceof ProtomechBay) {
+            return PROTOMECH;
+        } else if (bay instanceof SmallCraftBay) {
+            return SMALL_CRAFT;
+        } else if (bay instanceof LightVehicleBay) {
+            return VEHICLE_LIGHT;
+        } else if (bay instanceof HeavyVehicleBay) {
+            return VEHICLE_HEAVY;
+        } else if (bay instanceof SuperHeavyVehicleBay) {
+            return VEHICLE_SH;
+        } else {
+            return STANDARD_CARGO;
+        }
+    }
 }

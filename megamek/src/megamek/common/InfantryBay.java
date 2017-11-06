@@ -86,7 +86,7 @@ public final class InfantryBay extends Bay {
     // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
     // In practice we support loading any type of infantry into the bay as long as there is room to avoid
     // the headache of having to do formal reconfigurations.
-    private PlatoonType bayType = PlatoonType.FOOT; 
+    private PlatoonType platoonType = PlatoonType.FOOT; 
 
     /**
      * The default constructor is only for serialization.
@@ -115,7 +115,7 @@ public final class InfantryBay extends Bay {
         doorsNext = doors;
         this.bayNumber = bayNumber;
         currentdoors = doors;
-        this.bayType = bayType;
+        this.platoonType = bayType;
     }
     
     @Override
@@ -162,8 +162,8 @@ public final class InfantryBay extends Bay {
         StringBuilder sb = new StringBuilder();
         sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
                 .append(getUnusedSlots())
-            .append(" ").append(bayType.toString());
-        if (bayType != PlatoonType.MECHANIZED) {
+            .append(" ").append(platoonType.toString());
+        if (platoonType != PlatoonType.MECHANIZED) {
             sb.append(" platoon");
         } else {
             sb.append(" squad");
@@ -176,28 +176,32 @@ public final class InfantryBay extends Bay {
     
     @Override
     public double getUnusedSlots() {
-        return currentSpace / bayType.getWeight() - getBayDamage();
+        return currentSpace / platoonType.getWeight() - getBayDamage();
     }
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)(totalSpace / bayType.getWeight())
-                * (clan? bayType.getClanPersonnel() : bayType.getISPersonnel());
+        return (int)(totalSpace / platoonType.getWeight())
+                * (clan? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
     }
 
     @Override
     public String getDefaultSlotDescription() {
-        return " (" + bayType.toString() + ")";
+        return " (" + platoonType.toString() + ")";
     }
 
     @Override
     public String getType() {
-        return "Infantry (" + bayType.toString() + ")";
+        return "Infantry (" + platoonType.toString() + ")";
     }
 
     @Override
     public String toString() {
-        return "infantrybay:" + (totalSpace / bayType.getWeight()) + ":" + doors + ":"+ bayNumber + ":" + bayType.toString();
+        return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"+ bayNumber + ":" + platoonType.toString();
+    }
+    
+    public PlatoonType getPlatoonType() {
+        return platoonType;
     }
 
 } // End package class TroopSpace implements Transporter

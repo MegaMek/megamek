@@ -182,7 +182,7 @@ public class TestAero extends TestEntity {
                 (size, num) -> new MechBay(size, 1, num)),
         PROTOMECH ("Protomech", 10.0, 6, ProtomechBay.techAdvancement(),
                 (size, num) -> new ProtomechBay(size, 1, num)),
-        VEHICLE_HEAVY ("Heavy Vehicle", 200.0, 8, HeavyVehicleBay.techAdvancement(),
+        VEHICLE_HEAVY ("Heavy Vehicle", 100.0, 8, HeavyVehicleBay.techAdvancement(),
                 (size, num) -> new HeavyVehicleBay(size, 1, num)),
         VEHICLE_LIGHT ("Light Vehicle", 50.0, 5, LightVehicleBay.techAdvancement(),
                 (size, num) -> new LightVehicleBay(size, 1, num)),

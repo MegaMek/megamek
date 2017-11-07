@@ -26,7 +26,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
+public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -50,7 +50,7 @@ public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
-        this.atClass = CLASS_CAPITAL_MISSILE_T;
+        this.atClass = CLASS_TELE_MISSILE;
         this.capital = true;
     }
 

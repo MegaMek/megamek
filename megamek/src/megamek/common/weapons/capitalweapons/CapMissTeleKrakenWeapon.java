@@ -53,7 +53,7 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         this.bv = 2306;
         this.cost = 500000;
         this.flags = flags.or(F_MISSILE);
-        this.atClass = CLASS_CAPITAL_MISSILE_T;
+        this.atClass = CLASS_TELE_MISSILE;
         this.shortAV = 10;
         this.medAV = 10;
         this.longAV = 10;

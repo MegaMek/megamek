@@ -619,7 +619,7 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
     public static final int CLASS_AMS = 24;
-    public static final int CLASS_CAPITAL_MISSILE_T = 25;
+    public static final int CLASS_TELE_MISSILE = 25;
     public static final int NUM_CLASSES = 26;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
@@ -1030,8 +1030,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Capital Mass Driver Bay");
             case (CLASS_CAPITAL_MISSILE):
                 return EquipmentType.get("Capital Missile Bay");
-            case (CLASS_CAPITAL_MISSILE_T):
-                return EquipmentType.get("Tele-Operated Missile Bay");
+            case (CLASS_TELE_MISSILE):
+                return EquipmentType.get("Tele-Operated Capital Missile Bay");
             case (CLASS_AR10):
                 return EquipmentType.get("AR10 Bay");
             case (CLASS_SCREEN):

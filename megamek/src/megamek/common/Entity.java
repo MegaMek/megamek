@@ -11511,6 +11511,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                        && (((WeaponType) mounted.getType()).getAtClass()
                            != WeaponType.CLASS_CAPITAL_MISSILE)
                        && (((WeaponType) mounted.getType()).getAtClass()
+                               != WeaponType.CLASS_TELE_MISSILE)
+                       && (((WeaponType) mounted.getType()).getAtClass()
                            != WeaponType.CLASS_AR10)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
@@ -11530,6 +11532,42 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     ((WeaponType) mounted.getType()).setModes(modes
                                                                       .toArray(stringArray));
                 }
+            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                        || (((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_AR10)) {
+                 ArrayList<String> modes = new ArrayList<String>();
+                 String[] stringArray = {};
+                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
+                 modes.add("");
+                 if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                     modes.add("Bearings-Only Extreme Detection Range");
+                     modes.add("Bearings-Only Long Detection Range");
+                     modes.add("Bearings-Only Medium Detection Range");
+                     modes.add("Bearings-Only Short Detection Range");
+                 }
+
+                 if (modes.size() > 1) {
+                     ((WeaponType) mounted.getType()).setModes(modes
+                                                                       .toArray(stringArray));
+                 }
+                 
+            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_TELE_MISSILE)) {
+                ArrayList<String> modes = new ArrayList<String>();
+                String[] stringArray = {};
+                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
+                modes.add("");
+                modes.add("Tele-Operated");                
+                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                    modes.add("Bearings-Only Extreme Detection Range");
+                    modes.add("Bearings-Only Long Detection Range");
+                    modes.add("Bearings-Only Medium Detection Range");
+                    modes.add("Bearings-Only Short Detection Range");
+                }
+
+                if (modes.size() > 1) {
+                    ((WeaponType) mounted.getType()).setModes(modes
+                                                                      .toArray(stringArray));
+                }
+                
             } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
                        && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();

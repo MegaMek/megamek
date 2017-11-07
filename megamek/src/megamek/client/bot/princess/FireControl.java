@@ -2973,7 +2973,7 @@ public class FireControl {
         //		two left, two right if he has "extended torso twist" quirk
         // vehicles and turrets can turn any direction unless he has no turret
         final List<Integer> validFacingChanges = new ArrayList<>();
-        if (Entity.ETYPE_MECH == shooter.getEntityType()
+        if (((Entity.ETYPE_MECH & shooter.getEntityType()) > 0)
             && !shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)
             && !shooter.hasFallen()) {
             validFacingChanges.add(1);

@@ -3602,8 +3602,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
 
-            // Artillery only in the correct phase...
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+            // Artillery and Bearings-Only Capital Missiles only in the correct phase...
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || mounted.curMode().equals("Bearings-Only Extreme Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Short Detection Range"))
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 continue;
             }
@@ -9344,7 +9348,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
             return true;
         }
-
+        
         // must be active
         if (!isActive()) {
             return false;
@@ -9565,6 +9569,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
+                return true;
+            }
+            //Bearings-only capital missiles fire during the targeting phase
+            if (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Short Detection Range")) {
                 return true;
             }
         }

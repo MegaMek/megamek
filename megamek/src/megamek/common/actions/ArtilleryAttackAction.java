@@ -49,6 +49,14 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         // adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
+        WeaponType wType = (WeaponType) eType;
+        //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
+        if (((wType.getAtClass() == WeaponType.CLASS_AR10)
+                || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
+                || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
+                && (distance > 50)) {
+            turnsTilHit = (int) (distance / 50);
+        }
         if(getEntity(game).isAirborne()) {
             if(getEntity(game).getAltitude() < 9) {
                 turnsTilHit = 1;

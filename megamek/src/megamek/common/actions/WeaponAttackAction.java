@@ -365,9 +365,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
                 && (game.getPhase() == IGame.Phase.PHASE_FIRING);
         
-        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
+        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) 
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
+        
+        boolean isBearingsOnlyMissile = (weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Short Detection Range"));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -465,7 +470,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         String reason = WeaponAttackAction.toHitIsImpossible(game, ae, target, swarmPrimaryTarget, swarmSecondaryTarget,
                 weapon, atype, wtype, ttype, exchangeSwarmTarget, usesAmmo, te, isTAG, isInferno, isAttackerInfantry,
                 isIndirect, attackerId, weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK, targetInBuilding,
-                isArtilleryDirect, isTargetECMAffected, isStrafing);
+                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile);
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
@@ -2835,7 +2840,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean exchangeSwarmTarget, boolean usesAmmo, Entity te, boolean isTAG, boolean isInferno,
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
             Mounted ammo, boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
-            boolean isTargetECMAffected, boolean isStrafing) {
+            boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile) {
         boolean isHoming = false;
         ToHitData toHit = null;
 
@@ -2985,8 +2990,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getMunitionType() == AmmoType.M_FLARE))) {
             return "Weapon can't deliver flares";
         }
-        if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && !isArtilleryIndirect) {
-            return "Only indirect artillery can be fired in the targeting phase";
+        if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
+            return "Only indirect artillery and bearings-only missiles can be fired in the targeting phase";
         }
         if ((game.getPhase() == IGame.Phase.PHASE_OFFBOARD) && !isTAG) {
             return "Only TAG can be fired in the offboard attack phase";
@@ -3086,6 +3091,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
+        } else if ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+            || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
+            || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
+            || (weapon.curMode().equals("Bearings-Only Short Detection Range"))) { 
+            
         } else {
             // weapon is not artillery
             if (ttype == Targetable.TYPE_HEX_ARTILLERY) {

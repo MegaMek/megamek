@@ -91,7 +91,7 @@ public final class CargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "cargobay:" + totalSpace + ":" + doors;
+        return "cargobay:" + totalSpace + ":" + doors + ":" + bayNumber;
     }
     
     @Override

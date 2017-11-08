@@ -420,6 +420,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             for (int wId : weapon.getBayWeapons()) {
                 Mounted bayW = ae.getEquipment(wId);
                 Mounted bayWAmmo = bayW.getLinked();
+                if (bayWAmmo == null) {
+                    //At present, all weapons below using mLinker use ammo, so this won't be a problem
+                    continue;
+                }
                 AmmoType bAmmo = (AmmoType) bayWAmmo.getType();
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()

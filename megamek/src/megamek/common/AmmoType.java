@@ -14840,15 +14840,15 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 50.0;
         ammo.shots = 1;
-        ammo.bv = 96;
-        ammo.cost = 20000;
+        ammo.bv = 10000;
+        ammo.cost = 40000000;
         ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
                 .or(F_CAP_MISSILE).or(F_PEACEMAKER);
         ammo.capital = true;
 
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setISAdvancement(2300).setPrototypeFactions(F_TA)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     } 
@@ -14868,18 +14868,18 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.tonnage = 50.0;
         ammo.shots = 1;
-        ammo.bv = 96;
-        ammo.cost = 20000;
+        ammo.bv = 10000;
+        ammo.cost = 40000000;
         ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_PEACEMAKER);
         ammo.capital = true;
 
-        ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setISAdvancement(2300).setPrototypeFactions(F_TA)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     }
-    
+
     private static AmmoType createAR10SantaAnnaAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -14893,15 +14893,15 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 50.0;
         ammo.shots = 1;
-        ammo.bv = 96;
-        ammo.cost = 20000;
+        ammo.bv = 1000;
+        ammo.cost = 15000000;
         ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
                 .or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setISAdvancement(2300).setPrototypeFactions(F_TA)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     } 
@@ -14920,14 +14920,14 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.tonnage = 50.0;
         ammo.shots = 1;
-        ammo.bv = 96;
-        ammo.cost = 20000;
+        ammo.bv = 1000;
+        ammo.cost = 15000000;
         ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
-        ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_C)
-            .setISAdvancement(DATE_NONE, 3067)
-            .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setISAdvancement(2300).setPrototypeFactions(F_TA)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     }
@@ -14942,13 +14942,14 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ALAMO;
         ammo.shots = 1;
-        ammo.bv = 0;
-        ammo.cost = 0;
+        ammo.bv = 100;
+        ammo.cost = 1000000;
         ammo.flags = ammo.flags.or(F_NUCLEAR);
         ammo.capital = true;
 
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(DATE_NONE, DATE_NONE, 3067)
-            .setTechRating(RATING_C).setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+            .setISAdvancement(2200).setPrototypeFactions(F_TA)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     }

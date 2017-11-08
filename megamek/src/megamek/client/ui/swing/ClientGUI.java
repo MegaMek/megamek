@@ -115,6 +115,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
@@ -152,7 +153,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
     private String helpFileName = 
-            Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
+            SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
+                                                          Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
 
     public MegaMekController controller = null;
     // keep me

@@ -50,6 +50,7 @@ public class MRMBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
+        this.toHitModifier = 1;
         this.atClass = CLASS_MRM;
     }
     

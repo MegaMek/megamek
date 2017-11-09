@@ -33,6 +33,7 @@ v0.43.5-git
 + Issue #521: Submarine cannot pass under bridges in a turn when their elevation changes.
 + Issue #725: BattleMech Mechanical Jump Boosters not working correctly.
 + Issue #702: Unable to deploy ASF over Woods
++ Issue #631: Show quirks in the Unit view when in the mech selector
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

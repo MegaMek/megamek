@@ -29,6 +29,7 @@ v0.43.5-git
 + PR #740: Optional cargo/transport bay damage on cargo critical hit for large craft
 + Issue #205: Airborne dropships can now fire Arrow IV artillery from weapon bays (as long as there's only one artillery weapon per bay)
 + Issue #743: Skidding Vehicle freezing Client(s)
++ Issue #738: CamoChoiceDialog.valueChanged NPE
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

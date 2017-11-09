@@ -846,6 +846,13 @@ public class WeaponType extends EquipmentType {
         		sRange = 6;
         	}
     	}
+        //Allow extremely long-range shots for bearings-only capital missiles
+        if ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Short Detection Range"))) {
+            eRange = 5000;
+        }
         int[] weaponRanges =
             { minRange, sRange, mRange, lRange, eRange };
         return weaponRanges;
@@ -870,7 +877,7 @@ public class WeaponType extends EquipmentType {
     public int getExtremeRange() {
         return extremeRange;
     }
-
+    
     public int[] getWRanges() {
         return new int[]
             { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };

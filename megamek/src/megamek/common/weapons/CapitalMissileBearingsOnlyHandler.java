@@ -164,14 +164,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
 
-                artyMsg = "Artillery bay fire Incoming, landing on round "
+                artyMsg = "Bearings-only missile(s) launched. Will go active on round "
                         + (game.getRoundCount() + aaa.turnsTilHit)
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
                 game.getBoard().addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(),
                         new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
+                                SpecialHexDisplay.Type.ARTILLERY_TARGET, game
                                         .getRoundCount() + aaa.turnsTilHit,
                                 game.getPlayer(aaa.getPlayerId()), artyMsg,
                                 SpecialHexDisplay.SHD_OBSCURED_TEAM));

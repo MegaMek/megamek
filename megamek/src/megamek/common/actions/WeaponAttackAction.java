@@ -369,10 +369,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         
-        boolean isBearingsOnlyMissile = (weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+        boolean isBearingsOnlyMissile = (((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
                 || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
                 || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Short Detection Range"));
+                || (weapon.curMode().equals("Bearings-Only Short Detection Range")))
+                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -1495,6 +1496,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             return toHit;
 
+        }
+        
+        if (isBearingsOnlyMissile) {
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Bearings-only Missile Will Always Hit the Target Hex");
         }
 
         // Attacks against adjacent buildings automatically hit.
@@ -3096,6 +3101,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
             || (weapon.curMode().equals("Bearings-Only Short Detection Range"))) { 
             
+            //We don't really need to do anything here. This just prevents these weapons from returning impossible.
+            
         } else {
             // weapon is not artillery
             if (ttype == Targetable.TYPE_HEX_ARTILLERY) {
@@ -4192,6 +4199,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return "Off board homing shot must target a map sheet";
                 }
+            }
+        }
+        if (isBearingsOnlyMissile) {
+            //this is an arbitrary number. You shouldn't ever get this message.
+            if (distance > 5000) {
+                return "Bearings-only attack out of range";
+            }
+            if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                return "Bearings-only shot must target a hex";
             }
         }
 

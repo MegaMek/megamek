@@ -1048,6 +1048,13 @@ public class Compute {
             || (ae.usesWeaponBays() && game.getBoard().onGround())) {
             weaponRanges = wtype.getATRanges();
         }
+        // And if you're using bearings-only capital missiles, update the extreme range
+        if ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
+                || (weapon.curMode().equals("Bearings-Only Short Detection Range"))) {
+            weaponRanges = new int[] { Integer.MIN_VALUE, 12, 24, 40, 5000 };
+        }
 
         // determine base distance & range bracket
         int distance = Compute.effectiveDistance(game, ae, target, false);

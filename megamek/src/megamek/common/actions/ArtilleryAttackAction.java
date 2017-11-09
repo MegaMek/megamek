@@ -51,6 +51,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
         //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
+        //An aaa will only be returned if the weapon is set to the correct mode
         if (((wType.getAtClass() == WeaponType.CLASS_AR10)
                 || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))

@@ -2679,7 +2679,9 @@ public class MoveStep implements Serializable {
                 && !game.getBoard()
                 .getHex(curPos)
                 .containsTerrainExit(Terrains.BRIDGE,
-                        curPos.direction(lastPos))) {
+                        curPos.direction(lastPos))
+                && (getElevation() + entity.getHeight()
+                        >= game.getBoard().getHex(curPos).terrainLevel(Terrains.BRIDGE_ELEV))) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 

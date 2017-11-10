@@ -70,8 +70,7 @@ public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
         Mounted weapon = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
-        int rangeToTarget = attacker.getPosition().distance(
-                game.getEntity(waa.getTargetId()).getPosition());
+        int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
         if (((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
                || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
                || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))

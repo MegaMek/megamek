@@ -2520,10 +2520,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     && (munitionType == AmmoType.M_FLARE)) {
                 return new HexTarget(pos, game.getBoard(),
                         Targetable.TYPE_FLARE_DELIVER);
-            // Certain mek mortar types should target hexes
-            } else if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
+            // Certain mek mortar types and LRMs should target hexes
+            } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     || (aType.getAmmoType() == AmmoType.T_LRM)
-                    || (aType.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
                     && ((munitionType == AmmoType.M_AIRBURST) 
                             || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
                 return new HexTarget(pos, game.getBoard(),

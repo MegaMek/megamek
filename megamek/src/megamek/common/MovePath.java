@@ -336,21 +336,6 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
-        // We need to ensure the jump is in a straight-line (can't steer)
-        if (isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)
-                && (length() > 2)) {
-            Coords firstPos = getStep(0).getPosition();
-            Coords secondPos = getStep(1).getPosition();
-            Coords currPos = step.getPosition();
-            double tolerance = .00001;
-            double initialDir = firstPos.radian(secondPos);
-            double currentDir = firstPos.radian(currPos);
-            if ((currentDir > (initialDir + tolerance))
-                    || (currentDir < (initialDir - tolerance))) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
-        }
-        
         // Ensure we only lay one mine
         if ((step.getType() == MoveStepType.LAY_MINE)) {
             boolean containsOtherLayMineStep = false;

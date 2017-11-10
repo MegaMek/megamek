@@ -547,8 +547,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean mpMelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)  
+        if (usesAmmo 
+                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP))  
                 && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) 
                 && (ae.getElevation() == -1)
@@ -557,6 +557,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // surface to fire
             ae.setElevation(0);
         }
+        
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
@@ -3718,8 +3719,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean multiPurposeelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP) 
+        if (usesAmmo 
+                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)) 
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE)
                 && (ae.getElevation() == -1)
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {

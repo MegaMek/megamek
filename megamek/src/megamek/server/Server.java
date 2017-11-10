@@ -8285,7 +8285,7 @@ public class Server implements Runnable {
                             skidDirection = lastPos.direction(curPos);
                             start = curPos;
                         } else {
-                            elev = prevStep.getElevation();
+                            elev = (null == prevStep)? curElevation : prevStep.getElevation();
                             // maximum distance is hexes moved / 2
                             sideslipDistance = Math.min(moF, distance / 2);
                             skidDirection = prevFacing;
@@ -8300,7 +8300,7 @@ public class Server implements Runnable {
                             addReport(r);
 
                             if (processSkid(entity, start, elev, skidDirection,
-                                    sideslipDistance, prevStep,
+                                    sideslipDistance, (null == prevStep)? step : prevStep,
                                     lastStepMoveType)) {
                                 return;
                             }

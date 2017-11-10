@@ -5845,12 +5845,18 @@ public class Compute {
         if ((attacker == null) || (target == null)) {
             return false;
         }
+        
+        //Artillery attacks need to return differently, since none of the usual air to ground modifiers apply to them
+        if (target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
+            return false;
+        }
 
         if (attacker.game.getBoard().inSpace()) {
             return false;
         }
         // According to errata, VTOL and WiGes are considered ground targets
         return attacker.isAirborne() && !target.isAirborne();
+        
     }
 
     public static boolean isAirToAir(Entity attacker, Targetable target) {

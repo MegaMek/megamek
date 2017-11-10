@@ -983,7 +983,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             //This is reported elsewhere. Don't do anything else.   
             } else if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
                 hits = calcHits(vPhaseReport);
-            } else if (!bMissed)  {
+            } else if (!bMissed && nweaponsHit == 1)  {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

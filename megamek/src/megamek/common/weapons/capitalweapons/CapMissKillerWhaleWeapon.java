@@ -86,10 +86,6 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        // Let's try not doing this. We should be able to deal with nuclear ammo from the cap missile handler.
-       /* if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
-            return new SantaAnnaHandler(toHit, waa, game, server);
-        } */
         if (atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
             return new TeleMissileHandler(toHit, waa, game, server);
         }

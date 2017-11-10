@@ -632,6 +632,10 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
     public void valueChanged(TreeSelectionEvent ev) {
         if (ev.getSource().equals(treeCategories)) {
             TreePath[] paths = treeCategories.getSelectionPaths();
+            // If nothing is selected, there's nothing to populate the table with.
+            if (null == paths) {
+                return;
+            }
             for (TreePath path : paths) {
                 Object[] values = path.getPath();
                 String category = "";

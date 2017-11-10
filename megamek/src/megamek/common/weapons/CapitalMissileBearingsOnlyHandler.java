@@ -154,7 +154,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
-                Report r = new Report(3121);
+                Report r = new Report(3122);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;

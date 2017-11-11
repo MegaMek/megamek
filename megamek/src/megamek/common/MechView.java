@@ -26,10 +26,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
+import megamek.common.options.Quirks;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
@@ -391,6 +394,26 @@ public class MechView {
             } else {
                 sBasic.append(getInternalAndArmor());
             }
+        }
+        
+        StringJoiner quirksList = new StringJoiner("<br/>\n");
+        Quirks quirks = entity.getQuirks();
+        for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            IOptionGroup group = optionGroups.nextElement();
+            if (quirks.count(group.getKey()) > 0) {
+                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    IOption option = options.nextElement();
+                    if (option != null && option.booleanValue()) {
+                        quirksList.add(option.getDisplayableNameWithValue());
+                    }
+                }
+            }
+        }
+        if (quirksList.length() > 0) {
+            sFluff.append("<b>") //$NON-NLS-1$
+                .append(Messages.getString("MechView.Quirks")) //$NON-NLS-1$
+                .append("</b> <br/>\n") //$NON-NLS-1$
+                .append(quirksList.toString());
         }
         
         if (entity.getFluff().getOverview() != "") {

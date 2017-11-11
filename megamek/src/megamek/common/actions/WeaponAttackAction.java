@@ -420,7 +420,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             for (int wId : weapon.getBayWeapons()) {
                 Mounted bayW = ae.getEquipment(wId);
                 Mounted bayWAmmo = bayW.getLinked();
-                AmmoType bAmmo = (AmmoType) bayWAmmo.getType();
+                AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                         && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
@@ -429,7 +429,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 bArtemisV = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                         && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
                         && !isECMAffected && !bMekTankStealthActive && (atype != null)
-                        && (bAmmo.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+                        && (bAmmo != null) && (bAmmo.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
             }
         }
         
@@ -537,8 +537,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean mpMelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)  
+        if (usesAmmo 
+                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP))  
                 && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) 
                 && (ae.getElevation() == -1)
@@ -547,6 +547,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // surface to fire
             ae.setElevation(0);
         }
+        
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
@@ -3697,8 +3698,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean multiPurposeelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP) 
+        if (usesAmmo 
+                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)) 
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE)
                 && (ae.getElevation() == -1)
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {

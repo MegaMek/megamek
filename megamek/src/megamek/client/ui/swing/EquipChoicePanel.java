@@ -720,6 +720,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
     }
 
+    /**
+     * Worker function that creates a series of weapon ammo choice panels that allow the user to pick a particular ammo bin for an 
+     * ammo-using weapon with matching ammo.
+     */
     private void setupWeaponAmmoChoice() {
         GridBagLayout gbl = new GridBagLayout();
         panWeaponAmmoSelector.setLayout(gbl);
@@ -1296,7 +1300,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
         }
         
-        class WeaponAmmoChoicePanel extends JPanel implements ItemListener {
+        /**
+         * A panel representing the option to choose a particular ammo bin for an individual weapon.
+         * @author NickAragua
+         *
+         */
+        class WeaponAmmoChoicePanel extends JPanel {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 604670659251519188L;
             // the weapon being displayed in this row
             private Mounted m_mounted;
             private ArrayList<Mounted> matchingAmmoBins;
@@ -1321,7 +1334,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 weaponName.setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
                 add(weaponName, GBC.std());
                 
-                ammoBins = new JComboBox();
+                ammoBins = new JComboBox<>();
                 matchingAmmoBins = new ArrayList<>();
                 
                 for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
@@ -1358,6 +1371,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 validate();
             }
             
+            /**
+             * Refreshes a single item in the ammo type combo box to display the correct ammo type name.
+             * Because the underlying ammo bin hasn't been updated yet, we carry out the name swap "in-place".
+             * @param ammoBin The ammo bin whose ammo type has probably changed.
+             * @param selectedAmmoType The new ammo type.
+             */
             public void refreshAmmoBinName(Mounted ammoBin, AmmoType selectedAmmoType) {
                 int index = 0;
                 boolean matchFound = false;
@@ -1388,11 +1407,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             public void applyChoice() {
                 m_mounted.setLinked(matchingAmmoBins.get(ammoBins.getSelectedIndex()));
-            }
-            
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                refreshAmmoBinNames();
             }
         }
 

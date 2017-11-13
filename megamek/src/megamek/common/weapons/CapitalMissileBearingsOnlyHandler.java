@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -160,7 +161,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
-                Report r = new Report(3121);
+                Report r = new Report(3122);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
@@ -184,7 +185,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         Entity entityTarget;
         if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
-            convertHomingShotToEntityTarget();
+            convertHexTargetToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game) : null;
         } else {
@@ -318,9 +319,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             }
 
         }
-        
-        //Any AMS/Point Defense fire against homing rounds?
-        hits = handleAMS(vPhaseReport);
+               
 
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
@@ -422,51 +421,35 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     }
     
     /**
-     * Find the tagged entity for this attack Each TAG will attract a number of
-     * shots up to its priority number (mode setting) When all the TAGs are used
-     * up, the shots fired are reset. So if you leave them all on 1-shot, then
-     * homing attacks will be evenly split, however many shots you fire.
-     * Priority setting is to allocate more homing attacks to a more important
-     * target as decided by player. TAGs fired by the enemy aren't eligible, nor
-     * are TAGs fired at a target on a different map sheet.
+     * Find the available targets within sensor range. Bearings-only
+     * missiles scan within the nose arc and target the closest large craft
+     * within the preset range band. If none are found, it targets the closest
+     * small craft. 
      */
-    protected void convertHomingShotToEntityTarget() {
+    protected void convertHexTargetToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
         Targetable newTarget = null;
+        
+        // get all entities on the opposing side
+        Vector<Entity> v = (Vector<Entity>) game.getAllEnemyEntities(ae);
+        //Narrow the list to small craft and larger
+        Vector<Aero> targets = new Vector<Aero>();        
+        for (Entity e : v) {
+            
+                targets.add(a);
+                
 
-        Vector<TagInfo> v = game.getTagInfo();
-        Vector<TagInfo> allowed = new Vector<TagInfo>();
-        // get only TagInfo on the same side
-        for (TagInfo ti : v) {
-            switch (ti.targetType){
-            case Targetable.TYPE_BLDG_TAG:
-            case Targetable.TYPE_HEX_TAG:
-                allowed.add(ti);
-                break;
-            case Targetable.TYPE_ENTITY:
-                if (ae.isEnemyOf((Entity) ti.target)
-                        || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
-                    allowed.add(ti);
-                }
-                break;
-            }
+            
         }
-        if (allowed.size() == 0) {
+        if (targets.size() == 0) {
+            //We're not dealing with targets in arc or in range yet.
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no targets tagged this turn");
+                    "no valid targets in play");
             return;
         }
 
-        // get TAGs that hit
-        v = new Vector<TagInfo>();
-        for (TagInfo ti : allowed) {
-            newTarget = ti.target;
-            if (!ti.missed && (newTarget != null)) {
-                v.add(ti);
-            }
-        }
         assert (newTarget != null);
         if (v.size() == 0) {
             aaa.setTargetId(newTarget.getTargetId());

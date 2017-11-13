@@ -431,17 +431,19 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         final Coords tc = target.getPosition();
         Targetable newTarget = null;
+        Vector<Aero> targets = new Vector<Aero>();
         
         // get all entities on the opposing side
-        Vector<Entity> v = (Vector<Entity>) game.getAllEnemyEntities(ae);
-        //Narrow the list to small craft and larger
-        Vector<Aero> targets = new Vector<Aero>();        
-        for (Entity e : v) {
-            
+        for(Iterator<Entity> enemies = game.getAllEnemyEntities(ae); enemies.hasNext();) {
+            Entity e = enemies.next();
+            //Narrow the list to small craft and larger
+            if (((e.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != 0)) {
+                Aero a = (Aero) e;
                 targets.add(a);
-                
-
-            
+            } else if (((e.getEntityType() & (Entity.ETYPE_JUMPSHIP)) != 0)) {
+                Aero a = (Aero) e;
+                targets.add(a);
+            }            
         }
         if (targets.size() == 0) {
             //We're not dealing with targets in arc or in range yet.
@@ -451,18 +453,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         assert (newTarget != null);
-        if (v.size() == 0) {
-            aaa.setTargetId(newTarget.getTargetId());
-            aaa.setTargetType(newTarget.getTargetType());
-            target = newTarget;
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "tag missed the target");
-            return;
-        }
-        // get TAGs that are on the same map
-        allowed = new Vector<TagInfo>();
-        for (TagInfo ti : v) {
-            newTarget = ti.target;
+        
+        // Add only targets in arc
+        Vector<Aero> inArc = new Vector<Aero>();
+        for (Aero a : targets) {
+            Boolean isInArc = Compute.isInArc
             // homing target area is 8 hexes
             if (tc.distance(newTarget.getPosition()) <= 8) {
                 allowed.add(ti);

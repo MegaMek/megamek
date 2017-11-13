@@ -1136,7 +1136,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(lLoc, GBC.std());
                 add(m_choice, GBC.std());
                 add(m_num_shots, GBC.eol());
-                //add(m_weapon_choice, GBC.eol());
+
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$

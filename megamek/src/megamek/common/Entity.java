@@ -3524,14 +3524,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getTotalMunitionsOfType(EquipmentType et) {
         int totalShotsLeft = 0;
         
-        // specifically don't count caseless munitions as being of the same type
+        // specifically don't count caseless munitions as being of the same type as non-caseless
         for (Mounted amounted : getAmmo()) {
             boolean amCaseless = ((AmmoType) amounted.getType()).getMunitionType() == AmmoType.M_CASELESS;
             boolean etCaseless = ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
             boolean caselessMismatch = amCaseless != etCaseless;
             
-            if (amounted.getType().equals(et) && !caselessMismatch &&
-                    !amounted.isDumping()) {                
+            if (amounted.getType().equals(et) && !caselessMismatch && !amounted.isDumping()) {                
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }

@@ -64,12 +64,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
     private MMLogger logger = null;
+    boolean advancedPD = false;
 
     /**
      * This consructor may only be used for deserialization.
      */
     protected CapitalMissileBearingsOnlyHandler() {
         super();
+        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
     
     /**
@@ -545,10 +547,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         return true;
     }
         
-    //If you're firing missiles at a capital ship...
+    // check for AMS and Point Defense Bay fire
     @Override
-    protected int calcCounterAV () {
-        if ((target == null) || !advancedPD) {
+    protected int calcCounterAV() {
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)
+                || !advancedPD) {
             return 0;
         }
         int counterAV = 0;
@@ -581,8 +585,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                              || !counter.isReady() || counter.isMissing()
                                 // shutdown means no Point defenses
                                 || pdEnt.isShutDown()
-                                // Point defenses only fire vs attacks in arc covered by ams
-                                || !isInArc) {
+                                // Point defenses only fire vs attacks in arc
+                                || !isInArc
+                                // Point defense bays must have at least 2 weapons to affect capital missiles
+                                || (counter.getBayWeapons().size() < 2)) {
                             continue;
                     }
                     // Now for heat, damage and ammo we need the individual weapons in the bay
@@ -605,7 +611,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                         
                         //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
-                            if (bayWAmmo.getBaseShotsLeft() == 0) {
+                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
                                 continue;
                             }
                             // decrement the ammo
@@ -616,12 +622,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                         // get the attack value
                         amsAV += bayWType.getShortAV();                                      
                     }
-                    
-                    // set the ams as having fired, if it did
-                    if (amsAV > 0) {
-                        amsBayEngaged = true;
-                    }
-                                        
+                                                            
                 } else if (isPDBay) {
                     pdAV = 0;
                     // Point defenses can't fire if they're not ready for any reason
@@ -629,8 +630,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                              || !counter.isReady() || counter.isMissing()
                                 // shutdown means no Point defenses
                                 || pdEnt.isShutDown()
-                                // Point defenses only fire vs attacks in arc covered by ams
+                                // Point defenses only fire vs attacks in arc
                                 || !isInArc
+                                // Point defense bays must have at least 2 weapons to affect capital missiles
+                                || (counter.getBayWeapons().size() < 2)
                                 // Point defense bays only fire once per round
                                 || counter.isUsedThisRound() == true) {
                             continue;
@@ -655,7 +658,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                         
                         //Bays use lots of ammo. Check to make sure we haven't run out
                         if (bayWAmmo != null) {
-                            if (bayWAmmo.getBaseShotsLeft() == 0) {
+                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
                                 continue;
                             }
                             // decrement the ammo
@@ -669,14 +672,23 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     
                     // set the pdbay as having fired, if it was able to
                     if (pdAV > 0 ) {
-                        counter.setUsedThisRound(true); 
-                        pdBayEngaged = true;
+                        counter.setUsedThisRound(true);                        
                     }
                                  
                 } //end PDBay fire 
                 
                 // non-AMS only add half their damage, rounded up
-                counterAV += (int) Math.ceil(pdAV / 2.0); 
+                
+                // set the pdbay as having fired, if it did
+                if (pdAV > 0) {
+                    pdBayEngagedCap = true;
+                }
+                counterAV += (int) Math.ceil(pdAV / 2.0);
+                
+                // set the ams as having fired, if it did
+                if (amsAV > 0) {
+                    amsBayEngagedCap = true;
+                }
                 // AMS add their full damage
                 counterAV += amsAV;
             } //end "for Mounted counter"
@@ -690,25 +702,4 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         return CounterAV;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    @Override
-    protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
-        // area effect damage is double
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn /= 0.5;
-        }
-
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-
-        // System.err.println("Attack is doing " + toReturn + " damage.");
-
-        return (int) Math.ceil(toReturn);
-    }
 }

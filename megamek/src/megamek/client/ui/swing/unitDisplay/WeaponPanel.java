@@ -1857,8 +1857,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                                                  .elementAt(n));
             wtype = (WeaponType) mounted.getType();
         }
+        
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
+        
+        // this is the situation where there's some kind of ammo but it's not changeable
         } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             m_chAmmo.setEnabled(false);
             Mounted mountedAmmo = mounted.getLinked();
@@ -1887,8 +1890,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     rightBay = oldmount.ammoInBay(entity
                                                           .getEquipmentNum(mountedAmmo));
                 }
+                
+                // covers the situation where a weapon using non-caseless ammo should 
+                // not be able to switch to caseless on the fly and vice versa
+                boolean amCaseless = ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
+                boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
+                boolean caselessMismatch = amCaseless != etCaseless;                
 
-                if (mountedAmmo.isAmmoUsable() && same && rightBay
+                if (mountedAmmo.isAmmoUsable() && same && rightBay && !caselessMismatch
                     && (atype.getAmmoType() == wtype.getAmmoType())
                     && (atype.getRackSize() == wtype.getRackSize())) {
 

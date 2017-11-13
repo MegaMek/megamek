@@ -82,23 +82,22 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private int[] entityCorrespondance;
 
-    private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
+    private List<MunitionChoicePanel> m_vMunitions = new ArrayList<>();
+    private List<WeaponAmmoChoicePanel> m_vWeaponAmmoChoice = new ArrayList<>();
     
     /**
      * An <code>ArrayList</code> to keep track of all of the 
      * <code>APWeaponChoicePanels</code> that were added, so we can apply 
      * their choices when the dialog is closed.
      */
-    private ArrayList<APWeaponChoicePanel> m_vAPMounts = 
-            new ArrayList<APWeaponChoicePanel>();
+    private ArrayList<APWeaponChoicePanel> m_vAPMounts = new ArrayList<>();
     
     /**
      * An <code>ArrayList</code> to keep track of all of the 
      * <code>MEAChoicePanels</code> that were added, so we can apply 
      * their choices when the dialog is closed.
      */
-    private ArrayList<MEAChoicePanel> m_vMEAdaptors = 
-            new ArrayList<MEAChoicePanel>();
+    private ArrayList<MEAChoicePanel> m_vMEAdaptors = new ArrayList<>();
     
     /**
      * Panel for adding components related to selecting which anti-personnel
@@ -108,23 +107,21 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private JPanel panAPMounts = new JPanel();
     private JPanel panMEAdaptors = new JPanel();
     private JPanel panMunitions = new JPanel();
+    private JPanel panWeaponAmmoSelector = new JPanel();
 
-    private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
+    private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<>();
     private JPanel panRapidfireMGs = new JPanel();
 
     private InfantryArmorPanel panInfArmor = new InfantryArmorPanel();
 
-    private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
+    private ArrayList<MineChoicePanel> m_vMines = new ArrayList<>();
     private JPanel panMines = new JPanel();
 
-    private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<SantaAnnaChoicePanel>();
+    private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<>();
     private JPanel panSantaAnna = new JPanel();
 
     private BombChoicePanel m_bombs;
     private JPanel panBombs = new JPanel();
-
-//    private EquipChoicePanel m_equip;
-//    private JPanel panEquip = new JPanel(new GridBagLayout());
 
     private JLabel labAutoEject = new JLabel(
             Messages.getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -267,6 +264,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
             add(panMunitions,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
+            
+            setupWeaponAmmoChoice();
+            panWeaponAmmoSelector.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createEmptyBorder(), Messages
+                    .getString("CustomMechDialog.WeaponSelectionTitle"),
+                    TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
+            add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // set up Santa Annas if using nukes
@@ -358,6 +362,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         for (final Object newVar2 : m_vMunitions) {
             ((MunitionChoicePanel) newVar2).applyChoice();
         }
+        
+        // update ammo names for weapon ammo choice selectors
+        for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
+            wacPanel.applyChoice();
+        }
+        
         // update MG rapid fire settings
         for (final Object newVar1 : m_vMGs) {
             ((RapidfireMGPanel) newVar1).applyChoice();
@@ -704,12 +714,30 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 continue;
             }
             MunitionChoicePanel mcp;
-            mcp = new MunitionChoicePanel(m, vTypes);
+            mcp = new MunitionChoicePanel(m, vTypes, m_vWeaponAmmoChoice);
             panMunitions.add(mcp, GBC.eol());
             m_vMunitions.add(mcp);
         }
-        }
+    }
 
+    private void setupWeaponAmmoChoice() {
+        GridBagLayout gbl = new GridBagLayout();
+        panWeaponAmmoSelector.setLayout(gbl);
+        
+        for(Mounted weapon : entity.getWeaponList()) {
+            WeaponType weaponType = weapon.getType() instanceof WeaponType ? (WeaponType) weapon.getType() : null;
+            
+            // don't deal with bay or grouped weapons for now 
+            if(weaponType == null || weaponType.getAmmoType() == AmmoType.T_NA) {
+                continue;
+            }
+            
+            WeaponAmmoChoicePanel ammoChoicePanel = new WeaponAmmoChoicePanel(weapon);
+            panWeaponAmmoSelector.add(ammoChoicePanel, GBC.eol());
+            m_vWeaponAmmoChoice.add(ammoChoicePanel);
+        }
+    }
+    
         class MineChoicePanel extends JPanel {
             /**
              *
@@ -991,14 +1019,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             private static final long serialVersionUID = 3401106035583965326L;
 
-            private ArrayList<AmmoType> m_vTypes;
+            private List<AmmoType> m_vTypes;
 
             private JComboBox<String> m_choice;
+            
+            private List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels;
 
             @SuppressWarnings("rawtypes")
             private JComboBox m_num_shots;
             private ItemListener numShotsListener;
-
+           
             boolean numShotsChanged = false;
 
             private Mounted m_mounted;
@@ -1014,9 +1044,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             JCheckBox chHotLoad = new JCheckBox();
             
             @SuppressWarnings("unchecked")
-            MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
+            MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes, List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels) {
                 m_vTypes = vTypes;
                 m_mounted = m;
+                this.weaponAmmoChoicePanels = weaponAmmoChoicePanels;
+                
                 AmmoType curType = (AmmoType) m.getType();
                 m_choice = new JComboBox<String>();
                 Iterator<AmmoType> e = m_vTypes.iterator();
@@ -1058,8 +1090,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         m_num_shots.removeItemListener(numShotsListener);
                         int currShots = (Integer)m_num_shots.getSelectedItem();
                         m_num_shots.removeAllItems();
-                        int shotsPerTon = m_vTypes.get(
-                                m_choice.getSelectedIndex()).getShots();
+                        int shotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
+                        
                         // BA always have a certain number of shots per slot
                         if (entity instanceof BattleArmor){
                             shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
@@ -1073,6 +1105,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         } else {
                             m_num_shots.setSelectedItem(shotsPerTon);
                         }
+                        
+                        for(WeaponAmmoChoicePanel weaponAmmoChoicePanel : weaponAmmoChoicePanels) {
+                            weaponAmmoChoicePanel.refreshAmmoBinName(m_mounted, m_vTypes.get(m_choice.getSelectedIndex()));
+                        }
+                        
                         m_num_shots.addItemListener(numShotsListener);
                     }});
 
@@ -1095,6 +1132,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(lLoc, GBC.std());
                 add(m_choice, GBC.std());
                 add(m_num_shots, GBC.eol());
+                //add(m_weapon_choice, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
@@ -1123,6 +1161,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
                 m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                
                 if (chDump.isSelected()) {
                     m_mounted.setShotsLeft(0);
                 }
@@ -1234,7 +1273,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             private final AmmoType m_origAmmo;
 
             ProtomechMunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
-                super(m, vTypes);
+                super(m, vTypes, null);
                 m_origAmmo = (AmmoType) m.getType();
                 m_origShotsLeft = m.getBaseShotsLeft();
             }
@@ -1254,6 +1293,106 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (chDump.isSelected()) {
                     setShotsLeft(0);
                 }
+            }
+        }
+        
+        class WeaponAmmoChoicePanel extends JPanel implements ItemListener {
+            // the weapon being displayed in this row
+            private Mounted m_mounted;
+            private ArrayList<Mounted> matchingAmmoBins;
+            
+            private JComboBox<String> ammoBins;
+            
+            /**
+             * Constructor
+             * @param weapon The mounted weapon. Assumes that the weapon uses ammo.
+             */
+            public WeaponAmmoChoicePanel(Mounted weapon) {
+                // for safety purposes, if the given mounted isn't a weapon, don't do anything.
+                if(!(weapon.getType() instanceof WeaponType)) {
+                    return;
+                }
+                
+                m_mounted = weapon;
+                
+                this.setLayout(new GridBagLayout());
+                
+                JLabel weaponName = new JLabel();
+                weaponName.setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
+                add(weaponName, GBC.std());
+                
+                ammoBins = new JComboBox();
+                matchingAmmoBins = new ArrayList<>();
+                
+                for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
+                    if(((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
+                        matchingAmmoBins.add(ammoBin);
+                    }
+                }
+                
+                add(ammoBins, GBC.eol());
+                refreshAmmoBinNames();
+            }
+
+            /**
+             * Worker function that refreshes the combo box with "up-to-date" ammo names.
+             */
+            public void refreshAmmoBinNames() {
+                int selectedIndex = ammoBins.getSelectedIndex();
+                ammoBins.removeAllItems();
+                
+                int currentIndex = 0;
+                for(Mounted ammoBin : matchingAmmoBins) {
+                    ammoBins.addItem("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + ammoBin.getName());
+                    if(m_mounted.getLinked() == ammoBin) {
+                        selectedIndex = currentIndex;
+                    }
+                    
+                    currentIndex++;
+                }
+                
+                if(selectedIndex >= 0) {
+                    ammoBins.setSelectedIndex(selectedIndex);
+                }
+                
+                validate();
+            }
+            
+            public void refreshAmmoBinName(Mounted ammoBin, AmmoType selectedAmmoType) {
+                int index = 0;
+                boolean matchFound = false;
+                
+                for(index = 0; index < matchingAmmoBins.size(); index++) {
+                    if(matchingAmmoBins.get(index) == ammoBin) {
+                        matchFound = true;
+                        break;
+                    }
+                }
+                
+                if(matchFound) {
+                    int currentBinIndex = ammoBins.getSelectedIndex();
+                    
+                    ammoBins.removeItemAt(index);
+                    ammoBins.insertItemAt("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + selectedAmmoType.getName(), index);
+                    
+                    if(currentBinIndex == index) {                    
+                        ammoBins.setSelectedIndex(index);
+                    }
+                    
+                    validate();
+                }
+            }
+            
+            /**
+             * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
+             */
+            public void applyChoice() {
+                m_mounted.setLinked(matchingAmmoBins.get(ammoBins.getSelectedIndex()));
+            }
+            
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                refreshAmmoBinNames();
             }
         }
 

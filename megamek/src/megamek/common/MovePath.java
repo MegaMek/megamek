@@ -579,11 +579,25 @@ public class MovePath implements Cloneable, Serializable {
                     getEntity().toggleConversionMode();
                 }
             }
+            
             //Treat multiple convert steps as a single command
             if (step1.getType() == MovePath.MoveStepType.CONVERT_MODE)
                 while (steps.size() > 0
                     && steps.get(steps.size() - 1).getType() == MovePath.MoveStepType.CONVERT_MODE) {
                 steps.removeElementAt(steps.size() - 1);
+            }
+            
+            // if this step is part of a manuever, undo the whole manuever, all the way to the beginning.
+            if(step1.isManeuver()) {
+                int stepIndex = steps.size() - 1;
+                
+                while (steps.size() > 0 && steps.get(stepIndex).isManeuver()) {
+                    steps.removeElementAt(stepIndex);
+                    stepIndex--;
+                }
+                
+                // a manuever begins with a "manuever" step, so get rid of that as well
+                steps.removeElementAt(stepIndex);
             }
         }
 

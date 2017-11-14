@@ -142,6 +142,7 @@ import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
@@ -13816,14 +13817,17 @@ public class Server implements Runnable {
                         .getTarget(game) : null;
                 if (target == null) {
                     //this will pick our TAG target back up and assign it to the waa
-                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
-                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                            .getTarget(game) : null;
-                    if (target == null) {
-                        //in case our target really is null. 
-                        continue;
-                    }
+                    //but only if it isn't a bearings-only missile handler. Those don't use tag.
+                    if (!(wh instanceof CapitalMissileBearingsOnlyHandler)) {
+                        ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
+                        hh.convertHomingShotToEntityTarget();
+                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                                .getTarget(game) : null;
+                                if (target == null) {
+                                    //in case our target really is null. 
+                                    continue;
+                                }
+                    }            
                 }
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {

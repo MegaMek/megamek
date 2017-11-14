@@ -430,6 +430,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
+        int missileFacing = ae.getPosition().direction(tc);
+        boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
+        boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
+        boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
+        boolean detRangeExtreme = weapon.curMode().equals("Bearings-Only Extreme Detection Range");
+        int detectionDistance = 0;
         Targetable newTarget = null;
         Vector<Aero> targets = new Vector<Aero>();
         
@@ -457,59 +463,139 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Add only targets in arc
         Vector<Aero> inArc = new Vector<Aero>();
         for (Aero a : targets) {
-            Boolean isInArc = Compute.isInArc
-            // homing target area is 8 hexes
-            if (tc.distance(newTarget.getPosition()) <= 8) {
-                allowed.add(ti);
+            Boolean isInArc = Compute.isInArc(aaa.getCoords(), missileFacing, a, Compute.ARC_NOSE);
+            if (isInArc) {
+                inArc.add(a);
             }
         }
-        if (allowed.size() == 0) {
-            aaa.setTargetId(newTarget.getTargetId());
-            aaa.setTargetType(newTarget.getTargetType());
-            target = newTarget;
+        if (inArc.size() == 0) {
+            newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no tag in 8 hex radius of target hex");
-        } else {
-            // find the TAG hit with the most shots left, and closest
-            int bestDistance = Integer.MAX_VALUE;
-            TagInfo targetTag = allowed.firstElement();
-            for (TagInfo ti : allowed) {
-                int distance = tc.distance(newTarget.getPosition());
-
-                // higher # of shots left
-                if (ti.shots > targetTag.shots) {
-                    bestDistance = distance;
-                    targetTag = ti;
+                    "no targets detected within the missile's nose arc");
+            return;
+        }
+        //Empty out the targets vector and only put valid targets in arc back in
+        targets.removeAllElements();
+        for (Aero a : inArc) {
+            targets.add(a);
+        }
+        
+        // Detection range for targets is based on the range set at firing
+        Vector<Aero> detected = new Vector<Aero>();
+        if (detRangeExtreme) {
+            for (Aero a : targets) {
+                if (tc.distance(a.getPosition()) <= 25) {
+                    detected.add(a);
+                }
+            }
+        } else if (detRangeLong) {
+            for (Aero a : targets) {
+                if (tc.distance(a.getPosition()) <= 20) {
+                    detected.add(a);
+                }
+            }
+        } else if (detRangeMedium) {
+            for (Aero a : targets) {
+                if (tc.distance(a.getPosition()) <= 12) {
+                    detected.add(a);
+                }
+            }
+        } else if (detRangeShort) {
+            for (Aero a : targets) {
+                if (tc.distance(a.getPosition()) <= 6) {
+                    detected.add(a);
+                }
+            }
+        }
+        if (detected.size() == 0) {
+            newTarget = aaa.getTarget(game);
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "no targets detected within the missile's detection range");
+            return;
+        }
+        //Empty out the targets vector and only put valid targets in range back in
+        targets.removeAllElements();
+        for (Aero a : detected) {
+            targets.add(a);
+        }
+        
+            // find the largest and closest target of those available
+            int bestDistance = 0;
+            int bestTonnage = 0;
+            Aero currTarget = targets.firstElement();
+            newTarget = null;
+            //Target the closest large craft
+            for (Aero a : targets) {
+                //Ignore small craft for now
+                if (((a.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) == Entity.ETYPE_SMALL_CRAFT)) {
                     continue;
                 }
-                // same # of shots left
-                if (ti.shots == targetTag.shots) {
-                    // higher priority
-                    if (ti.priority > targetTag.priority) {
-                        bestDistance = distance;
-                        targetTag = ti;
+                int distance = tc.distance(a.getPosition());
+                if (distance > bestDistance) {
+                    bestDistance = distance;
+                    currTarget = a;
+                    newTarget = currTarget;
+                    continue;
+                }
+                // same distance
+                int tonnage = (int) a.getWeight();
+                if (distance == bestDistance) {
+                    //Find the largest target                    
+                    if (tonnage > bestTonnage) {
+                        bestTonnage = tonnage;
+                        currTarget = a;
+                        newTarget = currTarget;
                         continue;
                     }
-                    // same priority and closer
-                    if ((ti.priority == targetTag.priority)
-                            && (bestDistance > distance)) {
-                        bestDistance = distance;
-                        targetTag = ti;
+                }
+                // same distance and tonnage? Roll randomly
+                if (distance == bestDistance && tonnage == bestTonnage) {
+                    int tiebreaker = Compute.d6();
+                    if (tiebreaker < 4) {
+                        newTarget = a;
+                    } else {
+                        newTarget = currTarget;
                     }
+                }    
+            }
+            //Repeat the process for small craft if no large craft are found
+            if (newTarget == null) {
+                for (Aero a : targets) {
+                    int distance = tc.distance(a.getPosition());
+                    if (distance > bestDistance) {
+                        bestDistance = distance;
+                        currTarget = a;
+                        newTarget = currTarget;
+                        continue;
+                    }
+                    // same distance
+                    int tonnage = (int) a.getWeight();
+                    if (distance == bestDistance) {
+                        //Find the largest target                    
+                        if (tonnage > bestTonnage) {
+                            bestTonnage = tonnage;
+                            currTarget = a;
+                            newTarget = currTarget;
+                            continue;
+                        }
+                    }
+                    // same distance and tonnage? Roll randomly
+                    if (distance == bestDistance && tonnage == bestTonnage) {
+                        int tiebreaker = Compute.d6();
+                        if (tiebreaker < 4) {
+                            newTarget = a;
+                        } else {
+                            newTarget = currTarget;
+                        }
+                    } 
                 }
             }
-
-            // if the best TAG has no shots left
-            if (targetTag.shots == 0) {
-                game.clearTagInfoShots(ae, tc);
-            }
-
-            targetTag.shots--;
-            target = targetTag.target;
+            //Now, assign our chosen target to the missile
+            target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
         }
-    }
+
     
     /*
      * (non-Javadoc)

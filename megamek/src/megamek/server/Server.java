@@ -13774,7 +13774,7 @@ public class Server implements Runnable {
      * assign AMS (and APDS) to those attacks.
      */
     public void assignAMS() {
-
+        final String METHOD_NAME = "assignAMS()";
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
         // Map target to a list of missile attacks directed at it
@@ -13790,7 +13790,7 @@ public class Server implements Runnable {
             // might no longer be in the game.
             //TODO: Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
             if (game.getEntity(waa.getEntityId()) == null) {
-                System.out.println("Can't Assign AMS: Artillery firer is null!");
+                logInfo(METHOD_NAME, "Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
             
@@ -13807,7 +13807,7 @@ public class Server implements Runnable {
                 continue;
             }
 
-            // Can only use AMS versus missles.
+            // Can only use AMS versus missiles.
             if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                 continue;
             }
@@ -13818,7 +13818,7 @@ public class Server implements Runnable {
                 if (target == null) {
                     //this will pick our TAG target back up and assign it to the waa
                     //but only if it isn't a bearings-only missile handler. Those don't use tag.
-                    if (!(wh instanceof CapitalMissileBearingsOnlyHandler)) {
+                    if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                         ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
                         hh.convertHomingShotToEntityTarget();
                         target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa

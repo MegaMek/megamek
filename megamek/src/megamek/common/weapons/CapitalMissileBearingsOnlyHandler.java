@@ -419,7 +419,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * within the preset range band. If none are found, it targets the closest
      * small craft. 
      */
-    protected void convertHexTargetToEntityTarget() {
+    public void convertHexTargetToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
@@ -512,7 +512,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         
             // find the largest and closest target of those available
-            int bestDistance = 0;
+            int bestDistance = Integer.MAX_VALUE;
             int bestTonnage = 0;
             Aero currTarget = targets.firstElement();
             newTarget = null;
@@ -523,7 +523,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     continue;
                 }
                 int distance = tc.distance(a.getPosition());
-                if (distance > bestDistance) {
+                if (distance < bestDistance) {
                     bestDistance = distance;
                     currTarget = a;
                     newTarget = currTarget;

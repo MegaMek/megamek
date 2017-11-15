@@ -663,7 +663,101 @@ class EntitySprite extends Sprite {
     private StringBuffer tooltipString;
     private final boolean BR = true;
     private final boolean NOBR = false;
-    
+
+    /**
+     * Builds a small table representing a unit's armor using visual block characters
+     * and adds it to the current tooltipString.
+     */
+    private void addArmorMiniVisToTT() {
+        String armorChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniArmorChar");
+        String internalChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniISChar");
+        String destroyedChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniDestroyedChar");
+        String fontSize = Integer.toString(GUIPreferences.getInstance().getInt("AdvancedArmorMiniFrontSizeMod"));
+        // HTML color String from Preferences
+        String colorIntact = Integer
+                .toHexString(GUIPreferences.getInstance()
+                        .getColor("AdvancedArmorMiniColorIntact").getRGB() & 0xFFFFFF);
+        String colorPartialDmg = Integer
+                .toHexString(GUIPreferences.getInstance()
+                        .getColor("AdvancedArmorMiniColorPartialDmg").getRGB() & 0xFFFFFF);
+        String colorDamaged = Integer
+                .toHexString(GUIPreferences.getInstance()
+                        .getColor("AdvancedArmorMiniColorDamaged").getRGB() & 0xFFFFFF);
+        int visUnit = GUIPreferences.getInstance().getInt("AdvancedArmorMiniUnitsPerBlock");
+        addToTT("ArmorMiniPanelStart", BR);
+        for (int loc = 0 ; loc < entity.locations(); loc++) {
+            // addToTT("ArmorMiniPanelPart", BR, entity.getLocationAbbr(loc));
+            // If location is destroyed, mark it and move on
+            if (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED ||
+                    entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
+                // This is a really awkward way of making sure
+                for (int a = 0; a <= Math.ceil(
+                        (entity.getTotalArmor() + entity.getTotalInternal())/(double) visUnit); a++) {
+                    addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
+                    addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorIntact);
+                }
+
+            } else {
+                // Put rear armor blocks first, with some spacing, if unit has any.
+                if (entity.hasRearArmor(loc)) {
+                    addToTT("ArmorMiniPanelPartRear", BR, entity.getLocationAbbr(loc), fontSize);
+                    for (int a = 0; a <= (entity.getOArmor(loc, true)/visUnit); a++) {
+                        if (a < (entity.getArmor(loc, true)/visUnit)) {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                        } else if (a == (entity.getArmor(loc, true)/visUnit) &&
+                                (entity.getArmor(loc, true) % visUnit) > 0) {
+                            // Fraction of a visUnit left, but still display a "full" if at starting max armor
+                            if (entity.getArmor(loc, true) == entity.getOArmor(loc, true)) {
+                                addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                            } else {
+                                addToTT("BlockColored", NOBR, armorChar, fontSize, colorPartialDmg);;
+                            }
+                        } else if ((entity.getOArmor(loc, true) % visUnit) > 0) {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorDamaged);
+                        }
+                    }
+                    addToTT("ArmorMiniPanelPart", BR, entity.getLocationAbbr(loc), fontSize);
+                } else {
+                    addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
+                }
+                // Add IS shade blocks.
+                for (int a = 0; a <= (entity.getOInternal(loc)/visUnit); a++) {
+                    if (a < (entity.getInternal(loc)/visUnit)) {
+                        addToTT("BlockColored", NOBR, internalChar, fontSize, colorIntact);
+                    } else if (a == (entity.getInternal(loc)/visUnit) &&
+                            (entity.getInternal(loc) % visUnit) > 0) {
+                        // Fraction of a visUnit left, but still display a "full" if at starting max armor
+                        if (entity.getInternal(loc) == entity.getOInternal(loc)) {
+                            addToTT("BlockColored", NOBR, internalChar, fontSize, colorIntact);
+                        } else {
+                            addToTT("BlockColored", NOBR, internalChar, fontSize, colorPartialDmg);
+                        }
+                    } else if ((entity.getOInternal(loc) % visUnit) > 0) {
+                        addToTT("BlockColored", NOBR, internalChar, fontSize, colorDamaged);
+                    }
+                }
+                // Add main armor blocks.
+                for (int a = 0; a <= (entity.getOArmor(loc)/visUnit); a++) {
+                    if (a < (entity.getArmor(loc)/visUnit)) {
+                        addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                    } else if (a == (entity.getArmor(loc)/visUnit) &&
+                            (entity.getArmor(loc) % visUnit) > 0) {
+                        // Fraction of a visUnit left, but still display a "full" if at starting max armor
+                        if (entity.getArmor(loc) == entity.getOArmor(loc)) {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                        } else {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorPartialDmg);
+                        }
+                    } else if ((entity.getOArmor(loc) % visUnit) > 0){
+                        addToTT("BlockColored", NOBR, armorChar, fontSize, colorDamaged);
+                    }
+                }
+            }
+
+        }
+        addToTT("ArmorMiniPanelEnd", NOBR);
+    }
+
     /**
      * Adds a resource string to the entity tooltip
      * 
@@ -784,85 +878,7 @@ class EntitySprite extends Sprite {
         // Build a "status bar" visual representation of each
         // component of the unit using block element characters.
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
-            String armorChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniArmorChar");
-            String internalChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniISChar");
-            String destroyedChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniDestroyedChar");
-            // HTML color String from Preferences
-            String colorIntact = Integer
-                    .toHexString(GUIPreferences.getInstance()
-                            .getColor("AdvancedArmorMiniColorIntact").getRGB() & 0xFFFFFF);
-            String colorPartialDmg = Integer
-                    .toHexString(GUIPreferences.getInstance()
-                            .getColor("AdvancedArmorMiniColorPartialDmg").getRGB() & 0xFFFFFF);
-            String colorDamaged = Integer
-                    .toHexString(GUIPreferences.getInstance()
-                            .getColor("AdvancedArmorMiniColorDamaged").getRGB() & 0xFFFFFF);
-            int visUnit = GUIPreferences.getInstance().getInt("AdvancedArmorMiniUnitsPerBlock");
-            for (int loc = 0 ; loc < entity.locations(); loc++) {
-                addToTT("ArmorMiniPanelPart", BR, entity.getLocationAbbr(loc));
-                // If location is destroyed, mark it and move on
-                if (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED ||
-                        entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
-                    // This is a really awkward way of making sure
-                    for (int a = 0; a <= Math.ceil(
-                            (entity.getTotalArmor() + entity.getTotalInternal())/(double) visUnit); a++) {
-                        addToTT("BlockColored", NOBR, colorIntact, destroyedChar);
-                    }
-
-                } else {
-                    // Put rear armor blocks first, with some spacing, if unit has any.
-                    if (entity.hasRearArmor(loc)) {
-                        for (int a = 0; a <= (entity.getOArmor(loc, true)/visUnit); a++) {
-                            if (a < (entity.getArmor(loc, true)/visUnit)) {
-                                addToTT("BlockColored", NOBR, colorIntact, armorChar);
-                            } else if (a == (entity.getArmor(loc, true)/visUnit) &&
-                                    (entity.getArmor(loc, true) % visUnit) > 0) {
-                                // Fraction of a visUnit left, but still display a "full" if at starting max armor
-                                if (entity.getArmor(loc, true) == entity.getOArmor(loc, true)) {
-                                    addToTT("BlockColored", NOBR, colorIntact, armorChar);
-                                } else {
-                                    addToTT("BlockColored", NOBR, colorPartialDmg, armorChar);
-                                }
-                            } else if ((entity.getOArmor(loc, true) % visUnit) > 0) {
-                                addToTT("BlockColored", NOBR, colorDamaged, armorChar);
-                            }
-                        }
-                    }
-                    // Add IS shade blocks.
-                    for (int a = 0; a <= (entity.getOInternal(loc)/visUnit); a++) {
-                        if (a < (entity.getInternal(loc)/visUnit)) {
-                            addToTT("BlockColored", NOBR, colorIntact, internalChar);
-                        } else if (a == (entity.getInternal(loc)/visUnit) &&
-                                (entity.getInternal(loc) % visUnit) > 0) {
-                            // Fraction of a visUnit left, but still display a "full" if at starting max armor
-                            if (entity.getInternal(loc) == entity.getOInternal(loc)) {
-                                addToTT("BlockColored", NOBR, colorIntact, internalChar);
-                            } else {
-                                addToTT("BlockColored", NOBR, colorPartialDmg, internalChar);
-                            }
-                        } else if ((entity.getOInternal(loc) % visUnit) > 0) {
-                            addToTT("BlockColored", NOBR, colorDamaged, internalChar);
-                        }
-                    }
-                    // Add main armor blocks.
-                    for (int a = 0; a <= (entity.getOArmor(loc)/visUnit); a++) {
-                        if (a < (entity.getArmor(loc)/visUnit)) {
-                            addToTT("BlockColored", NOBR, colorIntact, armorChar);
-                        } else if (a == (entity.getArmor(loc)/visUnit) &&
-                                (entity.getArmor(loc) % visUnit) > 0) {
-                            // Fraction of a visUnit left, but still display a "full" if at starting max armor
-                            if (entity.getArmor(loc) == entity.getOArmor(loc)) {
-                                addToTT("BlockColored", NOBR, colorIntact, armorChar);
-                            } else {
-                                addToTT("BlockColored", NOBR, colorPartialDmg, armorChar);
-                            }
-                        } else if ((entity.getOArmor(loc) % visUnit) > 0){
-                            addToTT("BlockColored", NOBR, colorDamaged, armorChar);
-                        }
-                    }
-                }
-
-            }
+            addArmorMiniVisToTT();
         }
 
 

@@ -91,6 +91,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_COLOR_INTACT = "AdvancedArmorMiniColorIntact";
     public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
     public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
+    public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     /* --End advanced settings-- */
 
 
@@ -245,12 +246,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
         setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
-        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2588");
-        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u2593");
+        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2588");     // █
+        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u2593");       //  ▓
         setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2327");
         setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(0, 0, 0)); // HTML hex #008000
         setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
+        setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");

@@ -177,21 +177,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             return true;
         }
         Entity entityTarget;
-        if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
+        if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
             convertHexTargetToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game) : null;
         } else {
             entityTarget = (Entity) target;
         }
-        final boolean targetInBuilding = Compute.isInBuilding(game,
-                entityTarget);
-        final boolean bldgDamagedOnMiss = targetInBuilding
-                && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
-
-        // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -206,6 +198,52 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
+        
+        //Point Defense fire vs Capital Missiles
+        
+        // are we a glancing hit?  Check for this here, report it later
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
+            if (roll == toHit.getValue()) {
+                bGlancing = true;
+            } else {
+                bGlancing = false;
+            }
+        }
+        
+        // Set Margin of Success/Failure and check for Direct Blows
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
+
+        //This has to be up here so that we don't screw up glancing/direct blow reports
+        attackValue = calcAttackValue();
+        
+        //CalcAttackValue triggers counterfire, so now we can safely get this
+        CapMissileAMSMod = getCapMissileAMSMod();
+        
+        //Only do this if the missile wasn't destroyed
+        if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
+            toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
+            if (roll < toHit.getValue()) {
+                CapMissileMissed = true;
+            }
+        }
+        
+        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
+        if (amsBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3358);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+                    
+        // Report any PD bay action against Capital missiles that doesn't destroy them all.
+        } else if (pdBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3357);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
@@ -243,26 +281,17 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // do we hit?
         bMissed = roll < toHit.getValue();
 
-        // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        //Report Glancing/Direct Blow here because of Capital Missile weirdness
+        //TODO: Can't figure out a good way to make Capital Missile bays report direct/glancing blows
+        //when Advanced Point Defense is on, but they work correctly.
+        if ((bGlancing) && !(amsBayEngagedCap || pdBayEngagedCap)) {
+            r = new Report(3186);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        } 
 
-        // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
-                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
-        if (bDirect) {
+        if ((bDirect) && !(amsBayEngagedCap || pdBayEngagedCap)) {
             r = new Report(3189);
             r.subject = ae.getId();
             r.newlines = 0;
@@ -273,6 +302,22 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (!handledAmmoAndReport) {
             addHeat();
         }
+        
+        CounterAV = getCounterAV();
+        //use this if AMS counterfire destroys all the Capital missiles
+        if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
+            r = new Report(3356);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        //use this if PD counterfire destroys all the Capital missiles
+        if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
+            r = new Report(3355);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
 
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -282,62 +327,40 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (missReported) {
             bMissed = true;
         }
-        nDamPerHit = wtype.getRackSize();
-
-        // copperhead gets 10 damage less than standard
-        if (((AmmoType) ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
-            nDamPerHit -= 10;
-        }
-
-        // Do we need some sort of special resolution (minefields, artillery,
-        if (specialResolution(vPhaseReport, entityTarget)) {
-            return false;
-        }
-
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
-
-            // Works out fire setting, AMS shots, and whether continuation is
-            // necessary.
-            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
-                    vPhaseReport)) {
-                return false;
-            }
         }
-        int hits = 1;
-        int nCluster = 1;        
-        if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
+        // Handle damage.
+        int nCluster = calcnCluster();
+        int id = vPhaseReport.size();
+        int hits = calcHits(vPhaseReport);
+        //Set the hit location table based on where the missile goes active
+        if (entityTarget != null) {
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
+            }    
+        }
+        if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            // if we added a line to the phase report for calc hits, remove
+            // it now
+            while (vPhaseReport.size() > id) {
+                vPhaseReport.removeElementAt(vPhaseReport.size() - 1);
             }
+            int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
+            hits = aeroResults[0];
+            // If our capital missile was destroyed, it shouldn't hit
+            if ((amsBayEngagedCap || pdBayEngagedCap) && (CapMissileArmor <= 0)) {
+                hits = 0;
+            }
+            nCluster = aeroResults[1];
+        }
 
+        // We have to adjust the reports on a miss, so they line up
+        if (bMissed && id != vPhaseReport.size()) {
+            vPhaseReport.get(id - 1).newlines--;
+            vPhaseReport.get(id).indent(2);
+            vPhaseReport.get(vPhaseReport.size() - 1).newlines++;
         }
-               
-
-        // The building shields all units from a certain amount of damage.
-        // The amount is based upon the building's CF at the phase's start.
-        int bldgAbsorbs = 0;
-        if (targetInBuilding && (bldg != null)) {
-            bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
-        }
-        if ((bldg != null) && (bldgAbsorbs > 0)) {
-            // building absorbs some damage
-            r = new Report(6010);
-            if (entityTarget != null) {
-                r.subject = entityTarget.getId();
-            }
-            r.add(bldgAbsorbs);
-            vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = server.damageBuilding(bldg,
-                    nDamPerHit, target.getPosition());
-            if (entityTarget != null) {
-                for (Report report : buildingReport) {
-                    report.subject = entityTarget.getId();
-                }
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
-        nDamPerHit -= bldgAbsorbs;
 
         // Make sure the player knows when his attack causes no damage.
         if (nDamPerHit == 0) {

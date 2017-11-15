@@ -13813,20 +13813,36 @@ public class Server implements Runnable {
             }
             
             if (waa instanceof ArtilleryAttackAction) {
-                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                Entity target;
+                if (wh instanceof CapitalMissileBearingsOnlyHandler) {
+                    //For Bearings-only Capital Missiles
+                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                            .getTarget(game) : null;
+                    if (target == null) {
+                        //If multiple shots are involved, the target seems to get lost. This will reset it.
+                        CapitalMissileBearingsOnlyHandler cmh = (CapitalMissileBearingsOnlyHandler) wh;
+                        cmh.convertHexTargetToEntityTarget();
+                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                                .getTarget(game) : null;
+                        if (target == null) {
+                            //in case our target really is null. 
+                            continue;
+                        }
+                    } 
+                } else {
+                    //For all other types of homing artillery
+                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                         .getTarget(game) : null;
-                if (target == null) {
-                    //this will pick our TAG target back up and assign it to the waa
-                    //but only if it isn't a bearings-only missile handler. Those don't use tag.
-                    if (wh instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (target == null) {
+                        //this will pick our TAG target back up and assign it to the waa                    
                         ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
                         hh.convertHomingShotToEntityTarget();
                         target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                                 .getTarget(game) : null;
-                                if (target == null) {
-                                    //in case our target really is null. 
-                                    continue;
-                                }
+                        if (target == null) {
+                            //in case our target really is null. 
+                            continue;
+                        }
                     }            
                 }
                 Vector<WeaponHandler> v = htAttacks.get(target);

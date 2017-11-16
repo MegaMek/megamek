@@ -693,8 +693,7 @@ class EntitySprite extends Sprite {
                     entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
                 // This is a really awkward way of making sure
                 addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
-                for (int a = 0; a <= Math.ceil(
-                        (entity.getTotalArmor() + entity.getTotalInternal())/(double) visUnit); a++) {
+                for (int a = 0; a <= entity.getOInternal(loc)/visUnit; a++) {
                     addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorIntact);
                 }
 

@@ -663,6 +663,7 @@ class EntitySprite extends Sprite {
     private StringBuffer tooltipString;
     private final boolean BR = true;
     private final boolean NOBR = false;
+    private boolean skipBRafterTable = false;
 
     /**
      * Builds a small table representing a unit's armor using visual block characters
@@ -691,9 +692,9 @@ class EntitySprite extends Sprite {
             if (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED ||
                     entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
                 // This is a really awkward way of making sure
+                addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
                 for (int a = 0; a <= Math.ceil(
                         (entity.getTotalArmor() + entity.getTotalInternal())/(double) visUnit); a++) {
-                    addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
                     addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorIntact);
                 }
 
@@ -767,8 +768,13 @@ class EntitySprite extends Sprite {
      * @param ttO a list of Objects to insert into the {x} places in the resource.
      */
     private void addToTT(String ttSName, boolean startBR, Object... ttO) {
-        if (startBR == BR)
-            tooltipString.append("<BR>");
+        if (startBR == BR){
+            if (skipBRafterTable) {
+                skipBRafterTable = false;
+            } else {
+                tooltipString.append("<BR>");
+            }
+        }
         if (ttO != null) {
             tooltipString.append(Messages.getString("BoardView1.Tooltip."
                     + ttSName, ttO));
@@ -879,6 +885,7 @@ class EntitySprite extends Sprite {
         // component of the unit using block element characters.
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
             addArmorMiniVisToTT();
+            skipBRafterTable = true;
         }
 
 

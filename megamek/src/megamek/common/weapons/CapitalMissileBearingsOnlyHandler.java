@@ -493,7 +493,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             //Target the closest large craft
             for (Aero a : targets) {
                 //Ignore small craft for now
-                if (((a.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != Entity.ETYPE_DROPSHIP)) {
+                if (((a.getEntityType() & Entity.ETYPE_SMALL_CRAFT) > 0)
+                        && ((a.getEntityType() & Entity.ETYPE_DROPSHIP) == 0)) {
                     continue;
                 }
                 int distance = tc.distance(a.getPosition());

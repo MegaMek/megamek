@@ -354,6 +354,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             }
             nCluster = aeroResults[1];
         }
+        
+        //Bearings-only missiles shouldn't be able to target buildings, being space-only weapons
+        //but if these two things aren't defined, handleEntityDamage() doesn't work.
+        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        int bldgAbsorbs = 0;
 
         // We have to adjust the reports on a miss, so they line up
         if (bMissed && id != vPhaseReport.size()) {
@@ -373,64 +378,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } else if (!bMissed && // The attack is targeting a specific building
-                (target.getTargetType() == Targetable.TYPE_BLDG_TAG)){
-            r = new Report(3390);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            vPhaseReport.addAll(server.damageBuilding(bldg,
-                    nDamPerHit, target.getPosition()));
         } else if (!bMissed){ // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-        }
-
-        Coords coords = target.getPosition();
-        int ratedDamage = 5; // splash damage is 5 from all launchers
-        
-        //If AMS shoots down a missile, it shouldn't deal any splash damage
-        if (hits == 0) {
-            ratedDamage = 0;
-        }
-        
-        bldg = null;
-        bldg = game.getBoard().getBuildingAt(coords);
-        bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
-        bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-        // assumption: homing artillery splash damage is area effect.
-        // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, false);
-        ratedDamage -= bldgAbsorbs;
-        if (ratedDamage > 0) {
-            for (Entity entity : game.getEntitiesVector(coords)) {
-                if (!bMissed) {
-                    if (entity == entityTarget) {
-                        continue; // don't splash the target unless missile
-                        // missed
-                    }
-                }
-                toHit.setSideTable(entity.sideTable(aaa.getCoords()));
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                        toHit.getSideTable(), waa.getAimedLocation(),
-                        waa.getAimingMode(), toHit.getCover());
-                hit.setAttackerId(getAttackerId());
-                // BA gets damage to all troopers
-                if (entity instanceof BattleArmor) {
-                    BattleArmor ba = (BattleArmor) entity;
-                    for (int loc = 1; loc <= ba.getTroopers(); loc++) {
-                        hit.setLocation(loc);
-                        vPhaseReport.addAll(server.damageEntity(entity, hit,
-                                ratedDamage, false, DamageType.NONE, false,
-                                true, throughFront, underWater));
-                    }
-                } else {
-                    vPhaseReport.addAll(server.damageEntity(entity, hit,
-                            ratedDamage, false, DamageType.NONE, false, true,
-                            throughFront, underWater));
-                }
-                server.creditKill(entity, ae);
-            }
         }
         Report.addNewline(vPhaseReport);
         return false;
@@ -478,7 +429,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Add only targets in arc
         Vector<Aero> inArc = new Vector<Aero>();
         for (Aero a : targets) {
-            Boolean isInArc = Compute.isInArc(aaa.getCoords(), missileFacing, a, Compute.ARC_NOSE);
+            Boolean isInArc = Compute.isInArc(tc, missileFacing, a, Compute.ARC_NOSE);
             if (isInArc) {
                 inArc.add(a);
             }
@@ -542,7 +493,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             //Target the closest large craft
             for (Aero a : targets) {
                 //Ignore small craft for now
-                if (((a.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) == Entity.ETYPE_SMALL_CRAFT)) {
+                if (((a.getEntityType() & (Entity.ETYPE_SMALL_CRAFT)) != Entity.ETYPE_DROPSHIP)) {
                     continue;
                 }
                 int distance = tc.distance(a.getPosition());

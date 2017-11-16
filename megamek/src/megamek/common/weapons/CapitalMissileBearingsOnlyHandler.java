@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -29,6 +30,7 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -57,7 +59,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     boolean advancedPD = false;
 
     /**
-     * This consructor may only be used for deserialization.
+     * This constructor may only be used for deserialization.
      */
     protected CapitalMissileBearingsOnlyHandler() {
         super();
@@ -727,6 +729,168 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     @Override
     protected int getCounterAV() {
         return CounterAV;
+    }
+    
+    @Override
+    protected int calcAttackValue() {
+
+        double av = 0;
+        double counterAV = calcCounterAV();
+        int armor = 0;
+        int weaponarmor = 0;
+        //A bearings-only shot is, by definition, always going to be at extreme range...
+        int range = RangeType.RANGE_EXTREME;
+
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+            if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
+                // try loading something else
+                ae.loadWeaponWithSameAmmo(bayW);
+                bayWAmmo = bayW.getLinked();
+            }
+            if (!bayW.isBreached()
+                    && !bayW.isDestroyed()
+                    && !bayW.isJammed()
+                    && bayWAmmo != null
+                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW
+                            .getCurrentShots()) {
+                WeaponType bayWType = ((WeaponType) bayW.getType());
+                // need to cycle through weapons and add av
+                double current_av = 0;
+
+                AmmoType atype = (AmmoType) bayWAmmo.getType();
+                if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                        && (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                                || atype.hasFlag(AmmoType.F_PEACEMAKER))) {
+                    weaponarmor = 40;
+                } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                        && (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                                || atype.hasFlag(AmmoType.F_SANTA_ANNA))) {
+                    weaponarmor = 30;
+                } else if (bayWType.getAtClass() == (WeaponType.CLASS_AR10)
+                        && atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                    weaponarmor = 20;
+                } else {
+                weaponarmor = bayWType.getMissileArmor();
+                }
+                if (range == WeaponType.RANGE_SHORT) {
+                    current_av = bayWType.getShortAV();
+                } else if (range == WeaponType.RANGE_MED) {
+                    current_av = bayWType.getMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    current_av = bayWType.getLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    current_av = bayWType.getExtAV();
+                }
+                
+                if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
+                    nukeS2S = true;
+                }
+                
+                current_av = updateAVforAmmo(current_av, atype, bayWType,
+                        range, wId);
+                av = av + current_av;
+                armor = armor + weaponarmor;
+            }
+        }
+        
+        CapMissileArmor = armor - (int) counterAV;
+        CapMissileAMSMod = calcCapMissileAMSMod();
+        
+        
+            if (bDirect) {
+                av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+            }
+            if (bGlancing) {
+                av = (int) Math.floor(av / 2.0);
+            }
+            av = (int) Math.floor(getBracketingMultiplier() * av);
+            return (int) Math.ceil(av);
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
+    }
+
+    @Override
+    protected int getCapMisMod() {
+        int mod = 0;
+        for (int wId : weapon.getBayWeapons()) {
+            int curr_mod = 0;
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+            AmmoType atype = (AmmoType) bayWAmmo.getType();
+            curr_mod = getCritMod(atype);
+            if (curr_mod > mod) {
+                mod = curr_mod;
+            }
+        }
+        return mod;
+    }
+
+    /*
+     * get the cap mis mod given a single ammo type
+     */
+    protected int getCritMod(AmmoType atype) {
+        if (atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA) {
+            return 0;
+        }
+        if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
+                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                // Santa Anna, per IO rules
+                || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            return 9;
+        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
+                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                || atype.getAmmoType() == AmmoType.T_MANTA_RAY
+                || atype.getAmmoType() == AmmoType.T_ALAMO) {
+            return 10;
+        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
+                || atype.getAmmoType() == AmmoType.T_KRAKENM
+                // Peacemaker, per IO rules
+                || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            return 8;
+        } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
+            return 12;
+        } else {
+            return 11;
+        }
+    }
+    
+    @Override
+    protected double updateAVforAmmo(double current_av, AmmoType atype,
+            WeaponType bayWType, int range, int wId) {
+        //AR10 munitions
+        if (atype.getAmmoType() == AmmoType.T_AR10) {
+            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                current_av = 4;
+            } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                current_av = 3;
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                current_av = 1000;
+            } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                current_av = 100;
+            } else {
+                current_av = 2;
+            }
+        }
+        //Nuclear Warheads for non-AR10 missiles
+        if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            current_av = 100;
+        } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            current_av = 1000;
+        }       
+        return current_av;
     }
 
 }

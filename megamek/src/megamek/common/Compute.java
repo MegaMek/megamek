@@ -1243,25 +1243,6 @@ public class Compute {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
-        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
-        // if its a non physical attack
-        if (ae.getPartialRepairs() != null) {
-            if (ae.getPartialRepairs().booleanOption("sensors_1_crit")) {
-                mods.addModifier(1, "sensor damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("mech_sensors_2_crit")) {
-                mods.addModifier(2, "sensor damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
-                mods.addModifier(1, "stabilizer damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
-                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
-            } 
-            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
-                 mods.addModifier(1, "faulty cic/fcs repairs"); 
-            }
-        }
 
         // if this is an infantry weapon then we use a whole different
         // calculation
@@ -2025,6 +2006,25 @@ public class Compute {
                 mods.addModifier(1, "attacker sensors damaged");
             } else {
                 mods.addModifier(2, "attacker sensors damaged");
+            }
+        }
+        
+        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
+        if (attacker.getPartialRepairs() != null) {
+            if (attacker.getPartialRepairs().booleanOption("sensors_1_crit")) {
+                mods.addModifier(1, "sensor damage");
+            }
+            if (attacker.getPartialRepairs().booleanOption("mech_sensors_2_crit")) {
+                mods.addModifier(2, "sensor damage");
+            }
+            if (attacker.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
+                mods.addModifier(1, "stabilizer damage");
+            }
+            if (attacker.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
+                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
+            } 
+            if (attacker.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
+                 mods.addModifier(1, "faulty cic/fcs repairs"); 
             }
         }
 

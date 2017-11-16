@@ -369,11 +369,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         
-        boolean isBearingsOnlyMissile = (((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Short Detection Range")))
-                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING));
+        boolean isBearingsOnlyMissile = ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+                        || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
+                        || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
+                        || (weapon.curMode().equals("Bearings-Only Short Detection Range")));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -1500,7 +1499,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         if (isBearingsOnlyMissile) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Bearings-only Missile Will Always Hit the Target Hex");
+            if (game.getPhase() == IGame.Phase.PHASE_TARGETING) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Bearings-only Missile Will Always Hit the Target Hex");
+            } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+                return new ToHitData(4, "Base");                
+            }
         }
 
         // Attacks against adjacent buildings automatically hit.

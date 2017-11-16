@@ -56,14 +56,17 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
     private MMLogger logger = null;
-    boolean advancedPD = false;
+    boolean advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+    boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
+    boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
+    boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
+    boolean detRangeExtreme = weapon.curMode().equals("Bearings-Only Extreme Detection Range");
 
     /**
      * This constructor may only be used for deserialization.
      */
     protected CapitalMissileBearingsOnlyHandler() {
-        super();
-        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        super(); 
     }
     
     /**
@@ -396,10 +399,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
 
         final Coords tc = target.getPosition();
         int missileFacing = ae.getPosition().direction(tc);
-        boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
-        boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
-        boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
-        boolean detRangeExtreme = weapon.curMode().equals("Bearings-Only Extreme Detection Range");
         Targetable newTarget = null;
         Vector<Aero> targets = new Vector<Aero>();
         
@@ -457,11 +456,17 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 if (tc.distance(a.getPosition()) <= 20) {
                     detected.add(a);
                 }
+                if (tc.distance(a.getPosition()) <= 12) {
+                    toHit.addModifier(1, "target closer than range setting");
+                }
             }
         } else if (detRangeMedium) {
             for (Aero a : targets) {
                 if (tc.distance(a.getPosition()) <= 12) {
                     detected.add(a);
+                }
+                if (tc.distance(a.getPosition()) <= 6) {
+                    toHit.addModifier(1, "target closer than range setting");
                 }
             }
         } else if (detRangeShort) {
@@ -559,7 +564,31 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
-        }
+            
+            //Now that we have a ship target, set up the to-hit modifiers
+            int range = tc.distance(target.getPosition());
+            if (range > 20 && range <= 25) {
+                toHit.addModifier(6, "extreme range");
+            } else if (range > 12 && range <= 20) {
+                toHit.addModifier(4, "long range");
+            } else if (range > 12 && range <= 20) {
+                toHit.addModifier(2, "medium range");
+            } else if (range <= 6) {
+                toHit.addModifier(0, "short range");
+            } 
+            //If the target is closer than the set range band, add a +1 modifier
+            if ((detRangeExtreme && range <= 20)
+                    || (detRangeLong && range <= 12) 
+                    || (detRangeMedium && range <= 6)) {
+                toHit.addModifier(1, "target closer than range setting");
+            }
+    }
+            
+            
+            
+
+            
+       
 
     
     /*

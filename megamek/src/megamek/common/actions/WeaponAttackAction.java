@@ -369,10 +369,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         
-        boolean isBearingsOnlyMissile = ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
+        boolean isBearingsOnlyMissile = (((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
                         || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
                         || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-                        || (weapon.curMode().equals("Bearings-Only Short Detection Range")));
+                        || (weapon.curMode().equals("Bearings-Only Short Detection Range")))
+                            && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
+                                    || (game.getPhase() == IGame.Phase.PHASE_FIRING)));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)

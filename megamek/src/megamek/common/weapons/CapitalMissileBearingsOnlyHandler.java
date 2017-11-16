@@ -25,9 +25,9 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -43,7 +43,6 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author MKerensky
@@ -562,6 +561,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             }
             //Now, assign our chosen target to the missile
             target = newTarget;
+            Entity targetship = (Entity) newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
             
@@ -581,6 +581,20 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     || (detRangeLong && range <= 12) 
                     || (detRangeMedium && range <= 6)) {
                 toHit.addModifier(1, "target closer than range setting");
+            }
+            
+            // evading bonuses (
+            if ((target != null) && targetship.isEvading()) {
+                toHit.addModifier(2, "target is evading");
+            }
+            
+            // Space ECM
+            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                int ecm = ComputeECM.getLargeCraftECM(ae, tc, target.getPosition());
+                ecm = Math.min(4, ecm);
+                if (ecm > 0) {
+                    toHit.addModifier(ecm, "ECM");
+                }
             }
     }
             

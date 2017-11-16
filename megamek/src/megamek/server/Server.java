@@ -72,108 +72,11 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Bay;
-import megamek.common.BipedMech;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
-import megamek.common.BombType;
-import megamek.common.Building;
+import megamek.common.*;
 import megamek.common.Building.BasementType;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.BuildingTarget;
-import megamek.common.CalledShot;
-import megamek.common.CommonConstants;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Configuration;
-import megamek.common.ConvFighter;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.ECMInfo;
-import megamek.common.EjectedCrew;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.EntitySelector;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentMode;
-import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
-import megamek.common.Flare;
-import megamek.common.FuelTank;
-import megamek.common.Game;
-import megamek.common.GameTurn;
-import megamek.common.GunEmplacement;
-import megamek.common.HexTarget;
-import megamek.common.HitData;
-import megamek.common.IAero;
-import megamek.common.IArmorState;
-import megamek.common.IBoard;
-import megamek.common.IBomber;
-import megamek.common.IEntityRemovalConditions;
-import megamek.common.IGame;
 import megamek.common.IGame.Phase;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.ITerrain;
-import megamek.common.Infantry;
-import megamek.common.InfernoTracker;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.LargeSupportTank;
-import megamek.common.LocationFullException;
-import megamek.common.LosEffects;
-import megamek.common.MapSettings;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Minefield;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.OffBoardDirection;
-import megamek.common.PhysicalResult;
-import megamek.common.PilotingRollData;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.Report;
-import megamek.common.Roll;
-import megamek.common.SmallCraft;
-import megamek.common.SpaceStation;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.SuperHeavyTank;
-import megamek.common.SupportTank;
-import megamek.common.SupportVTOL;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.TargetRollModifier;
-import megamek.common.Targetable;
-import megamek.common.Team;
-import megamek.common.TechConstants;
-import megamek.common.TeleMissile;
-import megamek.common.Terrain;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.TripodMech;
-import megamek.common.TurnOrdered;
-import megamek.common.TurnVectors;
-import megamek.common.UnitLocation;
-import megamek.common.VTOL;
-import megamek.common.Warship;
-import megamek.common.WeaponComparatorBV;
-import megamek.common.WeaponType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -1881,6 +1784,37 @@ public class Server implements Runnable {
         game.clearIlluminatedPositions();
         send(new Packet(Packet.COMMAND_CLEAR_ILLUM_HEXES));
     }
+    
+    /*
+     *  Called during the end phase. Checks each entity for ASEW effects counters and decrements them by 1 if > 0
+     */
+    
+    public void decrementASEWTurns() {
+        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
+            final Entity entity = e.next();
+            // Decrement ASEW effects
+            if ((entity.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP) {
+                Dropship d = (Dropship) entity;
+                for (int loc = 0; loc < d.locations(); loc++) {
+                    if (d.getASEWAffected(loc) > 0) {
+                        d.setASEWAffected(loc, d.getASEWAffected(loc) - 1);
+                    } 
+                }
+            } else if ((entity.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
+                Jumpship j = (Jumpship) entity;
+                for (int loc = 0; loc < j.locations(); loc++) {
+                    if (j.getASEWAffected(loc) > 0) {
+                        j.setASEWAffected(loc, j.getASEWAffected(loc) - 1);
+                    } 
+                }
+            } else {
+                if (entity.getASEWAffected() > 0) {
+                    entity.setASEWAffected(entity.getASEWAffected() - 1);
+                }
+            }
+        }        
+    }    
+    
 
     /**
      * are we currently in a reporting phase
@@ -3212,6 +3146,9 @@ public class Server implements Runnable {
                         changePhase(IGame.Phase.PHASE_INITIATIVE);
                     }
                 }
+                // Decrement the ASEWAffected counter
+                decrementASEWTurns();    
+                
                 break;
             case PHASE_END_REPORT:
                 if (changePlayersTeam) {
@@ -8348,7 +8285,7 @@ public class Server implements Runnable {
                             skidDirection = lastPos.direction(curPos);
                             start = curPos;
                         } else {
-                            elev = prevStep.getElevation();
+                            elev = (null == prevStep)? curElevation : prevStep.getElevation();
                             // maximum distance is hexes moved / 2
                             sideslipDistance = Math.min(moF, distance / 2);
                             skidDirection = prevFacing;
@@ -8363,7 +8300,7 @@ public class Server implements Runnable {
                             addReport(r);
 
                             if (processSkid(entity, start, elev, skidDirection,
-                                    sideslipDistance, prevStep,
+                                    sideslipDistance, (null == prevStep)? step : prevStep,
                                     lastStepMoveType)) {
                                 return;
                             }
@@ -26141,6 +26078,27 @@ public class Server implements Runnable {
                     r.subject = aero.getId();
                     r.add((int) (percentDestroyed * 100));
                     reports.add(r);
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CARGO_BAY_DAMAGE)) {
+                        Vector<Bay> cargoBays = new Vector<Bay>();
+                        for (Bay next : aero.getTransportBays()) {
+                            if ((next instanceof CargoBay)
+                                    || (next instanceof InsulatedCargoBay)
+                                    || (next instanceof LiquidCargoBay)
+                                    || (next instanceof LivestockCargoBay)
+                                    || (next instanceof RefrigeratedCargoBay)) {
+                                cargoBays.add(next);
+                            }
+                        
+                        }
+                        Bay targetBay = cargoBays.get(Compute.randomInt(cargoBays.size()));
+                        targetBay.setBayDamaged();
+                        //report the damage
+                        r = new Report(9167);
+                        r.subject = aero.getId();
+                        r.add(targetBay.getType());
+                        r.add(targetBay.getBayNumber());
+                        reports.add(r);
+                    }
                 } else {
                     // units were hit
                     // get a list of units
@@ -26158,6 +26116,18 @@ public class Server implements Runnable {
                         if (units.size() > 0) {
                             Entity target = units.get(Compute.randomInt(units
                                                                                 .size()));
+                            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_CARGO_BAY_DAMAGE)) {
+                                // damage the cargo bay itself
+                                Bay targetBay = aero.getBay(target);
+                                targetBay.setBayDamaged();
+                                //report the damage
+                                r = new Report(9167);
+                                r.subject = aero.getId();
+                                r.add(targetBay.getType());
+                                r.add(targetBay.getBayNumber());
+                                reports.add(r);
+                            }
+                            //This dooms the selected transported unit
                             reports.addAll(destroyEntity(target, "cargo damage",
                                                        false, false));
                         }
@@ -26184,13 +26154,14 @@ public class Server implements Runnable {
                 // docking collar hit
                 // different effect for dropships and jumpships
                 if (aero instanceof Dropship) {
+                    //damage the docking collar. There isn't but one...
                     ((Dropship)aero).setDamageDockCollar(true);
                     r = new Report(9175);
                     r.subject = aero.getId();
                     reports.add(r);
                 }
                 if (aero instanceof Jumpship) {
-                    // damage the docking collar
+                    // damage a random docking collar
                     if (aero.damageDockCollar()) {
                         r = new Report(9176);
                         r.subject = aero.getId();

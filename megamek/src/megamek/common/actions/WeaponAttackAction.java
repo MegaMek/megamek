@@ -311,6 +311,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch bomb in mech mode."));
         }
         
+        // ASEW Missiles cannot be launched in an atmosphere
+        if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
+                && !game.getBoard().inSpace()) {
+            return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch ASEW missile in an atmosphere."));
+        }
+        
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
         if (exchangeSwarmTarget) {
@@ -400,7 +406,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
 
         Mounted mLinker = weapon.getLinkedBy();
-        
+               
         boolean bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
                 && (atype != null) && (atype.getAmmoType() == AmmoType.T_MRM);
@@ -409,6 +415,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
                 && !isECMAffected && !bMekTankStealthActive && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+        
+        if (ae.usesWeaponBays()) {
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted bayW = ae.getEquipment(wId);
+                Mounted bayWAmmo = bayW.getLinked();
+                AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
+                mLinker = bayW.getLinkedBy();
+                bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
+                        && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
+                        && (bAmmo != null) && (bAmmo.getAmmoType() == AmmoType.T_MRM);
+                
+                bArtemisV = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
+                        && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
+                        && !isECMAffected && !bMekTankStealthActive && (atype != null)
+                        && (bAmmo != null) && (bAmmo.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+            }
+        }
         
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
@@ -514,8 +537,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean mpMelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)  
+        if (usesAmmo 
+                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP))  
                 && (atype != null)
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) 
                 && (ae.getElevation() == -1)
@@ -524,6 +547,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // surface to fire
             ae.setElevation(0);
         }
+        
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
@@ -760,6 +784,31 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.isSufferingEMI()) {
             toHit.addModifier(+2, "electromagnetic interference");
         }
+        
+        //ASEW Missiles
+        // +4 for trying to fire one at a target of < 500 tons
+        if (wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE && te.getWeight() < 500.0) {
+            toHit.addModifier(4, "target is less than 500 tons");
+        }
+        // +4 attack penalty for ASEW affected locations
+        if (ae instanceof Dropship) {
+            Dropship d = (Dropship) ae;
+            int loc = weapon.getLocation();
+            if (d.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, "weapon arc affected by ASEW missile");
+            }            
+        } else if (ae instanceof Jumpship) {
+            Jumpship j = (Jumpship) ae;
+            int loc = weapon.getLocation();
+            if (j.getASEWAffected(loc) > 0) {
+                toHit.addModifier(4, "weapon arc affected by ASEW missile");
+            } 
+        } else {
+            if (ae.getASEWAffected() > 0) {
+                toHit.addModifier(4, "attacker affected by ASEW missile");
+            }
+        }
+            
 
         // evading bonuses (
         if ((te != null) && te.isEvading()) {
@@ -3013,8 +3062,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.isAirborne()) {
                 if (isArtilleryDirect) {
                     return "Airborne aerospace units can't make direct-fire artillery attacks";
-                } else if (isArtilleryIndirect && (wtype.getAmmoType() != AmmoType.T_ARROW_IV)) {
-                    return "Airborne aerospace units can't fire non-Arrow-IV artillery.";
+                } else if (isArtilleryIndirect) {
+                    if (ae.getAltitude() > 9) {
+                        return "Airborne aerospace units can't make artillery attacks from above Altitude 9.";
+                    }
+                    if (ae.usesWeaponBays()) {
+                        //For Dropships
+                        for (int wId : weapon.getBayWeapons()) {
+                            Mounted bayW = ae.getEquipment(wId);
+                            // check the loaded ammo for the Arrow IV flag
+                            Mounted bayWAmmo = bayW.getLinked();
+                            AmmoType bAType = (AmmoType) bayWAmmo.getType();
+                            if (bAType.getAmmoType() != AmmoType.T_ARROW_IV) {
+                                return "Airborne aerospace units can't fire non-Arrow-IV artillery.";
+                            }
+                        }
+                    } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
+                        //For Fighters, LAMs, Small Craft and VTOLs
+                        return "Airborne aerospace units can't make non-Arrow-IV artillery attacks.";
+                    }
                 }
             }
         } else {
@@ -3632,8 +3698,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int eistatus = 0;
 
         boolean multiPurposeelevationHack = false;
-        if (usesAmmo && (wtype.getAmmoType() == AmmoType.T_LRM) 
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP) 
+        if (usesAmmo 
+                && ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)) 
                 && (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE)
                 && (ae.getElevation() == -1)
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
@@ -3963,7 +4029,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return "Target is too low for nose weapons";
             }
-            if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)) {
+            if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)
+                    && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return "Target is too low for front-side weapons";
             }
             if ((weapon.getLocation() == Aero.LOC_AFT)) {

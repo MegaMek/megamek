@@ -1257,6 +1257,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 + "</b></html>"); //$NON-NLS-1$
             }
         }
+        
+        updateButtons();
     }
 
     /**

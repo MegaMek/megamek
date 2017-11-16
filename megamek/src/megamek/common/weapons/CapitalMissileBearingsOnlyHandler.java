@@ -18,20 +18,16 @@
 package megamek.common.weapons;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TargetRoll;

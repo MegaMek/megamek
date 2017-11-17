@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Thunderbird II
+Thunderbird II Battle Armor
 </Name>
 
 <Model>
-BattleArmor
+(Standard)
 </Model>
 
 <year>

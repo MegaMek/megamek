@@ -195,6 +195,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
     private JCheckBox showWpsinTT;
+    private JCheckBox showArmorMiniVisTT;
     private JCheckBox chkAntiAliasing;
     private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
@@ -479,6 +480,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(showWpsinTT);
         comps.add(row);
+
+        // copied from showWpsinTT, kept comment as it looks like a relevant compiler/editor flag?
+        showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showArmorMiniVisTT);
+        comps.add(row);
         
         // Horizontal Line and Spacer
         row = new ArrayList<>();
@@ -711,7 +718,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
         showWpsinTT.setSelected(gs.getShowWpsinTT());
-        
+        showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
+
         defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
 
         mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
@@ -874,6 +882,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setSoundMute(soundMute.isSelected());
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setShowWpsinTT(showWpsinTT.isSelected());
+        gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())

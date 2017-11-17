@@ -3796,7 +3796,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                     boolean dirty = false;
                     for (Mounted m : e.getWeaponList()) {
                         WeaponType wtype = (WeaponType) m.getType();
-                        if (!wtype.hasFlag(WeaponType.F_MISSILE) || (wtype.getAmmoType() != AmmoType.T_LRM)) {
+                        if (!wtype.hasFlag(WeaponType.F_MISSILE) 
+                                || (wtype.getAmmoType() != AmmoType.T_LRM)) {
                             continue;
                         }
                         m.setHotLoad(hotLoad);
@@ -3941,6 +3942,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                         }
                         if (etype.hasFlag(WeaponType.F_MISSILE)) {
                             hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM;
+                            hasHotLoad |= m.isHotLoaded();
+                        }
+                        if (etype.hasFlag(WeaponType.F_MISSILE)) {
+                            hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM_IMP;
                             hasHotLoad |= m.isHotLoaded();
                         }
                     }

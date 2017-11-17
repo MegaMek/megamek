@@ -1935,8 +1935,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         ranges[1] = wtype.getWRanges();
         if (atype != null) {
             if ((wtype.getAmmoType() == AmmoType.T_SRM)
+                    || (wtype.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MRM)
                     || (wtype.getAmmoType() == AmmoType.T_LRM)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MML)) {
                 if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
                     ranges[1] = wtype.getRanges(mounted);
@@ -2316,17 +2318,19 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avExt = 0;
             }
         } // end weapon is MML
-        else if ((atype.getAmmoType() == AmmoType.T_LRM)
-                 || (atype.getAmmoType() == AmmoType.T_SRM)) {
+        else if ((atype.getAmmoType() == AmmoType.T_LRM) 
+                || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                || (atype.getAmmoType() == AmmoType.T_SRM)
+                || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
 
             if (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-                if (atype.getAmmoType() == AmmoType.T_LRM) {
+                if ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_LRM_IMP)) {
                     int bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
                     avShort = avShort + bonus;
                     avMed = avMed + bonus;
                     avLong = avLong + bonus;
                 }
-                if (atype.getAmmoType() == AmmoType.T_SRM) {
+                if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
                     avShort = avShort + 2;
                 }
             }
@@ -2355,11 +2359,45 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avMed = 3;
                 avLong = 3;
                 avExt = 3;
+            } else if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+                avShort = 100;
+                avMed = 100;
+                avLong = 100;
+                avExt = 100;
+            } else if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+                avShort = 1000;
+                avMed = 1000;
+                avLong = 1000;
+                avExt = 1000;
             } else {
                 avShort = 2;
                 avMed = 2;
                 avLong = 2;
                 avExt = 2;
+            }
+        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE) {
+            if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+                avShort = 1000;
+                avMed = 1000;
+                avLong = 1000;
+                avExt = 1000; 
+            } else {
+                avShort = 4;
+                avMed = 4;
+                avLong = 4;
+                avExt = 4;
+            }
+        } else if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK) {
+            if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+                avShort = 100;
+                avMed = 100;
+                avLong = 100;
+                avExt = 100; 
+            } else {
+                avShort = 3;
+                avMed = 3;
+                avLong = 3;
+                avExt = 3;
             }
         }
 

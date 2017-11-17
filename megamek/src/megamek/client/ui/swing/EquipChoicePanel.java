@@ -652,8 +652,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         && entity.isClan()
                         && ((muniType == AmmoType.M_SEMIGUIDED)
                                 || (muniType == AmmoType.M_SWARM_I)
-                                || (muniType == AmmoType.M_FLARE)
-                                || (muniType == AmmoType.M_FRAGMENTATION)
                                 || (muniType == AmmoType.M_THUNDER_AUGMENTED)
                                 || (muniType == AmmoType.M_THUNDER_INFERNO)
                                 || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
@@ -661,8 +659,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                                 || (muniType == AmmoType.M_INFERNO_IV)
                                 || (muniType == AmmoType.M_VIBRABOMB_IV)
                                 || (muniType == AmmoType.M_LISTEN_KILL)
-                                || (muniType == AmmoType.M_ANTI_TSM) 
-                                || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
+                                || (muniType == AmmoType.M_ANTI_TSM)
+                                || (muniType == AmmoType.M_DEAD_FIRE) 
+                                || (muniType == AmmoType.M_MINE_CLEARANCE))) {
                     bTechMatch = false;
                 }
 

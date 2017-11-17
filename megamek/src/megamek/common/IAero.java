@@ -634,7 +634,7 @@ public interface IAero {
                 }
                 // no units in the way
                 for (Entity en : ((Entity) this).getGame().getEntitiesVector(pos)) {
-                    if (en.equals(this)) {
+                    if (en.equals((Entity) this)) {
                         continue;
                     }
                     if (!en.isAirborne()) {

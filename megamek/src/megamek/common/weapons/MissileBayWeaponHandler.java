@@ -149,17 +149,16 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
-        //TODO: At present, bays don't have linked artemis, so this old code doesn't trigger...
-        // check for artemisIV
-        Mounted mLinker = weapon.getLinkedBy();
+        Mounted bayW = ae.getEquipment(wId);
+        Mounted mLinker = bayW.getLinkedBy();
         int bonus = 0;
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
+                        MiscType.F_ARTEMIS))
                 && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if (atype.getAmmoType() == AmmoType.T_SRM) {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
                 bonus = 2;
             }
             current_av = current_av + bonus;
@@ -168,12 +167,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS_V))
+                        MiscType.F_ARTEMIS_V))
                 && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
-            if (atype.getAmmoType() == AmmoType.T_SRM) {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
                 bonus = 2;
             }
         }
@@ -195,37 +194,10 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             if (range > WeaponType.RANGE_SHORT) {
                 current_av = 0;
             }
-        }
-        //MMLs get an AV bonus from Artemis V, but not Artemis IV
-        if (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE) {
-            if (atype.getRackSize() == 9) {
-                current_av = 1.4 * current_av;
-            } else if (atype.getRackSize() == 7) {
-                current_av = 1.5 * current_av;
-            } else if (atype.getRackSize() == 5) {
-                current_av = Math.ceil(1.33 * current_av);
-            } else if (atype.getRackSize() == 3) {
-                current_av = 1.5 * current_av;
-            }            
-
-       } else if (atype.getAmmoType() == AmmoType.T_LRM
-               && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
-                       || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {
-            current_av = Math.ceil(1.33 * current_av);
-       } else if (atype.getAmmoType() == AmmoType.T_SRM 
-               && ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) 
-                       || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE))) {
-        // Different SRM racks get different AV bonuses for Artemis IV and V.
-           if (atype.getRackSize() == 6) {
-            current_av = Math.ceil(1.25 * current_av);
-           } else if (atype.getRackSize() == 4) {
-               current_av = 1.5 * current_av;
-           } else if (atype.getRackSize() == 2) {
-               current_av = 2 * current_av;
-           }
-       } 
+        } 
         return current_av;
-    } 
+        
+    }     
    
     // check for AMS and Point Defense Bay fire
     @Override

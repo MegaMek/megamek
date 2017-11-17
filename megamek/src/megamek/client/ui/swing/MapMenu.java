@@ -1294,7 +1294,9 @@ public class MapMenu extends JPopupMenu {
             if (board.inSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
                 menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
             } else {
-                if ((hasAmmoType(AmmoType.T_LRM) || hasAmmoType(AmmoType.T_MML))
+                if ((hasAmmoType(AmmoType.T_LRM)
+                        || hasAmmoType(AmmoType.T_LRM_IMP)
+                        || hasAmmoType(AmmoType.T_MML))
                     && (hasMunitionType(AmmoType.M_FASCAM)
                         || hasMunitionType(AmmoType.M_THUNDER)
                         || hasMunitionType(AmmoType.M_THUNDER_ACTIVE)

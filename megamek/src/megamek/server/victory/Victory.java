@@ -23,24 +23,24 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 public class Victory {
-    
-	private boolean checkForVictory;
-	private int neededVictoryConditions;
-	
-	private IVictoryConditions force = new ForceVictory();
-	private IVictoryConditions lastMan = new LastManStandingVictory();
-	private IVictoryConditions[] VCs = null;
-	
-	public Victory(GameOptions options) {
-		checkForVictory = options.booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
-		
-		if (checkForVictory) {
-		    VCs = buildVClist(options);
-		}
-	}
-	
-	private IVictoryConditions[] buildVClist(GameOptions options) {
-	    neededVictoryConditions = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
+
+    private boolean checkForVictory;
+    private int neededVictoryConditions;
+
+    private IVictoryConditions force = new ForceVictory();
+    private IVictoryConditions lastMan = new LastManStandingVictory();
+    private IVictoryConditions[] VCs = null;
+
+    public Victory(GameOptions options) {
+        checkForVictory = options.booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
+
+        if (checkForVictory) {
+            VCs = buildVClist(options);
+        }
+    }
+
+    private IVictoryConditions[] buildVClist(GameOptions options) {
+        neededVictoryConditions = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
         List<IVictoryConditions> victories = new ArrayList<IVictoryConditions>();
         // BV related victory conditions
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
@@ -49,7 +49,7 @@ public class Victory {
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_RATIO)) {
             victories.add(new BVRatioVictory(options.intOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT)));
         }
-        
+
         // Kill count victory condition
         if (options.booleanOption(OptionsConstants.VICTORY_USE_KILL_COUNT)) {
             victories.add(new KillCountVictory(options.intOption(OptionsConstants.VICTORY_GAME_KILL_COUNT)));
@@ -60,37 +60,39 @@ public class Victory {
             victories.add(new EnemyCmdrDestroyedVictory());
         }
         return victories.toArray(new IVictoryConditions[0]);
-	}
-	
+    }
+
     public VictoryResult checkForVictory(IGame game, Map<String, Object> context) {
         VictoryResult reVal;
-        
-    	//Check for ForceVictory
-    	reVal = force.victory(game, context);
-    	if (reVal.victory()) {
-    	    return reVal;
-    	}
-    	
-    	//Check optional Victory conditions
-    	//These can have reports
-    	if (checkForVictory) {
-    	    if (VCs == null) {
-    	        VCs = buildVClist(game.getOptions());
-    	    }
-    	    reVal = checkOptionalVictory(game, context);
-    	    if (reVal.victory()) {
-    	        return reVal;
-    	    }
-    	}
-    	
-    	//Check for LastManStandingVictory
-    	VictoryResult lastManResult = lastMan.victory(game, context);
-    	if (!reVal.victory() && lastManResult.victory()) {
-    	    return lastManResult;
-    	}
-    	return reVal;
+
+        // Check for ForceVictory
+        // Always check for forced victory, so games without victory conditions
+        // can be completed
+        reVal = force.victory(game, context);
+        if (reVal.victory()) {
+            return reVal;
+        }
+
+        // Check optional Victory conditions
+        // These can have reports
+        if (checkForVictory) {
+            if (VCs == null) {
+                VCs = buildVClist(game.getOptions());
+            }
+            reVal = checkOptionalVictory(game, context);
+            if (reVal.victory()) {
+                return reVal;
+            }
+        }
+
+        // Check for LastManStandingVictory
+        VictoryResult lastManResult = lastMan.victory(game, context);
+        if (checkForVictory && !reVal.victory() && lastManResult.victory()) {
+            return lastManResult;
+        }
+        return reVal;
     }
-    
+
     private VictoryResult checkOptionalVictory(IGame game, Map<String, Object> context) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
@@ -105,8 +107,7 @@ public class Victory {
                 victory = true;
             }
             for (int pl : res.getPlayers()) {
-                vr.addPlayerScore(pl, vr.getPlayerScore(pl)
-                        + res.getPlayerScore(pl));
+                vr.addPlayerScore(pl, vr.getPlayerScore(pl) + res.getPlayerScore(pl));
             }
             for (int t : res.getTeams()) {
                 vr.addTeamScore(t, vr.getTeamScore(t) + res.getTeamScore(t));
@@ -141,7 +142,7 @@ public class Victory {
         if (!vr.victory() && game.gameTimerIsExpired()) {
             return VictoryResult.drawResult();
         }
-        
+
         return vr;
     }
 }

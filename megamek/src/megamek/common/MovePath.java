@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.TreeMap;
@@ -336,21 +337,6 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
-        // We need to ensure the jump is in a straight-line (can't steer)
-        if (isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)
-                && (length() > 2)) {
-            Coords firstPos = getStep(0).getPosition();
-            Coords secondPos = getStep(1).getPosition();
-            Coords currPos = step.getPosition();
-            double tolerance = .00001;
-            double initialDir = firstPos.radian(secondPos);
-            double currentDir = firstPos.radian(currPos);
-            if ((currentDir > (initialDir + tolerance))
-                    || (currentDir < (initialDir - tolerance))) {
-                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-            }
-        }
-        
         // Ensure we only lay one mine
         if ((step.getType() == MoveStepType.LAY_MINE)) {
             boolean containsOtherLayMineStep = false;
@@ -594,11 +580,25 @@ public class MovePath implements Cloneable, Serializable {
                     getEntity().toggleConversionMode();
                 }
             }
+            
             //Treat multiple convert steps as a single command
             if (step1.getType() == MovePath.MoveStepType.CONVERT_MODE)
                 while (steps.size() > 0
                     && steps.get(steps.size() - 1).getType() == MovePath.MoveStepType.CONVERT_MODE) {
                 steps.removeElementAt(steps.size() - 1);
+            }
+            
+            // if this step is part of a manuever, undo the whole manuever, all the way to the beginning.
+            if(step1.isManeuver()) {
+                int stepIndex = steps.size() - 1;
+                
+                while (steps.size() > 0 && steps.get(stepIndex).isManeuver()) {
+                    steps.removeElementAt(stepIndex);
+                    stepIndex--;
+                }
+                
+                // a maneuver begins with a "maneuver" step, so get rid of that as well
+                steps.removeElementAt(stepIndex);
             }
         }
 
@@ -608,6 +608,9 @@ public class MovePath implements Cloneable, Serializable {
                 && !getStep(index).isLegal(this)) {
             index--;
         }
+        
+        // we may have removed a lot of steps - recalculate the contained step types
+        regenerateStepTypes();
     }
 
     public void clear() {
@@ -625,6 +628,17 @@ public class MovePath implements Cloneable, Serializable {
         return steps.elementAt(index);
     }
 
+    /**
+     * Helper function that rebuilds the "contained step types" from scratch.
+     * Loops over all the steps in the path, so should only be used when removing or replacing steps.
+     */
+    private void regenerateStepTypes() {
+        containedStepTypes.clear();
+        for(MoveStep step : steps) {
+            containedStepTypes.add(step.getType());
+        }
+    }
+    
     /**
      * Check for any of the specified type of step in the path
      * @param type The step type to check for
@@ -906,11 +920,11 @@ public class MovePath implements Cloneable, Serializable {
         }
         // Do final check for bad moves, and clip movement after first bad one
         // also clear and re-constitute "contained steps" cache
-        containedStepTypes = new HashSet<MoveStepType>();
+        containedStepTypes = new HashSet<>();
         final Vector<MoveStep> goodSteps = new Vector<>();
         for (MoveStep step : steps) {
             if (step.getMovementType(isEndStep(step)) != EntityMovementType.MOVE_ILLEGAL) {
-            	containedStepTypes.add(step.getType());
+                containedStepTypes.add(step.getType());
                 goodSteps.addElement(step);
             } else {
                 break;
@@ -1458,7 +1472,7 @@ public class MovePath implements Cloneable, Serializable {
         final MovePath copy = new MovePath(getGame(), getEntity());
         copy.steps = new Vector<MoveStep>(steps);
         copy.careful = careful;
-        copy.containedStepTypes = new HashSet<MoveStepType>(containedStepTypes);
+        copy.containedStepTypes = new HashSet<>(containedStepTypes);
         copy.fliesOverEnemy = fliesOverEnemy;
         return copy;
     }

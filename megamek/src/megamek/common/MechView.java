@@ -26,10 +26,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
+import megamek.common.options.Quirks;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
@@ -389,6 +392,26 @@ public class MechView {
             }
         }
         
+        StringJoiner quirksList = new StringJoiner("<br/>\n");
+        Quirks quirks = entity.getQuirks();
+        for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            IOptionGroup group = optionGroups.nextElement();
+            if (quirks.count(group.getKey()) > 0) {
+                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    IOption option = options.nextElement();
+                    if (option != null && option.booleanValue()) {
+                        quirksList.add(option.getDisplayableNameWithValue());
+                    }
+                }
+            }
+        }
+        if (quirksList.length() > 0) {
+            sFluff.append("<b>") //$NON-NLS-1$
+                .append(Messages.getString("MechView.Quirks")) //$NON-NLS-1$
+                .append("</b> <br/>\n") //$NON-NLS-1$
+                .append(quirksList.toString());
+        }
+        
         if (entity.getFluff().getOverview() != "") {
             sFluff.append("<br>");
             sFluff.append("\n<b>Overview:</b> <br>\n");
@@ -740,11 +763,11 @@ public class MechView {
             }
             sWeapons.append("<td>").append(mounted.getDesc()); //$NON-NLS-1$
             if (entity.isClan()
-                    && !TechConstants.isClan(mounted.getType().getTechLevel(entity.getYear()))) {
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
             if (!entity.isClan()
-                    && TechConstants.isClan(mounted.getType().getTechLevel(entity.getYear()))) {
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                 sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             /*
@@ -816,11 +839,11 @@ public class MechView {
                     }
                     sWeapons.append("<td>").append("&nbsp;&nbsp;>" + m.getDesc()); //$NON-NLS-1$
                     if (entity.isClan()
-                            && !TechConstants.isClan(m.getType().getTechLevel(entity.getYear()))) {
+                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                         sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
                     }
                     if (!entity.isClan()
-                            && TechConstants.isClan(m.getType().getTechLevel(entity.getYear()))) {
+                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                         sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
                     }
                     sWeapons.append("</td>");    
@@ -955,13 +978,11 @@ public class MechView {
             }
             sMisc.append("<td>").append(mounted.getDesc()).append("</td>"); //$NON-NLS-1$            	
             if (entity.isClan()
-                    && mounted.getType().getInternalName().substring(0, 2)
-                            .equals("IS")) { //$NON-NLS-1$
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 sMisc.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
             if (!entity.isClan()
-                    && mounted.getType().getInternalName().substring(0, 2)
-                            .equals("CL")) { //$NON-NLS-1$
+                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                 sMisc.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             sMisc.append("</td><td align='right'>")

@@ -544,6 +544,9 @@ public class Terrain implements ITerrain, Serializable {
             }
             return TargetRoll.AUTOMATIC_SUCCESS;
         case (Terrains.MUD):
+            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+                return TargetRoll.AUTOMATIC_SUCCESS;
+            }
             return -1;
         case (Terrains.TUNDRA):
             return -1;

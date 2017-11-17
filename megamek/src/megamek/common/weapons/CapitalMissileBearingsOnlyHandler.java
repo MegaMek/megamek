@@ -187,17 +187,15 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
 
         // Report weapon attack and its to-hit value.
-        Report r = new Report(3115);
-        r.indent();
+        Report r = new Report(3118);
         r.newlines = 0;
-        r.subject = subjectId;
-        r.add(wtype.getName());
-        if (entityTarget != null) {
-            r.addDesc(entityTarget);
-        } else {
-            r.messageId = 3120;
-            r.add(target.getDisplayName(), true);
-        }
+        vPhaseReport.addElement(r);
+        
+        r = new Report(3119);
+        r.indent();
+        r.newlines = 1;
+        r.subject = subjectId;        
+        r.addDesc(entityTarget);        
         vPhaseReport.addElement(r);
         
         //Point Defense fire vs Capital Missiles

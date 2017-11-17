@@ -28,6 +28,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -554,7 +555,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             }
             //Now, assign our chosen target to the missile
             target = newTarget;
-            Entity targetship = (Entity) newTarget;
+            Aero targetship = (Aero) newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
             
@@ -577,9 +578,33 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 toHit.addModifier(1, "target closer than range setting");
             }
             
-            // evading bonuses (
+            // evading bonuses
             if ((target != null) && targetship.isEvading()) {
                 toHit.addModifier(2, "target is evading");
+            }
+            
+            // is the target at zero velocity
+            if ((targetship.getCurrentVelocity() == 0) && !(targetship.isSpheroid() && !game.getBoard().inSpace())) {
+                toHit.addModifier(-2, "target is not moving");
+            }
+            
+            if (target.isAirborne() && target.isAero()) {
+                if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
+                    // get mods for direction of attack
+                    int side = toHit.getSideTable();
+                    // if this is an aero attack using advanced movement rules then
+                    // determine side differently
+                    if (game.useVectorMove()) {
+                        boolean usePrior = false;
+                        side = ((Entity) target).chooseSide(tc, usePrior);
+                    }
+                    if (side == ToHitData.SIDE_FRONT) {
+                        toHit.addModifier(+1, "attack against nose");
+                    }
+                    if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
+                        toHit.addModifier(+2, "attack against side");
+                    }
+                }
             }
             
             // Space ECM

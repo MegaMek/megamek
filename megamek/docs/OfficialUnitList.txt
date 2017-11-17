@@ -11,7 +11,7 @@ Trinity Medium Battle Armor (Asterion)[PPC]|
 Asura Medium Battle Armor (Anti-Infantry)|
 Asura Medium Battle Armor (SRM)|
 Asura Medium Battle Armor (Standard)|
-Clan Medium Battle Armor (B�r)|
+Clan Medium Battle Armor (Bär)|
 Clan Medium Battle Armor (Rabid)|
 Clan Medium Battle Armor (Volk)|
 Corona Heavy Battle Armor (SRM)|
@@ -389,7 +389,7 @@ Purifier Battle Armor Terra [MRR]|
 Purifier Battle Armor Terra [SPL]|
 Tornado PA(L) G17|
 'Surat' (Grey Death) Solahma Suit (Standard)|
-Thunderbird II BattleArmor|
+Thunderbird II Battle Armor (Standard)|
 Tortoise II (aSRM)|
 Tortoise II (C3)|
 Tortoise II (LRM)|
@@ -520,6 +520,100 @@ Triumph (2593)|
 Triumph (3057)|
 Union (2708)|
 Union (3055)|
+Vengeance (2682)|
+Vengeance (3056)|
+Broadsword (Standard)|
+Carrier (Standard)|
+Confederate (Clan)|
+Lion (Clan)|
+Lion (Wolf's Dragoons 3052)|
+Miraborg (Standard)|
+Noruff (Standard)|
+Overlord C|
+Sassanid (Standard)|
+Titan (Clan)|
+Union C|
+Achilles (2582)|
+Achilles (2751)-Royal|
+Achilles (3055)|
+Achilles (3078)-CC|
+Avenger (2816)|
+Avenger (3048)|
+Avenger (3072)-CC|
+Avenger (3079)-FS|
+Avenger (3090)-LC|
+Behemoth (Standard)|
+Buccaneer (2708)|
+Buccaneer (2709) (Vehicle)|
+Buccaneer (2792)|
+Buccaneer (3089)-FS|
+Buccaneer (Standard)|
+Claymore (Standard)|
+Condor (2801)|
+Condor (3035)-Dove|
+Condor (3054)|
+Confederate (2602)|
+Confederate (2703)|
+Excalibur (2786)|
+Excalibur (3056)|
+Fortress (2613)|
+Fortress (3058)|
+Fury (2638)|
+Fury (3040)-Drone Control|
+Fury (3056)|
+Fury (3089)|
+Gazelle (2531)|
+Gazelle (2857)|
+Gazelle (3055)|
+Hamilcar (3054)|
+Hamilcar (3084)|
+Hamilcar (Standard)|
+Hannibal (Standard)|
+Hercules (Standard)|
+Intruder (2655)|
+Intruder (2870)|
+Intruder (2905)|
+Intruder (3056)|
+Intruder (3081)-DA/FWL/CC|
+Intruder (3090)-LC|
+Kuan Ti (3070)-CC|
+Kuan Ti (3085)-FWL|
+Kuan Ti (Standard)|
+Leopard (2537)|
+Leopard (2845)-PPC|
+Leopard (3054)|
+Leopard (3056)|
+Leopard (3082)|
+Leopard CV (2581)|
+Leopard CV (3054)|
+Leopard CV (3083)|
+Lion (2595)|
+Lung Wang (3055)|
+Lung Wang (3085)|
+Lung Wang (Standard)|
+Mammoth (Standard)|
+Model 97 'Octopus' (Standard)|
+Monarch (Standard)|
+Mule (Standard)|
+Nagumo (3056)|
+Nagumo (3079)|
+Okinawa (Standard)|
+Overlord (2762)|
+Overlord (3056)|
+Rose (Bara no Ryu) (Standard)|
+Seeker (2815)-Mech|
+Seeker (2815)|
+Seeker (3054)|
+Seeker (3083)|
+Titan (2647)|
+Triumph (2593)|
+Triumph (3057)|
+Union (2708)|
+Union (2708b) Royal|
+Union (2709)-Combined Arms|
+Union (2710)-CV|
+Union (3055)|
+Union (3070)|
 Vengeance (2682)|
 Vengeance (3056)|
 Arcadia (3066)|
@@ -1973,7 +2067,7 @@ Field Medic Magistracy Medical Corp|
 Foot Infantry Raventhir's Infantry Guard|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
-Skaret Assassins J�rnF�lk|
+Skaret Assassins JàrnFòlk|
 Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|
 Pirate Lady Death's 'Pacification' Squads|
 Foot Ballistic Rifle Hastati V|
@@ -2038,6 +2132,24 @@ Mechanized Wheeled Platoon (Rifle AA)|
 Motorized Platoon (Rifle AA)|
 Foot Platoon (Flechette)|
 Motorized Platoon (Flechette)|
+Clan Foot Point (Anti-’Mech) (Flamer)|
+Clan Foot Point (Anti-’Mech) (Laser)|
+Clan Foot Point (Anti-’Mech) (LRM)|
+Clan Foot Point (Anti-’Mech) (MG)|
+Clan Foot Point (Anti-’Mech) (Rifle)|
+Clan Foot Point (Anti-’Mech) (SRM)|
+Foot Platoon (Anti-’Mech) (Flamer)|
+Foot Platoon (Anti-’Mech) (Laser)|
+Foot Platoon (Anti-’Mech) (LRM)|
+Foot Platoon (Anti-’Mech) (MG)|
+Foot Platoon (Anti-’Mech) (Rifle)|
+Foot Platoon (Anti-’Mech) (SRM)|
+Foot Squad (Flamer)|
+Foot Squad (Laser)|
+Foot Squad (LRM)|
+Foot Squad (MG)|
+Foot Squad (Rifle)|
+Foot Squad (SRM)|
 Clan Foot Point (Flamer)|
 Clan Foot Point (Laser)|
 Clan Foot Point (LRM)|
@@ -4955,7 +5067,7 @@ Crab CRB-27sl|
 Dervish DV-6Md|
 Hammerhands HMH-3D (Kessem)|
 Lancelot LNC25-01sl|
-Mackie MSK-9HKR 'Kill-Roy�s Little Buddy'|
+Mackie MSK-9HKR 'Kill-Roy�s Little Buddy'|
 Phoenix Hawk PXH-1Kk|
 Stalker STK-3Fk|
 Thunderbolt TDR-5Sd|
@@ -5027,6 +5139,7 @@ Wasp LAM WSP-105|
 Wasp LAM WSP-105M|
 Wasp LAM WSP-110|
 Yurei S-YR-1LAM|
+Mad Cat Mk II Hyper|
 Annihilator ANH-1G|
 Annihilator ANH-1X|
 Annihilator C 'Gausszilla'|
@@ -6754,7 +6867,7 @@ Maxim Flanker (Standard)|
 Partisan Hull Defense (Standard)|
 Sea Skimmer Hydrofoil 'Sniper'|
 Skulker Wheeled Scout Tank X-5|
-SturmFeur �Kalki� Cruise Missile Launcher (Standard)|
+SturmFeur “Kalki” Cruise Missile Launcher (Standard)|
 Cavalry Attack Helicopter Cadence Rain|
 Challenger MBT XVc|
 Fulcrum Heavy HoverTank X|

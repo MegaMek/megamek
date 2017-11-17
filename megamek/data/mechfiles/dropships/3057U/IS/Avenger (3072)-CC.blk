@@ -1,0 +1,174 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Avenger
+</Name>
+
+<Model>
+(3072) CC
+</Model>
+
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3048
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+cargobay:126.5:1:1
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<heatsinks>
+70
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+8000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+253
+226
+226
+203
+</armor>
+
+<Nose Equipment>
+ISArtemisIV
+(B) ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+IS LB 20-X AC Ammo:45
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISArtemisIV
+(B) ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo:30
+(B) LRM 20
+IS Ammo LRM-20:18
+(B) ISERMediumLaser
+ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISArtemisIV
+(B) ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo:30
+(B) LRM 20
+IS Ammo LRM-20:18
+(B) ISERMediumLaser
+ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISPlasmaRifle
+ISPlasmaRifleAmmo:10
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+(B) ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3057U - Jihad
+</source>
+
+<tonnage>
+1400.0
+</tonnage>
+
+<crew>
+15
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

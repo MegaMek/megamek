@@ -1,0 +1,161 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Seeker
+</Name>
+
+<Model>
+(3083)
+</Model>
+
+<year>
+3083
+</year>
+
+<originalBuildYear>
+3083
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+infantrybay:9.0:1:2:Foot
+1stclassquarters:40.0:0
+2ndclassquarters:0.0:0
+crewquarters:112.0:0
+lightvehiclebay:40.0:1:1
+cargobay:490.0:1
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+101
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6450
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+140
+120
+120
+116
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(R) (B) LRM 10
+(R) IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+PPC Capacitor
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(R) (B) LRM 10
+(R) IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+PPC Capacitor
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3057r - Clan Invasion
+</source>
+
+<tonnage>
+4700.0
+</tonnage>
+
+<crew>
+472
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

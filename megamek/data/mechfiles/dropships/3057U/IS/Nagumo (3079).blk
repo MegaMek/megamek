@@ -1,0 +1,185 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Nagumo
+</Name>
+
+<Model>
+(3079)
+</Model>
+
+<year>
+3079
+</year>
+
+<originalBuildYear>
+3056
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+1stclassquarters:50.0:0
+battlearmorbay:27.0:2:1
+crewquarters:161.0:0
+cargobay:2116.0:2
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+70
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+240
+150
+150
+180
+</armor>
+
+<Nose Equipment>
+ISApollo
+(B) ISGaussRifle
+ISUltraAC20
+IS Gauss Ammo:16
+IS Ultra AC/20 Ammo:30
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) MRM 40
+IS MRM 40 Ammo:18
+</Nose Equipment>
+
+<Left Side Equipment>
+ISApollo
+(B) ISLightGaussRifle
+IS Light Gauss Ammo:16
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISERMediumLaser
+(R) (B) MRM 30
+(R) IS MRM 30 Ammo:16
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISApollo
+(B) ISLightGaussRifle
+IS Light Gauss Ammo:16
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISERMediumLaser
+(R) (B) MRM 30
+(R) IS MRM 30 Ammo:16
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISUltraAC20
+IS Ultra AC/20 Ammo:30
+(B) ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3057U
+</source>
+
+<tonnage>
+4200.0
+</tonnage>
+
+<crew>
+190
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

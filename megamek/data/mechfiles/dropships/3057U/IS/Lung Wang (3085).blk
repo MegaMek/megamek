@@ -1,0 +1,186 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Lung Wang
+</Name>
+
+<Model>
+(3085)
+</Model>
+
+<year>
+3085
+</year>
+
+<originalBuildYear>
+3085
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+asfbay:2.0:2:1
+mechbay:4.0:2
+battlearmorbay:4.0:2:3
+cargobay:127.0:1
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+75
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+3000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+222
+194
+194
+193
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:78
+IS Ammo MML-9 SRM Artemis-capable:66
+(B) ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+ISArtemisIV
+(B) ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo:20
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISArtemisIV
+(B) ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo:20
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+</Right Side Equipment>
+
+<Aft Equipment>
+ISArtemisIV
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISLargePulseLaser
+(B) ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:26
+IS Ammo MML-9 SRM Artemis-capable:22
+</Aft Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<source>
+TRO 3057r - Clan Invasion
+</source>
+
+<tonnage>
+2600.0
+</tonnage>
+
+<crew>
+51
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

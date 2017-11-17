@@ -1,0 +1,179 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Condor
+</Name>
+
+<Model>
+(3035)-Dove
+</Model>
+
+<year>
+3035
+</year>
+
+<originalBuildYear>
+3035
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+crewquarters:483.0:0
+steeragequarters:750.0:0
+2ndclassquarters:420.0:0
+1stclassquarters:190.0:0
+cargobay:1033.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+90
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6240
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+150
+130
+130
+122
+</armor>
+
+<Nose Equipment>
+(B) PPC
+(B) Autocannon/5
+IS Ammo AC/5:20
+IS Ammo AC/5:20
+(B) LRM 15
+IS Ammo LRM-15:8
+IS Ammo LRM-15:8
+IS Ammo LRM-15:8
+(B) Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+IS Ammo AC/5:20
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+IS Ammo AC/5:20
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+MASH core component
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3057U - Succession Wars
+</source>
+
+<tonnage>
+4500.0
+</tonnage>
+
+<crew>
+63
+</crew>
+
+<officers>
+13
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+225
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

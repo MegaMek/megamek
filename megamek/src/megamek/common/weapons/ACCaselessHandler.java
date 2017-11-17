@@ -51,24 +51,22 @@ public class ACCaselessHandler extends ACWeaponHandler {
         if ((roll <= 2) && !(ae instanceof Infantry)) {
             int caselesscrit = Compute.d6(2);
 
+            Report r = new Report(3164);
+            r.subject = subjectId;
+            r.add(caselesscrit);
             bMissed = true;
             weapon.setJammed(true);
 
             if (caselesscrit >= 8) {
+                // Round explodes Destroying things
                 weapon.setDestroyed(true);
-                Report r = new Report(3163);
-                r.subject = subjectId;
-                r.choose(false);
+                r.choose(true);
                 vPhaseReport.addElement(r);
-
             } else {
-                Report r = new Report(3160);
-                r.subject = subjectId;
+                // Just a jam
                 r.choose(false);
                 vPhaseReport.addElement(r);
-
             }
-
         }
         return false;
     }

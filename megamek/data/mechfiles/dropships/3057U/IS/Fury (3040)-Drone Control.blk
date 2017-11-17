@@ -1,0 +1,161 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Fury
+</Name>
+
+<Model>
+(3040)-Drone Control
+</Model>
+
+<year>
+3040
+</year>
+
+<originalBuildYear>
+3040
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+infantrybay:4.0:1:2:Foot
+1stclassquarters:20.0:0
+2ndclassquarters:0.0:0
+lightvehiclebay:8.0:1:1
+crewquarters:364.0:0
+cargobay:176.5:1
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+76
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+5600
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+142
+120
+120
+110
+</armor>
+
+<Nose Equipment>
+(B) Medium Laser
+Medium Laser
+(B) ISERPPC
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+(B) Medium Laser
+Medium Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+(B) Medium Laser
+Medium Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+(B) Autocannon/10
+IS Ammo AC/10:20
+Communications Equipment (6 ton)
+</Aft Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<source>
+TRO 3057r - Clan Invasion
+</source>
+
+<tonnage>
+1900.0
+</tonnage>
+
+<crew>
+206
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

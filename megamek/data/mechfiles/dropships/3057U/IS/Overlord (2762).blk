@@ -1,0 +1,187 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Overlord
+</Name>
+
+<Model>
+(2762)
+</Model>
+
+<Tonnage>
+9700
+</Tonnage>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<Armor>
+220
+210
+210
+150
+</Armor>
+
+<Nose Equipment>
+ISPPC
+ISPPC
+ISAC20
+ISAC20
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC5
+ISAC5
+ISAC5 Ammo
+ISAC5 Ammo
+ISMediumLaser
+ISMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISPPC
+ISAC5
+ISAC5 Ammo
+ISAC5 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+(R) ISPPC
+(R) ISLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISPPC
+ISAC5
+ISAC5 Ammo
+ISAC5 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+(R) ISPPC
+(R) ISLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISAC5
+ISAC5
+ISAC5 Ammo
+ISAC5 Ammo
+ISAC5 Ammo
+ISAC5 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+18
+</structural_integrity>
+
+<heatsinks>
+120
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+9180
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2762
+</year>
+
+<source>
+TRO 3057r - Star League
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<designtype>
+1
+</designtype>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+MechBay:36:6
+ASFBay:6:2
+CargoBay:132:1
+</transporters>
+
+<escape_pod>
+3
+</escape_pod>
+
+<life_boat>
+3
+</life_boat>
+
+<crew>
+127
+</crew>
+
+<passengers>
+0
+</passengers>

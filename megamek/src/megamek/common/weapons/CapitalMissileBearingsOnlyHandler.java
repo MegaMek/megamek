@@ -104,7 +104,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      */
     @Override
     public boolean cares(IGame.Phase phase) {
-        if ((phase == IGame.Phase.PHASE_OFFBOARD)
+        if ((phase == IGame.Phase.PHASE_FIRING)
                 || (phase == IGame.Phase.PHASE_TARGETING)) {
             return true;
         }
@@ -176,12 +176,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             aaa.turnsTilHit--;
             return true;
         }
-        Entity entityTarget;
-        if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+        Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
+                .getTarget(game) : null;
+        if (game.getPhase() == IGame.Phase.PHASE_FIRING && entityTarget == null) {
             convertHexTargetToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game) : null;
-        } else {
+        } else {            
             entityTarget = (Entity) target;
         }
 
@@ -455,17 +456,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 if (tc.distance(a.getPosition()) <= 20) {
                     detected.add(a);
                 }
-                if (tc.distance(a.getPosition()) <= 12) {
-                    toHit.addModifier(1, "target closer than range setting");
-                }
             }
         } else if (detRangeMedium) {
             for (Aero a : targets) {
                 if (tc.distance(a.getPosition()) <= 12) {
                     detected.add(a);
-                }
-                if (tc.distance(a.getPosition()) <= 6) {
-                    toHit.addModifier(1, "target closer than range setting");
                 }
             }
         } else if (detRangeShort) {
@@ -566,12 +561,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             aaa.setTargetType(target.getTargetType());
             
             //Now that we have a ship target, set up the to-hit modifiers
+            toHit = new ToHitData(4, "Base");
             int range = tc.distance(target.getPosition());
             if (range > 20 && range <= 25) {
                 toHit.addModifier(6, "extreme range");
             } else if (range > 12 && range <= 20) {
                 toHit.addModifier(4, "long range");
-            } else if (range > 12 && range <= 20) {
+            } else if (range > 6 && range <= 12) {
                 toHit.addModifier(2, "medium range");
             } else if (range <= 6) {
                 toHit.addModifier(0, "short range");

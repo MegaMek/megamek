@@ -13814,7 +13814,11 @@ public class Server implements Runnable {
             
             if (waa instanceof ArtilleryAttackAction) {
                 Entity target;
+                ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
                 if (wh instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (aaa.turnsTilHit > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
+                        continue;
+                    }
                     //For Bearings-only Capital Missiles
                     target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                             .getTarget(game) : null;

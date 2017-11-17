@@ -68,6 +68,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             r.choose(false);
             vPhaseReport.addElement(r);
             vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+            return true;
         }
         return false;
     }

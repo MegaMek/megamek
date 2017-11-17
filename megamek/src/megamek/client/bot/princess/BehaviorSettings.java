@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.util.StringUtil;
 import org.w3c.dom.Document;
@@ -33,7 +34,7 @@ import java.util.Set;
  */
 public class BehaviorSettings {
 
-    protected static final double[] SELF_PRESERVATION_VALUES = new double[]{
+    static final double[] SELF_PRESERVATION_VALUES = {
             2.5,
             5,
             7.5,
@@ -45,7 +46,7 @@ public class BehaviorSettings {
             22.5,
             25,
             30};
-    protected static final int[] FALL_SHAME_VALUES = new int[]{
+    static final int[] FALL_SHAME_VALUES = {
             10,
             20,
             40,
@@ -57,7 +58,7 @@ public class BehaviorSettings {
             160,
             180,
             200};
-    protected static final double[] BRAVERY = new double[]{
+    protected static final double[] BRAVERY = {
             0.1,
             0.3,
             0.6,
@@ -69,7 +70,7 @@ public class BehaviorSettings {
             2.4,
             2.7,
             3.0};
-    protected static final double[] HYPER_AGGRESSION_VALUES = new double[]{
+    static final double[] HYPER_AGGRESSION_VALUES = {
             0.25,
             0.5,
             1,
@@ -81,7 +82,7 @@ public class BehaviorSettings {
             4,
             4.5,
             5};
-    protected static final double[] HERD_MENTALITY_VALUES = new double[]{
+    static final double[] HERD_MENTALITY_VALUES = {
             0.1,
             0.2,
             0.4,
@@ -108,13 +109,14 @@ public class BehaviorSettings {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
+    private LogLevel verbosity = LogLevel.WARNING; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
 
     private MMLogger logger = null;
 
     public BehaviorSettings() {
     }
 
-    public BehaviorSettings(Element behavior) throws PrincessException {
+    public BehaviorSettings(final Element behavior) throws PrincessException {
         fromXml(behavior);
     }
 
@@ -130,7 +132,7 @@ public class BehaviorSettings {
     }
 
     public BehaviorSettings getCopy() throws PrincessException {
-        BehaviorSettings copy = new BehaviorSettings();
+        final BehaviorSettings copy = new BehaviorSettings();
         copy.setHomeEdge(getHomeEdge());
         copy.setForcedWithdrawal(isForcedWithdrawal());
         copy.setAutoFlee(shouldAutoFlee());
@@ -141,13 +143,28 @@ public class BehaviorSettings {
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
         copy.setHyperAggressionIndex(getHyperAggressionIndex());
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
-        for (String t : getStrategicBuildingTargets()) {
+        copy.setVerbosity(getVerbosity());
+        for (final String t : getStrategicBuildingTargets()) {
             copy.addStrategicTarget(t);
         }
-        for (Integer p : getPriorityUnitTargets()) {
+        for (final Integer p : getPriorityUnitTargets()) {
             copy.addPriorityUnit(p);
         }
         return copy;
+    }
+
+    /**
+     * The verbosity of Princess chat messages.  This is separate from the megameklog.txt logging level.
+     */
+    public LogLevel getVerbosity() {
+        return verbosity;
+    }
+
+    /**
+     * The verbosity of Princess chat messages.  This is separate from the megameklog.txt logging level.
+     */
+    public void setVerbosity(final LogLevel verbosity) {
+        this.verbosity = verbosity;
     }
 
     /**
@@ -160,7 +177,7 @@ public class BehaviorSettings {
     /**
      * @param goHome Set TRUE if I should immediately proceed to my home board edge.
      */
-    public void setGoHome(boolean goHome) {
+    public void setGoHome(final boolean goHome) {
         this.goHome = goHome;
     }
 
@@ -175,7 +192,7 @@ public class BehaviorSettings {
      * @param autoFlee Set TRUE if I should flee off the board even if I am not crippled or Forced Withdrawal is not in
      *                 effect.
      */
-    public void setAutoFlee(boolean autoFlee) {
+    public void setAutoFlee(final boolean autoFlee) {
         this.autoFlee = autoFlee;
     }
 
@@ -193,7 +210,7 @@ public class BehaviorSettings {
      *
      * @param description The name to be used.
      */
-    public void setDescription(String description) throws PrincessException {
+    public void setDescription(final String description) throws PrincessException {
         if (StringUtil.isNullOrEmpty(description)) {
             throw new PrincessException("Description is required!");
         }
@@ -214,7 +231,7 @@ public class BehaviorSettings {
      *
      * @param target The target to be added.
      */
-    public void addStrategicTarget(String target) {
+    public void addStrategicTarget(final String target) {
         if (StringUtil.isNullOrEmpty(target)) {
             return;
         }
@@ -226,7 +243,7 @@ public class BehaviorSettings {
      *
      * @param target The target to be removed.
      */
-    public void removeStrategicTarget(String target) {
+    void removeStrategicTarget(final String target) {
         strategicBuildingTargets.remove(target);
     }
 
@@ -242,7 +259,7 @@ public class BehaviorSettings {
      *
      * @param id The ID of the unit to be added.
      */
-    public void addPriorityUnit(int id) {
+    public void addPriorityUnit(final int id) {
         priorityUnitTargets.add(id);
     }
 
@@ -251,7 +268,7 @@ public class BehaviorSettings {
      *
      * @param id The ID of the unit to be added.
      */
-    public void addPriorityUnit(String id) {
+    public void addPriorityUnit(final String id) {
         if (!StringUtil.isPositiveInteger(id)) {
             return;
         }
@@ -263,7 +280,7 @@ public class BehaviorSettings {
      *
      * @param id The ID of the unit to be removed.
      */
-    public void removePriorityUnit(int id) {
+    void removePriorityUnit(final int id) {
         priorityUnitTargets.remove(id);
     }
 
@@ -272,7 +289,7 @@ public class BehaviorSettings {
      *
      * @param id The ID of the unit to be removed.
      */
-    public void removePriorityUnit(String id) {
+    void removePriorityUnit(final String id) {
         if (!StringUtil.isPositiveInteger(id)) {
             return;
         }
@@ -293,7 +310,7 @@ public class BehaviorSettings {
      *
      * @param forcedWithdrawal Should Princess follow the Forced Withdrawal rules?
      */
-    public void setForcedWithdrawal(boolean forcedWithdrawal) {
+    public void setForcedWithdrawal(final boolean forcedWithdrawal) {
         this.forcedWithdrawal = forcedWithdrawal;
     }
 
@@ -302,14 +319,14 @@ public class BehaviorSettings {
      *
      * @param forcedWithdrawal Should Princess follow the Forced Withdrawal rules?
      */
-    public void setForcedWithdrawal(String forcedWithdrawal) {
+    public void setForcedWithdrawal(final String forcedWithdrawal) {
         setForcedWithdrawal("true".equalsIgnoreCase(forcedWithdrawal));
     }
 
-    private int validateIndex(int index) {
-        if (index < 0) {
+    private int validateIndex(final int index) {
+        if (0 > index) {
             return 0;
-        } else if (index > 10) {
+        } else if (10 < index) {
             return 10;
         }
         return index;
@@ -329,7 +346,7 @@ public class BehaviorSettings {
      *
      * @return Bravery modifier value.
      */
-    public double getBraveryValue() {
+    double getBraveryValue() {
         return getBraveryValue(braveryIndex);
     }
 
@@ -339,7 +356,7 @@ public class BehaviorSettings {
      * @param index The index of the Bravery modifier to retrieve.
      * @return Bravery modifier value at given index.
      */
-    public double getBraveryValue(int index) {
+    protected double getBraveryValue(final int index) {
         return BRAVERY[validateIndex(index)];
     }
 
@@ -348,7 +365,7 @@ public class BehaviorSettings {
      *
      * @param index The index of the Bravery modifier to be used.
      */
-    public void setBraveryIndex(int index) {
+    public void setBraveryIndex(final int index) {
         braveryIndex = validateIndex(index);
     }
 
@@ -357,10 +374,10 @@ public class BehaviorSettings {
      *
      * @param index The index of the Bravery modifier to be used.
      */
-    public void setBraveryIndex(String index) throws PrincessException {
+    public void setBraveryIndex(final String index) throws PrincessException {
         try {
             setBraveryIndex(Integer.parseInt(index));
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
     }
@@ -375,7 +392,7 @@ public class BehaviorSettings {
     /**
      * @return How much do I want to avoid failed Piloting Rolls?
      */
-    public int getFallShameValue() {
+    int getFallShameValue() {
         return getFallShameValue(getFallShameIndex());
     }
 
@@ -384,24 +401,24 @@ public class BehaviorSettings {
      * @return The value at the given index.  Indexes less than 0 are treated as 0 and indexes greater than 10 are
      *         treated as 10.
      */
-    public int getFallShameValue(int index) {
+    protected int getFallShameValue(final int index) {
         return FALL_SHAME_VALUES[validateIndex(index)];
     }
 
     /**
      * @param index The index of my current {@link #FALL_SHAME_VALUES}.
      */
-    public void setFallShameIndex(int index) {
+    public void setFallShameIndex(final int index) {
         this.fallShameIndex = validateIndex(index);
     }
 
     /**
      * @param index The index of my current {@link #FALL_SHAME_VALUES}.
      */
-    public void setFallShameIndex(String index) throws PrincessException {
+    public void setFallShameIndex(final String index) throws PrincessException {
         try {
             setFallShameIndex(Integer.parseInt(index));
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
     }
@@ -420,7 +437,7 @@ public class BehaviorSettings {
      *
      * @return Current herd mentality value.
      */
-    public double getHerdMentalityValue() {
+    double getHerdMentalityValue() {
         return getHerdMentalityValue(herdMentalityIndex);
     }
 
@@ -430,7 +447,7 @@ public class BehaviorSettings {
      * @param index The index [0-10] of the herd mentality value that should be used.
      * @return The herd mentality value at the specified index.
      */
-    public double getHerdMentalityValue(int index) {
+    protected double getHerdMentalityValue(final int index) {
         return HERD_MENTALITY_VALUES[validateIndex(index)];
     }
 
@@ -439,7 +456,7 @@ public class BehaviorSettings {
      *
      * @param herdMentalityIndex The index [0-10] of the herd mentality that should be used.
      */
-    public void setHerdMentalityIndex(int herdMentalityIndex) {
+    public void setHerdMentalityIndex(final int herdMentalityIndex) {
         this.herdMentalityIndex = validateIndex(herdMentalityIndex);
     }
 
@@ -448,10 +465,10 @@ public class BehaviorSettings {
      *
      * @param index The index ["0"-"10"] of the herd mentality value that should be used.
      */
-    public void setHerdMentalityIndex(String index) throws PrincessException {
+    public void setHerdMentalityIndex(final String index) throws PrincessException {
         try {
             setHerdMentalityIndex(Integer.parseInt(index));
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
     }
@@ -470,8 +487,8 @@ public class BehaviorSettings {
      *
      * @param homeEdge The {@link HomeEdge} princess should flee to.
      */
-    public void setHomeEdge(HomeEdge homeEdge) {
-        if (homeEdge == null)
+    public void setHomeEdge(final HomeEdge homeEdge) {
+        if (null == homeEdge)
             return;
 
         this.homeEdge = homeEdge;
@@ -482,7 +499,7 @@ public class BehaviorSettings {
      *
      * @param homeEdge the index of the {@link HomeEdge} princess should flee to.  See {@link HomeEdge#getIndex()}
      */
-    public void setHomeEdge(int homeEdge) {
+    public void setHomeEdge(final int homeEdge) {
         setHomeEdge(HomeEdge.getHomeEdge(homeEdge));
     }
 
@@ -491,10 +508,10 @@ public class BehaviorSettings {
      *
      * @param homeEdge the index of the {@link HomeEdge} princess should flee to.  See {@link HomeEdge#getIndex()}
      */
-    public void setHomeEdge(String homeEdge) throws PrincessException {
+    public void setHomeEdge(final String homeEdge) throws PrincessException {
         try {
             setHomeEdge(Integer.parseInt(homeEdge.trim()));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new PrincessException("Invalid homeEdge value.", e);
         }
     }
@@ -513,7 +530,7 @@ public class BehaviorSettings {
      *
      * @return Current hyper aggression value.
      */
-    public double getHyperAggressionValue() {
+    double getHyperAggressionValue() {
         return getHyperAggressionValue(hyperAggressionIndex);
     }
 
@@ -523,7 +540,7 @@ public class BehaviorSettings {
      * @param index The index[0-10] of the hyper aggression value desired.
      * @return The hyper aggression value at the given index.
      */
-    public double getHyperAggressionValue(int index) {
+    protected double getHyperAggressionValue(final int index) {
         return HYPER_AGGRESSION_VALUES[validateIndex(index)];
     }
 
@@ -532,7 +549,7 @@ public class BehaviorSettings {
      *
      * @param hyperAggressionIndex The index [0-10] of the hyper aggression value to be used.
      */
-    public void setHyperAggressionIndex(int hyperAggressionIndex) {
+    public void setHyperAggressionIndex(final int hyperAggressionIndex) {
         this.hyperAggressionIndex = validateIndex(hyperAggressionIndex);
     }
 
@@ -541,10 +558,10 @@ public class BehaviorSettings {
      *
      * @param index The index ["0"-"10"] of the hyper aggression value to be used.
      */
-    public void setHyperAggressionIndex(String index) throws PrincessException {
+    public void setHyperAggressionIndex(final String index) throws PrincessException {
         try {
             setHyperAggressionIndex(Integer.parseInt(index));
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
     }
@@ -574,9 +591,9 @@ public class BehaviorSettings {
      * @return The self preservation value at the specified index.
      */
     public double getSelfPreservationValue(int index) {
-        if (index < 0) {
+        if (0 > index) {
             index = 0;
-        } else if (index > 10) {
+        } else if (10 < index) {
             index = 10;
         }
         return SELF_PRESERVATION_VALUES[index];
@@ -587,7 +604,7 @@ public class BehaviorSettings {
      *
      * @param selfPreservationIndex The index [0-10] of the self preservation value to be used.
      */
-    public void setSelfPreservationIndex(int selfPreservationIndex) {
+    public void setSelfPreservationIndex(final int selfPreservationIndex) {
         this.selfPreservationIndex = validateIndex(selfPreservationIndex);
     }
 
@@ -596,10 +613,10 @@ public class BehaviorSettings {
      *
      * @param index The index ["0"-"10"] of the self preservation value to be used.
      */
-    public void setSelfPreservationIndex(String index) throws PrincessException {
+    public void setSelfPreservationIndex(final String index) throws PrincessException {
         try {
             setSelfPreservationIndex(Integer.parseInt(index));
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             throw new PrincessException(ex);
         }
     }
@@ -610,10 +627,11 @@ public class BehaviorSettings {
      * @param behavior The XML element containing the behavior parameters.
      * @return TRUE if the XML was successfully parsed.
      */
-    public boolean fromXml(Element behavior) throws PrincessException {
-        NodeList children = behavior.getChildNodes();
+    @SuppressWarnings("UnusedReturnValue")
+    boolean fromXml(final Element behavior) throws PrincessException {
+        final NodeList children = behavior.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
+            final Node child = children.item(i);
             if ("name".equalsIgnoreCase(child.getNodeName())) {
                 setDescription(child.getTextContent());
             } else if ("forcedWithdrawal".equalsIgnoreCase(child.getNodeName())) {
@@ -634,10 +652,12 @@ public class BehaviorSettings {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
                 setBraveryIndex(child.getTextContent());
+            } else if ("verbosity".equalsIgnoreCase(child.getNodeName())) {
+                setVerbosity(LogLevel.getLogLevel(child.getTextContent()));
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
-                NodeList targets = child.getChildNodes();
+                final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
-                    Node t = targets.item(j);
+                    final Node t = targets.item(j);
                     if ("target".equalsIgnoreCase(t.getNodeName())) {
                         addStrategicTarget(t.getTextContent());
                     }
@@ -662,61 +682,66 @@ public class BehaviorSettings {
      *
      * @return An XML {@link org.w3c.dom.Element} describing this behavior settings object.
      */
-    public Element toXml(Document doc, boolean includeTargets) {
+    Element toXml(final Document doc,
+                  final boolean includeTargets) {
         final String METHOD_NAME = "toXml(Document, boolean)";
         
         try {
-            Element behavior = doc.createElement("behavior");
+            final Element behavior = doc.createElement("behavior");
 
-            Element nameNode = doc.createElement("name");
+            final Element nameNode = doc.createElement("name");
             nameNode.setTextContent(StringUtil.makeXmlSafe(getDescription()));
             behavior.appendChild(nameNode);
 
-            Element homeEdgeNode = doc.createElement("homeEdge");
+            final Element homeEdgeNode = doc.createElement("homeEdge");
             homeEdgeNode.setTextContent("" + getHomeEdge().getIndex());
             behavior.appendChild(homeEdgeNode);
 
-            Element forcedWithdrawalNode = doc.createElement("forcedWithdrawal");
+            final Element forcedWithdrawalNode = doc.createElement("forcedWithdrawal");
             forcedWithdrawalNode.setTextContent("" + isForcedWithdrawal());
             behavior.appendChild(forcedWithdrawalNode);
 
-            Element goHomeNode = doc.createElement("goHome");
+            final Element goHomeNode = doc.createElement("goHome");
             goHomeNode.setTextContent("" + shouldGoHome());
             behavior.appendChild(goHomeNode);
 
-            Element autoFleeNode = doc.createElement("autoFlee");
+            final Element autoFleeNode = doc.createElement("autoFlee");
             autoFleeNode.setTextContent("" + shouldAutoFlee());
             behavior.appendChild(autoFleeNode);
 
-            Element fallShameNode = doc.createElement("fallShameIndex");
+            final Element fallShameNode = doc.createElement("fallShameIndex");
             fallShameNode.setTextContent("" + getFallShameIndex());
             behavior.appendChild(fallShameNode);
 
-            Element hyperAggressionNode = doc.createElement("hyperAggressionIndex");
+            final Element hyperAggressionNode = doc.createElement("hyperAggressionIndex");
             hyperAggressionNode.setTextContent("" + getHyperAggressionIndex());
             behavior.appendChild(hyperAggressionNode);
 
-            Element selfPreservationNode = doc.createElement("selfPreservationIndex");
+            final Element selfPreservationNode = doc.createElement("selfPreservationIndex");
             selfPreservationNode.setTextContent("" + getSelfPreservationIndex());
             behavior.appendChild(selfPreservationNode);
 
-            Element herdMentalityNode = doc.createElement("herdMentalityIndex");
+            final Element herdMentalityNode = doc.createElement("herdMentalityIndex");
             herdMentalityNode.setTextContent("" + getHerdMentalityIndex());
             behavior.appendChild(herdMentalityNode);
 
-            Element braveryNode = doc.createElement("braveryIndex");
+            final Element braveryNode = doc.createElement("braveryIndex");
             braveryNode.setTextContent("" + getBraveryIndex());
             behavior.appendChild(braveryNode);
 
-            Element targetsNode = doc.createElement("strategicBuildingTargets");
+            final Element verbosityNode = doc.createElement("verbosity");
+            verbosityNode.setTextContent(getVerbosity().toString());
+            behavior.appendChild(verbosityNode);
+
+            final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
-                for (String t : getStrategicBuildingTargets()) {
-                    Element targetElement = doc.createElement("target");
+                for (final String t : getStrategicBuildingTargets()) {
+                    final Element targetElement = doc.createElement("target");
                     targetElement.setTextContent(StringUtil.makeXmlSafe(t));
                     targetsNode.appendChild(targetElement);
                 }
-                for (int id : getPriorityUnitTargets()) {
-                    Element unitElement = doc.createElement("unit");
+                for (final int id : getPriorityUnitTargets()) {
+                    final Element unitElement = doc.createElement("unit");
                     unitElement.setTextContent(String.valueOf(id));
                     targetsNode.appendChild(unitElement);
                 }
@@ -724,7 +749,7 @@ public class BehaviorSettings {
             behavior.appendChild(targetsNode);
 
             return behavior;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             getLogger().log(getClass(), METHOD_NAME, e);
             
         }
@@ -736,32 +761,33 @@ public class BehaviorSettings {
      * @return A string log of these behavior settings.
      */
     public String toLog() {
-        String out = "Princess Behavior: " + getDescription();
-        out += "\n\tHome Edge: " + getHomeEdge().toString();
-        out += "\n\tForced Withdrawal: " + isForcedWithdrawal();
-        out += "\n\tSelf Preservation: " + getSelfPreservationIndex();
-        out += "\n\tHyper Aggression: " + getHyperAggressionIndex();
-        out += "\n\tFall Shame: " + getFallShameIndex();
-        out += "\n\tBravery: " + getBraveryIndex();
-        out += "\n\tHerd Mentality: " + getHerdMentalityIndex();
-        out += "\n\tTargets:";
-        out += "\n\t\tCoords: ";
-        for (String t : getStrategicBuildingTargets()) {
-            out += "  " + t;
+        final StringBuilder out = new StringBuilder("Princess Behavior: ").append(getDescription());
+        out.append("\n\tHome Edge: ").append(getHomeEdge());
+        out.append("\n\tForced Withdrawal: ").append(isForcedWithdrawal());
+        out.append("\n\tSelf Preservation: ").append(getSelfPreservationIndex());
+        out.append("\n\tHyper Aggression: ").append(getHyperAggressionIndex());
+        out.append("\n\tFall Shame: ").append(getFallShameIndex());
+        out.append("\n\tBravery: ").append(getBraveryIndex());
+        out.append("\n\tHerd Mentality: ").append(getHerdMentalityIndex());
+        out.append("\n\tVerbosity: ").append(getVerbosity());
+        out.append("\n\tTargets:");
+        out.append("\n\t\tCoords: ");
+        for (final String t : getStrategicBuildingTargets()) {
+            out.append("  ").append(t);
         }
-        out += "\n\t\tUnits:";
-        for (int id : getPriorityUnitTargets()) {
-            out += "  " + id;
+        out.append("\n\t\tUnits:");
+        for (final int id : getPriorityUnitTargets()) {
+            out.append("  ").append(id);
         }
-        return out;
+        return out.toString();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof BehaviorSettings)) return false;
 
-        BehaviorSettings that = (BehaviorSettings) o;
+        final BehaviorSettings that = (BehaviorSettings) o;
 
         if (autoFlee != that.autoFlee) return false;
         if (braveryIndex != that.braveryIndex) return false;
@@ -773,12 +799,13 @@ public class BehaviorSettings {
         if (selfPreservationIndex != that.selfPreservationIndex) return false;
         if (!description.equals(that.description)) return false;
         if (homeEdge != that.homeEdge) return false;
-        if (strategicBuildingTargets != null ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : that
-                                                                                                                         .strategicBuildingTargets != null) {
+        if (null != strategicBuildingTargets ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : null != that
+                .strategicBuildingTargets) {
             return false;
         }
-        if (priorityUnitTargets != null ? !priorityUnitTargets.equals(that.priorityUnitTargets) : that
-                                                                                                          .priorityUnitTargets != null) {
+        //noinspection RedundantIfStatement
+        if (null != priorityUnitTargets ? !priorityUnitTargets.equals(that.priorityUnitTargets) : null != that
+                .priorityUnitTargets) {
             return false;
         }
 
@@ -795,8 +822,8 @@ public class BehaviorSettings {
         result = 31 * result + fallShameIndex;
         result = 31 * result + hyperAggressionIndex;
         result = 31 * result + homeEdge.hashCode();
-        result = 31 * result + (strategicBuildingTargets != null ? strategicBuildingTargets.hashCode() : 0);
-        result = 31 * result + (priorityUnitTargets != null ? priorityUnitTargets.hashCode() : 0);
+        result = 31 * result + (null != strategicBuildingTargets ? strategicBuildingTargets.hashCode() : 0);
+        result = 31 * result + (null != priorityUnitTargets ? priorityUnitTargets.hashCode() : 0);
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
         return result;

@@ -19,8 +19,6 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -66,49 +64,10 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
         int jamLevel = 4;
         if (kindRapidFire) {
             jamLevel = 2;
         }
-        if (atype.getMunitionType() == AmmoType.M_CASELESS) {
-            if ((roll <= jamLevel) && (howManyShots == 2) && !(ae instanceof Infantry)) {
-                if (roll > 2 || kindRapidFire) {
-                    Report r = new Report(3161);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                    weapon.setJammed(true);
-                } else {
-                    if ((roll <= 2) && !(ae instanceof Infantry)) {
-                        int caselesscrit = Compute.d6(2);
-
-                        bMissed = true;
-                        weapon.setJammed(true);
-
-                        if (caselesscrit >= 8) {
-                            weapon.setDestroyed(true);
-                            Report r = new Report(3163);
-                            r.subject = subjectId;
-                            r.choose(false);
-                            vPhaseReport.addElement(r);
-
-                        } else {
-                            Report r = new Report(3160);
-                            r.subject = subjectId;
-                            r.choose(false);
-                            vPhaseReport.addElement(r);
-
-                        }
-
-                    }
-                    return false;
-                }
-            return false;        
-            }
-        }
-
         if ((roll <= jamLevel) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             if (roll > 2 || kindRapidFire) {
                 Report r = new Report(3161);

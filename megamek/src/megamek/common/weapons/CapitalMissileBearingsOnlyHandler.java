@@ -180,7 +180,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                 .getTarget(game) : null;
         if (game.getPhase() == IGame.Phase.PHASE_FIRING && entityTarget == null) {
-            convertHexTargetToEntityTarget();
+            convertHexTargetToEntityTarget(vPhaseReport);
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game) : null;
         } else {            
@@ -393,7 +393,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * within the preset range band. If none are found, it targets the closest
      * small craft. 
      */
-    public void convertHexTargetToEntityTarget() {
+    public void convertHexTargetToEntityTarget(Vector<Report> vPhaseReport) {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
@@ -417,6 +417,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             //We're not dealing with targets in arc or in range yet.
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no valid targets in play");
+            Report r = new Report (3123);
+            r.subject = subjectId;
+            r.add(target.getDisplayName(), true);
+            vPhaseReport.addElement(r);
             return;
         }
 
@@ -434,6 +438,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets detected within the missile's nose arc");
+            Report r = new Report (3123);
+            r.subject = subjectId;
+            r.add(target.getDisplayName(), true);
+            vPhaseReport.addElement(r);
             return;
         }
         //Empty out the targets vector and only put valid targets in arc back in
@@ -473,6 +481,10 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets detected within the missile's detection range");
+            Report r = new Report (3123);
+            r.subject = subjectId;
+            r.add(target.getDisplayName(), true);
+            vPhaseReport.addElement(r);
             return;
         }
         //Empty out the targets vector and only put valid targets in range back in

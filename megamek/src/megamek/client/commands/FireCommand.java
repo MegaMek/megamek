@@ -300,8 +300,8 @@ public class FireCommand extends ClientCommand {
                                 || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Long Detection Range"))
                                 || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Medium Detection Range"))
                                 || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Short Detection Range")))) {
-            str += " Can't shoot: "
-                   + Messages.getString("Weapon in bearings-only mode must be fired in targeting phase.");
+                str += " Can't shoot: "
+                        + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else if (toHit.getValue() > 12) {

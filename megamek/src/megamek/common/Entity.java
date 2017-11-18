@@ -3668,13 +3668,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return false;
             }
 
-            // Artillery or Bearings-only missiles only in the correct phase...
+            // Artillery or Bearings-only missiles only in the targeting phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
                     || mounted.curMode().equals("Bearings-Only Extreme Detection Range")
                     || mounted.curMode().equals("Bearings-Only Long Detection Range")
                     || mounted.curMode().equals("Bearings-Only Medium Detection Range")
                     || mounted.curMode().equals("Bearings-Only Short Detection Range"))
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                return false;
+            }
+            // No Bearings-only missiles in the firing phase
+            if ((mounted.curMode().equals("Bearings-Only Extreme Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Short Detection Range"))
+                && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
                 return false;
             }
 

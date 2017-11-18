@@ -2282,7 +2282,6 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS,F_LC)
                 .setProductionFactions(F_FS),"208,TM"));
         
-        //TODO - Implement for play
 		munitions.add(new MunitionMutator("Caseless", 1 , M_CASELESS,
 		        new TechAdvancement(TECH_BASE_ALL)
 		        .setIntroLevel(false)
@@ -2421,7 +2420,6 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(false, false, false,false, false)
                 .setProductionFactions(F_CJF),"208,TM"));
         
-        //TODO - Implement for play
         munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
                 new TechAdvancement(TECH_BASE_ALL)
                 .setIntroLevel(false)

@@ -54,21 +54,18 @@ public class ACCaselessHandler extends ACWeaponHandler {
             Report r = new Report(3164);
             r.subject = subjectId;
             r.add(caselesscrit);
-            bMissed = true;
 
             if (caselesscrit >= 8) {
-                // Round explodes destroying things
+                // Round explodes destroying weapon
                 weapon.setDestroyed(true);
                 r.choose(false);
-                vPhaseReport.addElement(r);
-                return true;
             } else {
                 // Just a jam
                 weapon.setJammed(true);
                 r.choose(true);
-                vPhaseReport.addElement(r);
-                return true;
             }
+            vPhaseReport.addElement(r);
+            return true;
         }
         return false;
     }

@@ -73,7 +73,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
      * @param methodName Name of the method logging is coming from
      * @param message Message to log
      */
-    @SuppressWarnings("unused")
     private void logDebug(String methodName, String message) {
         getLogger().log(getClass(), methodName, LogLevel.DEBUG, message);
     }

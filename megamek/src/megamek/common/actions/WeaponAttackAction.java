@@ -420,7 +420,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             for (int wId : weapon.getBayWeapons()) {
                 Mounted bayW = ae.getEquipment(wId);
                 Mounted bayWAmmo = bayW.getLinked();
-                AmmoType bAmmo = (AmmoType) bayWAmmo.getType();
+                AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                         && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
@@ -429,7 +429,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 bArtemisV = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                         && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
                         && !isECMAffected && !bMekTankStealthActive && (atype != null)
-                        && (bAmmo.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+                        && (bAmmo != null) && (bAmmo.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
             }
         }
         

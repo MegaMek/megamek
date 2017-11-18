@@ -39,8 +39,8 @@ public class ISBALRM5OS extends LRMWeapon {
         heat = 2;
         rackSize = 5;
         minimumRange = 6;
-        tonnage = 2.5;
-        criticals = 1;
+        tonnage = .2;
+        criticals = 5;
         bv = 9;
         cost = 18000;
         tonnage = .3;

@@ -219,7 +219,6 @@ public class AbstractPathFinder<N, C, E> {
 
     private StopConditionsAlternation<E> stopCondition = new StopConditionsAlternation<>();
 
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AbstractPathFinder";
     private MMLogger logger;
     private MMLogger getLogger() {
         return logger == null ? logger = DefaultMmLogger.getInstance() : logger;

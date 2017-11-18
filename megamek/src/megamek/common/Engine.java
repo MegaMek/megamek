@@ -643,13 +643,7 @@ public class Engine implements Serializable, ITechnology {
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
-                // Industrial Mechs with these engines don't generate heat 
-                if (e.getStructureType() 
-                        == EquipmentType.T_STRUCTURE_INDUSTRIAL){
-                    return 0;
-                } else {
-                    return 1;
-                }
+                return 0;
             case XXL_ENGINE:
                 return 4;
             default:
@@ -661,13 +655,7 @@ public class Engine implements Serializable, ITechnology {
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
-                // Industrial Mechs with these engines don't generate heat 
-                if (e.getStructureType() 
-                        == EquipmentType.T_STRUCTURE_INDUSTRIAL){
-                    return 0;
-                } else {
-                    return 2;
-                }
+                return 0;
             case XXL_ENGINE:
                 return 6;
             default:

@@ -35,7 +35,8 @@ import java.util.List;
  * @since 11/9/13 8:41 AM
  */
 public class AddBotUtil {
-    private final List<String> results = new ArrayList<String>();
+
+    private final List<String> results = new ArrayList<>();
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = "Replaces a player who is a ghost with a bot." +
             "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +
@@ -50,69 +51,73 @@ public class AddBotUtil {
             "or '-v' parameters are also used.";
 
     private String concatResults() {
-        StringBuilder output = new StringBuilder();
-        for (String r : results) {
+        final StringBuilder output = new StringBuilder();
+        for (final String r : results) {
             output.append(r).append("\n");
         }
         return output.toString();
     }
 
-    public String addBot(String[] args, IGame game, String host, int port) {
-        if (args.length < 2) {
+    public String addBot(final String[] args,
+                         final IGame game,
+                         final String host,
+                         final int port) {
+        if (2 > args.length) {
             results.add(USAGE);
             return concatResults();
         }
 
-        String botName = "TestBot";
-        String configName = "";
-        String playerName = "";
+        StringBuilder botName = new StringBuilder("TestBot");
+        StringBuilder configName = new StringBuilder();
+        StringBuilder playerName = new StringBuilder();
         LogLevel verbosity = null;
 
-        if (args.length == 2) {
-            playerName = args[1];
+        if (2 == args.length) {
+            playerName = new StringBuilder(args[1]);
         }
 
         boolean parsingBot = false;
         boolean parsingConfig = false;
         boolean parsingPlayer = false;
-        StringBuilder fullLine = new StringBuilder(args[0]);
+        final StringBuilder fullLine = new StringBuilder(args[0]);
         for (int i = 1; i < args.length; i++) {
             fullLine.append(" ").append(args[i]);
         }
-        String[] splitArgs = fullLine.toString().split("-");
-        for (String arg : splitArgs) {
+        final String[] splitArgs = fullLine.toString().split("-");
+        for (final String arg : splitArgs) {
             if (arg.toLowerCase().startsWith("b:")) {
-                botName = arg.replaceFirst("b:", "").split(" ")[0].trim();
+                botName = new StringBuilder(arg.replaceFirst("b:", "").split(" ")[0].trim());
                 parsingBot = true;
                 parsingConfig = false;
                 parsingPlayer = false;
             } else if (arg.toLowerCase().startsWith("c:")) {
-                configName = arg.replaceFirst("c:", "").trim();
+                configName = new StringBuilder(arg.replaceFirst("c:", "").trim());
                 parsingBot = false;
                 parsingConfig = true;
                 parsingPlayer = false;
             } else if (arg.toLowerCase().startsWith("p:")) {
-                playerName = arg.replaceFirst("p:", "").trim();
+                playerName = new StringBuilder(arg.replaceFirst("p:", "").trim());
                 parsingBot = false;
                 parsingConfig = false;
                 parsingPlayer = true;
             } else if (arg.toLowerCase().startsWith("v:")) {
-                String verbose = arg.replaceFirst("v:", "").trim();
+                final String verbose = arg.replaceFirst("v:", "").trim();
                 verbosity = LogLevel.getLogLevel(verbose);
-                if (verbosity == null) {
-                    results.add("Invalid Verbosity: '" + verbose + "'.  Defaulting to ERROR.");
-                    verbosity = LogLevel.ERROR;
+                if (null == verbosity) {
+                    results.add("Invalid Verbosity: '" + verbose + "'.  " +
+                                "Defaulting to " + LogLevel.WARNING + ".");
+                    verbosity = LogLevel.WARNING;
                 }
-                results.add("Verbosity set to '" + verbosity.toString() + "'.");
+                results.add("Verbosity set to '" + verbosity + "'.");
                 parsingBot = false;
                 parsingConfig = false;
                 parsingPlayer = false;
             } else if (parsingBot) {
-                botName += "-" + arg;
+                botName.append("-").append(arg);
             } else if (parsingConfig) {
-                configName += "-" + arg;
+                configName.append("-").append(arg);
             } else if (parsingPlayer) {
-                playerName += "-" + arg;
+                playerName.append("-").append(arg);
             }
         }
 
@@ -122,34 +127,38 @@ public class AddBotUtil {
             argLine = argLine.replaceFirst("-b:" + botName, "");
             argLine = argLine.replaceFirst("-c:" + configName, "");
             argLine = argLine.replaceFirst("-v:" + verbosity, "");
-            playerName = argLine.trim();
+            playerName = new StringBuilder(argLine.trim());
         }
 
         IPlayer target = null;
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            IPlayer player = i.nextElement();
-            if (player.getName().equals(playerName)) {
+        for (final Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
+            final IPlayer player = i.nextElement();
+            if (player.getName().equals(playerName.toString())) {
                 target = player;
             }
         }
 
-        if (target == null) {
+        if (null == target) {
             results.add("No player with the name '" + playerName + "'.");
             return concatResults();
         }
-        int playerId = target.getId();
+        final int playerId = target.getId();
 
         if (!target.isGhost()) {
             results.add("Player " + target.getName() + " is not a ghost.");
             return concatResults();
         }
 
-        BotClient botClient;
-        if ("Princess".equalsIgnoreCase(botName)) {
+        final BotClient botClient;
+        if ("Princess".equalsIgnoreCase(botName.toString())) {
             botClient = makeNewPrincessClient(target, verbosity, host, port);
             if (!StringUtil.isNullOrEmpty(configName)) {
-                BehaviorSettings behavior = BehaviorSettingsFactory.getInstance().getBehavior(configName);
-                if (behavior != null) {
+                final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
+                                                                         .getBehavior(configName.toString());
+                if (null != behavior) {
+                    if (null != verbosity) {
+                        behavior.setVerbosity(verbosity);
+                    }
                     ((Princess) botClient).setBehaviorSettings(behavior);
                 } else {
                     results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");
@@ -158,23 +167,23 @@ public class AddBotUtil {
             } else {
                 ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
             }
-        } else if ("TestBot".equalsIgnoreCase(botName)) {
+        } else if ("TestBot".equalsIgnoreCase(botName.toString())) {
             botClient = makeNewTestBotClient(target, host, port);
         } else {
             results.add("Unrecognized bot: '" + botName + "'.  Defaulting to TestBot.");
-            botName = "TestBot";
+            botName = new StringBuilder("TestBot");
             botClient = makeNewTestBotClient(target, host, port);
         }
         botClient.getGame().addGameListener(new BotGUI(botClient));
         try {
             botClient.connect();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             results.add(botName + " failed to connect.");
             return concatResults();
         }
         botClient.setLocalPlayerNumber(playerId);
 
-        StringBuilder result = new StringBuilder(botName);
+        final StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");
         if (botClient instanceof Princess) {
             result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription()).append
@@ -185,11 +194,16 @@ public class AddBotUtil {
         return concatResults();
     }
 
-    protected BotClient makeNewPrincessClient(IPlayer target, LogLevel verbosity, String host, int port) {
-        return new Princess(target.getName(), host, port, (verbosity == null ? LogLevel.WARNING : verbosity));
+    BotClient makeNewPrincessClient(final IPlayer target,
+                                    final LogLevel verbosity,
+                                    final String host,
+                                    final int port) {
+        return new Princess(target.getName(), host, port, (null == verbosity ? LogLevel.WARNING : verbosity));
     }
 
-    protected BotClient makeNewTestBotClient(IPlayer target, String host, int port) {
+    BotClient makeNewTestBotClient(final IPlayer target,
+                                   final String host,
+                                   final int port) {
         return new TestBot(target.getName(), host, port);
     }
 }

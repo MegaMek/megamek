@@ -84,6 +84,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     public static final String ADVANCED_SHOW_COORDS = "AdvancedShowCoords";
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
+    public static final String ADVANCED_ARMORMINI_UNITS_PER_BLOCK = "AdvancedArmorMiniUnitsPerBlock";
+    public static final String ADVANCED_ARMORMINI_ARMOR_CHAR = "AdvancedArmorMiniArmorChar";
+    public static final String ADVANCED_ARMORMINI_IS_CHAR = "AdvancedArmorMiniISChar";
+    public static final String ADVANCED_ARMORMINI_DESTROYED_CHAR = "AdvancedArmorMiniDestroyedChar";
+    public static final String ADVANCED_ARMORMINI_COLOR_INTACT = "AdvancedArmorMiniColorIntact";
+    public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
+    public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
+    public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     /* --End advanced settings-- */
 
 
@@ -171,6 +179,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_FIELD_OF_FIRE = "ShowFieldOfFire";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
+    public static final String SHOW_ARMOR_MINIVIS_TT = "showArmorMiniVisTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
     public static final String SHOW_WRECKS = "ShowWrecks";
     public static final String SOUND_BING_FILENAME = "SoundBingFilename";
@@ -236,6 +245,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
+        setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
+        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2588");     // █
+        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u2593");       //  ▓
+        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2327");
+        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(0, 0, 0)); // HTML hex #008000
+        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
+        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
+        setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
@@ -342,6 +359,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(SHOW_WPS_IN_TT, false);
+        store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
@@ -697,6 +715,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getShowWpsinTT() {
         return store.getBoolean(SHOW_WPS_IN_TT);
+    }
+
+    public boolean getshowArmorMiniVisTT() {
+        return store.getBoolean(SHOW_ARMOR_MINIVIS_TT);
     }
 
     public boolean getShowMoveStep() {
@@ -1062,6 +1084,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setShowWpsinTT(boolean state) {
         store.setValue(SHOW_WPS_IN_TT, state);
+    }
+
+    public void setshowArmorMiniVisTT(boolean state) {
+        store.setValue(SHOW_ARMOR_MINIVIS_TT, state);
     }
 
     public void setShowMoveStep(boolean state) {

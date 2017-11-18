@@ -22,13 +22,10 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;

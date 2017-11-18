@@ -66,7 +66,9 @@ import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
@@ -3427,9 +3429,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 weaponList.add(mounted);
             }
+            
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
-            }
+            } 
 
             // one-shot launchers need their single shot of ammo added.
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
@@ -3665,8 +3668,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return false;
             }
 
-            // Artillery only in the correct phase...
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+            // Artillery or Bearings-only missiles only in the correct phase...
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || mounted.curMode().equals("Bearings-Only Extreme Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
+                    || mounted.curMode().equals("Bearings-Only Short Detection Range"))
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 return false;
             }
@@ -9572,14 +9579,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return true;
             }
             //Bearings-only capital missiles fire during the targeting phase
-            if (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Short Detection Range")) {
-                return true;
+            if ((wtype instanceof TeleOperatedMissileBayWeapon)
+                    || (wtype instanceof CapitalMissileBayWeapon)) {
+                if (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
+                        || mounted.curMode().equals("Bearings-Only Long Detection Range")
+                        || mounted.curMode().equals("Bearings-Only Medium Detection Range")
+                        || mounted.curMode().equals("Bearings-Only Short Detection Range")) {
+                    aTracker.addWeapon(mounted);                    
+                } else {
+                    aTracker.removeWeapon(mounted);                    
+                }
             }
+            
         }
-        return false;
+        if (aTracker.getSize() > 0) {
+            return true;
+        } else { 
+            return false;
+        }
     }
 
     public double getTroopCarryingSpace() {

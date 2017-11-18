@@ -43,7 +43,7 @@ public class TechAdvancement implements ITechnology {
     private int[] productionFactions = {};
     private int[] extinctionFactions = {};
     private int[] reintroductionFactions = {};
-    private SimpleTechLevel staticTechLevel;
+    private SimpleTechLevel staticTechLevel = SimpleTechLevel.STANDARD;
     private int techRating = RATING_C;
     private int[] availability = new int[ERA_DA + 1];
     

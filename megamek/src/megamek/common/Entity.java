@@ -9593,18 +9593,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         || mounted.curMode().equals("Bearings-Only Long Detection Range")
                         || mounted.curMode().equals("Bearings-Only Medium Detection Range")
                         || mounted.curMode().equals("Bearings-Only Short Detection Range")) {
-                    aTracker.addWeapon(mounted);                    
-                } else {
-                    aTracker.removeWeapon(mounted);                    
-                }
-            }
-            
+                    return true;
+                } 
+            }            
         }
-        if (aTracker.getSize() > 0) {
-            return true;
-        } else { 
-            return false;
-        }
+        return false;
     }
 
     public double getTroopCarryingSpace() {

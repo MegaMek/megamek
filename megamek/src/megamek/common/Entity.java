@@ -9977,6 +9977,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
             mod = 6;
         }
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
+            mod = 8;
+        }
         if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
@@ -10048,6 +10051,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+            mod = mod / 2;
+        }
         return mod;
     }
 

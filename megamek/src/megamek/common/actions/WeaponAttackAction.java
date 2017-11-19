@@ -105,6 +105,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private int otherAttackInfo = -1; //
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
+    protected int launchVelocity = 50;
     /**
      * Keeps track of the ID of the current primary target for a swarm missile
      * attack.
@@ -4404,5 +4405,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     public void setPointblankShot(boolean isPointblankShot) {
         this.isPointblankShot = isPointblankShot;
+    }
+    
+    /*
+     * Needed by teleoperated missiles
+     * @param velocity - an integer representing initial velocity
+     */
+    public void setLaunchVelocity(int velocity) {
+        this.launchVelocity = velocity;
+    }
+    
+    //This is a stub. ArtilleryAttackActions actually need to use it
+    public void updateTurnsTilHit(IGame game) {
+        
     }
 }

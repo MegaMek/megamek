@@ -44,6 +44,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         super(entityId, targetType, targetId, weaponId);
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
+        this.launchVelocity = 50;
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
         // adjust distance for gravity
@@ -56,7 +57,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                 || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
                 && (distance > 50)) {
-            turnsTilHit = (int) (distance / 50);
+            turnsTilHit = (int) (distance / launchVelocity);
         }
         if(getEntity(game).isAirborne()) {
             if(getEntity(game).getAltitude() < 9) {
@@ -89,7 +90,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
     public int getPlayerId() {
         return playerId;
     }
-
+    
     public void setSpotterIds(Vector<Integer> spotterIds) {
         this.spotterIds = spotterIds;
     }
@@ -100,5 +101,18 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
 
     public Coords getCoords() {
         return this.firingCoords;
+    }
+    
+    /*
+     * Updates the turnsTilHit value of this aaa
+     * Needed after aaa setup by bearings-only missiles, which have a variable velocity
+     */
+    @Override
+    public void updateTurnsTilHit(IGame game) {
+        int distance = Compute.effectiveDistance(game, getEntity(game),
+                getTarget(game));
+        // adjust distance for gravity
+        distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
+        this.turnsTilHit = (int) (distance / launchVelocity); 
     }
 }

@@ -75,6 +75,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -874,6 +875,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()
                             .getGame());
+            // Get the launch velocity for bearings-only telemissiles
+            if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
+                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame);
+                tsd.setVisible(true);
+                waa.setLaunchVelocity(tsd.getSetting());
+                waa.updateTurnsTilHit(clientgui.getClient().getGame());
+            } 
         }
         if ((null != mounted.getLinked())
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {

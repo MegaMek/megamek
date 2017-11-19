@@ -48,7 +48,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll <= 3) {
             Report r = new Report(3162);
-            bMissed = true; 
+
             r.subject = subjectId;
             r.newlines = 1;
             weapon.setHit(true);

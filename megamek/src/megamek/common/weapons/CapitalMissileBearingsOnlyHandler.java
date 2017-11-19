@@ -190,14 +190,22 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         // Report weapon attack and its to-hit value.
         Report r = new Report(3118);
         r.newlines = 0;
+        r.subject = subjectId;
         vPhaseReport.addElement(r);
         
-        r = new Report(3119);
-        r.indent();
-        r.newlines = 1;
-        r.subject = subjectId;        
-        r.addDesc(entityTarget);        
-        vPhaseReport.addElement(r);
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            r = new Report (3123);
+            r.subject = subjectId;
+            r.add(" " + target.getPosition(), true);
+            vPhaseReport.addElement(r);
+        } else {        
+            r = new Report(3119);
+            r.indent();
+            r.newlines = 1;
+            r.subject = subjectId;        
+            r.addDesc(entityTarget);        
+            vPhaseReport.addElement(r);
+        }
         
         //Point Defense fire vs Capital Missiles
         
@@ -245,10 +253,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
+            //This is reported elsewhere
             return false;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
@@ -417,10 +422,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             //We're not dealing with targets in arc or in range yet.
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no valid targets in play");
-            Report r = new Report (3123);
-            r.subject = subjectId;
-            r.add(target.getDisplayName(), true);
-            vPhaseReport.addElement(r);
             return;
         }
 
@@ -438,10 +439,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets detected within the missile's nose arc");
-            Report r = new Report (3123);
-            r.subject = subjectId;
-            r.add(target.getDisplayName(), true);
-            vPhaseReport.addElement(r);
             return;
         }
         //Empty out the targets vector and only put valid targets in arc back in
@@ -481,10 +478,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no targets detected within the missile's detection range");
-            Report r = new Report (3123);
-            r.subject = subjectId;
-            r.add(target.getDisplayName(), true);
-            vPhaseReport.addElement(r);
             return;
         }
         //Empty out the targets vector and only put valid targets in range back in

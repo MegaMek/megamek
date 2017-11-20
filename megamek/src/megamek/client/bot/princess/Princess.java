@@ -695,7 +695,7 @@ public class Princess extends BotClient {
         // first move useless units: immobile units, ejected mechwarrior, etc
         Entity movingEntity = null;
         final List<Entity> myEntities = getEntitiesOwned();
-        double highestIndex = Double.MIN_VALUE;
+        double highestIndex = -Double.MAX_VALUE;
         final StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (final Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());

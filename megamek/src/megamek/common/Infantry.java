@@ -1697,6 +1697,17 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        if (getArmorKit() != null) {
+            if (getArmorKit().hasSubType(MiscType.S_XCT_VACUUM)) {
+                return false;
+            } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) && (game.getPlanetaryConditions().getTemperature() < -30)) {
+                return false;
+            } else if (getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) && (game.getPlanetaryConditions().getTemperature() > 50)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
         if (hasSpaceSuit() || isMechanized()) {
             return false;
         }
@@ -1705,7 +1716,11 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInVacuum() {
-        return !hasSpaceSuit();
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return true;
+        } else {
+            return !hasSpaceSuit();
+        }
     }
 
     @Override

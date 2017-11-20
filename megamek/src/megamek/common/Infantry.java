@@ -1306,8 +1306,20 @@ public class Infantry extends Entity {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        
-        //TODO: add + 0.1 for XCT
+
+        if (hasSpecialization(XCT)) {
+            utm += 0.1;
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("XCT:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("0.1");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
         
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -1606,6 +1618,11 @@ public class Infantry extends Entity {
         if (hasSpecialization(PARATROOPS)) {
         	multiplier *= 3;
         }
+
+        if (hasSpecialization(XCT)) {
+            multiplier *= 1.5;
+        }
+
         /* TODO: paramedics cost an addition x0.375 per paramedic */
 
         cost = cost * multiplier;

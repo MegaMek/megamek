@@ -286,13 +286,13 @@ public class Princess extends BotClient {
         try {
 
             // get the first unit
-            final int entityNum = game.getFirstDeployableEntityNum();
+            final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
             if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() > LogLevel.WARNING.toInt()) {
                 sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
             }
 
             // on the list to be deployed get a set of all the
-            final List<Coords> startingCoords = getStartingCoordsArray();
+            final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
             if (0 == startingCoords.size()) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
                     "No valid locations to deploy " +
@@ -300,8 +300,7 @@ public class Princess extends BotClient {
             }
 
             // get the coordinates I can deploy on
-            final Coords deployCoords = getFirstValidCoords(getEntity(entityNum),
-                                                            startingCoords);
+            final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
             if (null == deployCoords) {
                 // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business                
                 log(getClass(),

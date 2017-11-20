@@ -506,7 +506,7 @@ public abstract class BotClient extends Client {
         return null;
     }
 
-    protected List<Coords> getStartingCoordsArray() {
+    protected List<Coords> getStartingCoordsArray(Entity deployed_ent) {
         int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
@@ -514,7 +514,6 @@ public abstract class BotClient extends Client {
         Coords highestHex;
         List<RankedCoords> validCoords = new LinkedList<>();
         Vector<Entity> valid_attackers;
-        Entity deployed_ent = getEntity(game.getFirstDeployableEntityNum());
         WeaponAttackAction test_attack;
         List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                 .getEntitiesVector());

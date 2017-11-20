@@ -1620,7 +1620,7 @@ public class Infantry extends Entity {
         }
 
         if (hasSpecialization(XCT)) {
-            multiplier *= 1.5;
+            multiplier *= 5;
         }
 
         /* TODO: paramedics cost an addition x0.375 per paramedic */

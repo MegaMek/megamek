@@ -148,7 +148,7 @@ public abstract class BotClient extends Client {
                 if (e.getOldPhase().isPhaseSimultaneous(game)) {
                     int numOwnedEntities = game.getEntitiesOwnedBy(getLocalPlayer());
                     System.out.println("BotClient calculated turns, " + getName() + " phase " + e.getOldPhase()
-                            + calculatedTurnsThisPhase + "/" + numOwnedEntities);
+                            + " " + calculatedTurnsThisPhase + "/" + numOwnedEntities);
                 }
                 calculatedTurnsThisPhase = 0;
             }

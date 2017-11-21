@@ -469,8 +469,13 @@ public interface IGame {
 
     /**
      * Sets the current turn index
+     * 
+     * @param turnIndex
+     *            The new turn index.
+     * @param prevPlayerId
+     *            The ID of the player who triggered the turn index change.
      */
-    abstract void setTurnIndex(int turnIndex);
+    abstract void setTurnIndex(int turnIndex, int prevPlayerId);
 
     /**
      * Returns the current turn vector

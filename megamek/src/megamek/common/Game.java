@@ -749,12 +749,12 @@ public class Game implements Serializable, IGame {
     /**
      * Sets the current turn index
      */
-    public void setTurnIndex(int turnIndex) {
+    public void setTurnIndex(int turnIndex, int prevPlayerId) {
         // FIXME: occasionally getTurn() returns null. Handle that case
         // intelligently.
         this.turnIndex = turnIndex;
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
-                .getPlayerNum())));
+                .getPlayerNum()), prevPlayerId));
     }
 
     /**

@@ -560,8 +560,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Change whose turn it is.
      */
-    protected void changeTurnIndex(int index) {
-        game.setTurnIndex(index);
+    protected void changeTurnIndex(int index, int prevPlayerId) {
+        game.setTurnIndex(index, prevPlayerId);
     }
 
     /**
@@ -1303,7 +1303,7 @@ public class Client implements IClientCommandHandler {
             changePhase((IGame.Phase) c.getObject(0));
             break;
         case Packet.COMMAND_TURN:
-            changeTurnIndex(c.getIntValue(0));
+            changeTurnIndex(c.getIntValue(0), c.getIntValue(1));
             break;
         case Packet.COMMAND_ROUND_UPDATE:
             game.setRoundCount(c.getIntValue(0));

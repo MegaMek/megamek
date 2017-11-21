@@ -3653,7 +3653,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("SpacesuitCombat");
         misc.damageDivisor = 1.0;
-        misc.subType = S_ENCUMBERING | S_SPACE_SUIT | S_XCT_VACUUM |S_COLD_WEATHER;
+        misc.subType = S_ENCUMBERING | S_SPACE_SUIT | S_XCT_VACUUM | S_COLD_WEATHER;
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";

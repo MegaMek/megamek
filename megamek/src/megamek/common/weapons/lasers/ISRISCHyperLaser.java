@@ -5,7 +5,6 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.ChemicalLaserHandler;
 import megamek.common.weapons.HyperLaserHandler;
 import megamek.server.Server;
 
@@ -42,7 +41,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
     public ISRISCHyperLaser() {
         super();
         name = "RISC Hyper Laser";
-        //FIXME - Needs full rules implemented
+
         setInternalName("ISRISCHyperLaser");
         heat = 24;
         damage = 20;

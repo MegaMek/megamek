@@ -1452,21 +1452,11 @@ public class TestMech extends TestEntity {
             }
         }
         
-        if (mech.hasWorkingWeapon(WeaponType.F_HYPER)) {
-            switch (mech.hasEngine() ? mech.getEngine().getEngineType() : Engine.NONE) {
-                case Engine.FUEL_CELL:
-                case Engine.COMBUSTION_ENGINE:
-                case Engine.BATTERY:
-                case Engine.SOLAR:
-                case Engine.STEAM:
-                case Engine.NONE:
-                    buff.append("RISC Hyper Laser needs fusion engine\n");
-                    illegal = true;
-                    break;
-                default:
-                    break;
+        if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+                buff.append("RISC Hyper Laser needs fusion engine\n");
+                illegal = true;
             }
-        }
+
         
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)

@@ -64,9 +64,9 @@ public class ISRISCHyperLaser extends LaserWeapon {
         explosionDamage = 10;
         explosive = true;
         rulesRefs = "93,IO";
-        this.flags = F_HYPER;
+        this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
             .setISAdvancement(3134, DATE_NONE, DATE_NONE, 3141, DATE_NONE)
             .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 

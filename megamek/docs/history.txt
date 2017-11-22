@@ -39,6 +39,11 @@ v0.43.5-git
 + Issue #697: Over verbose princess
 + Issue #548: View > Round Report Does Not Allow Copy & Paste of Text
 + Issue #519: Fuel cells producing heat in battlemechs
++ Issue #727: Sniper and Range Master SPAs now work with Line of Sight range
++ Issue #460: Field of Fire/firing arc sprites not cleared when unit finishes movement
++ Issue #758: Princess doesn't check for ownership when deploying units
++ Issue #759: Princess won't move units with a move index of 0 or less
++ PR #760: XCT Infantry implemented
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

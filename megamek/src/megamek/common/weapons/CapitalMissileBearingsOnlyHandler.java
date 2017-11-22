@@ -490,10 +490,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         
         //If we're using tele-operated missiles, the player gets to select the target
-        if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
-            Aero[] options = targets.elements();
+        //TODO: This is beyond my skill level. If somebody wants to pick this up...
+       /* if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
+            String[] options = 
             int choice;
-            TeleMissileTargetDialog tsd = new TeleMissileTargetDialog(clientgui.frame,
+            TeleMissileTargetDialog tsd = new TeleMissileTargetDialog(this.CapitalMissileBearingsOnlyHandler.clientgui.frame,
                     Messages.getString("TeleMissileTargetDialog.title"), //$NON-NLS-1$
                     Messages.getString("TeleMissileTargetDialog.message"), //$NON-NLS-1$
                     options, choice, this, this);            
@@ -502,8 +503,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             target = targets.get(choice);            
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
-        } else {
-            // find the largest and closest target of those available
+        } else { */
+            // Otherwise, find the largest and closest target of those available
             int bestDistance = Integer.MAX_VALUE;
             int bestTonnage = 0;
             Aero currTarget = targets.firstElement();
@@ -579,7 +580,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             target = newTarget;            
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
-        }
+        //}
 
             
             //Now that we have a ship target, set up the to-hit modifiers

@@ -59,6 +59,8 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
+import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
+import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
 import megamek.common.weapons.WeaponHandler;
@@ -6256,7 +6258,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         && Compute.isInArc(game, getId(), getEquipmentNum(ams),
                                 game.getEntity(wr.waa.getEntityId()))) {
                     vAttacksInArc.addElement(wr.waa);
-                }
+                }                
             }
             //AMS Bays can fire at all incoming attacks each round
             if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {

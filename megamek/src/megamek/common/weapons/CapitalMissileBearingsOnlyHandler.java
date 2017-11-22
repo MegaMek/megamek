@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.TeleMissileTargetDialog;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
@@ -43,6 +45,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.Server;
 
 /**
@@ -486,6 +489,20 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             targets.add(a);
         }
         
+        //If we're using tele-operated missiles, the player gets to select the target
+        if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
+            Aero[] options = targets.elements();
+            int choice;
+            TeleMissileTargetDialog tsd = new TeleMissileTargetDialog(clientgui.frame,
+                    Messages.getString("TeleMissileTargetDialog.title"), //$NON-NLS-1$
+                    Messages.getString("TeleMissileTargetDialog.message"), //$NON-NLS-1$
+                    options, choice, this, this);            
+            choice = tsd.getTarget();
+            //Now, assign our chosen target to the missile
+            target = targets.get(choice);            
+            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetType(target.getTargetType());
+        } else {
             // find the largest and closest target of those available
             int bestDistance = Integer.MAX_VALUE;
             int bestTonnage = 0;
@@ -559,12 +576,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 }
             }
             //Now, assign our chosen target to the missile
-            target = newTarget;
-            Aero targetship = (Aero) newTarget;
+            target = newTarget;            
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
+        }
+
             
             //Now that we have a ship target, set up the to-hit modifiers
+            Aero targetship = (Aero) newTarget;
             toHit = new ToHitData(4, "Base");
             int range = tc.distance(target.getPosition());
             if (range > 20 && range <= 25) {

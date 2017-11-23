@@ -44,6 +44,7 @@ v0.43.5-git
 + Issue #758: Princess doesn't check for ownership when deploying units
 + Issue #759: Princess won't move units with a move index of 0 or less
 + PR #760: XCT Infantry implemented
++ PR #775: RISC Hyperlaser
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

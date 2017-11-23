@@ -1056,6 +1056,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().selectEntity(null);
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.bv.clearMovementData();
+        clientgui.bv.clearFieldofF();
     }
 
     /**
@@ -1257,6 +1258,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 + "</b></html>"); //$NON-NLS-1$
             }
         }
+        
+        updateButtons();
     }
 
     /**

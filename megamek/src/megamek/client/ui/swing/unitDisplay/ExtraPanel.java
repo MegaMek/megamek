@@ -261,6 +261,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         c.insets = new Insets(1, 9, 1, 9);
         gridbag.setConstraints(activateHidden, c);
+        c.insets = new Insets(1, 9, 6, 9);
         gridbag.setConstraints(activateHiddenPhase, c);
         add(activateHidden);
         add(activateHiddenPhase);

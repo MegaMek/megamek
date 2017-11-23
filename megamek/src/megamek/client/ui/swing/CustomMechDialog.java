@@ -770,6 +770,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.addValue(Crew.RANGEMASTER_MEDIUM);
             optionComp.addValue(Crew.RANGEMASTER_LONG);
             optionComp.addValue(Crew.RANGEMASTER_EXTREME);
+            optionComp.addValue(Crew.RANGEMASTER_LOS);
             optionComp.setSelected(option.stringValue());
         }
 

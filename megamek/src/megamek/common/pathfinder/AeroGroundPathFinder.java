@@ -99,6 +99,7 @@ public class AeroGroundPathFinder {
      * @param path the current path we're evaluating
      * @return Whether or not there's an enemy airborne entity on the board.
      */
+    @SuppressWarnings("unused")
     private static boolean airborneEnemiesOnBoard(Entity mover) {
         for(Iterator<Entity> entityIter = mover.getGame().getAllEnemyEntities((Entity) mover); entityIter.hasNext();) {
             Entity currentEntity = entityIter.next();

@@ -1,6 +1,12 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.IGame;
 import megamek.common.SimpleTechLevel;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.HyperLaserHandler;
+import megamek.server.Server;
 
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
@@ -35,7 +41,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
     public ISRISCHyperLaser() {
         super();
         name = "RISC Hyper Laser";
-        //FIXME - Needs full rules implemented
+
         setInternalName("ISRISCHyperLaser");
         heat = 24;
         damage = 20;
@@ -58,16 +64,26 @@ public class ISRISCHyperLaser extends LaserWeapon {
         explosionDamage = 10;
         explosive = true;
         rulesRefs = "93,IO";
+        this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
             .setISAdvancement(3134, DATE_NONE, DATE_NONE, 3141, DATE_NONE)
             .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     }
-}
 
 
-/*The part this is missing is - any unmodified attack roll result of 2 or 3 by a hyper
-laser will result in the same effects as a critical hit against the
-weapon, and will deliver no damage to the target (even if the roll
-would ordinarily result in a hit).*/
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
+     */
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        return new HyperLaserHandler(toHit, waa, game, server);
+    }
+}   

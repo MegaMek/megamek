@@ -3829,7 +3829,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                             // by
                                                                             // another
                                                                             // unit
-                && !isArtilleryIndirect && !isIndirect) {
+                && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
             if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in

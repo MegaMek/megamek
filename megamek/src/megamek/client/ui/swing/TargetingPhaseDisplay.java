@@ -867,11 +867,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         WeaponAttackAction waa = new WeaponAttackAction(cen,
                 target.getTargetType(), target.getTargetId(), weaponNum);
+        IGame game = clientgui.getClient().getGame();
+        int distance = Compute.effectiveDistance(game, waa.getEntity(game),
+                waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
                 || (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
                         || mounted.curMode().equals("Bearings-Only Long Detection Range")
                         || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Short Detection Range"))) {
+                        || mounted.curMode().equals("Bearings-Only Short Detection Range"))
+                            && distance > 50) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()
                             .getGame());

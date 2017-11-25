@@ -584,6 +584,9 @@ public class WeaponType extends EquipmentType {
     
     //Thunderbolt and similar large missiles, for use with AMS resolution
     public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(66);
+    
+    //Hyper-Laser
+    public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
         
     
     // add maximum range for AT2

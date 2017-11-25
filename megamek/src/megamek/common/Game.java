@@ -1907,13 +1907,6 @@ public class Game implements Serializable, IGame {
         return -1;
     }
 
-    /**
-     * Returns the number of the first deployable entity
-     */
-    public int getFirstDeployableEntityNum() {
-        return getFirstDeployableEntityNum(getTurn());
-    }
-
     public int getFirstDeployableEntityNum(GameTurn turn) {
         // Repeat the logic from getFirstEntityNum.
         if (turn == null) {
@@ -1926,13 +1919,6 @@ public class Game implements Serializable, IGame {
             }
         }
         return -1;
-    }
-
-    /**
-     * Returns the number of the next deployable entity
-     */
-    public int getNextDeployableEntityNum(int entityId) {
-        return getNextDeployableEntityNum(getTurn(), entityId);
     }
 
     public int getNextDeployableEntityNum(GameTurn turn, int start) {

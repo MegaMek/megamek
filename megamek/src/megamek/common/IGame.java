@@ -903,17 +903,13 @@ public interface IGame {
     abstract int getPrevEntityNum(GameTurn turn, int start);
 
     /**
-     * Returns the number of the first deployable entity
+     * Returns the number of the first deployable entity that is valid for the specified turn
      */
-    abstract int getFirstDeployableEntityNum();
-
     abstract int getFirstDeployableEntityNum(GameTurn turn);
 
     /**
-     * Returns the number of the next deployable entity
+     * Returns the number of the next deployable entity that is valid for the specified turn
      */
-    abstract int getNextDeployableEntityNum(int entityId);
-
     abstract int getNextDeployableEntityNum(GameTurn turn, int start);
 
     /**

@@ -366,6 +366,13 @@ public class MiscType extends EquipmentType {
     public static final long S_SNEAK_ECM = 1L << 3;
     public static final long S_ENCUMBERING = 1L << 4;
     public static final long S_SPACE_SUIT = 1L << 5;
+    public static final long S_XCT_VACUUM   = 1L << 6;
+    public static final long S_COLD_WEATHER = 1L << 7;
+    public static final long S_HOT_WEATHER  = 1L << 8;
+    // Unimplemented atmospheric conditions
+    public static final long S_HAZARDOUS_LIQ = 1L << 9;
+    public static final long S_TAINTED_ATMO = 1L << 10;
+    public static final long S_TOXIC_ATMO   = 1L << 11;
 
     // Secondary flag for tracks
     public static final long S_QUADVEE_WHEELS = 1L;
@@ -3644,7 +3651,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISEnvironmentSuitHostile");
         misc.addLookupName("CLEnvironmentSuitHostile");
         misc.damageDivisor = 2.0;
-        misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+        misc.subType = S_ENCUMBERING | S_SPACE_SUIT | S_XCT_VACUUM | S_COLD_WEATHER | S_HOT_WEATHER;
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317,TO";
@@ -3666,7 +3673,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISEnvironmentSuitMarine");
         misc.addLookupName("CLEnvironmentSuitMarine");
         misc.damageDivisor = 2.0;
-        misc.subType = S_SPACE_SUIT;
+        misc.subType = S_SPACE_SUIT | S_XCT_VACUUM | S_COLD_WEATHER | S_HOT_WEATHER;
         misc.cost = 15000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317,TO";
@@ -3725,6 +3732,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("HeatSuit");
         misc.damageDivisor = 1.0;
+        misc.subType = S_COLD_WEATHER;
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317,TO";
@@ -3766,6 +3774,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("ISMechWarriorCoolingSuit");
         misc.damageDivisor = 1.0;
+        misc.subType = S_HOT_WEATHER;
         misc.cost = 500;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317,TO";
@@ -3877,7 +3886,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("SnowSuit");
         misc.damageDivisor = 1.0;
-        misc.subType = S_ENCUMBERING;
+        misc.subType = S_ENCUMBERING | S_COLD_WEATHER;
         misc.cost = 70;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";
@@ -3896,7 +3905,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Spacesuit";
         misc.setInternalName(misc.name);
         misc.damageDivisor = 1.0;
-        misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+        misc.subType = S_ENCUMBERING | S_SPACE_SUIT | S_XCT_VACUUM | S_COLD_WEATHER;
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";
@@ -3916,7 +3925,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("SpacesuitCombat");
         misc.damageDivisor = 1.0;
-        misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+        misc.subType = S_ENCUMBERING | S_SPACE_SUIT | S_XCT_VACUUM | S_COLD_WEATHER;
         misc.cost = 7000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318,TO";

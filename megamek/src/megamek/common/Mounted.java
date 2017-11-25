@@ -70,7 +70,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
-
+    
     private int location;
     private boolean rearMounted;
 
@@ -368,7 +368,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 pendingMode = newMode;
             }
         }
-        // all communicationsequipment mounteds need to have the same mode at
+        // all communications equipment mounteds need to have the same mode at
         // all times
         if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
@@ -802,7 +802,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setRapidfire(boolean rapidfire) {
         this.rapidfire = rapidfire;
     }
-
+    
+       
     /**
      * Checks to see if the current ammo for this weapon is hotloaded
      *
@@ -1687,7 +1688,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
     }
-
+    
     public int getBaMountLoc() {
         return baMountLoc;
     }

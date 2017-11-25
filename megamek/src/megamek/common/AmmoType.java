@@ -23,6 +23,7 @@ import java.util.Vector;
 
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
+    
     // ammo types
     public static final int T_NA = -1;
     public static final int T_AC = 1;
@@ -326,7 +327,8 @@ public class AmmoType extends EquipmentType {
     
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
-    
+  
+  
     // Numbers 62-63 are used for Nuclear munitions, above 
       
     /*
@@ -1836,6 +1838,17 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH),"369,TO"));
         
         //TODO Incendiary LRMs - IO pg 61, TO pg 369
+        
+/*        munitions.add(new MunitionMutator("Incendiary", 2, M_INCENDIARY_LRM,
+                new TechAdvancement(TECH_BASE_IS)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+                .setClanAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH),"369,TO"));*/
                 
         munitions.add(new MunitionMutator("Semi-guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_IS)
@@ -2041,7 +2054,18 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH),"369,TO"));
         
         //TODO Incendiary LRMs - IO pg 61, TO pg 369
-                
+        
+/*        munitions.add(new MunitionMutator("(Clan) Incendiary", 2, M_INCENDIARY_LRM,
+                new TechAdvancement(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_E, RATING_E, RATING_E)
+                .setClanAdvancement(2341, 2342, 2352, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH),"369,TO"));*/
+                        
         munitions.add(new MunitionMutator("(Clan) Semi-guided", 1, M_SEMIGUIDED,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
@@ -2258,14 +2282,15 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS,F_LC)
                 .setProductionFactions(F_FS),"208,TM"));
         
-        //TODO - Implement for play
-/*		munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
-		        new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-		                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-		                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
-		                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-		                .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
-		        "352,TO"));*/
+		munitions.add(new MunitionMutator("Caseless", 1 , M_CASELESS,
+		        new TechAdvancement(TECH_BASE_ALL)
+		        .setIntroLevel(false)
+		        .setUnofficial(false)
+		        .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
 				new TechAdvancement(TECH_BASE_IS)
@@ -2327,14 +2352,15 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_CLAN)
                 .setProductionFactions(F_CLAN),"208,TM"));
         
-        //TODO - Implement for play
-/*      munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
-                new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                        .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
-                        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                        .setProductionFactions(F_FS),
-                "352,TO"));*/
+        munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2394,14 +2420,15 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(false, false, false,false, false)
                 .setProductionFactions(F_CJF),"208,TM"));
         
-        //TODO - Implement for play
-/*      munitions.add(new MunitionMutator("Caseless", .5, M_CASELESS,
-                new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                        .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
-                        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                        .setProductionFactions(F_FS),
-                "352,TO"));*/
+        munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
+                new TechAdvancement(TECH_BASE_ALL)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -15282,8 +15309,13 @@ public class AmmoType extends EquipmentType {
             munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.
-            munition.shots = Math.max(1, base.shots / weight);
-            munition.kgPerShot = base.kgPerShot * weight;
+            if (munition.getMunitionType() == AmmoType.M_CASELESS) {
+                munition.shots = Math.max(1, base.shots * 2);
+                munition.kgPerShot = base.kgPerShot * (weight/2);        
+            } else {
+                munition.shots = Math.max(1, base.shots / weight);
+                munition.kgPerShot = base.kgPerShot * weight;
+            }
 
             // copy base ammoType
             munition.ammoType = base.ammoType;
@@ -15313,6 +15345,7 @@ public class AmmoType extends EquipmentType {
                 }
                 if (munition.getMunitionType() == AmmoType.M_CASELESS) {
                     cost *= 1.5;
+                    bv *= 1.0;
                 }
             }
             if (((munition.getAmmoType() == AmmoType.T_LRM) 
@@ -15560,7 +15593,7 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * Checks to ensure that the given ammunition type is compatable with the given weapon type.  Performs the following
+     * Checks to ensure that the given ammunition type is compatible with the given weapon type.  Performs the following
      * tests:<br/>
      * {@code ammoType} != null<br/>
      * {@link AmmoType#getAmmoType()} == {@link WeaponType#getAmmoType()}<br/>
@@ -15568,7 +15601,7 @@ public class AmmoType extends EquipmentType {
      *
      * @param ammoType   The type of ammo to be tested.
      * @param weaponType The type of weapon the ammo is to be used with.
-     * @return TRUE if the ammo type and wepaon type are compatable.
+     * @return TRUE if the ammo type and weapon type are compatible.
      */
     public static boolean isAmmoValid(AmmoType ammoType, WeaponType weaponType) {
         if (ammoType == null) {

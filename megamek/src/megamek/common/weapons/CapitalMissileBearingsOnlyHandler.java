@@ -344,8 +344,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         int hits = calcHits(vPhaseReport);
         //Set the hit location table based on where the missile goes active
         if (entityTarget != null) {
-            if (aaa.getCoords() != null) {
-                toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
+            if (aaa.getOldTargetCoords() != null) {
+                toHit.setSideTable(entityTarget.sideTable(aaa.getOldTargetCoords()));
             }    
         }
         if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
@@ -403,8 +403,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      */
     public void convertHexTargetToEntityTarget(Vector<Report> vPhaseReport) {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-
+        
         final Coords tc = target.getPosition();
+        //Set the original missile target data. AMS and to-hit table calculations need this.
+        aaa.setOldTargetCoords(tc);
+        waa.setOriginalTargetId(target.getTargetId());
+        waa.setOriginalTargetType(target.getTargetType());
         int missileFacing = ae.getPosition().direction(tc);
         Targetable newTarget = null;
         Vector<Aero> targets = new Vector<Aero>();

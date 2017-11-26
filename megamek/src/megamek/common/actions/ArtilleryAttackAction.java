@@ -38,6 +38,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                                         // until it lands.
     protected int playerId;
     private Coords firingCoords;
+    private Coords oldTargetCoords;
 
     public ArtilleryAttackAction(int entityId, int targetType, int targetId,
             int weaponId, IGame game) {
@@ -101,6 +102,15 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
 
     public Coords getCoords() {
         return this.firingCoords;
+    }
+    
+    // For use with AMS and artillery to-hit tables
+    public void setOldTargetCoords(Coords coords) {
+        this.oldTargetCoords = coords;
+    }
+
+    public Coords getOldTargetCoords() {
+        return this.oldTargetCoords;
     }
     
     /*

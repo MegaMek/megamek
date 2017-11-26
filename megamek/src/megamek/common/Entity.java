@@ -41,6 +41,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.DisplacementAttackAction;
@@ -61,6 +62,7 @@ import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
 import megamek.common.weapons.WeaponHandler;
@@ -6254,11 +6256,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
                     vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
-                if (!targets.contains(wr.waa)
-                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                game.getEntity(wr.waa.getEntityId()))) {
-                    vAttacksInArc.addElement(wr.waa);
-                }                
+                if (wr instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (!targets.contains(wr.waa)
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
+                        vAttacksInArc.addElement(wr.waa);
+                    } 
+                } else {
+                    if (!targets.contains(wr.waa)
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    game.getEntity(wr.waa.getEntityId()))) {
+                        vAttacksInArc.addElement(wr.waa);
+                    }
+                }
             }
             //AMS Bays can fire at all incoming attacks each round
             if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {

@@ -5313,7 +5313,7 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "313,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3065, 3081, 3090)
+            .setISAdvancement(3065, 3081, 3090, DATE_NONE, DATE_NONE)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;

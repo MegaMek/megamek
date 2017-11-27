@@ -45,13 +45,11 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -116,9 +114,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<>();
     private JPanel panMines = new JPanel();
-
-    private ArrayList<SantaAnnaChoicePanel> m_vSantaAnna = new ArrayList<>();
-    private JPanel panSantaAnna = new JPanel();
 
     private BombChoicePanel m_bombs;
     private JPanel panBombs = new JPanel();
@@ -273,15 +268,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             add(panWeaponAmmoSelector, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // set up Santa Annas if using nukes
-        if (((entity instanceof Dropship) || (entity instanceof Jumpship))
-                && clientgui.getClient().getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVAERORULES_AT2_NUKES)) { //$NON-NLS-1$
-            setupSantaAnna();
-            add(panSantaAnna,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
-        }
-
         if (entity.isBomber()) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -352,22 +338,25 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         for (APWeaponChoicePanel apChoicePanel : m_vAPMounts) {
             apChoicePanel.applyChoice();
         }
-        
+
         // update modular equipment adaptor selections
         for (MEAChoicePanel meaChoicePanel : m_vMEAdaptors) {
             meaChoicePanel.applyChoice();
         }
-        
+
         // update munitions selections
         for (final Object newVar2 : m_vMunitions) {
             ((MunitionChoicePanel) newVar2).applyChoice();
         }
-        
-        // update ammo names for weapon ammo choice selectors
-        for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
-            wacPanel.applyChoice();
+        if (panMunitions instanceof BayMunitionsChoicePanel) {
+            ((BayMunitionsChoicePanel)panMunitions).apply();
+        } else {
+            // update ammo names for weapon ammo choice selectors
+            for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
+                wacPanel.applyChoice();
+            }
         }
-        
+
         // update MG rapid fire settings
         for (final Object newVar1 : m_vMGs) {
             ((RapidfireMGPanel) newVar1).applyChoice();
@@ -375,10 +364,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // update mines setting
         for (final Object newVar : m_vMines) {
             ((MineChoicePanel) newVar).applyChoice();
-        }
-        // update Santa Anna setting
-        for (final Object newVar : m_vSantaAnna) {
-            ((SantaAnnaChoicePanel) newVar).applyChoice();
         }
         // update bomb setting
         if (null != m_bombs) {
@@ -395,12 +380,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondance[choC3
-                    .getSelectedIndex()]);
+                                                                  .getSelectedIndex()]);
             int entC3nodeCount = client.getGame().getC3SubNetworkMembers(entity)
                     .size();
             int choC3nodeCount = client.getGame().getC3NetworkMembers(chosen)
                     .size();
-            
+
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES
                     && ((chosen == null) 
                             || entity.getC3MasterId() != chosen.getId())) {
@@ -409,7 +394,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 String message = Messages
                         .getString(
                                 "CustomMechDialog.NetworkTooBig.message", new Object[] {//$NON-NLS-1$
-                                entity.getShortName(),
+                                        entity.getShortName(),
                                         chosen.getShortName(),
                                         new Integer(entC3nodeCount),
                                         new Integer(choC3nodeCount),
@@ -421,7 +406,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
         } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
             entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
-                    .getSelectedIndex()]));
+                                                                    .getSelectedIndex()]));
         }
     }
 
@@ -472,24 +457,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
     }
 
-    private void setupSantaAnna() {
-        GridBagLayout gbl = new GridBagLayout();
-        panSantaAnna.setLayout(gbl);
-        for (Mounted m : entity.getAmmo()) {
-            AmmoType at = (AmmoType) m.getType();
-            // Santa Annas?
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    OptionsConstants.ADVAERORULES_AT2_NUKES)
-                    && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
-                            .getAmmoType() == AmmoType.T_AR10) && at
-                            .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
-                SantaAnnaChoicePanel sacp = new SantaAnnaChoicePanel(m);
-                panSantaAnna.add(sacp, GBC.eol());
-                m_vSantaAnna.add(sacp);
-            }
-        }
-    }
-    
     /**
      * Setup the layout of <code>panMEAdaptors</code>, which contains components
      * for selecting which manipulators are mounted in a modular equipment 
@@ -624,6 +591,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 
+        if (entity.usesWeaponBays()) {
+            panMunitions = new BayMunitionsChoicePanel(entity, game);
+            return;
+        }
+        panMunitions.setLayout(gbl);
+
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
@@ -634,7 +607,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // don't allow ammo switching of most things for Aeros
-            // allow only MML, ATM, and NARC
+            // allow only MML, ATM, and NARC. LRM/SRM can switch between Artemis and standard,
+            // but not other munitions. Same with MRM.
             // TODO: need a better way to customize munitions on Aeros
             // currently this doesn't allow AR10 and tele-missile launchers
             // to switch back and forth between tele and regular missiles
@@ -642,12 +616,19 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // an idiosyncratic fashion
             if ((entity instanceof Aero)
                     && !((at.getAmmoType() == AmmoType.T_MML)
+                            || (at.getAmmoType() == AmmoType.T_SRM)
+                            || (at.getAmmoType() == AmmoType.T_LRM)
+                            || (at.getAmmoType() == AmmoType.T_MRM)
                             || (at.getAmmoType() == AmmoType.T_ATM)
-                            || (at.getAmmoType() == AmmoType.T_NARC))) {
+                            || (at.getAmmoType() == AmmoType.T_IATM))) {
                 continue;
             }
 
             for (AmmoType atCheck : vAllTypes) {
+                if (entity.hasETypeFlag(Entity.ETYPE_AERO)
+                        && !atCheck.canAeroUse()) {
+                    continue;
+                }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
                 boolean bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
                         entity.isMixedTech());
@@ -673,6 +654,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                                 || (muniType == AmmoType.M_DEAD_FIRE) 
                                 || (muniType == AmmoType.M_MINE_CLEARANCE))) {
                     bTechMatch = false;
+                }
+                
+                if ((muniType == AmmoType.M_ARTEMIS_CAPABLE)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                    continue;
+                }
+                if ((muniType == AmmoType.M_ARTEMIS_V_CAPABLE)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V)
+                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                    continue;
                 }
 
                 if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) && //$NON-NLS-1$
@@ -1027,8 +1019,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             private JComboBox<String> m_choice;
             
-            private List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels;
-
             @SuppressWarnings("rawtypes")
             private JComboBox m_num_shots;
             private ItemListener numShotsListener;
@@ -1051,7 +1041,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes, List<WeaponAmmoChoicePanel> weaponAmmoChoicePanels) {
                 m_vTypes = vTypes;
                 m_mounted = m;
-                this.weaponAmmoChoicePanels = weaponAmmoChoicePanels;
                 
                 AmmoType curType = (AmmoType) m.getType();
                 m_choice = new JComboBox<String>();
@@ -1136,7 +1125,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(lLoc, GBC.std());
                 add(m_choice, GBC.std());
                 add(m_num_shots, GBC.eol());
-
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
@@ -1165,7 +1153,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
                 m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
-                
                 if (chDump.isSelected()) {
                     m_mounted.setShotsLeft(0);
                 }
@@ -1207,49 +1194,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             void setShotsLeft(int shots) {
                 m_mounted.setShotsLeft(shots);
-            }
-        }
-
-        // a choice panel for determining number of santa anna warheads
-        class SantaAnnaChoicePanel extends JPanel {
-            /**
-             *
-             */
-            private static final long serialVersionUID = -1645895479085898410L;
-
-            private JComboBox<String> m_choice;
-
-            private Mounted m_mounted;
-
-            public SantaAnnaChoicePanel(Mounted m) {
-                m_mounted = m;
-                m_choice = new JComboBox<String>();
-                for (int i = 0; i <= m_mounted.getBaseShotsLeft(); i++) {
-                    m_choice.addItem(Integer.toString(i));
-                }
-                int loc;
-                loc = m.getLocation();
-                String sDesc = "Nuclear warheads for " + m_mounted.getName() + " (" + entity.getLocationAbbr(loc) + "):"; //$NON-NLS-1$ //$NON-NLS-2$
-                JLabel lLoc = new JLabel(sDesc);
-                GridBagLayout g = new GridBagLayout();
-                setLayout(g);
-                add(lLoc, GBC.std());
-                m_choice.setSelectedIndex(m.getNSantaAnna());
-                add(m_choice, GBC.eol());
-            }
-
-            public void applyChoice() {
-                // this is a hack. I can't immediately apply the choice, because
-                // that would split this ammo bin in two and then the player could
-                // never
-                // get back to it. So I keep track of the Santa Anna allocation
-                // on the mounted and then apply it before deployment
-                m_mounted.setNSantaAnna(m_choice.getSelectedIndex());
-            }
-
-            @Override
-            public void setEnabled(boolean enabled) {
-                m_choice.setEnabled(enabled);
             }
         }
 

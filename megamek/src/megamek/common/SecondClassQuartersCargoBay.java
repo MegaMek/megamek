@@ -89,8 +89,13 @@ public final class SecondClassQuartersCargoBay extends Bay {
     }
 
     @Override
+    public boolean isQuarters() {
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "2ndclassquarters:" + totalSpace + ":" + doors;
+        return "2ndclassquarters:" + weight + ":" + doors;
     }
 
 }

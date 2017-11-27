@@ -75,12 +75,12 @@ public final class RefrigeratedCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer(
-                "Refrigerated Cargo Space (" + getCurrentDoors() + " doors) - ");
+                "Refrigerated Cargo Space " + numDoorsString() + " - ");
 
-        if (currentSpace != Math.round(currentSpace)) {
-            returnString.append(String.format("%1$,.3f", currentSpace));
+        if (getUnused() != Math.round(getUnused())) {
+            returnString.append(String.format("%1$,.3f", getUnused()));
         } else {
-            returnString.append(String.format("%1$,.0f", currentSpace));
+            returnString.append(String.format("%1$,.0f", getUnused()));
         }
 
         returnString.append(" tons");
@@ -100,6 +100,12 @@ public final class RefrigeratedCargoBay extends Bay {
     @Override
     public String toString() {
         return "refrigeratedcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+    }
+
+    
+    @Override
+    public boolean isCargo() {
+        return true;
     }
 
 }

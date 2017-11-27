@@ -2368,12 +2368,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avMed = 3;
                 avLong = 3;
                 avExt = 3;
-            } else if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+            } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;
                 avExt = 100;
-            } else if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
@@ -2385,7 +2385,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avExt = 2;
             }
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE) {
-            if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+            if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
@@ -2397,7 +2397,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avExt = 4;
             }
         } else if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK) {
-            if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;

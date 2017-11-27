@@ -38,6 +38,7 @@ public abstract class SRTWeapon extends MissileWeapon {
     public SRTWeapon() {
         super();
         ammoType = AmmoType.T_SRM_TORPEDO;
+        flags = flags.andNot(F_AERO_WEAPON);
     }
 
     /*

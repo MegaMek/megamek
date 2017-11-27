@@ -43,11 +43,15 @@ import megamek.common.HeavyVehicleBay;
 import megamek.common.ITechManager;
 import megamek.common.ITechnology;
 import megamek.common.InfantryBay;
+import megamek.common.InsulatedCargoBay;
 import megamek.common.LightVehicleBay;
+import megamek.common.LiquidCargoBay;
+import megamek.common.LivestockCargoBay;
 import megamek.common.MechBay;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ProtomechBay;
+import megamek.common.RefrigeratedCargoBay;
 import megamek.common.SecondClassQuartersCargoBay;
 import megamek.common.SmallCraft;
 import megamek.common.SmallCraftBay;
@@ -208,7 +212,15 @@ public class TestAero extends TestEntity {
         SMALL_CRAFT ("Small Craft", 200.0, 5, SmallCraftBay.techAdvancement(),
                 (size, num) -> new SmallCraftBay(size, 1, num)),
         CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
-                (size, num) -> new CargoBay(size, 1, num));
+                (size, num) -> new CargoBay(size, 1, num)),
+        LIQUID_CARGO ("Cargo (Liquid)", 1.0, 0, CargoBay.techAdvancement(),
+                (size, num) -> new LiquidCargoBay(size, 1, num)),
+        REFRIGERATED_CARGO ("Cargo (Refrigerated)", 1.0, 0, CargoBay.techAdvancement(),
+                (size, num) -> new RefrigeratedCargoBay(size, 1, num)),
+        INSULATED_CARGO ("Cargo (Insulated)", 1.0, 0, CargoBay.techAdvancement(),
+                (size, num) -> new InsulatedCargoBay(size, 1, num)),
+        LIVESTOCK_CARGO ("Cargo Livestock)", 1.0, 0, CargoBay.techAdvancement(),
+                (size, num) -> new LivestockCargoBay(size, 1, num));
         
         private String name;
         private double weight;
@@ -257,14 +269,18 @@ public class TestAero extends TestEntity {
             } else if (bay instanceof SuperHeavyVehicleBay) {
                 return VEHICLE_SH;
             } else if (bay instanceof InfantryBay) {
-                if (bay.getWeight() / bay.getCapacity() == INFANTRY_JUMP.getWeight()) {
-                    return INFANTRY_JUMP;
-                } else if (bay.getWeight() / bay.getCapacity() == INFANTRY_MOTORIZED.getWeight()) {
-                    return INFANTRY_MOTORIZED;
-                } else if (bay.getWeight() / bay.getCapacity() == INFANTRY_MECHANIZED.getWeight()) {
-                    return INFANTRY_MECHANIZED;
+                switch (((InfantryBay) bay).getPlatoonType()) {
+                    case JUMP:
+                        return INFANTRY_JUMP;
+                    case MECHANIZED:
+                        return INFANTRY_MECHANIZED;
+                    case MOTORIZED:
+                        return INFANTRY_MOTORIZED;
+                    case FOOT:
+                    default:
+                        return INFANTRY_FOOT;
+                    
                 }
-                return INFANTRY_FOOT;
             } else if (bay instanceof BattleArmorBay) {
                 if (bay.getWeight() / bay.getCapacity() == 12) {
                     return CS_BATTLE_ARMOR;

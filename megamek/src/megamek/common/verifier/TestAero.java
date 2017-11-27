@@ -59,6 +59,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.common.weapons.capitalweapons.AR10BayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1176,6 +1177,7 @@ public class TestAero extends TestEntity {
         
         if (weapon.isSubCapital() || (weapon instanceof CapitalMissileWeapon)
                 || (weapon instanceof CapitalMissileBayWeapon)
+                || (weapon instanceof AR10BayWeapon)
                 || (weapon.getAtClass() == WeaponType.CLASS_SCREEN)) {
             return en.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);

@@ -9,4 +9,5 @@ Minotaur (Standard),5
 Hydra 2,4
 Minotaur P2,3
 Procyon (Quad),2
-Svartalfa Ultra,1
+Svartalfa Ultra ProtoMech (Standard),1
+Svartalfa Ultra ProtoMech (LRM Variant),1

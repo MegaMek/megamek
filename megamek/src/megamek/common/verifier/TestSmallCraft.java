@@ -730,6 +730,12 @@ public class TestSmallCraft extends TestAero {
             buff.append("Left and right side weapon loads do not match.\n");
             illegal = true;
         }
+        
+        int bayDoors = smallCraft.getTransportBays().stream().mapToInt(Bay::getDoors).sum();
+        if (bayDoors > maxBayDoors(smallCraft)) {
+            buff.append("Exceeds maximum number of bay doors.\n");
+            illegal = true;
+        }
 
         return illegal;
     }

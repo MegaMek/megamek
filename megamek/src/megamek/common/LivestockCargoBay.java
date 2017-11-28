@@ -47,9 +47,9 @@ public final class LivestockCargoBay extends Bay {
      * @param bayNumber
      */
     public LivestockCargoBay(double space, int doors, int bayNumber) {
-        totalSpace = space * 0.83;
-        weight = space;
-        currentSpace = space * 0.83;
+        totalSpace = space;
+        weight = space / 0.83;
+        currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
         currentdoors = doors;

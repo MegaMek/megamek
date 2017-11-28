@@ -118,7 +118,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
-        if (sMotion.equals("spheroid")) {
+        if (sMotion.equalsIgnoreCase("spheroid")) {
             nMotion = EntityMovementMode.SPHEROID;
             a.setSpheroid(true);
         }

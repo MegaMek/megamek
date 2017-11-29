@@ -1291,7 +1291,7 @@ public abstract class TestEntity implements TestEntityOption {
         double cargoWeight = 0;
         for (Bay bay : getEntity().getTransportBays()) {
             if (!bay.isQuarters()) {
-                cargoWeight += bay.getWeight();
+                cargoWeight += ceil(bay.getWeight(), Ceil.HALFTON);
             }
         }
         return carryingSpace + cargoWeight;

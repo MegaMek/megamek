@@ -46,9 +46,9 @@ public final class InsulatedCargoBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      */
     public InsulatedCargoBay(double space, int doors, int bayNumber) {
-        totalSpace = space * 0.87;
-        weight = space;
-        currentSpace = space * 0.87;
+        totalSpace = space;
+        weight = space / 0.87;
+        currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
     }

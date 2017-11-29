@@ -47,9 +47,9 @@ public final class RefrigeratedCargoBay extends Bay {
      * @param bayNumber
      */
     public RefrigeratedCargoBay(double space, int doors, int bayNumber) {
-        totalSpace = space * 0.87;
-        weight = space;
-        currentSpace = space * 0.87;
+        totalSpace = space;
+        weight = space / 0.87;
+        currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
         currentdoors = doors;

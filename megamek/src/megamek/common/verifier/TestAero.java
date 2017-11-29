@@ -213,13 +213,13 @@ public class TestAero extends TestEntity {
                 (size, num) -> new SmallCraftBay(size, 1, num)),
         CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
                 (size, num) -> new CargoBay(size, 1, num)),
-        LIQUID_CARGO ("Cargo (Liquid)", 1.0, 0, CargoBay.techAdvancement(),
+        LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),
                 (size, num) -> new LiquidCargoBay(size, 1, num)),
-        REFRIGERATED_CARGO ("Cargo (Refrigerated)", 1.0, 0, CargoBay.techAdvancement(),
+        REFRIGERATED_CARGO ("Cargo (Refrigerated)", 1/0.87, 0, CargoBay.techAdvancement(),
                 (size, num) -> new RefrigeratedCargoBay(size, 1, num)),
-        INSULATED_CARGO ("Cargo (Insulated)", 1.0, 0, CargoBay.techAdvancement(),
+        INSULATED_CARGO ("Cargo (Insulated)", 1/0.87, 0, CargoBay.techAdvancement(),
                 (size, num) -> new InsulatedCargoBay(size, 1, num)),
-        LIVESTOCK_CARGO ("Cargo Livestock)", 1.0, 0, CargoBay.techAdvancement(),
+        LIVESTOCK_CARGO ("Cargo Livestock)", 1/0.83, 0, CargoBay.techAdvancement(),
                 (size, num) -> new LivestockCargoBay(size, 1, num));
         
         private String name;
@@ -292,12 +292,24 @@ public class TestAero extends TestEntity {
                 return FIGHTER;
             } else if (bay instanceof SmallCraftBay) {
                 return SMALL_CRAFT;
+            } else if (bay instanceof LiquidCargoBay) {
+                return LIQUID_CARGO;
+            } else if (bay instanceof LivestockCargoBay) {
+                return LIVESTOCK_CARGO;
+            } else if (bay instanceof RefrigeratedCargoBay) {
+                return REFRIGERATED_CARGO;
+            } else if (bay instanceof InsulatedCargoBay) {
+                return INSULATED_CARGO;
             } else if (bay instanceof CargoBay) {
                 return CARGO;
             } else {
                 // Crew quarters are implemented as bays and should not be mixed with transport bays
                 return null;
             }
+        }
+        
+        public boolean isCargoBay() {
+            return ordinal() >= CARGO.ordinal();
         }
     }
     

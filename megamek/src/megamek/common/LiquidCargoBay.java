@@ -46,9 +46,9 @@ public final class LiquidCargoBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      */
     public LiquidCargoBay(double space, int doors, int bayNumber) {
-        totalSpace = space * 0.91;
-        weight = space;
-        currentSpace = space * 0.91;
+        totalSpace = space;
+        weight = space / 0.91;
+        currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
         currentdoors = doors;

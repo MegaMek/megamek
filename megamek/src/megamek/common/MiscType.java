@@ -7467,19 +7467,20 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createISNavalTugAdaptor() {
-        MiscType misc = new MiscType();
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.cost = 100000;
-        misc.name = "Naval Tug Adaptor";
-        misc.setInternalName("ISNavalTugAdaptor");
-        misc.addLookupName("CLNavalTugAdaptor");
-        misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT);
-        misc.rulesRefs = "334,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3065, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_DC);
-        return misc;
+		MiscType misc = new MiscType();
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.cost = 100000;
+		misc.name = "Naval Tug Adaptor";
+		misc.setInternalName("ISNavalTugAdaptor");
+		misc.addLookupName("CLNavalTugAdaptor");
+		misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT);
+		misc.rulesRefs = "334,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
+				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+				.setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+		return misc;
     }
 
     public static MiscType createPCMT() {

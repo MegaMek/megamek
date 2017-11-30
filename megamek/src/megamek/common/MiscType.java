@@ -8134,9 +8134,10 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 10;
         misc.criticals = 1;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
-        misc.industrial = true;
-        misc.tankslots = 1;
+		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SC_EQUIPMENT)
+				.or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+		misc.industrial = true;
+	      misc.tankslots = 1;
         misc.rulesRefs = "239,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);

@@ -76,7 +76,7 @@ public final class SuperHeavyVehicleBay extends Bay {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -85,20 +85,15 @@ public final class SuperHeavyVehicleBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Superheavy Vehicle Bay (" + getCurrentDoors() + " doors) - "
-                + String.format("%1$,.0f", currentSpace)
-                + (currentSpace > 1 ? " units" : " unit");
+        return "Superheavy Vehicle Bay " + numDoorsString() + " - "
+                + String.format("%1$,.0f", getUnused())
+                + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override
@@ -112,8 +107,25 @@ public final class SuperHeavyVehicleBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 15;
+    }
+
+    @Override
     public String toString() {
         return "superheavyvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+    }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return SuperHeavyVehicleBay.techAdvancement();
     }
 
 } // End package class TroopSpace implements Transporter

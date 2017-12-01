@@ -44,6 +44,7 @@ public class Warship extends Jumpship {
     public Warship() {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        setDriveCoreType(DRIVE_CORE_COMPACT);
     }
     
     //ASEW Missile Effects, per location
@@ -72,27 +73,6 @@ public class Warship extends Jumpship {
     }
  
     
-    @Override
-    public double getStrategicFuelUse() {
-    	double tonsperday = 0;
-    	
-    	
-    	if (weight >= 200000) {
-    		tonsperday = 39.52;
-    		return tonsperday;
-    	} else if (weight >= 100000) {
-    		tonsperday = 19.75;
-    		return tonsperday;
-    	} else if (weight >= 50000) {
-    		tonsperday = 9.77;
-    		return tonsperday;
-    	} else if (weight >= 2000) {
-    		tonsperday = 2.82;
-    		return tonsperday;
-    	}
-    	return tonsperday;
-    }
-
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
@@ -156,6 +136,12 @@ public class Warship extends Jumpship {
     @Override
     public boolean canJump() {
         return kf_integrity > 0;
+    }
+    
+    @Override
+    public double getJumpDriveWeight() {
+        double pct = 0.45; //TODO: compact
+        return Math.ceil(getWeight() * pct); 
     }
 
     // broadside weapon arcs
@@ -222,11 +208,11 @@ public class Warship extends Jumpship {
             }
         }
 
-        if (armorType[0] == EquipmentType.T_ARMOR_FERRO_IMP) {
+        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
             baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
             baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
         }
 

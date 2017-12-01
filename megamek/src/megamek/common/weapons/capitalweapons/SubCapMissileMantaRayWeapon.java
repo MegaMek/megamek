@@ -27,7 +27,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class SubCapMantaRayWeapon extends SubCapMissileWeapon {
+public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
     /**
      * 
      */
@@ -36,11 +36,12 @@ public class SubCapMantaRayWeapon extends SubCapMissileWeapon {
     /**
      * 
      */
-    public SubCapMantaRayWeapon() {
+    public SubCapMissileMantaRayWeapon() {
         super();
-        this.name = "Manta Ray";
+        this.name = "Sub-Capital Missile Launcher (Manta Ray)";
         this.setInternalName(this.name);
         this.addLookupName("MantaRay");
+        this.addLookupName("Manta Ray");
         this.heat = 21;
         this.damage = 5;
         this.ammoType = AmmoType.T_MANTA_RAY;

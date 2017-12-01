@@ -89,8 +89,13 @@ public final class PillionSeatCargoBay extends Bay {
     }
 
     @Override
+    public boolean isQuarters() {
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "pillionseats:" + totalSpace + ":" + doors;
+        return "pillionseats:" + weight + ":" + doors;
     }
 
 }

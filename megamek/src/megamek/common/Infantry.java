@@ -65,8 +65,9 @@ public class Infantry extends Entity {
     public static int PARAMEDICS        = 1 << 8;
     public static int PARATROOPS        = 1 << 9;
     public static int TAG_TROOPS        = 1 << 10;
-    public static int SCUBA             = 1 << 11;
-    public static int NUM_SPECIALIZATIONS = 12;
+    public static int XCT               = 1 << 11;
+    public static int SCUBA             = 1 << 12;
+    public static int NUM_SPECIALIZATIONS = 13;
     public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS | DEMO_ENGINEERS
             | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS
             | TRENCH_ENGINEERS;
@@ -1305,8 +1306,20 @@ public class Infantry extends Entity {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        
-        //TODO: add + 0.1 for XCT
+
+        if (hasSpecialization(XCT)) {
+            utm += 0.1;
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("XCT:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("0.1");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
         
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -1605,6 +1618,11 @@ public class Infantry extends Entity {
         if (hasSpecialization(PARATROOPS)) {
         	multiplier *= 3;
         }
+
+        if (hasSpecialization(XCT)) {
+            multiplier *= 5;
+        }
+
         /* TODO: paramedics cost an addition x0.375 per paramedic */
 
         cost = cost * multiplier;
@@ -1679,6 +1697,17 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        if (getArmorKit() != null) {
+            if (getArmorKit().hasSubType(MiscType.S_XCT_VACUUM)) {
+                return false;
+            } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) && (game.getPlanetaryConditions().getTemperature() < -30)) {
+                return false;
+            } else if (getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) && (game.getPlanetaryConditions().getTemperature() > 50)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
         if (hasSpaceSuit() || isMechanized()) {
             return false;
         }
@@ -1687,7 +1716,11 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInVacuum() {
-        return !hasSpaceSuit();
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return true;
+        } else {
+            return !hasSpaceSuit();
+        }
     }
 
     @Override
@@ -1850,6 +1883,10 @@ public class Infantry extends Entity {
                 (getMovementMode() == EntityMovementMode.TRACKED) ||
                 (getMovementMode() == EntityMovementMode.SUBMARINE) ||
                 (getMovementMode() == EntityMovementMode.VTOL);
+    }
+
+    public boolean isXCT() {
+        return hasSpecialization(XCT);
     }
 
     /*

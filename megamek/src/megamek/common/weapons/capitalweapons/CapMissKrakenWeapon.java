@@ -39,7 +39,7 @@ public class CapMissKrakenWeapon extends CapitalMissileWeapon {
      */
     public CapMissKrakenWeapon() {
         super();
-        this.name = "Tele-operated Missile (Kraken)";
+        this.name = "Capital Missile Launcher (Kraken)";
         this.setInternalName(this.name);
         this.addLookupName("Kraken");
         this.heat = 50;

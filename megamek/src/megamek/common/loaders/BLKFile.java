@@ -795,6 +795,7 @@ public class BLKFile {
         
         if (t instanceof SmallCraft) {
             SmallCraft sc = (SmallCraft) t;
+            blk.writeBlockData("designtype", sc.getDesignType());
             blk.writeBlockData("crew", sc.getNCrew());
             blk.writeBlockData("officers", sc.getNOfficers());
             blk.writeBlockData("gunners", sc.getNGunners());

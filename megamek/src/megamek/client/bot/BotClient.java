@@ -69,6 +69,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -85,6 +86,12 @@ public abstract class BotClient extends Client {
 
     // a frame, to show stuff in
     public JFrame frame;
+    
+    /**
+     * Keeps track of whether this client has started to calculate a turn this phase.
+     */
+    boolean calculatedTurnThisPhase = false;
+    int calculatedTurnsThisPhase = 0;
 
     /**
      * Store a reference to the ClientGUI for the client who created this bot.
@@ -112,22 +119,38 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                if (isMyTurn()
-                        && (e.getPlayer() != null) 
-                        && (e.getPlayer().getId() == localPlayerNumber)) {
+                // On simultaneous phases, each player ending their turn will generalte a turn change
+                // We want to ignore turns from other players and only listen to events we generated
+                boolean ignoreSimTurn = game.isPhaseSimultaneous() && (e.getPreviousPlayerId() != localPlayerNumber)
+                        && calculatedTurnThisPhase;
+
+                
+                if (isMyTurn() && !ignoreSimTurn) {
+                    calculatedTurnThisPhase = true;
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),
-                                               getName() + " Turn " + game.getTurnIndex()
-                                               + " Calc Thread"
+                            getName() + " Turn " + game.getTurnIndex() + " Calc Thread"
                     );
                     worker.start();
+                    calculatedTurnsThisPhase++;
                 }
-                
+
                 // unloading "stranded" units happens as part of a game turn change, so that's where we do it.
                 if(canUnloadStranded()) {
                     sendUnloadStranded(getStrandedEntities());
                 }
+            }
+
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                calculatedTurnThisPhase = false;
+                if (e.getOldPhase().isPhaseSimultaneous(game)) {
+                    int numOwnedEntities = game.getEntitiesOwnedBy(getLocalPlayer());
+                    System.out.println("BotClient calculated turns, " + getName() + " phase " + e.getOldPhase()
+                            + " " + calculatedTurnsThisPhase + "/" + numOwnedEntities);
+                }
+                calculatedTurnsThisPhase = 0;
             }
 
             @Override

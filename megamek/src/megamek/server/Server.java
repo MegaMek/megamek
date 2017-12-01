@@ -1178,7 +1178,7 @@ public class Server implements Runnable {
             }
             if (game.phaseHasTurns(game.getPhase())) {
                 send(connId, createTurnVectorPacket());
-                send(connId, createTurnIndexPacket());
+                send(connId, createTurnIndexPacket(connId));
             }
 
             send(connId, createArtilleryPacket(player));
@@ -2451,9 +2451,9 @@ public class Server implements Runnable {
 
         // move along
         if (outOfOrder) {
-            send(createTurnIndexPacket());
+            send(createTurnIndexPacket(entityUsed.getOwnerId()));
         } else {
-            changeToNextTurn();
+            changeToNextTurn(entityUsed.getOwnerId());
         }
     }
 
@@ -2872,7 +2872,7 @@ public class Server implements Runnable {
             case PHASE_PHYSICAL:
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
-                changeToNextTurn();
+                changeToNextTurn(-1);
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
@@ -3409,7 +3409,7 @@ public class Server implements Runnable {
                 game.swapTurnOrder(currentturnindex, nextturnid);
                 // update the turn packages for all players.
                 send(createTurnVectorPacket());
-                send(createTurnIndexPacket());
+                send(createTurnIndexPacket(connid));
             } else {
                 // if nothing changed return without doing anything
                 return;
@@ -3423,7 +3423,7 @@ public class Server implements Runnable {
      * current phase. If the player whose turn it is next is not connected, we
      * allow the other players to skip that player.
      */
-    private void changeToNextTurn() {
+    private void changeToNextTurn(int prevPlayerId) {
         // if there aren't any more turns, end the phase
         if (!game.hasMoreTurns()) {
             endCurrentPhase();
@@ -3440,7 +3440,11 @@ public class Server implements Runnable {
             return;
         }
 
-        send(createTurnIndexPacket());
+        if (prevPlayerId != -1) {
+            send(createTurnIndexPacket(prevPlayerId));
+        } else {
+            send(createTurnIndexPacket(player.getId()));
+        }
 
         if ((null != player) && player.isGhost()) {
             sendGhostSkipMessage(player);
@@ -5191,7 +5195,13 @@ public class Server implements Runnable {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
-            logError(METHOD_NAME, "Server got invalid movement packet");
+            String msg = "error: server got invalid movement packet from " + "connection " + connId;
+            if (entity != null) {
+                msg += ", Entity: " + entity.getShortName();
+            } else {
+                msg += ", Entity was null!";
+            }
+            logError(METHOD_NAME, msg);
             return;
         }
 
@@ -13248,7 +13258,7 @@ public class Server implements Runnable {
             }
             logError(METHOD_NAME, msg);
             send(connId, createTurnVectorPacket());
-            send(connId, createTurnIndexPacket());
+            send(connId, createTurnIndexPacket(turn.getPlayerNum()));
             return;
         }
 
@@ -13304,7 +13314,7 @@ public class Server implements Runnable {
             }
             logError(METHOD_NAME, msg);
             send(connId, createTurnVectorPacket());
-            send(connId, createTurnIndexPacket());
+            send(connId, createTurnIndexPacket(connId));
             return;
         }
 
@@ -13620,7 +13630,7 @@ public class Server implements Runnable {
             }
             logError(METHOD_NAME, msg);
             send(connId, createTurnVectorPacket());
-            send(connId, createTurnIndexPacket());
+            send(connId, createTurnIndexPacket(turn.getPlayerNum()));
             return;
         }
 
@@ -31105,8 +31115,11 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing the current turn index
      */
-    private Packet createTurnIndexPacket() {
-        return new Packet(Packet.COMMAND_TURN, new Integer(game.getTurnIndex()));
+    private Packet createTurnIndexPacket(int playerId) {
+        final Object[] data = new Object[3];
+        data[0] = new Integer(game.getTurnIndex());
+        data[1] = playerId;
+        return new Packet(Packet.COMMAND_TURN, data);
     }
 
     /**
@@ -33501,7 +33514,7 @@ public class Server implements Runnable {
 
         // Clear the list of pending units and move to the next turn.
         game.resetActions();
-        changeToNextTurn();
+        changeToNextTurn(connId);
     }
 
     /**

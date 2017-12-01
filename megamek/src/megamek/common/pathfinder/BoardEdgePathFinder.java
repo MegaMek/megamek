@@ -8,7 +8,9 @@ import java.util.TreeMap;
 
 import megamek.client.bot.princess.HomeEdge;
 import megamek.common.Board;
+import megamek.common.Building;
 import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.Hex;
 import megamek.common.IBoard;
@@ -16,6 +18,8 @@ import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Terrain;
+import megamek.common.options.OptionsConstants;
 
 /**
  * This class is intended to be used to find a (potentially long) legal path 
@@ -24,6 +28,8 @@ import megamek.common.MovePath.MoveStepType;
  *
  */
 public class BoardEdgePathFinder {
+    // next step: introduce caching mechanism mapping coords to successful paths
+    
     public MovePath FindPathToEdge(MovePath pathToHere, int destinationRegion) {
         Comparator<MovePath> movePathComparator = new SortByDistanceToEdge(destinationRegion);
         
@@ -85,15 +91,14 @@ public class BoardEdgePathFinder {
         Coords dest = movePath.getFinalCoords();
         IBoard board = movePath.getGame().getBoard();
         IHex destHex = board.getHex(dest);
-        
+        Coords src = movePath.getSecondLastStep().getPosition();
+        IHex srcHex = board.getHex(src);
+        Entity entity = movePath.getEntity();
         
         boolean destinationInBounds = board.contains(dest);
         if(!destinationInBounds) {
             return false;
         }
-        
-        boolean destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
-        boolean destinationHasBuilding = board.getBuildingAt(dest) != null;
         
         // we only need to be able to legally move into the hex from the previous hex. 
         // we don't care about stacking limits, remaining unit mp or other transient data
@@ -111,8 +116,39 @@ public class BoardEdgePathFinder {
         // naval units can't go onto land or depth 0 water
         // non-infantry units "can't" go into buildings
         
+        Building destinationBuilding = board.getBuildingAt(dest);
+        boolean isMech = (entity.getEntityType() & Entity.ETYPE_MECH) > 0;
+        boolean isTank = entity.getMovementMode() == EntityMovementMode.TRACKED ||
+                            entity.getMovementMode() == EntityMovementMode.WHEELED ||
+                            entity.getMovementMode() == EntityMovementMode.HOVER;
+        boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
+        boolean isWheeled = entity.getMovementMode() == EntityMovementMode.WHEELED;
+        boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
+        
+        boolean destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
+        boolean destinationHasBuilding = destinationBuilding != null;
+        boolean mechGoingUpTooHigh = ((entity.getEntityType() & Entity.ETYPE_MECH) > 0) && (destHex.getLevel() - entity.getElevation() > 2); 
+        boolean mechGoingDownTooLow = ((entity.getEntityType() & Entity.ETYPE_MECH) > 0) && (entity.getElevation() - destHex.getLevel() > 2) &&
+                movePath.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING);
+        boolean tankGoingUpTooHigh = isTank && (destHex.getLevel() - entity.getElevation() > 1);
+        boolean tankGoingDownTooLow = isTank && (entity.getElevation() - destHex.getLevel() > 1);
+        boolean tankIntoHeavyWoods = (destHex.terrainLevel(Terrains.JUNGLE) > 1 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
+        boolean weakTankIntoWoods = (isHovercraft || isWheeled) && 
+                (destHex.terrainLevel(Terrains.JUNGLE) > 1 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
+        boolean wheeledTankIntoRough = isWheeled &&
+                destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE);
+                                    
+        
+        
         return !destinationImpassable &&
-                !destinationHasBuilding;
+                !destinationHasBuilding &&
+                !mechGoingUpTooHigh &&
+                !mechGoingDownTooLow && 
+                !tankGoingUpTooHigh &&
+                !tankGoingDownTooLow &&
+                !tankIntoHeavyWoods &&
+                !weakTankIntoWoods &&
+                !wheeledTankIntoRough;
     }
  
     /**

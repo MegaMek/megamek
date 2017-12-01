@@ -4106,6 +4106,13 @@ public class Aero extends Entity implements IAero, IBomber {
         return 0;
     }
 
+    /**
+     * @return The number bay personnel or extra passenger space.
+     */
+    public int getBayPersonnel() {
+        return 0;
+    }
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO;

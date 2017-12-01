@@ -215,4 +215,15 @@ public class SpaceStation extends Jumpship {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_SPACE_STATION;
     }
 
+    @Override
+    public int getBayPersonnel() {
+        int totalBayPersonnel = 0;
+        
+        for (Bay next : getTransportBays()) {
+            totalBayPersonnel += next.getPersonnel(isClan());
+        }
+
+        return totalBayPersonnel;
+    }
+
 }

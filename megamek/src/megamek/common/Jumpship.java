@@ -1538,4 +1538,16 @@ public class Jumpship extends Aero {
     protected int calculateWalk() {
     	return walkMP;
     }
+
+    @Override
+    public int getBayPersonnel() {
+        int totalBayPersonnel = 0;
+        
+        for (Bay next : getTransportBays()) {
+            totalBayPersonnel += next.getPersonnel(isClan());
+        }
+
+        return totalBayPersonnel;
+    }
+
 }

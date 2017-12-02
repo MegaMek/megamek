@@ -100,6 +100,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+    
+    //Defined here so we can use it in multiple methods
+    Mounted bayWAmmo;
 
     /*
      * (non-Javadoc)
@@ -114,33 +117,37 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         return false;
     }
-        
-    @Override
-    protected void useAmmo() {
-        final String METHOD_NAME = "useAmmo()";
+    
+    protected void getMountedAmmo() {
+        final String METHOD_NAME = "getMountedAmmo()";
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             // check the currently loaded ammo
-            Mounted bayWAmmo = bayW.getLinked();
+            bayWAmmo = bayW.getLinked();
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
                 logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
             }
-
-            int shots = bayW.getCurrentShots();
-            for (int i = 0; i < shots; i++) {
-                if (null == bayWAmmo
-                        || bayWAmmo.getUsableShotsLeft() < 1) {
-                    // try loading something else
-                    ae.loadWeaponWithSameAmmo(bayW);
-                    bayWAmmo = bayW.getLinked();
-                }
-                if (null != bayWAmmo) {
-                    bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
-                }
+        }    
+    }
+        
+    @Override
+    protected void useAmmo() {
+        getMountedAmmo();
+        Mounted bayW = bayWAmmo.getLinkedBy();        
+        int shots = (bayW.getCurrentShots() * weapon.getBayWeapons().size());
+        for (int i = 0; i < shots; i++) {
+            if (null == bayWAmmo
+                    || bayWAmmo.getUsableShotsLeft() < 1) {
+                // try loading something else
+                ae.loadWeaponWithSameAmmo(bayW);
+                bayWAmmo = bayW.getLinked();
             }
-        }
+            if (null != bayWAmmo) {
+                bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
+            }
+        }        
     }
 
     /*
@@ -615,6 +622,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             // is the target at zero velocity
             if ((targetship.getCurrentVelocity() == 0) && !(targetship.isSpheroid() && !game.getBoard().inSpace())) {
                 toHit.addModifier(-2, "target is not moving");
+            }
+            
+            //Barracuda Missile Modifier
+            getMountedAmmo();
+            AmmoType bayAType = (AmmoType) bayWAmmo.getType();
+            if ((bayWAmmo.getType().hasFlag(AmmoType.F_AR10_BARRACUDA))
+                    || (bayAType.getAmmoType() == AmmoType.T_BARRACUDA)) {
+                toHit.addModifier(-2, "Barracuda Missile");
             }
             
             if (target.isAirborne() && target.isAero()) {

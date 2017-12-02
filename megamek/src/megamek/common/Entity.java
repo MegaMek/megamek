@@ -85,6 +85,7 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
+import megamek.common.weapons.capitalweapons.AR10BayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.other.TSEMPWeapon;
@@ -9600,7 +9601,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             //Bearings-only capital missiles fire during the targeting phase
             if ((wtype instanceof TeleOperatedMissileBayWeapon)
-                    || (wtype instanceof CapitalMissileBayWeapon)) {
+                    || (wtype instanceof CapitalMissileBayWeapon)
+                    || (wtype instanceof AR10BayWeapon)) {
                 if (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
                         || mounted.curMode().equals("Bearings-Only Long Detection Range")
                         || mounted.curMode().equals("Bearings-Only Medium Detection Range")
@@ -11587,7 +11589,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                  ArrayList<String> modes = new ArrayList<String>();
                  String[] stringArray = {};
                  ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-                 modes.add("");
+                 modes.add("Normal");
                  if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                      modes.add("Bearings-Only Extreme Detection Range");
                      modes.add("Bearings-Only Long Detection Range");
@@ -11604,7 +11606,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-                modes.add("");
+                modes.add("Normal");
                 modes.add("Tele-Operated");                
                 if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     modes.add("Bearings-Only Extreme Detection Range");

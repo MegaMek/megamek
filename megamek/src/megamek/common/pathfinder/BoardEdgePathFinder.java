@@ -290,9 +290,9 @@ public class BoardEdgePathFinder {
                 movePath.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING);
         boolean tankGoingUpTooHigh = isTank && (destHex.getLevel() - entity.getElevation() > 1);
         boolean tankGoingDownTooLow = isTank && (entity.getElevation() - destHex.getLevel() > 1);
-        boolean tankIntoHeavyWoods = (destHex.terrainLevel(Terrains.JUNGLE) > 1 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
+        boolean tankIntoHeavyWoods = (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
         boolean weakTankIntoWoods = (isHovercraft || isWheeled) && 
-                (destHex.terrainLevel(Terrains.JUNGLE) > 1 || destHex.terrainLevel(Terrains.WOODS) > 1) && !destHexHasRoad;
+                (destHex.terrainLevel(Terrains.JUNGLE) > 0 || destHex.terrainLevel(Terrains.WOODS) > 0) && !destHexHasRoad;
         boolean wheeledTankIntoRough = isWheeled &&
                 destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE);
         boolean groundTankIntoWater = isTank && !isHovercraft &&

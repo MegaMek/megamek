@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,14 +75,12 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.pathfinder.AbstractPathFinder;
-import megamek.common.pathfinder.ShortestPathFinder;
+import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
 public abstract class BotClient extends Client {
-
-    private static final HexHasPathToCenterCache hexHasPathToCenterCache = new HexHasPathToCenterCache();
+    private Map<EntityMovementMode, BoardEdgePathFinder> deploymentPathFinders = new HashMap<>();
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -350,8 +349,6 @@ public abstract class BotClient extends Client {
     }
 
     private void runEndGame() {
-        hexHasPathToCenterCache.clearCache();
-
         // Make a list of the player's living units.
         ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
 
@@ -803,48 +800,23 @@ public abstract class BotClient extends Client {
     // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
     // ToDo: This will require a new PathFinder.
     private boolean hasPathToCenter(Entity entity, IBoard board) {
-        // Flying units can always reach the center of the board.
+        // Flying units can always get anywhere
         if (entity.isAero() || entity instanceof VTOL) {
             return true;
         }
+        
+        BoardEdgePathFinder boardEdgePathFinder;
 
-        // Don't take too long.
-        final int timeLimit = PreferenceManager.getClientPreferences()
-                                               .getMaxPathfinderTime();
-
-        final Coords boardCenter = board.getCenter();
-
-        // Start the path assuming forward movement, but if the unit is
-        // jump-capable, use jump movement.
-        MovePath pathToCenter = new MovePath(game, entity);
-        MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
-        if (entity.getOriginalJumpMP() > 0) {
-            type = MovePath.MoveStepType.START_JUMP;
+        if(deploymentPathFinders.containsKey(entity.getMovementMode())) {
+            boardEdgePathFinder = deploymentPathFinders.get(entity.getMovementMode());
         }
-
-        // Check the cache to see if we've already tested this hex for this
-        // movement mode.
-        HexHasPathToCenterCache.Key key =
-                new HexHasPathToCenterCache.Key(entity.getPosition()
-                                                      .toFriendlyString(),
-                                                entity.getMovementMode());
-        Boolean hasPath = hexHasPathToCenterCache.hasPathToCenter(key);
-        if (hasPath != null) {
-            return hasPath;
+        else {
+            boardEdgePathFinder = new BoardEdgePathFinder();
+            deploymentPathFinders.put(entity.getMovementMode(), boardEdgePathFinder);
         }
-
-        // Find the shortest path.
-        ShortestPathFinder shortestPathFinder =
-                ShortestPathFinder.newInstanceOfAStar(boardCenter, type, game);
-        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition =
-                new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
-        shortestPathFinder.addStopCondition(timeoutCondition);
-        shortestPathFinder.run(pathToCenter.clone());
-
-        // Base return on if a path was found or not and cache the result.
-        hasPath = shortestPathFinder.getComputedPath(boardCenter) != null;
-        hexHasPathToCenterCache.addMember(key, hasPath);
-        return hasPath;
+        
+        MovePath mp = boardEdgePathFinder.findPathToEdge(entity);
+        return mp != null;
     }
 
     private double potentialBuildingDamage(int x, int y, Entity entity) {

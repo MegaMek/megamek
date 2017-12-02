@@ -17,15 +17,18 @@ package megamek.common;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -39,6 +42,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -62,6 +66,7 @@ public class MechSummaryCache {
     }
 
     private static final String FILENAME_UNITS_CACHE = "units.cache";
+    private static final String FILENAME_LOOKUP = "name_changes.txt";
 
     static MechSummaryCache m_instance;
     private static boolean disposeInstance = false;
@@ -283,6 +288,8 @@ public class MechSummaryCache {
             }
         }
 
+        bNeedsUpdate |= addLookupNames(lLastCheck);
+
         // save updated cache back to disk
         if (bNeedsUpdate) {
             try {
@@ -306,7 +313,7 @@ public class MechSummaryCache {
          * loadReport.append(" --")
          * .append(failedUnitsDesc.nextElement()).append("\n"); }
          */
-
+        
         System.out.print(loadReport.toString());
 
         done();
@@ -715,6 +722,44 @@ public class MechSummaryCache {
 
         return bNeedsUpdate;
     }
+    
+    private boolean addLookupNames(long lLastCheck) {
+        final String METHOD_NAME = "addLookupNames(long)"; //$NON-NLS-1$
+        File lookupNames = new MegaMekFile(getUnitCacheDir(),
+                FILENAME_LOOKUP).getFile();
+        boolean needsUpdate = false;
+        if (lookupNames.exists() && lookupNames.lastModified() > lLastCheck) {
+            try {
+                InputStream is = new FileInputStream(lookupNames);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                String line = null;
+                String lookupName = null;
+                String entryName = null;
+                while (null != (line = reader.readLine())) {
+                    if (line.startsWith("#")) {
+                        continue;
+                    }
+                    int index = line.indexOf("|");
+                    if (index > 0) {
+                        lookupName = line.substring(0, index);
+                        entryName = line.substring(index + 1);
+                        if ((lookupName.length() > 0) && (!m_nameMap.containsKey(lookupName))) {
+                            MechSummary ms = m_nameMap.get(entryName);
+                            if (null != ms) {
+                                m_nameMap.put(lookupName, ms);
+                                needsUpdate = true;
+                            }
+                        }
+                    }
+                }
+                reader.close();
+            } catch (IOException ex) {
+                DefaultMmLogger.getInstance().log(MechSummaryCache.class, METHOD_NAME, ex);
+            }
+        }
+        return needsUpdate;
+    }
+
 
     public int getCacheCount() {
         return cacheCount;

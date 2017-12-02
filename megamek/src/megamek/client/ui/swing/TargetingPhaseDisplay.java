@@ -1063,14 +1063,23 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, 0, false);
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
-
             clientgui.mechD.wPan.wRangeR
                     .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
+            IGame game = clientgui.getClient().getGame();
+            int distance = Compute.effectiveDistance(game, ce(),
+                    target);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.alreadyFired"));
                 //$NON-NLS-1$
+                setFireEnabled(false);
+            } else if ((m.curMode().equals("Bearings-Only Extreme Detection Range")
+                    || m.curMode().equals("Bearings-Only Long Detection Range")
+                    || m.curMode().equals("Bearings-Only Medium Detection Range")
+                    || m.curMode().equals("Bearings-Only Short Detection Range"))
+                    && distance <= 50) {
+                clientgui.mechD.wPan.wToHitR.setText("Cannot fire bearings-only missile at <= 50 hexes");
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages

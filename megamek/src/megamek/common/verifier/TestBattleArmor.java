@@ -29,6 +29,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
@@ -134,8 +135,33 @@ public class TestBattleArmor extends TestEntity {
             }
             return null;
         }
+        
+        /**
+         * @return The <code>MiscType</code> for this armor.
+         */
+        public EquipmentType getArmorEqType() {
+            String name = EquipmentType.getArmorTypeName(type, isClan);
+            return EquipmentType.get(name);
+        }
     }
 
+    /**
+     * Filters all ba armor according to given tech constraints
+     * 
+     * @param techManager
+     * @return A list of all armors that meet the tech constraints
+     */
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+        List<EquipmentType> retVal = new ArrayList<>();
+        for (BAArmor armor : BAArmor.values()) {
+            final EquipmentType eq = armor.getArmorEqType();
+            if ((null != eq) && techManager.isLegal(eq)) {
+                retVal.add(eq);
+            }
+        }
+        return retVal;
+    }
+    
     /**
      * An enumeration that keeps track of the legal manipulators for
      * BattleArmor.
@@ -434,6 +460,16 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public boolean isAero() {
+        return false;
+    }
+    
+    @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+    
+    @Override
+    public boolean isJumpship() {
         return false;
     }
 

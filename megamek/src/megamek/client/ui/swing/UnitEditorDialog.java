@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 import java.util.function.BiConsumer;
 
 import javax.swing.BorderFactory;
@@ -109,7 +110,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel rightThrusterCrit;
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
-    CheckCritPanel[] bayCriticals;
+    JSpinner[] bayDamage;
     CheckCritPanel[] bayDoorCrit;
     CheckCritPanel[] protoCrits;
 
@@ -988,17 +989,20 @@ public class UnitEditorDialog extends JDialog {
         
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
         	int b = 0;
-        	bayCriticals = new CheckCritPanel [aero.getTransportBays().size()];
-        	bayDoorCrit = new CheckCritPanel [aero.getTransportBays().size()];
-        	for (Bay nextbay : aero.getTransportBays()) {
+        	JSpinner bayCrit;
+        	Vector<Bay> bays = aero.getTransportBays();
+        	bayDamage = new JSpinner[bays.size()];
+        	bayDoorCrit = new CheckCritPanel [bays.size()];
+        	for (Bay nextbay : bays) {
         		gridBagConstraints.gridx = 0;
         		gridBagConstraints.gridy++;
         		gridBagConstraints.weightx = 0.0;
         		panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + nextbay.getBayNumber()
         				+ "</b><br></html>"), gridBagConstraints);
     		
-        		CheckCritPanel bayCrit = new CheckCritPanel(1, nextbay.getBayDamaged());
-        		bayCriticals[b] = bayCrit;
+        		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
+                        0, nextbay.getCapacity(), nextbay.isCargo()? 0.5: 1.0));
+        		bayDamage[b] = bayCrit;
         		gridBagConstraints.gridx = 1;
         		gridBagConstraints.weightx = 1.0;
         		panSystem.add(bayCrit, gridBagConstraints);
@@ -1243,15 +1247,11 @@ public class UnitEditorDialog extends JDialog {
             if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
             	int b = 0;
             	for (Bay bay : aero.getTransportBays()) {
-            		CheckCritPanel bayCrit = bayCriticals[b];
+            		JSpinner bayCrit = bayDamage[b];
             		if (null == bayCrit) {
             			continue;
             		}
-            		if (bayCrit.getHits() > 0) {
-            			bay.setBayDamaged();
-            		} else {
-            			bay.clearBayDamaged();
-            		}
+            		bay.setBayDamage(bay.getCapacity() - (Double) bayCrit.getModel().getValue());
             		CheckCritPanel doorCrit = bayDoorCrit[b];
             		if (null == doorCrit) {
             			continue;

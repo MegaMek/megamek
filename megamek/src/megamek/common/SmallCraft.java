@@ -35,6 +35,8 @@ public class SmallCraft extends Aero {
     // crew and passengers
     private int nCrew = 0;
     private int nPassenger = 0;
+    private int nOfficers = 0;
+    private int nGunners = 0;
     private int nBattleArmor = 0;
     private int nMarines = 0;
     private int nOtherPassenger = 0;
@@ -43,6 +45,10 @@ public class SmallCraft extends Aero {
     public static final int CIVILIAN = 0;
     public static final int MILITARY = 1;
     private int designType = 0;
+    
+    // escape pods and lifeboats
+    private int escapePods = 0;
+    private int lifeBoats = 0;
     
     private final static TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
@@ -54,7 +60,7 @@ public class SmallCraft extends Aero {
             .setISApproximate(false, true, false, false)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -65,6 +71,11 @@ public class SmallCraft extends Aero {
         }
     }
     
+    @Override
+    public boolean isPrimitive() {
+        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
+    }
+
     public void setDesignType(int design) {
         designType = design;
     }
@@ -72,10 +83,19 @@ public class SmallCraft extends Aero {
     public int getDesignType() {
         return designType;
     }
+    
     public void setNCrew(int crew) {
         nCrew = crew;
     }
-
+    
+    public void setNOfficers(int officer) {
+        nOfficers = officer;
+    }
+    
+    public void setNGunners(int gunners) {
+        nGunners = gunners;
+    }
+    
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -101,11 +121,23 @@ public class SmallCraft extends Aero {
     public int getNPassenger() {
         return nPassenger;
     }
-
+    
+    @Override
+    public int getNOfficers() {
+        return nOfficers;
+    }
+    
+    @Override
+    public int getNGunners() {
+        return nGunners;
+    }
+    
+    @Override
     public int getNBattleArmor() {
         return nBattleArmor;
     }
 
+    @Override
     public int getNMarines() {
         return nMarines;
     }
@@ -114,9 +146,48 @@ public class SmallCraft extends Aero {
         return nOtherPassenger;
     }
     
+    public void setEscapePods(int n) {
+        escapePods = n;
+    }
+
+    public int getEscapePods() {
+        return escapePods;
+    }
+
+    public void setLifeBoats(int n) {
+        lifeBoats = n;
+    }
+
+    public int getLifeBoats() {
+        return lifeBoats;
+    }
+    
+    @Override
     public double getStrategicFuelUse() {
-    	double tonsperday = 1.84;
-    	return tonsperday;
+        if (isPrimitive()) {
+            return 1.84 * primitiveFuelFactor();
+        }
+    	return 1.84;
+    }
+
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2500) {
+            return 1.0;
+        } else if (year >= 2400) {
+            return 1.2;
+        } else if (year >= 2300) {
+            return 1.4;
+        } else if (year >= 2251) {
+            return 1.5;
+        } else if (year >= 2201) {
+            return 1.7;
+        } else if (year >= 2151) {
+            return 1.9;
+        } else {
+            return 2.2;
+        }
     }
 
     @Override
@@ -247,6 +318,11 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 12:
                     setPotCrit(CRIT_KF_BOOM);
+                    // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
+                    if ((this instanceof Dropship)
+                            && (((Dropship)this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
+                        setPotCrit(CRIT_AVIONICS);
+                    }
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
@@ -476,76 +552,52 @@ public class SmallCraft extends Aero {
         // first I need to subtract SI bonus from total armor
         int armorPoints = getTotalOArmor();
         armorPoints -= getSI() * locations();
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
+        double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
+                getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
 
-        double baseArmor = 16.0;
-        if (isClan()) {
-            baseArmor = 20.0;
-        }
-        if (isSpheroid()) {
-            if (weight >= 12500) {
-                baseArmor = 14.0;
-                if (isClan()) {
-                    baseArmor = 17.0;
-                }
-            } else if (weight >= 20000) {
-                baseArmor = 12.0;
-                if (isClan()) {
-                    baseArmor = 14.0;
-                }
-            } else if (weight >= 35000) {
-                baseArmor = 10.0;
-                if (isClan()) {
-                    baseArmor = 12.0;
-                }
-            } else if (weight >= 50000) {
-                baseArmor = 8.0;
-                if (isClan()) {
-                    baseArmor = 10.0;
-                }
-            } else if (weight >= 65000) {
-                baseArmor = 6.0;
-                if (isClan()) {
-                    baseArmor = 7.0;
-                }
+        return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
+    }
+    
+    public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {
+        double base = 16.0;
+        if (spheroid) {
+            if (craftWeight >= 65000) {
+                base = 6.0;
+            } else if (craftWeight >= 50000) {
+                base = 8.0;
+            } else if (craftWeight >= 35000) {
+                base = 10.0;
+            } else if (craftWeight >= 20000) {
+                base = 12.0;
+            } else if (craftWeight >= 12500) {
+                base = 14.0;
             }
         } else {
-            if (weight >= 6000) {
-                baseArmor = 14.0;
-                if (isClan()) {
-                    baseArmor = 17.0;
-                }
-            } else if (weight >= 9500) {
-                baseArmor = 12.0;
-                if (isClan()) {
-                    baseArmor = 14.0;
-                }
-            } else if (weight >= 12500) {
-                baseArmor = 10.0;
-                if (isClan()) {
-                    baseArmor = 12.0;
-                }
-            } else if (weight >= 17500) {
-                baseArmor = 8.0;
-                if (isClan()) {
-                    baseArmor = 10.0;
-                }
-            } else if (weight >= 25000) {
-                baseArmor = 6.0;
-                if (isClan()) {
-                    baseArmor = 7.0;
-                }
+            if (craftWeight >= 25000) {
+                base = 6.0;
+            } else if (craftWeight >= 17500) {
+                base = 8.0;
+            } else if (craftWeight >= 12500) {
+                base = 10.0;
+            } else if (craftWeight >= 9500) {
+                base = 12.0;
+            } else if (craftWeight >= 6000) {
+                base = 14.0;
+            }
+        }
+        if (isClan) {
+            if (base > 14) {
+                base += 4;
+            } else if (base > 12) {
+                base += 3;
+            } else if (base > 6) {
+                base += 2;
+            } else {
+                base += 1;
             }
         }
 
-        double armorPerTon = baseArmor * EquipmentType.getArmorPointMultiplier(armorType[0], techLevel);
-        double armWeight = 0.0;
-        for (; ((int) Math.round(armWeight * armorPerTon)) < armorPoints; armWeight += .5) {
-            // add armor weight in discrete batches
-        }
-        return armWeight;
+        return base * EquipmentType.getArmorPointMultiplier(at, isClan);
     }
 
     /**

@@ -79,7 +79,7 @@ public final class ASFBay extends Bay {
 
         // System.err.print("Current space to load " + unit.getShortName() +
         // " is " + this.currentSpace + "\n");
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -88,11 +88,6 @@ public final class ASFBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
@@ -111,7 +106,7 @@ public final class ASFBay extends Bay {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
             throw new IllegalArgumentException("Can not load "
-                    + unit.getShortName() + " into this bay. " + currentSpace);
+                    + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= 1;
@@ -126,7 +121,7 @@ public final class ASFBay extends Bay {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
             throw new IllegalArgumentException("Can not recover "
-                    + unit.getShortName() + " into this bay. " + currentSpace);
+                    + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= 1;
@@ -141,13 +136,13 @@ public final class ASFBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Aerospace Fighter (" + getCurrentDoors() + " doors) - "
-                    + String.format("%1$,.0f", currentSpace) + " units ("
+            return "Aerospace Fighter " + numDoorsString() + " - "
+                    + String.format("%1$,.0f", getUnused()) + " units ("
                     + getRecoverySlots() + " recovery open)";
         }
-        return String.format("Aerospace Fighter Bay (%1$d doors) - %2$,.0f",
-                getCurrentDoors(), currentSpace)
-                + (currentSpace > 1 ? " units" : " unit");
+        return String.format("Aerospace Fighter Bay %s - %2$,.0f",
+                numDoorsString(), getUnused())
+                + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override
@@ -251,7 +246,24 @@ public final class ASFBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 2;
+    }
+
+    @Override
     public String toString() {
         return "asfbay:" + totalSpace + ":" + doors + ":" + bayNumber;
     }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return ASFBay.techAdvancement();
+    }
+
 }

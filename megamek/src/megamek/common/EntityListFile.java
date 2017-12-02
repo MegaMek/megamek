@@ -105,6 +105,10 @@ public class EntityListFile {
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getBaseShotsLeft()));
+                if (mount.getEntity().usesWeaponBays()) {
+                    output.append("\" capacity=\"")
+                        .append(String.valueOf(mount.getAmmoCapacity()));
+                }
             }
             if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
@@ -901,17 +905,14 @@ public class EntityListFile {
                 //large craft bays and doors. 
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
                 	for (Bay nextbay : a.getTransportBays()) {
-                		output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
-                		output.write(CommonConstants.NL);
-                		if (nextbay.getBayDamaged() == 0) {
-                			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"false\"/>\n");
-                		} else if (nextbay.getBayDamaged() == 1) {
-                			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"true\"/>\n");
-                		}
-                		output.write(indentStr(indentLvl+1) + "<BayDoors doors=\"" + nextbay.getCurrentDoors() + "\"/>");
-                		output.write(CommonConstants.NL);
-                		output.write(indentStr(indentLvl+1) + "</TransportBay>");
-                		output.write(CommonConstants.NL);
+                		output.write(indentStr(indentLvl+1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">");
+                        output.write(CommonConstants.NL);
+                        output.write(indentStr(indentLvl + 2) + "<damage>" + nextbay.getBayDamage() + "</damage>");
+                        output.write(CommonConstants.NL);
+                        output.write(indentStr(indentLvl + 2) + "<doors>" + nextbay.getCurrentDoors() + "</doors>");
+                        output.write(CommonConstants.NL);
+                		output.write(indentStr(indentLvl+1) + "</transportBay>");
+                        output.write(CommonConstants.NL);
                 	}
                 }
 

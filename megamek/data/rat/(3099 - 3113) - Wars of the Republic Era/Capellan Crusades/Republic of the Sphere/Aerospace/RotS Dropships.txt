@@ -1,6 +1,6 @@
 Capellan Crusades Republic of the Sphere Dropships
 Claymore V3,1
-Interdictor Pocket Warship (3113),2
+Interdictor Pocket Warship (3115),2
 Fortress (3058),3
 Gazelle (3055),4
 Leopard (3056),5

@@ -44,7 +44,7 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.addLookupName("BarracudaT");
         this.heat = 10;
         this.damage = 2;
-        this.ammoType = AmmoType.T_BARRACUDA;
+        this.ammoType = AmmoType.T_BARRACUDA_T;
         this.shortRange = 20;
         this.mediumRange = 30;
         this.longRange = 40;

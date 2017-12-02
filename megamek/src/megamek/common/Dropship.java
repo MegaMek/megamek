@@ -58,31 +58,24 @@ public class Dropship extends SmallCraft {
         return asewAffectedTurns[arc];
     }
   
-    // escape pods and lifeboats
-    int escapePods = 0;
-    int lifeBoats = 0;
-
-    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
-            .setISApproximate(false, true, false, false)
-            .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
-    @Override
-    public TechAdvancement getConstructionTechAdvancement() {
-        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
-    }
+    /**
+     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
+     * 
+     */
+    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_PROTOTYPE = 1;
+    public static final int COLLAR_NO_BOOM   = 2;
+    
+    private static final String[] COLLAR_NAMES = {
+            "KF-Boom", "Prototype KF-Boom", "No Boom"
+    };
     
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
     private boolean kfBoomDamaged = false;
+    private int collarType = COLLAR_STANDARD;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -94,6 +87,29 @@ public class Dropship extends SmallCraft {
     
     public boolean isKFBoomDamaged() {
         return kfBoomDamaged;
+    }
+    
+    public int getCollarType() {
+        return collarType;
+    }
+    
+    public void setCollarType(int collarType) {
+        this.collarType = collarType;
+    }
+    
+    public String getCollarName() {
+        return COLLAR_NAMES[collarType];
+    }
+    
+    public static String getCollarName(int type) {
+        return COLLAR_NAMES[type];
+    }
+    
+    public static TechAdvancement getCollarTA() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2458, 2470, 2500)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public String getCritDamageString() {
@@ -232,89 +248,103 @@ public class Dropship extends SmallCraft {
         kfBoomDamaged = b;
     }
 
-    public void setEscapePods(int n) {
-        escapePods = n;
-    }
-
-    public int getEscapePods() {
-        return escapePods;
-    }
-
-    public void setLifeBoats(int n) {
-        lifeBoats = n;
-    }
-
-    public int getLifeBoats() {
-        return lifeBoats;
-    }
-
-    public int getFuelPerTon() {
-
-        int points = 80;
-
-        if (weight >= 40000) {
-            points = 10;
-            return points;
-        } else if (weight >= 20000) {
-            points = 20;
-            return points;
-        } else if (weight >= 3000) {
-            points = 30;
-            return points;
-        } else if (weight >= 1900) {
-            points = 40;
-            return points;
-        } else if (weight >= 1200) {
-            points = 50;
-            return points;
-        } else if (weight >= 800) {
-            points = 60;
-            return points;
-        } else if (weight >= 400) {
-            points = 70;
-            return points;
+    @Override
+    public double getFuelPointsPerTon() {
+        double ppt;
+        if (getWeight() < 400) {
+            ppt = 80;
+        } else if (getWeight() < 800) {
+            ppt = 70;
+        } else if (getWeight() < 1200) {
+            ppt = 60;
+        } else if (getWeight() < 1900) {
+            ppt = 50;
+        } else if (getWeight() < 3000) {
+            ppt = 40;
+        } else if (getWeight() < 20000) {
+            ppt = 30;
+        } else if (getWeight() < 40000) {
+            ppt = 20;
+        } else {
+            ppt = 10;
         }
+        if (isPrimitive()) {
+            return ppt / primitiveFuelFactor();
+        }
+        return ppt;
+    }
 
-        return points;
+    @Override
+    public double getStrategicFuelUse() {
+        double fuelUse = 1.84; // default for military designs and civilian < 1000
+        if ((getDesignType() == CIVILIAN) || isPrimitive()) {
+            if (getWeight() >= 70000) {
+                fuelUse = 8.83;
+            } else if (getWeight() >= 50000) {
+                fuelUse = 8.37;
+            } else if (getWeight() >= 40000) {
+                fuelUse = 7.71;
+            } else if (getWeight() >= 30000) {
+                fuelUse = 6.52;
+            } else if (getWeight() >= 20000) {
+                fuelUse = 5.19;
+            } else if (getWeight() >= 9000) {
+                fuelUse = 4.22;
+            } else if (getWeight() >= 4000) {
+                fuelUse = 2.82;
+            }
+        }
+        if (isPrimitive()) {
+            return fuelUse * primitiveFuelFactor();
+        }
+        return fuelUse;
     }
     
-    public double getStrategicFuelUse() {
-    	double tonsperday = 0;
-    	
-    	if (this.getDesignType() == 1) {
-    		tonsperday = 1.84;
-    		return tonsperday;
-    	} else if (weight >= 70000) {
-    		tonsperday = 8.83;
-    		return tonsperday;
-    	} else if (weight >= 50000) {
-    		tonsperday = 8.37;
-    		return tonsperday;
-    	} else if (weight >= 40000) {
-    		tonsperday = 7.71;
-    		return tonsperday;
-    	} else if (weight >= 30000) {
-    		tonsperday = 6.52;
-    		return tonsperday;
-    	} else if (weight >= 20000) {
-    		tonsperday = 5.19;
-    		return tonsperday;
-    	} else if (weight >= 9000) {
-    		tonsperday = 4.22;
-    		return tonsperday;
-    	} else if (weight >= 4000) {
-    		tonsperday = 3.37;
-    		return tonsperday;
-    	} else if (weight >= 1000) {
-    		tonsperday = 2.82;
-    		return tonsperday;
-    	} else if (weight >= 100) {
-    		tonsperday = 1.84;
-    		return tonsperday;
-    	}
-    	return tonsperday;
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2500) {
+            return 1.0;
+        } else if (year >= 2400) {
+            return 1.1;
+        } else if (year >= 2351) {
+            return 1.3;
+        } else if (year >= 2251) {
+            return 1.4;
+        } else if (year >= 2201) {
+            return 1.6;
+        } else if (year >= 2151) {
+            return 1.8;
+        } else {
+            return 2.0;
+        }
     }
 
+    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+            .setISApproximate(false, true, false, false)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        if (collarType != COLLAR_NO_BOOM) {
+            ctl.addComponent(getCollarTA());
+        }
+    }
+    
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -344,7 +374,11 @@ public class Dropship extends SmallCraft {
         // Landing Gear
         costs[costIdx++] += 10 * getWeight();
         // Docking Collar
-        costs[costIdx++] += 10000;
+        if (collarType == COLLAR_STANDARD) {
+            costs[costIdx++] += 10000;
+        } else if (collarType == COLLAR_PROTOTYPE) {
+            costs[costIdx++] += 1010000;
+        }
 
         // Engine
         double engineMultiplier = 0.065;
@@ -357,7 +391,7 @@ public class Dropship extends SmallCraft {
         costs[costIdx++] += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // Fuel Tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
+        costs[costIdx++] += (200 * getFuel()) / getFuelPointsPerTon() * 1.02;
 
         // Armor
         costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
@@ -1796,11 +1830,6 @@ public class Dropship extends SmallCraft {
         } else {
             return super.rollHitLocation(table, side);
         }
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE;
     }
 
     @Override

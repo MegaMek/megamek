@@ -27,6 +27,66 @@ public final class InfantryBay extends Bay {
      *
      */
     private static final long serialVersionUID = 946578184870030662L;
+    
+    /** The amount of space taken up by an infantry unit in a transport bay differs from the space
+     * in an infantry compartment (used in APCs) due to quarters, equipment storage, and maintenance
+     * equipment. A single cubicle holds a platoon, except in the case of mechanized which requires
+     * a cubicle per squad. */
+    public enum PlatoonType {
+        FOOT (5, 28, 25),
+        JUMP (6, 21, 20),
+        MOTORIZED (7, 28, 25),
+        MECHANIZED (8, 7, 5);
+        
+        private int weight;
+        private int isPersonnel;
+        private int clanPersonnel;
+        
+        PlatoonType(int weight, int isPersonnel, int clanPersonnel) {
+            this.weight = weight;
+            this.isPersonnel = isPersonnel;
+            this.clanPersonnel = clanPersonnel;
+        }
+        
+        public int getWeight() {
+            return weight;
+        }
+        
+        public int getISPersonnel() {
+            return isPersonnel;
+        }
+        
+        public int getClanPersonnel() {
+            return clanPersonnel;
+        }
+        
+        @Override
+        public String toString() {
+            return name().substring(0, 1) + name().substring(1).toLowerCase();
+        }
+        
+        public static PlatoonType getPlatoonType(Entity en) {
+            switch (en.getMovementMode()) {
+                case TRACKED:
+                case WHEELED:
+                case HOVER:
+                case VTOL:
+                case SUBMARINE:
+                    return MECHANIZED;
+                case INF_MOTORIZED:
+                    return MOTORIZED;
+                case INF_JUMP:
+                    return JUMP;
+                default:
+                    return FOOT;
+            }
+        }
+    }
+    
+    // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
+    // In practice we support loading any type of infantry into the bay as long as there is room to avoid
+    // the headache of having to do formal reconfigurations.
+    private PlatoonType platoonType = PlatoonType.FOOT; 
 
     /**
      * The default constructor is only for serialization.
@@ -39,21 +99,33 @@ public final class InfantryBay extends Bay {
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only the
-     * weight of the troops (and their equipment) are considered; if you'd like
-     * to think that they are stacked like lumber, be my guest.
+     * Create a space for the given tonnage of troops. This is the total tonnage of the bay;
+     * the amount of space taken up by a given unit depends on the PlatoonType.
      *
      * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     *            - The number of platoons (or squads for mechanized) of the designated type this
+     *              bay can carry.
      * @param bayNumber
      */
-    public InfantryBay(double space, int doors, int bayNumber) {
-        totalSpace = space;
-        currentSpace = space;
+    public InfantryBay(double space, int doors, int bayNumber, PlatoonType bayType) {
+        // We need to track by total tonnage rather than individual platoons
+        totalSpace = space * bayType.getWeight();
+        currentSpace = totalSpace;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
         currentdoors = doors;
+        this.platoonType = bayType;
+    }
+    
+    @Override
+    public double spaceForUnit(Entity unit) {
+        PlatoonType type = PlatoonType.getPlatoonType(unit);
+        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
+            return type.getWeight() * ((Infantry)unit).getSquadN();
+        } else {
+            return type.getWeight();
+        }
     }
 
     /**
@@ -67,17 +139,12 @@ public final class InfantryBay extends Bay {
      */
     @Override
     public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        boolean result = false;
-
         // Only infantry
-        if (unit instanceof Infantry) {
-            result = true;
-        }
+        boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < 1) {
+        if (getUnused() < spaceForUnit(unit)) {
             result = false;
         }
 
@@ -86,30 +153,55 @@ public final class InfantryBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Infantry Bay (" + getCurrentDoors() + " doors) - "
-                + String.format("%1$,.0f", currentSpace)
-                + (currentSpace > 1 ? " platoons" : " platoon");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
+                .append(getUnusedSlots())
+            .append(" ").append(platoonType.toString());
+        if (platoonType != PlatoonType.MECHANIZED) {
+            sb.append(" platoon");
+        } else {
+            sb.append(" squad");
+        }
+        if (getUnusedSlots() != 1) {
+            sb.append("s");
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public double getUnusedSlots() {
+        return currentSpace / platoonType.getWeight() - getBayDamage();
+    }
+
+    @Override
+    public int getPersonnel(boolean clan) {
+        return (int)(totalSpace / platoonType.getWeight())
+                * (clan? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
+    }
+
+    @Override
+    public String getDefaultSlotDescription() {
+        return " (" + platoonType.toString() + ")";
     }
 
     @Override
     public String getType() {
-        return "Infantry";
+        return "Infantry (" + platoonType.toString() + ")";
     }
 
     @Override
     public String toString() {
-        return "infantrybay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"+ bayNumber + ":" + platoonType.toString();
+    }
+    
+    public PlatoonType getPlatoonType() {
+        return platoonType;
     }
 
 } // End package class TroopSpace implements Transporter

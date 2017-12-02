@@ -47,6 +47,7 @@ public class BombArrowIV extends AmmoWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
+        flags = flags.or(F_BOMB_WEAPON);
         rulesRefs = "359,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)

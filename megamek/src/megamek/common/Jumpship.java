@@ -42,6 +42,16 @@ public class Jumpship extends Aero {
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
+    
+    public static final int DRIVE_CORE_STANDARD    = 0;
+    public static final int DRIVE_CORE_COMPACT     = 1;
+    public static final int DRIVE_CORE_SUBCOMPACT  = 2;
+    public static final int DRIVE_CORE_NONE        = 3;
+    public static final int DRIVE_CORE_PRIMITIVE   = 4;
+    
+    // The percentage of the total unit weight taken up by the drive core. The value
+    // given for primitive assumes a 30ly range, but the final value has to be computed.
+    private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
     private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
@@ -49,6 +59,8 @@ public class Jumpship extends Aero {
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
+    private int driveCoreType = DRIVE_CORE_STANDARD;
+    private int jumpRange = 30; // Primitive jumpships can have a reduced range
 
     // crew and passengers
     private int nCrew = 0;
@@ -327,23 +339,54 @@ public class Jumpship extends Aero {
         return nOtherCrew;
     }
     
+    @Override
+    public double getFuelPointsPerTon() {
+        double ppt;
+        if (getWeight() < 110000) {
+            ppt = 10;
+        } else if (getWeight() < 250000) {
+            ppt = 5;
+        } else {
+            ppt = 2.5;
+        }
+        if (isPrimitive()) {
+            return ppt / primitiveFuelFactor();
+        }
+        return ppt;
+    }
+
+    @Override
     public double getStrategicFuelUse() {
-    	double tonsperday = 0;
-    	    	
+        double fuelUse;
     	if (weight >= 200000) {
-    		tonsperday = 3.95;
-    		return tonsperday;
+    		fuelUse = 3.95;
     	} else if (weight >= 100000) {
-    		tonsperday = 1.98;
-    		return tonsperday;
+    	    fuelUse = 1.98;
     	} else if (weight >= 50000) {
-    		tonsperday = 0.98;
-    		return tonsperday;
-    	} else if (weight >= 2000) {
-    		tonsperday = 0.28;
-    		return tonsperday;
+    	    fuelUse = 0.98;
+    	} else {
+    	    fuelUse = 0.28;
     	}
-    	return tonsperday;
+    	if (isPrimitive()) {
+    	    return fuelUse * primitiveFuelFactor();
+    	}
+    	return fuelUse;
+    }
+
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2300) {
+            return 1.0;
+        } else if (year >= 2251) {
+            return 1.1;
+        } else if (year >= 2201) {
+            return 1.4;
+        } else if (year >= 2151) {
+            return 1.7;
+        } else {
+            return 2.0;
+        }
     }
 
     @Override
@@ -384,6 +427,39 @@ public class Jumpship extends Aero {
 
     public boolean canJump() {
         return kf_integrity > 0;
+    }
+    
+    public int getDriveCoreType() {
+        return driveCoreType;
+    }
+    
+    public void setDriveCoreType(int driveCoreType) {
+        this.driveCoreType = driveCoreType;
+    }
+
+    /**
+     * Get maximum range of a jump
+     */
+    public int getJumpRange() {
+        return jumpRange;
+    }
+    
+    /**
+     * Set maximum jump range (used for primitive jumpships)
+     */
+    public void setJumpRange(int range) {
+        jumpRange = range;
+    }
+    
+    /**
+     * @return The weight of the jump drive core for this unit
+     */
+    public double getJumpDriveWeight() {
+        double pct = DRIVE_CORE_WEIGHT_PCT[driveCoreType];
+        if (driveCoreType == DRIVE_CORE_PRIMITIVE) {
+            pct = 0.05 + 0.03 * jumpRange;
+        }
+        return Math.ceil(getWeight() * pct); 
     }
 
     // different firing arcs
@@ -1010,11 +1086,11 @@ public class Jumpship extends Aero {
             }
         }
 
-        if (armorType[0] == EquipmentType.T_ARMOR_FERRO_IMP) {
+        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
             baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
             baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
         }
 

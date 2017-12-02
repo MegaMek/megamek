@@ -17,7 +17,8 @@ package megamek.common.event;
 import megamek.common.IPlayer;
 
 /**
- * Instances of this class are sent when Game turn changes
+ * Instances of this class are sent when Game turn changes.  This even keeps track of the player who will be taking
+ * the new turn as well as the player who took the turn that triggered this event.
  */
 public class GameTurnChangeEvent extends GamePlayerEvent {
 
@@ -25,13 +26,24 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
      * 
      */
     private static final long serialVersionUID = -6812056631576383917L;
+    
+    /**
+     * Track the ID of the player who took the turn that triggered this even.
+     */
+    private int prevPlayerId;
 
     /**
      * @param source
-     * @param player
+     *            The Game instance
+     * @param currPlayer
+     *            The player for whom the new turn is for.
+     * @param prevPlayerId
+     *            The id of the player who took the turn that triggered this
+     *            event.
      */
-    public GameTurnChangeEvent(Object source, IPlayer player) {
-        super(source, player);
+    public GameTurnChangeEvent(Object source, IPlayer currPlayer, int prevPlayerId) {
+        super(source, currPlayer);
+        this.prevPlayerId = prevPlayerId;
     }
 
     @Override
@@ -42,5 +54,9 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
     @Override
     public String getEventName() {
         return "Turn Change";
+    }
+    
+    public int getPreviousPlayerId() {
+        return prevPlayerId;
     }
 }

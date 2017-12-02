@@ -103,7 +103,8 @@ public class DockingCollar implements Transporter {
             Dropship ds = (Dropship) unit;
             result = true;
 
-            // If the dropship's collar is damaged, we can't mate with it.
+            // If the dropship's collar is damaged, or it's a primitive without a collar
+            // we can't mate with it.
             if (ds.isDockCollarDamaged()) {
                 result = false;
             }

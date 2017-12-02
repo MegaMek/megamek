@@ -82,7 +82,7 @@ public final class SmallCraftBay extends Bay {
 
         // System.err.print("Current space to load " + unit.getShortName() +
         // " is " + this.currentSpace + "\n");
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -91,11 +91,6 @@ public final class SmallCraftBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
@@ -113,7 +108,7 @@ public final class SmallCraftBay extends Bay {
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= 1;
@@ -127,7 +122,7 @@ public final class SmallCraftBay extends Bay {
     public void recover(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= 1;
@@ -142,14 +137,14 @@ public final class SmallCraftBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Small Craft (" + getCurrentDoors() + " doors) - "
-                    + String.format("%1$,.0f", currentSpace)
-                    + (currentSpace > 1 ? " units (" : " unit (")
+            return "Small Craft " + numDoorsString() + " - "
+                    + String.format("%1$,.0f", getUnused())
+                    + (getUnused() > 1 ? " units (" : " unit (")
                     + getRecoverySlots() + " recovery open)";
         } else {
-            return "Small Craft (" + getCurrentDoors() + " doors) - "
-                    + String.format("%1$,.0f", currentSpace)
-                    + (currentSpace > 1 ? " units" : " unit");
+            return "Small Craft " + numDoorsString() + " - "
+                    + String.format("%1$,.0f", getUnused())
+                    + (getUnused() > 1 ? " units" : " unit");
         }
     }
 
@@ -251,8 +246,24 @@ public final class SmallCraftBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 5;
+    }
+
+    @Override
     public String toString() {
         return "smallcraftbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+    }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return SmallCraftBay.techAdvancement();
     }
 
 } // End package class TroopSpace implements Transporter

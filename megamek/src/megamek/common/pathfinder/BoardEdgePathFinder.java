@@ -30,15 +30,18 @@ public class BoardEdgePathFinder {
     // This is a map that will tell us if a particular coordinate has a move path to a particular edge
     Map<Integer, Map<Coords, MovePath>> edgePathCache;
     
-    // this is a map of coordinates which do not have a valid path to a particular edge  
-    Map<Integer, Set<Coords>> noPathCache;
+    // This is a map that will tell us the longest non-repeating path available to a particular coordinate
+    // Useful in situations where a unit has no possible way to get from the deployment zone to the opposite edge
+    // It is accumulated over multiple calls to findPathToEdge()
+    // It will basically tell us the available "surface area" from a particular set of coordinates
+    Map<Coords, MovePath> longestNonEdgePathCache;
     
     /**
      * Constructor - initializes internal caches
      */
     public BoardEdgePathFinder() {
         edgePathCache = new HashMap<>();
-        noPathCache = new HashMap<>();
+        longestNonEdgePathCache = new HashMap<>();
     }
     
     /**
@@ -129,8 +132,14 @@ public class BoardEdgePathFinder {
      */
     public MovePath findPathToEdge(Entity entity) {
         int destinationRegion = determineOppositeEdge(entity);
+        
+        // back up and restore the entity's original facing, as it's not nice to have side effects
+        int originalFacing = entity.getFacing();
         setAppropriateFacing(entity, destinationRegion);
-        return findPathToEdge(entity, destinationRegion);
+        MovePath pathToEdge = findPathToEdge(entity, destinationRegion);
+        entity.setFacing(originalFacing);
+        
+        return pathToEdge;
     }
     
     /**
@@ -151,6 +160,7 @@ public class BoardEdgePathFinder {
         // a collection of coordinates we've already visited, so we don't loop back.
         Set<Coords> visitedCoords = new HashSet<>();
         visitedCoords.add(startPath.getFinalCoords());
+        longestNonEdgePathCache.put(entity.getPosition(), startPath);
         
         while(!candidates.isEmpty()) {
             if(isOnBoardEdge(candidates.get(0), destinationRegion) ||
@@ -160,11 +170,26 @@ public class BoardEdgePathFinder {
             }
             
             candidates.addAll(generateChildNodes(candidates.get(0), visitedCoords));
+            
+            // if this path moved around more than the current 'longest path', store it, just in case
+            if(candidates.get(0).getHexesMoved() > longestNonEdgePathCache.get(entity.getPosition()).getHexesMoved()) {
+                longestNonEdgePathCache.put(entity.getPosition(), candidates.get(0));
+            }
+            
             candidates.remove(0);
             candidates.sort(movePathComparator);
         }
         
         return null;
+    }
+    
+    /**
+     * Gets the currently stored longest non-edge path from the given entity's current position
+     * @param coords The coordinates to check
+     * @return A move path or null if these coordinates haven't been evaluated.
+     */
+    public MovePath getLongestNonEdgePath(Coords coords) {
+        return longestNonEdgePathCache.get(coords);
     }
     
     /**

@@ -60,7 +60,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Protomech;
-import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
@@ -475,8 +474,7 @@ public abstract class BotClient extends Client {
      * method iterates through the list of Coords and returns the first Coords
      * that does not have a stacking violation.
      */
-    protected Coords getFirstValidCoords(Entity deployedUnit,
-            List<Coords> possibleDeployCoords) {
+    protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         // Check all of the hexes in order.
         for (Coords dest : possibleDeployCoords) {
             Entity violation = Compute.stackingViolation(game, deployedUnit,
@@ -600,6 +598,8 @@ public abstract class BotClient extends Client {
             ideal_elev = highest_elev;
         }
 
+        double highestFitness = -5000;
+        
         for (RankedCoords coord : validCoords) {
 
             // Calculate the fitness factor for each hex and save it to the array
@@ -665,7 +665,7 @@ public abstract class BotClient extends Client {
             coord.fitness += (total_damage / 10);
 
             // Mech
-            if (deployed_ent instanceof Mech) {
+            if (deployed_ent.hasETypeFlag(Entity.ETYPE_MECH)) {
                 // -> Trees are good
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
@@ -686,7 +686,7 @@ public abstract class BotClient extends Client {
 
             // Infantry
 
-            if (deployed_ent instanceof Infantry) {
+            if (deployed_ent.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                 // -> Trees and buildings make good cover, esp for conventional
                 // infantry
                 // rough is nice, too
@@ -738,18 +738,13 @@ public abstract class BotClient extends Client {
                 }
             }
 
-            // VTOL *PLACEHOLDER*
-            // Currently, VTOLs are deployed as tanks, because they're a
-            // sub-class.
-            // This isn't correct in the long run, and eventually should be
-            // fixed.
-            // FIXME
-            if (deployed_ent instanceof Tank) {
+            // some criteria for deploying non-vtol tanks
+            if (deployed_ent.hasETypeFlag(Entity.ETYPE_TANK) &&
+                    !deployed_ent.hasETypeFlag(Entity.ETYPE_VTOL)) {
                 // Tracked vehicle
                 // -> Trees increase fitness
                 if (deployed_ent.getMovementMode() == EntityMovementMode.TRACKED) {
-                    if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
-                            Terrains.WOODS)) {
+                    if (board.getHex(coord.getX(), coord.getY()).containsTerrain(Terrains.WOODS)) {
                         coord.fitness += 2;
                     }
                 }
@@ -770,6 +765,7 @@ public abstract class BotClient extends Client {
                 coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }
+            
             // ProtoMech
             // ->
             // -> Trees increase fitness by +2 (minor)
@@ -781,11 +777,24 @@ public abstract class BotClient extends Client {
             }
 
             // Make sure I'm not stuck in a dead-end.
-            if (!hasPathToCenter(deployed_ent, board)) {
+            if (!hasPathToEdge(deployed_ent, board)) {
                 coord.fitness -= 100;
+            }
+            
+            if(coord.fitness > highestFitness) {
+                highestFitness = coord.fitness;
             }
         }
 
+        // now, we double check: did we get a bunch of coordinates with a value way below 0?
+        // This indicates that we did not find any paths from the deployment zone to the opposite edge
+        // So we adjust each coordinate's fitness based on the "longest available path"
+        if(highestFitness < -10) {
+            for(RankedCoords rc : validCoords) {
+                rc.fitness += deploymentPathFinders.get(deployed_ent.getMovementMode()).getLongestNonEdgePath(rc.getCoords()).getHexesMoved();
+            }
+        }
+        
         // Now sort the valid array.
         Collections.sort(validCoords);
 
@@ -799,7 +808,7 @@ public abstract class BotClient extends Client {
 
     // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
     // ToDo: This will require a new PathFinder.
-    private boolean hasPathToCenter(Entity entity, IBoard board) {
+    private boolean hasPathToEdge(Entity entity, IBoard board) {
         // Flying units can always get anywhere
         if (entity.isAero() || entity instanceof VTOL) {
             return true;

@@ -6338,6 +6338,9 @@ public abstract class Mech extends Entity {
             case COCKPIT_SUPERHEAVY_TRIPOD:
                 inName = "COCKPIT_SUPERHEAVY_TRIPOD";
                 break;
+            case COCKPIT_TRIPOD:
+                inName = "COCKPIT_TRIPOD";
+                break;
             case COCKPIT_INTERFACE:
                 inName = "COCKPIT_INTERFACE";
                 break;

@@ -449,6 +449,7 @@ public class TestSmallCraft extends TestAero {
         boolean NC3 = hasNC3();
         // Add in extra fire control system weight for exceeding base slot limit
         for (double extra : extraSlotCost(smallCraft)) {
+            //Naval C3 doubles the weight of FCS, if present
             if (NC3 == true) {
                 weight += (extra *2);
             } else {

@@ -374,7 +374,17 @@ public class TestSmallCraft extends TestAero {
     public boolean isSmallCraft() {
         return true;
     }
-
+    
+    //Determines if we have a Naval C3 installed. Needed for FCS tonnage calculations.
+    protected boolean hasNC3() {
+        for (Mounted m : smallCraft.getEquipment()) {
+            if (m.getType().hasFlag(MiscType.F_NAVAL_C3)) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
     @Override
     public double getWeightControls() {
         // Non primitives use the multiplier for 2500+ even if they were built before that date
@@ -436,9 +446,14 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightMisc() {
         double weight = 0.0;
+        boolean NC3 = hasNC3();
         // Add in extra fire control system weight for exceeding base slot limit
         for (double extra : extraSlotCost(smallCraft)) {
-            weight += extra;
+            if (NC3 == true) {
+                weight += (extra *2);
+            } else {
+                weight += extra;
+            }
         }
         // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
         // 2-ton launch mechanism

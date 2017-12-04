@@ -376,8 +376,8 @@ public class TestSmallCraft extends TestAero {
     }
     
     //Determines if we have a Naval C3 installed. Needed for FCS tonnage calculations.
-    protected boolean hasNC3() {
-        for (Mounted m : smallCraft.getEquipment()) {
+    public static boolean hasNC3(SmallCraft sc) {
+        for (Mounted m : sc.getEquipment()) {
             if (m.getType().hasFlag(MiscType.F_NAVAL_C3)) {
                 return true;
             } 
@@ -446,7 +446,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightMisc() {
         double weight = 0.0;
-        boolean NC3 = hasNC3();
+        boolean NC3 = hasNC3(smallCraft);
         // Add in extra fire control system weight for exceeding base slot limit
         for (double extra : extraSlotCost(smallCraft)) {
             //Naval C3 doubles the weight of FCS, if present

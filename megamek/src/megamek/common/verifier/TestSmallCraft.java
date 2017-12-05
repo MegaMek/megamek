@@ -171,6 +171,7 @@ public class TestSmallCraft extends TestAero {
         int arcs = sc.isSpheroid()? 6 : 4;
         int weaponsPerArc[] = new int[arcs];
         double weaponTonnage[] = new double[arcs];
+        boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
 
         for (Mounted m : sc.getEquipment()) {
             if (usesWeaponSlot(sc, m.getType())) {
@@ -190,6 +191,9 @@ public class TestSmallCraft extends TestAero {
             int excess = (weaponsPerArc[arc] - 1) / SLOTS_PER_ARC;
             if (excess > 0) {
                 retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
+            }
+            if (hasNC3) {
+                retVal[arc] *= 2;
             }
         }
         return retVal;

@@ -171,6 +171,7 @@ public class TestSmallCraft extends TestAero {
         int arcs = sc.isSpheroid()? 6 : 4;
         int weaponsPerArc[] = new int[arcs];
         double weaponTonnage[] = new double[arcs];
+        boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
 
         for (Mounted m : sc.getEquipment()) {
             if (usesWeaponSlot(sc, m.getType())) {
@@ -190,6 +191,9 @@ public class TestSmallCraft extends TestAero {
             int excess = (weaponsPerArc[arc] - 1) / SLOTS_PER_ARC;
             if (excess > 0) {
                 retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
+            }
+            if (hasNC3) {
+                retVal[arc] *= 2;
             }
         }
         return retVal;
@@ -374,17 +378,7 @@ public class TestSmallCraft extends TestAero {
     public boolean isSmallCraft() {
         return true;
     }
-    
-    //Determines if we have a Naval C3 installed. Needed for FCS tonnage calculations.
-    public static boolean hasNC3(SmallCraft sc) {
-        for (Mounted m : sc.getEquipment()) {
-            if (m.getType().hasFlag(MiscType.F_NAVAL_C3)) {
-                return true;
-            } 
-        }
-        return false;
-    }
-    
+        
     @Override
     public double getWeightControls() {
         // Non primitives use the multiplier for 2500+ even if they were built before that date
@@ -446,15 +440,9 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightMisc() {
         double weight = 0.0;
-        boolean NC3 = hasNC3(smallCraft);
         // Add in extra fire control system weight for exceeding base slot limit
         for (double extra : extraSlotCost(smallCraft)) {
-            //Naval C3 doubles the weight of FCS, if present
-            if (NC3 == true) {
-                weight += (extra *2);
-            } else {
-                weight += extra;
-            }
+            weight += extra;            
         }
         // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
         // 2-ton launch mechanism

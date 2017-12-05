@@ -378,7 +378,7 @@ public class TestSmallCraft extends TestAero {
     public boolean isSmallCraft() {
         return true;
     }
-        
+
     @Override
     public double getWeightControls() {
         // Non primitives use the multiplier for 2500+ even if they were built before that date
@@ -442,7 +442,7 @@ public class TestSmallCraft extends TestAero {
         double weight = 0.0;
         // Add in extra fire control system weight for exceeding base slot limit
         for (double extra : extraSlotCost(smallCraft)) {
-            weight += extra;            
+            weight += extra;
         }
         // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
         // 2-ton launch mechanism

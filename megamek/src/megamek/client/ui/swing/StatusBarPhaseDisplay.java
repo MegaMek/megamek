@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -33,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 
 import megamek.client.Client;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -52,14 +55,44 @@ import megamek.common.preference.PreferenceChangeEvent;
  *
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener, KeyListener, IPreferenceChangeListener {
+        implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = 639696875125581395L;
     
     protected static final int TRANSPARENT = 0xFFFF00FF;
     
     protected static final Dimension minButtonSize = new Dimension(32,32);
-    
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
     /**
      * Interface that defines what a command for a phase is.
      * 
@@ -134,6 +167,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panButtons.setLayout(new GridBagLayout());
         
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        ToolTipManager.sharedInstance().registerComponent(this);
     }
     
     
@@ -207,6 +241,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 button.setMinimumSize(minButtonSize);
                 button.setPreferredSize(minButtonSize);
                 subPanel.add(button);
+                ToolTipManager.sharedInstance().registerComponent(button);
             } else {
                 subPanel.add(Box.createHorizontalGlue());
             }

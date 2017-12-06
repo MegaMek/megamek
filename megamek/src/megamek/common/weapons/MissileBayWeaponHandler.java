@@ -249,12 +249,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                         
                         // build up some heat
                         //First Check to see if we have enough heat capacity to fire
-                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                        if ((getLargeCraftHeat(pdEnt) + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
                             continue;
                         }
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
                             pdEnt.heatBuildup += Compute.d6(bayW
-                                    .getCurrentHeat());                     
+                                    .getCurrentHeat());
                         } else {
                             pdEnt.heatBuildup += bayW.getCurrentHeat();
                         }

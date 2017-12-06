@@ -27,7 +27,6 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
@@ -47,7 +46,6 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -1499,11 +1497,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((e.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP 
                 || (e.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
 
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+            for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
                 Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) o;
                 if (prevAttack.getEntityId() == e.getId()) {
                     Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());

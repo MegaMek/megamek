@@ -324,7 +324,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         
                         // build up some heat
                         //First Check to see if we have enough heat capacity to fire
-                        if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                        if (pdOverheated) {
+                            continue;
+                        } else if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
                             pdOverheated = true;
                             continue;
                         }

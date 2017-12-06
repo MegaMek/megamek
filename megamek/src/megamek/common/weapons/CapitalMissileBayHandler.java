@@ -284,14 +284,14 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         Entity entityTarget = (Entity) target;
         // any AMS bay attacks by the target?
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        //We need to know how much heat has been assigned to offensive weapons fire by the defender this round
+        int weaponHeat = getLargeCraftHeat(entityTarget) + entityTarget.heatBuildup;
         if (null != lCounters) {
             for (Mounted counter : lCounters) {               
                 boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
                 boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
                 Entity pdEnt = counter.getEntity();
                 boolean isInArc;
-                //We need to know how much heat has been assigned to offensive weapons fire by the defender this round
-                int weaponHeat = getLargeCraftHeat(pdEnt);
                 // If the defending unit is the target, use attacker for arc
                 if (entityTarget.equals(pdEnt)) {
                     isInArc = Compute.isInArc(game, pdEnt.getId(),
@@ -325,6 +325,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         // build up some heat
                         //First Check to see if we have enough heat capacity to fire
                         if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            pdOverheated = true;
                             continue;
                         }
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
@@ -375,6 +376,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         // build up some heat
                         //First Check to see if we have enough heat capacity to fire
                         if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                            pdOverheated = true;
                             continue;
                         }
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {

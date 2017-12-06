@@ -73,6 +73,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bDirect = false;
     protected boolean amsBayEngaged = false;
     protected boolean pdBayEngaged = false;
+    protected boolean pdOverheated = false;
     protected boolean amsBayEngagedCap = false;
     protected boolean pdBayEngagedCap = false;
     protected boolean amsBayEngagedMissile = false;
@@ -542,7 +543,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 	        		CapMissileMissed = true;
 	        	}
 	        }
-	        
+
 	        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
 	        if (amsBayEngagedCap && CapMissileArmor > 0) {
                 r = new Report(3358);
@@ -554,6 +555,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         	} else if (pdBayEngagedCap && CapMissileArmor > 0) {
                 r = new Report(3357);
                 r.add(CapMissileAMSMod);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+	        
+	        // Report AMS/Pointdefense failure due to Overheating.
+            if (pdOverheated) {
+                r = new Report (3359);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }

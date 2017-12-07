@@ -335,7 +335,7 @@ public class BoardEdgePathFinder {
         // even if you level them they still turn to rubble. Additionally, they cannot go into deep snow.
         boolean wheeledTankRestriction = isWheeled &&
                 (destHex.containsTerrain(Terrains.ROUGH) || destHex.containsTerrain(Terrains.RUBBLE) 
-                || destHex.containsTerrain(Terrains.BUILDING) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
+                || destHex.containsTerrain(Terrains.BLDG_CF) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
         
         // tracked and wheeled tanks cannot go into water without a bridge
         boolean groundTankIntoWater = isTracked && !isHovercraft &&

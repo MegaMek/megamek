@@ -377,7 +377,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         
                         // build up some heat
                         //First Check to see if we have enough heat capacity to fire
-                        if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                        if (pdOverheated) {
+                            continue;
+                        } else if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
                             pdOverheated = true;
                             continue;
                         }
@@ -445,8 +447,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     @Override
     protected int getLargeCraftHeat(Entity e) {
         int totalheat = 0;
-        if ((e.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP 
-                || (e.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
+        if (((e.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP 
+                || (e.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0)
+                && e.usesWeaponBays()) {
 
             for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
                 AttackHandler ah = i.nextElement();

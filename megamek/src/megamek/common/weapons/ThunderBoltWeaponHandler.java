@@ -293,6 +293,19 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         getAMSHitsMod(vPhaseReport);
         bSalvo = true;
+        // Report AMS/Pointdefense failure due to Overheating.
+        if (pdOverheated 
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            Report r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } 
         if (amsEngaged || apdsEngaged || amsBayEngagedMissile || pdBayEngagedMissile) {
             Report r = new Report(3235);
             r.subject = subjectId;

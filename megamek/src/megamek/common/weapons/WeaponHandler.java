@@ -560,10 +560,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 	        
 	        // Report AMS/Pointdefense failure due to Overheating.
-            if (pdOverheated) {
+            if (pdOverheated 
+                    && (!(amsBayEngaged
+                            || amsBayEngagedCap
+                            || amsBayEngagedMissile
+                            || pdBayEngaged
+                            || pdBayEngagedCap
+                            || pdBayEngagedMissile))) {
                 r = new Report (3359);
                 r.subject = subjectId;
+                r.indent();
                 vPhaseReport.addElement(r);
+            } else if (pdOverheated) {
+                //Report a partial failure
+                r = new Report (3361);
+                r.subject = subjectId;
+                r.indent();
+                vPhaseReport.addElement(r); 
             }
 	        
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {

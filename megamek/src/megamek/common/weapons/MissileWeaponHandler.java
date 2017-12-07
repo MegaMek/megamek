@@ -981,6 +981,25 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];
+            // Report AMS/Pointdefense failure due to Overheating.
+            if (pdOverheated 
+                    && (!(amsBayEngaged
+                            || amsBayEngagedCap
+                            || amsBayEngagedMissile
+                            || pdBayEngaged
+                            || pdBayEngagedCap
+                            || pdBayEngagedMissile))) {
+                r = new Report (3359);
+                r.subject = subjectId;
+                r.indent();
+                vPhaseReport.addElement(r);
+            } else if (pdOverheated) {
+                //Report a partial failure
+                r = new Report (3361);
+                r.subject = subjectId;
+                r.indent();
+                vPhaseReport.addElement(r); 
+            }
             if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
                 // handle single AMS action against standard missiles
                 // Thunderbolts get handled by calcHits below

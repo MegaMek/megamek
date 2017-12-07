@@ -657,7 +657,20 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
             //this has to be called here or it fires before the TAG shot and we have no target
             server.assignAMS();
-            calcCounterAV();                
+            calcCounterAV();
+            // Report AMS/Pointdefense failure due to Overheating.
+            if (pdOverheated 
+                    && (!(amsBayEngaged
+                            || amsBayEngagedCap
+                            || amsBayEngagedMissile
+                            || pdBayEngaged
+                            || pdBayEngagedCap
+                            || pdBayEngagedMissile))) {
+                Report r = new Report (3359);
+                r.subject = subjectId;
+                r.indent();
+                vPhaseReport.addElement(r);
+            } 
             //They all do the same thing in this case...             
             if (amsBayEngaged || pdBayEngaged) {
                 bSalvo = true;

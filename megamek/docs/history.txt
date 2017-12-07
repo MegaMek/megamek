@@ -44,6 +44,8 @@ v0.43.5-git
 + Issue #758: Princess doesn't check for ownership when deploying units
 + Issue #759: Princess won't move units with a move index of 0 or less
 + PR #760: XCT Infantry implemented
++ PR #772: Make tooltips disappear when mouse is over the Status Display / buttons
++ PR #771: Improved bot mobile unit deployment effectiveness and speed (faster and no more deploying in completely inaccessible holes)
 + PR #775: RISC Hyperlaser Implemented
 + Data: New Sprites and Removing extra files.
 + PR #757: Caseless ammunition Implemented

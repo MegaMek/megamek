@@ -753,6 +753,27 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
+     * Determine the opposite edge from the given edge
+     * Returns START_NONE for non-cardinal edges (North, South, West, East)
+     * @param cardinalEdge The edge to return the opposite off
+     * @return Constant representing the opposite edge
+     */
+    public int getOppositeEdge(int cardinalEdge) {
+        switch(cardinalEdge) {
+        case Board.START_E:
+            return Board.START_W;
+        case Board.START_N:
+            return Board.START_S;
+        case Board.START_W:
+            return Board.START_E;
+        case Board.START_S:
+            return Board.START_N;
+        default:
+            return Board.START_NONE;
+        }
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override

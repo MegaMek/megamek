@@ -10363,6 +10363,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.canon = canon;
     }
 
+    /**
+     * Get the entity's "climbing mode"
+     * @return True or false, where true = climb up and false = go through
+     */
     public boolean climbMode() {
         return climbMode;
     }

@@ -35,11 +35,12 @@ public class ISC3M extends TAGWeapon {
         addLookupName("ISC3MasterComputer");
         tonnage = 5;
         criticals = 5;
+        tankslots = 1;
         hittable = true;
         spreadable = false;
         cost = 1500000;
         bv = 0;
-        flags = flags.or(F_C3M);
+        flags = flags.or(F_C3M).or(F_MECH_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON);
         heat = 0;
         damage = 0;
         shortRange = 5;

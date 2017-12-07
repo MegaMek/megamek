@@ -71,6 +71,10 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         setFluff(a);
         checkManualBV(a);
 
+        if (dataFile.exists("originalBuildYear")) {
+            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+        }
+
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find tonnage block.");
         }
@@ -81,8 +85,12 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         }
         a.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
-        if (dataFile.exists("passengers")) {
-            a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
+        if (dataFile.exists("officers")) {
+            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+        }
+
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
         }
 
         if (dataFile.exists("battlearmor")) {
@@ -97,12 +105,20 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             a.setNOtherPassenger(dataFile.getDataAsInt("otherpassenger")[0]);
         }
 
+        if (dataFile.exists("life_boat")) {
+            a.setLifeBoats(dataFile.getDataAsInt("life_boat")[0]);
+        }
+
+        if (dataFile.exists("escape_pod")) {
+            a.setEscapePods(dataFile.getDataAsInt("escape_pod")[0]);
+        }
+
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find motion_type block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
-        if (sMotion.equals("spheroid")) {
+        if (sMotion.equalsIgnoreCase("spheroid")) {
             nMotion = EntityMovementMode.SPHEROID;
             a.setSpheroid(true);
         }
@@ -122,6 +138,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find heatsinks block.");
         }
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
@@ -142,11 +159,15 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
         a.setEngine(new Engine(400, 0, 0));
 
+        // Switch older files with standard armor to aerospace
+        int at = EquipmentType.T_ARMOR_AEROSPACE;
         if (dataFile.exists("armor_type")) {
-            a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-        } else {
-            a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+            at = dataFile.getDataAsInt("armor_type")[0];
+            if (at == EquipmentType.T_ARMOR_STANDARD) {
+                at = EquipmentType.T_ARMOR_AEROSPACE;
+            }
         }
+        a.setArmorType(at);
         if (dataFile.exists("armor_tech")) {
             a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }

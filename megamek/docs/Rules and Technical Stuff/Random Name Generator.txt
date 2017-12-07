@@ -1,0 +1,34 @@
+ 
+This class sets up a random name generator that can then
+be used to generate random pilot names. it will have a couple different
+settings and flexible input files
+
+Files are located in Data/Names all files are comma-delimited text files.
+
+The masterancestry.txt file shows the correspondence between the different ethnic names and their numeric
+code in the database. This file is currently not actually read in by MM, but is provided as a reference. The same
+numeric code must be used across all of the files listed below. Currently the numeric codes must be listed in exact
+sequential order (i.e. no skipping numbers) for the program to work correctly.
+
+The name database is located in three files: firstname_males.txt, firstname_females.txt, and surnames.txt.
+There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
+
+fld1 - The name itself, either a male/female first name or a surname.
+fld2 - a frequency weight to account for some names being more common than others. Currently this is not being used.
+fld3 - the numeric code identifying the "ethnic" group this name belongs to.
+
+Faction files are located in Data/Names/factions.
+
+The name that is given before ".txt" is used as the key for the faction.
+The faction files will have varying number of fields depending on how many ethnic groups exist. The faction file does two things. First, it identifies
+the relative frequency of different ethnic surnames for a faction.
+
+Second, it identifies the correspondence between first names and surnames. This allows, for example, for more Japanese first names regardless of surname
+in the Draconis Combine. There should be a line in the Faction file for each ethnic group.
+
+fld1 - the id for the ethnic group
+fld2 - the ethnic group name. Not currently read in, just for easy reference.
+fld3 - The relative frequency of this ethnic surname in the faction.
+fld4-fldn - These fields identify the relative frequency of first names from an ethnic group given the surname listed in fld1.
+
+@author Jay Lawson

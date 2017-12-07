@@ -228,7 +228,7 @@ public class Precognition implements Runnable {
                 getGame().setPhase((IGame.Phase) c.getObject(0));
                 break;
             case Packet.COMMAND_TURN:
-                getGame().setTurnIndex(c.getIntValue(0));
+                getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
                 break;
             case Packet.COMMAND_ROUND_UPDATE:
                 getGame().setRoundCount(c.getIntValue(0));

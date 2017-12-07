@@ -1857,8 +1857,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                                                  .elementAt(n));
             wtype = (WeaponType) mounted.getType();
         }
+        
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
+        
+        // this is the situation where there's some kind of ammo but it's not changeable
         } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             m_chAmmo.setEnabled(false);
             Mounted mountedAmmo = mounted.getLinked();
@@ -1887,8 +1890,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     rightBay = oldmount.ammoInBay(entity
                                                           .getEquipmentNum(mountedAmmo));
                 }
+                
+                // covers the situation where a weapon using non-caseless ammo should 
+                // not be able to switch to caseless on the fly and vice versa
+                boolean amCaseless = ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
+                boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
+                boolean caselessMismatch = amCaseless != etCaseless;                
 
-                if (mountedAmmo.isAmmoUsable() && same && rightBay
+                if (mountedAmmo.isAmmoUsable() && same && rightBay && !caselessMismatch
                     && (atype.getAmmoType() == wtype.getAmmoType())
                     && (atype.getRackSize() == wtype.getRackSize())) {
 
@@ -2359,12 +2368,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avMed = 3;
                 avLong = 3;
                 avExt = 3;
-            } else if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+            } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;
                 avExt = 100;
-            } else if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
@@ -2376,7 +2385,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avExt = 2;
             }
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE) {
-            if (atype.getMunitionType() == AmmoType.M_PEACEMAKER) {
+            if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
@@ -2388,7 +2397,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 avExt = 4;
             }
         } else if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK) {
-            if (atype.getMunitionType() == AmmoType.M_SANTA_ANNA) {
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;

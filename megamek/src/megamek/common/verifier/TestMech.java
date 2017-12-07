@@ -36,12 +36,14 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.QuadVee;
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -84,6 +86,7 @@ public class TestMech extends TestEntity {
         public int getJumpType() {
             return jumpType;
         }
+        
         public static List<EquipmentType> allJJs(boolean industrialOnly) {
             List<EquipmentType> retVal = new ArrayList<>();
             for (MechJumpJets jj : values()) {
@@ -94,6 +97,48 @@ public class TestMech extends TestEntity {
             return retVal;
         }
 
+    }
+    
+    /**
+     * Filters all mech armor according to given tech constraints
+     *
+     * @param etype
+     * @param industrial
+     * @param techManager
+     * @return
+     */
+    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
+        List<EquipmentType> retVal = new ArrayList<>();
+        boolean industrialOnly = industrial
+                && (techManager.getTechLevel().ordinal() < SimpleTechLevel.EXPERIMENTAL.ordinal());
+        boolean isLam = (etype & Entity.ETYPE_LAND_AIR_MECH) != 0;
+        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
+            if ((at == EquipmentType.T_ARMOR_PATCHWORK)
+                    || (isLam && (at == EquipmentType.T_ARMOR_HARDENED))) {
+                continue;
+            }
+            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
+            EquipmentType eq = EquipmentType.get(name);
+            if ((null != eq)
+                    && eq.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                    && techManager.isLegal(eq)
+                    && (!isLam || (eq.getCriticals(null) == 0))
+                    && (!industrialOnly || ((MiscType)eq).isIndustrial())) {
+                retVal.add(eq);
+            }
+            if (techManager.useMixedTech()) {
+                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
+                EquipmentType eq2 = EquipmentType.get(name);
+                if ((null != eq2) && (eq != eq2)
+                        && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                        && techManager.isLegal(eq2)
+                        && (!isLam || (eq2.getCriticals(null) == 0))
+                        && (!industrialOnly || ((MiscType)eq).isIndustrial())) {
+                    retVal.add(eq2);
+                }
+            }
+        }
+        return retVal;
     }
     
     private Mech mech = null;
@@ -167,6 +212,16 @@ public class TestMech extends TestEntity {
 
     @Override
     public boolean isAero() {
+        return false;
+    }
+
+    @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+    
+    @Override
+    public boolean isJumpship() {
         return false;
     }
 
@@ -1435,19 +1490,15 @@ public class TestMech extends TestEntity {
             }
         }
 
-        if (mech.hasWorkingWeapon(WeaponType.F_TASER)) {
-            switch (mech.hasEngine() ? mech.getEngine().getEngineType() : Engine.NONE) {
-                case Engine.FISSION:
-                case Engine.FUEL_CELL:
-                case Engine.COMBUSTION_ENGINE:
-                case Engine.NONE:
-                    buff.append("Mech Taser needs fusion engine\n");
-                    illegal = true;
-                    break;
-                default:
-                    break;
-            }
-        }
+		if (mech.hasWorkingWeapon(WeaponType.F_TASER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+			buff.append("Mek Taser needs fusion engine\n");
+			illegal = true;
+		}
+
+		if (mech.hasWorkingWeapon(WeaponType.F_HYPER) && !(mech.hasEngine() && mech.getEngine().isFusion())) {
+			buff.append("RISC Hyper Laser needs fusion engine\n");
+			illegal = true;
+		}
         
         if (mech.hasFullHeadEject()) {
             if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)

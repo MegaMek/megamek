@@ -241,6 +241,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                                 && (m.getType() instanceof AmmoType)){
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
+                            m.setAmmoCapacity(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
                         }
                         m.setAPMMounted(apmMounted);
                         m.setSquadSupportWeapon(sswMounted);

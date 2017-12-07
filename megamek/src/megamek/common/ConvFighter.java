@@ -44,6 +44,11 @@ public class ConvFighter extends Aero {
     public int getHeatCapacity() {
         return 999;
     }
+    
+    @Override
+    public double getFuelPointsPerTon() {
+        return 160;
+    }
 
     @Override
     public int getFuelUsed(int thrust) {

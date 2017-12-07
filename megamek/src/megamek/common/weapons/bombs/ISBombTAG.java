@@ -47,6 +47,7 @@ public class ISBombTAG extends TAGWeapon {
         this.extremeRange = 20;
         this.bv = 0;
         this.cost = 50000;
+        flags = flags.or(F_BOMB_WEAPON);
         rulesRefs = "238,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

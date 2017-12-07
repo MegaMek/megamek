@@ -53,6 +53,16 @@ public class TestInfantry extends TestEntity {
     public boolean isAero() {
         return false;
     }
+    
+    @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+    
+    @Override
+    public boolean isJumpship() {
+        return false;
+    }
 
     @Override
     public double getWeightControls() {

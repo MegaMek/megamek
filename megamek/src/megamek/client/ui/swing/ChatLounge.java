@@ -3615,10 +3615,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                 String errorMessage = "";
                 if (bayNumber != -1) {
                     Bay bay = loadingEntity.getBayById(bayNumber);
+                    double loadSize = entities.stream().mapToDouble(e -> bay.spaceForUnit(e)).sum();
                     capacity = bay.getUnused();
-                    hasEnoughCargoCapacity = entities.size() <= capacity;
+                    hasEnoughCargoCapacity = loadSize <= capacity;
                     errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
-                            " " + (int) capacity + ".";
+                            " " + (int) bay.getUnusedSlots()
+                            + bay.getDefaultSlotDescription() + ".";
                 } else {
                     HashMap<Long, Double> capacities, counts;
                     capacities = new HashMap<Long, Double>();
@@ -4117,7 +4119,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                                             Bay bay = (Bay) t;
                                             menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
                                                     + "Slots: "
-                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnused() + ")");
+                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnusedSlots()
+                                                    + loader.getBayById(bay.getBayNumber()).getDefaultSlotDescription()
+                                                    + ")");
                                             menuItem.setActionCommand(
                                                     "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
                                             /*

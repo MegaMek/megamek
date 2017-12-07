@@ -87,6 +87,7 @@ import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMDBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalPPCBayWeapon;
+import megamek.common.weapons.bayweapons.GaussBayWeapon;
 import megamek.common.weapons.bayweapons.LBXBayWeapon;
 import megamek.common.weapons.bayweapons.LRMBayWeapon;
 import megamek.common.weapons.bayweapons.LaserBayWeapon;
@@ -103,6 +104,7 @@ import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapCannonBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapitalMissileBayWeapon;
+import megamek.common.weapons.bayweapons.ThunderboltBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
@@ -150,7 +152,7 @@ import megamek.common.weapons.capitalweapons.SubCapCannonWeaponMedium;
 import megamek.common.weapons.capitalweapons.SubCapLaserWeapon1;
 import megamek.common.weapons.capitalweapons.SubCapLaserWeapon2;
 import megamek.common.weapons.capitalweapons.SubCapLaserWeapon3;
-import megamek.common.weapons.capitalweapons.SubCapMantaRayWeapon;
+import megamek.common.weapons.capitalweapons.SubCapMissileMantaRayWeapon;
 import megamek.common.weapons.capitalweapons.SubCapMissilePiranhaWeapon;
 import megamek.common.weapons.capitalweapons.SubCapMissileStingrayWeapon;
 import megamek.common.weapons.capitalweapons.SubCapMissileSwordfishWeapon;
@@ -547,6 +549,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_AERO_WEAPON = BigInteger.valueOf(1).shiftLeft(45);
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
+    
 
     public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
     public static final BigInteger F_INF_BURST = BigInteger.valueOf(1).shiftLeft(49);
@@ -584,6 +587,9 @@ public class WeaponType extends EquipmentType {
     
     //Thunderbolt and similar large missiles, for use with AMS resolution
     public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(66);
+    
+    //Hyper-Laser
+    public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
         
     
     // add maximum range for AT2
@@ -618,7 +624,9 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
     public static final int CLASS_AMS = 24;
-    public static final int NUM_CLASSES = 25;
+    public static final int CLASS_GAUSS = 25;
+    public static final int CLASS_THUNDERBOLT = 26;
+    public static final int NUM_CLASSES = 27;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -638,8 +646,9 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
     
-    public static String[] classNames =
-        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
+    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS",
+            "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
+            "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
 
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
@@ -996,6 +1005,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Plasma Bay");
             case (CLASS_AC):
                 return EquipmentType.get("AC Bay");
+/*            case (CLASS_GAUSS):
+                return EquipmentType.get("Gauss Bay");*/
             case (CLASS_LBX_AC):
                 return EquipmentType.get("LBX AC Bay");
             case (CLASS_LRM):
@@ -1006,6 +1017,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("MRM Bay");
             case (CLASS_MML):
                 return EquipmentType.get("MML Bay");
+            case (CLASS_THUNDERBOLT):
+                return EquipmentType.get("Thunderbolt Bay");
             case (CLASS_ATM):
                 return EquipmentType.get("ATM Bay");
             case (CLASS_ROCKET_LAUNCHER):
@@ -2080,7 +2093,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapMissilePiranhaWeapon());
         EquipmentType.addType(new SubCapMissileStingrayWeapon());
         EquipmentType.addType(new SubCapMissileSwordfishWeapon());
-        EquipmentType.addType(new SubCapMantaRayWeapon());
+        EquipmentType.addType(new SubCapMissileMantaRayWeapon());
         EquipmentType.addType(new MassDriverHeavy());
         EquipmentType.addType(new MassDriverMedium());
         EquipmentType.addType(new MassDriverLight());
@@ -2112,6 +2125,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ArtilleryBayWeapon());
         EquipmentType.addType(new PlasmaBayWeapon());
         EquipmentType.addType(new ACBayWeapon());
+        EquipmentType.addType(new GaussBayWeapon());
+        EquipmentType.addType(new ThunderboltBayWeapon());
         EquipmentType.addType(new LBXBayWeapon());
         EquipmentType.addType(new LRMBayWeapon());
         EquipmentType.addType(new SRMBayWeapon());

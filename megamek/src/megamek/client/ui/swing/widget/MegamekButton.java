@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,7 +35,7 @@ import megamek.common.util.MegaMekFile;
  *
  * @author arlith
  */
-public class MegamekButton extends JButton {
+public class MegamekButton extends JButton implements MouseListener {
 
     private static final long serialVersionUID = -3271105050872007863L;
 
@@ -325,4 +326,28 @@ public class MegamekButton extends JButton {
         return iconsLoaded;
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 }

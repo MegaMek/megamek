@@ -3335,7 +3335,6 @@ public abstract class Mech extends Entity {
                 case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     armorMultiplier = 1.5;
                     break;
-                case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
                     armorMultiplier = 1.2;
@@ -6338,6 +6337,9 @@ public abstract class Mech extends Entity {
                 break;
             case COCKPIT_SUPERHEAVY_TRIPOD:
                 inName = "COCKPIT_SUPERHEAVY_TRIPOD";
+                break;
+            case COCKPIT_TRIPOD:
+                inName = "COCKPIT_TRIPOD";
                 break;
             case COCKPIT_INTERFACE:
                 inName = "COCKPIT_INTERFACE";

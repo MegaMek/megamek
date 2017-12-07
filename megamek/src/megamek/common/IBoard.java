@@ -210,6 +210,14 @@ public interface IBoard {
     public abstract boolean isLegalDeployment(Coords c, int nDir);
 
     /**
+     * Determine the opposite edge from the given edge
+     * Returns START_NONE for non-cardinal edges (North, South, West, East)
+     * @param cardinalEdge The edge to return the opposite off
+     * @return Constant representing the opposite edge
+     */
+    public abstract int getOppositeEdge(int cardinalEdge);
+    
+    /**
      * Record that the given coordinates have recieved a hit from an inferno.
      *
      * @param coords

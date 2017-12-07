@@ -2304,6 +2304,7 @@ public class MiscType extends EquipmentType {
         misc.name = "QuadVee Wheels";
         misc.setInternalName(misc.name);
         misc.addLookupName("Wheels");
+        misc.shortName = "Wheels";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
@@ -4943,6 +4944,7 @@ public class MiscType extends EquipmentType {
         misc.name = "C3 Computer [Slave]";
         misc.setInternalName("ISC3SlaveUnit");
         misc.addLookupName("IS C3 Slave");
+        misc.shortName = "C3 Slave";
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 250000;
@@ -4964,6 +4966,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISC3iUnit");
         misc.addLookupName("ISImprovedC3CPU");
         misc.addLookupName("IS C3i Computer");
+        misc.shortName = "C3i";
         misc.tonnage = 2.5f;
         misc.criticals = 2;
         misc.cost = 750000;
@@ -4982,6 +4985,7 @@ public class MiscType extends EquipmentType {
         misc.name = "C3 Boosted System (C3BS) [Slave]";
         misc.setInternalName("ISC3BoostedSystemSlaveUnit");
         misc.addLookupName("IS C3 Boosted System Slave");
+        misc.shortName = "C3 Boosted Slave";
         misc.tonnage = 3;
         misc.criticals = 2;
         misc.cost = 500000;
@@ -5182,6 +5186,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLAntiPersonnelPod");
         misc.addLookupName("Clan A-Pod");
         misc.addLookupName("CL AP Pod");
+        misc.shortName = "A-Pod";
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 1500;
@@ -9548,6 +9553,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLAES");
         misc.addLookupName("CL Actuator Enhancement System");
         misc.addLookupName("CLActuatorEnhancementSystem");
+        misc.shortName = "AES";
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;

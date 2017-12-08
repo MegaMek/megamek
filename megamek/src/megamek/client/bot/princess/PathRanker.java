@@ -252,7 +252,7 @@ public abstract class PathRanker {
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
                 // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-                if (e.isAero() && e.isAirborne() || 
+                if ((e.isAero() && e.isAirborne()) || 
                         getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
                     continue;
                 }

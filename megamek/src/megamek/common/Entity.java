@@ -5414,8 +5414,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
     
-    //Only aeros will have this, but we need to return a value for any entity type
     public boolean hasNavalC3() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_NAVAL_C3) && !m.isInoperable()) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -5446,6 +5454,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 c3NetIdString = "C3i." + getId();
             } else if (hasActiveNovaCEWS()) {
                 c3NetIdString = "C3Nova." + getId();
+            } else if (hasNavalC3()) {
+                c3NetIdString = "NC3." + getId();
             }
         }
         return c3NetIdString;
@@ -5851,6 +5861,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             int distance = Compute.effectiveDistance(game,this,e,false);
             //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
             if (distance > 60) {
+                return false;
+            }
+            //Naval C3 only works in space
+            if (!game.getBoard().inSpace()) {
                 return false;
             }
             return true;

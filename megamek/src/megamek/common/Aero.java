@@ -344,43 +344,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         return j;
     }
-    
-    /*
-     * Only aero units can have NC3
-     */
-    @Override
-    public boolean hasNavalC3() {
-        if (isShutDown() || isOffBoard()) {
-            return false;
-        }
-        if (!game.getBoard().inSpace()) {
-            return false;
-        }
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                && m.getType().hasFlag(MiscType.F_NAVAL_C3) && !m.isInoperable()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public String getC3NetId() {
-        if (c3NetIdString == null) {
-            if (hasC3()) {
-                c3NetIdString = "C3." + getId();
-            } else if (hasC3i()) {
-                c3NetIdString = "C3i." + getId();
-            } else if (hasActiveNovaCEWS()) {
-                c3NetIdString = "C3Nova." + getId();
-            } else if (hasNavalC3()) {
-                c3NetIdString = "NC3." + getId();
-            }
-        }
-        return c3NetIdString;
-    }
-
+   
     /**
      * Returns the number of locations in the entity
      */

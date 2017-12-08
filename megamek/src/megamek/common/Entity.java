@@ -5412,6 +5412,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return false;
     }
+    
+    //Only aeros will have this, but we need to return a value for any entity type
+    public boolean hasNavalC3() {
+        return false;
+    }
 
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
@@ -5559,7 +5564,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int calculateFreeC3Nodes() {
         int nodes = 0;
-        if (hasC3i()) {
+        if (hasC3i() || hasNavalC3()) {
             nodes = 5;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
@@ -5833,6 +5838,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                 e.getPosition()))
                    && !(ComputeECM.isAffectedByECM(this, getPosition(),
                                                    getPosition()));
+        }
+        
+        // NC3 is easy too - if they both have NC3, and their net ID's match,
+        // they're on the same network! 
+        if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
+            int distance = Compute.effectiveDistance(game,this,e,false);
+            //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
+            if (distance > 60) {
+                return false;
+            }
+            return true;
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match,

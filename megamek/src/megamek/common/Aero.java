@@ -348,6 +348,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /*
      * Only aero units can have NC3
      */
+    @Override
     public boolean hasNavalC3() {
         if (isShutDown() || isOffBoard()) {
             return false;

@@ -30377,11 +30377,11 @@ public class Server implements Runnable {
 
             game.addEntity(entity);
 
-            // Now we relink C3/C3i to our guys! Yes, this is hackish... but, we
+            // Now we relink C3/NC3/C3i to our guys! Yes, this is hackish... but, we
             // do
             // what we must.
             // Its just too bad we have to loop over the entire entities array..
-            if (entity.hasC3() || entity.hasC3i()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 boolean C3iSet = false;
 
                 for (Entity e : game.getEntitiesVector()) {
@@ -30413,7 +30413,7 @@ public class Server implements Runnable {
                         }
                     }
 
-                    // C3i Checks// C3i Checks
+                    // C3i Checks
                     if (entity.hasC3i() && (C3iSet == false)) {
                         entity.setC3NetIdSelf();
                         int pos = 0;
@@ -30422,6 +30422,25 @@ public class Server implements Runnable {
                             if ((entity.getC3iNextUUIDAsString(pos) != null)
                                 && (e.getC3UUIDAsString() != null)
                                 && entity.getC3iNextUUIDAsString(pos)
+                                         .equals(e.getC3UUIDAsString())) {
+                                entity.setC3NetId(e);
+                                C3iSet = true;
+                                break;
+                            }
+
+                            pos++;
+                        }
+                    }
+                    
+                    // NC3 Checks
+                    if (entity.hasNavalC3() && (C3iSet == false)) {
+                        entity.setC3NetIdSelf();
+                        int pos = 0;
+                        while (pos < Entity.MAX_C3i_NODES) {
+                            // We've found a network, join it.
+                            if ((entity.getNC3NextUUIDAsString(pos) != null)
+                                && (e.getC3UUIDAsString() != null)
+                                && entity.getNC3NextUUIDAsString(pos)
                                          .equals(e.getC3UUIDAsString())) {
                                 entity.setC3NetId(e);
                                 C3iSet = true;

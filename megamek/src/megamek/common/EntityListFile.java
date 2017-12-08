@@ -1007,6 +1007,25 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl+1) + "</c3iset>");
                 output.write(CommonConstants.NL);
             }
+            
+            // Write the NC3 Data if needed
+            if (entity.hasNavalC3()) {
+                output.write(indentStr(indentLvl+1) + "<NC3set>");
+                output.write(CommonConstants.NL);
+                Iterator<Entity> NC3List = list.iterator();
+                while (NC3List.hasNext()) {
+                    final Entity NC3Entity = NC3List.next();
+
+                    if (NC3Entity.onSameC3NetworkAs(entity, true)) {
+                        output.write(indentStr(indentLvl+1) + "<NC3_link link=\"");
+                        output.write(NC3Entity.getC3UUIDAsString());
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                }
+                output.write(indentStr(indentLvl+1) + "</NC3set>");
+                output.write(CommonConstants.NL);
+            }
 
             // Finish writing this entity to the file.
             output.write(indentStr(indentLvl) + "</entity>");

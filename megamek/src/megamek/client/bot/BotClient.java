@@ -65,6 +65,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameCFREvent;
@@ -188,9 +189,22 @@ public abstract class BotClient extends Client {
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
                     case Packet.COMMAND_CFR_HIDDEN_PBS:
-                        // TODO: Punt for now; this will need to be updated for
-                        // bot to make pointblank shots with hidden units
-                        sendHiddenPBSCFRResponse(null);
+                        try {
+                            Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
+                            
+                            if(pointBlankShots == null) {
+                                sendHiddenPBSCFRResponse(null);
+                            } else {
+                                // we send two packets because the server will ignore the first one
+                                sendHiddenPBSCFRResponse(new Vector<EntityAction>());
+                                sendHiddenPBSCFRResponse(pointBlankShots);
+                            }
+                        } catch(Exception e) {
+                            // if we screw up, don't keep everyone else waiting
+                            sendHiddenPBSCFRResponse(null);
+                            throw e;
+                        }
+
                         break;
                 }
             }
@@ -223,6 +237,10 @@ public abstract class BotClient extends Client {
 
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
+    
+    protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) { 
+        return null;
+    }
 
     /**
      * Calculates the full {@link MovePath} for the given {@link Entity}.
@@ -436,6 +454,7 @@ public abstract class BotClient extends Client {
                 }
                 moveEntity(mp.getEntity().getId(), mp);
             } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+                // TODO: consider that if you're hidden you should hold fire
                 calculateFiringTurn();
             } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
@@ -491,7 +510,7 @@ public abstract class BotClient extends Client {
 
         return mass;
     }
-
+    
     /**
      * Gets valid & empty starting coords around the specified point. This
      * method iterates through the list of Coords and returns the first Coords

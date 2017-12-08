@@ -5345,7 +5345,7 @@ public abstract class Mech extends Entity {
         
         if (this instanceof LandAirMech) {
             costs[i++] = (structureCost + weaponCost)
-                    * ((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75;
+                    * (((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
         } else if (this instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {

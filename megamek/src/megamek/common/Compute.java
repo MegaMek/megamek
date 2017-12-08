@@ -1645,7 +1645,7 @@ public class Compute {
     }
 
     /**
-     * find a c3, c3i, or nova spotter that is closer to the target than the
+     * find a c3, c3i, NC3, or nova spotter that is closer to the target than the
      * attacker.
      *
      * @param game
@@ -1658,7 +1658,7 @@ public class Compute {
             Targetable target) {
         // no available C3-like system
         if (!attacker.hasC3() && !attacker.hasC3i()
-                && !attacker.hasActiveNovaCEWS()) {
+                && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
             return attacker;
         }
 

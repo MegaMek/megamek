@@ -751,7 +751,7 @@ public class EntityListFile {
                         .getEntity(entity.getC3Master().getId())
                         .getC3UUIDAsString());
             }
-            if (entity.hasC3() || entity.hasC3i()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 output.write("\" c3UUID=\"");
                 output.write(entity.getC3UUIDAsString());
             }

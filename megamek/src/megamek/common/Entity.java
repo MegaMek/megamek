@@ -5860,13 +5860,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
             int distance = Compute.effectiveDistance(game,this,e,false);
             //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
-            if (distance > 60) {
-                return false;
-            }
-            //Naval C3 only works in space
-            if (!game.getBoard().inSpace()) {
-                return false;
-            }
+            if (game.getRoundCount() > 0) {
+                if (distance > 60) {
+                    return false;
+                }
+                //Naval C3 only works in space
+                if (!game.getBoard().inSpace()) {
+                    return false;
+                }
+            } 
             return true;
         }
 

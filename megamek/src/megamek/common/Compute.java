@@ -1183,11 +1183,11 @@ public class Compute {
         int usingRange = Math.min(range, c3range);
 
         // add range modifier, C3 can't be used with LOS Range
-        if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (!nc3EnergyGuided)) {
+        if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (ae.hasNavalC3() && !nc3EnergyGuided)) {
             // Ensure usingRange is set to range, ie with C3
             usingRange = range;
             // Naval C3 adjustment for ballistic and unguided weapons
-            if ((!nc3EnergyGuided) && (c3range < range)) {
+            if ((ae.hasNavalC3() && !nc3EnergyGuided) && (c3range < range)) {
                 if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM))
                         && (ae.getShortRangeModifier() != 0)) {
                     mods.addModifier((ae.getShortRangeModifier() / 2), "NC3 modified short range");

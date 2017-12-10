@@ -50,6 +50,7 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.actions.EntityAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
@@ -560,6 +561,17 @@ public class Princess extends BotClient {
         }
     }
 
+    protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
+        Entity shooter = getGame().getEntity(firingEntityID);
+        Targetable target = getGame().getEntity(targetID); 
+        
+        FiringPlan plan = fireControl.getBestFiringPlan(shooter, target, game, calcAmmoConservation(shooter));
+        fireControl.loadAmmo(shooter, plan);
+        plan.sortPlan();
+
+        return plan.getEntityActionVector();
+    }
+    
     @Override
     protected Vector<Minefield> calculateMinefieldDeployment() {
         final String METHOD_NAME = "calculateMinefieldDeployment()";

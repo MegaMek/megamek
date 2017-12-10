@@ -60,6 +60,7 @@ v0.43.5-git
 + Issue #644: Fix potential invalid turn packets in simultaneous phases
 + Track older unit names so changing the name will not break MekHQ campaign files.
 + Fixed LAM conversion gear cost calculation.
++ Princess can now take point blank shots with hidden units
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

@@ -30886,10 +30886,9 @@ public class Server implements Runnable {
                     // if a unit is removed during deployment just keep going
                     // without adjusting the turn vector.
                     game.removeTurnFor(entity);
+                    game.removeEntity(entityId,
+                            IEntityRemovalConditions.REMOVE_NEVER_JOINED);
                 }
-                game.removeEntity(entityId,
-                        IEntityRemovalConditions.REMOVE_NEVER_JOINED);
-
             }
         }
         send(createRemoveEntityPacket(ids,
@@ -30900,6 +30899,8 @@ public class Server implements Runnable {
             for (Integer entityId : ids) {
                 final Entity entity = game.getEntity(entityId);
                 endCurrentTurn(entity);
+                game.removeEntity(entityId,
+                        IEntityRemovalConditions.REMOVE_NEVER_JOINED);
             }
         }
     }

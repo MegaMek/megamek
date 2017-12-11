@@ -45,7 +45,7 @@ v0.43.5-git
 + Issue #759: Princess won't move units with a move index of 0 or less
 + PR #760: XCT Infantry implemented
 + PR #772: Make tooltips disappear when mouse is over the Status Display / buttons
-+ PR #771: Improved bot mobile unit deployment effectiveness and speed (faster and no more deploying in completely inaccessible holes)
++ PR #771: Improved bot mobile unit deployment effectiveness and speed (faster and less deploying in completely inaccessible holes)
 + PR #775: RISC Hyperlaser Implemented
 + Data: New Sprites and Removing extra files.
 + PR #757: Caseless ammunition Implemented
@@ -61,6 +61,7 @@ v0.43.5-git
 + Track older unit names so changing the name will not break MekHQ campaign files.
 + Fixed LAM conversion gear cost calculation.
 + Princess can now take point blank shots with hidden units
++ Naval C3 (space, not water)
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

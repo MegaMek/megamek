@@ -326,6 +326,8 @@ public class TestAero extends TestEntity {
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || (aero.hasETypeFlag(Entity.ETYPE_DROPSHIP))) {
             return 7 + (int)Math.ceil(aero.getWeight() / 50000);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return aero.isSpheroid()? 4 : 2;
         } else {
             return 0;
         }

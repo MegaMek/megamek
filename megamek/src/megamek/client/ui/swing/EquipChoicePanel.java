@@ -201,7 +201,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
         }
 
-        if (entity.hasC3() || entity.hasC3i()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
             add(labC3, GBC.std());
             add(choC3, GBC.eol());
             refreshC3();
@@ -405,6 +405,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 refreshC3();
             }
         } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
+            entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
+                                                                    .getSelectedIndex()]));
+        } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
             entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
                                                                     .getSelectedIndex()]));
         }
@@ -1608,7 +1611,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             int listIndex = 0;
             entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
 
-            if (entity.hasC3i()) {
+            if (entity.hasC3i() || entity.hasNavalC3()) {
                 choC3.addItem(Messages
                         .getString("CustomMechDialog.CreateNewNetwork")); //$NON-NLS-1$
                 if (entity.getC3Master() == null) {
@@ -1665,6 +1668,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (entity.hasC3i() != e.hasC3i()) {
                     continue;
                 }
+                // NC3 only links with NC3
+                if (entity.hasNavalC3() != e.hasNavalC3()) {
+                    continue;
+                }
                 // likewise can't connect c3 to nova
                 if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
                     continue;
@@ -1682,14 +1689,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (entity.C3MasterIs(e) && !entity.equals(e)) {
                     nodes++;
                 }
-                if (entity.hasC3i()
+                if ((entity.hasC3i() || entity.hasNavalC3())
                         && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
                     nodes++;
                 }
                 if (nodes == 0) {
                     continue;
                 }
-                if (e.hasC3i()) {
+                if (e.hasC3i() || e.hasNavalC3()) {
                     if (entity.onSameC3NetworkAs(e)) {
                         choC3.addItem(Messages
                                 .getString(

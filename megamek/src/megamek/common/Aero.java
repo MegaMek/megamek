@@ -363,9 +363,12 @@ public class Aero extends Entity implements IAero, IBomber {
         return false;
     }
 
+    /**
+     * Aeros really can't torso twist?
+     */
     @Override
     public int clipSecondaryFacing(int n) {
-        return n;
+        return getFacing();
     }
 
     @Override

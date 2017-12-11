@@ -12403,10 +12403,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // TODO: assuming submarines on the surface act like surface naval
         // vessels until rules clarified
         // http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
-        return (getElevation() == 0)
-               && ((getMovementMode() == EntityMovementMode.NAVAL)
-                   || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode
-                .SUBMARINE));
+        return (getElevation() == 0) && isNaval();
+    }
+    
+    /**
+     * Is this a naval vessel?
+     * @return Whether it is or not.
+     */
+    public boolean isNaval() {
+        return (getMovementMode() == EntityMovementMode.NAVAL) 
+                || (getMovementMode() == EntityMovementMode.HYDROFOIL) 
+                || (getMovementMode() == EntityMovementMode.SUBMARINE);
     }
 
     /**

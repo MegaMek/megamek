@@ -416,7 +416,7 @@ public class MechFileParser {
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getWeaponList()) {
+                for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // Only PPCS are Valid

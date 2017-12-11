@@ -81,6 +81,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         for (int era = 0; era < ERA_NUM; era++) {
             availability[era] = initialTA.getBaseAvailability(era);
         }
+        staticTechLevel = initialTA.getStaticTechLevel();
     }
     
     /**

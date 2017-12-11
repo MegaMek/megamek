@@ -258,10 +258,10 @@ public class BayMunitionsChoicePanel extends JPanel {
                 if ((atype.getMunitionType() & (AmmoType.M_ARTEMIS_CAPABLE | AmmoType.M_ARTEMIS_V_CAPABLE))
                         == 0) {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)?
-                            "EquipmentChoicePanel.LRM" : "CustomMechDialog.SRM"); //$NON-NLS-1$  //$NON-NLS-2$
+                            "CustomMechDialog.LRM" : "CustomMechDialog.SRM"); //$NON-NLS-1$  //$NON-NLS-2$
                 } else {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)?
-                            "EquipmentChoicePanel.LRMArtemis" : "CustomMechDialog.SRMArtemis"); //$NON-NLS-1$  //$NON-NLS-2$
+                            "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis"); //$NON-NLS-1$  //$NON-NLS-2$
                 }
             }
             

@@ -344,7 +344,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         return j;
     }
-
+   
     /**
      * Returns the number of locations in the entity
      */
@@ -363,9 +363,12 @@ public class Aero extends Entity implements IAero, IBomber {
         return false;
     }
 
+    /**
+     * Aeros really can't torso twist?
+     */
     @Override
     public int clipSecondaryFacing(int n) {
-        return n;
+        return getFacing();
     }
 
     @Override

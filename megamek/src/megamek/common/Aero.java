@@ -344,7 +344,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         return j;
     }
-
+   
     /**
      * Returns the number of locations in the entity
      */

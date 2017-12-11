@@ -812,7 +812,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setFuelTonnage(double fuelTons) {
         double pointsPerTon = getFuelPointsPerTon();
-        fuel = (int) Math.ceil(pointsPerTon * fuelTons);
+        fuel = (int) Math.floor(pointsPerTon * fuelTons + 0.001);
     }
 
     /**
@@ -822,7 +822,10 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public double getFuelTonnage() {
-        return fuel / getFuelPointsPerTon();
+        // Rounding required for primitive small craft/dropship fuel multipliers.
+        // The reason this is rounded normally instead of up is that the fuel points are actually calculated
+        // from the tonnage and rounded down.
+        return Math.round(2.0 * fuel / getFuelPointsPerTon()) / 2.0;
     }
 
     /**

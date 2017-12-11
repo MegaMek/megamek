@@ -30891,8 +30891,10 @@ public class Server implements Runnable {
                 }
             }
         }
-        send(createRemoveEntityPacket(ids,
-                IEntityRemovalConditions.REMOVE_NEVER_JOINED));
+        
+        // during deployment this absolutely must be called before game.removeEntity(), otherwise the game hangs
+        // when a unit is removed. Cause unknown. 
+        send(createRemoveEntityPacket(ids, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
 
         // Prevents deployment hanging. Only do this during deployment.
         if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {

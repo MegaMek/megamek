@@ -913,16 +913,14 @@ public class Compute {
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
-        boolean nc3EnergyGuided = ((wtype.getAtClass() == WeaponType.CLASS_LASER)
-                || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_LASER)
+        boolean nc3EnergyGuided = (((wtype.hasFlag(WeaponType.F_ENERGY) 
+                    && wtype.getAtClass() != WeaponType.CLASS_POINT_DEFENSE 
+                    && wtype.getAtClass() != WeaponType.CLASS_AMS))
                 || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
-                || (wtype.getAtClass() == WeaponType.CLASS_PULSE_LASER)
-                || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_PPC)
                 || (wtype.getAtClass() == WeaponType.CLASS_AR10)
                 || (wtype.getAtClass() == WeaponType.CLASS_ATM)
                 || (wtype.getAtClass() == WeaponType.CLASS_LRM)
                 || (wtype.getAtClass() == WeaponType.CLASS_SRM)
-                || (wtype.getAtClass() == WeaponType.CLASS_PPC)
                 || (wtype.getAtClass() == WeaponType.CLASS_MML)
                 || (wtype.getAtClass() == WeaponType.CLASS_THUNDERBOLT));
 

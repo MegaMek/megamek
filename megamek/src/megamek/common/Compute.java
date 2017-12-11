@@ -913,9 +913,7 @@ public class Compute {
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
-        boolean nc3EnergyGuided = (((wtype.hasFlag(WeaponType.F_ENERGY) 
-                    && wtype.getAtClass() != WeaponType.CLASS_POINT_DEFENSE 
-                    && wtype.getAtClass() != WeaponType.CLASS_AMS))
+        boolean nc3EnergyGuided = ((wtype.hasFlag(WeaponType.F_ENERGY))
                 || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
                 || (wtype.getAtClass() == WeaponType.CLASS_AR10)
                 || (wtype.getAtClass() == WeaponType.CLASS_ATM)

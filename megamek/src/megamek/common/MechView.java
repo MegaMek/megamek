@@ -367,17 +367,11 @@ public class MechView {
         
         //Display Strategic Fuel Use for Small Craft and up
         if (isSmallCraft) {
-        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
-        					+ ((SmallCraft) entity).getStrategicFuelUse());
-        } else if (isDropship) {
-        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
-        					+ ((Dropship) entity).getStrategicFuelUse());
+            sBasic.append(String.format("<br/><br/><b>Strategic Fuel Use</b><br>\nTons per Burn Day: %2.2f",
+                    ((SmallCraft) entity).getStrategicFuelUse()));
         } else if (isJumpship) {
-        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
-        					+ ((Jumpship) entity).getStrategicFuelUse());
-        } else if (isWarship) {
-        	sBasic.append("<br><br><b>Strategic Fuel Use</b>" + "<br>Tons per Burn Day: "
-        					+ ((Warship) entity).getStrategicFuelUse());
+            sBasic.append(String.format("<br/><br/><b>Strategic Fuel Use</b><br>\nTons per Burn Day: %2.2f",
+                    ((Jumpship) entity).getStrategicFuelUse()));
         }
         
         if (isDropship && ((Dropship) entity).isPrimitive()) {

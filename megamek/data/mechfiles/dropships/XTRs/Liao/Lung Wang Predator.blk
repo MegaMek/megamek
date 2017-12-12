@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,76 +16,39 @@ Dropship
 Lung Wang
 </Name>
 
-<model>
+<Model>
 'Predator'
-</model>
+</Model>
 
-<Tonnage>
-2600
-</Tonnage>
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:2.0:2:1
+infantrybay:2.0:1:3:Foot
+2ndclassquarters:0.0:0
+steeragequarters:120.0:0
+crewquarters:0.0:0
+1stclassquarters:50.0:0
+cargobay:24.5:1:2
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-220
-190
-190
-190
-</Armor>
-
-<Nose Equipment>
-SCL3
-SCL3
-SCL3
-ISExtendedLRM20
-ISExtendedLRM20
-ISExtendedLRM20
-ISExtendedLRM20 Ammo:60
-ISLargePulseLaser
-ISLargePulseLaser
-ISMediumPulseLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-IS LB 10-X AC
-ISLBXAC10 CL Ammo
-ISLBXAC10 CL Ammo
-ISERLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISERPPC
-ISMediumPulseLaser
-</Left Side Equipment>
-
-<Right Side Equipment>
-IS LB 10-X AC
-ISLBXAC10 CL Ammo
-ISLBXAC10 CL Ammo
-ISERLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISERPPC
-ISMediumPulseLaser
-</Right Side Equipment>
-
-<Aft Equipment>
-ISERLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:12
-ISSRM6
-IS Artemis IV FCS
-ISSRM6 Ammo Artemis-capable:15
-ISMobileHPG
-</Aft Equipment>
-
-<structural_integrity>
-15
-</structural_integrity>
 
 <heatsinks>
 100
@@ -99,56 +62,125 @@ ISMobileHPG
 3000
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-3076
-</year>
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+220
+192
+192
+190
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Extended LRM 20
+Extended LRM 20
+Extended LRM 20
+IS Ammo Extended LRM-20:60
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISLBXAC10
+IS LB 10-X Cluster Ammo:10
+IS LB 10-X Cluster Ammo:10
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISERPPC
+(B) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISLBXAC10
+IS LB 10-X Cluster Ammo:10
+IS LB 10-X Cluster Ammo:10
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISERPPC
+(B) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+ISMobileHPG
+</Aft Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
 
 <source>
 XTRO Liao - Jihad
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+2800.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
+<crew>
+88
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+10
+</gunners>
+
+<passengers>
 0
-</armor_type>
+</passengers>
 
-<engine_type>
+<marines>
 0
-</engine_type>
+</marines>
 
-<motion_type>
-Spheriod
-</motion_type>
+<battlearmor>
+0
+</battlearmor>
 
-<transporters>
-ASFBay:2:2
-CargoBay:18.5:1
-InfantryBay:2:1
-</transporters>
-
-<escape_pod>
-2
-</escape_pod>
+<otherpassenger>
+0
+</otherpassenger>
 
 <life_boat>
 0
 </life_boat>
 
-<crew>
-88
-</crew>
+<escape_pod>
+2
+</escape_pod>
 
-<passengers>
-0
-</passengers>
+<History>
+Remaking this ship to current construction standards involves adding 200 tons to ships weight.
+</history>

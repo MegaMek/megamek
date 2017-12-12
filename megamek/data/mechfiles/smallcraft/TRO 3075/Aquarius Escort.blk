@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,54 +20,32 @@ Aquarius Escort
 (Standard)
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+2515
+</year>
+
+<originalBuildYear>
+2515
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+crewquarters:0.0:0
+1stclassquarters:0.0:0
+steeragequarters:30.0:0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-183
-162
-162
-101
-</Armor>
-
-<Nose Equipment>
-ISLargeLaser
-ISLargeLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLRM10
-ISLRM10 Ammo
-ISLRM10 Ammo
-ISSRM6
-ISSRM6 Ammo
-ISSRM6 Ammo
-(R) ISMediumLaser
-</Left Side Equipment>
-
-<Right Side Equipment>
-ISLRM10
-ISLRM10 Ammo
-ISLRM10 Ammo
-ISSRM6
-ISSRM6 Ammo
-ISSRM6 Ammo
-(R) ISMediumLaser
-</Right Side Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-8
-</structural_integrity>
 
 <heatsinks>
 32
@@ -78,41 +56,105 @@ ISMediumLaser
 </sink_type>
 
 <fuel>
-400
+480
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2515
-</year>
+<armor_type>
+41
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+183
+162
+162
+101
+</armor>
+
+<Nose Equipment>
+Large Laser
+Large Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+LRM 10
+IS Ammo LRM-10
+IS Ammo LRM-10
+SRM 6
+IS Ammo SRM-6
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+LRM 10
+IS Ammo LRM-10
+IS Ammo LRM-10
+SRM 6
+IS Ammo SRM-6
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+TRO 3075 - Age of War
+</source>
+
+<tonnage>
+200.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
 <crew>
 6
 </crew>
 
+<officers>
+2
+</officers>
+
+<gunners>
+2
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

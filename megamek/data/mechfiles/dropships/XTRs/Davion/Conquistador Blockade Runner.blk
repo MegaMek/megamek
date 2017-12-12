@@ -43,7 +43,7 @@ battlearmorbay:20.0:1:3
 2ndclassquarters:0.0:0
 1stclassquarters:50.0:0
 crewquarters:161.0:0
-cargobay:503.5:1:4
+cargobay:509.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -101,8 +101,6 @@ IS Gauss Ammo:80
 IS Light Gauss Ammo:80
 (B) ISERPPC
 ISERPPC
-PPC Capacitor
-PPC Capacitor
 (B) LRM 20
 LRM 20
 LRM 20
@@ -141,8 +139,6 @@ IS Gauss Ammo:80
 IS Light Gauss Ammo:80
 (B) ISERPPC
 ISERPPC
-PPC Capacitor
-PPC Capacitor
 (B) LRM 20
 LRM 20
 IS Ammo LRM-20 Artemis-capable:72
@@ -190,8 +186,6 @@ IS Gauss Ammo:80
 IS Light Gauss Ammo:80
 (B) ISERPPC
 ISERPPC
-PPC Capacitor
-PPC Capacitor
 (B) LRM 20
 LRM 20
 IS Ammo LRM-20 Artemis-capable:72
@@ -247,6 +241,10 @@ XTRO Davion - Jihad
 <tonnage>
 17400.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 208

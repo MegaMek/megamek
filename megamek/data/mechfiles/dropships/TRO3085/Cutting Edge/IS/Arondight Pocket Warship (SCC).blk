@@ -1,0 +1,228 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Arondight Pocket Warship
+</Name>
+
+<Model>
+(SCC)
+</Model>
+
+<year>
+3077
+</year>
+
+<originalBuildYear>
+3077
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:2
+2ndclassquarters:0.0:0
+steeragequarters:120.0:0
+crewquarters:231.0:0
+cargobay:381.0:2:1
+1stclassquarters:70.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+200
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+7500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+353
+322
+322
+301
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Ammo Heavy SCC:60
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:32
+(B) ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:80
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:20
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5 Ammo:120
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:48
+(R) (B) Sub-Capital Missile Launcher (Piranha)
+(R) Sub-Capital Missile Launcher (Piranha)
+(R) Ammo Piranha:20
+(R) (B) ISRotaryAC5
+(R) ISRotaryAC5
+(R) ISRotaryAC5 Ammo:120
+(R) (B) ISERMediumLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:80
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:20
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5 Ammo:120
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:48
+(R) (B) Sub-Capital Missile Launcher (Piranha)
+(R) Sub-Capital Missile Launcher (Piranha)
+(R) Ammo Piranha:20
+(R) (B) ISRotaryAC5
+(R) ISRotaryAC5
+(R) ISRotaryAC5 Ammo:120
+(R) (B) ISERMediumLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Screen Launcher
+Ammo Screen:10
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:32
+(B) ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Aft Equipment>
+
+<structural_integrity>
+20
+</structural_integrity>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<tonnage>
+12000.0
+</tonnage>
+
+<crew>
+43
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+25
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+24
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+7
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

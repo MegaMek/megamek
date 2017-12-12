@@ -1,0 +1,274 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Tiamat Pocket Warship
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:6:1
+2ndclassquarters:0.0:0
+steeragequarters:180.0:0
+crewquarters:364.0:0
+1stclassquarters:110.0:0
+cargobay:2082.0:1:2
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+526
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+810
+750
+750
+705
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Ammo Heavy SCC:90
+(B) Tele-operated Missile (Kraken T)
+Ammo KrakenT:15
+(B) ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGauss Ammo:80
+(B) ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 Barracuda:20
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 Barracuda:20
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:30
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) Screen Launcher
+Ammo Screen:20
+</Aft Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<source>
+Jihad Hot Spots: Terra - Jihad
+</source>
+
+<tonnage>
+36000.0
+</tonnage>
+
+<crew>
+64
+</crew>
+
+<officers>
+11
+</officers>
+
+<gunners>
+40
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+36
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

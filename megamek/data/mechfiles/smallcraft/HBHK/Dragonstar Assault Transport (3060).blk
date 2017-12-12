@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,42 +20,34 @@ Dragonstar Assault Transport
 (3060)
 </Model>
 
-<Tonnage>
-150
-</Tonnage>
+<year>
+3060
+</year>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+battlearmorbay:3.0:2:1
+2ndclassquarters:0.0:0
+crewquarters:0.0:0
+1stclassquarters:0.0:0
+steeragequarters:20.0:0
+cargobay:4.5:0:2
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-85
-72
-72
-55
-</Armor>
-
-<Nose Equipment>
-ISLargePulseLaser
-ISERMediumLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-ISMediumPulseLaser
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISMediumPulseLaser
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISERMediumLaser
-ISERMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-6
-</structural_integrity>
 
 <heatsinks>
 20
@@ -69,47 +61,92 @@ ISERMediumLaser
 480
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3060
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-spheroid
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-battlearmorbay:3:2
-CargoBay:4.5:0
-</transporters>
+<armor_tech>
+1
+</armor_tech>
 
-<crew>
-4
-</crew>
+<armor>
+86
+73
+73
+56
+</armor>
 
-<passengers>
-42
-</passengers>
+<Nose Equipment>
+ISLargePulseLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
 
 <source>
 HB Kurita - Clan Invasion
 </source>
+
+<tonnage>
+150.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
+
+<crew>
+22
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,33 @@ Mowang Courier
 (Standard)
 </Model>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+2835
+</year>
+
+<originalBuildYear>
+2835
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+1stclassquarters:10.0:0
+2ndclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:10.0:0
+cargobay:26.5:1:1
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-16
-16
-16
-16
-</Armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment> 
-</Right Side Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
-
-<structural_integrity>
-6
-</structural_integrity>
 
 <heatsinks>
 0
@@ -60,49 +57,89 @@ Mowang Courier
 </sink_type>
 
 <fuel>
-800
+1640
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2835
-</year>
+<armor_type>
+41
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+16
+16
+16
+16
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<source>
+Handbook:Liao - Early Succesion Wars
+</source>
+
+<tonnage>
+100.0
+</tonnage>
 
 <designtype>
 0
 </designtype>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-CargoBay:5.5:1
-</transporters>
-
 <crew>
 3
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+0
+</gunners>
+
 <passengers>
-3
+0
 </passengers>
 
-<Source>
-Handbook:Liao
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

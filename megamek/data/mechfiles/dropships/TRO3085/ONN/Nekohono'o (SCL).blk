@@ -1,0 +1,242 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Nekohono'o
+</Name>
+
+<Model>
+(SCL)
+</Model>
+
+<year>
+3080
+</year>
+
+<originalBuildYear>
+3080
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:2:1
+smallcraftbay:9.0:2:2
+battlearmorbay:27.0:2:3
+cargobay:1583.0:2:4
+2ndclassquarters:0.0:0
+crewquarters:287.0:0
+1stclassquarters:90.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+425
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+310
+236
+236
+176
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:54
+ISApollo
+ISApollo
+ISApollo
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+(B) MRM 40
+MRM 40
+IS MRM 40 Ammo:36
+ISApollo
+ISApollo
+(B) ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+(R) (B) Sub-Capital Laser (SCL/2)
+(R) Sub-Capital Laser (SCL/2)
+(R) (B) Heavy PPC
+(R) Heavy PPC
+(R) Heavy PPC
+(R) (B) MRM 40
+(R) MRM 40
+(R) MRM 40
+(R) IS MRM 40 Ammo:54
+ISApollo
+ISApollo
+ISApollo
+(R) (B) Screen Launcher
+(R) Ammo Screen:20
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+(B) MRM 40
+MRM 40
+IS MRM 40 Ammo:36
+ISApollo
+ISApollo
+(B) ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+(R) (B) Sub-Capital Laser (SCL/2)
+(R) Sub-Capital Laser (SCL/2)
+(R) (B) Heavy PPC
+(R) Heavy PPC
+(R) Heavy PPC
+(R) (B) MRM 40
+(R) MRM 40
+(R) MRM 40
+(R) IS MRM 40 Ammo:54
+ISApollo
+ISApollo
+ISApollo
+(R) (B) Screen Launcher
+(R) Ammo Screen:20
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+ISNC3
+(B) Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:54
+ISApollo
+ISApollo
+ISApollo
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<tonnage>
+16000.0
+</tonnage>
+
+<crew>
+260
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+30
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

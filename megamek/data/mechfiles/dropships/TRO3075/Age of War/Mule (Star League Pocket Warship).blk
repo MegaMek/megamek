@@ -1,0 +1,177 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mule
+</Name>
+
+<Model>
+(Star League Pocket Warship)
+</Model>
+
+<year>
+2756
+</year>
+
+<originalBuildYear>
+2756
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+1stclassquarters:50.0:0
+2ndclassquarters:0.0:0
+crewquarters:154.0:0
+cargobay:413.5:1:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+160
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+9570
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+176
+154
+154
+132
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+IS Ammo AC/5:20
+(B) Medium Laser
+(B) Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:39
+Ammo White Shark:39
+(B) SRM 6
+IS Ammo SRM-6:15
+(B) Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:39
+Ammo White Shark:39
+(B) SRM 6
+IS Ammo SRM-6:15
+(B) Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+11200.0
+</tonnage>
+
+<crew>
+34
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+15
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

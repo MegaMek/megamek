@@ -1169,7 +1169,7 @@ public class MiniMap extends JPanel {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (doubleBlind && !hasVisual) { // Unseen Unit
+        } else if ((doubleBlind && !hasVisual) || entity.isHidden()) { // Unseen Unit
             // Do nothing
             return;
         } else if (entity instanceof Mech) {

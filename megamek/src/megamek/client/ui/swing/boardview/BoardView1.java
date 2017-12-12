@@ -118,6 +118,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -3460,16 +3461,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || entity.hasSeenEntity(localPlayer)
-                || entity.hasDetectedEntity(localPlayer);
-
-        canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || !entity.isHidden();
+        boolean canSee = EntityVisibilityUtils.hasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite

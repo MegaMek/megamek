@@ -6715,28 +6715,27 @@ public abstract class Mech extends Entity {
                         .append(armoredText);
             } else if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
+                toReturn.append(m.getType().getInternalName());
                 switch (m.getFacing()) {
                     case 1:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FR)").append(armoredText);
+                        toReturn.append(" (FR)");
                         break;
                     case 2:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RR)").append(armoredText);
+                        toReturn.append(" (RR)");
                         break;
                     // case 3:
                         // already handled by isRearMounted() above
                     case 4:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RL)").append(armoredText);
+                        toReturn.append(" (RL)");
                         break;
                     case 5:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FL)").append(armoredText);
+                        toReturn.append(" (FL)");
                         break;
                     default:
+                        // forward facing
                         break;
                 }
+                toReturn.append(armoredText);
             } else {
                 toReturn.append(m.getType().getInternalName()).append(
                         armoredText);

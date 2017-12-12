@@ -64,6 +64,8 @@ public class MULParser {
     private static final String BLOWN_OFF = "blownOff";
     private static final String C3I = "c3iset";
     private static final String C3ILINK = "c3i_link";
+    private static final String NC3 = "NC3set";
+    private static final String NC3LINK = "NC3_link";
     private static final String LINK = "link";
     private static final String RFMG = "rfmg";
 
@@ -479,6 +481,8 @@ public class MULParser {
                     parseBombs(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(C3I)){
                     parseC3I(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(NC3)){
+                    parseNC3(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BA_MEA)){
                     parseBAMEA(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BA_APM)){
@@ -2038,6 +2042,40 @@ public class MULParser {
                         System.out.println("Loading C3i UUID " + pos + 
                                 ": " + link);
                         entity.setC3iNextUUIDAsString(pos, link);
+                    }
+                }
+            } else {
+                continue;
+            }
+        }
+    }
+    
+    /**
+     * Parse an NC3 tag for the given <code>Entity</code>.
+     * 
+     * @param nc3Tag
+     * @param entity
+     */
+    private void parseNC3(Element nc3Tag, Entity entity){
+        // Deal with any child nodes
+        NodeList nl = nc3Tag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+
+            if (currNode.getParentNode() != nc3Tag) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                Element currEle = (Element)currNode;
+                String nodeName = currNode.getNodeName();
+                if (nodeName.equalsIgnoreCase(NC3LINK)){
+                    String link = currEle.getAttribute(LINK);
+                    int pos = entity.getFreeNC3UUID();
+                    if ((link.length() > 0) && (pos != -1)) {
+                        System.out.println("Loading NC3 UUID " + pos + 
+                                ": " + link);
+                        entity.setNC3NextUUIDAsString(pos, link);
                     }
                 }
             } else {

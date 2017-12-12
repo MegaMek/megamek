@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,43 +20,33 @@ Ares Attack Craft
 Mark IX
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+3077
+</year>
+
+<originalBuildYear>
+3077
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:20.0:0
+cargobay:6.5:1:1
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
-
-<Armor>
-159
-118
-118
-81
-</Armor>
-
-<Nose Equipment>
-ISLargePulseLaser
-ISERLargeLaser
-ISBeagleActiveProbe
-</Nose Equipment>
-
-<Left Side Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISMediumPulseLaser
-ISMediumPulseLaser
-</Right Side Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
-
-<structural_integrity>
-11
-</structural_integrity>
 
 <heatsinks>
 15
@@ -70,42 +60,93 @@ ISMediumPulseLaser
 800
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-3077
-</year>
+<armor_type>
+41
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+159
+118
+118
+81
+</armor>
+
+<Nose Equipment>
+ISLargePulseLaser
+ISERLargeLaser
+BeagleActiveProbe
+</Nose Equipment>
+
+<Left Side Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<tonnage>
+200.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-CargoBay:3:0
-</transporters>
-
 <crew>
 4
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

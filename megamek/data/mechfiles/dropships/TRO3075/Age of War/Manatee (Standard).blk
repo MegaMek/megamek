@@ -1,0 +1,162 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Manatee
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2449
+</year>
+
+<originalBuildYear>
+2449
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:375.0:1:1
+mechbay:1.0:1
+mechbay:1.0:1
+mechbay:1.0:1
+mechbay:1.0:1
+1stclassquarters:20.0:0
+2ndclassquarters:0.0:0
+crewquarters:77.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+129
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+5400
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+80
+70
+70
+60
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3075 - Age of War
+</source>
+
+<tonnage>
+1900.0
+</tonnage>
+
+<crew>
+19
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,79 +17,37 @@ Leopard PA-Class Dropship
 </Name>
 
 <Model>
+
 </Model>
 
-<Tonnage>
-1900
-</Tonnage>
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+asfbay:2.0:2:2
+1stclassquarters:20.0:0
+2ndclassquarters:0.0:0
+infantrybay:4.0:1:3:Jump
+crewquarters:77.0:0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-230
-180
-180
-130
-</Armor>
-
-<Nose Equipment>
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:24
-ISSmallPulseLaser
-ISSmallPulseLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:36
-ISBinaryLaser
-ISBinaryLaser
-(R) ISSmallPulseLaser
-(R) ISSmallPulseLaser
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:36
-ISBinaryLaser
-ISBinaryLaser
-(R) ISSmallPulseLaser
-(R) ISSmallPulseLaser
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISBinaryLaser
-ISBinaryLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-</Aft Equipment>
-
-<structural_integrity>
-12
-</structural_integrity>
 
 <heatsinks>
 129
@@ -100,59 +58,130 @@ ISMediumPulseLaser
 </sink_type>
 
 <fuel>
-5120
+4840
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3073
-</year>
-
-<source>
-XTRO Pirates - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
+<engine_type>
 1
-</designtype>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+7
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+230
+180
+180
+130
+</armor>
 
-<transporters>
-smallcraftbay:2:2
-asfbay:2:2
-infantrybay:4:0
-</transporters>
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+PPC Capacitor
+PPC Capacitor
+PPC Capacitor
+PPC Capacitor
+PPC Capacitor
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+</Nose Equipment>
 
-<escape_pod>
+<Left Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:36
+ISArtemisIV
+ISArtemisIV
+(B) Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+(R) (B) ISSmallPulseLaser
+(R) ISSmallPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:36
+ISArtemisIV
+ISArtemisIV
+(B) Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+(R) (B) ISSmallPulseLaser
+(R) ISSmallPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+XTRO Pirates - Jihad
+</source>
+
+<tonnage>
+1900.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+111
+</crew>
+
+<officers>
 2
-</escape_pod>
+</officers>
+
+<gunners>
+8
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
 
 <life_boat>
 0
 </life_boat>
 
-<crew>
-110
-</crew>
+<escape_pod>
+2
+</escape_pod>
 
-<passengers>
-0
-</passengers>

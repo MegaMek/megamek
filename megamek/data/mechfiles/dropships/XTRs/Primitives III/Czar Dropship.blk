@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,79 +16,44 @@ Dropship
 Czar Dropship
 </Name>
 
-<model>
+<Model>
 (Standard)
-</model>
+</Model>
 
-<Tonnage>
-6400
-</Tonnage>
+<year>
+2462
+</year>
+
+<originalBuildYear>
+2462
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:1.0:1:1
+infantrybay:18.0:1:2:Foot
+infantrybay:18.0:1:3:Foot
+2ndclassquarters:0.0:0
+1stclassquarters:90.0:0
+crewquarters:308.0:0
+cargobay:1896.5:2:5
+cargobay:1897.0:2:4
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
 
-<Armor>
-98
-74
-74
-50
-</Armor>
-
-<Nose Equipment>
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-
-(R) ISLargeLaser
-(R) ISLargeLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-
-(R) ISLargeLaser
-(R) ISLargeLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-7
-</structural_integrity>
+<collartype>
+0
+</collartype>
 
 <heatsinks>
 112
@@ -99,61 +64,125 @@ ISMediumLaser
 </sink_type>
 
 <fuel>
-4500
+4091
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2462
-</year>
+<armor_type>
+40
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+97
+73
+73
+49
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<source>
+XTRO Primitives III - Age of War
+</source>
+
+<tonnage>
+6400.0
+</tonnage>
 
 <designtype>
 0
 </designtype>
 
-<armor_type>
-17
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-spheroid
-</motion_type>
-
-<transporters>
-smallcraftbay:1:1
-infantrybay:18:1
-infantrybay:18:1
-CargoBay:1900:2
-CargoBay:1901:2
-</transporters>
-
-<escape_pod>
-4
-</escape_pod>
-
-<life_boat>
-10
-</life_boat>
-
 <crew>
-44
+1066
 </crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+10
+</gunners>
 
 <passengers>
 0
 </passengers>
 
-<source>
-XTRO Primitives III - Age of War
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

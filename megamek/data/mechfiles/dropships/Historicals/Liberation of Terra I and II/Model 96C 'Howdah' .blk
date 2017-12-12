@@ -1,0 +1,211 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Model 96C 'Howdah'
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+2695
+</year>
+
+<originalBuildYear>
+2695
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:1462.0:2:1
+smallcraftbay:2.0:2:2
+asfbay:6.0:4:3
+2ndclassquarters:0.0:0
+crewquarters:329.0:0
+1stclassquarters:90.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+200
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+21000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+373
+327
+327
+280
+</armor>
+
+<Nose Equipment>
+(B) PPC
+PPC
+PPC
+PPC
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+ISNavalTugAdaptor
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+PPC
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+(R) (B) PPC
+(R) PPC
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) ISGaussRifle
+(R) ISGaussRifle
+(R) IS Gauss Ammo:48
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+PPC
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+(R) (B) PPC
+(R) PPC
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) ISGaussRifle
+(R) ISGaussRifle
+(R) IS Gauss Ammo:48
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<source>
+H:Liberation of Terra I - Star League
+</source>
+
+<tonnage>
+15000.0
+</tonnage>
+
+<crew>
+69
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

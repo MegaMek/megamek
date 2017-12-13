@@ -215,6 +215,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the engine and structural tech ratings match.
      */
     protected int engineTechRating = USE_STRUCTURAL_RATING;
+    /**
+     * Year to use calculating engine and control system weight and fuel efficiency for primitive
+     * support vehicles and aerospace units. This needs to be tracked separately from intro year to
+     * account for refits that change the intro year but don't affect the structural components
+     */
+    private int originalBuildYear = -1;
+    
     private Engine engine;
     protected boolean mixedTech = false;
     protected boolean designValid = true;
@@ -384,6 +391,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
     private String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    private String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -3395,6 +3403,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
+            double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots())
+                    * ((AmmoType) mounted.getType()).getTonnage(this);
+            mounted.setAmmoCapacity(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -3520,7 +3531,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Determine how much ammunition (of all munition types) remains which is
-     * compatable with the given ammo.
+     * compatible with the given ammo.
      *
      * @param et - the <code>EquipmentType</code> of the ammo to be found. This
      *           value may be <code>null</code>.
@@ -3529,8 +3540,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getTotalMunitionsOfType(EquipmentType et) {
         int totalShotsLeft = 0;
+        
+        // specifically don't count caseless munitions as being of the same type as non-caseless
         for (Mounted amounted : getAmmo()) {
-            if (amounted.getType().equals(et) && !amounted.isDumping()) {
+            boolean amCaseless = ((AmmoType) amounted.getType()).getMunitionType() == AmmoType.M_CASELESS;
+            boolean etCaseless = ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
+            boolean caselessMismatch = amCaseless != etCaseless;
+            
+            if (amounted.getType().equals(et) && !caselessMismatch && !amounted.isDumping()) {                
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }
@@ -5396,6 +5413,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return false;
     }
+    
+    public boolean hasNavalC3() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_NAVAL_C3) && !m.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
@@ -5424,6 +5454,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 c3NetIdString = "C3i." + getId();
             } else if (hasActiveNovaCEWS()) {
                 c3NetIdString = "C3Nova." + getId();
+            } else if (hasNavalC3()) {
+                c3NetIdString = "NC3." + getId();
             }
         }
         return c3NetIdString;
@@ -5480,6 +5512,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setC3NetIdSelf() {
         if (hasActiveNovaCEWS()) {
             c3NetIdString = "C3Nova." + getId();
+        } else if (hasNavalC3()) {
+            c3NetIdString = "NC3." + getId();
         } else {
             c3NetIdString = "C3i." + getId();
         }
@@ -5543,7 +5577,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int calculateFreeC3Nodes() {
         int nodes = 0;
-        if (hasC3i()) {
+        if (hasC3i() || hasNavalC3()) {
             nodes = 5;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
@@ -5769,7 +5803,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             c3NetIdString = "C3." + id;
         } else if (hasC3i() && (entityId == NONE)) {
             c3NetIdString = "C3i." + id;
-        } else if (hasC3() || hasC3i()) {
+        } else if (hasNavalC3() && (entityId == NONE)) {
+            c3NetIdString = "NC3." + id;
+        } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = game.getEntity(entityId).getC3NetId();
         }
         for (Entity e : game.getEntitiesVector()) {
@@ -5817,6 +5853,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                 e.getPosition()))
                    && !(ComputeECM.isAffectedByECM(this, getPosition(),
                                                    getPosition()));
+        }
+        
+        // NC3 is easy too - if they both have NC3, and their net ID's match,
+        // they're on the same network! 
+        if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
+            int distance = Compute.effectiveDistance(game,this,e,false);
+            //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
+            if (game.getRoundCount() > 0) {
+                if (distance > 60) {
+                    return false;
+                }
+                //Naval C3 only works in space
+                if (!game.getBoard().inSpace()) {
+                    return false;
+                }
+            } 
+            return true;
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match,
@@ -8332,7 +8385,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean useBRTag) {
+    public String getUnusedString(boolean ishtml) {
         StringBuffer result = new StringBuffer();
 
         // Walk through this entity's transport components;
@@ -8340,7 +8393,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
-            result.append(next.getUnusedString());
+            if ((next instanceof Bay) && ((Bay)next).isQuarters()) {
+                continue;
+            }
+            if (ishtml && (next instanceof Bay) && (((Bay) next).getBayDamage() > 0)) {
+                result.append("<font color='red'>")
+                    .append(next.getUnusedString())
+                    .append("</font>");
+            } else {
+                result.append(next.getUnusedString());
+            }
             if (next instanceof TroopSpace && isOmni()) {
             	if (omniPodTransports.contains(next)) {
             		result.append(" (Pod)");
@@ -8350,7 +8412,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                if (useBRTag) {
+                if (ishtml) {
                     result.append("<br>");
                 } else {
                     result.append("\n");
@@ -8460,6 +8522,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             loadedThisTurn = true;
         }
+    }
+    
+    /**
+     * @return The number of additional crew capacity provided by quarters in transport bays.
+     */
+    public int getBayPersonnel() {
+        int count = 0;
+        for (Bay bay : this.getTransportBays()) {
+            count += bay.getPersonnel(isClan());
+        }
+        return count;
     }
 
     /**
@@ -12100,66 +12173,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Apply any pending Santa Anna allocations to Killer Whale ammo bins
-     * effectively "splitting" the ammo bins in two This is a hack that I should
-     * really creat a general method of "splitting" ammo bins for
-     */
-    public void applySantaAnna() {
-
-        // I can't add the ammo while I am iterating through the ammo list
-        // so collect vectors containing number of shots and location
-        Vector<Integer> locations = new Vector<Integer>();
-        Vector<Integer> ammo = new Vector<Integer>();
-        Vector<Mounted> baymounts = new Vector<Mounted>();
-        Vector<String> name = new Vector<String>();
-
-        for (Mounted amounted : getAmmo()) {
-            if (amounted.getNSantaAnna() > 0) {
-                // first reduce the current ammo load by number of santa annas
-                int nSantaAnna = amounted.getNSantaAnna();
-                amounted.setShotsLeft(Math.max(amounted.getBaseShotsLeft()
-                                               - nSantaAnna, 0));
-                // save the new ammo information
-                locations.add(amounted.getLocation());
-                ammo.add(nSantaAnna);
-                // name depends on type
-                if (amounted.getType().getInternalName().indexOf("AR10") != -1) {
-                    name.add("AR10 SantaAnna Ammo");
-                } else {
-                    name.add("SantaAnna Ammo");
-                }
-                if (null == getBayByAmmo(amounted)) {
-                    System.err
-                            .println("cannot find the right bay for Santa Anna ammo");
-                    return;
-                }
-                baymounts.add(getBayByAmmo(amounted));
-                // now make sure santa anna loadout is reset
-                amounted.setNSantaAnna(0);
-            }
-        }
-
-        // now iterate through to get new mounts
-        if ((ammo.size() != locations.size()) || (ammo.size() != name.size())
-            || (ammo.size() != baymounts.size())) {
-            // this shouldn't happen
-            System.err.println("cannot load santa anna ammo");
-            return;
-        }
-        for (int i = 0; i < ammo.size(); i++) {
-            try {
-                Mounted newmount = addEquipment(
-                        EquipmentType.get(name.elementAt(i)),
-                        locations.elementAt(i), false, ammo.elementAt(i));
-                // add this mount to the ammo for the bay
-                baymounts.elementAt(i).addAmmoToBay(getEquipmentNum(newmount));
-            } catch (LocationFullException ex) {
-                // throw new LocationFullException(ex.getMessage());
-            }
-        }
-    }
-
-    /**
      * get the bay that ammo is associated with
      *
      * @param mammo
@@ -12427,10 +12440,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // TODO: assuming submarines on the surface act like surface naval
         // vessels until rules clarified
         // http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
-        return (getElevation() == 0)
-               && ((getMovementMode() == EntityMovementMode.NAVAL)
-                   || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode
-                .SUBMARINE));
+        return (getElevation() == 0) && isNaval();
+    }
+    
+    /**
+     * Is this a naval vessel?
+     * @return Whether it is or not.
+     */
+    public boolean isNaval() {
+        return (getMovementMode() == EntityMovementMode.NAVAL) 
+                || (getMovementMode() == EntityMovementMode.HYDROFOIL) 
+                || (getMovementMode() == EntityMovementMode.SUBMARINE);
     }
 
     /**
@@ -13370,7 +13390,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((game != null)
             && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                 || (hasC3M() && (calculateFreeC3Nodes() < 3))
-                || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5)))) {
+                || (hasC3S() && (c3Master > NONE)) || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
             int totalForceBV = 0;
             totalForceBV += baseBV;
             for (Entity e : game.getC3NetworkMembers(this)) {
@@ -13955,6 +13975,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getFreeC3iUUID() {
         int pos = 0;
         while (c3iUUIDs[pos] != null) {
+            pos++;
+            if (pos >= MAX_C3i_NODES) {
+                return -1;
+            }
+        }
+        return pos;
+    }
+    
+    public void setNC3NextUUIDAsString(int pos, String c3id) {
+        NC3UUIDs[pos] = c3id;
+    }
+
+    public String getNC3NextUUIDAsString(int pos) {
+        return NC3UUIDs[pos];
+    }
+
+    public int getFreeNC3UUID() {
+        int pos = 0;
+        while (NC3UUIDs[pos] != null) {
             pos++;
             if (pos >= MAX_C3i_NODES) {
                 return -1;
@@ -14762,6 +14801,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+    
+    /**
+     * Units with construction data that varies by year (such as engine and control system weight
+     * for some primitive aerospace units) require tracking the original build year separately
+     * from the intro year for the model to account for refits that don't affect the core components.
+     *  
+     * @return The year to use for core component construction data.
+     */
+    public int getOriginalBuildYear() {
+        if (originalBuildYear < 0) {
+            return year;
+        }
+        return originalBuildYear;
+    }
+    
+    public void setOriginalBuildYear(int year) {
+        originalBuildYear = year;
     }
 
     /**

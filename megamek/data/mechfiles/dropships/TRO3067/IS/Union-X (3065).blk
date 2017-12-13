@@ -1,0 +1,197 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union-X
+</Name>
+
+<Model>
+(3065)
+</Model>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:8.0:4
+battlearmorbay:5.0:1:2
+asfbay:4.0:2:3
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+cargobay:282.0:1:4
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+120
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+190
+184
+184
+179
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:60
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:80
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISUltraAC5
+ISUltraAC5
+IS Ultra AC/5 Ammo:200
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+ISArtemisIV
+ISArtemisIV
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:60
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISUltraAC5
+ISUltraAC5
+IS Ultra AC/5 Ammo:200
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+ISArtemisIV
+ISArtemisIV
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:60
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+3700.0
+</tonnage>
+
+<crew>
+66
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+7
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+

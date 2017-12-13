@@ -35,6 +35,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
 import megamek.common.ITechnology;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -74,6 +75,10 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isMech();
 
     public abstract boolean isAero();
+    
+    public abstract boolean isSmallCraft();
+    
+    public abstract boolean isJumpship();
 
     public abstract double getWeightControls();
 
@@ -278,6 +283,33 @@ public abstract class TestEntity implements TestEntityOption {
                 / Math.pow(10, precision);
     }
     
+    /**
+     * Filters all armor according to given tech constraints
+     *
+     * @param etype         The entity type bit mask
+     * @param industrial    For mechs; industrial mechs can only use certain armor types
+     *                      unless allowing experimental rules
+     * @param movementMode  For vehicles; hardened armor is illegal for some movement modes 
+     * @param techManager   The constraints used to filter the armor types
+     * @return A list of all armors that meet the tech constraints
+     */
+    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial,
+            EntityMovementMode movementMode, ITechManager techManager) {
+        if ((etype & Entity.ETYPE_BATTLEARMOR) != 0) {
+            return TestBattleArmor.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_SMALL_CRAFT) != 0) {
+            return TestSmallCraft.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_AERO) != 0) {
+            return TestAero.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_TANK) != 0) {
+            return TestTank.legalArmorsFor(movementMode, techManager);
+        } else if ((etype & Entity.ETYPE_MECH) != 0) {
+            return TestMech.legalArmorsFor(etype, industrial, techManager);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    
     public static List<EquipmentType> validJumpJets(long entitytype, boolean industrial) {
         if ((entitytype & Entity.ETYPE_MECH) != 0) {
             return TestMech.MechJumpJets.allJJs(industrial);
@@ -295,6 +327,31 @@ public abstract class TestEntity implements TestEntityOption {
             return Collections.emptyList();
         }
     }
+    
+    /**
+     * Additional crew requirements for vehicles and aerospace vessels for certain types of
+     * equipment.
+     */
+    public static int equipmentCrewRequirements(EquipmentType eq) {
+        if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_MASH)
+                    || eq.hasFlag(MiscType.F_MASH_EXTRA)
+                    || eq.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                return 5;
+            }
+            if (eq.hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                return 3;
+            }
+            if (eq.hasFlag(MiscType.F_COMMUNICATIONS)) {
+                return (int) eq.getTonnage(null);
+            }
+            if (eq.hasFlag(MiscType.F_MOBILE_HPG)) {
+                // Mobile HPG has crew requirement of 10; ground-mobile has requirement of 1.
+                return eq.hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
+            }
+        }
+        return 0;
+    }
 
     private boolean hasMASC() {
         if (getEntity() instanceof Mech) {
@@ -302,7 +359,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return false;
     }
-
+    
     public String printShortMovement() {
         return "Movement: "
                 + Integer.toString(getEntity().getOriginalWalkMP())
@@ -471,7 +528,10 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getWeightWeapon() {
         double weight = 0.0;
-        for (Mounted m : getEntity().getWeaponList()) {
+        for (Mounted m : getEntity().getTotalWeaponList()) {
+            if (m.isWeaponGroup()) {
+                continue;
+            }
             WeaponType wt = (WeaponType) m.getType();
             if (m.isDWPMounted()){
                 weight += wt.getTonnage(getEntity()) * 0.75;
@@ -549,7 +609,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             buff.append(StringUtil.makeLength(mt.getName(), 20));
-            buff.append(
+            buff.append(" ").append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
                     .append(TestEntity.makeWeightString(mt
@@ -821,7 +881,7 @@ public abstract class TestEntity implements TestEntityOption {
         // Check cockpit TL
         ITechnology cockpit = null;
         String cockpitName = null;
-        if (getEntity() instanceof Aero) {
+        if (getEntity().getEntityType() == Entity.ETYPE_AERO) {
             cockpit = ((Aero)getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Aero)getEntity()).getCockpitTypeString();
         } else if (getEntity() instanceof Mech) {
@@ -1233,7 +1293,9 @@ public abstract class TestEntity implements TestEntityOption {
         double carryingSpace = getEntity().getTroopCarryingSpace();
         double cargoWeight = 0;
         for (Bay bay : getEntity().getTransportBays()) {
-            cargoWeight += bay.getWeight();
+            if (!bay.isQuarters()) {
+                cargoWeight += ceil(bay.getWeight(), Ceil.HALFTON);
+            }
         }
         return carryingSpace + cargoWeight;
     }

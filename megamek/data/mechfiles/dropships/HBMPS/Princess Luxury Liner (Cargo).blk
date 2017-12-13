@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,60 +20,36 @@ Princess Luxury Liner
 (Cargo)
 </Model>
 
-<Tonnage>
-11800
-</Tonnage>
+<year>
+2823
+</year>
+
+<originalBuildYear>
+2823
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:4.0:2:1
+liquidcargobay:1274.0:0:2
+cargobay:2086.0:4:4
+2ndclassquarters:700.0:0
+1stclassquarters:100.0:0
+crewquarters:301.0:0
+cargobay:2263.0:0:3
+cargobay:446.0:0:5
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
-
-<Armor>
-87
-75
-75
-71
-</Armor>
-
-<Nose Equipment>
-ISLargeLaser
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (100)
-</Nose Equipment>
-
-<Left Side Equipment>
-ISMediumLaser
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (100)
-(R) ISMediumLaser
-(R) ISMachine Gun
-(R) ISMachine Gun
-(R) ISMG Ammo (100)
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISMediumLaser
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (100)
-(R) ISMediumLaser
-(R) ISMachine Gun
-(R) ISMachine Gun
-(R) ISMG Ammo (100)
-</Right Side Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (100)
-</Aft Equipment>
-
-<structural_integrity>
-5
-</structural_integrity>
 
 <heatsinks>
 60
@@ -87,58 +63,110 @@ ISMG Ammo (100)
 25500
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2823
-</year>
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+87
+77
+77
+71
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+(B) Machine Gun
+Machine Gun
+IS Machine Gun Ammo - Half:100
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Medium Laser
+(B) Machine Gun
+Machine Gun
+IS Machine Gun Ammo - Half:100
+(R) (B) Medium Laser
+(R) (B) Machine Gun
+(R) Machine Gun
+(R) IS Machine Gun Ammo - Half:100
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Medium Laser
+(B) Machine Gun
+Machine Gun
+IS Machine Gun Ammo - Half:100
+(R) (B) Medium Laser
+(R) (B) Machine Gun
+(R) Machine Gun
+(R) IS Machine Gun Ammo - Half:100
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+(B) Machine Gun
+Machine Gun
+IS Machine Gun Ammo - Half:100
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
 
 <source>
 HB:Major Periphery States - Succession Wars
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+11800.0
+</tonnage>
 
 <designtype>
 0
 </designtype>
 
-<armor_type>
+<crew>
+63
+</crew>
+
+<officers>
+10
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+100
+</passengers>
+
+<marines>
 0
-</armor_type>
+</marines>
 
-<engine_type>
+<battlearmor>
 0
-</engine_type>
+</battlearmor>
 
-<motion_type>
-spheroid
-</motion_type>
-
-<transporters>
-SmallCraftBay:4:2
-CargoBay:2360:1
-CargoBay:463:1
-LiquidCargo:1400:1
-CargoBay:2085:4
-</transporters>
-
-<escape_pod>
-15
-</escape_pod>
+<otherpassenger>
+0
+</otherpassenger>
 
 <life_boat>
 10
 </life_boat>
 
-<crew>
-73
-</crew>
+<escape_pod>
+15
+</escape_pod>
 
-<passengers>
-100
-</passengers>

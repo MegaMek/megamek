@@ -56,7 +56,12 @@ public class SpaceStation extends Jumpship {
     public int getASEWAffected(int arc) {
         return asewAffectedTurns[arc];
     }
-
+    
+    public SpaceStation() {
+        super();
+        setDriveCoreType(DRIVE_CORE_NONE);
+    }
+    
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES)
             .setTechRating(RATING_D)

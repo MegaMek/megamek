@@ -344,7 +344,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         return j;
     }
-
+   
     /**
      * Returns the number of locations in the entity
      */
@@ -363,9 +363,12 @@ public class Aero extends Entity implements IAero, IBomber {
         return false;
     }
 
+    /**
+     * Aeros really can't torso twist?
+     */
     @Override
     public int clipSecondaryFacing(int n) {
-        return n;
+        return getFacing();
     }
 
     @Override
@@ -794,39 +797,10 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public double getFuelPointsPerTon() {
-        if (hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            return 160;
-        } else if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            if (getWeight() < 400) {
-                return 80;
-            } else if (getWeight() < 800) {
-                return 70;
-            } else if (getWeight() < 1200) {
-                return 60;
-            } else if (getWeight() < 1900) {
-                return 50;
-            } else if (getWeight() < 3000) {
-                return 40;
-            } else if (getWeight() < 20000) {
-                return 30;
-            } else if (getWeight() < 40000) {
-                return 20;
-            } else {
-                return 10;
-            }
-        } else if (hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            if (getWeight() < 110000) {
-                return 10;
-            } else if (getWeight() < 250000) {
-                return 5;
-            } else {
-                return 2.5;
-            }
-        } else if (hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return 80;
-        } else { // Entity.ETYPE_AERO
-            return 80;
+        if (isPrimitive()) {
+            return 80 * primitiveFuelFactor();
         }
+        return 80;
     }
 
     /**
@@ -838,7 +812,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setFuelTonnage(double fuelTons) {
         double pointsPerTon = getFuelPointsPerTon();
-        fuel = (int) Math.ceil(pointsPerTon * fuelTons);
+        fuel = (int) Math.floor(pointsPerTon * fuelTons + 0.001);
     }
 
     /**
@@ -848,7 +822,29 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public double getFuelTonnage() {
-        return fuel / getFuelPointsPerTon();
+        // Rounding required for primitive small craft/dropship fuel multipliers.
+        // The reason this is rounded normally instead of up is that the fuel points are actually calculated
+        // from the tonnage and rounded down.
+        return Math.round(2.0 * fuel / getFuelPointsPerTon()) / 2.0;
+    }
+
+    /**
+     * Used by SmallCraft and Jumpship and their child classes.
+     * 
+     * @return The tons of fuel burned in a day at 1G using strategic movement.
+     */
+    public double getStrategicFuelUse() {
+        return 0.0;
+    }
+    
+    /**
+     * Some primitve aerospace units have their fuel efficiency reduced by a factor based
+     * on construction year.
+     * 
+     * @return The primitive fuel factor for the build year.
+     */
+    public double primitiveFuelFactor() {
+        return 1.0;
     }
 
     public int getHeatType() {
@@ -1321,7 +1317,7 @@ public class Aero extends Entity implements IAero, IBomber {
             case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                 armorMultiplier = 1.5;
                 break;
-            case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+            case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
             case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
             case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
                 armorMultiplier = 1.2;
@@ -3849,7 +3845,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         // Cargo bays and bay doors for large craft
         for (Bay next : getTransportBays()) {
-        	if (next.getBayDamaged() > 0) {
+        	if (next.getBayDamage() > 0) {
         		if (!first) {
         			toReturn += ", ";
         		}
@@ -4066,11 +4062,47 @@ public class Aero extends Entity implements IAero, IBomber {
         }
     }
 
+    /**
+     * @return The total number of crew available to supplement marines on boarding actions.
+     *         Includes officers, enlisted, and bay personnel, but not marines/ba or passengers.
+     */
     public int getNCrew() {
         return 1;
     }
+    
+    
+    /**
+     * @return The total number of officers for vessels.
+     */
+    public int getNOfficers() {
+        return 0;
+    }
+    
+    /**
+     * @return The total number of gunners for vessels.
+     */
+    public int getNGunners() {
+        return 0;
+    }
 
+    /**
+     * @return The total passenger capacity.
+     */
     public int getNPassenger() {
+        return 0;
+    }
+
+    /**
+     * @return The number battlearmored marines available to vessels for boarding actions.
+     */
+    public int getNBattleArmor() {
+        return 0;
+    }
+
+    /**
+     * @return The number conventional marines available to vessels for boarding actions.
+     */
+    public int getNMarines() {
         return 0;
     }
 

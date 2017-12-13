@@ -1,0 +1,168 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Leopard
+</Name>
+
+<Model>
+'Pocket Warship'
+</Model>
+
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+1stclassquarters:20.0:0
+crewquarters:63.0:0
+cargobay:58.5:1:1
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+70
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+339
+254
+254
+168
+</armor>
+
+<Nose Equipment>
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) Tele-operated Missile (Killer Whale-T)
+Ammo Killer Whale-T:11
+</Nose Equipment>
+
+<Left Side Equipment>
+ISArtemisIV
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+(B) ISERLargeLaser
+ISERLargeLaser
+(B) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISArtemisIV
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+(B) ISERLargeLaser
+ISERLargeLaser
+(B) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+1900.0
+</tonnage>
+
+<crew>
+9
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

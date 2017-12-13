@@ -1629,6 +1629,14 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
+        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // We want to ignore turns from other players and only listen to events we generated
+        // Except on the first turn
+        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+            return;
+        }
 
         if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_PHYSICAL) {
 

@@ -1731,7 +1731,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         // Set the tree strings based on C3 settings for the unit.
-        if (entity.hasC3i()) {
+        if (entity.hasC3i() || entity.hasNavalC3()) {
             if (entity.calculateFreeC3Nodes() == 5) {
                 strTreeSet = "**"; //$NON-NLS-1$
             }
@@ -1806,6 +1806,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c3network += Messages.getString("ChatLounge.C3iNetwork") + entity.getC3NetId();
                     if (entity.calculateFreeC3Nodes() > 0) {
                         c3network += Messages.getString("ChatLounge.C3iNodes",
+                                new Object[] { entity.calculateFreeC3Nodes() });
+                    }
+                }
+            } else if (entity.hasNavalC3()) {
+                if (entity.calculateFreeC3Nodes() >= 5) {
+                    c3network += Messages.getString("ChatLounge.NC3None");
+                } else {
+                    c3network += Messages.getString("ChatLounge.NC3Network") + entity.getC3NetId();
+                    if (entity.calculateFreeC3Nodes() > 0) {
+                        c3network += Messages.getString("ChatLounge.NC3Nodes",
                                 new Object[] { entity.calculateFreeC3Nodes() });
                     }
                 }
@@ -1892,7 +1902,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         String strTreeView = ""; //$NON-NLS-1$
 
         // Set the tree strings based on C3 settings for the unit.
-        if (entity.hasC3i()) {
+        if (entity.hasC3i() || entity.hasNavalC3()) {
             if (entity.calculateFreeC3Nodes() == 5) {
                 strTreeSet = "**"; //$NON-NLS-1$
             }
@@ -3615,10 +3625,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                 String errorMessage = "";
                 if (bayNumber != -1) {
                     Bay bay = loadingEntity.getBayById(bayNumber);
+                    double loadSize = entities.stream().mapToDouble(e -> bay.spaceForUnit(e)).sum();
                     capacity = bay.getUnused();
-                    hasEnoughCargoCapacity = entities.size() <= capacity;
+                    hasEnoughCargoCapacity = loadSize <= capacity;
                     errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
-                            " " + (int) capacity + ".";
+                            " " + (int) bay.getUnusedSlots()
+                            + bay.getDefaultSlotDescription() + ".";
                 } else {
                     HashMap<Long, Double> capacities, counts;
                     capacities = new HashMap<Long, Double>();
@@ -4117,7 +4129,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                                             Bay bay = (Bay) t;
                                             menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
                                                     + "Slots: "
-                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnused() + ")");
+                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnusedSlots()
+                                                    + loader.getBayById(bay.getBayNumber()).getDefaultSlotDescription()
+                                                    + ")");
                                             menuItem.setActionCommand(
                                                     "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
                                             /*

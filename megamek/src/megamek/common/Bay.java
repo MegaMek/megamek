@@ -23,7 +23,7 @@ import java.util.Vector;
  * aboard large spacecraft and mobile structures
  */
 
-public class Bay implements Transporter {
+public class Bay implements Transporter, ITechnology {
 
     // Private attributes and helper functions.
 
@@ -39,7 +39,7 @@ public class Bay implements Transporter {
     Vector<Integer> recoverySlots = new Vector<Integer>();
     int bayNumber = 0;
     transient IGame game = null;
-    protected int damaged = 0;
+    private double damage;
 
     /**
      * The troops being carried.
@@ -52,7 +52,7 @@ public class Bay implements Transporter {
     /* package */double totalSpace;
 
     /**
-     * The current amount of space available for troops.
+     * The current amount of space not occupied by troops or cargo.
      */
     /* package */double currentSpace;
 
@@ -64,6 +64,7 @@ public class Bay implements Transporter {
     protected Bay() {
         totalSpace = 0;
         currentSpace = 0;
+        damage = 0;
     }
 
     // Public constructors and methods.
@@ -83,19 +84,27 @@ public class Bay implements Transporter {
         this.doors = doors;
         doorsNext = currentdoors;
         this.bayNumber = bayNumber;
+        damage = 0;
     }
     
-    // For tracking damage to the bay itself, not the cargo it carries
-    public int getBayDamaged() {
-    	return damaged;
+    /**
+     * Bay damage to unit transport bays is tracked by number of cubicles/units. Damage
+     * to cargo bays is tracked by cargo tonnage.
+     * 
+     * @return The reduction of bay capacity due to damage.
+     */
+    public double getBayDamage() {
+    	return damage;
     }
     
-    public void setBayDamaged() {
-    	damaged = 1;
-    }
-    
-    public void clearBayDamaged() {
-    	damaged = 0;
+    /**
+     * Bay damage to unit transport bays is tracked by number of cubicles/units. Damage
+     * to cargo bays is tracked by cargo tonnage.
+     *
+     * @param damage The total amount of bay capacity reduced due to damage.
+     */
+    public void setBayDamage(double damage) {
+    	this.damage = Math.min(damage, totalSpace);
     }
     
     // the starting number of doors for the bay.
@@ -134,6 +143,17 @@ public class Bay implements Transporter {
         unloadedThisTurn = 0;
         loadedThisTurn = 0;
     }
+    
+    /**
+     * Most bay types track space by individual units. Infantry bays have variable space requirements
+     * and must track by cubicle tonnage.
+     * 
+     * @param unit The unit to load/unload.
+     * @return     The amount of bay space taken up by the unit.
+     */
+    public double spaceForUnit(Entity unit) {
+        return 1;
+    }
 
     @Override
     public void resetTransporter() {
@@ -157,7 +177,7 @@ public class Bay implements Transporter {
         boolean result = true;
 
         // We must have enough space for the new troops.
-        if (currentSpace < 1) {
+        if (getUnused() < spaceForUnit(unit)) {
             result = false;
         }
 
@@ -166,11 +186,6 @@ public class Bay implements Transporter {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
@@ -200,10 +215,10 @@ public class Bay implements Transporter {
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
         }
 
-        currentSpace -= 1;
+        currentSpace -= spaceForUnit(unit);
         if((unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE)) {
                 loadedThisTurn += 1;
         }
@@ -297,7 +312,7 @@ public class Bay implements Transporter {
 
         // If we removed it, restore our space.
         if (retval) {
-            currentSpace += 1;
+            currentSpace += spaceForUnit(unit);
             unloadedThisTurn += 1;
         }
 
@@ -311,8 +326,13 @@ public class Bay implements Transporter {
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString(boolean showrecovery) {
-        return "(" + getCurrentDoors() + " doors)  - " + currentSpace
-                + (currentSpace > 1 ? " units" : " unit");
+        return numDoorsString() + "  - " + getUnused()
+                + (getUnused() > 1 ? " units" : " unit");
+    }
+    
+    protected String numDoorsString() {
+        return "(" + getCurrentDoors()
+            + ((getCurrentDoors() == 1)?" door":" doors") + ")";
     }
 
     @Override
@@ -320,9 +340,30 @@ public class Bay implements Transporter {
         return getUnusedString(true);
     }
 
+    /**
+     * @return The amount of unused space in the bay.
+     */
     @Override
     public double getUnused() {
+        return currentSpace - damage;
+    }
+    
+    /**
+     * @return The amount of unused space in the bay expressed in slots. For most bays this is the
+     *         same as the the unused space, but bays for units that can take up a variable amount
+     *         of space (such as infantry bays) this calculates the number of the default unit size
+     *         that can fit into the remaining space.
+     */
+    public double getUnusedSlots() {
         return currentSpace;
+    }
+    
+    /**
+     * @return A String that describes the default slot type. Only meaningful for bays with variable
+     *         space requirements (like infantry).
+     */
+    public String getDefaultSlotDescription() {
+        return "";
     }
 
     /**
@@ -418,16 +459,28 @@ public class Bay implements Transporter {
     public double getWeight() {
         return totalSpace;
     }
+    
+    /**
+     * @param clan  Whether the bay is installed in a Clan unit. Needed for infantry bays.
+     * @return      The number of additional crew provided by the bay. This includes transport bays only;
+     *              crew quarters are already accounted for in the crew total.
+     */
+    public int getPersonnel(boolean clan) {
+        return 0;
+    }
 
     @Override
     public String toString() {
         return "bay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
+    /**
+     * @return The total size of the bay.
+     */
     public double getCapacity() {
         return totalSpace;
     }
-
+    
     public int getBayNumber() {
         return bayNumber;
     }
@@ -435,6 +488,117 @@ public class Bay implements Transporter {
     @Override
     public void setGame(IGame game) {
         this.game = game;
+    }
+    
+    // Use cargo/infantry for default tech advancement
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return Bay.techAdvancement();
+    }
+
+    @Override
+    public boolean isClan() {
+        return getTechAdvancement().isClan();
+    }
+
+    @Override
+    public boolean isMixedTech() {
+        return getTechAdvancement().isMixedTech();
+    }
+
+    @Override
+    public int getTechBase() {
+        return getTechAdvancement().getTechBase();
+    }
+
+    @Override
+    public int getIntroductionDate() {
+        return getTechAdvancement().getIntroductionDate();
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return getTechAdvancement().getPrototypeDate();
+    }
+
+    @Override
+    public int getProductionDate() {
+        return getTechAdvancement().getProductionDate();
+    }
+
+    @Override
+    public int getCommonDate() {
+        return getTechAdvancement().getCommonDate();
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        return getTechAdvancement().getExtinctionDate();
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return getTechAdvancement().getReintroductionDate();
+    }
+
+    @Override
+    public int getTechRating() {
+        return getTechAdvancement().getTechRating();
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        return getTechAdvancement().getBaseAvailability(era);
+    }
+
+    @Override
+    public int getIntroductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getIntroductionDate(clan, faction);
+    }
+
+    @Override
+    public int getPrototypeDate(boolean clan, int faction) {
+        return getTechAdvancement().getPrototypeDate(clan, faction);
+    }
+
+    @Override
+    public int getProductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getProductionDate(clan, faction);
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan, int faction) {
+        return getTechAdvancement().getExtinctionDate(clan, faction);
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan, int faction) {
+        return getTechAdvancement().getReintroductionDate(clan, faction);
+    }
+
+    @Override
+    public SimpleTechLevel getStaticTechLevel() {
+        return getTechAdvancement().getStaticTechLevel();
+    }
+
+    /**
+     * @return true if this bay represents crew quarters or seating rather than a unit transport bay.
+     */
+    public boolean isQuarters() {
+        return false;
+    }
+    
+    /**
+     * @return true if this bay represents cargo capacity rather than unit transport or crew quarters.
+     */
+    public boolean isCargo() {
+        return false;
     }
 
 } // End package class TroopSpace implements Transporter

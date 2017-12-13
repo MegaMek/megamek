@@ -648,21 +648,7 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean isPhaseSimultaneous() {
-        switch (phase) {
-        case PHASE_DEPLOYMENT:
-            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
-        case PHASE_MOVEMENT:
-            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
-        case PHASE_FIRING:
-            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
-        case PHASE_PHYSICAL:
-            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
-        case PHASE_TARGETING:
-        case PHASE_OFFBOARD:
-            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
-        default:
-            return false;
-        }
+        return phase.isPhaseSimultaneous(this);
     }
 
     /**
@@ -749,12 +735,12 @@ public class Game implements Serializable, IGame {
     /**
      * Sets the current turn index
      */
-    public void setTurnIndex(int turnIndex) {
+    public void setTurnIndex(int turnIndex, int prevPlayerId) {
         // FIXME: occasionally getTurn() returns null. Handle that case
         // intelligently.
         this.turnIndex = turnIndex;
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
-                .getPlayerNum())));
+                .getPlayerNum()), prevPlayerId));
     }
 
     /**
@@ -1020,7 +1006,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> members = new Vector<Entity>();
         //WOR
         // Does the unit have a C3 computer?
-        if ((entity != null) && (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS())) {
+        if ((entity != null) && (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3())) {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
@@ -1054,8 +1040,8 @@ public class Game implements Serializable, IGame {
      */
     public Vector<Entity> getC3SubNetworkMembers(Entity entity) {
         //WOR
-        // Handle null, C3i, and company commander units.
-        if ((entity == null) || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.C3MasterIs(entity)) {
+        // Handle null, C3i, NC3, and company commander units.
+        if ((entity == null) || entity.hasC3i() || entity.hasNavalC3() || entity.hasActiveNovaCEWS() || entity.C3MasterIs(entity)) {
             return getC3NetworkMembers(entity);
         }
 
@@ -1851,11 +1837,15 @@ public class Game implements Serializable, IGame {
      * @param start the entity id to start at
      */
     public int getNextEntityNum(GameTurn turn, int start) {
+        // If we don't have a turn, return ENTITY_NONE
+        if (turn == null) {
+            return Entity.NONE;
+        }
         boolean hasLooped = false;
         int i = (entities.indexOf(entityIds.get(start)) + 1) % entities.size();
         if (i == -1) {
             //This means we were given an invalid entity ID, punt
-            return -1;
+            return Entity.NONE;
         }
         int startingIndex = i;
         while (!((hasLooped == true) && (i == startingIndex))) {
@@ -1870,7 +1860,7 @@ public class Game implements Serializable, IGame {
             }
         }
         // return getFirstEntityNum(turn);
-        return -1;
+        return Entity.NONE;
     }
 
     /**

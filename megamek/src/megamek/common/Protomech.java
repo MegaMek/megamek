@@ -936,6 +936,7 @@ public class Protomech extends Entity {
             if (-1 != shots) {
                 mounted.setShotsLeft(shots);
                 mounted.setOriginalShots(shots);
+                mounted.setAmmoCapacity(shots * ((AmmoType) mounted.getType()).getKgPerShot() / 1000);
                 super.addEquipment(mounted, loc, rearMounted);
                 return;
             }

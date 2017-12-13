@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,155 +20,35 @@ Conquistador
 'Blockade Runner'
 </Model>
 
-<Tonnage>
-17400
-</Tonnage>
+<year>
+3074
+</year>
+
+<originalBuildYear>
+3074
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:20.0:4:1
+smallcraftbay:4.0:2:2
+battlearmorbay:20.0:1:3
+2ndclassquarters:0.0:0
+1stclassquarters:50.0:0
+crewquarters:161.0:0
+cargobay:509.5:1:4
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-524
-460
-460
-350
-</Armor>
-
-<Nose Equipment>
-LightSCC
-LightSCC
-LightSCC
-LightSCC
-LightSCC Ammo:80
-(B) ISGaussRifle
-ISGaussRifle
-ISGauss Ammo:80
-(B) ISLightGaussRifle
-ISLightGaussRifle
-ISLightGauss Ammo:80
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:144
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-</Nose Equipment>
-
-<Left Side Equipment>
-LightSCC
-LightSCC
-LightSCC
-LightSCC Ammo:60
-(B) ISGaussRifle
-ISGaussRifle
-ISGauss Ammo:80
-(B) ISLightGaussRifle
-ISLightGaussRifle
-ISLightGauss Ammo:80
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:72
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-(R) ISGaussRifle
-(R) ISGaussRifle
-(R) ISGauss Ammo:32
-(R) ISERPPC
-(R) ISERPPC
-(R) ISLargePulseLaser
-(R) ISLargePulseLaser
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-</Left Side Equipment>
-
-<Right Side Equipment> 
-LightSCC
-LightSCC
-LightSCC
-LightSCC Ammo:60
-(B) ISGaussRifle
-ISGaussRifle
-ISGauss Ammo:80
-(B) ISLightGaussRifle
-ISLightGaussRifle
-ISLightGauss Ammo:80
-ISERPPC
-ISERPPCCapacitor
-ISERPPC
-ISERPPCCapacitor
-ISLRM20
-IS Artemis IV FCS
-ISLRM20
-IS Artemis IV FCS
-ISLRM20 Ammo Artemis-capable:72
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-(R) ISGaussRifle
-(R) ISGaussRifle
-(R) ISGauss Ammo:32
-(R) ISERPPC
-(R) ISERPPC
-(R) ISLargePulseLaser
-(R) ISLargePulseLaser
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-(R) IS Laser AMS
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISGaussRifle
-ISGaussRifle
-ISGauss Ammo:32
-ISERPPC
-ISERPPC
-ISLargePulseLaser
-ISLargePulseLaser
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-</Aft Equipment>
-
-<structural_integrity>
-30
-</structural_integrity>
 
 <heatsinks>
 329
@@ -182,59 +62,223 @@ IS Laser AMS
 15000
 </fuel>
 
-<type>
-
-IS Level 4
-
-</type>
-
-<year>
-3074
-</year>
-
-<source>
-XTRO Davion - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
+<engine_type>
 1
-</designtype>
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+524
+460
+460
+350
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:80
+(B) ISGaussRifle
+ISGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Gauss Ammo:80
+IS Light Gauss Ammo:80
+(B) ISGaussRifle
+ISGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Gauss Ammo:80
+IS Light Gauss Ammo:80
+(B) ISERPPC
+ISERPPC
+(B) LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:144
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+PPC Capacitor
+PPC Capacitor
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:60
+(B) ISGaussRifle
+ISGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Gauss Ammo:80
+IS Light Gauss Ammo:80
+(B) ISGaussRifle
+ISGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Gauss Ammo:80
+IS Light Gauss Ammo:80
+(B) ISERPPC
+ISERPPC
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:72
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISGaussRifle
+(R) ISGaussRifle
+(R) IS Gauss Ammo:32
+(R) (B) ISERPPC
+(R) ISERPPC
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+PPC Capacitor
+PPC Capacitor
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:60
+(B) ISGaussRifle
+ISGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Gauss Ammo:80
+IS Light Gauss Ammo:80
+(B) ISGaussRifle
+ISGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Gauss Ammo:80
+IS Light Gauss Ammo:80
+(B) ISERPPC
+ISERPPC
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:72
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISGaussRifle
+(R) ISGaussRifle
+(R) IS Gauss Ammo:32
+(R) (B) ISERPPC
+(R) ISERPPC
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+PPC Capacitor
+PPC Capacitor
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:32
+(B) ISERPPC
+ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<source>
+XTRO Davion - Jihad
+</source>
+
+<tonnage>
+17400.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+208
+</crew>
+
+<officers>
+6
+</officers>
+
+<gunners>
+20
+</gunners>
+
+<passengers>
 0
-</engine_type>
+</passengers>
 
-<motion_type>
-aerodyne
-</motion_type>
+<marines>
+0
+</marines>
 
-<transporters>
-ASFBay:20:6
-SmallCraftBay:4:2
-BattleArmorBay:20:2
-CargoBay:660:1
-</transporters>
+<battlearmor>
+0
+</battlearmor>
 
-<escape_pod>
-12
-</escape_pod>
+<otherpassenger>
+0
+</otherpassenger>
 
 <life_boat>
 12
 </life_boat>
 
-<crew>
-29
-</crew>
+<escape_pod>
+12
+</escape_pod>
 
-<passengers>
-0
-</passengers>

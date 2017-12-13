@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,69 +20,34 @@ Gaajian System Patrol Boat
 (2485)
 </Model>
 
-<Tonnage>
-1500
-</Tonnage>
+<year>
+2485
+</year>
+
+<originalBuildYear>
+2485
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+1stclassquarters:30.0:0
+steeragequarters:210.0:0
+2ndclassquarters:0.0:0
+crewquarters:77.0:0
+cargobay:75.0:1:2
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-208
-182
-182
-172
-</Armor>
-
-<Nose Equipment>
-ISPPC
-ISPPC
-ISPPC
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISLookDownRadar
-ISHighResImager
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Equipment>
-
-<structural_integrity>
-12
-</structural_integrity>
 
 <heatsinks>
 68
@@ -96,61 +61,115 @@ ISSmallLaser
 5000
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-2485
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-spheroid
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-smallcraftbay:2:2
-CargoBay:95:1
-</transporters>
+<armor_tech>
+1
+</armor_tech>
 
-<escape_pod>
-4
-</escape_pod>
+<armor>
+206
+180
+180
+170
+</armor>
 
-<life_boat>
-0
-</life_boat>
+<Nose Equipment>
+(B) PPC
+PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+ISLookDownRadar
+ISHighResImager
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+HB:House Kurita - Age of War
+</source>
+
+<tonnage>
+1500.0
+</tonnage>
 
 <crew>
-12
+21
 </crew>
 
+<officers>
+3
+</officers>
+
+<gunners>
+6
+</gunners>
+
 <passengers>
-10
+0
 </passengers>
 
 <marines>
 42
 </marines>
 
-<source>
-HB:House Kurita - Age of War
-</source>
+<battlearmor>
+0
+</battlearmor>
 
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
 

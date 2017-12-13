@@ -1,0 +1,218 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Outpost
+</Name>
+
+<Model>
+(3070)
+</Model>
+
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:5.0:1
+heavyvehiclebay:10.0:2:2
+protomechbay:10.0:2:3
+battlearmorbay:10.0:1:4
+1stclassquarters:40.0:0
+2ndclassquarters:0.0:0
+crewquarters:98.0:0
+steeragequarters:0.0:0
+cargobay:1814.0:1:5
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+170
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+360
+355
+355
+350
+</armor>
+
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLHAG30
+Hyper-Assault Gauss Rifle/30 Ammo:20
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:120
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLHAG30
+Hyper-Assault Gauss Rifle/30 Ammo:20
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:72
+(R) (B) CLERLargeLaser
+(R) CLERLargeLaser
+(R) (B) CLHAG30
+(R) Hyper-Assault Gauss Rifle/30 Ammo:20
+(R) (B) CLMediumPulseLaser
+(R) CLMediumPulseLaser
+(R) CLMediumPulseLaser
+(R) (B) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLHAG30
+Hyper-Assault Gauss Rifle/30 Ammo:20
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:72
+(R) (B) CLERLargeLaser
+(R) CLERLargeLaser
+(R) (B) CLHAG30
+(R) Hyper-Assault Gauss Rifle/30 Ammo:20
+(R) (B) CLMediumPulseLaser
+(R) CLMediumPulseLaser
+(R) CLMediumPulseLaser
+(R) (B) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+(B) CLHAG30
+Hyper-Assault Gauss Rifle/30 Ammo:20
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:72
+</Aft Equipment>
+
+<structural_integrity>
+20
+</structural_integrity>
+
+<source>
+TRO 3067 - Jihad
+</source>
+
+<tonnage>
+7000.0
+</tonnage>
+
+<crew>
+224
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+8
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+5
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

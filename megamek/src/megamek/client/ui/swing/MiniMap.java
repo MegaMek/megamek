@@ -73,6 +73,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
@@ -1149,7 +1150,7 @@ public class MiniMap extends JPanel {
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = m_game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());
+        boolean hasVisual = EntityVisibilityUtils.hasVisual(m_bview.getLocalPlayer(), m_game, entity);
         boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
         
         int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
@@ -1169,7 +1170,7 @@ public class MiniMap extends JPanel {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (doubleBlind && !hasVisual) { // Unseen Unit
+        } else if (!hasVisual) { // Unseen Unit
             // Do nothing
             return;
         } else if (entity instanceof Mech) {

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,140 +13,42 @@ Dropship
 </UnitType>
 
 <Name>
-Nekohono'o 
+Nekohono'o
 </Name>
 
-<model>
+<Model>
 (HQ)
-</model>
+</Model>
 
-<Tonnage>
-16000
-</Tonnage>
+<year>
+3077
+</year>
+
+<originalBuildYear>
+3077
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:2:1
+mechbay:12.0:2
+battlearmorbay:27.0:2:3
+2ndclassquarters:168.0:0
+1stclassquarters:180.0:0
+crewquarters:336.0:0
+cargobay:642.5:2:4
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-310
-236
-236
-176
-</Armor>
-
-<Nose Equipment>
-KrakenT
-KrakenT Ammo:10
-ISMRM40
-IS MRM Apollo FCS
-ISMRM40
-IS MRM Apollo FCS
-ISMRM40 Ammo:36
-IS LB 10-X AC
-IS LB 10-X AC
-IS LB 10-X AC
-IS LB 10-X AC
-ISLBXAC10 CL Ammo:180
-ISLBXAC10 Ammo:180
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6 Ammo:60
-ISNC3Unit
-</Nose Equipment>
-
-<Left Side Equipment>
-(B) ISCruiseMissile120
-ISCruiseMissile120Ammo:10
-(B) ISCruiseMissile70
-ISCruiseMissile70
-ISCruiseMissile70
-ISCruiseMissile70Ammo:30
-(B) ISArrowIVSystem
-ISArrowIVSystem
-ISArrowIV Ammo:30
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGauss Ammo:64
-ISHEAVYPPC
-ISHEAVYPPC
-ISHEAVYPPC
-ISHEAVYPPC
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10 CL Ammo:100
-(R) ISLBXAC10 Ammo:100
-(R) ISStreakSRM4
-(R) ISStreakSRM4
-(R) ISStreakSRM4
-(R) ISStreakSRM4 Ammo:75
-(R) ISERMediumLaser
-(R) ISERMediumLaser
-(R) ISERMediumLaser
-(R) ScreenLauncher
-(R) ScreenLauncher Ammo:20
-</Left Side Equipment>
-
-<Right Side Equipment>
-(B) ISCruiseMissile120
-ISCruiseMissile120Ammo:10
-(B) ISCruiseMissile70
-ISCruiseMissile70
-ISCruiseMissile70
-ISCruiseMissile70Ammo:30
-(B) ISArrowIVSystem
-ISArrowIVSystem
-ISArrowIV Ammo:30
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGauss Ammo:64
-ISHEAVYPPC
-ISHEAVYPPC
-ISHEAVYPPC
-ISHEAVYPPC
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10
-(R) ISLBXAC10 CL Ammo:100
-(R) ISLBXAC10 Ammo:100
-(R) ISStreakSRM4
-(R) ISStreakSRM4
-(R) ISStreakSRM4
-(R) ISStreakSRM4 Ammo:75
-(R) ISERMediumLaser
-(R) ISERMediumLaser
-(R) ISERMediumLaser
-(R) ScreenLauncher
-(R) ScreenLauncher Ammo:20
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
-CommsGear:12
-ISLargeNavalCommScannerSuite
-</Aft Equipment>
-
-<structural_integrity>
-16
-</structural_integrity>
 
 <heatsinks>
 550
@@ -160,57 +62,183 @@ ISLargeNavalCommScannerSuite
 12000
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3077
-</year>
-
-<source>
-XTRO Kurita - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
+<engine_type>
 1
-</designtype>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+310
+236
+236
+175
+</armor>
+
+<Nose Equipment>
+(B) Tele-operated Missile (Kraken T)
+Ammo KrakenT:10
+(B) MRM 40
+MRM 40
+IS MRM 40 Ammo:36
+ISApollo
+ISApollo
+(B) ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X Cluster Ammo:180
+IS LB 10-X AC Ammo:180
+(B) ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo:60
+ISNC3
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISCruiseMissile120
+ISCruiseMissile120Ammo:10
+(B) ISCruiseMissile70
+ISCruiseMissile70
+ISCruiseMissile70
+ISCruiseMissile70Ammo:30
+(B) ISArrowIV
+ISArrowIV
+ISArrowIVAmmo:30
+(B) ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:64
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+(R) (B) ISLBXAC10
+(R) ISLBXAC10
+(R) ISLBXAC10
+(R) ISLBXAC10
+(R) ISLBXAC10
+(R) IS LB 10-X Cluster Ammo:100
+(R) IS LB 10-X AC Ammo:100
+(R) (B) ISStreakSRM4
+(R) ISStreakSRM4
+(R) ISStreakSRM4
+(R) IS Streak SRM 4 Ammo:75
+(R) (B) ISERMediumLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) Screen Launcher
+(R) Ammo Screen:20
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISCruiseMissile120
+ISCruiseMissile120Ammo:10
+(B) ISCruiseMissile70
+ISCruiseMissile70
+ISCruiseMissile70
+ISCruiseMissile70Ammo:30
+(B) ISArrowIV
+ISArrowIV
+ISArrowIVAmmo:30
+(B) ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:64
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+(R) (B) ISLBXAC10
+(R) ISLBXAC10
+(R) ISLBXAC10
+(R) ISLBXAC10
+(R) ISLBXAC10
+(R) IS LB 10-X Cluster Ammo:100
+(R) IS LB 10-X AC Ammo:100
+(R) (B) ISStreakSRM4
+(R) ISStreakSRM4
+(R) ISStreakSRM4
+(R) IS Streak SRM 4 Ammo:75
+(R) (B) ISERMediumLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) Screen Launcher
+(R) Ammo Screen:20
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+Communications Equipment (12 ton)
+ISLargeNavalCommScannerSuite
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+
+<source>
+XTRO Kurita - Jihad
+</source>
+
+<tonnage>
+16000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+240
+</crew>
+
+<officers>
+18
+</officers>
+
+<gunners>
+15
+</gunners>
+
+<passengers>
+24
+</passengers>
+
+<marines>
 0
-</engine_type>
+</marines>
 
-<motion_type>
-spheroid
-</motion_type>
+<battlearmor>
+0
+</battlearmor>
 
-<transporters>
-ASFBay:6:2
-MechBay:12:2
-battlearmorbay:27:2
-CargoBay:1642.5:2
-</transporters>
-
-<escape_pod>
-6
-</escape_pod>
+<otherpassenger>
+0
+</otherpassenger>
 
 <life_boat>
 0
 </life_boat>
 
-<crew>
-42
-</crew>
+<escape_pod>
+6
+</escape_pod>
 
-<passengers>
-24
-</passengers>

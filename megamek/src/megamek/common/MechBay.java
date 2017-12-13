@@ -76,7 +76,7 @@ public final class MechBay extends Bay {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -85,20 +85,15 @@ public final class MechBay extends Bay {
             result = false;
         }
         
-        // the bay can't be damaged
-        if (damaged == 1) {
-        	result = false;
-        }
-
         // Return our result.
         return result;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Mech (" + getCurrentDoors() + " doors) - "
-                + String.format("%1$,.0f", currentSpace)
-                + (currentSpace > 1 ? " units" : " unit");
+        return "Mech " + numDoorsString() + " - "
+                + String.format("%1$,.0f", getUnused())
+                + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override
@@ -112,8 +107,25 @@ public final class MechBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 2;
+    }
+
+    @Override
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
+    }
+    
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2445, 2470, 2500)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return MechBay.techAdvancement();
     }
 
 } // End package class TroopSpace implements Transporter

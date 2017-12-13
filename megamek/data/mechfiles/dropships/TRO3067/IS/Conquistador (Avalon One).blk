@@ -1,0 +1,304 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Conquistador
+</Name>
+
+<Model>
+(Avalon One)
+</Model>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:2:1
+asfbay:18.0:2:2
+smallcraftbay:4.0:1:3
+1stclassquarters:150.0:0
+2ndclassquarters:0.0:0
+crewquarters:525.0:0
+steeragequarters:520.0:0
+cargobay:1032.0:1:4
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+259
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+15000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+490
+446
+446
+412
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+ISRotaryAC5
+ISRotaryAC5
+IS Gauss Ammo:80
+ISRotaryAC5 Ammo:480
+(B) LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:144
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X Cluster Ammo:160
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:504
+(B) Screen Launcher
+Ammo Screen:20
+(B) ISGaussRifle
+ISGaussRifle
+ISRotaryAC5
+ISRotaryAC5
+IS Gauss Ammo:80
+ISRotaryAC5 Ammo:480
+ISSmallNavalCommScannerSuite
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+ISRotaryAC5
+IS Gauss Ammo:80
+ISRotaryAC5 Ammo:240
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:72
+ISArtemisIV
+ISArtemisIV
+(B) ISLBXAC20
+IS LB 20-X Cluster Ammo:40
+(B) ISERPPC
+ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:336
+(R) (B) ISGaussRifle
+(R) ISRotaryAC5
+(R) IS Gauss Ammo:40
+(R) ISRotaryAC5 Ammo:240
+(R) (B) ISLBXAC10
+(R) IS LB 10-X Cluster Ammo:40
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:504
+(B) ISGaussRifle
+ISGaussRifle
+ISRotaryAC5
+IS Gauss Ammo:80
+ISRotaryAC5 Ammo:240
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+ISRotaryAC5
+IS Gauss Ammo:80
+ISRotaryAC5 Ammo:240
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:72
+ISArtemisIV
+ISArtemisIV
+(B) ISLBXAC20
+IS LB 20-X Cluster Ammo:40
+(B) ISERPPC
+ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:336
+(R) (B) ISGaussRifle
+(R) ISRotaryAC5
+(R) IS Gauss Ammo:40
+(R) ISRotaryAC5 Ammo:240
+(R) (B) ISLBXAC10
+(R) IS LB 10-X Cluster Ammo:40
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:504
+(B) ISGaussRifle
+ISGaussRifle
+ISRotaryAC5
+IS Gauss Ammo:80
+ISRotaryAC5 Ammo:240
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:80
+(B) ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:156
+(B) Screen Launcher
+Ammo Screen:20
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+17400.0
+</tonnage>
+
+<crew>
+167
+</crew>
+
+<officers>
+15
+</officers>
+
+<gunners>
+17
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+56
+</marines>
+
+<battlearmor>
+48
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+12
+</life_boat>
+
+<escape_pod>
+12
+</escape_pod>
+

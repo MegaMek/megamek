@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,64 +20,34 @@ Gaajian System Patrol Boat
 (3060)
 </Model>
 
-<Tonnage>
-1500
-</Tonnage>
+<year>
+3060
+</year>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+1stclassquarters:20.0:0
+steeragequarters:165.0:0
+2ndclassquarters:0.0:0
+crewquarters:63.0:0
+cargobay:135.5:1:2
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-208
-182
-182
-172
-</Armor>
-
-<Nose Equipment>
-ISERPPC
-ISERPPC
-ISLargePulseLaser
-ISLargePulseLaser
-ISERMediumLaser
-ISERMediumLaser
-ISAMS
-ISAMS Ammo:48
-ISLookDownRadar
-ISHighResImager
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargePulseLaser
-ISLargePulseLaser
-ISERMediumLaser
-ISERMediumLaser
-(R) ISMediumPulseLaser
-(R) ISMediumPulseLaser
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISLargePulseLaser
-ISLargePulseLaser
-ISERMediumLaser
-ISERMediumLaser
-(R) ISMediumPulseLaser
-(R) ISMediumPulseLaser
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISLargePulseLaser
-ISLargePulseLaser
-ISERMediumLaser
-ISERMediumLaser
-ISAMS
-ISAMS Ammo:48
-</Aft Equipment>
-
-<structural_integrity>
-12
-</structural_integrity>
 
 <heatsinks>
 54
@@ -91,61 +61,110 @@ ISAMS Ammo:48
 5000
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3060
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-spheroid
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-smallcraftbay:2:2
-CargoBay:111:1
-</transporters>
+<armor_tech>
+1
+</armor_tech>
 
-<escape_pod>
-4
-</escape_pod>
+<armor>
+206
+180
+180
+170
+</armor>
 
-<life_boat>
-0
-</life_boat>
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAMS Ammo:48
+ISLookDownRadar
+ISHighResImager
+</Nose Equipment>
 
-<crew>
-11
-</crew>
+<Left Side Equipment>
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(B) ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
 
-<passengers>
-10
-</passengers>
+<Right Side Equipment>
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(B) ISERMediumLaser
+ISERMediumLaser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
 
-<marines>
-33
-</marines>
+<Aft Equipment>
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAMS Ammo:48
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
 
 <source>
 HB:House Kurita - Clan Invasion
 </source>
 
+<tonnage>
+1500.0
+</tonnage>
+
+<crew>
+19
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+21
+</marines>
+
+<battlearmor>
+12
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
 

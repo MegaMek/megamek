@@ -1,0 +1,289 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Castrum Pocket WarShip
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3097
+</year>
+
+<originalBuildYear>
+3097
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:18.0:6:1
+battlearmorbay:12.0:1:2
+2ndclassquarters:0.0:0
+1stclassquarters:200.0:0
+crewquarters:658.0:0
+cargobay:8854.5:2:3
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+600
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+1305
+1153
+1153
+1006
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:120
+(B) Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Sub-Capital Cannon (Light)
+Ammo Light SCC:120
+ISNC3
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 White Shark:20
+Ammo AR10 Barracuda:40
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 White Shark:20
+Ammo AR10 Barracuda:40
+(B) Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Ammo Medium SCC:60
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:120
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:120
+(B) Screen Launcher
+Ammo Screen:20
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:180
+(R) (B) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Ammo Light SCC:120
+(R) (B) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Ammo Light SCC:120
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 White Shark:20
+Ammo AR10 Barracuda:40
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 White Shark:20
+Ammo AR10 Barracuda:40
+(B) Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Ammo Medium SCC:60
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:120
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:120
+(B) Screen Launcher
+Ammo Screen:20
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:180
+(R) (B) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Ammo Light SCC:120
+(R) (B) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Sub-Capital Cannon (Light)
+(R) Ammo Light SCC:120
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:120
+(B) ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo:120
+(B) Screen Launcher
+Ammo Screen:20
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:180
+</Aft Equipment>
+
+<structural_integrity>
+150
+</structural_integrity>
+
+<source>
+XTRO Republic I - Early Republic
+</source>
+
+<tonnage>
+100000.0
+</tonnage>
+
+<crew>
+256
+</crew>
+
+<officers>
+20
+</officers>
+
+<gunners>
+70
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+162
+</otherpassenger>
+
+<life_boat>
+50
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

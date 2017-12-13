@@ -105,6 +105,10 @@ public class EntityListFile {
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getBaseShotsLeft()));
+                if (mount.getEntity().usesWeaponBays()) {
+                    output.append("\" capacity=\"")
+                        .append(String.valueOf(mount.getAmmoCapacity()));
+                }
             }
             if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
@@ -747,7 +751,7 @@ public class EntityListFile {
                         .getEntity(entity.getC3Master().getId())
                         .getC3UUIDAsString());
             }
-            if (entity.hasC3() || entity.hasC3i()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 output.write("\" c3UUID=\"");
                 output.write(entity.getC3UUIDAsString());
             }
@@ -901,17 +905,14 @@ public class EntityListFile {
                 //large craft bays and doors. 
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
                 	for (Bay nextbay : a.getTransportBays()) {
-                		output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
-                		output.write(CommonConstants.NL);
-                		if (nextbay.getBayDamaged() == 0) {
-                			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"false\"/>\n");
-                		} else if (nextbay.getBayDamaged() == 1) {
-                			output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"true\"/>\n");
-                		}
-                		output.write(indentStr(indentLvl+1) + "<BayDoors doors=\"" + nextbay.getCurrentDoors() + "\"/>");
-                		output.write(CommonConstants.NL);
-                		output.write(indentStr(indentLvl+1) + "</TransportBay>");
-                		output.write(CommonConstants.NL);
+                		output.write(indentStr(indentLvl+1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">");
+                        output.write(CommonConstants.NL);
+                        output.write(indentStr(indentLvl + 2) + "<damage>" + nextbay.getBayDamage() + "</damage>");
+                        output.write(CommonConstants.NL);
+                        output.write(indentStr(indentLvl + 2) + "<doors>" + nextbay.getCurrentDoors() + "</doors>");
+                        output.write(CommonConstants.NL);
+                		output.write(indentStr(indentLvl+1) + "</transportBay>");
+                        output.write(CommonConstants.NL);
                 	}
                 }
 
@@ -1004,6 +1005,25 @@ public class EntityListFile {
                     }
                 }
                 output.write(indentStr(indentLvl+1) + "</c3iset>");
+                output.write(CommonConstants.NL);
+            }
+            
+            // Write the NC3 Data if needed
+            if (entity.hasNavalC3()) {
+                output.write(indentStr(indentLvl+1) + "<NC3set>");
+                output.write(CommonConstants.NL);
+                Iterator<Entity> NC3List = list.iterator();
+                while (NC3List.hasNext()) {
+                    final Entity NC3Entity = NC3List.next();
+
+                    if (NC3Entity.onSameC3NetworkAs(entity, true)) {
+                        output.write(indentStr(indentLvl+1) + "<NC3_link link=\"");
+                        output.write(NC3Entity.getC3UUIDAsString());
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                }
+                output.write(indentStr(indentLvl+1) + "</NC3set>");
                 output.write(CommonConstants.NL);
             }
 

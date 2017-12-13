@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,51 +20,40 @@ DroST IIa Transport
 (2445)
 </Model>
 
-<Tonnage>
-5300
-</Tonnage>
+<year>
+2445
+</year>
+
+<originalBuildYear>
+2445
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+infantrybay:5.0:3:3:Foot
+infantrybay:5.0:3:5:Foot
+2ndclassquarters:70.0:0
+1stclassquarters:50.0:0
+crewquarters:217.0:0
+cargobay:948.5:0:2
+cargobay:948.0:0:4
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-115
-114
-114
-80
-</Armor>
-
-<Nose Equipment>
-Autocannon/5
-IS Ammo AC/5
-Large Laser
-Medium Laser
-</Nose Equipment>
-
-<Left Side Equipment>
-Autocannon/5
-IS Ammo AC/5
-Large Laser
-Medium Laser
-(R) Medium Laser
-</Left Side Equipment>
-
-<Right Side Equipment>
-Autocannon/5
-IS Ammo AC/5
-Large Laser
-Medium Laser
-(R) Medium Laser
-</Right Side Equipment>
-
-<Aft Equipment>
-Medium Laser
-</Aft Equipment>
-
-<structural_integrity>
-16
-</structural_integrity>
+<collartype>
+2
+</collartype>
 
 <heatsinks>
 86
@@ -75,60 +64,104 @@ Medium Laser
 </sink_type>
 
 <fuel>
-6000
+6819
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2445
-</year>
+<armor_type>
+40
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+113
+112
+112
+80
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Large Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Large Laser
+Medium Laser
+(R) (B) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Large Laser
+Medium Laser
+(R) (B) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>
+
+<tonnage>
+5300.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
-17
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-SmallCraftBay:2:2
-CargoBay:1000:3
-CargoBay:1211:3
-infantrybay:5:3
-infantrybay:5:3
-</transporters>
-
-<escape_pod>
-1
-</escape_pod>
-<life_boat>
-2
-</life_boat>
-
 <crew>
-10
+316
 </crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+12
+</gunners>
 
 <passengers>
 10
 </passengers>
 
-<source>
-XTRO Primitives IV - Age of War
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+1
+</escape_pod>
+

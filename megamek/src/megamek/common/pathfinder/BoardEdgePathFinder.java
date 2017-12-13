@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import megamek.client.bot.BotClient;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Coords;
@@ -35,12 +36,21 @@ public class BoardEdgePathFinder {
     // It will basically tell us the available "surface area" from a particular set of coordinates
     Map<Coords, MovePath> longestNonEdgePathCache;
     
+    // This is a map that will tell us all the paths that connect to the path that's the key
+    // Useful in a) determining a full path to the edge and
+    // b) purging paths that would become invalid for whatever reason (building collapse or terrain destruction usually)
+    Map<MovePath, List<MovePath>> connectedPaths;
+    
+    private BotClient owner;
+    
     /**
      * Constructor - initializes internal caches
      */
-    public BoardEdgePathFinder() {
+    public BoardEdgePathFinder() {//BotClient client) {
         edgePathCache = new HashMap<>();
         longestNonEdgePathCache = new HashMap<>();
+        connectedPaths = new HashMap<>();
+        //owner = client;
     }
     
     /**
@@ -170,20 +180,11 @@ public class BoardEdgePathFinder {
                     coordinatePaths.remove(pathCoords);
                 }
                 
-                List<MovePath> connectedPathsToInvalidate = new ArrayList<>();
-                
-                // for each other path to this edge
-                for(MovePath connectedPath : coordinatePaths.values()) {
-                    // if it connects up to this path
-                    if((directPath != connectedPath) &&
-                            directPath.getCoordsSet().contains(connectedPath.getFinalCoords())) {
-                        // mark it for invalidation
-                        connectedPathsToInvalidate.add(connectedPath);
+                // for each path that connects to this path, invalidate it
+                if(connectedPaths.containsKey(directPath)) {
+                    for(MovePath connectedPath : connectedPaths.get(directPath)) {
+                        invalidatePaths(connectedPath.getStartCoords());                    
                     }
-                }
-                
-                for(MovePath connectedPath : connectedPathsToInvalidate) {
-                    invalidatePaths(connectedPath.getStartCoords());                    
                 }
             }
         }
@@ -263,6 +264,16 @@ public class BoardEdgePathFinder {
      * Helper function that tells us if the given set of coordinates have a path cached already
      * @param coords Coordinates to check
      * @param destinationRegion Where we're going
+     * @return Cached move path
+     */
+    private MovePath getCachedPathForCoordinates(Coords coords, int destinationRegion) {
+        return edgePathCache.containsKey(destinationRegion) ? edgePathCache.get(destinationRegion).get(coords) : null;
+    }
+    
+    /**
+     * Helper function that tells us if the given set of coordinates have a path cached already
+     * @param coords Coordinates to check
+     * @param destinationRegion Where we're going
      * @return True or false
      */
     private boolean coordinatesHaveCachedPath(Coords coords, int destinationRegion) {
@@ -271,10 +282,33 @@ public class BoardEdgePathFinder {
     
     /**
      * Worker function that caches a path that gets to the destination region
+     * and also records if it connects to a path that eventually gets to the destination
      * @param path The path to cache
      * @param destinationRegion The region of the board to which the path moves
      */
     private void cacheGoodPath(MovePath path, int destinationRegion) {
+        // don't bother with all this stuff if we're not moving
+        if(path.length() == 0) {
+            return;
+        }
+        
+        if(path.getKey().hashCode() == -1363392647) {
+            int alpha = 1;
+        }
+        
+        // first, attempt to connect this tributary to the trunk 
+        // a tributary is a smaller river that connects to a larger body of water (that's the trunk)
+        MovePath trunk = getCachedPathForCoordinates(path.getFinalCoords(), destinationRegion);
+        if(trunk != null) {
+            if(!connectedPaths.containsKey(trunk)) {
+                connectedPaths.put(trunk, new ArrayList<>());
+            }
+            
+            //System.out.println("Next path connects to " + trunk.toString() + " at coordinates " + path.getFinalCoords().toString());
+            connectedPaths.get(trunk).add(path);
+        }
+        
+        // cache the path for the set of coordinates if one doesn't yet exist
         Map<Coords, MovePath> coordinatePathMap;
         
         if(!edgePathCache.containsKey(destinationRegion)) {
@@ -284,10 +318,10 @@ public class BoardEdgePathFinder {
             coordinatePathMap = edgePathCache.get(destinationRegion);
         }
         
-        // cache the path for the set of coordinates if one doesn't yet exist
         for(Coords coords : path.getCoordsSet()) {
             if(!coordinatePathMap.containsKey(coords)) {
                 coordinatePathMap.put(coords, path);
+                //System.out.println("Caching path " + path.toString() + " : for coordinates " + coords.toString());
             }
         }
     }

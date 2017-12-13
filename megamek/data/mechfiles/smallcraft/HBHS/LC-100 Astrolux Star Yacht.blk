@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,32 @@ SmallCraft
 LC-100
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+2953
+</year>
+
+<originalBuildYear>
+2953
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+crewquarters:14.0:0
+1stclassquarters:80.0:0
+cargobay:6.0:1:1
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-33
-28
-28
-23
-</Armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment> 
-</Right Side Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
-
-<structural_integrity>
-8
-</structural_integrity>
 
 <heatsinks>
 1
@@ -63,46 +59,86 @@ LC-100
 1600
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-2953
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-CargoBay:7.5:1
-</transporters>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+33
+28
+28
+23
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+HB: House Steiner
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
 
 <crew>
 3
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+0
+</gunners>
+
 <passengers>
 7
 </passengers>
 
-<source>
-HB: House Steiner
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

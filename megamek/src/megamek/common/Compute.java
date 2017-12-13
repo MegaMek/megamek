@@ -912,6 +912,15 @@ public class Compute {
                 && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
+        boolean nc3EnergyGuided = ((wtype.hasFlag(WeaponType.F_ENERGY))
+                || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                || (wtype.getAtClass() == WeaponType.CLASS_AR10)
+                || (wtype.getAtClass() == WeaponType.CLASS_ATM)
+                || (wtype.getAtClass() == WeaponType.CLASS_LRM)
+                || (wtype.getAtClass() == WeaponType.CLASS_SRM)
+                || (wtype.getAtClass() == WeaponType.CLASS_MML)
+                || (wtype.getAtClass() == WeaponType.CLASS_THUNDERBOLT));
 
         if (ae.isAirborne()) {
             useExtremeRange = true;
@@ -1170,48 +1179,62 @@ public class Compute {
         int usingRange = Math.min(range, c3range);
 
         // add range modifier, C3 can't be used with LOS Range
-        if ((usingRange == range) || (range == RangeType.RANGE_LOS)) {
+        if ((usingRange == range) || (range == RangeType.RANGE_LOS) || (ae.hasNavalC3() && !nc3EnergyGuided)) {
             // Ensure usingRange is set to range, ie with C3
             usingRange = range;
-            // no c3 adjustment
-            if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM))
-                && (ae.getShortRangeModifier() != 0)) {
-                mods.addModifier(ae.getShortRangeModifier(), "short range");
-            } else if (range == RangeType.RANGE_MEDIUM) {
-                // Right now, the range-mod affecting targeting systems DON'T
-                // affect medium range, so we won't add that here ever.
-                mods.addModifier(ae.getMediumRangeModifier(), "medium range");
-            } else if (range == RangeType.RANGE_LONG) {
-                // Protos that loose head sensors can't shoot long range.
-                if ((ae instanceof Protomech)
-                    && (2 == ((Protomech) ae)
-                        .getCritsHit(Protomech.LOC_HEAD))) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE,
-                                     "No long range attacks with destroyed head sensors.");
-                } else {
-                    mods.addModifier(ae.getLongRangeModifier(), "long range");
+            // Naval C3 adjustment for ballistic and unguided weapons
+            if ((ae.hasNavalC3() && !nc3EnergyGuided) && (c3range < range)) {
+                if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM))
+                        && (ae.getShortRangeModifier() != 0)) {
+                    mods.addModifier((ae.getShortRangeModifier() / 2), "NC3 modified short range");
+                } else if (range == RangeType.RANGE_MEDIUM) {
+                    mods.addModifier((ae.getMediumRangeModifier() / 2), "NC3 modified medium range");
+                } else if (range == RangeType.RANGE_LONG) {
+                    mods.addModifier((ae.getLongRangeModifier() / 2), "NC3 modified long range");
+                } else if (range == RangeType.RANGE_EXTREME) {
+                    mods.addModifier((ae.getExtremeRangeModifier() / 2), "NC3 modified Extreme range");
                 }
-            } else if (range == RangeType.RANGE_EXTREME) {
-                // Protos that loose head sensors can't shoot extreme range.
-                if ((ae instanceof Protomech)
-                    && (2 == ((Protomech) ae)
-                        .getCritsHit(Protomech.LOC_HEAD))) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE,
-                                     "No extreme range attacks with destroyed head sensors.");
-                } else {
-                    mods.addModifier(ae.getExtremeRangeModifier(),
-                                     "extreme range");
-                }
-            } else if (range == RangeType.RANGE_LOS) {
-                // Protos that loose head sensors can't shoot LOS range.
-                if ((ae instanceof Protomech)
-                    && (2 == ((Protomech) ae)
-                        .getCritsHit(Protomech.LOC_HEAD))) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE,
-                                     "No LOS range attacks with destroyed head sensors.");
-                } else {
-                    mods.addModifier(ae.getLOSRangeModifier(),
-                                     "LOS range");
+            } else {
+                // no c3 adjustment
+                if (((range == RangeType.RANGE_SHORT) || (range == RangeType.RANGE_MINIMUM))
+                        && (ae.getShortRangeModifier() != 0)) {
+                    mods.addModifier(ae.getShortRangeModifier(), "short range");
+                } else if (range == RangeType.RANGE_MEDIUM) {
+                    // Right now, the range-mod affecting targeting systems DON'T
+                    // affect medium range, so we won't add that here ever.
+                    mods.addModifier(ae.getMediumRangeModifier(), "medium range");
+                } else if (range == RangeType.RANGE_LONG) {
+                    // Protos that loose head sensors can't shoot long range.
+                    if ((ae instanceof Protomech)
+                            && (2 == ((Protomech) ae)
+                            .getCritsHit(Protomech.LOC_HEAD))) {
+                        mods.addModifier(TargetRoll.IMPOSSIBLE,
+                                         "No long range attacks with destroyed head sensors.");
+                    } else {
+                        mods.addModifier(ae.getLongRangeModifier(), "long range");
+                    }
+                } else if (range == RangeType.RANGE_EXTREME) {
+                    // Protos that loose head sensors can't shoot extreme range.
+                    if ((ae instanceof Protomech)
+                            && (2 == ((Protomech) ae)
+                            .getCritsHit(Protomech.LOC_HEAD))) {
+                        mods.addModifier(TargetRoll.IMPOSSIBLE,
+                                         "No extreme range attacks with destroyed head sensors.");
+                    } else {
+                        mods.addModifier(ae.getExtremeRangeModifier(),
+                                         "extreme range");
+                    }
+                } else if (range == RangeType.RANGE_LOS) {
+                    // Protos that loose head sensors can't shoot LOS range.
+                    if ((ae instanceof Protomech)
+                            && (2 == ((Protomech) ae)
+                            .getCritsHit(Protomech.LOC_HEAD))) {
+                        mods.addModifier(TargetRoll.IMPOSSIBLE,
+                                         "No LOS range attacks with destroyed head sensors.");
+                    } else {
+                        mods.addModifier(ae.getLOSRangeModifier(),
+                                         "LOS range");
+                    }
                 }
             }
         } else {
@@ -1645,7 +1668,7 @@ public class Compute {
     }
 
     /**
-     * find a c3, c3i, or nova spotter that is closer to the target than the
+     * find a c3, c3i, NC3, or nova spotter that is closer to the target than the
      * attacker.
      *
      * @param game
@@ -1658,7 +1681,7 @@ public class Compute {
             Targetable target) {
         // no available C3-like system
         if (!attacker.hasC3() && !attacker.hasC3i()
-                && !attacker.hasActiveNovaCEWS()) {
+                && !attacker.hasActiveNovaCEWS() && !attacker.hasNavalC3()) {
             return attacker;
         }
 

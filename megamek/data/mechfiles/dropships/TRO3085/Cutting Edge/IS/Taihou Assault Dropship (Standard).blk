@@ -1,0 +1,206 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Taihou Assault Dropship
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3079
+</year>
+
+<originalBuildYear>
+3079
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:1:2
+2ndclassquarters:0.0:0
+steeragequarters:180.0:0
+1stclassquarters:40.0:0
+crewquarters:133.0:0
+cargobay:614.0:2:1
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<heatsinks>
+250
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+601
+451
+451
+328
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Ammo Heavy SCC:60
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+(B) Screen Launcher
+Ammo Screen:10
+ISNC3
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) MRM 40
+MRM 40
+MRM 40
+IS MRM 40 Ammo:42
+ISApollo
+ISApollo
+ISApollo
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<tonnage>
+12000.0
+</tonnage>
+
+<crew>
+29
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+36
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+5
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+

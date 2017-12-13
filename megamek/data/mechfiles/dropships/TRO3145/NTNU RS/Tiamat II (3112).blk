@@ -1,0 +1,273 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Tiamat II
+</Name>
+
+<Model>
+(3112)
+</Model>
+
+<year>
+3112
+</year>
+
+<originalBuildYear>
+3112
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+2ndclassquarters:0.0:0
+steeragequarters:180.0:0
+crewquarters:350.0:0
+1stclassquarters:100.0:0
+cargobay:2581.0:1:2
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+526
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+810
+750
+750
+705
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Sub-Capital Cannon (Heavy)
+Ammo Heavy SCC:90
+(B) ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGauss Ammo:80
+(B) ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISNC3
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 Barracuda:20
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:104
+IS Ammo MML-9 SRM Artemis-capable:88
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 Barracuda:20
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:104
+IS Ammo MML-9 SRM Artemis-capable:88
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:30
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:104
+IS Ammo MML-9 SRM Artemis-capable:88
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) Screen Launcher
+Ammo Screen:20
+</Aft Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<source>
+RS 3145 NTNU - Late Republic
+</source>
+
+<tonnage>
+36000.0
+</tonnage>
+
+<crew>
+62
+</crew>
+
+<officers>
+10
+</officers>
+
+<gunners>
+35
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+36
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

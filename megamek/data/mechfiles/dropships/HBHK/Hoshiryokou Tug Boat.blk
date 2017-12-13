@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,39 +17,83 @@ Hoshiryokou
 </Name>
 
 <Model>
-(Standard)
+(Tug Boat)
 </Model>
 
-<Tonnage>
-800
-</Tonnage>
+<year>
+2480
+</year>
+
+<originalBuildYear>
+2480
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:8.0:1:1
+steeragequarters:45.0:0
+crewquarters:0.0:0
+2ndclassquarters:35.0:0
+1stclassquarters:10.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-122
-92
-92
-92
-</Armor>
+<heatsinks>
+8
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1200
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+118
+90
+90
+90
+</armor>
 
 <Nose Equipment>
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
+(B) Large Laser
+(B) Small Laser
+Small Laser
 ISNavalTugAdaptor
 </Nose Equipment>
 
 <Left Side Equipment>
 </Left Side Equipment>
 
-<Right Side Equipment> 
+<Right Side Equipment>
 </Right Side Equipment>
 
-<Aft Equipment> 
-ISSmallLaser
+<Aft Equipment>
+(B) Small Laser
 Cargo Container (10 tons)
 Cargo Container (10 tons)
 Cargo Container (10 tons)
@@ -66,67 +110,51 @@ Cargo Container (10 tons)
 25
 </structural_integrity>
 
-<heatsinks>
-8
-</heatsinks>
+<source>
+HB:House Kurita - Age of War
+</source>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-1400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-2480
-</year>
-
-<internal_type>
-0
-</internal_type>
+<tonnage>
+800.0
+</tonnage>
 
 <designtype>
 0
 </designtype>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-
-CargoBay:8:1
-</transporters>
-
-<escape_pod>
-1
-</escape_pod>
-
-<life_boat>
-0
-</life_boat>
-
 <crew>
-5
+6
 </crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
 
 <passengers>
 9
 </passengers>
 
-<source>
-HB:House Kurita - Age of War
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+1
+</escape_pod>
+

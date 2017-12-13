@@ -3516,7 +3516,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3635,7 +3635,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
 
@@ -4215,6 +4215,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         && !fe.equals(e)
                         && !ComputeECM.isAffectedByECM(e, e.getPosition(),
                                 fe.getPosition())) {
+                    c3Sprites.add(new C3Sprite(this, e, fe));
+                }
+            }
+        } else if (e.hasNavalC3()) {
+            for (Entity fe : game.getEntitiesVector()) {
+                if (fe.getPosition() == null) {
+                    return;
+                }
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
             }

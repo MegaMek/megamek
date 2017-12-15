@@ -240,6 +240,7 @@ import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
@@ -13880,7 +13881,7 @@ public class Server implements Runnable {
      * assign AMS (and APDS) to those attacks.
      */
     public void assignAMS() {
-
+        final String METHOD_NAME = "assignAMS()";
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
         // Map target to a list of missile attacks directed at it
@@ -13896,7 +13897,7 @@ public class Server implements Runnable {
             // might no longer be in the game.
             //TODO: Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
             if (game.getEntity(waa.getEntityId()) == null) {
-                System.out.println("Can't Assign AMS: Artillery firer is null!");
+                logInfo(METHOD_NAME, "Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
             
@@ -13913,24 +13914,47 @@ public class Server implements Runnable {
                 continue;
             }
 
-            // Can only use AMS versus missles.
+            // Can only use AMS versus missiles.
             if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                 continue;
             }
             
             if (waa instanceof ArtilleryAttackAction) {
-                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                        .getTarget(game) : null;
-                if (target == null) {
-                    //this will pick our TAG target back up and assign it to the waa
-                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
+                Entity target;
+                ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+                if (wh instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (aaa.turnsTilHit > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
+                        continue;
+                    }
+                    //For Bearings-only Capital Missiles
                     target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                             .getTarget(game) : null;
                     if (target == null) {
-                        //in case our target really is null. 
-                        continue;
-                    }
+                        //If multiple shots are involved, the target seems to get lost. This will reset it.
+                        CapitalMissileBearingsOnlyHandler cmh = (CapitalMissileBearingsOnlyHandler) wh;
+                        cmh.convertHexTargetToEntityTarget(vPhaseReport);
+                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                                .getTarget(game) : null;
+                        if (target == null) {
+                            //in case our target really is null. 
+                            continue;
+                        }
+                    } 
+                } else {
+                    //For all other types of homing artillery
+                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                        .getTarget(game) : null;
+                    if (target == null) {
+                        //this will pick our TAG target back up and assign it to the waa                    
+                        ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
+                        hh.convertHomingShotToEntityTarget();
+                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                                .getTarget(game) : null;
+                        if (target == null) {
+                            //in case our target really is null. 
+                            continue;
+                        }
+                    }            
                 }
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {

@@ -14,7 +14,7 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons.capitalweapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -24,28 +24,25 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class AR10BayWeapon extends AmmoBayWeapon {
+public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = 8756042527483383101L;
+    private static final long serialVersionUID = 8756042527413382101L;
 
     /**
      * 
      */
-    public AR10BayWeapon() {
+    public TeleOperatedMissileBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "AR10 Bay";
+        this.name = "Tele-Operated Capital Missile Bay";
         this.setInternalName(this.name);
-        addLookupName("ISAR10Bay");
-        addLookupName("CLAR10Bay");
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;
@@ -56,22 +53,8 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
-        this.maxRange = RANGE_SHORT;
-        this.atClass = CLASS_AR10;
+        this.atClass = CLASS_TELE_MISSILE;
         this.capital = true;
-        rulesRefs = "210,TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
-            .setISAdvancement(2540, 2550, 3055, 2950, 3051)
-            .setISApproximate(true, false, false, true, false)
-            .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FS,F_LC);
     }
 
     /*

@@ -75,6 +75,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -866,10 +867,25 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         WeaponAttackAction waa = new WeaponAttackAction(cen,
                 target.getTargetType(), target.getTargetId(), weaponNum);
-        if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        IGame game = clientgui.getClient().getGame();
+        int distance = Compute.effectiveDistance(game, waa.getEntity(game),
+                waa.getTarget(game));
+        if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
+                || (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
+                        || mounted.curMode().equals("Bearings-Only Long Detection Range")
+                        || mounted.curMode().equals("Bearings-Only Medium Detection Range")
+                        || mounted.curMode().equals("Bearings-Only Short Detection Range"))
+                            && distance > 50) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()
                             .getGame());
+            // Get the launch velocity for bearings-only telemissiles
+            if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
+                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame);
+                tsd.setVisible(true);
+                waa.setLaunchVelocity(tsd.getSetting());
+                waa.updateTurnsTilHit(clientgui.getClient().getGame());
+            } 
         }
         if ((null != mounted.getLinked())
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
@@ -1047,14 +1063,23 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, 0, false);
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
-
             clientgui.mechD.wPan.wRangeR
                     .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
             Mounted m = ce().getEquipment(weaponId);
+            IGame game = clientgui.getClient().getGame();
+            int distance = Compute.effectiveDistance(game, ce(),
+                    target);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.alreadyFired"));
                 //$NON-NLS-1$
+                setFireEnabled(false);
+            } else if ((m.curMode().equals("Bearings-Only Extreme Detection Range")
+                    || m.curMode().equals("Bearings-Only Long Detection Range")
+                    || m.curMode().equals("Bearings-Only Medium Detection Range")
+                    || m.curMode().equals("Bearings-Only Short Detection Range"))
+                    && distance <= 50) {
+                clientgui.mechD.wPan.wToHitR.setText("Cannot fire bearings-only missile at <= 50 hexes");
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages

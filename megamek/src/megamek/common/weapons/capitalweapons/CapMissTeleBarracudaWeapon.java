@@ -53,7 +53,7 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.bv = 461;
         this.cost = 100000;
         this.flags = flags.or(F_MISSILE);
-        this.atClass = CLASS_CAPITAL_MISSILE;
+        this.atClass = CLASS_TELE_MISSILE;
         this.shortAV = 2;
         this.medAV = 2;
         this.longAV = 2;

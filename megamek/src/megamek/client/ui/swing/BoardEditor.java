@@ -14,17 +14,20 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -960,9 +963,19 @@ public class BoardEditor extends JComponent implements ItemListener,
                     }
                 }
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
-                g
-                        .drawString(
-                                Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
+                g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
+                StringBuffer errBuf = new StringBuffer();
+                if (!curHex.isValid(errBuf)) {
+                    g.setFont(new Font("SansSerif", Font.BOLD, 14)); //$NON-NLS-1$
+                    Point hexCenter = new Point(BoardView1.HEX_W / 2, BoardView1.HEX_H / 2);
+                    bv.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
+                            false);
+                    String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
+                    tooltip = tooltip.replace("\n", "<br>");
+                    setToolTipText(tooltip);
+                } else {
+                    setToolTipText(null);
+                }
             } else {
                 g.clearRect(0, 0, 72, 72);
             }

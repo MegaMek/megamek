@@ -196,6 +196,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // the dimensions of megamek's hex images
     static final int HEX_W = HexTileset.HEX_W;
     static final int HEX_H = HexTileset.HEX_H;
+    static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -493,6 +494,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Holds the final Coords for a planned movement. Set by MovementDisplay,
      *  used to display the distance in the board tooltip. */ 
     private Coords movementTarget;
+
+    // Used to track the previous x/y for tooltip display
+    int prevTipX = -1, prevTipY = -1;
 
 
     /**
@@ -5522,6 +5526,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         StringBuffer txt = new StringBuffer();
         IHex mhex = null;
         final Point point = e.getPoint();
+        if (prevTipX > 0 && prevTipY > 0) {
+            int deltaX = point.x - prevTipX;
+            int deltaY = point.y - prevTipY;
+            double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (deltaMagnitude > HEX_DIAG) {
+                prevTipX = -1; prevTipY = -1;
+                // This is used to fool the tooltip manager into resetting the tip
+                ToolTipManager.sharedInstance().mousePressed(null);
+                return null;
+            }
+        }
+        prevTipX = point.x; prevTipY = point.y;
         final Coords mcoords = getCoordsAt(point);
         final ArrayList<ArtilleryAttackAction> artilleryAttacks =
                 getArtilleryAttacksAtLocation(mcoords);

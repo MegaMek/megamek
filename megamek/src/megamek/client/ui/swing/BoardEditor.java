@@ -950,7 +950,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             super.paintComponent(g);
             if (curHex != null) {
                 TilesetManager tm = bv.getTilesetManager();
-                g.drawImage(tm.baseFor(curHex), 0, 0, this);
+                g.drawImage(tm.baseFor(curHex), 0, 0, BoardView1.HEX_W, BoardView1.HEX_H, this);
                 g.setColor(getForeground());
                 if (tm.supersFor(curHex) != null) {
                     for (final Object newVar : tm.supersFor(curHex)) {

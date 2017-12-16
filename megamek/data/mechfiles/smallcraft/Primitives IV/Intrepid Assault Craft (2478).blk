@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,45 +20,33 @@ Intrepid Assault Craft
 (2478)
 </Model>
 
-<Tonnage>
-150
-</Tonnage>
+<year>
+2478
+</year>
+
+<originalBuildYear>
+2478
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+infantrybay:1.0:2:1:Foot
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:25.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-85
-65
-65
-45
-</Armor>
-
-<Nose Equipment>
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargeLaser
-ISMediumLaser
-</Left Side Equipment>
-
-<Right Side Equipment>
-ISLargeLaser
-ISMediumLaser
-</Right Side Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-10
-</structural_integrity>
 
 <heatsinks>
 22
@@ -72,46 +60,95 @@ ISMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-2478
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+84
+64
+64
+44
+</armor>
+
+<Nose Equipment>
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+Large Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+Large Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>
+
+<tonnage>
+150.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
 
 <crew>
-5
+33
 </crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+2
+</gunners>
 
 <passengers>
 0
 </passengers>
 
-<transporters>
-infantrybay:1:2
-</transporters>
+<marines>
+0
+</marines>
 
-<source>
-XTRO Primitives IV - Age of War
-</source>
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

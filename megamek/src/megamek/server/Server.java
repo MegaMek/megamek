@@ -10197,6 +10197,44 @@ public class Server implements Runnable {
         }
     }
 
+    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
+        final String METHOD_NAME = "processPointblankShotCFR(Entity, Entity)";
+        sendTeleguidedMissileCFR(playerId, targetDescriptions);
+        while (true) {
+            synchronized (cfrPacketQueue) {
+                try {
+                    while (cfrPacketQueue.isEmpty()) {
+                        cfrPacketQueue.wait();
+                    }
+                } catch (InterruptedException e) {
+                    return 0;
+                }
+                // Get the packet, if there's something to get
+                ReceivedPacket rp;
+                if (cfrPacketQueue.size() > 0) {
+                    rp = cfrPacketQueue.poll();
+                    int cfrType = rp.packet.getIntValue(0);
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
+                        logError(METHOD_NAME,
+                                "Expected a " + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet, " + "received: " + cfrType);
+                        continue;
+                    }
+                    // Check packet came from right ID
+                    if (rp.connId != playerId) {
+                        logError(METHOD_NAME,
+                                "Exected a " + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
+                                + " but instead it came from player " + rp.connId);
+                        continue;
+                    }
+                    return (int)rp.packet.getData()[0];
+                } else { // If no packets, wait again
+                    continue;
+                }
+            }
+        }
+    }
+
     /**
      * If an aero unit takes off in the same turn that other units loaded, then
      * it risks damage to itself and those units
@@ -13166,6 +13204,12 @@ public class Server implements Runnable {
                 new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                         new Object[] { Packet.COMMAND_CFR_HIDDEN_PBS,
                                 hidden.getId(), target.getId() }));
+    }
+
+    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
+        // Send target descriptions to Client
+        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions }));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
@@ -30401,11 +30445,11 @@ public class Server implements Runnable {
 
             game.addEntity(entity);
 
-            // Now we relink C3/C3i to our guys! Yes, this is hackish... but, we
+            // Now we relink C3/NC3/C3i to our guys! Yes, this is hackish... but, we
             // do
             // what we must.
             // Its just too bad we have to loop over the entire entities array..
-            if (entity.hasC3() || entity.hasC3i()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 boolean C3iSet = false;
 
                 for (Entity e : game.getEntitiesVector()) {
@@ -30437,7 +30481,7 @@ public class Server implements Runnable {
                         }
                     }
 
-                    // C3i Checks// C3i Checks
+                    // C3i Checks
                     if (entity.hasC3i() && (C3iSet == false)) {
                         entity.setC3NetIdSelf();
                         int pos = 0;
@@ -30446,6 +30490,25 @@ public class Server implements Runnable {
                             if ((entity.getC3iNextUUIDAsString(pos) != null)
                                 && (e.getC3UUIDAsString() != null)
                                 && entity.getC3iNextUUIDAsString(pos)
+                                         .equals(e.getC3UUIDAsString())) {
+                                entity.setC3NetId(e);
+                                C3iSet = true;
+                                break;
+                            }
+
+                            pos++;
+                        }
+                    }
+                    
+                    // NC3 Checks
+                    if (entity.hasNavalC3() && (C3iSet == false)) {
+                        entity.setC3NetIdSelf();
+                        int pos = 0;
+                        while (pos < Entity.MAX_C3i_NODES) {
+                            // We've found a network, join it.
+                            if ((entity.getNC3NextUUIDAsString(pos) != null)
+                                && (e.getC3UUIDAsString() != null)
+                                && entity.getNC3NextUUIDAsString(pos)
                                          .equals(e.getC3UUIDAsString())) {
                                 entity.setC3NetId(e);
                                 C3iSet = true;
@@ -30910,20 +30973,23 @@ public class Server implements Runnable {
                     // if a unit is removed during deployment just keep going
                     // without adjusting the turn vector.
                     game.removeTurnFor(entity);
+                    game.removeEntity(entityId,
+                            IEntityRemovalConditions.REMOVE_NEVER_JOINED);
                 }
-                game.removeEntity(entityId,
-                        IEntityRemovalConditions.REMOVE_NEVER_JOINED);
-
             }
         }
-        send(createRemoveEntityPacket(ids,
-                IEntityRemovalConditions.REMOVE_NEVER_JOINED));
+        
+        // during deployment this absolutely must be called before game.removeEntity(), otherwise the game hangs
+        // when a unit is removed. Cause unknown. 
+        send(createRemoveEntityPacket(ids, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
 
         // Prevents deployment hanging. Only do this during deployment.
         if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
             for (Integer entityId : ids) {
                 final Entity entity = game.getEntity(entityId);
                 endCurrentTurn(entity);
+                game.removeEntity(entityId,
+                        IEntityRemovalConditions.REMOVE_NEVER_JOINED);
             }
         }
     }

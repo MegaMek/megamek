@@ -1,0 +1,197 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Pueblo
+</Name>
+
+<Model>
+(2673)
+</Model>
+
+<year>
+2673
+</year>
+
+<originalBuildYear>
+2673
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:4.0:2:1
+cargobay:300.0:2:2
+2ndclassquarters:91.0:0
+1stclassquarters:100.0:0
+crewquarters:210.0:0
+steeragequarters:0.0:0
+cargobay:1288.0:2:3
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<heatsinks>
+164
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+13500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+520
+520
+520
+300
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+(B) LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:72
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+ISMobileHPG
+ISSmallNavalCommScannerSuite
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+ISERPPC
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(R) (B) ISERPPC
+(R) (B) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+ISERPPC
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(R) (B) ISERPPC
+(R) (B) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERPPC
+ISERPPC
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<source>
+H:Liberation of Terra II - Star League
+</source>
+
+<tonnage>
+8400.0
+</tonnage>
+
+<crew>
+44
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+8
+</gunners>
+
+<passengers>
+18
+</passengers>
+
+<marines>
+6
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+6
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

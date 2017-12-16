@@ -1,0 +1,198 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Seleucus Infantry Transport
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3100
+</year>
+
+<originalBuildYear>
+3100
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+battlearmorbay:20.0:5:1
+lightvehiclebay:12.0:1:2
+1stclassquarters:50.0:0
+2ndclassquarters:0.0:0
+crewquarters:112.0:0
+cargobay:205.0:1:3
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+102
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+251
+230
+230
+201
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+(B) ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+IS Light Gauss Ammo:64
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) Extended LRM 20
+Extended LRM 20
+IS Ammo Extended LRM-20:32
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) Extended LRM 20
+Extended LRM 20
+IS Ammo Extended LRM-20:32
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3145 Free Worlds League - Early Republic
+</source>
+
+<tonnage>
+2600.0
+</tonnage>
+
+<crew>
+196
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

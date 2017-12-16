@@ -1,0 +1,7 @@
+# Provides backward compatibility for any changes to the unit name.
+# If a name is changed, an entry should be made here so that it can still
+# be found by a previous name that may appear in a MUL file or a MekHQ
+# campaign file. Each entry should be on a separate line and have the
+# format "oldname|currentname"
+
+Jagermech JM6-DG|JagerMech JM6-DG

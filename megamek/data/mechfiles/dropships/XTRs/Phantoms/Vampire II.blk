@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,58 +13,41 @@ Dropship
 </UnitType>
 
 <Name>
-Vampire
+Vampire II
 </Name>
 
-<model>
-II
-</model>
+<Model>
+(Standard)
+</Model>
 
-<Tonnage>
-600
-</Tonnage>
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+battlearmorbay:4.0:4:1
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:90.0:0
+cargobay:8.0:1:2
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-151
-151
-151
-113
-</Armor>
-
-<Nose Equipment>
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-CommsGear:8
-</Nose Equipment>
-
-<Left Side Equipment>
-IS X-Pulse Large Laser
-IS X-Pulse Large Laser
-IS Laser AMS
-IS Laser AMS
-</Left Side Equipment>
-
-<Right Side Equipment> 
-IS X-Pulse Large Laser
-IS X-Pulse Large Laser
-IS Laser AMS
-IS Laser AMS
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISERLargeLaser
-ISERLargeLaser
-</Aft Equipment>
-
-<structural_integrity>
-7
-</structural_integrity>
 
 <heatsinks>
 94
@@ -78,55 +61,101 @@ ISERLargeLaser
 2660
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-3070
-</year>
+<armor_type>
+19
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+150
+151
+151
+113
+</armor>
+
+<Nose Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Communications Equipment (8 ton)
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISLargeXPulseLaser
+ISLargeXPulseLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISLargeXPulseLaser
+ISLargeXPulseLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+</Aft Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<source>
+XTRO Phantoms - Jihad
+</source>
+
+<tonnage>
+600.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-battlearmorbay:4:4
-CargoBay:7:1
-</transporters>
-
-<escape_pod>
-0
-</escape_pod>
-
-<life_boat>
-0
-</life_boat>
-
 <crew>
-41
+42
 </crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+3
+</gunners>
 
 <passengers>
 0
 </passengers>
 
-<source>
-XTRO Phantoms - Jihad
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

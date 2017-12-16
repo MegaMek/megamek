@@ -1,0 +1,231 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Interdictor Pocket Warship
+</Name>
+
+<Model>
+(SCC)
+</Model>
+
+<year>
+3078
+</year>
+
+<originalBuildYear>
+3078
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+steeragequarters:180.0:0
+crewquarters:154.0:0
+1stclassquarters:50.0:0
+smallcraftbay:2.0:1:1
+cargobay:509.0:2:2
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<heatsinks>
+244
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+685
+513
+513
+342
+</armor>
+
+<Nose Equipment>
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:48
+(B) Sub-Capital Cannon (Medium)
+Sub-Capital Cannon (Medium)
+Ammo Medium SCC:30
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:78
+IS Ammo MML-9 SRM Artemis-capable:66
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Sub-Capital Laser (SCL/1)
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(R) (B) Heavy PPC
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAMS Ammo:36
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:48
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:78
+IS Ammo MML-9 SRM Artemis-capable:66
+(B) ISERPPC
+ISERPPC
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Sub-Capital Laser (SCL/1)
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(R) (B) Heavy PPC
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAMS Ammo:36
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:48
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:78
+IS Ammo MML-9 SRM Artemis-capable:66
+(B) ISERPPC
+ISERPPC
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Heavy PPC
+Heavy PPC
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISAntiMissileSystem
+ISAMS Ammo:24
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:78
+IS Ammo MML-9 SRM Artemis-capable:66
+</Aft Equipment>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<tonnage>
+9400.0
+</tonnage>
+
+<crew>
+32
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+13
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+36
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

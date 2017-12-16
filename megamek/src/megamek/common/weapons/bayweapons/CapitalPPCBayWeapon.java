@@ -42,6 +42,7 @@ public class CapitalPPCBayWeapon extends BayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
+        this.flags = flags.or(F_ENERGY);
         this.atClass = CLASS_CAPITAL_PPC;
         this.capital = true;
     }

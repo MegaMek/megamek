@@ -118,6 +118,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -3460,16 +3461,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || entity.hasSeenEntity(localPlayer)
-                || entity.hasDetectedEntity(localPlayer);
-
-        canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || !entity.isHidden();
+        boolean canSee = EntityVisibilityUtils.hasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite
@@ -3524,7 +3516,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3643,7 +3635,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
 
@@ -4223,6 +4215,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         && !fe.equals(e)
                         && !ComputeECM.isAffectedByECM(e, e.getPosition(),
                                 fe.getPosition())) {
+                    c3Sprites.add(new C3Sprite(this, e, fe));
+                }
+            }
+        } else if (e.hasNavalC3()) {
+            for (Entity fe : game.getEntitiesVector()) {
+                if (fe.getPosition() == null) {
+                    return;
+                }
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
             }

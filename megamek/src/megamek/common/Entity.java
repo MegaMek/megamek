@@ -398,6 +398,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
     private String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    private String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -5436,6 +5437,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return false;
     }
+    
+    public boolean hasNavalC3() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_NAVAL_C3) && !m.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
@@ -5464,6 +5478,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 c3NetIdString = "C3i." + getId();
             } else if (hasActiveNovaCEWS()) {
                 c3NetIdString = "C3Nova." + getId();
+            } else if (hasNavalC3()) {
+                c3NetIdString = "NC3." + getId();
             }
         }
         return c3NetIdString;
@@ -5520,6 +5536,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setC3NetIdSelf() {
         if (hasActiveNovaCEWS()) {
             c3NetIdString = "C3Nova." + getId();
+        } else if (hasNavalC3()) {
+            c3NetIdString = "NC3." + getId();
         } else {
             c3NetIdString = "C3i." + getId();
         }
@@ -5583,7 +5601,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int calculateFreeC3Nodes() {
         int nodes = 0;
-        if (hasC3i()) {
+        if (hasC3i() || hasNavalC3()) {
             nodes = 5;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
@@ -5809,7 +5827,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             c3NetIdString = "C3." + id;
         } else if (hasC3i() && (entityId == NONE)) {
             c3NetIdString = "C3i." + id;
-        } else if (hasC3() || hasC3i()) {
+        } else if (hasNavalC3() && (entityId == NONE)) {
+            c3NetIdString = "NC3." + id;
+        } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = game.getEntity(entityId).getC3NetId();
         }
         for (Entity e : game.getEntitiesVector()) {
@@ -5857,6 +5877,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                 e.getPosition()))
                    && !(ComputeECM.isAffectedByECM(this, getPosition(),
                                                    getPosition()));
+        }
+        
+        // NC3 is easy too - if they both have NC3, and their net ID's match,
+        // they're on the same network! 
+        if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
+            int distance = Compute.effectiveDistance(game,this,e,false);
+            //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
+            if (game.getRoundCount() > 0) {
+                if (distance > 60) {
+                    return false;
+                }
+                //Naval C3 only works in space
+                if (!game.getBoard().inSpace()) {
+                    return false;
+                }
+            } 
+            return true;
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match,
@@ -10442,6 +10479,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.canon = canon;
     }
 
+    /**
+     * Get the entity's "climbing mode"
+     * @return True or false, where true = climb up and false = go through
+     */
     public boolean climbMode() {
         return climbMode;
     }
@@ -12480,10 +12521,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // TODO: assuming submarines on the surface act like surface naval
         // vessels until rules clarified
         // http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
-        return (getElevation() == 0)
-               && ((getMovementMode() == EntityMovementMode.NAVAL)
-                   || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode
-                .SUBMARINE));
+        return (getElevation() == 0) && isNaval();
+    }
+    
+    /**
+     * Is this a naval vessel?
+     * @return Whether it is or not.
+     */
+    public boolean isNaval() {
+        return (getMovementMode() == EntityMovementMode.NAVAL) 
+                || (getMovementMode() == EntityMovementMode.HYDROFOIL) 
+                || (getMovementMode() == EntityMovementMode.SUBMARINE);
     }
 
     /**
@@ -13423,7 +13471,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((game != null)
             && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                 || (hasC3M() && (calculateFreeC3Nodes() < 3))
-                || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5)))) {
+                || (hasC3S() && (c3Master > NONE)) || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
             int totalForceBV = 0;
             totalForceBV += baseBV;
             for (Entity e : game.getC3NetworkMembers(this)) {
@@ -14008,6 +14056,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getFreeC3iUUID() {
         int pos = 0;
         while (c3iUUIDs[pos] != null) {
+            pos++;
+            if (pos >= MAX_C3i_NODES) {
+                return -1;
+            }
+        }
+        return pos;
+    }
+    
+    public void setNC3NextUUIDAsString(int pos, String c3id) {
+        NC3UUIDs[pos] = c3id;
+    }
+
+    public String getNC3NextUUIDAsString(int pos) {
+        return NC3UUIDs[pos];
+    }
+
+    public int getFreeNC3UUID() {
+        int pos = 0;
+        while (NC3UUIDs[pos] != null) {
             pos++;
             if (pos >= MAX_C3i_NODES) {
                 return -1;

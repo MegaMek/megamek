@@ -1,0 +1,189 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Dictator
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2600
+</year>
+
+<originalBuildYear>
+2600
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:12.0:1
+mechbay:12.0:1
+mechbay:12.0:1
+cargobay:704.0:1:4
+2ndclassquarters:0.0:0
+1stclassquarters:60.0:0
+crewquarters:231.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+109
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+4500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+205
+182
+182
+151
+</armor>
+
+<Nose Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:48
+(B) Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/10:60
+(B) Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:48
+(B) Autocannon/10
+Autocannon/10
+IS Ammo AC/10:30
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Autocannon/10
+(R) IS Ammo AC/10:30
+(R) (B) SRM 6
+(R) SRM 6
+(R) IS Ammo SRM-6:60
+(R) (B) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:48
+(B) Autocannon/10
+Autocannon/10
+IS Ammo AC/10:30
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Autocannon/10
+(R) IS Ammo AC/10:30
+(R) (B) SRM 6
+(R) SRM 6
+(R) IS Ammo SRM-6:60
+(R) (B) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/10
+Autocannon/10
+IS Ammo AC/10:40
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+9000.0
+</tonnage>
+
+<crew>
+105
+</crew>
+
+<officers>
+6
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+9
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

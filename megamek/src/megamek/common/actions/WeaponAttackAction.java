@@ -3834,7 +3834,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                             // unit
                 && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
+            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3() || ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {

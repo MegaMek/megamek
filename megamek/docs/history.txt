@@ -65,6 +65,7 @@ v0.43.5-git
 + Board editor hex preview indicates if hex is invalid, tool tip lists why
 + Board view in board editor shows invalid terrain and adds the reason why to the tooltip
 + Board editor now has validate button which will report all of the errors on the board
++ Board editor sorts terrains by alphabetical order, supports terrain type tooltips
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

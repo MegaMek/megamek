@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.TeleMissileTargetDialog;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -101,6 +101,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+    
+    private ClientGUI clientgui;
     
     //Defined here so we can use it in multiple methods
     Mounted bayWAmmo;
@@ -509,6 +511,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 waa.setTargetType(target.getTargetType());
                 targetDescriptions.add(target.getDisplayName() + ": Needs " + waa.toHit(game).getValue() + " to hit.");
             }
+            TeleMissileTargetDialog ttd = new TeleMissileTargetDialog(clientgui, targetDescriptions);
+            ttd.setVisible(true);
             int choice = server.processTeleguidedMissileCFR(getAttackerId(), targetDescriptions);
             newTarget = targets.get(choice);
          } else {

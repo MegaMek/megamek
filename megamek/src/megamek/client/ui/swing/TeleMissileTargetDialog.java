@@ -14,128 +14,79 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
 
-import javax.swing.ButtonGroup;
+import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.common.IPlayer;
+import megamek.common.Team;
 
-
+/**
+ * Target selector for a bearings-only teleoperated missile.
+ */
 public class TeleMissileTargetDialog extends JDialog implements ActionListener {
     /**
      *
      */
     private static final long serialVersionUID = 6527373019065650613L;
+    private JButton butOk = new JButton(
+            Messages.getString("TeleMissileTargetDialog.butOk")); //$NON-NLS-1$
+    private JList<String> targetList = new JList<String>(
+            new DefaultListModel<String>());
 
-    private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private int target;
+    private ClientGUI clientgui;
 
-    /**
-     * The checkboxes for available choices.
-     */
-    private IndexedRadioButton[] checkboxes;
-    private boolean[] boxEnabled;
+    public TeleMissileTargetDialog(ClientGUI cg, List<String> targets) {
+        super(cg.frame, Messages.getString("TeleMissileTargetDialog.title"), false); //$NON-NLS-1$
+        clientgui = cg;
 
-    public TeleMissileTargetDialog(JFrame parent, String title, String message,
-            String[] choices, boolean[] enabled, int selectedIndex,
-            ItemListener il, ActionListener al) {
-        super(parent, title, false);
-        super.setResizable(false);
+        butOk.addActionListener(this);
 
-        boxEnabled = enabled;
+        // layout
+        getContentPane().setLayout(new BorderLayout());
 
-        GridBagLayout gridbag = new GridBagLayout();
-        getContentPane().setLayout(gridbag);
+        JPanel listPan = new JPanel();
+        listPan.setBackground(Color.white);
+        targetList.setBackground(Color.white);
+        listPan.add(targetList, BorderLayout.NORTH);
+        listPan.add(Box.createVerticalStrut(40), BorderLayout.SOUTH);
 
-        GridBagConstraints c = new GridBagConstraints();
+        getContentPane().add(listPan, BorderLayout.NORTH);
+        getContentPane().add(Box.createHorizontalStrut(20), BorderLayout.WEST);
+        getContentPane().add(Box.createHorizontalStrut(20), BorderLayout.EAST);
+        getContentPane().add(butOk, BorderLayout.SOUTH);
 
-        JLabel labMessage = new JLabel(message, SwingConstants.LEFT);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.gridwidth = 0;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(labMessage, c);
-        getContentPane().add(labMessage);
-
-        ButtonGroup radioGroup = new ButtonGroup();
-        checkboxes = new IndexedRadioButton[choices.length];
-
-        for (int i = 0; i < choices.length; i++) {
-            boolean even = (i & 1) == 0;
-            checkboxes[i] = new IndexedRadioButton(choices[i], i == selectedIndex,
-                    radioGroup, i);
-            checkboxes[i].addItemListener(il);
-            checkboxes[i].setEnabled(enabled[i]);
-            c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
-            c.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(checkboxes[i], c);
-            add(checkboxes[i]);
-        }
-
-        butOk.addActionListener(al);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.insets = new Insets(5, 0, 5, 0);
-        c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(butOk, c);
-        add(butOk);
-
-        butOk.requestFocus();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
 
         pack();
-        setLocation((parent.getLocation().x + (parent.getSize().width / 2))
-                - (getSize().width / 2), (parent.getLocation().y
-                + (parent.getSize().height / 2)) - (getSize().height / 2));
-    }
-    
-    public int getTarget() {
-        return target;
+        setResizable(false);
+        setLocation((cg.getLocation().x + (cg.getSize().width / 2))
+                - (getSize().width / 2),
+                (cg.getLocation().y + (cg.getSize().height / 2))
+                        - (getSize().height / 2));
     }
 
-    public void setEnableAll(boolean enableAll) {
-        for (int i = 0; i < checkboxes.length; i++) {
-            if (enableAll) {
-                checkboxes[i].setEnabled(boxEnabled[i]);
-            } else {
-                checkboxes[i].setEnabled(false);
-            }
-        }
-    }
-    
-    /**
-     * ActionListener, listens to the button in the dialog.
-     */
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(butOk)) {
-            closeDialog();
-        }
-    }
-    
-    /**
-     * ItemListener, listens to the radiobuttons in the dialog.
-     */
-    public void itemStateChanged(ItemEvent ev) {
-        IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
-        target = icb.getIndex();
-    }
-    
-    public void closeDialog() {
-        if (this != null) {
-            target = 0;
-            this.dispose();
-        }
+    public void actionPerformed(ActionEvent e) {
+        setVisible(false);
     }
 
 }

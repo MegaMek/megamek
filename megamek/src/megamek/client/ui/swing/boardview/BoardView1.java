@@ -196,7 +196,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // the dimensions of megamek's hex images
     static final int HEX_W = HexTileset.HEX_W;
     static final int HEX_H = HexTileset.HEX_H;
-    static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
+    public static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -5530,7 +5530,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             int deltaX = point.x - prevTipX;
             int deltaY = point.y - prevTipY;
             double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            if (deltaMagnitude > HEX_DIAG) {
+            if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
                 prevTipX = -1; prevTipY = -1;
                 // This is used to fool the tooltip manager into resetting the tip
                 ToolTipManager.sharedInstance().mousePressed(null);

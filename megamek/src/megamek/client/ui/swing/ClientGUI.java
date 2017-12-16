@@ -442,6 +442,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             @Override
             protected void processKeyEvent(KeyEvent e) {
                 //menuBar.dispatchEvent(e);
+                // Make the source be the ClientGUI and not the dialog
+                // This prevents a ClassCastException in ToolTipManager
+                e.setSource(ClientGUI.this);
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);

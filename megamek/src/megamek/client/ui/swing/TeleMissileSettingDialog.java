@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 import megamek.client.ui.Messages;
 
 /**
- * Ask for the setting for a vibrabomb.
+ * Ask for the velocity setting for a teleoperated missile.
  */
 public class TeleMissileSettingDialog extends JDialog implements ActionListener {
     /**

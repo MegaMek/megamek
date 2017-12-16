@@ -153,6 +153,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         try {
             bv = new BoardView1(game, controller, null);
             bvc = bv.getComponent(true);
+            bv.setDisplayInvalidHexInfo(true);
         } catch (IOException e) {
             JOptionPane
                     .showMessageDialog(

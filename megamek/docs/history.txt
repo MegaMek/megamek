@@ -63,6 +63,7 @@ v0.43.5-git
 + Princess can now take point blank shots with hidden units
 + Naval C3 (space, not water)
 + Board Editor hex preview indicates if hex is invalid, tool tip lists why
++ Board view in board editor shows invalid terrain and adds the reason why to the tooltip
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

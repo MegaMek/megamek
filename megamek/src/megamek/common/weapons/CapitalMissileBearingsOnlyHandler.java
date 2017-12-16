@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
@@ -414,8 +415,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         final Coords tc = target.getPosition();
         //Set the original missile target data. AMS and to-hit table calculations need this.
         aaa.setOldTargetCoords(tc);
-        waa.setOriginalTargetId(target.getTargetId());
-        waa.setOriginalTargetType(target.getTargetType());
+        aaa.setOriginalTargetId(target.getTargetId());
+        aaa.setOriginalTargetType(target.getTargetType());
         int missileFacing = ae.getPosition().direction(tc);
         Targetable newTarget = null;
         Vector<Aero> targets = new Vector<Aero>();
@@ -499,22 +500,18 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         for (Aero a : detected) {
             targets.add(a);
         }
-        
+
         //If we're using tele-operated missiles, the player gets to select the target
-        //TODO: This is beyond my skill level. If somebody wants to pick this up...
-       /* if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
-            String[] options = 
-            int choice;
-            TeleMissileTargetDialog tsd = new TeleMissileTargetDialog(this.CapitalMissileBearingsOnlyHandler.clientgui.frame,
-                    Messages.getString("TeleMissileTargetDialog.title"), //$NON-NLS-1$
-                    Messages.getString("TeleMissileTargetDialog.message"), //$NON-NLS-1$
-                    options, choice, this, this);            
-            choice = tsd.getTarget();
-            //Now, assign our chosen target to the missile
-            target = targets.get(choice);            
-            aaa.setTargetId(target.getTargetId());
-            aaa.setTargetType(target.getTargetType());
-        } else { */
+        if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
+            List<String> targetDescriptions = new ArrayList<String>();
+            for (Aero target : targets) {
+                waa.setTargetId(target.getId());
+                waa.setTargetType(target.getTargetType());
+                targetDescriptions.add(target.getDisplayName() + ": Needs " + waa.toHit(game).getValue() + " to hit.");
+            }
+            int choice = server.processTeleguidedMissileCFR(getAttackerId(), targetDescriptions);
+            newTarget = targets.get(choice);
+         } else {
             // Otherwise, find the largest and closest target of those available
             int bestDistance = Integer.MAX_VALUE;
             int bestTonnage = 0;
@@ -587,11 +584,11 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     } 
                 }
             }
-            //Now, assign our chosen target to the missile
-            target = newTarget;            
-            aaa.setTargetId(target.getTargetId());
-            aaa.setTargetType(target.getTargetType());
-        //}
+        }
+        // Now, assign our chosen target to the missile
+        target = newTarget;
+        aaa.setTargetId(target.getTargetId());
+        aaa.setTargetType(target.getTargetType());
 
             
             //Now that we have a ship target, set up the to-hit modifiers

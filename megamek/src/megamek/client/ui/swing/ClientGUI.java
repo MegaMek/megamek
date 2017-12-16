@@ -2105,6 +2105,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         client.sendHiddenPBSCFRResponse(null);
                     }
                     break;
+                case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    // TODO: Show a dialog to the client to make a selection
+                    client.sendTelemissileTargetCFRResponse(0);
+                    break;
             }
         }
     };

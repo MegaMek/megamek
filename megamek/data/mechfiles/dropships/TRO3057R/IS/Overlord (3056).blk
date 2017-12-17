@@ -9,55 +9,56 @@ MAM0
 </Version>
 
 <UnitType>
-SmallCraft
+Dropship
 </UnitType>
 
 <Name>
-Long-Range Shuttlecraft
+Overlord
 </Name>
 
 <Model>
-KR-61C
+(3056)
 </Model>
 
 <year>
-2841
+3056
 </year>
 
 <originalBuildYear>
-2841
+3056
 </originalBuildYear>
 
 <type>
-Clan Level 2
+IS Level 2
 </type>
 
 <motion_type>
-Aerodyne
+Spheroid
 </motion_type>
 
 <transporters>
-1stclassquarters:0.0:0
-crewquarters:0.0:0
+mechbay:36.0:6
+asfbay:6.0:2:2
+cargobay:99.0:0:3
 2ndclassquarters:0.0:0
-steeragequarters:25.0:0
-cargobay:14.5:1:1
+1stclassquarters:80.0:0
+crewquarters:238.0:0
 </transporters>
 
 <SafeThrust>
-4
+3
 </SafeThrust>
 
 <heatsinks>
-0
+120
 </heatsinks>
 
 <sink_type>
-1
+0
 </sink_type>
 
 <fuel>
-2000
+9180
 </fuel>
 
 <engine_type>
@@ -69,58 +70,97 @@ cargobay:14.5:1:1
 </armor_type>
 
 <armor_tech>
-2
+1
 </armor_tech>
 
 <armor>
-50
-31
-31
-42
+220
+210
+210
+176
 </armor>
 
 <Nose Equipment>
+(B) ISERPPC
+ISERPPC
+(B) ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
 </Nose Equipment>
 
 <Left Side Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(R) (B) ISERPPC
+(R) (B) ISERLargeLaser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
 </Left Side Equipment>
 
 <Right Side Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:30
+ISArtemisIV
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(R) (B) ISERPPC
+(R) (B) ISERLargeLaser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
 </Right Side Equipment>
 
 <Aft Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:36
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
 </Aft Equipment>
 
 <structural_integrity>
-6
+20
 </structural_integrity>
 
 <source>
-2850
+TRO 3057R - Clan Invasion
 </source>
 
 <tonnage>
-100.0
+9700.0
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>
-3
+126
 </crew>
 
 <officers>
-1
+8
 </officers>
 
 <gunners>
-0
+5
 </gunners>
 
 <passengers>
-2
+0
 </passengers>
 
 <marines>
@@ -136,10 +176,10 @@ cargobay:14.5:1:1
 </otherpassenger>
 
 <life_boat>
-0
+3
 </life_boat>
 
 <escape_pod>
-0
+3
 </escape_pod>
 

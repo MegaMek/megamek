@@ -1,0 +1,239 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Lion
+</Name>
+
+<Model>
+(2835)
+</Model>
+
+<year>
+2835
+</year>
+
+<originalBuildYear>
+2835
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:10.0:2
+infantrybay:10.0:0:2:Foot
+cargobay:2712.0:1:3
+2ndclassquarters:0.0:0
+1stclassquarters:90.0:0
+crewquarters:287.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+110
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6300
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+300
+200
+200
+246
+</armor>
+
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:48
+CLArtemisIV
+CLArtemisIV
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:96
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:48
+CLArtemisIV
+CLArtemisIV
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:96
+(R) (B) CLLRM15
+(R) CLLRM15
+(R) Clan Ammo LRM-15 (Clan) Artemis-capable:64
+(R) CLArtemisIV
+(R) CLArtemisIV
+(R) (B) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLMediumPulseLaser
+(R) CLMediumPulseLaser
+(R) (B) CLStreakSRM6
+(R) CLStreakSRM6
+(R) Clan Streak SRM 6 Ammo:60
+(R) (B) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAMS Ammo:96
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:48
+CLArtemisIV
+CLArtemisIV
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:96
+(R) (B) CLLRM15
+(R) CLLRM15
+(R) Clan Ammo LRM-15 (Clan) Artemis-capable:64
+(R) CLArtemisIV
+(R) CLArtemisIV
+(R) (B) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLMediumPulseLaser
+(R) CLMediumPulseLaser
+(R) (B) CLStreakSRM6
+(R) CLStreakSRM6
+(R) Clan Streak SRM 6 Ammo:60
+(R) (B) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAMS Ammo:96
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLLRM15
+CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable:64
+CLArtemisIV
+CLArtemisIV
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo:64
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:96
+</Aft Equipment>
+
+<structural_integrity>
+14
+</structural_integrity>
+
+<source>
+TRO 3057R - Early Succession War
+</source>
+
+<tonnage>
+7300.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+320
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

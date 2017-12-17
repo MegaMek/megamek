@@ -1,7 +1,7 @@
 Mercenaries Dropship
-Excalibur (3056),1
+Excalibur 'Pocket Warship',1
 Intruder (3056),2
-Mule (Standard),3
+Mule (2737),3
 Triumph (3057),4
 Leopard (3056),5
 Union (3055),6

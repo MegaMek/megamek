@@ -24,6 +24,10 @@ Tyre
 3064
 </year>
 
+<originalBuildYear>
+3064
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -69,6 +76,7 @@ CLHeavyMediumLaser
 CLStreakSRM6
 Clan Streak SRM 6 Ammo
 Clan Streak SRM 6 Ammo
+CLCASE
 CLCASE
 CLCASE
 </Nose Equipment>

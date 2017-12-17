@@ -24,6 +24,10 @@ E
 3069
 </year>
 
+<originalBuildYear>
+3069
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -76,11 +83,12 @@ CLLargePulseLaser:OMNI
 
 <Left Wing Equipment>
 CLHAG40:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE
@@ -90,11 +98,12 @@ CLCASE
 
 <Right Wing Equipment>
 CLHAG40:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
-HAG/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE

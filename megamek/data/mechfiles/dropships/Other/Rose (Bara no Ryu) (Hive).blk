@@ -1,0 +1,183 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Rose (Bara no Ryu)
+</Name>
+
+<Model>
+(Hive)
+</Model>
+
+<year>
+3078
+</year>
+
+<originalBuildYear>
+3078
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:4.0:1:1
+mechbay:4.0:0
+heavyvehiclebay:36.0:3:3
+2ndclassquarters:0.0:0
+1stclassquarters:80.0:0
+crewquarters:273.0:0
+cargobay:5752.0:1:4
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+168
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1800
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+150
+120
+120
+105
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(R) (B) Medium Laser
+(R) (B) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:12
+(R) ISArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(R) (B) Medium Laser
+(R) (B) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:12
+(R) ISArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<tonnage>
+16000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+363
+</crew>
+
+<officers>
+8
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

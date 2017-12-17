@@ -515,21 +515,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 setToHit(target);
                 targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
             }
-            //Set up the selection pane
-            String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
-            String msg = Messages.getString(i18nString);
-            i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
-            String title = Messages.getString(i18nString);
-            String input = (String) JOptionPane.showInputDialog(clientgui, msg,
-                    title, JOptionPane.QUESTION_MESSAGE, null,
-                    targetDescriptions.toArray(), targetDescriptions.get(0));
-            if (input != null) {
-                for (int i = 0; i < targetDescriptions.size(); i++) {
-                    if (input.equals(targetDescriptions.get(i))) {
-                        break;
-                    }
-                }
-            }
             int choice = server.processTeleguidedMissileCFR(getAttackerId(), targetDescriptions);
             newTarget = targets.get(choice);
          } else {

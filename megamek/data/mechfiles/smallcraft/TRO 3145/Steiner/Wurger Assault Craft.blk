@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,68 +20,33 @@ Wurger Assault Craft
 (Standard)
 </Model>
 
-<Tonnage>
-160
-</Tonnage>
+<year>
+3099
+</year>
+
+<originalBuildYear>
+3099
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:1.0:1:1
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:25.0:0
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
-
-<Armor>
-119
-102
-102
-89
-</Armor>
-
-<Nose Equipment>
-ISAMS
-ISAMS
-ISAMS
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISBeagleActiveProbe
-</Nose Equipment>
-
-<Left Side Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-(R) ISAMS
-(R) ISAMS
-(R) ISAMS
-</Left Side Equipment>
-
-<Right Side Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-(R) ISAMS
-(R) ISAMS
-(R) ISAMS
-</Right Side Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISGuardianECM
-</Aft Equipment>
-
-<structural_integrity>
-9
-</structural_integrity>
 
 <heatsinks>
 14
@@ -95,46 +60,118 @@ ISGuardianECM
 1200
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3099
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
+<engine_type>
 1
-</designtype>
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+119
+102
+102
+89
+</armor>
+
+<Nose Equipment>
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+BeagleActiveProbe
+</Nose Equipment>
+
+<Left Side Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISGuardianECMSuite
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3145 Lyran Commonwealth - Early Republic
+</source>
+
+<tonnage>
+160.0
+</tonnage>
+
+<designtype>
 0
-</engine_type>
-
-<motion_type>
-spheroid
-</motion_type>
-
-<transporters>
-CargoBay:1:1
-</transporters>
+</designtype>
 
 <crew>
 5
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+2
+</gunners>
+
 <passengers>
 0
 </passengers>
 
-<source>
-TRO 3145 Lyran Commonwealth - Early Republic
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

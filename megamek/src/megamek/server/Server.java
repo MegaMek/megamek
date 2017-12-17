@@ -26310,7 +26310,7 @@ public class Server implements Runnable {
             if (destroyed == (int) destroyed) {
                 r.add((int) destroyed); 
             } else {
-                r.add(String.valueOf(destroyed));
+                r.add(String.valueOf(Math.ceil(destroyed * 2.0) / 2.0));
             }
             reports.add(r);
             if (!hitBay.isCargo()) {

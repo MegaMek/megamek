@@ -24,6 +24,10 @@ Chaeronea
 2901
 </year>
 
+<originalBuildYear>
+2901
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 11

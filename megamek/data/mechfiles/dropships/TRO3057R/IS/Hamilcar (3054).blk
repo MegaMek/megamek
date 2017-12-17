@@ -1,0 +1,180 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Hamilcar
+</Name>
+
+<Model>
+(3054)
+</Model>
+
+<year>
+3054
+</year>
+
+<originalBuildYear>
+3054
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+mechbay:8.0:4
+asfbay:4.0:2:2
+cargobay:85.5:1:3
+2ndclassquarters:0.0:0
+1stclassquarters:60.0:0
+crewquarters:210.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+58
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2910
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+170
+140
+140
+154
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:40
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) SRM 4
+IS Ammo SRM-4 Artemis-capable:25
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargePulseLaser
+(R) (B) LRM 15
+(R) IS Ammo LRM-15 Artemis-capable:16
+(R) ISArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargePulseLaser
+(R) (B) LRM 15
+(R) IS Ammo LRM-15 Artemis-capable:16
+(R) ISArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+(B) LRM 15
+IS Ammo LRM-15 Artemis-capable:16
+ISArtemisIV
+(B) SRM 4
+IS Ammo SRM-4 Artemis-capable:25
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+3600.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+60
+</crew>
+
+<officers>
+6
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,33 @@ Bus
 S-7A
 </Model>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+2602
+</year>
+
+<originalBuildYear>
+2602
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:32.0:0:1
+2ndclassquarters:0.0:0
+crewquarters:0.0:0
+1stclassquarters:0.0:0
+steeragequarters:15.0:0
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
-
-<Armor>
-80
-24
-24
-32
-</Armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment> 
-</Right Side Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
-
-<structural_integrity>
-5
-</structural_integrity>
 
 <heatsinks>
 0
@@ -63,42 +60,86 @@ S-7A
 160
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2602
-</year>
+<armor_type>
+41
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+80
+26
+26
+32
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+5
+</structural_integrity>
+
+<source>
+TRO 3057R- Star League
+</source>
+
+<tonnage>
+100.0
+</tonnage>
 
 <designtype>
 0
 </designtype>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-CargoBay:32:0
-</transporters>
-
 <crew>
 3
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+0
+</gunners>
+
 <passengers>
-10
+0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

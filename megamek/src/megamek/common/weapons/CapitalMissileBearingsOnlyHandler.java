@@ -22,8 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.TeleMissileTargetDialog;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
@@ -106,6 +108,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     
     //Defined here so we can use it in multiple methods
     Mounted bayWAmmo;
+    int range;
+    Coords targetCoords;
 
     /*
      * (non-Javadoc)
@@ -415,6 +419,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         
         final Coords tc = target.getPosition();
+        targetCoords = tc;
         //Set the original missile target data. AMS and to-hit table calculations need this.
         aaa.setOldTargetCoords(tc);
         aaa.setOriginalTargetId(target.getTargetId());
@@ -507,12 +512,24 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         if (weapon.getType() instanceof TeleOperatedMissileBayWeapon) {
             List<String> targetDescriptions = new ArrayList<String>();
             for (Aero target : targets) {
-                waa.setTargetId(target.getId());
-                waa.setTargetType(target.getTargetType());
-                targetDescriptions.add(target.getDisplayName() + ": Needs " + waa.toHit(game).getValue() + " to hit.");
+                setToHit(target);
+                targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
             }
-            TeleMissileTargetDialog ttd = new TeleMissileTargetDialog(clientgui, targetDescriptions);
-            ttd.setVisible(true);
+            //Set up the selection pane
+            String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
+            String msg = Messages.getString(i18nString);
+            i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
+            String title = Messages.getString(i18nString);
+            String input = (String) JOptionPane.showInputDialog(clientgui, msg,
+                    title, JOptionPane.QUESTION_MESSAGE, null,
+                    targetDescriptions.toArray(), targetDescriptions.get(0));
+            if (input != null) {
+                for (int i = 0; i < targetDescriptions.size(); i++) {
+                    if (input.equals(targetDescriptions.get(i))) {
+                        break;
+                    }
+                }
+            }
             int choice = server.processTeleguidedMissileCFR(getAttackerId(), targetDescriptions);
             newTarget = targets.get(choice);
          } else {
@@ -593,73 +610,74 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         target = newTarget;
         aaa.setTargetId(target.getTargetId());
         aaa.setTargetType(target.getTargetType());
+        setToHit(target);
+    }
 
-            
-            //Now that we have a ship target, set up the to-hit modifiers
-            Aero targetship = (Aero) newTarget;
-            toHit = new ToHitData(4, "Base");
-            int range = tc.distance(target.getPosition());
-            if (range > 20 && range <= 25) {
-                toHit.addModifier(6, "extreme range");
-            } else if (range > 12 && range <= 20) {
-                toHit.addModifier(4, "long range");
-            } else if (range > 6 && range <= 12) {
-                toHit.addModifier(2, "medium range");
-            } else if (range <= 6) {
-                toHit.addModifier(0, "short range");
-            } 
-            //If the target is closer than the set range band, add a +1 modifier
-            if ((detRangeExtreme && range <= 20)
-                    || (detRangeLong && range <= 12) 
-                    || (detRangeMedium && range <= 6)) {
-                toHit.addModifier(1, "target closer than range setting");
-            }
-            
-            // evading bonuses
-            if ((target != null) && targetship.isEvading()) {
-                toHit.addModifier(2, "target is evading");
-            }
-            
-            // is the target at zero velocity
-            if ((targetship.getCurrentVelocity() == 0) && !(targetship.isSpheroid() && !game.getBoard().inSpace())) {
-                toHit.addModifier(-2, "target is not moving");
-            }
-            
-            //Barracuda Missile Modifier
-            getMountedAmmo();
-            AmmoType bayAType = (AmmoType) bayWAmmo.getType();
-            if ((bayWAmmo.getType().hasFlag(AmmoType.F_AR10_BARRACUDA))
-                    || (bayAType.getAmmoType() == AmmoType.T_BARRACUDA)) {
-                toHit.addModifier(-2, "Barracuda Missile");
-            }
-            
-            if (target.isAirborne() && target.isAero()) {
-                if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
-                    // get mods for direction of attack
-                    int side = toHit.getSideTable();
-                    // if this is an aero attack using advanced movement rules then
-                    // determine side differently
-                    if (game.useVectorMove()) {
-                        boolean usePrior = false;
-                        side = ((Entity) target).chooseSide(tc, usePrior);
-                    }
-                    if (side == ToHitData.SIDE_FRONT) {
-                        toHit.addModifier(+1, "attack against nose");
-                    }
-                    if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
-                        toHit.addModifier(+2, "attack against side");
-                    }
+    private void setToHit(Targetable target) {    
+        //Once we have a ship target, set up the to-hit modifiers
+        Aero targetship = (Aero) target;
+        toHit = new ToHitData(4, "Base");
+        if (range > 20 && range <= 25) {
+            toHit.addModifier(6, "extreme range");
+        } else if (range > 12 && range <= 20) {
+            toHit.addModifier(4, "long range");
+        } else if (range > 6 && range <= 12) {
+            toHit.addModifier(2, "medium range");
+        } else if (range <= 6) {
+            toHit.addModifier(0, "short range");
+        } 
+        //If the target is closer than the set range band, add a +1 modifier
+        if ((detRangeExtreme && range <= 20)
+                || (detRangeLong && range <= 12) 
+                || (detRangeMedium && range <= 6)) {
+            toHit.addModifier(1, "target closer than range setting");
+        }
+   
+        // evading bonuses
+        if ((target != null) && targetship.isEvading()) {
+            toHit.addModifier(2, "target is evading");
+        }
+    
+        // is the target at zero velocity
+        if ((targetship.getCurrentVelocity() == 0) && !(targetship.isSpheroid() && !game.getBoard().inSpace())) {
+            toHit.addModifier(-2, "target is not moving");
+        }
+    
+        //Barracuda Missile Modifier
+        getMountedAmmo();
+        AmmoType bayAType = (AmmoType) bayWAmmo.getType();
+        if ((bayWAmmo.getType().hasFlag(AmmoType.F_AR10_BARRACUDA))
+                || (bayAType.getAmmoType() == AmmoType.T_BARRACUDA)) {
+            toHit.addModifier(-2, "Barracuda Missile");
+        }
+   
+        if (target.isAirborne() && target.isAero()) {
+            if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
+                // get mods for direction of attack
+                int side = toHit.getSideTable();
+                // if this is an aero attack using advanced movement rules then
+                // determine side differently
+                if (game.useVectorMove()) {
+                    boolean usePrior = false;
+                    side = ((Entity) target).chooseSide(targetCoords, usePrior);
+                }
+                if (side == ToHitData.SIDE_FRONT) {
+                    toHit.addModifier(+1, "attack against nose");
+                }
+                if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
+                    toHit.addModifier(+2, "attack against side");
                 }
             }
+        }
             
-            // Space ECM
-            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                int ecm = ComputeECM.getLargeCraftECM(ae, tc, target.getPosition());
-                ecm = Math.min(4, ecm);
-                if (ecm > 0) {
-                    toHit.addModifier(ecm, "ECM");
-                }
+        // Space ECM
+        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            int ecm = ComputeECM.getLargeCraftECM(ae, targetCoords, target.getPosition());
+            ecm = Math.min(4, ecm);
+            if (ecm > 0) {
+                toHit.addModifier(ecm, "ECM");
             }
+        }
     }
             
             

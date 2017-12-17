@@ -42,7 +42,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -85,10 +88,15 @@ import megamek.common.MapSettings;
 import megamek.common.Terrains;
 import megamek.common.util.BoardUtilities;
 
-public class BoardEditor extends JComponent implements ItemListener,
-                                                       ListSelectionListener, ActionListener, DocumentListener,
-                                                       IMapSettingsObserver {
+public class BoardEditor extends JComponent
+        implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
     
+    /**
+     * Class to make terrains in JComboBoxes easier.  This enables keeping the terrain type int separate from the name
+     * that gets displayed and also provides a way to get tooltips.
+     * 
+     * @author arlith
+     */
     private static class TerrainHelper implements Comparable<TerrainHelper> {
 
         private int terrainType;
@@ -113,10 +121,64 @@ public class BoardEditor extends JComponent implements ItemListener,
         public int compareTo(TerrainHelper o) {
             return toString().compareTo(o.toString());
         }
+        
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof Integer) {
+                return getTerrainType() == ((Integer)other).intValue();
+            }
+            if (!(other instanceof TerrainHelper)) {
+                return false;
+            }
+            return getTerrainType() == ((TerrainHelper)other).getTerrainType();
+        }
+    }
 
+    /**
+     * Class to make it easier to display a <code>Terrain</code> in a JList or JComboBox.
+     *
+     * @author arlith
+     */
+    private static class TerrainTypeHelper implements Comparable<TerrainTypeHelper> {
+
+        ITerrain terrain;
+
+        TerrainTypeHelper(ITerrain terrain) {
+            this.terrain = terrain;
+        }
+
+        public ITerrain getTerrain() {
+            return terrain;
+        }
+
+        @Override
+        public String toString() {
+            String baseString = Terrains.getDisplayName(terrain.getType(), terrain.getLevel());
+            if (baseString == null) {
+                baseString = Terrains.getEditorName(terrain.getType());
+                baseString += " " + terrain.getLevel();
+            }
+            if (terrain.hasExitsSpecified()) {
+                baseString += " (Exits: " + terrain.getExits() + ")";
+            }
+            return baseString; 
+        }
+
+        public String getTooltip() {
+            return terrain.toString();
+        }
+
+        @Override
+        public int compareTo(TerrainTypeHelper o) {
+            return toString().compareTo(o.toString());
+        }
+        
     }
     
-
+    /**
+     *  ListCellRenderer for rendering tooltips for each item in a list or combobox.  Code from SourceForge:
+     *  https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items 
+     */
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
         /**
          * 
@@ -124,10 +186,11 @@ public class BoardEditor extends JComponent implements ItemListener,
         private static final long serialVersionUID = 7428395938750335593L;
 
         TerrainHelper[] terrains;
+        
+        List<TerrainTypeHelper> terrainTypes;
 
-        @SuppressWarnings("rawtypes")
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 
             JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index, isSelected,
@@ -136,11 +199,18 @@ public class BoardEditor extends JComponent implements ItemListener,
             if (-1 < index && null != value && null != terrains) {
                 list.setToolTipText(terrains[index].getTerrainTooltip());
             }
+            if (-1 < index && null != value && null != terrainTypes) {
+                list.setToolTipText(terrainTypes.get(index).getTooltip());
+            }
             return comp;
         }
 
         public void setTerrains(TerrainHelper[] terrains) {
             this.terrains = terrains;
+        }
+        
+        public void setTerrainTypess(List<TerrainTypeHelper> terrainTypes) {
+            this.terrainTypes = terrainTypes;
         }
     }
 
@@ -167,7 +237,8 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JButton butElevUp;
     private JButton butElevDown;
     private JLabel labTerrain;
-    private JList<String> lisTerrain;
+    private JList<TerrainTypeHelper> lisTerrain;
+    private ComboboxToolTipRenderer lisTerrainRenderer;
     private JButton butDelTerrain;
     private JPanel panTerrainType;
     private JComboBox<TerrainHelper> choTerrainType;
@@ -317,8 +388,10 @@ public class BoardEditor extends JComponent implements ItemListener,
         butElevDown.addActionListener(this);
         labTerrain = new JLabel(
                 Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
-        lisTerrain = new JList<String>(new DefaultListModel<String>());
+        lisTerrainRenderer = new ComboboxToolTipRenderer();
+        lisTerrain = new JList<>(new DefaultListModel<>());
         lisTerrain.addListSelectionListener(this);
+        lisTerrain.setCellRenderer(lisTerrainRenderer);
         lisTerrain.setVisibleRowCount(6);
         refreshTerrainList();
         butDelTerrain = new JButton(Messages
@@ -534,15 +607,23 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Refreshes the terrain list to match the current hex
      */
     private void refreshTerrainList() {
-        ((DefaultListModel<String>) lisTerrain.getModel()).removeAllElements();
+        
+        ((DefaultListModel<TerrainTypeHelper>)lisTerrain.getModel()).removeAllElements();
+        lisTerrainRenderer.setTerrainTypess(null);
         int terrainTypes[] = curHex.getTerrainTypes();
+        List<TerrainTypeHelper> types = new ArrayList<>();
         for (int i = 0; i < terrainTypes.length; i++) {
             ITerrain terrain = curHex.getTerrain(terrainTypes[i]);
             if (terrain != null) {
-                ((DefaultListModel<String>) lisTerrain.getModel()).addElement(terrain
-                                                                                      .toString());
+                TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
+                types.add(tth);
             }
         }
+        Collections.sort(types);
+        for (TerrainTypeHelper tth : types) {
+            ((DefaultListModel<TerrainTypeHelper>) lisTerrain.getModel()).addElement(tth);
+        }
+        lisTerrainRenderer.setTerrainTypess(types);
     }
 
     /**
@@ -585,9 +666,10 @@ public class BoardEditor extends JComponent implements ItemListener,
             return;
         }
         ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
-                lisTerrain.getSelectedValue());
+                lisTerrain.getSelectedValue().getTerrain());
         terrain = curHex.getTerrain(terrain.getType());
-        choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
+        TerrainHelper terrainHelper = new TerrainHelper(terrain.getType());
+        choTerrainType.setSelectedItem(terrainHelper);
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
         cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
         texTerrExits.setText(Integer.toString(terrain.getExits()));
@@ -968,7 +1050,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if (ae.getSource().equals(butDelTerrain)
                    && (lisTerrain.getSelectedValue() != null)) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
-                    lisTerrain.getSelectedValue());
+                    lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();

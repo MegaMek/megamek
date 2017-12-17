@@ -43,8 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -127,6 +125,7 @@ public class BoardEditor extends JComponent implements ItemListener,
 
         TerrainHelper[] terrains;
 
+        @SuppressWarnings("rawtypes")
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {

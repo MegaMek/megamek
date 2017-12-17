@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.43.5-git
+v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.
 + PR #686: Large Craft Advanced Point Defense Rules from Stratops p96
 + PR #686: Expanded AMS functionality. Now works against Arrow IV Homing and LAA/AAA/AS missiles per the rules for

@@ -1,0 +1,193 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Okinawa
+</Name>
+
+<Model>
+(3056)
+</Model>
+
+<year>
+3056
+</year>
+
+<originalBuildYear>
+3056
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:2:1
+asfbay:12.0:4:2
+cargobay:325.5:2:3
+2ndclassquarters:0.0:0
+1stclassquarters:50.0:0
+crewquarters:35.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+77
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4050
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+200
+150
+150
+140
+</armor>
+
+<Nose Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) ISERLargeLaser
+(R) (B) LRM 10
+(R) IS Ammo LRM-10 Artemis-capable:12
+(R) ISArtemisIV
+(R) (B) ISLargePulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) ISERLargeLaser
+(R) (B) LRM 10
+(R) IS Ammo LRM-10 Artemis-capable:12
+(R) ISArtemisIV
+(R) (B) ISLargePulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(B) ISLargePulseLaser
+(B) ISStreakSRM2
+ISStreakSRM2
+IS Streak SRM 2 Ammo:100
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+4500.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+46
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

@@ -1,0 +1,179 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Broadsword
+</Name>
+
+<Model>
+(2979)
+</Model>
+
+<year>
+2979
+</year>
+
+<originalBuildYear>
+2979
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+mechbay:1.0:1
+mechbay:2.0:2
+mechbay:2.0:2
+cargobay:69.5:0:4
+1stclassquarters:20.0:0
+2ndclassquarters:0.0:0
+crewquarters:49.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+79
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5200
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+190
+160
+160
+126
+</armor>
+
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+(B) CLERPPC
+CLERPPC
+(B) CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:12
+CLArtemisIV
+(B) CLAntiMissileSystem
+CLAMS Ammo:24
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+CLArtemisIV
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLSmallPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+CLArtemisIV
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLSmallPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLMediumPulseLaser
+(B) CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo:60
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3057R - Late Succession War - Lostech
+</source>
+
+<tonnage>
+1900.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+19
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

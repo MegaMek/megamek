@@ -1,0 +1,184 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union
+</Name>
+
+<Model>
+(2708b)
+</Model>
+
+<year>
+2708
+</year>
+
+<originalBuildYear>
+2708
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:4.0:2
+mechbay:8.0:2
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:77.0:0
+cargobay:337.5:2:3
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+90
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6450
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+180
+180
+180
+104
+</armor>
+
+<Nose Equipment>
+(B) ISERLargeLaser
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:36
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:32
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:32
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:32
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+3600.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+38
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+7
+</escape_pod>
+

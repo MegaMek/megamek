@@ -1,0 +1,183 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union C
+</Name>
+
+<Model>
+(2840) (Cargo)
+</Model>
+
+<year>
+2840
+</year>
+
+<originalBuildYear>
+2840
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:1:1
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+cargobay:2351.0:2:2
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+126
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+7500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+280
+210
+210
+168
+</armor>
+
+<Nose Equipment>
+(B) CLGaussRifle
+Clan Gauss Ammo:16
+(B) CLERLargeLaser
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:36
+CLArtemisIV
+CLArtemisIV
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo:32
+(B) CLERLargeLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(R) (B) CLMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo:32
+(B) CLERLargeLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(R) (B) CLMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLGaussRifle
+Clan Gauss Ammo:16
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:18
+CLArtemisIV
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3057R - Early Succession War
+</source>
+
+<tonnage>
+4700.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+25
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

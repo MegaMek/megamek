@@ -13,23 +13,23 @@ SmallCraft
 </UnitType>
 
 <Name>
-Oo-Suzumebachi
+Bus
 </Name>
 
 <Model>
-(Standard)
+S-7AC
 </Model>
 
 <year>
-3118
+2843
 </year>
 
 <originalBuildYear>
-3118
+2843
 </originalBuildYear>
 
 <type>
-IS Level 3
+Clan Level 2
 </type>
 
 <motion_type>
@@ -37,28 +37,27 @@ Aerodyne
 </motion_type>
 
 <transporters>
-battlearmorbay:3.0:1:1
-cargobay:1.0:1:2
+cargobay:32.0:0:1
 2ndclassquarters:0.0:0
-1stclassquarters:0.0:0
 crewquarters:0.0:0
-steeragequarters:20.0:0
+1stclassquarters:0.0:0
+steeragequarters:15.0:0
 </transporters>
 
 <SafeThrust>
-6
+3
 </SafeThrust>
 
 <heatsinks>
-8
+0
 </heatsinks>
 
 <sink_type>
-1
+0
 </sink_type>
 
 <fuel>
-800
+160
 </fuel>
 
 <engine_type>
@@ -66,66 +65,50 @@ steeragequarters:20.0:0
 </engine_type>
 
 <armor_type>
-19
+41
 </armor_type>
 
 <armor_tech>
-5
+1
 </armor_tech>
 
 <armor>
-131
-95
-95
-64
+96
+30
+30
+40
 </armor>
 
 <Nose Equipment>
-MRM 40
-ISApollo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
 </Nose Equipment>
 
 <Left Side Equipment>
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
 </Left Side Equipment>
 
 <Right Side Equipment>
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
 </Right Side Equipment>
 
 <Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
 </Aft Equipment>
 
 <structural_integrity>
-9
+5
 </structural_integrity>
 
 <source>
-TRO 3145 Draconis Combine - Late Republic
+TRO 3057R- Star League
 </source>
 
 <tonnage>
-170.0
+100.0
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>
-22
+3
 </crew>
 
 <officers>
@@ -133,7 +116,7 @@ TRO 3145 Draconis Combine - Late Republic
 </officers>
 
 <gunners>
-1
+0
 </gunners>
 
 <passengers>

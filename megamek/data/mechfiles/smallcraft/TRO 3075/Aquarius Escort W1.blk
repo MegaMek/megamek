@@ -90,15 +90,15 @@ ISArrowIVHomingAmmo
 </Nose Equipment>
 
 <Left Side Equipment>
-ISERMediumLaser
 SRM 6
 IS Ammo SRM-6
+(R) ISERMediumLaser 
 </Left Side Equipment>
 
 <Right Side Equipment>
-ISERMediumLaser
 SRM 6
 IS Ammo SRM-6
+(R) ISERMediumLaser 
 </Right Side Equipment>
 
 <Aft Equipment>

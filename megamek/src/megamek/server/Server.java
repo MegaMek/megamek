@@ -10227,7 +10227,7 @@ public class Server implements Runnable {
                                 + " but instead it came from player " + rp.connId);
                         continue;
                     }
-                    return (int)rp.packet.getData()[0];
+                    return (int)rp.packet.getData()[1];
                 } else { // If no packets, wait again
                     continue;
                 }

@@ -10198,7 +10198,7 @@ public class Server implements Runnable {
     }
 
     public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
-        final String METHOD_NAME = "processPointblankShotCFR(Entity, Entity)";
+        final String METHOD_NAME = "processTeleguidedMissileCFR(Entity, Entity)";
         sendTeleguidedMissileCFR(playerId, targetDescriptions);
         while (true) {
             synchronized (cfrPacketQueue) {

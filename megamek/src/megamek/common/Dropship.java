@@ -1854,4 +1854,15 @@ public class Dropship extends SmallCraft {
         }
     }
 
+    @Override
+    public int getBayPersonnel() {
+        int totalBayPersonnel = 0;
+        
+        for (Bay next : getTransportBays()) {
+            totalBayPersonnel += next.getPersonnel(isClan());
+        }
+
+        return totalBayPersonnel;
+    }
+
 }

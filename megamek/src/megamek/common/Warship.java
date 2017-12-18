@@ -532,4 +532,16 @@ public class Warship extends Jumpship {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }
+
+    @Override
+    public int getBayPersonnel() {
+        int totalBayPersonnel = 0;
+        
+        for (Bay next : getTransportBays()) {
+            totalBayPersonnel += next.getPersonnel(isClan());
+        }
+
+        return totalBayPersonnel;
+    }
+
 }

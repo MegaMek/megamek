@@ -515,8 +515,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 setToHit(target);
                 targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
             }
-            int choice = server.processTeleguidedMissileCFR(getAttackerId(), targetDescriptions);
+            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions);
             newTarget = targets.get(choice);
+
          } else {
             // Otherwise, find the largest and closest target of those available
             int bestDistance = Integer.MAX_VALUE;

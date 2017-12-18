@@ -13974,7 +13974,8 @@ public class Server implements Runnable {
                     target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                             .getTarget(game) : null;
                     if (target == null) {
-                        //If multiple shots are involved, the target seems to get lost. This will reset it.
+                        continue;
+                        /*//If multiple shots are involved, the target seems to get lost. This will reset it.
                         CapitalMissileBearingsOnlyHandler cmh = (CapitalMissileBearingsOnlyHandler) wh;
                         cmh.convertHexTargetToEntityTarget(vPhaseReport);
                         target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
@@ -13982,7 +13983,7 @@ public class Server implements Runnable {
                         if (target == null) {
                             //in case our target really is null. 
                             continue;
-                        }
+                        } */
                     } 
                 } else {
                     //For all other types of homing artillery

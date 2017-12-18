@@ -104,7 +104,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         super(t, w, g, s);
     }
     
-    private ClientGUI clientgui;
     
     //Defined here so we can use it in multiple methods
     Mounted bayWAmmo;

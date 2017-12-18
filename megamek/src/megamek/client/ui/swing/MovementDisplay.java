@@ -1467,7 +1467,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
                     ejecting = true;
                 }
-                if (unusedVelocity && !flyoff && !landing && !ejecting) {
+                if (unusedVelocity && !flyoff && !landing && !ejecting && !cmd.contains(MoveStepType.FLEE)) {
                     String title = Messages
                             .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
                     String body = Messages

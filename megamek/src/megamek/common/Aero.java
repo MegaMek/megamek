@@ -206,6 +206,11 @@ public class Aero extends Entity implements IAero, IBomber {
 
     private int eccmRoll = 0;
 
+    @Override
+    public boolean canFlee() {
+    	return (super.canFlee() && getAltitude() == 10 && hasMP());
+    }
+    
     public Aero() {
         super();
         // need to set altitude to something different than entity

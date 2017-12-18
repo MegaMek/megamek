@@ -1636,6 +1636,11 @@ public class Infantry extends Entity {
         return cost;
     }
     
+    @Override
+    public boolean canFlee() {
+    	return (super.canFlee() && super.atEdge());
+    }
+    
     /**
      * The alternate cost here is used by MekHQ to create costs that reflect just the cost of 
      * equipment. The motive costs here are based on the costs associated with an auto-rifle

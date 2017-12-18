@@ -1956,6 +1956,11 @@ public class Protomech extends Entity {
         }
         return super.getLocationAbbr(loc);
     }
+    
+    @Override
+    public boolean canFlee() {
+    	return (super.canFlee() && super.hasMP() && super.atEdge());
+    }
 
     /**
      * * Not every Protomech has a main gun.

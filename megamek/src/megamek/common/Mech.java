@@ -6016,6 +6016,12 @@ public abstract class Mech extends Entity {
         return condEjectAmmo;
     }
 
+    @Override
+    public boolean canFlee() {
+    	return (super.canFlee() && super.hasMP() && super.atEdge());
+    }
+    
+    
     /**
      * @param condEjectAmmo
      *            The condEjectAmmo to set.

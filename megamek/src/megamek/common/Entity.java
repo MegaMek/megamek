@@ -9042,21 +9042,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return unitNumber;
     }
 
+
     /**
-     * Returns whether an entity can flee from its current position. Currently
-     * returns true if the entity is on the edge of the board.
+     * Returns whether an entity is on the edge of the board.
+     */
+    public boolean atEdge() {
+    	Coords pos = getPosition();
+        return ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
+                || (pos.getY() == 0) || (pos.getY() == (game.getBoard()
+                        .getHeight() - 1)));
+    }
+    
+
+    /**
+     * Returns whether an entity currently has MP.
+     */
+    public boolean hasMP() {
+    	return (getWalkMP() > 0);
+    }
+    
+    /**
+     * Returns whether an entity can flee.
      */
     public boolean canFlee() {
-        Coords pos = getPosition();
-        return (pos != null)
-               && ((getWalkMP() > 0) || (this instanceof Infantry))
+    	Coords pos = getPosition();
+            return (pos != null)
                && !isProne()
                && !isStuck()
                && !isShutDown()
                && !getCrew().isUnconscious()
-               && ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
-                   || (pos.getY() == 0) || (pos.getY() == (game.getBoard()
-                                                               .getHeight() - 1)));
+               ;
     }
 
     public void setEverSeenByEnemy(boolean b) {

@@ -2870,6 +2870,11 @@ public class Tank extends Entity {
     public boolean isNuclearHardened() {
         return true;
     }
+    
+    @Override
+    public boolean canFlee() {
+    	return (super.canFlee() && super.hasMP() && super.atEdge());
+    }
 
     @Override
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted)

@@ -1464,7 +1464,7 @@ public class Client implements IClientCommandHandler {
                 cfrEvt.setTargetId((int) c.getObject(2));
                 break;
             case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
-                cfrEvt.setTeleguidedMissileTargets((List<String>)c.getObject(0));
+                cfrEvt.setTeleguidedMissileTargets((List<String>)c.getObject(1));
                 break;
             }
             game.processGameEvent(cfrEvt);

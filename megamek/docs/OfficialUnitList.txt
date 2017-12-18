@@ -462,63 +462,116 @@ Mustang Fighter (Standard)|
 Colt Medium Fighter (LRM)|
 Colt Medium Fighter (SRM)|
 Tsuru VIP Aircraft (Standard)|
-Broadsword (Standard)|
-Carrier (Standard)|
-Confederate (Clan)|
-Lion (Clan)|
-Lion (Wolf's Dragoons 3052)|
-Miraborg (Standard)|
-Noruff (Standard)|
-Overlord C|
-Sassanid (Standard)|
-Titan (Clan)|
-Union C|
+Gaajian System Patrol Boat (2485)|
+Gaajian System Patrol Boat (3060)|
+Hoshiryokou (Standard)|
+Hoshiryokou (Tug Boat)|
+Aqueduct Liquid Carrier (Standard)|
+Princess Luxury Liner (Cargo)|
+Princess Luxury Liner (Standard)|
+Lee (2756)|
+M3 Drone CASPAR|
+Model 96C 'Howdah'|
+Pueblo (2673)|
+Jumbo (Standard)|
+Polaris (Standard)|
+Cockatrice Monitor Platform (Drone)|
+Dragau Assault Interceptor (CASPAR II Drone)|
+Tiamat Pocket Warship (CASPAR II Drone)|
+Danais (Standard)|
+Trojan (Blockade Runner)|
+Lion (3052) (WD)|
+Rose (Bara no Ryu) (Hive)|
+Outpost (Defender)|
+Titan (Monitor)|
+Claymore V3|
+Lung Wang P2|
+Merlin R1|
+Vengeance DC|
+Behemoth C (2848)|
+Behemoth C (Arcship)|
+Broadsword (2979)|
+Carrier (2882)|
+Confederate C (3048)|
+Lion (2835)|
+Lion (3005) (WD)|
+Miraborg (3053)|
+Noruff (3056)|
+Overlord C (2818) (Tank)|
+Overlord C (2818)|
+Sassanid (2875)|
+Titan (2953)|
+Union C (2829) (Tank)|
+Union C (2829)|
+Union C (2840) (Cargo)|
 Achilles (2582)|
+Achilles (2721)|
+Achilles (2721b)|
 Achilles (3055)|
 Avenger (2816)|
 Avenger (3048)|
-Behemoth (Standard)|
-Buccaneer (Standard)|
-Claymore (Standard)|
+Behemoth (2658)|
+Behemoth (2782)|
+Buccaneer (2708)|
+Buccaneer (2709) (Vehicle)|
+Buccaneer (2792)|
+Cargo King (2790)|
+Cargomaster (2790)|
+Claymore (3054)|
 Condor (2801)|
+Condor (3035) Dove|
 Condor (3054)|
+Condor (3079)|
 Confederate (2602)|
-Confederate (2703)|
+Confederate (2602) (Mech)|
+Danais (2720)|
 Excalibur (2786)|
-Excalibur (3056)|
 Fortress (2613)|
 Fortress (3058)|
 Fury (2638)|
 Fury (3056)|
 Gazelle (2531)|
 Gazelle (3055)|
-Hamilcar (Standard)|
-Hannibal (Standard)|
-Hercules (Standard)|
+Hamilcar (3054)|
+Hamilcar (3084)|
+Hannibal (3055)|
+Hercules (3053)|
 Intruder (2655)|
 Intruder (3056)|
-Kuan Ti (Standard)|
+Kuan Ti (3055)|
 Leopard (2537)|
 Leopard (3056)|
 Leopard CV (2581)|
 Leopard CV (3054)|
 Lion (2595)|
-Lung Wang (Standard)|
-Mammoth (Standard)|
-Model 97 'Octopus' (Standard)|
-Monarch (Standard)|
-Mule (Standard)|
-Nagumo (Standard)|
-Okinawa (Standard)|
+Lung Wang (3055)|
+Mammoth (2658)|
+Model 97 'Octopus' (3051)|
+Monarch (2759)|
+Mule (2737)|
+Nagumo (3056)|
+Okinawa (3055)|
+Okinawa (3056)|
 Overlord (2762)|
+Overlord (2762b)|
+Overlord (2775) (Combined Arms)|
+Overlord (2809) (Klondike)|
+Overlord (2817) (Command)|
 Overlord (3056)|
-Rose (Bara no Ryu) (Standard)|
+Rose (Bara no Ryu) (3054)|
 Seeker (2815)|
+Seeker (2815) (Mech)|
 Seeker (3054)|
 Titan (2647)|
+Titan (2647b)|
 Triumph (2593)|
+Triumph (2593b)|
 Triumph (3057)|
+Trojan (Blockade Runner) (2720)|
 Union (2708)|
+Union (2708b)|
+Union (2709) (Combined Arms)|
+Union (2710) (CV)|
 Union (3055)|
 Vengeance (2682)|
 Vengeance (3056)|
@@ -537,47 +590,47 @@ Overlord A3|
 Overlord A3A|
 Union-X (3065)|
 Union-X (3071)|
-Aurora (BA)|
-Aurora (Cargo)|
-Aurora (Combined Arms)|
-Aurora (Gunship)|
-Aurora (Tanker)|
-Aurora (Vehicle)|
-Aurora (CV)|
-Aurora (Standard)|
 Colossus (Standard)|
 Colossus Mk I|
 Dictator (Command)|
 Dictator (Standard)|
-Excalibur (Pocket Warship)|
-Leopard 'Pocket Warship'|
 Manatee (Cargo)|
 Manatee (Standard)|
-Model 96 'Elephant' Mk I|
 Model 96 'Elephant' (Standard)|
-Mule (Armored Pocket Warship)|
-Mule (Pocket Warship)|
+Model 96 'Elephant' Mk I|
 Mule (Star League Pocket Warship)|
-Pentagon Mk I|
-Pentagon (Standard)|
-Pentagon (2751)|
 Pentagon 'Pocket Warship'|
-Union 'Pocket Warship'|
+Pentagon (2751)|
+Pentagon (Standard)|
+Pentagon Mk I|
 Vampire (Standard)|
+Vulture (2405)|
 Vulture (Cargo)|
 Vulture (Standard)|
+Aurora (BA)|
+Aurora (Cargo)|
+Aurora (Combined Arms)|
+Aurora (CV)|
+Aurora (Gunship)|
+Aurora (Standard)|
+Aurora (Tanker)|
+Aurora (Vehicle)|
+Excalibur 'Pocket Warship'|
+Leopard 'Pocket Warship'|
+Mule 'Pocket Warship'|
+Mule (Armored Pocket Warship)|
+Union 'Pocket Warship'|
 Aesir Assault Dropship (Standard)|
+Isegrim Assault DropShip (Standard)|
+Vanir Assault Dropship (Standard)|
 Arondight Pocket Warship (Refit)|
 Arondight Pocket Warship (SCC)|
 Arondight Pocket Warship (Standard)|
-Interdictor Pocket Warship (Anti-Ship)|
 Interdictor Pocket Warship (SCC)|
 Interdictor Pocket Warship (Standard)|
-Isegrim Assault DropShip (Standard)|
+Interdictor Pocket Warship (Sub-Capital)|
 Taihou Assault Dropship (Standard)|
-Vanir Assault Dropship (Standard)|
 Nekohono'o (SCL)|
-Rose (Bara no Ryu) (Hive)|
 Dragau II Assault Interceptor (Standard)|
 Tiamat Pocket Warship (Standard)|
 Gorgon Carrier (Standard)|
@@ -589,37 +642,13 @@ Interdictor Pocket Warship (3115)|
 Tiamat II (3112)|
 Duat Military Transport (Standard)|
 Trutzburg (Standard)|
-Gaajian System Patrol Boat (2485)|
-Gaajian System Patrol Boat (3060)|
-Hoshiryokou (Standard)|
-Aqueduct Liquid Carrier (Standard)|
-Princess Luxury Liner (Cargo)|
-Princess Luxury Liner (Standard)|
-Lee (2756)|
-M3 Drone|
-Model 96C 'Howdah'|
-Pueblo (2673)|
-Jumbo (Standard)|
-Polaris (Standard)|
-Cargoking (Standard)|
-Cargomaster (Standard)|
-Cockatrice Monitor Platform (Drone)|
-Dragau Assault Interceptor (CASPAR II Drone)|
-Tiamat Pocket Warship (CASPAR II Drone)|
-Danais (Standard)|
-Trojan (Blockade Runner)|
-Claymore V3|
-Lung Wang P2|
-Merlin R1|
-Outpost (Defender)|
-Titan (Monitor)|
-Vengeance DC|
+Castrum Pocket WarShip (Standard)|
 Conquistador 'Blockade Runner'|
 Nekohono'o (HQ)|
 Lung Wang 'Predator'|
 Merlin Ngake|
-Vengeance Danai Centrella|
-Vampire II|
+Vengeance (Danai Centrella)|
+Vampire II (Standard)|
 Leopard PA-Class Dropship|
 Black Eagle (Standard)|
 Czar Dropship (Standard)|
@@ -628,7 +657,6 @@ DroST IIa Transport (2470)|
 DroST IIb Transport (2445)|
 DroST IIb Transport (2470)|
 Saturn Patrol Ship (Standard)|
-Castrum Pocket WarShip (Standard)|
 Claymore Interceptor|
 Cheetah F-10|
 Cheetah F-11-R|
@@ -1084,6 +1112,7 @@ Seydlitz SYD-45X 'Starling'|
 Slayer SL-CX1|
 SeaBuster Early Strike Fighter|
 Thunderbird TRB-XTS|
+Battle Taxi NL-43|
 Deathstalker XF-78|
 Chippewa CHP-X-P (Gladstone)|
 Lightning LTN-G16-P (Branson)|
@@ -2710,7 +2739,7 @@ Imp IMP-3E|
 Imp IMP-4E|
 JagerMech JM6-DD|
 JagerMech JM6-DDa|
-Jagermech JM6-DG|
+JagerMech JM6-DG|
 JagerMech JM6-DGr|
 JagerMech JM6-H|
 JagerMech JM7-D|
@@ -5566,6 +5595,7 @@ Intrepid Assault Craft (2478)|
 Foxhound Gunboat TIG-40|
 Ares Assault Craft Mark VII-C|
 Ares Assault Craft Mark VII|
+Bus S-7AC|
 DropShuttle K-1|
 DropShuttle K-1C|
 Escape Pod (Standard)|
@@ -5575,6 +5605,7 @@ Long-Range Shuttlecraft KR-61C|
 Battle Taxi NL-42|
 Bus S-7A|
 Shuttle ST-46|
+Shuttle ST-46C|
 Aquarius Escort M1|
 Aquarius Escort W1|
 Aquarius Escort (Standard)|
@@ -5589,7 +5620,6 @@ Condottiere Assault Craft (Standard)|
 NL-45 Gunboat (Standard)|
 Wurger Assault Craft (Standard)|
 Mowang Courier (Clandestine)|
-Battle Taxi NL-43|
 S7-P Bus 'Scarab'|
 Ares Close Assault Landing Craft Mk.II|
 Ares Landing Craft Mk.I|

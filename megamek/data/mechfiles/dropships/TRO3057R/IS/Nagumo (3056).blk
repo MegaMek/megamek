@@ -1,0 +1,197 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Nagumo
+</Name>
+
+<Model>
+(3056)
+</Model>
+
+<year>
+3056
+</year>
+
+<originalBuildYear>
+3056
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+infantrybay:12.0:2:1:Foot
+cargobay:2274.0:2:2
+2ndclassquarters:0.0:0
+1stclassquarters:50.0:0
+crewquarters:168.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+55
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+240
+150
+150
+180
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/20
+ISGaussRifle
+IS Ammo AC/20:10
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) SRM 4
+IS Ammo SRM-4 Artemis-capable:25
+ISArtemisIV
+(R) (B) Large Laser
+(R) Medium Laser
+(R) (B) LRM 15
+(R) IS Ammo LRM-15 Artemis-capable:16
+(R) ISArtemisIV
+(R) (B) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) SRM 4
+IS Ammo SRM-4 Artemis-capable:25
+ISArtemisIV
+(R) (B) Large Laser
+(R) Medium Laser
+(R) (B) LRM 15
+(R) IS Ammo LRM-15 Artemis-capable:16
+(R) ISArtemisIV
+(R) (B) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/20
+IS Ammo AC/20:10
+(B) Large Laser
+Medium Laser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+4200.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+365
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

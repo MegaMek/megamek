@@ -1,0 +1,191 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Overlord
+</Name>
+
+<Model>
+(2817) (Command)
+</Model>
+
+<year>
+2817
+</year>
+
+<originalBuildYear>
+2817
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:32.0:6
+asfbay:6.0:2:2
+crewquarters:245.0:0
+1stclassquarters:180.0:0
+2ndclassquarters:140.0:0
+steeragequarters:140.0:0
+cargobay:337.5:0:3
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+120
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+9180
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+220
+210
+210
+152
+</armor>
+
+<Nose Equipment>
+(B) PPC
+PPC
+(B) Autocannon/20
+Autocannon/20
+Autocannon/5
+Autocannon/5
+IS Ammo AC/20:30
+IS Ammo AC/5:40
+(B) Medium Laser
+Medium Laser
+Communications Equipment (15 ton)
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+(B) Autocannon/5
+IS Ammo AC/5:40
+(B) LRM 20
+IS Ammo LRM-20:30
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) PPC
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+(B) Autocannon/5
+IS Ammo AC/5:40
+(B) LRM 20
+IS Ammo LRM-20:30
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) PPC
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) LRM 20
+IS Ammo LRM-20:36
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+18
+</structural_integrity>
+
+<source>
+TRO 3057R - Early Succession War
+</source>
+
+<tonnage>
+9700.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+119
+</crew>
+
+<officers>
+8
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+30
+</passengers>
+
+<marines>
+28
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+3
+</life_boat>
+
+<escape_pod>
+3
+</escape_pod>
+

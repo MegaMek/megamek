@@ -537,4 +537,6 @@ public interface IBoard {
     public abstract boolean hasBoardBackground();
 
     public abstract boolean isValid();
+
+    public abstract boolean isValid(StringBuffer errBuff);
 }

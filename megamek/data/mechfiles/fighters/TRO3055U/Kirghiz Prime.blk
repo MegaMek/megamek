@@ -24,6 +24,10 @@ Prime
 2874
 </year>
 
+<originalBuildYear>
+2874
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -76,6 +83,7 @@ CLCASE
 CLCASE
 CLCASE
 CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -83,6 +91,7 @@ CLGaussRifle:OMNI
 Clan Gauss Ammo:OMNI
 Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE
@@ -100,6 +109,7 @@ CLCASE
 CLCASE
 CLCASE
 CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -108,6 +118,7 @@ CLStreakSRM6:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 Clan Streak SRM 6 Ammo:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE

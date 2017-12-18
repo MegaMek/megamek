@@ -1,12 +1,14 @@
 3145 Wolf Empire Keshik Dropships
-Broadsword (Standard),1
-Titan (Clan),2
+Broadsword (2979),1
+Titan (2953),2
 Isegrim Assault DropShip (Standard),3
-Broadsword (Standard),4
+Broadsword (2979),4
 Isegrim Assault DropShip (Standard),5
-Union C,6
-Titan (Clan),5
-Carrier (Standard),4
+Titan (2953),5
+Carrier (2882),4
 Nagasawa (Standard),3
 Isegrim Assault DropShip (Standard),2
 Mercer (3065),1
+Union C (2829),4
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

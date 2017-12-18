@@ -1,0 +1,162 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Behemoth
+</Name>
+
+<Model>
+(2658)
+</Model>
+
+<year>
+2658
+</year>
+
+<originalBuildYear>
+0
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:20.0:4:1
+2ndclassquarters:0.0:0
+1stclassquarters:90.0:0
+crewquarters:308.0:0
+cargobay:18781.0:1:4
+cargobay:18781.0:1:5
+cargobay:18781.5:1:2
+cargobay:18781.5:1:3
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+297
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+50
+50
+50
+60
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+100000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+153
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+5
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+

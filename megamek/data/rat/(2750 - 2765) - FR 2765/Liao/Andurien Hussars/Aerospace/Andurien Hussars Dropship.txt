@@ -1,7 +1,8 @@
 Andurien Hussars Dropship
 Black Eagle (Standard),1
 Fury (2638),2
-Confederate (2703),3
+Confederate (2602),2
+Confederate (2602) (Mech),1
 Gazelle (2531),4
 Dictator (Standard),5
 Triumph (2593),6

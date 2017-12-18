@@ -1,0 +1,208 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Fortress
+</Name>
+
+<Model>
+(2613)
+</Model>
+
+<year>
+2613
+</year>
+
+<originalBuildYear>
+0
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:12.0:1
+heavyvehiclebay:12.0:2:2
+infantrybay:3.0:1:3:Foot
+cargobay:415.5:1:4
+2ndclassquarters:0.0:0
+1stclassquarters:70.0:0
+crewquarters:245.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+131
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+12000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+220
+210
+210
+156
+</armor>
+
+<Nose Equipment>
+(B) PPC
+PPC
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:40
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:36
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) PPC
+(R) (B) Autocannon/20
+(R) Autocannon/5
+(R) IS Ammo AC/20:15
+(R) IS Ammo AC/5:20
+(R) (B) LRM 10
+(R) LRM 10
+(R) IS Ammo LRM-10:24
+(R) (B) SRM 6
+(R) SRM 6
+(R) IS Ammo SRM-6:30
+(R) (B) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:36
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) PPC
+(R) (B) Autocannon/20
+(R) Autocannon/5
+(R) IS Ammo AC/20:15
+(R) IS Ammo AC/5:20
+(R) (B) LRM 10
+(R) LRM 10
+(R) IS Ammo LRM-10:24
+(R) (B) SRM 6
+(R) SRM 6
+(R) IS Ammo SRM-6:30
+(R) (B) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+13
+</structural_integrity>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+6000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+246
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+5
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

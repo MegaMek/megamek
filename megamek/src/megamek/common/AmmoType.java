@@ -12999,7 +12999,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.kgPerShot = 33.3;
+        ammo.kgPerShot = 33.4;
         ammo.rulesRefs = "261,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

@@ -197,10 +197,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 .getTarget(game) : null;
         if (game.getPhase() == IGame.Phase.PHASE_FIRING && entityTarget == null) {
             convertHexTargetToEntityTarget(vPhaseReport);
-            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-                    .getTarget(game) : null;
-        } else {            
-            entityTarget = (Entity) target;
         }
 
         // Report weapon attack and its to-hit value.
@@ -516,6 +512,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             }
             int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions);
             newTarget = targets.get(choice);
+            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetType(target.getTargetType());
 
          } else {
             // Otherwise, find the largest and closest target of those available
@@ -590,12 +588,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     } 
                 }
             }
+            // Now, assign our chosen target to the missile
+            target = newTarget;
+            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetType(target.getTargetType());
+            setToHit(target);
         }
-        // Now, assign our chosen target to the missile
-        target = newTarget;
-        aaa.setTargetId(target.getTargetId());
-        aaa.setTargetType(target.getTargetType());
-        setToHit(target);
+
     }
 
     private void setToHit(Targetable target) {    

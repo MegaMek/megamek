@@ -22,10 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
@@ -197,6 +193,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 .getTarget(game) : null;
         if (game.getPhase() == IGame.Phase.PHASE_FIRING && entityTarget == null) {
             convertHexTargetToEntityTarget(vPhaseReport);
+            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
+                    .getTarget(game) : null;
         }
 
         // Report weapon attack and its to-hit value.

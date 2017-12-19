@@ -388,17 +388,6 @@ public abstract class BotClient extends Client {
         }
     }
 
-    @Override
-    protected void receiveBuildingCollapse(Packet packet) {
-        super.receiveBuildingCollapse(packet);
-        
-        for(Coords coords : (Vector<Coords>) packet.getObject(0)) {
-            for(BoardEdgePathFinder bepf : deploymentPathFinders.values()) {
-                bepf.invalidatePaths(coords);
-            }
-        }
-    }
-    
     private void runEndGame() {
         // Make a list of the player's living units.
         ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
@@ -965,12 +954,12 @@ public abstract class BotClient extends Client {
         return fDamage;
     }
 
-    
     /**
      * If the unit has stealth armor, turning it off is probably a good idea if
      * most of the enemy force is at 'short' range or if in danger of
      * overheating
      */
+
     private void toggleStealth() {
 
         initialize();

@@ -95,6 +95,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
+import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
@@ -316,6 +317,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private int gear;
     // is the shift key held?
     private boolean shiftheld;
+    
+    private BoardEdgePathFinder mechbepf = new BoardEdgePathFinder();
+    
     /**
      * A local copy of the current entity's loaded units.
      */
@@ -1727,8 +1731,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         final Entity ce = ce();
 
+     // debugging code, remove for the love of god
+        if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED &&
+                b.getCoords().equals(ce().getPosition())) {
+            cmd = mechbepf.findPathToEdge(ce());
+            clientgui.bv.drawMovementData(ce(), cmd);
+            return;
+        }
+        else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED &&
+                !b.getCoords().equals(ce().getPosition())) {
+            cmd = mechbepf.findCombinedPath(ce());
+            clientgui.bv.drawMovementData(ce(), cmd);
+            return;
+        }
+                       
+        
         // Are we ignoring events?
-        if (isIgnoringEvents()) {
+        if (true) {//isIgnoringEvents()) {
             return;
         }
 
@@ -1743,8 +1762,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)){
+            //|| ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
@@ -1752,8 +1771,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
         Coords currPosition = cmd != null ? cmd.getFinalCoords()
-                                          : ce != null ? ce.getPosition() : null;
-
+                                          : ce != null ? ce.getPosition() : null;                         
+                                          
         if ((b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) && !nopath) {
             if (!b.getCoords().equals(currPosition) || shiftheld
                 || (gear == MovementDisplay.GEAR_TURN)) {

@@ -9061,17 +9061,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     	return (getWalkMP() > 0);
     }
     
+    public boolean underControl() {
+    	Coords pos = getPosition();
+        return (pos != null)
+           && !isProne()
+           && !isStuck()
+           && !isShutDown()
+           && !getCrew().isUnconscious()
+           ;
+    }
+    
+    
     /**
      * Returns whether an entity can flee.
      */
+    
     public boolean canFlee() {
-    	Coords pos = getPosition();
-            return (pos != null)
-               && !isProne()
-               && !isStuck()
-               && !isShutDown()
-               && !getCrew().isUnconscious()
-               ;
+    	return underControl() && atEdge() && hasMP();
     }
 
     public void setEverSeenByEnemy(boolean b) {

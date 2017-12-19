@@ -1638,7 +1638,7 @@ public class Infantry extends Entity {
     
     @Override
     public boolean canFlee() {
-    	return (super.canFlee() && super.atEdge());
+    	return (underControl() && atEdge());
     }
     
     /**

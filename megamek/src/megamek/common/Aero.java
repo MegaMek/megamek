@@ -208,7 +208,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean canFlee() {
-    	return (super.canFlee() && getAltitude() == 10 && hasMP());
+    	return (underControl() && getAltitude() == 10 && hasMP());
     }
     
     public Aero() {

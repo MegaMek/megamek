@@ -2872,11 +2872,6 @@ public class Tank extends Entity {
     }
     
     @Override
-    public boolean canFlee() {
-    	return (super.canFlee() && super.hasMP() && super.atEdge());
-    }
-
-    @Override
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         if (getEquipmentNum(mounted) == -1) {

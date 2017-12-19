@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import megamek.client.bot.BotClient;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Coords;
@@ -30,27 +29,18 @@ public class BoardEdgePathFinder {
     // This is a map that will tell us if a particular coordinate has a move path to a particular edge
     Map<Integer, Map<Coords, MovePath>> edgePathCache;
     
-    // This is a map that will tell us the longest non-repeating path available from a particular coordinate
+    // This is a map that will tell us the longest non-repeating path available to a particular coordinate
     // Useful in situations where a unit has no possible way to get from the deployment zone to the opposite edge
     // It is accumulated over multiple calls to findPathToEdge()
     // It will basically tell us the available "surface area" from a particular set of coordinates
     Map<Coords, MovePath> longestNonEdgePathCache;
     
-    // This is a map that will tell us all the paths that connect to the path that's the key
-    // Useful in a) determining a full path to the edge and
-    // b) purging paths that would become invalid for whatever reason (building collapse or terrain destruction usually)
-    Map<MovePath, List<MovePath>> connectedPaths;
-    
-    private BotClient owner;
-    
     /**
      * Constructor - initializes internal caches
      */
-    public BoardEdgePathFinder() {//BotClient client) {
+    public BoardEdgePathFinder() {
         edgePathCache = new HashMap<>();
         longestNonEdgePathCache = new HashMap<>();
-        connectedPaths = new HashMap<>();
-        //owner = client;
     }
     
     /**
@@ -132,65 +122,6 @@ public class BoardEdgePathFinder {
     }
     
     /**
-     * Helper method that attempts to find the set of paths that connect from the end of this path
-     * to the path's desired edge. The reason being that a particular path may technically lead to an edge, 
-     * but we cut the path generation short when it reaches another path that already goes to that edge.
-     * @param startingPath
-     * @return
-     */
-    private List<MovePath> findContinuingPath(MovePath startingPath) {
-        List<MovePath> retval = new ArrayList<>();
-
-        int destinationRegion = determineOppositeEdge(startingPath.getEntity());
-        MovePath currentPath = startingPath;
-        
-        while(!isOnBoardEdge(currentPath, destinationRegion) && (currentPath != null)) {
-            if(edgePathCache.containsKey(destinationRegion)) {
-                currentPath = edgePathCache.get(destinationRegion).get(currentPath.getFinalCoords());
-            } else {
-                // this indicates that the end point of the current path does not go on to the desired edge
-                currentPath = null;  
-            }
-            
-            // 
-            if(currentPath != null) {
-                retval.add(currentPath);
-            }
-        }
-        
-        return retval;
-    }
-    
-    /**
-     * Invalidate all paths that go through this set of coordinates (because of a building or bridge collapse), or some other terrain change
-     * either directly or by connecting to a path that goes through this set of coordinates.
-     * @param coords
-     */
-    public void invalidatePaths(Coords coords) {
-        // identify if this set of coordinates has a path that leads to an edge
-        // loop through all paths in the path cache destined for the edge, and invalidate the ones that connect to the initial identified path
-        // invalidate the first path
-        
-        for(Map<Coords, MovePath> coordinatePaths : edgePathCache.values()) {
-            MovePath directPath = coordinatePaths.get(coords);
-            
-            if(directPath != null) {
-                // first, clear out all cached coordinate-path entries for this path 
-                for(Coords pathCoords : directPath.getCoordsSet()) {
-                    coordinatePaths.remove(pathCoords);
-                }
-                
-                // for each path that connects to this path, invalidate it
-                if(connectedPaths.containsKey(directPath)) {
-                    for(MovePath connectedPath : connectedPaths.get(directPath)) {
-                        invalidatePaths(connectedPath.getStartCoords());                    
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
      * Finds a legal path for the given entity to the "opposite" board edge
      * Completely ignores movement risk
      * Mostly ignores movement cost
@@ -264,16 +195,6 @@ public class BoardEdgePathFinder {
      * Helper function that tells us if the given set of coordinates have a path cached already
      * @param coords Coordinates to check
      * @param destinationRegion Where we're going
-     * @return Cached move path
-     */
-    private MovePath getCachedPathForCoordinates(Coords coords, int destinationRegion) {
-        return edgePathCache.containsKey(destinationRegion) ? edgePathCache.get(destinationRegion).get(coords) : null;
-    }
-    
-    /**
-     * Helper function that tells us if the given set of coordinates have a path cached already
-     * @param coords Coordinates to check
-     * @param destinationRegion Where we're going
      * @return True or false
      */
     private boolean coordinatesHaveCachedPath(Coords coords, int destinationRegion) {
@@ -282,46 +203,27 @@ public class BoardEdgePathFinder {
     
     /**
      * Worker function that caches a path that gets to the destination region
-     * and also records if it connects to a path that eventually gets to the destination
      * @param path The path to cache
      * @param destinationRegion The region of the board to which the path moves
      */
     private void cacheGoodPath(MovePath path, int destinationRegion) {
-        // don't bother with all this stuff if we're not moving
-        if(path.length() == 0) {
-            return;
-        }
-        
-        if(path.getKey().hashCode() == -1363392647) {
-            int alpha = 1;
-        }
-        
-        // first, attempt to connect this tributary to the trunk 
-        // a tributary is a smaller river that connects to a larger body of water (that's the trunk)
-        MovePath trunk = getCachedPathForCoordinates(path.getFinalCoords(), destinationRegion);
-        if(trunk != null) {
-            if(!connectedPaths.containsKey(trunk)) {
-                connectedPaths.put(trunk, new ArrayList<>());
-            }
-            
-            //System.out.println("Next path connects to " + trunk.toString() + " at coordinates " + path.getFinalCoords().toString());
-            connectedPaths.get(trunk).add(path);
-        }
-        
-        // cache the path for the set of coordinates if one doesn't yet exist
         Map<Coords, MovePath> coordinatePathMap;
         
         if(!edgePathCache.containsKey(destinationRegion)) {
             coordinatePathMap = new HashMap<>();
             edgePathCache.put(destinationRegion, coordinatePathMap);
-        } else {
+        }
+        else {
             coordinatePathMap = edgePathCache.get(destinationRegion);
         }
         
+        // cache the path for the set of coordinates if one doesn't yet exist
+        // or if the current path is better than the cached one
         for(Coords coords : path.getCoordsSet()) {
-            if(!coordinatePathMap.containsKey(coords)) {
+            if(!coordinatePathMap.containsKey(coords) ||
+                    coordinatePathMap.get(coords).getMpUsed() > path.getMpUsed()) {
                 coordinatePathMap.put(coords, path);
-                //System.out.println("Caching path " + path.toString() + " : for coordinates " + coords.toString());
+                
             }
         }
     }
@@ -409,11 +311,11 @@ public class BoardEdgePathFinder {
         
         // if we're going to step onto a bridge that will collapse, let's not consider going there
         boolean destinationHasWeakBridge = destinationHasBuilding && destHex.containsTerrain(Terrains.BRIDGE_CF) &&
-                destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+                destinationBuilding.getCurrentCF(dest) > entity.getWeight();
                 
         // if we're going to step onto a building that will collapse, let's not consider going there
         boolean destinationHasWeakBuilding = destinationHasBuilding && destHex.containsTerrain(Terrains.BLDG_CF) &&
-                destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+                destinationBuilding.getCurrentCF(dest) > entity.getWeight();
                 
         // this condition indicates that that we are unable to go to the destination because it's too high compared to the source
         boolean goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange; 

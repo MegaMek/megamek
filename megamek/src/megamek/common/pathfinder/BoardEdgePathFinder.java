@@ -35,25 +35,19 @@ public class BoardEdgePathFinder {
     // It is accumulated over multiple calls to findPathToEdge()
     // It will basically tell us the available "surface area" from a particular set of coordinates
     Map<Coords, MovePath> longestNonEdgePathCache;
-    
-<<<<<<< Updated upstream
-=======
+
     // This is a map that will tell us all the paths that connect to the path that's the key
     // Useful in a) determining a full path to the edge and
     // b) purging paths that would become invalid for whatever reason (building collapse or terrain destruction usually)
     Map<MovePath, List<MovePath>> connectedPaths;
-    
->>>>>>> Stashed changes
+
     /**
      * Constructor - initializes internal caches
      */
     public BoardEdgePathFinder() {
         edgePathCache = new HashMap<>();
         longestNonEdgePathCache = new HashMap<>();
-<<<<<<< Updated upstream
-=======
         connectedPaths = new HashMap<>();
->>>>>>> Stashed changes
     }
     
     /**
@@ -144,8 +138,6 @@ public class BoardEdgePathFinder {
     }
     
     /**
-<<<<<<< Updated upstream
-=======
      * Helper method that attempts to find a path that connects from the entity's current position
      * to the path's desired edge. The reason being that a particular path may technically lead to an edge, 
      * but we cut the path generation short when it reaches another path that already goes to that edge.
@@ -300,7 +292,6 @@ public class BoardEdgePathFinder {
     }
     
     /** 
->>>>>>> Stashed changes
      * Finds a legal path for the given entity to the "opposite" board edge
      * Completely ignores movement risk
      * Mostly ignores movement cost
@@ -330,6 +321,12 @@ public class BoardEdgePathFinder {
      */
     public MovePath findPathToEdge(Entity entity, int destinationRegion) {
         MovePath startPath = new MovePath(entity.getGame(), entity);
+        if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            startPath.addStep(MoveStepType.CLIMB_MODE_OFF);
+        } else {
+            startPath.addStep(MoveStepType.CLIMB_MODE_ON);
+        }
+        
         Comparator<MovePath> movePathComparator = new SortByDistanceToEdge(destinationRegion);
         
         List<MovePath> candidates = new ArrayList<>();
@@ -376,6 +373,16 @@ public class BoardEdgePathFinder {
     }
     
     /**
+     * Helper function that gets us a cached path for the given set of coordinates if they have a path cached
+     * @param coords Coordinates to check
+     * @param destinationRegion Where we're going
+     * @return True or false
+     */
+    private MovePath getCachedPathForCoordinates(Coords coords, int destinationRegion) {
+        return edgePathCache.containsKey(destinationRegion) ? edgePathCache.get(destinationRegion).get(coords) : null;
+    }
+    
+    /**
      * Helper function that tells us if the given set of coordinates have a path cached already
      * @param coords Coordinates to check
      * @param destinationRegion Where we're going
@@ -391,8 +398,6 @@ public class BoardEdgePathFinder {
      * @param destinationRegion The region of the board to which the path moves
      */
     private void cacheGoodPath(MovePath path, int destinationRegion) {
-<<<<<<< Updated upstream
-=======
         // don't bother with all this stuff if we're not moving
         if(path.length() == 0) {
             return;
@@ -411,7 +416,6 @@ public class BoardEdgePathFinder {
         }
         
         // cache the path for the set of coordinates if one doesn't yet exist
->>>>>>> Stashed changes
         Map<Coords, MovePath> coordinatePathMap;
         
         if(!edgePathCache.containsKey(destinationRegion)) {
@@ -516,11 +520,11 @@ public class BoardEdgePathFinder {
         
         // if we're going to step onto a bridge that will collapse, let's not consider going there
         boolean destinationHasWeakBridge = destinationHasBuilding && destHex.containsTerrain(Terrains.BRIDGE_CF) &&
-                destinationBuilding.getCurrentCF(dest) > entity.getWeight();
+                destinationBuilding.getCurrentCF(dest) < entity.getWeight();
                 
         // if we're going to step onto a building that will collapse, let's not consider going there
         boolean destinationHasWeakBuilding = destinationHasBuilding && destHex.containsTerrain(Terrains.BLDG_CF) &&
-                destinationBuilding.getCurrentCF(dest) > entity.getWeight();
+                destinationBuilding.getCurrentCF(dest) < entity.getWeight();
                 
         // this condition indicates that that we are unable to go to the destination because it's too high compared to the source
         boolean goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange; 

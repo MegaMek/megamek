@@ -1,0 +1,177 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Avenger
+</Name>
+
+<Model>
+(2816)
+</Model>
+
+<year>
+2816
+</year>
+
+<originalBuildYear>
+0
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:126.5:1:1
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<heatsinks>
+70
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+8000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+230
+203
+203
+180
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/20
+Autocannon/5
+Autocannon/5
+IS Ammo AC/20:15
+IS Ammo AC/5:40
+(B) LRM 20
+IS Ammo LRM-20:24
+(B) Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:40
+(B) LRM 20
+IS Ammo LRM-20:18
+(B) Medium Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:40
+(B) LRM 20
+IS Ammo LRM-20:18
+(B) Medium Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/2
+IS Ammo AC/2:45
+(B) LRM 20
+IS Ammo LRM-20:18
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3057R - Early Succession War
+</source>
+
+<tonnage>
+1400.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+15
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

@@ -1,8 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,45 +20,36 @@ Zhen Niao
 (Standard)
 </Model>
 
-<Tonnage>
-40
-</Tonnage>
+<year>
+3101
+</year>
+
+<originalBuildYear>
+3101
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:3.0:1:1
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:20.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-84
-61
-61
-41
-</Armor>
-
-<structural_integrity>
-8
-</structural_integrity>
-
-<Nose Equipment>
-ISBeagleActiveProbe
-</Nose Equipment>
-
-<Left Wing Equipment> 
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISGuardianECM
-ISHypersprectralImager
-ISSpaceMineDispenser
-</Aft Equipment>
-
 <heatsinks>
-12
+5
 </heatsinks>
 
 <sink_type>
@@ -65,52 +57,95 @@ ISSpaceMineDispenser
 </sink_type>
 
 <fuel>
-400
+1920
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3101
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-8
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+19
+</armor_type>
 
-<history>
-</history>
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+84
+61
+61
+41
+</armor>
+
+<Nose Equipment>
+BeagleActiveProbe
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISGuardianECMSuite
+ISHypersprectralImager
+ISSpaceMineDispenser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
 
 <source>
 TRO 3145 Capellan Confederation - Late Republic
 </source>
 
-<transporters>
-cargobay:3:1
-</transporters>
+<tonnage>
+140.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 4
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

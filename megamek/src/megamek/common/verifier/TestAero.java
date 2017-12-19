@@ -149,7 +149,8 @@ public class TestAero extends TestEntity {
          */
         public static AeroArmor getArmor(int t, boolean c){
             for (AeroArmor a : values()){
-                if (a.type == t && a.isClan == c){
+                if ((a.type == t) && ((a.isClan == c)
+                        || (t == EquipmentType.T_ARMOR_STANDARD))) {
                     return a;
                 }
             }

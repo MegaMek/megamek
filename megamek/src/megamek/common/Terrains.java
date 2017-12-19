@@ -146,6 +146,19 @@ public class Terrains implements ITerrainFactory {
         return names[type];
     }
 
+    public static String getEditorName(int type) {
+        return Messages.getString("Terrains.editorName." + names[type]);
+    }
+
+    public static String getEditorTooltip(int type) {
+        String key = "Terrains.editorTooltip." + names[type];
+        if (Messages.hasString(key)) {
+            return Messages.getString(key);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * @param type
      * @param level

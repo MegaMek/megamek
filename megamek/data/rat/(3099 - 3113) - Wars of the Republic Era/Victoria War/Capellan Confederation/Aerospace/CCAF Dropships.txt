@@ -1,10 +1,10 @@
 Victoria War Capellan Confederation Dropships
 Seeker (3054),1
 Triumph (2593),2
-Kuan Ti (Standard),3
+Kuan Ti (3055),3
 Leopard CV (3054),4
 Overlord (3056),5
-Lung Wang (Standard),6
+Lung Wang (3055),6
 Lung Wang P2,5
 Overlord A3,4
 Vengeance (3056),3

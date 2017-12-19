@@ -908,6 +908,11 @@ public class Board implements Serializable, IBoard {
         return isValid(data, width, height, null);
     }
 
+    public boolean isValid(StringBuffer errBuff) {
+        // Search for black-listed hexes
+        return isValid(data, width, height, errBuff);
+    }
+
     private boolean isValid(IHex[] data, int width, int height, StringBuffer errBuff) {
         // Search for black-listed hexes
         for (int x = 0; x < width; x++) {

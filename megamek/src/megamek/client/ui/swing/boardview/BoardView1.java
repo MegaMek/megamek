@@ -194,8 +194,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int BOARD_HEX_POPUP = 4;
 
     // the dimensions of megamek's hex images
-    static final int HEX_W = HexTileset.HEX_W;
-    static final int HEX_H = HexTileset.HEX_H;
+    public static final int HEX_W = HexTileset.HEX_W;
+    public static final int HEX_H = HexTileset.HEX_H;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -493,6 +493,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Holds the final Coords for a planned movement. Set by MovementDisplay,
      *  used to display the distance in the board tooltip. */ 
     private Coords movementTarget;
+
+    /**
+     * Flag to indicate if we should display informatin about illegal terrain in hexes.
+     */
+    boolean displayInvalidHexInfo = false;
 
 
     /**
@@ -2710,6 +2715,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), 0, 0
                     + (int) (12 * scale), font_hexnum, g);
+        }
+
+        if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
+            Point hexCenter = new Point((int)(HEX_W / 2 * scale), (int)(HEX_H / 2 * scale));
+            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED, false,
+                    new Font("SansSerif", Font.BOLD, 14));
         }
 
         // write terrain level / water depth / building height
@@ -5684,6 +5695,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
+            if (displayInvalidHexInfo) {
+                StringBuffer errBuff = new StringBuffer();
+                if (!mhex.isValid(errBuff)) {
+                    txt.append(Messages.getString("BoardView1.invalidHex"));
+                    txt.append("<br>"); //$NON-NLS-1$
+                    String errors = errBuff.toString();
+                    errors = errors.replace("\n", "<br>");
+                    txt.append(errors);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+            }
         }
         
         // Show the player(s) that may deploy here 
@@ -6601,4 +6623,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return hexImage;
     }
 
+    public void setDisplayInvalidHexInfo(boolean v) {
+        displayInvalidHexInfo = v;
+    }
+
+    public boolean getDisplayInvalidHexInfo() {
+        return displayInvalidHexInfo;
+    }
 }

@@ -6,7 +6,7 @@ Overlord (3056),4
 Leopard CV (3054),5
 Assault Triumph (3062),6
 Vengeance (3056),5
-Kuan Ti (Standard),4
+Kuan Ti (3055),4
 Merlin (3063),3
 Leopard 'Pocket Warship',2
 Merlin (3063),1

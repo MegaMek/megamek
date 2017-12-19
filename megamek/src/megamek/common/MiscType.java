@@ -8855,7 +8855,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createMASH() {
         MiscType misc = new MiscType();
 
-        misc.name = "MASH core component";
+        misc.name = "MASH Core Component";
         misc.setInternalName(misc.name);
         misc.tonnage = 3.5;
         misc.criticals = 1;
@@ -11281,9 +11281,9 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "271,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-                .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
+                .setISAdvancement(DATE_ES, DATE_ES, 3050, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(DATE_NONE, 2868, 2870, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(DATE_ES, 2868, 2870, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setProductionFactions(F_CWF);
 
         return misc;

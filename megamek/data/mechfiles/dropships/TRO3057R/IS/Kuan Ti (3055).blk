@@ -1,0 +1,208 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Kuan Ti
+</Name>
+
+<Model>
+(3055)
+</Model>
+
+<year>
+3055
+</year>
+
+<originalBuildYear>
+3055
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+cargobay:268.0:2:2
+1stclassquarters:50.0:0
+2ndclassquarters:0.0:0
+crewquarters:140.0:0
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<heatsinks>
+43
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+1800
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+220
+160
+160
+180
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:32
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:24
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/10
+IS Ammo AC/10:10
+(B) ISERLargeLaser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/10
+IS Ammo AC/10:10
+(B) ISERLargeLaser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:24
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+2200.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+35
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+7
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

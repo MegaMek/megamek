@@ -1,0 +1,286 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Achilles
+
+</Name>
+
+<Model>
+
+(2721)
+
+</Model>
+
+<Tonnage>
+
+4500
+
+</Tonnage>
+
+<SafeThrust>
+
+8
+
+</SafeThrust>
+
+<Armor>
+
+290
+
+260
+
+260
+
+176
+
+</Armor>
+
+<Nose Equipment>
+
+ISERPPC
+
+ISERPPC
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15 Ammo Artemis-capable:24
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISERPPC
+
+ISUltraAC5
+
+ISUltraAC5
+
+ISUltraAC5 Ammo:60
+
+ISGaussRifle
+
+ISGauss Ammo:16
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15 Ammo Artemis-capable:32
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+(R) ISERPPC
+
+(R) ISUltraAC5
+
+(R) ISUltraAC5 Ammo:20
+
+(R) ISLargePulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISERPPC
+
+ISUltraAC5
+
+ISUltraAC5
+
+ISUltraAC5 Ammo:60
+
+ISGaussRifle
+
+ISGauss Ammo:16
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15 Ammo Artemis-capable:32
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+(R) ISERPPC
+
+(R) ISUltraAC5
+
+(R) ISUltraAC5 Ammo:20
+
+(R) ISLargePulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISUltraAC5
+
+ISUltraAC5
+
+ISUltraAC5 Ammo:40
+
+ISLRM10
+
+IS Artemis IV FCS
+
+ISLRM10 Ammo Artemis-capable:12
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+16
+
+</structural_integrity>
+
+<heatsinks>
+
+124
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+9000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2721
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+ASFBay:2:1
+
+SmallCraft:2:1
+
+InfantryBay:1:0
+
+CargoBay:160.5:1 
+
+</transporters>
+
+<escape_pod>
+
+4
+
+</escape_pod>
+
+<life_boat>
+
+1
+
+</life_boat>
+
+<crew>
+
+72
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

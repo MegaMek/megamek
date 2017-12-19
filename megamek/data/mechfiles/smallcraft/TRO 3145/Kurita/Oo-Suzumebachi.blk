@@ -1,8 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,52 +20,34 @@ Oo-Suzumebachi
 (Standard)
 </Model>
 
-<Tonnage>
-170
-</Tonnage>
+<year>
+3118
+</year>
+
+<originalBuildYear>
+3118
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+battlearmorbay:3.0:1:1
+cargobay:1.0:1:2
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:20.0:0
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
-
-<Armor>
-131
-95
-95
-64
-</Armor>
-
-<structural_integrity>
-9
-</structural_integrity>
-
-<Nose Equipment>
-ISMRM40
-ISApollo
-ISMRM40 Ammo
-ISMRM40 Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISAMS
-ISAMS
-ISAMS
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISAMS
-ISAMS
-ISAMS
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-</Aft Equipment>
 
 <heatsinks>
 8
@@ -78,50 +61,102 @@ ISERMediumLaser
 800
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3118
-</year>
-
-<source>
-TRO 3145 Draconis Combine - Late Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
+<engine_type>
 1
-</designtype>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+5
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+131
+95
+95
+64
+</armor>
 
-<history>
-</history>
+<Nose Equipment>
+MRM 40
+ISApollo
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Nose Equipment>
 
-<transporters>
-battlearmorbay:3:1
-cargobay:1:1
-</transporters>
+<Left Side Equipment>
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3145 Draconis Combine - Late Republic
+</source>
+
+<tonnage>
+170.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
-4
+22
 </crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
 
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

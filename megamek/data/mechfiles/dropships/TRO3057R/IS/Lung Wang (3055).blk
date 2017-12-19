@@ -1,0 +1,196 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Lung Wang
+</Name>
+
+<Model>
+(3055)
+</Model>
+
+<year>
+3055
+</year>
+
+<originalBuildYear>
+3055
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:4.0:2
+asfbay:2.0:2:2
+cargobay:289.5:2:3
+infantrybay:1.0:0:4:Foot
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+75
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+3000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+220
+192
+192
+192
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 15
+IS Ammo LRM-20 Artemis-capable:12
+IS Ammo LRM-15 Artemis-capable:16
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/10
+IS Ammo AC/10:10
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/10
+IS Ammo AC/10:10
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISLargePulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+2600.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+55
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

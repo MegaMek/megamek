@@ -46,6 +46,16 @@ public class Messages {
             return '!' + key + '!';
         }
     }
+    
+    /**
+     * Returns true if the resource bundle has a translated value for the given key.
+     *
+     * @param key
+     * @return
+     */
+    public static boolean hasString(String key) {
+        return RESOURCE_BUNDLE.containsKey(key);
+    }
 
     /**
      * Returns the formatted message for the given key in the resource bundle.

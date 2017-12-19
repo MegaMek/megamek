@@ -1,12 +1,15 @@
 3145 Rasalhague Dominion Fleet Dropships
-Miraborg (Standard),1
-Overlord C,2
+Miraborg (3053),1
+Overlord C (2818),1
+Overlord C (2818) (Tank),1
 Vanir Assault Dropship (Standard),3
-Union C,4
 Nagasawa (Standard),5
 Vanir Assault Dropship (Standard),6
-Noruff (Standard),5
+Noruff (3056),5
 Aesir Assault Dropship (Standard),4
-Miraborg (Standard),3
-Sassanid (Standard),2
+Miraborg (3053),3
+Sassanid (2875),2
 Nagasawa (Standard),1
+Union C (2829),2
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

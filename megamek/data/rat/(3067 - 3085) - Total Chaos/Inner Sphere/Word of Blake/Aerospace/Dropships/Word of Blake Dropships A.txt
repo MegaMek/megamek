@@ -2,11 +2,11 @@ Word of Blake Dropships A
 Leopard CV (3054),1
 Assault Triumph (3062),2
 Vengeance (3056),3
-Kuan Ti (Standard),4
+Kuan Ti (3055),4
 Merlin (3063),5
 Leopard 'Pocket Warship',6
 Merlin (3063),5
 Union 'Pocket Warship',4
 Pentagon 'Pocket Warship',3
 Interdictor Pocket Warship (Standard),2
-Interdictor Pocket Warship (Anti-Ship),1
+Interdictor Pocket Warship (Sub-Capital),1

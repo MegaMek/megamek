@@ -8,5 +8,6 @@ Overlord (3056),6
 Union (3055),5
 Leopard (3056),4
 Triumph (3057),3
-Okinawa (Standard),2
+Okinawa (3055),1
+Okinawa (3056),1
 Nekohono'o (Standard),1

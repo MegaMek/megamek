@@ -1,12 +1,12 @@
 Victoria War Mercenary Dropships
 Vengeance (3056),1
 Union (3055),2
-Claymore (Standard),3
+Claymore (3054),3
 Leopard (3056),4
 Merlin (3063),5
-Hamilcar (Standard),6
-Lung Wang (Standard),5
-Kuan Ti (Standard),4
+Hamilcar (3054),6
+Lung Wang (3055),5
+Kuan Ti (3055),4
 Overlord (3056),3
 Union (3055),2
 Leopard CV (2581),1

@@ -1,0 +1,207 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Hannibal
+</Name>
+
+<Model>
+(3055)
+</Model>
+
+<year>
+3055
+</year>
+
+<originalBuildYear>
+0
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+heavyvehiclebay:12.0:2:1
+infantrybay:4.0:1:2:Foot
+cargobay:1004.5:1:3
+2ndclassquarters:0.0:0
+1stclassquarters:70.0:0
+crewquarters:231.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+79
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2850
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+220
+170
+170
+160
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/10
+Autocannon/5
+Autocannon/5
+IS Ammo AC/10:10
+IS Ammo AC/5:40
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) ISERPPC
+ISERPPC
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(B) ISNarcBeacon
+ISNarc Pods:12
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISLargePulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) Large Laser
+(R) Medium Laser
+(R) (B) SRM 4
+(R) IS Ammo SRM-4 Artemis-capable:25
+(R) ISArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISLargePulseLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) Large Laser
+(R) Medium Laser
+(R) (B) SRM 4
+(R) IS Ammo SRM-4 Artemis-capable:25
+(R) ISArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/10
+IS Ammo AC/10:10
+(B) ISERLargeLaser
+Large Laser
+Medium Laser
+Medium Laser
+(B) ISERPPC
+(B) SRM 4
+IS Ammo SRM-4 Artemis-capable:25
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+4900.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+248
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+7
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+6
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

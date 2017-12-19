@@ -1,0 +1,155 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Buccaneer
+</Name>
+
+<Model>
+(2708)
+</Model>
+
+<year>
+2708
+</year>
+
+<originalBuildYear>
+2708
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:1000.0:1:1
+cargobay:1000.0:1:2
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:63.0:0
+cargobay:329.0:1:3
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+58
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+4800
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+70
+60
+60
+50
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+(B) LRM 5
+IS Ammo LRM-5:24
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Medium Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Medium Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+3500.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+12
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+2
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

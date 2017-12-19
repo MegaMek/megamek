@@ -1,12 +1,12 @@
 Diamond_Shark Dropships (FMU)
-Broadsword (Standard),1
-Titan (Clan),2
-Broadsword (Standard),3
-Overlord C,4
-Union C,5
-Union C,6
-Broadsword (Standard),5
-Overlord C,4
-Titan (Clan),3
-Overlord C,2
-Noruff (Standard),1
+Broadsword (2979),1
+Titan (2953),2
+Broadsword (2979),3
+Union C (2829),7
+Union C (2829) (Tank),2
+Union C (2840) (Cargo),2
+Broadsword (2979),5
+Titan (2953),3
+Noruff (3056),1
+Overlord C (2818),8
+Overlord C (2818) (Tank),2

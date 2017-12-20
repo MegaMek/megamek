@@ -33,7 +33,7 @@ public class EntityVisibilityUtils {
     }
     
     /**
-     * Used to determine if this EntitySprite is only detected by an enemies
+     * Used to determine if this entity is only detected by an enemies
      * sensors and hence should only be a sensor return.
      *
      * @return

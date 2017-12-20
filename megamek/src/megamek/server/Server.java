@@ -10197,9 +10197,9 @@ public class Server implements Runnable {
         }
     }
 
-    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
+    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions, Coords tc) {
         final String METHOD_NAME = "processTeleguidedMissileCFR(Entity, Entity)";
-        sendTeleguidedMissileCFR(playerId, targetDescriptions);
+        sendTeleguidedMissileCFR(playerId, targetDescriptions, tc);
         while (true) {
             synchronized (cfrPacketQueue) {
                 try {
@@ -13206,10 +13206,10 @@ public class Server implements Runnable {
                                 hidden.getId(), target.getId() }));
     }
 
-    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
+    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions, Coords tc) {
         // Send target descriptions to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions }));
+                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions, tc }));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,

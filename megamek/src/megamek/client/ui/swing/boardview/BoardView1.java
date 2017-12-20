@@ -3472,7 +3472,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = EntityVisibilityUtils.hasVisual(localPlayer, game, entity);
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite

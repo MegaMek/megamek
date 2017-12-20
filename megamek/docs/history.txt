@@ -2,6 +2,7 @@
 ----------------
 v0.43.6-git
 + Bug: Weight issues with BA LRM5 and Ammo.
++ Account for Clan CASE in unit cost calculations.
 
 v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.

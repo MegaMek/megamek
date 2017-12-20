@@ -10299,7 +10299,33 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 bvText.append(endRow);
             }
         }
+        int count = implicitClanCASE();
+        if (count > 0) {
+            long itemCost = 50000;
+            cost += 50000 * itemCost;
+            if (null != bvText) {
+                for (int i = 0; i < count; i++) {
+                    bvText.append(startColumn);
+                    bvText.append("CASE");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append(commafy.format(itemCost));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
+            }
+        }
         return cost;
+    }
+    
+    /**
+     * Used to for cost calculations. Though the TM rules allow a Clan unit to be designed without CASE,
+     * MM assumes that CASE is present in any location that has explosive equipment.
+     * 
+     * @return The number of locations protected by Clan CASE beyond what is explicitly mounted.
+     */
+    protected int implicitClanCASE() {
+        return 0;
     }
 
     public boolean removePartialCoverHits(int location, int cover, int side) {

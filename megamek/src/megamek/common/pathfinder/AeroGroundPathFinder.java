@@ -400,8 +400,10 @@ public class AeroGroundPathFinder {
     // "respect" board edges by attempting a turn 
     private void ForwardToTheEnd(MovePath mp) {
         while(mp.getFinalVelocityLeft() > 0) {
-                
-                mp.addStep(MoveStepType.FORWARDS);
+                // don't generate an illegal move that flies off the board
+                if(!mp.nextForwardStepOffBoard()) {
+                    mp.addStep(MoveStepType.FORWARDS);
+                }
                 
                 // if we have arrived on the edge, and we can turn, then attempt to "bounce off" or "ride" the edge. 
                 // as long as we're not trying to go off board, then forget about it

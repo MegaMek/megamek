@@ -17,6 +17,7 @@ package megamek.common.event;
 
 import java.util.List;
 
+import megamek.common.Coords;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.net.Packet;
 
@@ -57,6 +58,11 @@ public class GameCFREvent extends GameEvent {
      * List of descriptions for targets of a teleguided missile.
      */
     private List<String> telemissileTargets;
+    
+    /**
+     * Original target coords for a bearings-only teleguided missile.
+     */
+    private Coords telemissileTargetCoords;
     
     /**
      * Construct game event
@@ -152,8 +158,16 @@ public class GameCFREvent extends GameEvent {
     public List<String> getTelemissileTargetDescriptions() {
         return telemissileTargets;
     }
-
+    
     public void setTeleguidedMissileTargets(List<String> newTargetDescriptions) {
         telemissileTargets = newTargetDescriptions;
+    }
+    
+    public Coords getTelemissileTargetCoords() {
+        return telemissileTargetCoords;
+    }
+    
+    public void setTeleguidedMissileCoords(Coords tc) {
+        telemissileTargetCoords = tc;
     }
 }

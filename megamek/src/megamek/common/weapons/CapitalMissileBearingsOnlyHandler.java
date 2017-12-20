@@ -508,11 +508,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 setToHit(target);
                 targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
             }
-            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions, tc);
+            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions);
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
+            server.assignAMS();
 
          } else {
             // Otherwise, find the largest and closest target of those available
@@ -592,6 +593,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
             setToHit(target);
+            server.assignAMS();
         }
 
     }

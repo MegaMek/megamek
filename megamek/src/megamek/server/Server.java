@@ -10197,9 +10197,9 @@ public class Server implements Runnable {
         }
     }
 
-    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions, Coords tc) {
+    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
         final String METHOD_NAME = "processTeleguidedMissileCFR(Entity, Entity)";
-        sendTeleguidedMissileCFR(playerId, targetDescriptions, tc);
+        sendTeleguidedMissileCFR(playerId, targetDescriptions);
         while (true) {
             synchronized (cfrPacketQueue) {
                 try {
@@ -13206,10 +13206,10 @@ public class Server implements Runnable {
                                 hidden.getId(), target.getId() }));
     }
 
-    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions, Coords tc) {
+    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
         // Send target descriptions to Client
         send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions, tc }));
+                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions}));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
@@ -13975,15 +13975,6 @@ public class Server implements Runnable {
                             .getTarget(game) : null;
                     if (target == null) {
                         continue;
-                        /*//If multiple shots are involved, the target seems to get lost. This will reset it.
-                        CapitalMissileBearingsOnlyHandler cmh = (CapitalMissileBearingsOnlyHandler) wh;
-                        cmh.convertHexTargetToEntityTarget(vPhaseReport);
-                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                                .getTarget(game) : null;
-                        if (target == null) {
-                            //in case our target really is null. 
-                            continue;
-                        } */
                     } 
                 } else {
                     //For all other types of homing artillery

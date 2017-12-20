@@ -2107,10 +2107,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     break;
                 case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
                     List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    Coords targetHex = evt.getTelemissileTargetCoords();
                     //Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
                     msg = Messages.getString(i18nString);
-                    i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
+                    i18nString = "TeleMissileTargetDialog.title" + targetHex + ":"; //$NON-NLS-1$
                     title = Messages.getString(i18nString);
                     String input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,

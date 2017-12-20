@@ -547,14 +547,7 @@ public class BasicPathRanker extends PathRanker {
         StringBuilder formula = new StringBuilder("Calculation: {");
 
         try {
-        	if (movingUnit.isAero() || movingUnit instanceof VTOL) {
-            	RankedPath aeroRankedPath = doAeroSpecificRanking(path);
-                if (aeroRankedPath != null) {
-                    return aeroRankedPath;
-                }
-            }
-
-            // Copy the path to avoid inadvertent changes.
+        	// Copy the path to avoid inadvertent changes.
             MovePath pathCopy = path.clone();
 
             // Worry about failed piloting rolls (weighted by Fall Shame).

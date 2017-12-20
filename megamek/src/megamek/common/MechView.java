@@ -214,9 +214,9 @@ public class MechView {
         int originalMode = entity.getConversionMode();
         entity.setConversionMode(0);
         if (!isGunEmplacement) {
-            sBasic.append("<br>"); //$NON-NLS-1$
+            sBasic.append("<br><b>"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement")) //$NON-NLS-1$
-                    .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
+                    .append("</b>").append(entity.getWalkMP()).append("/") //$NON-NLS-1$
                     .append(entity.getRunMPasString());
             if (entity.getJumpMP() > 0) {
                 sBasic.append("/") //$NON-NLS-1$
@@ -284,7 +284,7 @@ public class MechView {
         sBasic.append("<br>"); //$NON-NLS-1$
         if (isMech || isVehicle
                 || (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
-            sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
+            sBasic.append("<b>").append(Messages.getString("MechView.Engine")).append("</b>"); //$NON-NLS-1$
             sBasic.append(entity.hasEngine() ? entity.getEngine().getShortEngineName() : "(none)");
             if (entity.getEngineHits() > 0) {
                 sBasic.append("<font color='red'> (" + entity.getEngineHits()
@@ -305,8 +305,8 @@ public class MechView {
 
         if (isAero) {
             Aero a = (Aero) entity;
-            sBasic.append(Messages.getString("MechView.HeatSinks")) //$NON-NLS-1$
-                    .append(a.getHeatSinks());
+            sBasic.append("<b>").append(Messages.getString("MechView.HeatSinks")) //$NON-NLS-1$
+                    .append("</b>").append(a.getHeatSinks());
             if (a.getPodHeatSinks() > 0) {
             	sBasic.append(" (").append(a.getPodHeatSinks()).append(" ")
             		.append(Messages.getString("MechView.Pod")).append(")"); //$NON-NLS-1$
@@ -320,8 +320,9 @@ public class MechView {
                         + " damaged)</font>");
             }
             if (a.getCockpitType() != Mech.COCKPIT_STANDARD) {
-                sBasic.append("<br>"); //$NON-NLS-1$
+                sBasic.append("<br><b>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
+                sBasic.append("</b>");
                 sBasic.append(a.getCockpitTypeString());
             }
         }
@@ -347,8 +348,9 @@ public class MechView {
                     sBasic.append(" (armored)");
                 }
             }
-            sBasic.append("<br>");
+            sBasic.append("<br><b>");
             sBasic.append(Messages.getString("MechView.Gyro"));
+            sBasic.append("</b>");
             sBasic.append(aMech.getGyroTypeString());
             if (aMech.getGyroHits() > 0) {
                 sBasic.append("<font color='red'> (" + aMech.getGyroHits()
@@ -367,10 +369,10 @@ public class MechView {
         
         //Display Strategic Fuel Use for Small Craft and up
         if (isSmallCraft) {
-            sBasic.append(String.format("<br/><br/><b>Strategic Fuel Use</b><br>\nTons per Burn Day: %2.2f",
+            sBasic.append(String.format("<br/><br/><b>Strategic Fuel Use</b><br>\n<b>Tons per Burn Day:</b> %2.2f",
                     ((SmallCraft) entity).getStrategicFuelUse()));
         } else if (isJumpship) {
-            sBasic.append(String.format("<br/><br/><b>Strategic Fuel Use</b><br>\nTons per Burn Day: %2.2f",
+            sBasic.append(String.format("<br/><br/><b>Strategic Fuel Use</b><br>\n<b>Tons per Burn Day:</b> %2.2f",
                     ((Jumpship) entity).getStrategicFuelUse()));
         }
         
@@ -468,13 +470,13 @@ public class MechView {
         int maxArmor = (entity.getTotalInternal() * 2) + 3;
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            sIntArm.append(Messages.getString("MechView.Men"))
-                    .append(entity.getTotalInternal())
+            sIntArm.append("<b>").append(Messages.getString("MechView.Men"))
+                    .append("</b>").append(entity.getTotalInternal())
                     .append(" (" + inf.getSquadSize() + "/" + inf.getSquadN()
                             + ")");
         } else {
-            sIntArm.append(Messages.getString("MechView.Internal")) //$NON-NLS-1$
-                    .append(entity.getTotalInternal());
+            sIntArm.append("<b>").append(Messages.getString("MechView.Internal")) //$NON-NLS-1$
+                    .append("</b>").append(entity.getTotalInternal());
         }
         if (isMech) {
             sIntArm.append(Messages.getString("MechView."
@@ -485,11 +487,11 @@ public class MechView {
 
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            sIntArm.append(Messages.getString("MechView.Armor")).append(
+            sIntArm.append("<b>").append(Messages.getString("MechView.Armor")).append("</b>").append(
                     inf.getArmorDesc());
         } else {
-            sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
-                    .append(entity.getTotalArmor());
+            sIntArm.append("<b>").append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+                    .append("</b>").append(entity.getTotalArmor());
 
         }
         if (isMech) {
@@ -593,8 +595,8 @@ public class MechView {
         sIntArm.append("<br>"); //$NON-NLS-1$
 
         // int maxArmor = (int) mech.getWeight() * 8;
-        sIntArm.append(Messages.getString("MechView.SI")) //$NON-NLS-1$
-                .append(a.getSI());
+        sIntArm.append("<b>").append(Messages.getString("MechView.SI")) //$NON-NLS-1$
+                .append("</b>").append(a.getSI());
 
         sIntArm.append("<br>"); //$NON-NLS-1$
 
@@ -602,23 +604,23 @@ public class MechView {
         if (isJumpship & !isSpaceStation) {
             Jumpship js = (Jumpship) entity;
 
-            sIntArm.append(Messages.getString("MechView.SailIntegrity")) //$NON-NLS-1$
-                    .append(js.getSailIntegrity());
+            sIntArm.append("<b>").append(Messages.getString("MechView.SailIntegrity")) //$NON-NLS-1$
+                    .append("</b>").append(js.getSailIntegrity());
 
             sIntArm.append("<br>"); //$NON-NLS-1$
 
-            sIntArm.append(Messages.getString("MechView.KFIntegrity")) //$NON-NLS-1$
-                    .append(js.getKFIntegrity());
+            sIntArm.append("<b>").append(Messages.getString("MechView.KFIntegrity")) //$NON-NLS-1$
+                    .append("</b>").append(js.getKFIntegrity());
 
             sIntArm.append("<br>"); //$NON-NLS-1$
         }
 
         if (entity.isCapitalFighter()) {
-            sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
-                    .append(a.getCapArmor());
+            sIntArm.append("<b>").append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+                    .append("</b>").append(a.getCapArmor());
         } else {
-            sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
-                    .append(entity.getTotalArmor());
+            sIntArm.append("<b>").append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+                    .append("</b>").append(entity.getTotalArmor());
         }
 
         if (isJumpship) {

@@ -301,8 +301,8 @@ public class MechTextView {
                 // Skip empty sections.
                 if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
                         || (isVehicle
-                                && (loc == ((Tank) entity).getLocTurret()) && ((Tank) entity)
-                                    .hasNoTurret()) || (loc == Tank.LOC_BODY)) {
+                                && ((loc == ((Tank) entity).getLocTurret()) && ((Tank) entity)
+                                    .hasNoTurret() || (loc == Tank.LOC_BODY)))) {
                     continue;
                 }
                 String armor = "";

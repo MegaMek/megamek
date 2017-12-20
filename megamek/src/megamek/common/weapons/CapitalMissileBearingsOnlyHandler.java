@@ -513,6 +513,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
+            //Run this again, otherwise toHit is left set to the value for the last target in the list...
+            setToHit(target);
             server.assignAMS();
 
          } else {

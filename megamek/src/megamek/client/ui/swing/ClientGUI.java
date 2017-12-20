@@ -2118,12 +2118,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     if (input != null) {
                         for (int i = 0; i < targetDescriptions.size(); i++) {
                             if (input.equals(targetDescriptions.get(i))) {
+                                client.sendTelemissileTargetCFRResponse(i);
                                 break;
                             }
                         }
                     }
-                    client.sendTelemissileTargetCFRResponse(0);
-                    break;
             }
         }
     };

@@ -17,7 +17,7 @@ public class EntityVisibilityUtils {
      * @param entity The entity to check
      * @return Whether or not the player can see the entity.
      */
-    public static boolean hasVisual(IPlayer localPlayer, IGame game, Entity entity) {
+    public static boolean detectedOrHasVisual(IPlayer localPlayer, IGame game, Entity entity) {
         boolean canSee = (localPlayer == null)
                 || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 || !entity.getOwner().isEnemyOf(localPlayer)
@@ -30,5 +30,49 @@ public class EntityVisibilityUtils {
                 || !entity.isHidden();
         
         return canSee;
+    }
+    
+    /**
+     * Used to determine if this entity is only detected by an enemies
+     * sensors and hence should only be a sensor return.
+     *
+     * @return
+     */
+    public static boolean onlyDetectedBySensors(IPlayer localPlayer, Entity entity) {
+        boolean sensors = entity.getGame().getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensorsDetectAll = entity.getGame().getOptions().booleanOption(
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
+        boolean doubleBlind = entity.getGame().getOptions().booleanOption(
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean hasVisual = entity.hasSeenEntity(localPlayer);
+        boolean hasDetected = entity.hasDetectedEntity(localPlayer);
+
+        if (sensors && doubleBlind && !sensorsDetectAll
+                && !EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity)
+                && hasDetected && !hasVisual) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * We only want to show double-blind visibility indicators on our own
+     * mechs and teammates mechs (assuming team vision option).
+     */
+    public static boolean trackThisEntitiesVisibilityInfo(IPlayer localPlayer, Entity e) {
+        if (localPlayer == null) {
+            return false;
+        }
+        
+        if (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
+                && ((e.getOwner().getId() == localPlayer.getId()) || 
+                        (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
+                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
+            return true;
+        }
+        
+        return false;
     }
 }

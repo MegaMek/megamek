@@ -508,7 +508,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 setToHit(target);
                 targetDescriptions.add(target.getDisplayName() + ": Needs " + toHit.getValue() + " to hit.");
             }
-            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions);
+            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetDescriptions, tc);
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getTargetId());

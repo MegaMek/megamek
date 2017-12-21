@@ -16,11 +16,15 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
@@ -81,7 +85,15 @@ public class AR10BayWeapon extends AmmoBayWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new CapitalMissileBayHandler(toHit, waa, game, server);
+        Mounted weapon = game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId());
+        Entity attacker = game.getEntity(waa.getEntityId());
+        int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
+        if (weapon.isInBearingsOnlyMode() && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
+        } else {    
+            return new CapitalMissileBayHandler(toHit, waa, game, server);
+        }
     }
     
     @Override

@@ -1144,15 +1144,6 @@ public class MiniMap extends JPanel {
     }
 
     private void paintUnit(Graphics g, Entity entity) {
-        boolean sensors = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
-        boolean sensorsDetectAll = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean hasVisual = EntityVisibilityUtils.hasVisual(m_bview.getLocalPlayer(), m_game, entity);
-        boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
-        
         int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
                 + leftMargin + hexSide[zoom];
         int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity
@@ -1160,8 +1151,7 @@ public class MiniMap extends JPanel {
         int[] xPoints;
         int[] yPoints;
 
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && hasDetected && !hasVisual) { // Sensor Return
+        if (EntityVisibilityUtils.onlyDetectedBySensors(m_bview.getLocalPlayer(), entity)) { // Sensor Return
             String sensorReturn = "?";           
             Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$            
             int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
@@ -1170,7 +1160,7 @@ public class MiniMap extends JPanel {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (!hasVisual) { // Unseen Unit
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(m_bview.getLocalPlayer(), m_game, entity)) { // Unseen Unit
             // Do nothing
             return;
         } else if (entity instanceof Mech) {

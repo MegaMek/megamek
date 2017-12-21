@@ -24,6 +24,10 @@ Tyre
 2907
 </year>
 
+<originalBuildYear>
+2907
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -71,6 +78,7 @@ Clan Ultra AC/10 Ammo
 CLMediumPulseLaser
 CLMediumPulseLaser
 CLMediumPulseLaser
+CLCASE
 CLCASE
 </Nose Equipment>
 

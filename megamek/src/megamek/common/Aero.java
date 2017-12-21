@@ -20,8 +20,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -2857,6 +2859,29 @@ public class Aero extends Entity implements IAero, IBomber {
 
         return Math.round(cost * omniMultiplier * weightMultiplier);
 
+    }
+    
+    @Override
+    protected int implicitClanCASE() {
+        if (!isClan() || !isFighter()) {
+            return 0;
+        }
+        // Ammo is actually supposed to be assigned to a fuselage location rather than one of the four
+        // weapon arcs. We will use LOC_NONE to record the existence of non-weapon explosive equipment.
+        Set<Integer> caseLocations = new HashSet<>();
+        int explicit = 0;
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+                explicit++;
+            } else if (m.getType().isExplosive(m)) {
+                if (m.getType() instanceof WeaponType) {
+                    caseLocations.add(m.getLocation());
+                } else {
+                    caseLocations.add(LOC_NONE);
+                }
+            }
+        }
+        return Math.max(0, caseLocations.size() - explicit);
     }
 
     @Override

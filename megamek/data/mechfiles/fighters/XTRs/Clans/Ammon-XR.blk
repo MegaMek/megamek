@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,40 +20,32 @@ Ammon
 XR
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-70
-60
-60
-34
-</Armor>
-
-<Nose Equipment>
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLStreakLRM15 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLStreakLRM15
-CLStreakLRM15 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLStreakLRM15
-CLStreakLRM15 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLLaserAntiMissileSystem
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 20
@@ -67,34 +59,45 @@ CLLaserAntiMissileSystem
 400
 </fuel>
 
-<type>
-Clan Level 4
-</type>
+<engine_type>
+2
+</engine_type>
 
-<armor_tech>
-8
-</armor_tech>
+<armor>
+70
+60
+60
+34
+</armor>
 
-<year>
-3076
-</year>
+<Nose Equipment>
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+Clan Streak LRM 15 Ammo
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLLaserAntiMissileSystem
+</Aft Equipment>
 
 <source>
 XTRO Clans - Jihad
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+65.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

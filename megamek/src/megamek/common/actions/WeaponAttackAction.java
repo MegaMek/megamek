@@ -105,6 +105,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private int otherAttackInfo = -1; //
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
+    protected int launchVelocity = 50;
     /**
      * Keeps track of the ID of the current primary target for a swarm missile
      * attack.
@@ -365,9 +366,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
                 && (game.getPhase() == IGame.Phase.PHASE_FIRING);
         
-        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
+        boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) 
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
+        
+        boolean isBearingsOnlyMissile = (weapon.isInBearingsOnlyMode())
+                            && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
+                                    || (game.getPhase() == IGame.Phase.PHASE_FIRING));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -420,7 +425,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             for (int wId : weapon.getBayWeapons()) {
                 Mounted bayW = ae.getEquipment(wId);
                 Mounted bayWAmmo = bayW.getLinked();
+
+                if (bayWAmmo == null) {
+                    //At present, all weapons below using mLinker use ammo, so this won't be a problem
+                    continue;
+                }
                 AmmoType bAmmo = bayWAmmo != null ? (AmmoType) bayWAmmo.getType() : null;
+
                 mLinker = bayW.getLinkedBy();
                 bApollo = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                         && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))
@@ -461,7 +472,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         String reason = WeaponAttackAction.toHitIsImpossible(game, ae, target, swarmPrimaryTarget, swarmSecondaryTarget,
                 weapon, atype, wtype, ttype, exchangeSwarmTarget, usesAmmo, te, isTAG, isInferno, isAttackerInfantry,
                 isIndirect, attackerId, weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK, targetInBuilding,
-                isArtilleryDirect, isTargetECMAffected, isStrafing);
+                isArtilleryDirect, isTargetECMAffected, isStrafing, isBearingsOnlyMissile);
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
@@ -1487,6 +1498,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             return toHit;
 
+        }
+        
+        if (isBearingsOnlyMissile) {
+            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Bearings-only Missile Will Always Hit the Target Hex");
+            }
+            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Bearings-only Missile Cannot be fired at this range");
+            } 
         }
 
         // Attacks against adjacent buildings automatically hit.
@@ -2832,7 +2852,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean exchangeSwarmTarget, boolean usesAmmo, Entity te, boolean isTAG, boolean isInferno,
             boolean isAttackerInfantry, boolean isIndirect, int attackerId, int weaponId, boolean isArtilleryIndirect,
             Mounted ammo, boolean isArtilleryFLAK, boolean targetInBuilding, boolean isArtilleryDirect,
-            boolean isTargetECMAffected, boolean isStrafing) {
+            boolean isTargetECMAffected, boolean isStrafing, boolean isBearingsOnlyMissile) {
         boolean isHoming = false;
         ToHitData toHit = null;
 
@@ -2982,8 +3002,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getMunitionType() == AmmoType.M_FLARE))) {
             return "Weapon can't deliver flares";
         }
-        if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && !isArtilleryIndirect) {
-            return "Only indirect artillery can be fired in the targeting phase";
+        if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
+            return "Only indirect artillery and bearings-only missiles can be fired in the targeting phase";
         }
         if ((game.getPhase() == IGame.Phase.PHASE_OFFBOARD) && !isTAG) {
             return "Only TAG can be fired in the offboard attack phase";
@@ -3083,6 +3103,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
+        } else if (weapon.isInBearingsOnlyMode()) {             
+            //We don't really need to do anything here. This just prevents these weapons from returning impossible.
         } else {
             // weapon is not artillery
             if (ttype == Targetable.TYPE_HEX_ARTILLERY) {
@@ -3802,7 +3824,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                             // by
                                                                             // another
                                                                             // unit
-                && !isArtilleryIndirect && !isIndirect) {
+                && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
             if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3() || ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
@@ -3830,7 +3852,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "Target not in arc.";
         }
 
-        if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect) {
+        if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect && !ae.isDropping()) {
             if ((ae.getAltitude() > 5) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 return "attacker is too high";
             }
@@ -4181,6 +4203,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
+        if (isBearingsOnlyMissile) {
+            //this is an arbitrary number. You shouldn't ever get this message.
+            if (distance > RangeType.RANGE_BEARINGS_ONLY_OUT) {
+                return "Bearings-only attack out of range";
+            }
+            if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
+                return "Bearings-only shot must target a hex";
+            }
+        }
 
         if (ae.getGrappled() != Entity.NONE) {
             int grapple = ae.getGrappled();
@@ -4371,5 +4402,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     public void setPointblankShot(boolean isPointblankShot) {
         this.isPointblankShot = isPointblankShot;
+    }
+    
+    /*
+     * Needed by teleoperated missiles
+     * @param velocity - an integer representing initial velocity
+     */
+    public void setLaunchVelocity(int velocity) {
+        this.launchVelocity = velocity;
+    }
+    
+    //This is a stub. ArtilleryAttackActions actually need to use it
+    public void updateTurnsTilHit(IGame game) {
+        
     }
 }

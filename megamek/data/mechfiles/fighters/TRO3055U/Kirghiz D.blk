@@ -24,6 +24,10 @@ D
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -92,6 +99,7 @@ CLCASE
 CLCASE
 CLCASE
 CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -103,6 +111,7 @@ Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE

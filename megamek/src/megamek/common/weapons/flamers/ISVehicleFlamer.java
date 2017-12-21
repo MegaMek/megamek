@@ -40,6 +40,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.addLookupName("ISVehicleFlamer");
         this.addLookupName("CLVehicleFlamer");
         this.addLookupName("Clan Vehicle Flamer");
+        this.addLookupName("Vehicle Flamer");
         this.heat = 3;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_4D6;

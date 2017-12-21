@@ -1636,6 +1636,16 @@ public class FireControl {
 
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooterState.isAero());
+        
+        if(shooter.isAero()) {
+            final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
+            calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
+            
+            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+                return bombingPlan;
+            }
+        }
+        
         return myPlan;
     }
 
@@ -1830,6 +1840,16 @@ public class FireControl {
 
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
+        
+        if(shooter.isAero()) {
+            final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
+            calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
+            
+            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+                return bombingPlan;
+            }
+        }
+        
         return myPlan;
     }
 
@@ -2006,6 +2026,7 @@ public class FireControl {
         // Start with an alpha strike.
         final FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
                                                          ammoConservation, game);
+        
         // Although they don't track heat, infantry/BA do need to make tradeoffs
         // between firing different weapons, because swarm/leg attacks are
         // mutually exclusive with normal firing, so we treat them similarly to
@@ -2013,8 +2034,7 @@ public class FireControl {
         
         // conventional fighters can drop bombs
         if (DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
-            && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)
-            && ((shooter.getEntityType() & Entity.ETYPE_CONV_FIGHTER) == 0)) {
+            && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
             return alphaStrike; // No need to worry about heat if the unit
                                 // doesn't track it.
         }
@@ -2065,14 +2085,16 @@ public class FireControl {
         }
 
         // Get the best firing plan that falls under our heat limit.
+        // Now emulates the logic from getBestFiringPlanUnderHeat, rather than sorting the firing plans low to high then picking the lowest one
         final FiringPlan[] heatPlans = calcFiringPlansUnderHeat(shooter, alphaStrike);
-        Arrays.sort(heatPlans);
-        if (0 < heatPlans.length) {
-            return heatPlans[0];
-        } else {
-            // Return a do nothing plan
-            return new FiringPlan(target);
+        FiringPlan bestPlan = new FiringPlan(target);
+        
+        for (final FiringPlan firingPlan : heatPlans) {
+            if ((bestPlan.getUtility() < firingPlan.getUtility())) {
+                bestPlan = firingPlan;
+            }
         }
+        return bestPlan;
     }
 
     private FiringPlan getBestFiringPlanUnderHeat(final Targetable target,

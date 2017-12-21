@@ -1,0 +1,193 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Overlord
+</Name>
+
+<Model>
+(2762b)
+</Model>
+
+<year>
+2762
+</year>
+
+<originalBuildYear>
+2762
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:36.0:6
+2ndclassquarters:0.0:0
+1stclassquarters:80.0:0
+crewquarters:245.0:0
+cargobay:982.5:3:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+120
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+9180
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+350
+300
+300
+250
+</armor>
+
+<Nose Equipment>
+(B) ISUltraAC5
+IS Ultra AC/5 Ammo:20
+(B) ISERLargeLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:60
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) ISUltraAC5
+Autocannon/20
+IS Ultra AC/5 Ammo:40
+IS Ammo AC/20:25
+(B) ISERLargeLaser
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISUltraAC5
+(R) IS Ultra AC/5 Ammo:40
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) ISUltraAC5
+Autocannon/20
+IS Ultra AC/5 Ammo:40
+IS Ammo AC/20:25
+(B) ISERLargeLaser
+(B) ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISUltraAC5
+(R) IS Ultra AC/5 Ammo:40
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISUltraAC5
+IS Ultra AC/5 Ammo:40
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:36
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+</Aft Equipment>
+
+<structural_integrity>
+18
+</structural_integrity>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+9700.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+115
+</crew>
+
+<officers>
+8
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+3
+</life_boat>
+
+<escape_pod>
+3
+</escape_pod>
+

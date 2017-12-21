@@ -24,6 +24,7 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IAimingModes;
+import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -294,6 +295,10 @@ public class FireCommand extends ClientCommand {
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
+            } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING 
+                        && m.isInBearingsOnlyMode()) {
+                str += " Can't shoot: "
+                        + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else if (toHit.getValue() > 12) {

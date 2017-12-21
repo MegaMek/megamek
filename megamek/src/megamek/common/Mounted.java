@@ -1698,6 +1698,20 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         modeSwitchable = b;
     }
     
+    /**
+     * Method that checks to see if our capital missile bay is in bearings-only mode
+     * @return
+     */
+    public boolean isInBearingsOnlyMode() {
+        if (curMode().equals("Bearings-Only Extreme Detection Range")
+                    || curMode().equals("Bearings-Only Long Detection Range")
+                    || curMode().equals("Bearings-Only Medium Detection Range")
+                    || curMode().equals("Bearings-Only Short Detection Range")) {
+            return true;
+        }
+        return false;
+    }
+    
     public int getBaMountLoc() {
         return baMountLoc;
     }

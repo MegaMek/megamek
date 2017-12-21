@@ -24,6 +24,10 @@ C
 2874
 </year>
 
+<originalBuildYear>
+2874
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -74,6 +81,7 @@ Clan Ultra AC/20 Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
 CLERSmallLaser:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE

@@ -87,18 +87,16 @@ ISERLargeLaser
 IS Ammo SRM-6
 LRM 10
 IS Ammo LRM-10
-IS Ammo LRM-10
 SRM 6
-ISERMediumLaser
+(R) ISERMediumLaser 
 </Left Side Equipment>
 
 <Right Side Equipment>
 LRM 10
 IS Ammo LRM-10
-IS Ammo LRM-10
 SRM 6
 IS Ammo SRM-6
-ISERMediumLaser
+(R) ISERMediumLaser 
 </Right Side Equipment>
 
 <Aft Equipment>

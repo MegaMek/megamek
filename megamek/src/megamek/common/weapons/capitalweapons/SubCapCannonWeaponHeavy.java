@@ -33,6 +33,8 @@ public class SubCapCannonWeaponHeavy extends SubCapCannonWeapon {
         this.name = "Sub-Capital Cannon (Heavy)";
         this.setInternalName(this.name);
         this.addLookupName("HeavySCC");
+        this.addLookupName("Heavy Sub-Capital Cannon");
+        this.shortName = "Heavy SCC";
         this.heat = 42;
         this.damage = 7;
         this.rackSize = 7;

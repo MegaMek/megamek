@@ -1,12 +1,15 @@
 Clan Ghost Bear Dropships Late 3075
-Titan (Clan),1
+Titan (2953),1
 Condor (3054),2
-Miraborg (Standard),3
-Overlord C,4
-Confederate (Clan),5
-Union C,6
-Broadsword (Standard),5
-Sassanid (Standard),4
-Noruff (Standard),3
-Sassanid (Standard),2
-Lion (Clan),1
+Miraborg (3053),3
+Overlord C (2818),3
+Overlord C (2818) (Tank),1
+Confederate C (3048),5
+Broadsword (2979),5
+Sassanid (2875),4
+Noruff (3056),3
+Sassanid (2875),2
+Lion (2835),1
+Union C (2829),4
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

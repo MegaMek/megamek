@@ -17,6 +17,7 @@ package megamek.common.event;
 
 import java.util.List;
 
+import megamek.common.Coords;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.net.Packet;
 
@@ -52,6 +53,16 @@ public class GameCFREvent extends GameEvent {
      * AMS_ASSIGN CFRs.
      */
     private List<WeaponAttackAction> waas;
+
+    /**
+     * List of descriptions for targets of a teleguided missile.
+     */
+    private List<String> telemissileTargets;
+    
+    /**
+     * Original target coords for a bearings-only teleguided missile.
+     */
+    private Coords telemissileTargetCoords;
     
     /**
      * Construct game event
@@ -83,6 +94,11 @@ public class GameCFREvent extends GameEvent {
             case Packet.COMMAND_CFR_APDS_ASSIGN:
                 evtName += " assigning APDS for Entity Id " + eId;
                 break;
+            case Packet.COMMAND_CFR_HIDDEN_PBS:
+                evtName += " assigning pointblank shot for Entity Id " + eId + ", target: " + targetId;
+                break;
+            case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                evtName += " assigning teleguided missile targets: " + telemissileTargets;
         }
         return evtName;
     }
@@ -137,5 +153,21 @@ public class GameCFREvent extends GameEvent {
 
     public void setTargetId(int targetId) {
         this.targetId = targetId;
+    }
+
+    public List<String> getTelemissileTargetDescriptions() {
+        return telemissileTargets;
+    }
+    
+    public void setTeleguidedMissileTargets(List<String> newTargetDescriptions) {
+        telemissileTargets = newTargetDescriptions;
+    }
+    
+    public Coords getTelemissileTargetCoords() {
+        return telemissileTargetCoords;
+    }
+    
+    public void setTeleguidedMissileCoords(Coords tc) {
+        telemissileTargetCoords = tc;
     }
 }

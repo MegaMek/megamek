@@ -1,0 +1,161 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Seeker
+</Name>
+
+<Model>
+(2815)
+</Model>
+
+<year>
+2815
+</year>
+
+<originalBuildYear>
+2815
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+lightvehiclebay:40.0:1:1
+infantrybay:9.0:1:2:Foot
+cargobay:491.0:1:3
+1stclassquarters:40.0:0
+2ndclassquarters:0.0:0
+crewquarters:112.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+101
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6450
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+140
+120
+120
+116
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+(R) (B) LRM 10
+(R) IS Ammo LRM-10:12
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+(R) (B) LRM 10
+(R) IS Ammo LRM-10:12
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3057R - Early Succession War
+</source>
+
+<tonnage>
+4700.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+472
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

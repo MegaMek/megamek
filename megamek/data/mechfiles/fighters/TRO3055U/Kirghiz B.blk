@@ -24,6 +24,10 @@ B
 2874
 </year>
 
+<originalBuildYear>
+2874
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -81,6 +88,7 @@ CLCASE
 CLCASE
 CLCASE
 CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,6 +102,7 @@ CLCASE
 CLCASE
 CLCASE
 CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -102,6 +111,7 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
 CLERPPC:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE

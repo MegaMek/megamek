@@ -649,11 +649,15 @@ public class Hex implements IHex, Serializable {
         if ((containsTerrain(Terrains.RAPIDS))) {
             if (!containsTerrain(Terrains.WATER)) {
                 rv = false;
-                errBuff.append("Rapids must occurr within water!\n");
+                if (errBuff != null) {
+                    errBuff.append("Rapids must occurr within water!\n");
+                }
             }
             if (this.depth() <1) {
                 rv = false;
-                errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+                if (errBuff != null) {
+                    errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+                }
             }
         }
 

@@ -96,6 +96,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -1951,6 +1952,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.autoFiringWeapon"));
+                //$NON-NLS-1$
+                setFireEnabled(false);
+            } else if (m.isInBearingsOnlyMode()) {
+                clientgui.mechD.wPan.wToHitR.setText(Messages
+                        .getString("FiringDisplay.bearingsOnlyWrongPhase"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {

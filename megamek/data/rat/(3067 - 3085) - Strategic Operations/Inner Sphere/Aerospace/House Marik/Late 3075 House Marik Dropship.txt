@@ -1,7 +1,7 @@
 Marik Dropship Late 3075
-Kuan Ti (Standard),1
+Kuan Ti (3055),1
 Intruder (3056),2
-Hamilcar (Standard),3
+Hamilcar (3054),3
 Fury (3056),4
 Leopard (3056),5
 Union (3055),6
@@ -9,4 +9,4 @@ Leopard CV (3054),5
 Condor (3054),4
 Gazelle (3055),3
 Merlin (3063),2
-Hannibal (Standard),1
+Hannibal (3055),1

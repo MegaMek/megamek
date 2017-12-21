@@ -197,6 +197,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     static final int HEX_W = HexTileset.HEX_W;
     static final int HEX_H = HexTileset.HEX_H;
     public static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
+
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -497,6 +498,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Used to track the previous x/y for tooltip display
     int prevTipX = -1, prevTipY = -1;
+
+    /**
+     * Flag to indicate if we should display informatin about illegal terrain in hexes.
+     */
+    boolean displayInvalidHexInfo = false;
+
 
 
     /**
@@ -2716,6 +2723,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     + (int) (12 * scale), font_hexnum, g);
         }
 
+        if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
+            Point hexCenter = new Point((int)(HEX_W / 2 * scale), (int)(HEX_H / 2 * scale));
+            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED, false,
+                    new Font("SansSerif", Font.BOLD, 14));
+        }
+
         // write terrain level / water depth / building height
         if (scale > 0.5f) {
             int ypos = HEX_H-2;
@@ -3465,7 +3478,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = EntityVisibilityUtils.hasVisual(localPlayer, game, entity);
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite
@@ -5700,6 +5713,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
+            if (displayInvalidHexInfo) {
+                StringBuffer errBuff = new StringBuffer();
+                if (!mhex.isValid(errBuff)) {
+                    txt.append(Messages.getString("BoardView1.invalidHex"));
+                    txt.append("<br>"); //$NON-NLS-1$
+                    String errors = errBuff.toString();
+                    errors = errors.replace("\n", "<br>");
+                    txt.append(errors);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+            }
         }
         
         // Show the player(s) that may deploy here 
@@ -6617,4 +6641,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return hexImage;
     }
 
+    public void setDisplayInvalidHexInfo(boolean v) {
+        displayInvalidHexInfo = v;
+    }
+
+    public boolean getDisplayInvalidHexInfo() {
+        return displayInvalidHexInfo;
+    }
 }

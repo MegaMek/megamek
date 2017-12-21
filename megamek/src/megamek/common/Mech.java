@@ -23,9 +23,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
@@ -5382,6 +5384,26 @@ public abstract class Mech extends Entity {
         cost = Math.round(cost * weightMultiplier);
         addCostDetails(cost, costs);
         return cost;
+    }
+    
+    @Override
+    protected int implicitClanCASE() {
+        if (!isClan()) {
+            return 0;
+        }
+        int explicit = 0;
+        Set<Integer> caseLocations = new HashSet<>();
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+                explicit++;
+            } else if (m.getType().isExplosive(m)) {
+                caseLocations.add(m.getLocation());
+                if (m.getSecondLocation() >= 0) {
+                    caseLocations.add(m.getSecondLocation());
+                }
+            }
+        }
+        return Math.max(0, caseLocations.size() - explicit);
     }
 
     private void addCostDetails(double cost, double[] costs) {

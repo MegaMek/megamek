@@ -1,0 +1,204 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Titan
+</Name>
+
+<Model>
+(2953)
+</Model>
+
+<year>
+2953
+</year>
+
+<originalBuildYear>
+2953
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:10.0:3:1
+cargobay:441.5:0:2
+asfbay:10.0:3:3
+cargobay:441.5:0:4
+asfbay:10.0:2:5
+cargobay:441.5:0:6
+2ndclassquarters:0.0:0
+1stclassquarters:70.0:0
+crewquarters:217.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+195
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+14400
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+250
+250
+250
+260
+</armor>
+
+<Nose Equipment>
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+(B) CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20:30
+(B) CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+Clan Ultra AC/20 Ammo:60
+ISSmallNavalCommScannerSuite
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20:12
+(B) CLUltraAC20
+CLUltraAC20
+Clan Ultra AC/20 Ammo:40
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20:12
+(B) CLUltraAC20
+CLUltraAC20
+Clan Ultra AC/20 Ammo:40
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLLRM20
+Clan Ammo LRM-20:12
+(B) CLUltraAC20
+Clan Ultra AC/20 Ammo:20
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+18
+</structural_integrity>
+
+<source>
+TRO 3057R - Late Succession War - Lostech
+</source>
+
+<tonnage>
+12000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+98
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+8
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

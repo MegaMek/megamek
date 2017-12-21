@@ -4205,7 +4205,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         if (isBearingsOnlyMissile) {
             //this is an arbitrary number. You shouldn't ever get this message.
-            if (distance > 5000) {
+            if (distance > RangeType.RANGE_BEARINGS_ONLY_OUT) {
                 return "Bearings-only attack out of range";
             }
             if (ttype != Targetable.TYPE_HEX_ARTILLERY) {

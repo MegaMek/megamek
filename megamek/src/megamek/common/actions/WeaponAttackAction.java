@@ -3830,7 +3830,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "Target not in arc.";
         }
 
-        if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect) {
+        if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect && !ae.isDropping()) {
             if ((ae.getAltitude() > 5) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 return "attacker is too high";
             }

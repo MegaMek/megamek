@@ -1053,8 +1053,8 @@ public class Compute {
         }
 
         // if Aero then adjust to standard ranges
-        if (ae.isAirborne()
-            || (ae.usesWeaponBays() && game.getBoard().onGround())) {
+        if (ae.isAero() && (ae.isAirborne()
+            || (ae.usesWeaponBays() && game.getBoard().onGround()))) {
             weaponRanges = wtype.getATRanges();
         }
 
@@ -1588,6 +1588,11 @@ public class Compute {
             } else {
                 distance += (2 * target.getAltitude());
             }
+        }
+        
+        // Attacking a ground unit while dropping
+        if (attacker.isDropping() && target.getAltitude() == 0) {
+            distance += (2 * attacker.getAltitude());
         }
 
         return distance;
@@ -5878,7 +5883,7 @@ public class Compute {
             return false;
         }
         // According to errata, VTOL and WiGes are considered ground targets
-        return attacker.isAirborne() && !target.isAirborne();
+        return attacker.isAirborne() && !target.isAirborne() && attacker.isAero();
         
     }
 

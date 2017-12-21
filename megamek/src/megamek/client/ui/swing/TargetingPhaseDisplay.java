@@ -1079,7 +1079,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     || m.curMode().equals("Bearings-Only Medium Detection Range")
                     || m.curMode().equals("Bearings-Only Short Detection Range"))
                     && distance <= 50) {
-                clientgui.mechD.wPan.wToHitR.setText("Cannot fire bearings-only missile at <= 50 hexes");
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages

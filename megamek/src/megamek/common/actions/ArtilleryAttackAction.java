@@ -21,6 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.RangeType;
 import megamek.common.WeaponType;
 
 /**
@@ -57,7 +58,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         if (((wType.getAtClass() == WeaponType.CLASS_AR10)
                 || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
-                && (distance > 50)) {
+                && (distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
             turnsTilHit = (int) (distance / launchVelocity);
         }
         if(getEntity(game).isAirborne()) {

@@ -200,6 +200,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
+    private JTextField tooltipDistSupression;
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
@@ -476,6 +477,16 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(tooltipDismissDelay);
         comps.add(row);
         
+        tooltipDistSupression = new JTextField(4);
+        tooltipDistSupression.setMaximumSize(new Dimension(150,40));
+        tooltipDistSupression.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
+        JLabel tooltipDistSupressionLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDistSuppression")); //$NON-NLS-1$
+        tooltipDistSupressionLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
+        row = new ArrayList<>();
+        row.add(tooltipDistSupressionLabel);
+        row.add(tooltipDistSupression);
+        comps.add(row);
+
         showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showWpsinTT);
@@ -717,6 +728,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
+        tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
         showWpsinTT.setSelected(gs.getShowWpsinTT());
         showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
 
@@ -885,6 +897,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
+        gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
 

@@ -1501,7 +1501,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         if (isBearingsOnlyMissile) {
-            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance > 50) {
+            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Bearings-only Missile Will Always Hit the Target Hex");
             }
             if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance <= 50) {

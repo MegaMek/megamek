@@ -51,8 +51,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
-import megamek.common.UnitType;
-import megamek.common.VTOL;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
@@ -225,34 +223,6 @@ public class BasicPathRanker extends PathRanker {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
-    }
-
-    /**
-     * Performs some evaluation of the path specific to aerotech units
-     * @param movePath the path to check
-     * @return A 'RankedPath' object with a certain evaluation
-     */
-    RankedPath doAeroSpecificRanking(MovePath movePath) {
-        // stalling is awful
-    	if(AeroPathUtil.willStall(movePath)) {
-            return new RankedPath(-1000d, movePath, "stall");
-        }
-
-        // crashing is even worse
-        if (AeroPathUtil.willCrash(movePath)) {
-            return new RankedPath(-10000d, movePath, "crash");
-        }
-
-        // Flying off board should only be done if necessary, but is better than taking a lot of damage.
-        // VTOLs really should not be flying off board as they can just stop moving instead
-        if (movePath.fliesOffBoard()) {
-            if (UnitType.isVTOL(movePath.getEntity())) {
-                return new RankedPath(-5000d, movePath, "off-board");
-            }
-            return new RankedPath(-5d, movePath, "off-board");
-        }
-
-        return null;
     }
 
     @Override

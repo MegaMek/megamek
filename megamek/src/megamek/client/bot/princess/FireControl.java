@@ -2086,13 +2086,14 @@ public class FireControl {
 
         // Get the best firing plan that falls under our heat limit.
         final FiringPlan[] heatPlans = calcFiringPlansUnderHeat(shooter, alphaStrike);
-        Arrays.sort(heatPlans);
-        if (0 < heatPlans.length) {
-            return heatPlans[0];
-        } else {
-            // Return a do nothing plan
-            return new FiringPlan(target);
+        FiringPlan bestPlan = new FiringPlan(target);
+        
+        for (final FiringPlan firingPlan : heatPlans) {
+            if ((bestPlan.getUtility() < firingPlan.getUtility())) {
+                bestPlan = firingPlan;
+            }
         }
+        return bestPlan;
     }
 
     private FiringPlan getBestFiringPlanUnderHeat(final Targetable target,

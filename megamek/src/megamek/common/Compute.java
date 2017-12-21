@@ -1059,7 +1059,7 @@ public class Compute {
         }
         // And if you're using bearings-only capital missiles, update the extreme range
         if (weapon.isInBearingsOnlyMode()) {
-            weaponRanges = new int[] { Integer.MIN_VALUE, 12, 24, 40, 5000 };
+            weaponRanges = new int[] { Integer.MIN_VALUE, 12, 24, 40, RangeType.RANGE_BEARINGS_ONLY_OUT };
         }
 
         // determine base distance & range bracket

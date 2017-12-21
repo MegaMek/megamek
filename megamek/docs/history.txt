@@ -6,6 +6,7 @@ v0.43.6-git
 + Fixes for Princess aircraft refusing to engage ground targets, being stuck on the edge of the map
 + Enable Princess to properly consider standing still and firing for infantry units that have "move OR fire" rules (field guns, etc)
 + Issue #351: Dropping units cannot attack ground targets
++ Feature: Capital missile bearings only launch
 
 v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.

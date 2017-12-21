@@ -348,7 +348,7 @@ public class BasicPathRanker extends PathRanker {
                                         FireControl.DOES_NOT_TRACK_HEAT,
                                         null);
             myFiringPlan = getFireControl().determineBestFiringPlan(guess);
-        }//
+        }
         return myFiringPlan.getUtility();
     }
 

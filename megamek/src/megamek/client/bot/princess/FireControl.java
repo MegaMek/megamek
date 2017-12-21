@@ -2085,6 +2085,7 @@ public class FireControl {
         }
 
         // Get the best firing plan that falls under our heat limit.
+        // Now emulates the logic from getBestFiringPlanUnderHeat, rather than sorting the firing plans low to high then picking the lowest one
         final FiringPlan[] heatPlans = calcFiringPlansUnderHeat(shooter, alphaStrike);
         FiringPlan bestPlan = new FiringPlan(target);
         

@@ -3629,10 +3629,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery and Bearings-Only Capital Missiles only in the correct phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.curMode().equals("Bearings-Only Extreme Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Short Detection Range"))
+                    || mounted.isInBearingsOnlyMode())
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 continue;
             }
@@ -3692,19 +3689,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery or Bearings-only missiles only in the targeting phase...
             if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.curMode().equals("Bearings-Only Extreme Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Short Detection Range"))
+                    || mounted.isInBearingsOnlyMode())
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 return false;
             }
             // No Bearings-only missiles in the firing phase
-            if ((mounted.curMode().equals("Bearings-Only Extreme Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Long Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                    || mounted.curMode().equals("Bearings-Only Short Detection Range"))
-                && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
+            if (mounted.isInBearingsOnlyMode() && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 return false;
             }
 
@@ -9676,10 +9666,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((wtype instanceof TeleOperatedMissileBayWeapon)
                     || (wtype instanceof CapitalMissileBayWeapon)
                     || (wtype instanceof AR10BayWeapon)) {
-                if (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Long Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Short Detection Range")) {
+                if (mounted.isInBearingsOnlyMode()) {
                     return true;
                 } 
             }            

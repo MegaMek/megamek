@@ -60,6 +60,7 @@ import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.SmallCraft;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -1735,11 +1736,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         int mediumR = wtype.getMediumRange();
         int longR = wtype.getLongRange();
         int extremeR = wtype.getExtremeRange();
-        if ((mounted.curMode().equals("Bearings-Only Extreme Detection Range"))
-                || (mounted.curMode().equals("Bearings-Only Long Detection Range"))
-                || (mounted.curMode().equals("Bearings-Only Medium Detection Range"))
-                || (mounted.curMode().equals("Bearings-Only Short Detection Range"))) {
-            extremeR = 5000;
+        if (mounted.isInBearingsOnlyMode()) {
+            extremeR = RangeType.RANGE_BEARINGS_ONLY_OUT;
         }
         if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
             || (longR == 0)) {

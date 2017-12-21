@@ -59,6 +59,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.HexTarget;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -871,11 +872,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         int distance = Compute.effectiveDistance(game, waa.getEntity(game),
                 waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
-                || (mounted.curMode().equals("Bearings-Only Extreme Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Long Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Medium Detection Range")
-                        || mounted.curMode().equals("Bearings-Only Short Detection Range"))
-                            && distance > 50) {
+                || (mounted.isInBearingsOnlyMode()
+                            && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()
                             .getGame());
@@ -1074,11 +1072,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         .getString("TargetingPhaseDisplay.alreadyFired"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if ((m.curMode().equals("Bearings-Only Extreme Detection Range")
-                    || m.curMode().equals("Bearings-Only Long Detection Range")
-                    || m.curMode().equals("Bearings-Only Medium Detection Range")
-                    || m.curMode().equals("Bearings-Only Short Detection Range"))
-                    && distance <= 50) {
+            } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {

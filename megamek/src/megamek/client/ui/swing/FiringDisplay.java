@@ -1954,10 +1954,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         .getString("FiringDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if ((m.getType().hasModes() && m.curMode().equals("Bearings-Only Extreme Detection Range"))
-                            || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Long Detection Range"))
-                            || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Medium Detection Range"))
-                            || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Short Detection Range"))) {
+            } else if (m.isInBearingsOnlyMode()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.bearingsOnlyWrongPhase"));
                 //$NON-NLS-1$

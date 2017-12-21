@@ -370,12 +370,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                         || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         
-        boolean isBearingsOnlyMissile = (((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
-                        || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
-                        || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-                        || (weapon.curMode().equals("Bearings-Only Short Detection Range")))
+        boolean isBearingsOnlyMissile = (weapon.isInBearingsOnlyMode())
                             && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
-                                    || (game.getPhase() == IGame.Phase.PHASE_FIRING)));
+                                    || (game.getPhase() == IGame.Phase.PHASE_FIRING));
         
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (te != null)
@@ -3106,13 +3103,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
-        } else if ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
-            || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
-            || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-            || (weapon.curMode().equals("Bearings-Only Short Detection Range"))) { 
-            
+        } else if (weapon.isInBearingsOnlyMode()) {             
             //We don't really need to do anything here. This just prevents these weapons from returning impossible.
-            
         } else {
             // weapon is not artillery
             if (ttype == Targetable.TYPE_HEX_ARTILLERY) {

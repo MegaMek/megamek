@@ -19,6 +19,7 @@ package megamek.common.weapons.bayweapons;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -71,11 +72,8 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
                 .getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
-        if (((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
-               || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
-               || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-               || (weapon.curMode().equals("Bearings-Only Short Detection Range")))
-                && (rangeToTarget > 50)) {
+        if (weapon.isInBearingsOnlyMode()
+                && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
         } else {    
             return new CapitalMissileBayHandler(toHit, waa, game, server);

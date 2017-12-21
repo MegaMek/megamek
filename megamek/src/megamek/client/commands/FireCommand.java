@@ -296,10 +296,7 @@ public class FireCommand extends ClientCommand {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
             } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING 
-                        && ((m.getType().hasModes() && m.curMode().equals("Bearings-Only Extreme Detection Range"))
-                                || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Long Detection Range"))
-                                || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Medium Detection Range"))
-                                || (m.getType().hasModes() && m.curMode().equals("Bearings-Only Short Detection Range")))) {
+                        && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {

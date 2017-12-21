@@ -1058,10 +1058,7 @@ public class Compute {
             weaponRanges = wtype.getATRanges();
         }
         // And if you're using bearings-only capital missiles, update the extreme range
-        if ((weapon.curMode().equals("Bearings-Only Extreme Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Long Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Medium Detection Range"))
-                || (weapon.curMode().equals("Bearings-Only Short Detection Range"))) {
+        if (weapon.isInBearingsOnlyMode()) {
             weaponRanges = new int[] { Integer.MIN_VALUE, 12, 24, 40, 5000 };
         }
 

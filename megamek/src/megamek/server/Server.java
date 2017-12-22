@@ -6484,9 +6484,10 @@ public class Server implements Runnable {
         }
         // we must be in atmosphere
         // if we're off the map, assume hex ceiling 0
+        // Hexes with elevations < 0 are treated as 0 altitude
         int ceiling = 0;
         if (game.getBoard().getHex(pos) != null) {
-            ceiling = game.getBoard().getHex(pos).ceiling(true);
+            ceiling = Math.max(0, game.getBoard().getHex(pos).ceiling(true));
         }
         return ceiling >= altitude;
     }

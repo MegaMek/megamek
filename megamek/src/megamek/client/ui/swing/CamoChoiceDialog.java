@@ -343,7 +343,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
 
     public void setPlayer(IPlayer p) {
         player = p;
-        colorIndex = player.getColorIndex();
+
         category = player.getCamoCategory();
         filename = player.getCamoFileName();
         if (sourceButton != null) {
@@ -372,7 +372,12 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                 break;
             }
         }
-        tableCamo.setRowSelectionInterval(rowIndex, rowIndex);
+        
+        if(rowIndex < 0 || rowIndex >= tableCamo.getRowCount()) {
+            System.out.println("Attempting to set invalid camo index " + rowIndex + " for player " + p.getName() + ". Using default instead.");
+        } else {
+            tableCamo.setRowSelectionInterval(rowIndex, rowIndex);
+        }
     }
 
     public void setEntity(Entity e) {

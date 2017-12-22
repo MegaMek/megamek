@@ -8234,7 +8234,7 @@ public class Server implements Runnable {
             // check for leap
             if (!lastPos.equals(curPos)
                     && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech)
+                    && (entity instanceof Mech) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
                         + game.getBoard().getHex(lastPos).getLevel())
@@ -24150,7 +24150,7 @@ public class Server implements Runnable {
                     }
 
                     // Torso destruction in airborne LAM causes immediate crash.
-                    if (te instanceof LandAirMech) {
+                    if ((te instanceof LandAirMech) && !te.isDestroyed() && !te.isDoomed()) {
                         r = new Report(9710);
                         r.subject = te.getId();
                         r.addDesc(te);

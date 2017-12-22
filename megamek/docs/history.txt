@@ -9,6 +9,7 @@ v0.43.6-git
 + Feature: Capital missile bearings only launch
 + Issue #362: Tooltips are a lot less sticky
 + Issue #819: Leap check for LAM passing over terrain.
++ Issue #818: Fighter stuck on atmospheric map with no movement options
 
 v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.

@@ -11,7 +11,7 @@ Trinity Medium Battle Armor (Asterion)[PPC]|
 Asura Medium Battle Armor (Anti-Infantry)|
 Asura Medium Battle Armor (SRM)|
 Asura Medium Battle Armor (Standard)|
-Clan Medium Battle Armor (BÃ¤r)|
+Clan Medium Battle Armor (Bär)|
 Clan Medium Battle Armor (Rabid)|
 Clan Medium Battle Armor (Volk)|
 Corona Heavy Battle Armor (SRM)|
@@ -2002,7 +2002,7 @@ Field Medic Magistracy Medical Corp|
 Foot Infantry Raventhir's Infantry Guard|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
-Skaret Assassins JÃ rnFÃ²lk|
+Skaret Assassins JàrnFòlk|
 Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|
 Pirate Lady Death's 'Pacification' Squads|
 Foot Ballistic Rifle Hastati V|
@@ -2067,18 +2067,18 @@ Mechanized Wheeled Platoon (Rifle AA)|
 Motorized Platoon (Rifle AA)|
 Foot Platoon (Flechette)|
 Motorized Platoon (Flechette)|
-Clan Foot Point (Anti-â€™Mech) (Flamer)|
-Clan Foot Point (Anti-â€™Mech) (Laser)|
-Clan Foot Point (Anti-â€™Mech) (LRM)|
-Clan Foot Point (Anti-â€™Mech) (MG)|
-Clan Foot Point (Anti-â€™Mech) (Rifle)|
-Clan Foot Point (Anti-â€™Mech) (SRM)|
-Foot Platoon (Anti-â€™Mech) (Flamer)|
-Foot Platoon (Anti-â€™Mech) (Laser)|
-Foot Platoon (Anti-â€™Mech) (LRM)|
-Foot Platoon (Anti-â€™Mech) (MG)|
-Foot Platoon (Anti-â€™Mech) (Rifle)|
-Foot Platoon (Anti-â€™Mech) (SRM)|
+Clan Foot Point (Anti-’Mech) (Flamer)|
+Clan Foot Point (Anti-’Mech) (Laser)|
+Clan Foot Point (Anti-’Mech) (LRM)|
+Clan Foot Point (Anti-’Mech) (MG)|
+Clan Foot Point (Anti-’Mech) (Rifle)|
+Clan Foot Point (Anti-’Mech) (SRM)|
+Foot Platoon (Anti-’Mech) (Flamer)|
+Foot Platoon (Anti-’Mech) (Laser)|
+Foot Platoon (Anti-’Mech) (LRM)|
+Foot Platoon (Anti-’Mech) (MG)|
+Foot Platoon (Anti-’Mech) (Rifle)|
+Foot Platoon (Anti-’Mech) (SRM)|
 Foot Squad (Flamer)|
 Foot Squad (Laser)|
 Foot Squad (LRM)|
@@ -5002,7 +5002,7 @@ Crab CRB-27sl|
 Dervish DV-6Md|
 Hammerhands HMH-3D (Kessem)|
 Lancelot LNC25-01sl|
-Mackie MSK-9HKR 'Kill-Royï¿½s Little Buddy'|
+Mackie MSK-9HKR 'Kill-Roy’s Little Buddy'|
 Phoenix Hawk PXH-1Kk|
 Stalker STK-3Fk|
 Thunderbolt TDR-5Sd|
@@ -6802,7 +6802,7 @@ Maxim Flanker (Standard)|
 Partisan Hull Defense (Standard)|
 Sea Skimmer Hydrofoil 'Sniper'|
 Skulker Wheeled Scout Tank X-5|
-SturmFeur â€œKalkiâ€ Cruise Missile Launcher (Standard)|
+SturmFeur “Kalki” Cruise Missile Launcher (Standard)|
 Cavalry Attack Helicopter Cadence Rain|
 Challenger MBT XVc|
 Fulcrum Heavy HoverTank X|

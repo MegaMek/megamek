@@ -147,6 +147,18 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("armor_tech")) {
             t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
+        if (dataFile.exists("Turret")) {
+            String field = dataFile.getDataAsString("Turret")[0];
+            int index = field.indexOf(":");
+            if (index >= 0) {
+                t.setTurretSize(Integer.parseInt(field.substring(index + 1)));
+                if (field.toLowerCase().startsWith("modular")
+                        || field.toLowerCase().startsWith("configurable")) {
+                    t.setModularTurret(true);
+                }
+            }
+        }
+        t.recalculateTechAdvancement();
 
         String[] abbrs = t.getLocationAbbrs();
         for (int loop = 0; loop < t.locations(); loop++) {
@@ -188,6 +200,9 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                 } else if  (saEquip[x].contains(":RA")){
                     mountLoc = BattleArmor.MOUNT_LOC_RARM;
                     saEquip[x] = saEquip[x].replace(":RA", "");
+                } else if  (saEquip[x].contains(":TU")){
+                    mountLoc = BattleArmor.MOUNT_LOC_TURRET;
+                    saEquip[x] = saEquip[x].replace(":TU", "");
                 }
                 
                 boolean dwpMounted = saEquip[x].contains(":DWP");
@@ -226,6 +241,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                                 && (m.getType() instanceof AmmoType)){
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
+                            m.setAmmoCapacity(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
                         }
                         m.setAPMMounted(apmMounted);
                         m.setSquadSupportWeapon(sswMounted);

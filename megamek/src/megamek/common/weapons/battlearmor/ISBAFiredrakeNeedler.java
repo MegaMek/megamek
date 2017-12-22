@@ -18,8 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -37,8 +35,7 @@ public class ISBAFiredrakeNeedler extends Weapon {
      */
     public ISBAFiredrakeNeedler() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Firedrake Needler";
+        name = "Needler (Firedrake)";
         setInternalName("ISBAFireDrakeNeedler");
         addLookupName("ISBAFiredrakeIncendiaryNeedler");
         damage = 1;
@@ -50,15 +47,20 @@ public class ISBAFiredrakeNeedler extends Weapon {
         extremeRange = 4;
         bv = 2;
         cost = 1500;
-        tonnage = 0.050f;
+        tonnage = 0.050;
         criticals = 1;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_C };
-        introDate = 3061;
-        techRating = EquipmentType.RATING_D;
-        techLevel.put(3061, techLevel.get(3071));
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "266,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(3058, 3060, 3068, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
     }
 
 }

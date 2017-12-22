@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,33 @@ Condottiere Assault Craft
 (Standard)
 </Model>
 
-<Tonnage>
-150
-</Tonnage>
+<year>
+3093
+</year>
+
+<originalBuildYear>
+3093
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:1.0:1:1
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:25.0:0
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
-
-<Armor>
-124
-92
-92
-61
-</Armor>
-
-<Nose Equipment>
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLRM15
-ISArtemisIV
-ISLRM15 Artemis-capable Ammo
-ISLRM15 Artemis-capable Ammo
-</Left Side Equipment>
-
-<Right Side Equipment>
-ISLRM15
-ISArtemisIV
-ISLRM15 Artemis-capable Ammo
-ISLRM15 Artemis-capable Ammo
-</Right Side Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-5
-</structural_integrity>
 
 <heatsinks>
 11
@@ -82,46 +60,105 @@ ISERMediumLaser
 720
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3093
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-17
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+124
+92
+92
+61
+</armor>
+
+<Nose Equipment>
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Nose Equipment>
+
+<Left Side Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Left Side Equipment>
+
+<Right Side Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+5
+</structural_integrity>
+
+<source>
+TRO 3145 Mercenaries - Late Republic
+</source>
+
+<tonnage>
+150.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
 
 <crew>
 5
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+2
+</gunners>
+
 <passengers>
 0
 </passengers>
 
-<transporters>
-cargobay:1:1
-</transporters>
+<marines>
+0
+</marines>
 
-<source>
-TRO 3145 Mercenaries - Late Republic
-</source>
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

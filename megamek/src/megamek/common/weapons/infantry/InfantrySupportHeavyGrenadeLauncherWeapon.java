@@ -18,35 +18,38 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavyGrenadeLauncherWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Grenade Launcher (Heavy)";
-        setInternalName(name);
-        addLookupName("InfantryHeavyGrenadeLauncher");
-        addLookupName("Infantry Heavy Grenade Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 1500;
-        bv = 5.38;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 1.76;
-        infantryRange = 1;
-        crew = 1;
-        introDate = 3050;
-        techLevel.put(3050,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_C;
-    }
+	public InfantrySupportHeavyGrenadeLauncherWeapon() {
+		super();
+
+		name = "Grenade Launcher (Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryHeavyGrenadeLauncher");
+		addLookupName("Infantry Heavy Grenade Launcher");
+		ammoType = AmmoType.T_NA;
+		cost = 1500;
+		bv = 5.38;
+		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+		infantryDamage = 1.76;
+		infantryRange = 1;
+		crew = 1;
+		tonnage = .018;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_FS, F_LC)
+				.setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
+				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
+	}
 }

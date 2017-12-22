@@ -18,34 +18,35 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryShotgunAvengerCCWWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Shotgun (Avenger CCW)";
-        setInternalName(name);
-        addLookupName("InfantryAvengerCCW");
-        addLookupName("Avenger Crowd Control Weapon");
-        ammoType = AmmoType.T_NA;
-        cost = 345;
-        bv = 0.30;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.33;
-        infantryRange = 0;
-        introDate = 3020;
-        techLevel.put(3020,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
-        techRating = RATING_C;
-    }
+	public InfantryShotgunAvengerCCWWeapon() {
+		super();
+
+		name = "Shotgun (Avenger CCW)";
+		setInternalName(name);
+		addLookupName("InfantryAvengerCCW");
+		addLookupName("Avenger Crowd Control Weapon");
+		ammoType = AmmoType.T_NA;
+		cost = 345;
+		bv = 0.30;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.33;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3019, 3020, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSV)
+		        .setProductionFactions(F_CSV).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_E, RATING_C, RATING_D);
+
+	}
 }

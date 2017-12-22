@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a volume of space set aside for carrying livestock
  */
 
 public final class LivestockCargoBay extends Bay {
@@ -47,11 +47,12 @@ public final class LivestockCargoBay extends Bay {
      * @param bayNumber
      */
     public LivestockCargoBay(double space, int doors, int bayNumber) {
-        totalSpace = space * 0.83;
-        weight = space;
-        currentSpace = space * 0.83;
+        totalSpace = space;
+        weight = space / 0.83;
+        currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -73,13 +74,13 @@ public final class LivestockCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Livestock Cargo Space ("
-                + getDoors() + " doors) - ");
+        StringBuffer returnString = new StringBuffer("Livestock Cargo Space "
+                + numDoorsString() + " - ");
 
-        if (currentSpace != Math.round(currentSpace)) {
-            returnString.append(String.format("%1$,.3f", currentSpace));
+        if (getUnused() != Math.round(getUnused())) {
+            returnString.append(String.format("%1$,.3f", getUnused()));
         } else {
-            returnString.append(String.format("%1$,.0f", currentSpace));
+            returnString.append(String.format("%1$,.0f", getUnused()));
         }
 
         returnString.append(" tons");
@@ -99,6 +100,12 @@ public final class LivestockCargoBay extends Bay {
     @Override
     public String toString() {
         return "livestockcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+    }
+
+    
+    @Override
+    public boolean isCargo() {
+        return true;
     }
 
 }

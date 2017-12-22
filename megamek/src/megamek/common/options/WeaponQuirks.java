@@ -20,6 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.MiscType;
@@ -27,7 +28,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
  * Contains the options determining quirks of the unit
@@ -50,18 +51,22 @@ public class WeaponQuirks extends AbstractOptions {
         IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_ACCURATE, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_INACCURATE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPN_POS_DIRECT_TORSO_MOUNT, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED, false); //$NON-NLS-1$
+
     }
     
     //TODO
@@ -96,7 +101,7 @@ public class WeaponQuirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)) {
+                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
                 return false;
             }
             return true;
@@ -112,14 +117,21 @@ public class WeaponQuirks extends AbstractOptions {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return false;
             }
+            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
+                return false;
+            }
         }
 
         if (!(wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             return false;
         }
         
+/*        if ((wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
+            return false;
+        }*/
+        
         if (en instanceof Protomech) {
-            if (qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
+            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return false;
             }
@@ -149,7 +161,55 @@ public class WeaponQuirks extends AbstractOptions {
             if (en instanceof Protomech
                 || en instanceof Aero
                 || en instanceof Jumpship
+                || en instanceof Dropship
+                || en instanceof GunEmplacement)  {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
+            if (en instanceof Protomech
+                || en instanceof BattleArmor
+                || en instanceof Jumpship
                 || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
+            if (en instanceof Aero
+                || en instanceof BattleArmor
+                || en instanceof Jumpship
+                || en instanceof Dropship
+                || en instanceof Tank
+                || en instanceof GunEmplacement) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
+            if (en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
+            if (en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
+            if (en instanceof Jumpship) {
 
                 return false;
             }

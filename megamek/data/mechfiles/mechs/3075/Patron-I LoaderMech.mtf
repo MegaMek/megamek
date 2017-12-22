@@ -1,15 +1,16 @@
 Version:1.1
 Patron I LoaderMech
 
+
 Config:Biped
 TechBase:Inner Sphere
 Era:2470
 Source:TRO 3075
-Rules Level:5
+Rules Level:4
 
 Mass:15
 Engine:40 Fuel Cell Engine(IS)
-Structure:Industrial
+Structure:IS Industrial
 Myomer:Standard
 Cockpit:Primitive Cockpit
 Gyro:Standard Gyro
@@ -76,9 +77,9 @@ MechSprayer
 -Empty-
 
 Right Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 -Empty-
 -Empty-
 -Empty-

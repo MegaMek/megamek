@@ -33,6 +33,8 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.flamers.CLHeavyFlamer;
+import megamek.common.weapons.flamers.ISHeavyFlamer;
 import megamek.server.Server;
 
 /**

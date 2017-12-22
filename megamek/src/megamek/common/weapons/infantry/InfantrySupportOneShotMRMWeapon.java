@@ -18,36 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportOneShotMRMWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "MRM Launcher (One-Shot)";
-        setInternalName(name);
-        addLookupName("InfantryMRM");
-        addLookupName("InfantryOneShotMRM");
-        addLookupName("Infantry One-Shot MRM Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 2.71;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.53;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 3065;
-        techLevel.put(3065,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
-        techRating = RATING_D;
-    }
+	public InfantrySupportOneShotMRMWeapon() {
+		super();
+
+		name = "MRM Launcher";
+		setInternalName(name);
+		addLookupName("InfantryMRM");
+		addLookupName("InfantryOneShotMRM");
+		addLookupName("Infantry One-Shot MRM Launcher");
+		ammoType = AmmoType.T_NA;
+		cost = 2500;
+		bv = 2.71;
+		tonnage = .03;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
+		infantryDamage = 0.53;
+		infantryRange = 2;
+		crew = 1;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
+		        .setProductionFactions(F_DC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+	}
 }

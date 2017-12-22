@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying mechs aboard dropships
+ * Represents a volume of space set aside for carrying mechs or LAMs aboard large spacecraft and mobile structures
  */
 
 public final class MechBay extends Bay {
@@ -50,6 +50,7 @@ public final class MechBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -66,14 +67,16 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only mechs
-        if (unit instanceof Mech) {
+        // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs
+        if ((unit instanceof Mech) 
+        		|| ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH)) 
+        		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -81,16 +84,16 @@ public final class MechBay extends Bay {
         if (doors <= loadedThisTurn) {
             result = false;
         }
-
+        
         // Return our result.
         return result;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Mech (" + getDoors() + " doors) - "
-                + String.format("%1$,.0f", currentSpace)
-                + (currentSpace > 1 ? " units" : " unit");
+        return "Mech " + numDoorsString() + " - "
+                + String.format("%1$,.0f", getUnused())
+                + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override
@@ -104,8 +107,25 @@ public final class MechBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 2;
+    }
+
+    @Override
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
+    }
+    
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2445, 2470, 2500)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return MechBay.techAdvancement();
     }
 
 } // End package class TroopSpace implements Transporter

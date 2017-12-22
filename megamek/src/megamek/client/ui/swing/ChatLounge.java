@@ -47,11 +47,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -90,7 +90,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
@@ -108,11 +107,14 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LAMPilot;
+import megamek.common.LandAirMech;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
@@ -227,7 +229,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private boolean mscLoaded = false;
     private boolean rngLoaded = false;
 
-    private int cmdSelectedTab = -1;
+    private String cmdSelectedTab = null;
 
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
@@ -1359,7 +1361,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else {
             value += pilot.getDesc();
         }
-        value += " (" + pilot.getGunnery() + "/" + pilot.getPiloting() + ")";
+        value += " (" + pilot.getSkillsAsString() + ")";
         if (pilot.countOptions() > 0) {
             value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
         }
@@ -1374,12 +1376,24 @@ public class ChatLounge extends AbstractPhaseDisplay
         int implants = pilot.countOptions(PilotOptions.MD_ADVANTAGES);
 
         String value = "";
-        if (blindDrop) {
-            value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br>";
+        if (!blindDrop && pilot.getSlotCount() > 1) {
+            for (int i = 0; i < pilot.getSlotCount(); i++) {
+                if (pilot.isMissing(i)) {
+                    value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
+                } else {
+                    value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
+                    value += pilot.getSkillsAsString(i);
+                }
+                value += "<br/>";
+            }
         } else {
-            value += "<b>" + pilot.getDesc() + "</b><br>";
+            if (blindDrop) {
+                value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br/>";
+            } else {
+                value += "<b>" + pilot.getDesc() + "</b><br/>";
+            }
+            value += "" + pilot.getSkillsAsString();
         }
-        value += "" + pilot.getGunnery() + "/" + pilot.getPiloting();
         if (crewAdvCount > 0) {
             value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
         }
@@ -1403,9 +1417,9 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (pilot.getHits() > 0) {
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
-        value += "" + pilot.getGunnery() + "/" + pilot.getPiloting() + "<br>";
+        value += "" + pilot.getSkillsAsString() + "<br>";
         if (tough) {
-            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness() + "<br>";
+            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
         }
         if (command) {
             value += Messages.getString("ChatLounge.Command") + pilot.getCommandBonus() + "<br>";
@@ -1487,19 +1501,28 @@ public class ChatLounge extends AbstractPhaseDisplay
 
         // Pilot Info
         // Nickname > Name > "Pilot"
-        String pnameStr = "Pilot";
+        for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+            if (entity.getCrew().isMissing(i)) {
+                continue;
+            }
+            String pnameStr = entity.getCrew().getCrewType().getRoleName(i);
 
-        if ((entity.getCrew().getName() != null) && !entity.getCrew().getName().equals(""))
-            pnameStr = entity.getCrew().getName();
-
-        if ((entity.getCrew().getNickname() != null) && !entity.getCrew().getNickname().equals(""))
-            pnameStr = "'" + entity.getCrew().getNickname() + "'";
-
-        addToTT("Pilot", BR, pnameStr, entity.getCrew().getGunnery(), entity.getCrew().getPiloting());
-
-        // Pilot Status
-        if (!entity.getCrew().getStatusDesc().equals(""))
-            addToTT("PilotStatus", NOBR, entity.getCrew().getStatusDesc());
+            if ((entity.getCrew().getName(i) != null) && !entity.getCrew().getName(i).equals(""))
+                pnameStr = entity.getCrew().getName(i);
+    
+            if ((entity.getCrew().getNickname(i) != null) && !entity.getCrew().getNickname(i).equals(""))
+                pnameStr = "'" + entity.getCrew().getNickname(i) + "'";
+            
+            if (entity.getCrew().getSlotCount() > 1) {
+                pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
+            }
+    
+            addToTT("Pilot", BR, pnameStr, entity.getCrew().getGunnery(i), entity.getCrew().getPiloting(i));
+    
+            // Pilot Status
+            if (!entity.getCrew().getStatusDesc(i).equals(""))
+                addToTT("PilotStatus", NOBR, entity.getCrew().getStatusDesc(i));
+        }
 
         // Pilot Advantages
         int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
@@ -1539,7 +1562,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 // Append ranges
                 WeaponType wtype = (WeaponType) curWp.getType();
                 int ranges[];
-                if (entity instanceof Aero) {
+                if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
                     ranges = wtype.getRanges(curWp);
@@ -1708,7 +1731,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
 
         // Set the tree strings based on C3 settings for the unit.
-        if (entity.hasC3i()) {
+        if (entity.hasC3i() || entity.hasNavalC3()) {
             if (entity.calculateFreeC3Nodes() == 5) {
                 strTreeSet = "**"; //$NON-NLS-1$
             }
@@ -1783,6 +1806,16 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c3network += Messages.getString("ChatLounge.C3iNetwork") + entity.getC3NetId();
                     if (entity.calculateFreeC3Nodes() > 0) {
                         c3network += Messages.getString("ChatLounge.C3iNodes",
+                                new Object[] { entity.calculateFreeC3Nodes() });
+                    }
+                }
+            } else if (entity.hasNavalC3()) {
+                if (entity.calculateFreeC3Nodes() >= 5) {
+                    c3network += Messages.getString("ChatLounge.NC3None");
+                } else {
+                    c3network += Messages.getString("ChatLounge.NC3Network") + entity.getC3NetId();
+                    if (entity.calculateFreeC3Nodes() > 0) {
+                        c3network += Messages.getString("ChatLounge.NC3Nodes",
                                 new Object[] { entity.calculateFreeC3Nodes() });
                     }
                 }
@@ -1869,7 +1902,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         String strTreeView = ""; //$NON-NLS-1$
 
         // Set the tree strings based on C3 settings for the unit.
-        if (entity.hasC3i()) {
+        if (entity.hasC3i() || entity.hasNavalC3()) {
             if (entity.calculateFreeC3Nodes() == 5) {
                 strTreeSet = "**"; //$NON-NLS-1$
             }
@@ -2086,7 +2119,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         // fighter
         if (loader instanceof FighterSquadron) {
             FighterSquadron fSquad = (FighterSquadron) loader;
-            Aero fighter = (Aero) loadee;
             // We can't use Aero.getBombPoints() because the bombs haven't been
             // loaded yet, only selected, so we have to count the choices
             int[] bombChoice = fSquad.getBombChoices();
@@ -2095,7 +2127,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 numLoadedBombs += bombChoice[i];
             }
             // We can't load all of the squadrons bombs
-            if (numLoadedBombs > fighter.getMaxBombPoints()) {
+            if (numLoadedBombs > ((IBomber)loadee).getMaxBombPoints()) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
                         Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE);
                 return;
@@ -2252,6 +2284,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
+                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+                if ((entity instanceof LandAirMech)
+                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                    for (Entity loadee : entity.getLoadedUnits()) {
+                        entity.unload(loadee);
+                        loadee.setTransportId(Entity.NONE);
+                        client.sendUpdateEntity(loadee);
+                    }
+                 }
+
                 client.sendUpdateEntity(entity);
 
                 // Changing state to a transporting unit can update state of
@@ -2274,7 +2316,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
-    public void setCMDSelectedTab(int tab) {
+    public void setCMDSelectedTab(String tab) {
         cmdSelectedTab = tab;
     }
 
@@ -2315,7 +2357,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             cmd.refreshQuirks();
             cmd.refreshPartReps();
             cmd.setTitle(entity.getShortName());
-            if (cmdSelectedTab != -1) {
+            if (cmdSelectedTab != null) {
                 cmd.setSelectedTab(cmdSelectedTab);
             }
             cmd.setVisible(true);
@@ -2323,6 +2365,16 @@ public class ChatLounge extends AbstractPhaseDisplay
             GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
             cmdSelectedTab = cmd.getSelectedTab();
             if (editable && cmd.isOkay()) {
+                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+                if ((entity instanceof LandAirMech)
+                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                    for (Entity loadee : entity.getLoadedUnits()) {
+                        entity.unload(loadee);
+                        loadee.setTransportId(Entity.NONE);
+                        c.sendUpdateEntity(loadee);
+                    }
+                 }
+                
                 // send changes
                 c.sendUpdateEntity(entity);
 
@@ -3406,8 +3458,8 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             public void setPortrait(Crew pilot) {
 
-                String category = pilot.getPortraitCategory();
-                String file = pilot.getPortraitFileName();
+                String category = pilot.getPortraitCategory(0);
+                String file = pilot.getPortraitFileName(0);
 
                 // Return a null if the player has selected no portrait file.
                 if ((null == category) || (null == file) || (null == portraits)) {
@@ -3428,9 +3480,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                     portrait = (Image) portraits.getItem(category, file);
                     if (null == portrait) {
                         // the image could not be found so switch to default one
-                        pilot.setPortraitCategory(Crew.ROOT_PORTRAIT);
+                        pilot.setPortraitCategory(Crew.ROOT_PORTRAIT, 0);
                         category = "";
-                        pilot.setPortraitFileName(Crew.PORTRAIT_NONE);
+                        pilot.setPortraitFileName(Crew.PORTRAIT_NONE, 0);
                         file = "default.gif";
                         portrait = (Image) portraits.getItem(category, file);
                     }
@@ -3538,9 +3590,17 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    e.getCrew().setGunnery(skills[0]);
-                    e.getCrew().setPiloting(skills[1]);
+                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                        int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                        e.getCrew().setGunnery(skills[0], i);
+                        e.getCrew().setPiloting(skills[1], i);
+                        if (e.getCrew() instanceof LAMPilot) {
+                            skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                            ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                            ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                        }
+                    }
+                    e.getCrew().sortRandomSkills();
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("NAME")) {
@@ -3549,7 +3609,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    e.getCrew().setName(c.getRandomNameGenerator().generate());
+                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                        e.getCrew().setName(c.getRandomNameGenerator().generate(), i);
+                    }
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("LOAD")) {
@@ -3563,10 +3625,12 @@ public class ChatLounge extends AbstractPhaseDisplay
                 String errorMessage = "";
                 if (bayNumber != -1) {
                     Bay bay = loadingEntity.getBayById(bayNumber);
+                    double loadSize = entities.stream().mapToDouble(e -> bay.spaceForUnit(e)).sum();
                     capacity = bay.getUnused();
-                    hasEnoughCargoCapacity = entities.size() <= capacity;
+                    hasEnoughCargoCapacity = loadSize <= capacity;
                     errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
-                            " " + (int) capacity + ".";
+                            " " + (int) bay.getUnusedSlots()
+                            + bay.getDefaultSlotDescription() + ".";
                 } else {
                     HashMap<Long, Double> capacities, counts;
                     capacities = new HashMap<Long, Double>();
@@ -3725,23 +3789,31 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else if (command.equalsIgnoreCase("RAPIDFIREMG_OFF") || command.equalsIgnoreCase("RAPIDFIREMG_ON")) {
                 boolean rapidFire = command.equalsIgnoreCase("RAPIDFIREMG_ON");
                 for (Entity e : entities) {
+                    boolean dirty = false;
                     for (Mounted m : e.getWeaponList()) {
                         WeaponType wtype = (WeaponType) m.getType();
                         if (!wtype.hasFlag(WeaponType.F_MG)) {
                             continue;
                         }
                         m.setRapidfire(rapidFire);
+                        dirty = true;
+                    }
+                    if (dirty) {
+                        clientgui.getClient().sendUpdateEntity(e);
                     }
                 }
             } else if (command.equalsIgnoreCase("HOTLOAD_OFF") || command.equalsIgnoreCase("HOTLOAD_ON")) {
                 boolean hotLoad = command.equalsIgnoreCase("HOTLOAD_ON");
                 for (Entity e : entities) {
+                    boolean dirty = false;
                     for (Mounted m : e.getWeaponList()) {
                         WeaponType wtype = (WeaponType) m.getType();
-                        if (!wtype.hasFlag(WeaponType.F_MISSILE) || (wtype.getAmmoType() != AmmoType.T_LRM)) {
+                        if (!wtype.hasFlag(WeaponType.F_MISSILE) 
+                                || (wtype.getAmmoType() != AmmoType.T_LRM)) {
                             continue;
                         }
                         m.setHotLoad(hotLoad);
+                        dirty = true;
                     }
                     for (Mounted m : e.getAmmo()) {
                         AmmoType atype = (AmmoType) m.getType();
@@ -3756,14 +3828,23 @@ public class ChatLounge extends AbstractPhaseDisplay
                                 m.setMode(i);
                             }
                         }
+                        dirty = true;
+                    }
+                    if (dirty) {
+                        clientgui.getClient().sendUpdateEntity(e);
                     }
                 }
             } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF") || command.equalsIgnoreCase("SEARCHLIGHT_ON")) {
                 boolean searchLight = command.equalsIgnoreCase("SEARCHLIGHT_ON");
                 for (Entity e : entities) {
+                    boolean dirty = false;
                     if (!e.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
                         e.setExternalSpotlight(searchLight);
                         e.setSpotlightState(searchLight);
+                        dirty = true;
+                    }
+                    if (dirty) {
+                        clientgui.getClient().sendUpdateEntity(e);
                     }
                 }
             }
@@ -3873,6 +3954,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                         }
                         if (etype.hasFlag(WeaponType.F_MISSILE)) {
                             hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM;
+                            hasHotLoad |= m.isHotLoaded();
+                        }
+                        if (etype.hasFlag(WeaponType.F_MISSILE)) {
+                            hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM_IMP;
                             hasHotLoad |= m.isHotLoaded();
                         }
                     }
@@ -4044,7 +4129,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                                             Bay bay = (Bay) t;
                                             menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
                                                     + "Slots: "
-                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnused() + ")");
+                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnusedSlots()
+                                                    + loader.getBayById(bay.getBayNumber()).getDefaultSlotDescription()
+                                                    + ")");
                                             menuItem.setActionCommand(
                                                     "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
                                             /*
@@ -4142,10 +4229,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                         if (swapper.isCapitalFighter()) {
                             continue;
                         }
-                        // only swap your own pilots and with the same unit type
+                        // only swap your own pilots and with the same unit and crew type
                         if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
                                 && (UnitType.determineUnitTypeCode(swapper) == UnitType
-                                        .determineUnitTypeCode(entity))) {
+                                        .determineUnitTypeCode(entity))
+                                && swapper.getCrew().getCrewType() == entity.getCrew().getCrewType()) {
                             canSwap = true;
                             menuItem = new JMenuItem(swapper.getShortName());
                             menuItem.setActionCommand("SWAP|" + swapper.getId());

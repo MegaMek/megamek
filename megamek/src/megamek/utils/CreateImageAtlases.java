@@ -1,26 +1,32 @@
+/*
+ * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.utils;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import com.thoughtworks.xstream.XStream;
-
 import megamek.client.ui.swing.HexTileset;
+import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.common.Configuration;
 
 /**
@@ -48,7 +54,7 @@ public class CreateImageAtlases {
      * written to a file which can later be used when loading images to see if a
      * particular image can be loaded from an atlas instead.
      */
-    Map<File, String> imgFileToAtlasMap = new HashMap<>();
+    ImageAtlasMap imgFileToAtlasMap = new ImageAtlasMap();
 
     /**
      * Keep track of what images have been written to an atlas. At the end, this
@@ -158,7 +164,8 @@ public class CreateImageAtlases {
 
             // Update imageFileToAtlas map
             atlasLoc = atlasFile.toString() + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
-            imgFileToAtlasMap.put(imgFile, atlasLoc);
+            File atlasLocFile = new File(atlasLoc);
+            imgFileToAtlasMap.put(imgFile.toPath(), atlasLocFile.toPath());
             imagesStored.add(imgFile.toString());
 
             // Draw image in atlas
@@ -188,13 +195,7 @@ public class CreateImageAtlases {
      * Write the imgFile to Atlas map to a file.
      */
     public void writeImgFileToAtlasMap() {
-        XStream xstream = new XStream();
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(Configuration.imageFileAtlasMapFile()),
-                Charset.forName("UTF-8"));) {
-            xstream.toXML(imgFileToAtlasMap, writer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        imgFileToAtlasMap.writeToFile();
     }
 
     /**

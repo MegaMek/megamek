@@ -46,7 +46,7 @@ import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
-import megamek.common.weapons.TSEMPWeapon;
+import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
@@ -261,6 +261,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         c.insets = new Insets(1, 9, 1, 9);
         gridbag.setConstraints(activateHidden, c);
+        c.insets = new Insets(1, 9, 6, 9);
         gridbag.setConstraints(activateHiddenPhase, c);
         add(activateHidden);
         add(activateHiddenPhase);

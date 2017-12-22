@@ -90,7 +90,8 @@ public class GameOptions extends AbstractOptions {
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150); //$NON-NLS-1$
-        addOption(allowed, "techlevel", IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); //$NON-NLS-1$
@@ -180,6 +181,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false); // $NON-NLS-1$
@@ -187,6 +189,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VTOL_STRAFING, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false); // $NON-NLS-1$
@@ -219,6 +222,10 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_REVERSE_GEAR, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TURN_MODE, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false); //$NON-NLS-1$
@@ -249,11 +256,13 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$

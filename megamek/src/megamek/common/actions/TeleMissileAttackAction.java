@@ -91,7 +91,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             toHit.addModifier(ae.mpUsed, "thrust used");
         
         //out of fuel
-        if(tm.getFuel() <= 0) 
+        if(tm.getCurrentFuel() <= 0) 
             toHit.addModifier(+6, "out of fuel");
         
         //modifiers for the originating unit need to be added later, because

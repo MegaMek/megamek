@@ -1,5 +1,5 @@
 3145 Mercenary Transport Dropships
-Excalibur (3056),1
+Excalibur 'Pocket Warship',1
 Overlord (3056),2
 Condor (3054),3
 Union (3055),4

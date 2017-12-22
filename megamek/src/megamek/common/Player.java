@@ -447,6 +447,11 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
+    public void increaseInitialBV(int bv) {
+        initialBV += bv;
+    }
+
+    @Override
     public int getInitialBV() {
         return initialBV;
     }
@@ -517,9 +522,8 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
-        if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
-            for (Entity entity : game.getEntitiesVector()) {
-                if ((null != entity.getOwner())
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)
                     && !entity.isDestroyed()
                     && entity.isDeployed()
@@ -527,9 +531,20 @@ public final class Player extends TurnOrdered implements IPlayer {
                     && entity.getCrew().isActive()
                     && !entity.isCaptured()
                     && !(entity instanceof MechWarrior)) {
-                    if (entity.getCrew().getCommandBonus() > commandb) {
-                        commandb = entity.getCrew().getCommandBonus();
-                    }
+                int bonus = 0;
+                if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+                    bonus = entity.getCrew().getCommandBonus();
+                }
+                //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
+                //Since we are not designating a single force commander at this point, we assume a superheavy tripod
+                //is the force commander if that gives the highest bonus.
+                if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                    bonus += 2;
+                }
+                //Once we've gotten the status of the command console (if any), reset the flag that tracks
+                //the previous turn's action.
+                if (bonus > commandb) {
+                    commandb = bonus;
                 }
             }
         }

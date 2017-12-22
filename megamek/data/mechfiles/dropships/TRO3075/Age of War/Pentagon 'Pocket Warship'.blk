@@ -1,0 +1,181 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Pentagon
+</Name>
+
+<Model>
+'Pocket Warship'
+</Model>
+
+<year>
+3075
+</year>
+
+<originalBuildYear>
+3075
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+crewquarters:126.0:0
+1stclassquarters:40.0:0
+cargobay:166.5:1:1
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<heatsinks>
+170
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+18000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+368
+323
+323
+278
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:4
+Ammo AR10 White Shark:2
+Ammo AR10 Killer Whale:4
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERLargeLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERPPC
+ISERPPC
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) ISERPPC
+(B) ISERLargeLaser
+ISERLargeLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:16
+(B) ISERPPC
+ISERPPC
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) ISERPPC
+(B) ISERLargeLaser
+ISERLargeLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) ISERPPC
+</Aft Equipment>
+
+<structural_integrity>
+21
+</structural_integrity>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<tonnage>
+4000.0
+</tonnage>
+
+<crew>
+18
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+8
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+1
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

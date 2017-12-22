@@ -37,6 +37,7 @@ import megamek.client.ui.Messages;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
 import megamek.common.UnitRole;
+import megamek.common.UnitRoleHandler;
 
 /**
  * Shows a table of all units matching the chosen faction/unit type/era parameters and
@@ -343,8 +344,11 @@ public class AnalyzeFormationDialog extends JDialog {
                 return sb.toString();
             case COL_ROLE:
                 ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
-                UnitRole r = mr == null? UnitRole.UNDETERMINED : mr.getUnitRole();
-                return r.toString();
+                if (null == mr) {
+                    return UnitRole.UNDETERMINED.toString();
+                } else {
+                    return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
+                }
             default:
                 Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));
                 return metric == null? "?" : metric.apply(ms);

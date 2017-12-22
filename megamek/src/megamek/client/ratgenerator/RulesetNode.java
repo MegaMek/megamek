@@ -275,7 +275,7 @@ public class RulesetNode {
 				}
 				for (String p : property.split(",")) {
 					if (p.startsWith("-")) {
-						fd.getRoles().remove(p.replace("-", ""));
+						fd.getRoles().remove(MissionRole.parseRole(p.replace("-", "")));
 					} else {
 						MissionRole role = MissionRole.parseRole(p.replace("+", ""));
 						if (role != null) {
@@ -304,7 +304,7 @@ public class RulesetNode {
 				}
 				for (String p : property.split(",")) {
 					if (p.startsWith("-")) {
-						fd.getMovementModes().remove(p.replace("-", ""));
+						fd.getMovementModes().remove(EntityMovementMode.getMode(p.replace("-", "")));
 					} else {
 						fd.getMovementModes().add(EntityMovementMode.getMode(p.replace("+", "")));
 					}

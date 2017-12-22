@@ -18,33 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSonicStunnerWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Sonic Stunner";
-        setInternalName(name);
-        addLookupName("InfantrySonicStunnerpistol");
-        ammoType = AmmoType.T_NA;
-        cost = 100;
-        bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.07;
-        infantryRange = 0;
-        introDate = 2375;
-        techLevel.put(2375,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_B};
-        techRating = RATING_D;
-    }
+	public InfantryPistolSonicStunnerWeapon() {
+		super();
+
+		name = "Sonic Stunner";
+		setInternalName(name);
+		addLookupName("InfantrySonicStunnerpistol");
+		ammoType = AmmoType.T_NA;
+		cost = 100;
+		bv = 0.06;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.07;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setClanAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+				.setProductionFactions(F_TH).setTechRating(RATING_D)
+				.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+
+	}
 }

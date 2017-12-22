@@ -36,7 +36,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.ui.swing.util.ImageFileFactory;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -49,6 +48,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.HitData;
+import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -63,6 +63,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
+import megamek.common.SimpleTechLevel;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -150,10 +151,9 @@ public class ScenarioLoader {
             System.err.println(String.format("Equipment %s is not an ammo type", newAmmoType.getName())); //$NON-NLS-1$
             return null;
         }
-        if(!TechConstants.isLegal(
-            TechConstants.getGameTechLevel(game, e.isClan()),
-            newAmmoType.getTechLevel(year), true,
-            e.isMixedTech())) {
+        if(!newAmmoType.isLegal(year,
+            SimpleTechLevel.getGameTechLevel(game),
+            e.isClan(), e.isMixedTech())) {
             System.out.println(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)", //$NON-NLS-1$
                 newAmmoType.getName(), newAmmoType.getTechLevel(year), year,
                 TechConstants.getGameTechLevel(game, e.isClan())));
@@ -164,8 +164,6 @@ public class ScenarioLoader {
             final long muniType = ((AmmoType) newAmmoType).getMunitionType() & ~AmmoType.M_INCENDIARY_LRM;
             if((muniType == AmmoType.M_SEMIGUIDED)
                 || (muniType == AmmoType.M_SWARM_I)
-                || (muniType == AmmoType.M_FLARE)
-                || (muniType == AmmoType.M_FRAGMENTATION)
                 || (muniType == AmmoType.M_THUNDER_AUGMENTED)
                 || (muniType == AmmoType.M_THUNDER_INFERNO)
                 || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
@@ -173,8 +171,9 @@ public class ScenarioLoader {
                 || (muniType == AmmoType.M_INFERNO_IV)
                 || (muniType == AmmoType.M_VIBRABOMB_IV)
                 || (muniType == AmmoType.M_LISTEN_KILL)
-                || (muniType == AmmoType.M_ANTI_TSM) 
-                || (muniType == AmmoType.M_SMOKE_WARHEAD)) {
+                || (muniType == AmmoType.M_ANTI_TSM)
+                || (muniType == AmmoType.M_DEAD_FIRE) 
+                || (muniType == AmmoType.M_MINE_CLEARANCE)) {
                 System.out.println(String.format("Ammo type %s not allowed by Clan rules", //$NON-NLS-1$
                     newAmmoType.getName()));
                 return null;
@@ -495,7 +494,7 @@ public class ScenarioLoader {
                         break;
                     case PARAM_PILOT_HITS:
                         int hits = Integer.parseInt(p.getString(key));
-                        e.getCrew().setHits(Math.min(hits, 5));
+                        e.getCrew().setHits(Math.min(hits, 5), 0);
                         break;
                     case PARAM_EXTERNAL_ID:
                         e.setExternalIdAsString(p.getString(key));
@@ -525,10 +524,10 @@ public class ScenarioLoader {
                         break;
                     case PARAM_ALTITUDE:
                         int altitude = Math.min(Integer.parseInt(p.getString(key)), 10);
-                        if(e instanceof Aero) {
+                        if(e.isAero()) {
                             e.setAltitude(altitude);
                             if(altitude <= 0) {
-                                ((Aero) e).land();
+                                ((IAero) e).land();
                             }
                         } else {
                             System.out.println(String.format("Altitude setting for a non-aerospace unit %s; ignoring", //$NON-NLS-1$
@@ -554,7 +553,8 @@ public class ScenarioLoader {
             }
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-            e.setCrew(new Crew(parts[1], 1, Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
+            e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1, Integer.parseInt(parts[2]),
+                    Integer.parseInt(parts[3])));
             if(parts.length >= 7) {
                 String direction = parts[4].toUpperCase(Locale.ROOT);
                 switch(direction) {

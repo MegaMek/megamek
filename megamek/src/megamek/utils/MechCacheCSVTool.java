@@ -42,7 +42,7 @@ public class MechCacheCSVTool {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
         BufferedWriter fout;
         try{
-            fout = new BufferedWriter(new PrintWriter("mechs.csv"));
+            fout = new BufferedWriter(new PrintWriter("mechs(IO).csv"));
         } catch (FileNotFoundException e){
             System.out.println("Could not open file for output!");
             return;
@@ -51,15 +51,15 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Weight,Intro Date,Unit Type,BV,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,BV,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
-                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
+/*                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
                     continue;
-                }
+                }*/
                 
                 csvLine = new StringBuffer();
                 // Chasis Name
@@ -67,19 +67,43 @@ public class MechCacheCSVTool {
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
                 
+                //Source Book
+                csvLine.append(mech.getSourceFile() + ",");
                 
                 //if (mech.getModel().equals("")){
                 //    csvLine.append("(Standard),");
                 //} else {                    
                 //    csvLine.append(mech.getModel() + ",");
                 //}
-                
+
                 //Weight
                 csvLine.append(mech.getTons() + ",");
                 
                 // IntroDate
                 csvLine.append(mech.getYear() + ",");
                 
+                //Experimental Tech Year
+                if(mech.getAdvancedTechYear() <= mech.getYear()) {
+                    csvLine.append(",");
+                } else {
+                    csvLine.append(mech.getYear() + ",");
+                }
+                         
+
+                //Advanced Tech Year
+                if(mech.getAdvancedTechYear()>0) {
+                    csvLine.append(mech.getAdvancedTechYear()).append(",");
+                    } else {
+                        csvLine.append(",");
+                    }
+
+                //Standard Tech Year
+                if(mech.getStandardTechYear()>0) {
+                    csvLine.append(mech.getStandardTechYear()).append(",");
+                    } else {
+                        csvLine.append(",");
+                    }
+
                 //Unit Type
                 csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
                 
@@ -159,13 +183,13 @@ public class MechCacheCSVTool {
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){
                     boolean ignore = false;
-                    // Ignore armor criticals
+                    // Ignore armor critical
                     for (String armorName : EquipmentType.armorNames){
                         if (name.contains(armorName.trim())){
                             ignore = true;
                         }
                     }
-                    // Ignore internal structure criticals
+                    // Ignore internal structure critical
                     for (String isName : EquipmentType.structureNames){
                         if (name.contains(isName.trim())){
                             ignore = true;

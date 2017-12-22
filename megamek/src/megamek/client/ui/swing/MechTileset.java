@@ -41,8 +41,10 @@ import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.Tank;
@@ -67,6 +69,11 @@ public class MechTileset {
     private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
     private String SUPER_HEAVY_MECH_STRING = "default_super_heavy_mech"; //$NON-NLS-1$
     private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
+    private String QUADVEE_STRING = "default_quadvee"; //$NON-NLS-1$
+    private String QUADVEE_VEHICLE_STRING = "default_quadvee_vehicle"; //$NON-NLS-1$
+    private String LAM_MECH_STRING = "default_lam_mech"; //$NON-NLS-1$
+    private String LAM_AIRMECH_STRING = "default_lam_airmech"; //$NON-NLS-1$
+    private String LAM_FIGHTER_STRING = "default_lam_fighter"; //$NON-NLS-1$
     private String TRIPOD_STRING = "default_tripod"; //$NON-NLS-1$
     private String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
     private String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
@@ -115,6 +122,11 @@ public class MechTileset {
     private MechEntry default_assault;
     private MechEntry default_super_heavy_mech;
     private MechEntry default_quad;
+    private MechEntry default_quadvee;
+    private MechEntry default_quadvee_vehicle;
+    private MechEntry default_lam_mech;
+    private MechEntry default_lam_airmech;
+    private MechEntry default_lam_fighter;
     private MechEntry default_tripod;
     private MechEntry default_tracked;
     private MechEntry default_tracked_heavy;
@@ -211,27 +223,29 @@ public class MechTileset {
      * Returns the MechEntry corresponding to the entity
      */
     public MechEntry entryFor(Entity entity, int secondaryPos) {
+        //Some entities (QuadVees, LAMs) use different sprites depending on mode.
+        String mode = entity.getTilesetModeString().toUpperCase();
         // first, check for exact matches
         if (secondaryPos != -1) {
-            if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos)) {
-                return exact.get(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos);
+            if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+mode+"_"+secondaryPos)) {
+                return exact.get(entity.getShortNameRaw().toUpperCase()+mode+"_"+secondaryPos);
             }
 
             // next, chassis matches
-            if (chassis.containsKey(entity.getChassis().toUpperCase()+"_"+secondaryPos)) {
-                return chassis.get(entity.getChassis().toUpperCase()+"_"+secondaryPos);
+            if (chassis.containsKey(entity.getChassis().toUpperCase()+mode+"_"+secondaryPos)) {
+                return chassis.get(entity.getChassis().toUpperCase()+mode+"_"+secondaryPos);
             }
 
             // last, the generic model
             return genericFor(entity, secondaryPos);
         }
-        if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
-            return exact.get(entity.getShortNameRaw().toUpperCase());
+        if (exact.containsKey(entity.getShortNameRaw().toUpperCase() + mode)) {
+            return exact.get(entity.getShortNameRaw().toUpperCase() + mode);
         }
 
         // next, chassis matches
-        if (chassis.containsKey(entity.getChassis().toUpperCase())) {
-            return chassis.get(entity.getChassis().toUpperCase());
+        if (chassis.containsKey(entity.getChassis().toUpperCase() + mode)) {
+            return chassis.get(entity.getChassis().toUpperCase() + mode);
         }
         // last, the generic model
         return genericFor(entity, secondaryPos);
@@ -250,6 +264,19 @@ public class MechTileset {
         // mech, by weight
         if (entity instanceof TripodMech) {
             return default_tripod;
+        }
+        if (entity instanceof QuadVee) {
+            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE?
+                    default_quadvee_vehicle : default_quadvee;
+        }
+        if (entity instanceof LandAirMech) {
+            if (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
+                return default_lam_fighter;
+            } else if (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
+                return default_lam_airmech;
+            } else {
+                return default_lam_mech;
+            }
         }
         if (entity instanceof Mech) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
@@ -443,6 +470,11 @@ public class MechTileset {
         default_assault = exact.get(ASSAULT_STRING.toUpperCase());
         default_super_heavy_mech = exact.get(SUPER_HEAVY_MECH_STRING.toUpperCase());
         default_quad = exact.get(QUAD_STRING.toUpperCase());
+        default_quadvee = exact.get(QUADVEE_STRING.toUpperCase());
+        default_quadvee_vehicle = exact.get(QUADVEE_VEHICLE_STRING.toUpperCase());
+        default_lam_mech = exact.get(LAM_MECH_STRING.toUpperCase());
+        default_lam_airmech = exact.get(LAM_AIRMECH_STRING.toUpperCase());
+        default_lam_fighter = exact.get(LAM_FIGHTER_STRING.toUpperCase());
         default_tripod = exact.get(TRIPOD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
         default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());

@@ -23,6 +23,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+import java.util.function.BiConsumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -36,19 +40,24 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import megamek.common.ASFBay;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Bay;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.IArmorState;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
+import megamek.common.SmallCraftBay;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 
@@ -87,6 +96,8 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel sensorCrit;
     CheckCritPanel lifeSupportCrit;
     CheckCritPanel cockpitCrit;
+    Map<Integer,CheckCritPanel> lamAvionicsCrit;
+    Map<Integer,CheckCritPanel> lamLandingGearCrit;
     CheckCritPanel[][] actuatorCrits;
     CheckCritPanel turretlockCrit;
     CheckCritPanel motiveCrit;
@@ -99,6 +110,8 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel rightThrusterCrit;
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
+    JSpinner[] bayDamage;
+    CheckCritPanel[] bayDoorCrit;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -460,28 +473,30 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 1.0;
         panSystem.add(centerEngineCrit, gridBagConstraints);
 
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.weightx = 0.0;
-        panSystem.add(new JLabel("<html><b>" + "Engine" + "</b><br></html>"),
-                gridBagConstraints);
-        leftEngineCrit = new CheckCritPanel(leftEngineCrits, leftEngineHits);
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.weightx = 1.0;
-        panSystem.add(leftEngineCrit, gridBagConstraints);
+        if (entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) > 0) {
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Engine (LT)" + "</b><br></html>"),
+                    gridBagConstraints);
+            leftEngineCrit = new CheckCritPanel(leftEngineCrits, leftEngineHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(leftEngineCrit, gridBagConstraints);
+    
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Engine (RT)" + "</b><br></html>"),
+                    gridBagConstraints);
+            rightEngineCrit = new CheckCritPanel(rightEngineCrits, rightEngineHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(rightEngineCrit, gridBagConstraints);
+        }
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.weightx = 0.0;
-        panSystem.add(new JLabel("<html><b>" + "Engine" + "</b><br></html>"),
-                gridBagConstraints);
-        rightEngineCrit = new CheckCritPanel(rightEngineCrits, rightEngineHits);
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.weightx = 1.0;
-        panSystem.add(rightEngineCrit, gridBagConstraints);
-
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Gyro" + "</b><br></html>"),
                 gridBagConstraints);
@@ -491,7 +506,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(gyroCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Sensor" + "</b><br></html>"),
                 gridBagConstraints);
@@ -501,7 +516,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(sensorCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Life Support"
                 + "</b><br></html>"), gridBagConstraints);
@@ -511,7 +526,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(lifeSupportCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         gridBagConstraints.weighty = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Cockpit" + "</b><br></html>"),
@@ -519,8 +534,44 @@ public class UnitEditorDialog extends JDialog {
         cockpitCrit = new CheckCritPanel(cockpitCrits, cockpitHits);
         gridBagConstraints.gridx = 1;
         panSystem.add(cockpitCrit, gridBagConstraints);
+        
+        if (entity instanceof LandAirMech) {
+            lamAvionicsCrit = new TreeMap<>();
+            lamLandingGearCrit = new TreeMap<>();
+            for (int loc = 0; loc < entity.locations(); loc++) {
+                int crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, loc);
+                if (crits > 0) {
+                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, loc);
+                    CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
+                    lamAvionicsCrit.put(loc, critPanel);
+                }
+                crits = entity.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, loc);
+                if (crits > 0) {
+                    int hits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, loc);
+                    CheckCritPanel critPanel = new CheckCritPanel(crits, hits);
+                    lamLandingGearCrit.put(loc, critPanel);
+                }
+            }
+            BiConsumer<Map.Entry<Integer,CheckCritPanel>, String> addToPanel = (entry, critName) -> {
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                panSystem.add(new JLabel("<html><b>" + critName + " ("
+                        + entity.getLocationAbbr(entry.getKey()) + ")" + "</b><br></html>"),
+                        gridBagConstraints);
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.weightx = 1.0;
+                panSystem.add(entry.getValue(), gridBagConstraints);
+            };
+            lamAvionicsCrit.entrySet().forEach(e -> addToPanel.accept(e, "Avionics"));
+            lamLandingGearCrit.entrySet().forEach(e -> addToPanel.accept(e, "Landing Gear"));
+        }
 
-        actuatorCrits = new CheckCritPanel[4][4];
+        if (entity instanceof QuadVee) {
+            actuatorCrits = new CheckCritPanel[4][5];
+        } else {
+            actuatorCrits = new CheckCritPanel[4][4];
+        }
 
         for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LLEG; loc++) {
             int start = Mech.ACTUATOR_SHOULDER;
@@ -537,7 +588,7 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 gridBagConstraints.weighty = 0.0;
-                if ((loc == Mech.LOC_LLEG) && (i == end)) {
+                if ((loc == Mech.LOC_LLEG) && (i == end) && !(entity instanceof QuadVee)) {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(
@@ -548,6 +599,25 @@ public class UnitEditorDialog extends JDialog {
                         entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, i,
                                 loc));
                 actuatorCrits[loc - Mech.LOC_RARM][i - start] = actuatorCrit;
+                gridBagConstraints.gridx = 1;
+                panSystem.add(actuatorCrit, gridBagConstraints);
+            }
+            if (entity instanceof QuadVee) {
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                gridBagConstraints.weighty = 0.0;
+                if (loc == Mech.LOC_LLEG) {
+                    gridBagConstraints.weighty = 1.0;
+                }
+                panSystem.add(
+                        new JLabel("<html><b>" + entity.getLocationName(loc)
+                                + " " + ((Mech) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR)
+                                + "</b><br></html>"), gridBagConstraints);
+                CheckCritPanel actuatorCrit = new CheckCritPanel(1,
+                        entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR,
+                                loc));
+                actuatorCrits[loc - Mech.LOC_RARM][Mech.ACTUATOR_FOOT - Mech.ACTUATOR_HIP + 1] = actuatorCrit;
                 gridBagConstraints.gridx = 1;
                 panSystem.add(actuatorCrit, gridBagConstraints);
             }
@@ -787,7 +857,7 @@ public class UnitEditorDialog extends JDialog {
 
         if (aero instanceof Jumpship) {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
@@ -799,7 +869,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(fcsCrit, gridBagConstraints);
         } else {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 1;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             gridBagConstraints.weighty = 0.0;
             gridBagConstraints.fill = GridBagConstraints.NONE;
@@ -812,7 +882,7 @@ public class UnitEditorDialog extends JDialog {
         }
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Sensor" + "</b><br></html>"),
                 gridBagConstraints);
@@ -822,7 +892,7 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(sensorCrit, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Engine" + "</b><br></html>"),
                 gridBagConstraints);
@@ -833,9 +903,10 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(engineCrit, gridBagConstraints);
-
+        
+    if (!(aero instanceof Jumpship)) {
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Landing Gear"
                 + "</b><br></html>"), gridBagConstraints);
@@ -847,9 +918,10 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(gearCrit, gridBagConstraints);
-
+    }
+    
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + "Life Support"
                 + "</b><br></html>"), gridBagConstraints);
@@ -864,7 +936,7 @@ public class UnitEditorDialog extends JDialog {
 
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 6;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Left Thruster"
                     + "</b><br></html>"), gridBagConstraints);
@@ -874,7 +946,7 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(leftThrusterCrit, gridBagConstraints);
 
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 7;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Right Thruster"
                     + "</b><br></html>"), gridBagConstraints);
@@ -887,7 +959,7 @@ public class UnitEditorDialog extends JDialog {
         if (aero instanceof Dropship) {
 
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 8;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Docking Collar"
                     + "</b><br></html>"), gridBagConstraints);
@@ -899,8 +971,56 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(dockCollarCrit, gridBagConstraints);
-
+            
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "K-F Boom"
+                    + "</b><br></html>"), gridBagConstraints);
+            int kfboomHits = 0;
+            if (((Dropship) aero).isKFBoomDamaged()) {
+            	kfboomHits = 1;
+            }
+            kfboomCrit = new CheckCritPanel(1, kfboomHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(kfboomCrit, gridBagConstraints);
         }
+        
+        if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
+        	int b = 0;
+        	JSpinner bayCrit;
+        	Vector<Bay> bays = aero.getTransportBays();
+        	bayDamage = new JSpinner[bays.size()];
+        	bayDoorCrit = new CheckCritPanel [bays.size()];
+        	for (Bay nextbay : bays) {
+        		gridBagConstraints.gridx = 0;
+        		gridBagConstraints.gridy++;
+        		gridBagConstraints.weightx = 0.0;
+        		panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + nextbay.getBayNumber()
+        				+ "</b><br></html>"), gridBagConstraints);
+    		
+        		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
+                        0, nextbay.getCapacity(), nextbay.isCargo()? 0.5: 1.0));
+        		bayDamage[b] = bayCrit;
+        		gridBagConstraints.gridx = 1;
+        		gridBagConstraints.weightx = 1.0;
+        		panSystem.add(bayCrit, gridBagConstraints);
+    		
+        		gridBagConstraints.gridx = 0;
+        		gridBagConstraints.gridy++;
+        		gridBagConstraints.weightx = 0.0;
+        		panSystem.add(new JLabel("<html><b>" + "Bay # " + nextbay.getBayNumber() + " Doors"
+        				+ "</b><br></html>"), gridBagConstraints);
+    		
+        		CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
+        		bayDoorCrit[b] = doorCrit;
+        		gridBagConstraints.gridx = 1;
+        		gridBagConstraints.weightx = 1.0;
+        		panSystem.add(doorCrit, gridBagConstraints);
+        		b++;
+    		}
+    	}
     }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
@@ -979,6 +1099,18 @@ public class UnitEditorDialog extends JDialog {
                 entity.damageSystem(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_COCKPIT, cockpitCrit.getHits());
             }
+            if (null != lamAvionicsCrit && !lamAvionicsCrit.isEmpty()) {
+                for (int loc : lamAvionicsCrit.keySet()) {
+                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS,
+                            loc, lamAvionicsCrit.get(loc).getHits());
+                }
+            }
+            if (null != lamLandingGearCrit && !lamLandingGearCrit.isEmpty()) {
+                for (int loc : lamLandingGearCrit.keySet()) {
+                    entity.damageSystem(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR,
+                            loc, lamLandingGearCrit.get(loc).getHits());
+                }
+            }
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     CheckCritPanel actuatorCrit = actuatorCrits[i][j];
@@ -992,6 +1124,18 @@ public class UnitEditorDialog extends JDialog {
                     }
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator,
                             loc, actuatorCrit.getHits());
+                }
+                if (entity instanceof QuadVee) {
+                    for (int j = 0; j < 4; j++) {
+                        CheckCritPanel actuatorCrit = actuatorCrits[i][4];
+                        if (null == actuatorCrit) {
+                            continue;
+                        }
+                        int loc = i + Mech.LOC_RARM;
+                        int actuator = QuadVee.SYSTEM_CONVERSION_GEAR;
+                        entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator,
+                                loc, actuatorCrit.getHits());
+                    }
                 }
             }
         } else if (entity instanceof Protomech) {
@@ -1089,11 +1233,46 @@ public class UnitEditorDialog extends JDialog {
                 aero.setLeftThrustHits(leftThrusterCrit.getHits());
             }
             if (null != rightThrusterCrit) {
-                aero.setLeftThrustHits(leftThrusterCrit.getHits());
+                aero.setRightThrustHits(rightThrusterCrit.getHits());
             }
             if ((null != dockCollarCrit) && (aero instanceof Dropship)) {
                 ((Dropship) aero)
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
+            }
+            if ((null != kfboomCrit) && (aero instanceof Dropship)) {
+            	((Dropship) aero)
+            			.setDamageKFBoom(kfboomCrit.getHits() > 0);
+            }
+            // cargo bays and bay doors
+            if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
+            	int b = 0;
+            	for (Bay bay : aero.getTransportBays()) {
+            		JSpinner bayCrit = bayDamage[b];
+            		if (null == bayCrit) {
+            			continue;
+            		}
+            		bay.setBayDamage(bay.getCapacity() - (Double) bayCrit.getModel().getValue());
+            		CheckCritPanel doorCrit = bayDoorCrit[b];
+            		if (null == doorCrit) {
+            			continue;
+            		}
+            		if ((bay.getCurrentDoors() > 0) && (doorCrit.getHits() > 0)) {
+            			bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
+
+            		} else if (doorCrit.getHits() == 0) {
+            			bay.setCurrentDoors(bay.getDoors());
+            		}
+        			// for ASF and SC bays, we have to update recovery slots as doors are changed
+        			if (bay instanceof ASFBay) {
+        				ASFBay a = (ASFBay) bay;
+        				a.initializeRecoverySlots();        				
+        			} 
+        			if (bay instanceof SmallCraftBay) {
+    					SmallCraftBay s = (SmallCraftBay) bay;
+    					s.initializeRecoverySlots();    					
+        			}
+            	b++;
+            	}
             }
         }
 

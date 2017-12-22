@@ -40,7 +40,6 @@ import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
-import megamek.common.UnitRole;
 import megamek.common.UnitType;
 import megamek.common.util.MegaMekFile;
 
@@ -918,9 +917,6 @@ public class RATGenerator {
 			}
 		}
 		cr.addModel(mr);
-        if (wn.getAttributes().getNamedItem("unitRole") != null) {
-            mr.setUnitRole(UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
-        }
         if (wn.getAttributes().getNamedItem("mechanized") != null) {
             mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
         }

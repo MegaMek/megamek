@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import megamek.common.Building.BasementType;
+import megamek.common.annotations.Nullable;
 
 /**
  * Hex represents a single hex on the board.
@@ -622,7 +623,7 @@ public class Hex implements IHex, Serializable {
     }
 
     @Override
-    public boolean isValid(StringBuffer errBuff) {
+    public boolean isValid(@Nullable StringBuffer errBuff) {
         boolean rv = true;
 
         // Check individual terrains for validity
@@ -648,31 +649,25 @@ public class Hex implements IHex, Serializable {
         if ((containsTerrain(Terrains.RAPIDS))) {
             if (!containsTerrain(Terrains.WATER)) {
                 rv = false;
-                errBuff.append("Rapids must occurr within water!\n");
+                if (errBuff != null) {
+                    errBuff.append("Rapids must occurr within water!\n");
+                }
             }
             if (this.depth() <1) {
                 rv = false;
-                errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+                if (errBuff != null) {
+                    errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+                }
             }
         }
 
         // Buildings
-        if ((containsTerrain(Terrains.BUILDING)
-                && (!containsTerrain(Terrains.BLDG_CF) || !containsTerrain(Terrains.BLDG_ELEV)))
-                || (containsTerrain(Terrains.BLDG_CF)
-                        && (!containsTerrain(Terrains.BUILDING) || !containsTerrain(Terrains.BLDG_ELEV)))
-                || (containsTerrain(Terrains.BLDG_ELEV)
-                        && (!containsTerrain(Terrains.BLDG_CF) || !containsTerrain(Terrains.BUILDING)))) {
+        if ((containsTerrain(Terrains.BUILDING) && !containsTerrain(Terrains.BLDG_ELEV))
+                || (containsTerrain(Terrains.BLDG_ELEV) && !containsTerrain(Terrains.BUILDING))) {
             if (errBuff != null) {
                 StringBuilder missingType = new StringBuilder();
                 if (!containsTerrain(Terrains.BUILDING)) {
                     missingType.append(Terrains.getName(Terrains.BUILDING));
-                }
-                if (!containsTerrain(Terrains.BLDG_CF)) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.BLDG_CF));
                 }
                 if (!containsTerrain(Terrains.BLDG_ELEV)) {
                     if (missingType.length() > 0) {
@@ -687,22 +682,12 @@ public class Hex implements IHex, Serializable {
         }
 
         // Bridges
-        if ((containsTerrain(Terrains.BRIDGE)
-                && (!containsTerrain(Terrains.BRIDGE_CF) || !containsTerrain(Terrains.BRIDGE_ELEV)))
-                || (containsTerrain(Terrains.BRIDGE_CF)
-                        && (!containsTerrain(Terrains.BRIDGE) || !containsTerrain(Terrains.BRIDGE_ELEV)))
-                || (containsTerrain(Terrains.BRIDGE_ELEV)
-                        && (!containsTerrain(Terrains.BRIDGE_CF) || !containsTerrain(Terrains.BRIDGE)))) {
+        if ((containsTerrain(Terrains.BRIDGE) && !containsTerrain(Terrains.BRIDGE_ELEV))
+                || (containsTerrain(Terrains.BRIDGE_ELEV) && !containsTerrain(Terrains.BRIDGE))) {
             if (errBuff != null) {
                 StringBuilder missingType = new StringBuilder();
                 if (!containsTerrain(Terrains.BRIDGE)) {
                     missingType.append(Terrains.getName(Terrains.BRIDGE));
-                }
-                if (!containsTerrain(Terrains.BRIDGE_CF)) {
-                    if (missingType.length() > 0) {
-                        missingType.append(", ");
-                    }
-                    missingType.append(Terrains.getName(Terrains.BRIDGE_CF));
                 }
                 if (!containsTerrain(Terrains.BRIDGE_ELEV)) {
                     if (missingType.length() > 0) {

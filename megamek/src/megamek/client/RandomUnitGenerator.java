@@ -244,7 +244,7 @@ public class RandomUnitGenerator implements Serializable {
                     if( weight <= 0.0f ) {
                         System.err.println(
                             String.format("The frequency field is zero or negative (%d) on line %d of %s", //$NON-NLS-1$
-                                weight, lineNumber, fileName));
+                                (int)Math.round(weight), lineNumber, fileName));
                         continue;
                     }
 

@@ -38,27 +38,27 @@ public interface Targetable extends Serializable {
     public static final int TYPE_HEX_SCREEN = 17;
     public static final int TYPE_HEX_AERO_BOMB = 18;
 
-    public int getTargetType();
+    int getTargetType();
 
-    public int getTargetId();
+    int getTargetId();
 
     /** @return the coordinates of the hex containing the target */
-    public Coords getPosition();
+    Coords getPosition();
     
-    public Map<Integer, Coords> getSecondaryPositions();
+    Map<Integer, Coords> getSecondaryPositions();
 
     /**
      * @return elevation of the top (e.g. torso) of the target relative to
      *         surface
      */
-    public int relHeight();
+    int relHeight();
 
     /**
      * Returns the height of the target, that is, how many levels above its
      * elevation it is for LOS purposes.
      * 
      * @return height of the target in elevation levels */
-    public int getHeight();
+    int getHeight();
 
     /**
      * Returns the elevation of this target, relative to the position Hex's
@@ -66,43 +66,58 @@ public interface Targetable extends Serializable {
      * @return elevation of the bottom (e.g. legs) of the target relative to
      *         surface
      */
-    public int getElevation();
+    int getElevation();
     
     /**
      * @return altitude of target
      */
-    public int getAltitude();
+    int getAltitude();
 
     /** @return true if the target is immobile (-4 to hit) */
-    public boolean isImmobile();
+    boolean isImmobile();
 
     /** @return name of the target for ui purposes */
-    public String getDisplayName();
+    String getDisplayName();
 
     /** @return side hit from location */
-    public int sideTable(Coords src);
+    int sideTable(Coords src);
     
     /** @return side hit from location */
-    public int sideTable(Coords src, boolean usePrior);
+    int sideTable(Coords src, boolean usePrior);
 
     /** @return if this is off the board */
-    public boolean isOffBoard();
+    boolean isOffBoard();
     
+
+    /**
+     * @return if this is an <code>Entity</code> capable of aerospace movement
+     */
+    default boolean isAero() {
+        return false;
+    }
+    
+    /**
+     * @return if this is an <code>Entity</code> capable of carrying and using bombs
+     */
+    default boolean isBomber() {
+        return false;
+    }
+
     /**
      * @return Is the entity airborne in the fashion of an aerospace unit?
      * Does not include VTOL movement (see {@link Targetable#isAirborneVTOLorWIGE()}
      */
-    public boolean isAirborne();
+    boolean isAirborne();
     
     /**
      * @return is the entity airborne in the fashion of a VTOL
      * Not used for aerospace units, see {@link Targetable#isAirborne()}
      */
-    public boolean isAirborneVTOLorWIGE();
+    boolean isAirborneVTOLorWIGE();
     
     // Make sure Targetable implements both
     @Override
-    public boolean equals(Object obj);
+    boolean equals(Object obj);
 
     /**
      * Determines if this target should be considered the enemy of the supplied player.  Targets that aren't owned by
@@ -112,7 +127,12 @@ public interface Targetable extends Serializable {
      * @param other
      * @return
      */
-    public boolean isEnemyOf(Entity other);
+    boolean isEnemyOf(Entity other);
+    
+    default boolean isHexBeingBombed() {
+        return getTargetType() == TYPE_HEX_AERO_BOMB || 
+                getTargetType() == TYPE_HEX_BOMB;
+    }
 
     @Override
     int hashCode();

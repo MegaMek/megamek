@@ -51,8 +51,8 @@ public class PlanetaryConditions implements Serializable {
     public static final int WE_LIGHT_HAIL       = 13;
     public static final int WE_HEAVY_HAIL       = 14;
     private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Gusting Rain", "Torrential Downpour",
-                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", "Ice Storm"};//,
-                                             //"Light Hail", "Heavy Hail"};
+                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", "Blizzard",
+                                             "Ice Storm"};//, "Light Hail", "Heavy Hail"};
     public static final int WE_SIZE = weatherNames.length;
 
     //Wind
@@ -585,7 +585,7 @@ public class PlanetaryConditions implements Serializable {
         }
 
         // temperature difference
-        if((en instanceof Tank) || (en instanceof Infantry) || (en instanceof Protomech)) {
+        if((en instanceof Tank) || ((en instanceof Infantry) && !((Infantry)en).isXCT()) || (en instanceof Protomech)) {
             mod -= Math.abs(getTemperatureDifference(50,-30));
         }
 
@@ -640,9 +640,9 @@ public class PlanetaryConditions implements Serializable {
             Spotlight = targetIlluminated;
         }else {
             Spotlight = en.isUsingSpotlight();
-            isMechVee = (en instanceof Mech) || (en instanceof Tank);
+            isMechVee = (en instanceof Mech && !en.isAero()) || (en instanceof Tank);
             isLargeCraft = (en instanceof Dropship) || (en instanceof Jumpship);
-            isAero = (en instanceof Aero) && !isLargeCraft;
+            isAero = (en.isAero()) && !isLargeCraft;
         }
         //anything else is infantry
 

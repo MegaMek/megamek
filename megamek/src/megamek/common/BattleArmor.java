@@ -22,7 +22,6 @@ import java.util.Vector;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -94,12 +93,12 @@ public class BattleArmor extends Infantry {
      * name for the manipulator's MiscType entry.
      */
     public static final String[] MANIPULATOR_NAME_STRINGS = { "None",
-        "Armored Glove", "Basic Manipulator",
-        "Basic Manipulator (Mine Clearance)", "Battle Claw",
-        "Battle Magnetic Claw", "Battle Vibro Claw",
-        "Heavy Battle Claw", "Heavy Battle Magnetic Claw",
-        "Heavy Battle Vibro Claw", "Salvage Arm", "Cargo Lifter",
-    "Industrial Drill" };
+        "BA Manipulators [Armored Gloves]", "BA Manipulators [Manipulator (Basic)]",
+        "BA Manipulator Adaptation [Mine Clearance Equipment]", "BA Manipulators [Battle Claw]",
+        "BA Manipulator Adaptation [Magnetic Battle Claw]", "BA Manipulator Adaptation [Vibro-Claw]",
+        "BA Manipulators [Heavy Battle Claw]", "BA Manipulator Adaptation [Heavy Magnetic Battle Claw]",
+        "BA Manipulator Adaptation [Heavy Vibro-Claw", "BA Manipulators [Salvage Arm]", "BA Manipulators [Cargo Lifter]",
+    "BA Manipulators [Industrial Drill]" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;
@@ -257,18 +256,23 @@ public class BattleArmor extends Infantry {
     /**
      * The location for mounted equipment on BA
      */
-    public static final int MOUNT_LOC_NONE = -1;
-    public static final int MOUNT_LOC_BODY = 0;
-    public static final int MOUNT_LOC_RARM = 1;
-    public static final int MOUNT_LOC_LARM = 2;
+    public static final int MOUNT_LOC_NONE   = -1;
+    public static final int MOUNT_LOC_BODY   = 0;
+    public static final int MOUNT_LOC_RARM   = 1;
+    public static final int MOUNT_LOC_LARM   = 2;
+    public static final int MOUNT_LOC_TURRET = 3;
 
     public static final String[] MOUNT_LOC_NAMES = { "Body", "Right Arm",
-    "Left Arm" };
+            "Left Arm", "Turret" };
 
     /**
      * How many mount locations are possible?
      */
-    public static final int MOUNT_NUM_LOCS = 3;
+    public static final int MOUNT_NUM_LOCS = 4;
+    
+    // Quad BA can add critical space by adding a turret mount.
+    private int turretSize = 0;
+    private boolean modularTurret = false;
 
     private boolean exoskeleton = false;
 
@@ -347,6 +351,51 @@ public class BattleArmor extends Infantry {
 
         // Construction complete.
         isInitialized = true;
+    }
+    
+    protected static final TechAdvancement[] TA_BATTLEARMOR = {
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
+                .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)
+                .setReintroductionFactions(F_CS).setTechRating(RATING_D)
+                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //ultralight
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3050)
+                .setClanAdvancement(2865, 2870, 2900).setPrototypeFactions(F_CWF)
+                .setProductionFactions(F_CIH, F_FS, F_LC).setClanApproximate(true, false, false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //light
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3052, 3052)
+                .setClanAdvancement(2840, 2868, 2875)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CGS)
+                .setProductionFactions(F_CWF, F_FS, F_LC, F_CS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //medium
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3058)
+                .setClanAdvancement(2867, 2875, 3058)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CWF)
+                .setProductionFactions(F_CHH, F_FS, F_LC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), // heavy
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3058, 3060)
+                .setClanAdvancement(2870, 2877, 3060)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CNC)
+                .setProductionFactions(F_CGB, F_DC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
+    };
+    
+    public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
+        return new TechAdvancement(TA_BATTLEARMOR[weightClass]);
+    }
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        int index = getWeightClass();
+        if (index < 0 || index >= TA_BATTLEARMOR.length) {
+            index = EntityWeightClass.WEIGHT_MEDIUM;
+        }
+        return TA_BATTLEARMOR[index];
     }
 
     /**
@@ -786,15 +835,6 @@ public class BattleArmor extends Infantry {
         if (BattleArmor.CAMO_SYSTEM.equals(name)) {
             hasCamoSystem = true;
             camoName = name;
-        }
-
-        if (mounted.getType() instanceof ISBAPopUpMineLauncher) {
-            if (loc == BattleArmor.LOC_SQUAD) {
-                for (int i = LOC_TROOPER_1; i <= getTroopers();i++) {
-                    addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"),
-                            loc);
-                }
-            }
         }
     }
 
@@ -1717,6 +1757,19 @@ public class BattleArmor extends Infantry {
         buff.append(newline);
         buff.append("</armor>");
         buff.append(newline);
+        
+        if (getTurretCapacity() > 0) {
+            buff.append("<turret>");
+            buff.append(newline);
+            if (hasModularTurretMount()) {
+                buff.append("Modular:");
+            } else {
+                buff.append("Standard:");
+            }
+            buff.append(String.valueOf(getTurretCapacity()));
+            buff.append("</turret>");
+            buff.append(newline);
+        }
 
         buff.append("<armor_type>");
         buff.append(newline);
@@ -2311,20 +2364,27 @@ public class BattleArmor extends Infantry {
         }
 
     }
-
+    
     public int getBodyCrits() {
         if(getChassisType() == CHASSIS_TYPE_QUAD) {
+            int turret = 0;
+            if (getTurretCapacity() > 0) {
+                turret = 1;
+                if (hasModularTurretMount()) {
+                    turret++;
+                }
+            }
             switch(getWeightClass()) {
             case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
                 return 0;
             case EntityWeightClass.WEIGHT_LIGHT:
-                return 5;
+                return 5 - turret;
             case EntityWeightClass.WEIGHT_MEDIUM:
-                return 7;
+                return 7 - turret;
             case EntityWeightClass.WEIGHT_HEAVY:
-                return 9;
+                return 9 - turret;
             default:
-                return 11;
+                return 11 - turret;
             }
         } else {
             switch(getWeightClass()) {
@@ -2338,9 +2398,25 @@ public class BattleArmor extends Infantry {
             }
         }
     }
+    
+    public int getTurretCapacity() {
+        return turretSize;
+    }
+    
+    public void setTurretSize(int capacity) {
+        turretSize = capacity;
+    }
+    
+    public boolean hasModularTurretMount() {
+        return modularTurret;
+    }
+    
+    public void setModularTurret(boolean modular) {
+        modularTurret = modular;
+    }
 
     public int getTotalCrits() {
-        return (getArmCrits() * 2) + getBodyCrits();
+        return (getArmCrits() * 2) + getBodyCrits() + getTurretCapacity();
     }
 
     public int getNumCrits(int loc){
@@ -2348,6 +2424,8 @@ public class BattleArmor extends Infantry {
             return getBodyCrits();
         } else if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)){
             return getArmCrits();
+        } else if (loc == MOUNT_LOC_TURRET) {
+            return getTurretCapacity();
         } else {
             return 0;
         }
@@ -2365,7 +2443,7 @@ public class BattleArmor extends Infantry {
     public int getNumAllowedAntiMechWeapons(int loc){
         if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)){
             return 1;
-        } else if (loc == MOUNT_LOC_BODY){
+        } else if ((loc == MOUNT_LOC_BODY) || (loc == MOUNT_LOC_TURRET)) {
             if (getChassisType() == CHASSIS_TYPE_QUAD){
                 return 4;
             } else {

@@ -22,19 +22,16 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
  * This describes equipment mounted on a mech.
@@ -73,7 +70,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
-
+    
     private int location;
     private boolean rearMounted;
 
@@ -96,6 +93,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
+    private double ammoCapacity;
 
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
@@ -152,10 +150,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     protected int baseDamageCapacity = 0;
     protected int damageTaken = 0;
 
-    // this is a hack but in the case of Killer Whale ammo
-    // I need some way of tracking how many missiles are Santa Annas
-    private int nSantaAnna = 0;
-
     /**
      * BA use locations for troopers, so we need a way to keep track of where
      *  a piece of equipment is moutned on BA
@@ -198,6 +192,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
         if (type instanceof AmmoType) {
             shotsLeft = ((AmmoType) type).getShots();
+            ammoCapacity = type.getTonnage(entity);
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
@@ -371,7 +366,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 pendingMode = newMode;
             }
         }
-        // all communicationsequipment mounteds need to have the same mode at
+        // all communications equipment mounteds need to have the same mode at
         // all times
         if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
@@ -520,6 +515,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             }
             if (getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                 desc.append(" (Right arm)");
+            }
+            if (getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
+                desc.append(" (Turret)");
             }
             if (isDWPMounted()) {
                 desc.append(" (DWP)");
@@ -755,8 +753,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             nShots = 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC) || (wtype
-                .getAmmoType() == AmmoType.T_LAC))
+        else if (((wtype.getAmmoType() == AmmoType.T_AC) 
+                || (wtype.getAmmoType() == AmmoType.T_LAC)
+                || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
+                || (wtype.getAmmoType() == AmmoType.T_PAC))
                 && wtype.hasModes()
                 && (ignoreMode || mode.equals("Rapid"))) {
             nShots = 2;
@@ -792,6 +792,25 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setDumping(boolean b) {
         m_bDumping = b;
     }
+    
+    /**
+     * The capacity of an ammo bin may be different than the weight of the original shots
+     * in the case of AR10s due to variable missile weight.
+     * 
+     * @return The capacity of a mounted ammo bin in tons.
+     */
+    public double getAmmoCapacity() {
+        return ammoCapacity;
+    }
+
+    /**
+     * Sets the maximum tonnage of ammo for a mounted ammo bin.
+     * 
+     * @param capacity The capacity of the bin in tons.
+     */
+    public void setAmmoCapacity(double capacity) {
+        ammoCapacity = capacity;
+    }
 
     public boolean isRapidfire() {
         return rapidfire;
@@ -800,7 +819,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setRapidfire(boolean rapidfire) {
         this.rapidfire = rapidfire;
     }
-
+    
+       
     /**
      * Checks to see if the current ammo for this weapon is hotloaded
      *
@@ -1010,6 +1030,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             AmmoType atype = (AmmoType) type;
             int rackSize = atype.getRackSize();
             int damagePerShot = atype.getDamagePerShot();
+            // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
+            if ((type instanceof BombType)
+                    && (((BombType)type).getBombType() == BombType.B_ASEW)) {
+                damagePerShot = 5;
+            }
 
             long mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
@@ -1395,6 +1420,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         bombMounted = b;
     }
 
+    /**
+     * Convenience "property" to reduce typing, which returns true if the current
+     * piece of equipment is a bomb capable of striking ground targets.
+     * @return True if 
+     */
+    public boolean isGroundBomb() {
+        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
+                getType().hasFlag(AmmoType.F_GROUND_BOMB);
+    }
+    
     // is ammo in the same bay as the weapon
     public boolean ammoInBay(int mAmmoId) {
         for (int nextAmmoId : bayAmmo) {
@@ -1462,16 +1497,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return 0;
     }
 
-    public int getNSantaAnna() {
-        return nSantaAnna;
-    }
-
-    public void setNSantaAnna(int n) {
-        nSantaAnna = n;
-    }
-
     public boolean isBodyMounted() {
-        return baMountLoc == BattleArmor.MOUNT_LOC_BODY;
+        return (baMountLoc == BattleArmor.MOUNT_LOC_BODY)
+                || (baMountLoc == BattleArmor.MOUNT_LOC_TURRET);
     }
 
     public boolean isDWPMounted() {
@@ -1571,29 +1599,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * count all the quirks for this unit, positive and negative
+     * Count all the quirks for this "mounted" object, positive and negative
      */
     public int countQuirks() {
-        int count = 0;
-
         if ((null == entity) || (null == entity.game)
                 || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return count;
+            return 0;
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        return quirks.count();
     }
 
     /**
@@ -1601,37 +1615,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * the separator
      */
     public String getQuirkList(String sep) {
-        StringBuffer qrk = new StringBuffer();
-
         if ((null == entity) || (null == entity.game)
                 || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            return qrk.toString();
+            return "";
         }
 
-        if (null == sep) {
-            sep = "";
-        }
-
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption quirk = j.nextElement();
-                if (quirk.booleanValue()) {
-                    if (qrk.length() > 0) {
-                        qrk.append(sep);
-                    }
-                    qrk.append(quirk.getName());
-                    if ((quirk.getType() == IOption.STRING)
-                            || (quirk.getType() == IOption.CHOICE)
-                            || (quirk.getType() == IOption.INTEGER)) {
-                        qrk.append(" ").append(quirk.stringValue());
-                    }
-                }
-            }
-        }
-        return qrk.toString();
+        return quirks.getOptionList(sep);
     }
 
     public CalledShot getCalledShot() {
@@ -1708,7 +1697,21 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
     }
-
+    
+    /**
+     * Method that checks to see if our capital missile bay is in bearings-only mode
+     * @return
+     */
+    public boolean isInBearingsOnlyMode() {
+        if (curMode().equals("Bearings-Only Extreme Detection Range")
+                    || curMode().equals("Bearings-Only Long Detection Range")
+                    || curMode().equals("Bearings-Only Medium Detection Range")
+                    || curMode().equals("Bearings-Only Short Detection Range")) {
+            return true;
+        }
+        return false;
+    }
+    
     public int getBaMountLoc() {
         return baMountLoc;
     }
@@ -1822,4 +1825,5 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return false;
         }
     }
+
 }

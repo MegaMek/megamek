@@ -18,37 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleRadiumLaserSniperWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
-        name = "Rifle (Radium Sniper)";
-        setInternalName(name);
-        addLookupName("InfantryRadiumSniper");
-        addLookupName("Radium Sniper Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 9500;
-        bv = 2.58;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.36;
-        infantryRange = 3;
-        introDate = 2583;
-        techLevel.put(2583,techLevel.get(3071));
-        extinctDate = 2607;
-        reintroDate = 3062;
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
-        availRating = new int[]{RATING_F,RATING_X,RATING_F};
-        techRating = RATING_E;
-    }
+	public InfantryRifleRadiumLaserSniperWeapon() {
+		super();
+
+		name = "Rifle (Radium Sniper)";
+		setInternalName(name);
+		addLookupName("InfantryRadiumSniper");
+		addLookupName("Radium Sniper Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 9500;
+		bv = 2.58;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.36;
+		infantryRange = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2582, 2583, DATE_NONE, 2607, 3062)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_TC)
+		        .setProductionFactions(F_TC).setReintroductionFactions(F_TC).setTechRating(RATING_E)
+		        .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F);
+
+	}
 }

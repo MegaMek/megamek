@@ -46,7 +46,7 @@ Leg
 
 <Squad Equipment>
 ISImprovedSensors:Body
-BARemoteSensorDispenser:Body
+ISBARemoteSensorDispenser:Body
 BAAPMount:LA
 Infantry Auto Rifle:APM:LA
 BABasicManipulator:LA

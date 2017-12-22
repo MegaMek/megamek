@@ -45,8 +45,8 @@ Leg
 </armor_tech>
 
 <Point Equipment>
-Bearhunter Superheavy AC:LA
-Bearhunter Superheavy AC:RA
+CLBearhunter Superheavy AC:LA
+CLBearhunter Superheavy AC:RA
 CLAdvancedSRM5:Body
 BA-Advanced SRM-5 Ammo:Body:Shots2#
 BABasicManipulator:LA

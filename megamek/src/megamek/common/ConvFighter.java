@@ -44,6 +44,11 @@ public class ConvFighter extends Aero {
     public int getHeatCapacity() {
         return 999;
     }
+    
+    @Override
+    public double getFuelPointsPerTon() {
+        return 160;
+    }
 
     @Override
     public int getFuelUsed(int thrust) {
@@ -62,6 +67,16 @@ public class ConvFighter extends Aero {
         return used;
     }
 
+    protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
+                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_CONV_FIGHTER;
+    }
+    
     @Override
     public double getBVTypeModifier() {
         if (hasStealth()) {

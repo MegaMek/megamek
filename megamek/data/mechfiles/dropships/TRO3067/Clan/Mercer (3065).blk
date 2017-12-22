@@ -1,0 +1,220 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mercer
+</Name>
+
+<Model>
+(3065)
+</Model>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:10.0:4
+1stclassquarters:40.0:0
+2ndclassquarters:0.0:0
+crewquarters:119.0:0
+cargobay:577.0:2:2
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+175
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+3000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+350
+330
+330
+310
+</armor>
+
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+(B) CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+(B) CLLargePulseLaser
+CLLargePulseLaser
+(B) CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo:96
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+(B) CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:72
+(B) CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo:90
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLERPPC
+CLERPPC
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+(R) (B) CLERMediumLaser
+(R) CLERMediumLaser
+(R) CLERMediumLaser
+(R) CLERMediumLaser
+(R) CLERMediumLaser
+(R) (B) CLERPPC
+(R) CLERPPC
+(R) (B) CLLargePulseLaser
+(R) CLLargePulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLERPPC
+CLERPPC
+(B) CLMediumPulseLaser
+CLMediumPulseLaser
+(R) (B) CLERMediumLaser
+(R) CLERMediumLaser
+(R) CLERMediumLaser
+(R) CLERMediumLaser
+(R) CLERMediumLaser
+(R) (B) CLERPPC
+(R) CLERPPC
+(R) (B) CLLargePulseLaser
+(R) CLLargePulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERPPC
+CLERPPC
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:36
+CLArtemisIV
+CLArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+4500.0
+</tonnage>
+
+<crew>
+37
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+12
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

@@ -68,6 +68,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Infantry;
+import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -621,8 +622,13 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                     int year = (null != client) ? client.getGame().getOptions()
                             .intOption(OptionsConstants.ALLOWED_YEAR) : 999999;
                     boolean techLevelMatch = false;
+                    int type = mech.getType();
+                    if (client != null && client.getGame() != null
+                            && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
+                        type = mech.getType(year);
+                    }
                     for (int tl : nTypes) {
-                        if (mech.getType() == tl) {
+                        if (type == tl) {
                             techLevelMatch = true;
                         }
                     }
@@ -739,24 +745,33 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if (cs.useAverageSkills()) {
-            int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
-                    true);
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+            if (cs.useAverageSkills()) {
+                int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
+                        true);
+    
+                int gunnery = skills[0];
+                int piloting = skills[1];
+    
+                e.getCrew().setGunnery(gunnery, i);
+                // For infantry, piloting doubles as antimek skill, and this is
+                // set based on whether the unit has antimek training, which gets
+                // set in the BLK file, so we should ignore the defaults
+                if (!(e instanceof Infantry)) {
+                    e.getCrew().setPiloting(piloting, i);
+                }
 
-            int gunnery = skills[0];
-            int piloting = skills[1];
-
-            e.getCrew().setGunnery(gunnery);
-            // For infantry, piloting doubles as antimek skill, and this is
-            // set based on whether the unit has antimek training, which gets
-            // set in the BLK file, so we should ignore the defaults
-            if (!(e instanceof Infantry)) {
-                e.getCrew().setPiloting(piloting);
+                if (e.getCrew() instanceof LAMPilot) {
+                    skills = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                }
+            }
+            if(cs.generateNames()) {
+                e.getCrew().setName(client.getRandomNameGenerator().generate(), i);
             }
         }
-        if(cs.generateNames()) {
-            e.getCrew().setName(client.getRandomNameGenerator().generate());
-        }
+        e.getCrew().sortRandomSkills();
     }
 
      public void run() {
@@ -968,6 +983,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 return ms.getCost();
             }
             if (col == COL_LEVEL) {
+                if (client != null && client.getGame() != null
+                        && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
+                    return ms.getLevel(client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
+                }
                 return ms.getLevel();
             }
             return "?";

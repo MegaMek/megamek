@@ -45,15 +45,15 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-Bearhunter Superheavy AC:Body
-Bearhunter Superheavy AC:Body
-CLBAMG:Body
-CLBAMG:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
-IS BA Advanced:Body
+Machine Gun (Bearhunter AC):TU
+Machine Gun (Bearhunter AC):TU
+CLBAMG:TU
+CLBAMG:TU
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
+BA Advanced:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -75,6 +75,10 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <chassis>
 quad
 </chassis>
+
+<turret>
+Modular:6
+</turret>
 
 <jumpingMP>
 0

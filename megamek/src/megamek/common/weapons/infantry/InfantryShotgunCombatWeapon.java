@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryShotgunCombatWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryShotgunCombatWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Shotgun (Combat)";
-        setInternalName(name);
-        addLookupName("InfantryCombatShotgun");
-        addLookupName("Combat Shotgun");
-        ammoType = AmmoType.T_NA;
-        cost = 175;
-        bv = 0.25;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.27;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
-    }
+	public InfantryShotgunCombatWeapon() {
+		super();
+
+		name = "Shotgun (Combat)";
+		setInternalName(name);
+		addLookupName("InfantryCombatShotgun");
+		addLookupName("Combat Shotgun");
+		ammoType = AmmoType.T_NA;
+		cost = 175;
+		bv = 0.25;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.27;
+		infantryRange = 0;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+
+	}
 }

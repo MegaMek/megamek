@@ -40,10 +40,10 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ISIHGaussRifle;
-import megamek.common.weapons.ISSnubNosePPC;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 public class CEntity {
 
@@ -1436,6 +1436,8 @@ public class CEntity {
 
             // LRMs, SRMs, which may have Artemis
             if ((linked_ammo == AmmoType.T_SRM)
+                    || (linked_ammo == AmmoType.T_SRM_IMP) 
+                    || (linked_ammo == AmmoType.T_LRM_IMP)
                     || (linked_ammo == AmmoType.T_LRM)) {
 
                 damage_value = hits_by_racksize[rack_size];
@@ -1456,7 +1458,7 @@ public class CEntity {
 
                 }
 
-                if (linked_ammo == AmmoType.T_SRM) {
+                if ((linked_ammo == AmmoType.T_SRM) || (linked_ammo == AmmoType.T_SRM_IMP)) {
                     damage_value *= 2.0;
                 }
 
@@ -1539,7 +1541,7 @@ public class CEntity {
 
             // Heavy Gauss, Snubnose PPC, variable speed lasers change
             // damage with range
-            if ((wt instanceof ISIHGaussRifle) || (wt instanceof ISSnubNosePPC)
+            if ((wt instanceof ISImpHGaussRifle) || (wt instanceof ISSnubNosePPC)
                     || (wt instanceof VariableSpeedPulseLaserWeapon)) {
                 raw_damage_array[0] = wt.getDamage(wt.getShortRange());
                 raw_damage_array[1] = wt.getDamage(wt.getShortRange());

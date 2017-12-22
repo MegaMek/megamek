@@ -392,7 +392,9 @@ public class BotGeometry {
             try {
                 while (cfit.hasNext()) {
                     CoordFacingCombo cf = cfit.next();
-                    expandToInclude(cf.getCoords());
+                    if(cf != null) {
+                        expandToInclude(cf.getCoords());
+                    }
                 }
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);

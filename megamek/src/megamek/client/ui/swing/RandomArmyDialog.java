@@ -66,6 +66,7 @@ import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -112,6 +113,7 @@ WindowListener, TreeSelectionListener {
     private JPanel m_pAdvSearch = new JPanel();
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
+    private JButton m_bRandomSkills = new JButton(Messages.getString("RandomSkillDialog.title"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
@@ -205,8 +207,10 @@ WindowListener, TreeSelectionListener {
         m_bOK.addActionListener(this);
         m_pButtons.add(m_bCancel);
         m_bCancel.addActionListener(this);
+        m_bRandomSkills.addActionListener(this);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
+        m_pButtons.add(m_bRandomSkills);
 
         // construct the Adv Search Panel
         m_pAdvSearch.setLayout(new FlowLayout(FlowLayout.LEADING));
@@ -741,6 +745,8 @@ WindowListener, TreeSelectionListener {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
+        } else if (ev.getSource().equals(m_bRandomSkills)) {
+            m_clientgui.getRandomSkillDialog().showDialog();
         }
     }
 
@@ -915,17 +921,26 @@ WindowListener, TreeSelectionListener {
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if(cs.useAverageSkills()) {
-            int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+            if(cs.useAverageSkills()) {
+                int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+    
+                int gunnery = skills[0];
+                int piloting = skills[1];
+    
+                e.getCrew().setGunnery(gunnery, i);
+                e.getCrew().setPiloting(piloting, i);
 
-            int gunnery = skills[0];
-            int piloting = skills[1];
-
-            e.getCrew().setGunnery(gunnery);
-            e.getCrew().setPiloting(piloting);
-        }
-        if(cs.generateNames()) {
-            e.getCrew().setName(m_client.getRandomNameGenerator().generate());
+                if (e.getCrew() instanceof LAMPilot) {
+                    skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                }
+            }
+            e.getCrew().sortRandomSkills();
+            if(cs.generateNames()) {
+                e.getCrew().setName(m_client.getRandomNameGenerator().generate(), i);
+            }
         }
     }
 

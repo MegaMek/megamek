@@ -19,7 +19,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
@@ -48,28 +47,30 @@ import megamek.common.TechConstants;
  */
 public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolHoldoutGyrojetPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Gyrojet Pistol (Hold-Out)";
-        setInternalName(name);
-        addLookupName("InfantryHoldoutGyrojetpistol");
-        addLookupName("Holdout Gyrojet Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 30;
-        bv = 0.04;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.04;
-        infantryRange = 0;
-        introDate = 2630;
-        techLevel.put(2630,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_D,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantryPistolHoldoutGyrojetPistolWeapon() {
+		super();
+
+		name = "Gyrojet Pistol (Hold-Out)";
+		setInternalName(name);
+		addLookupName("InfantryHoldoutGyrojetpistol");
+		addLookupName("Holdout Gyrojet Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 30;
+		bv = 0.04;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.04;
+		infantryRange = 0;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_D)
+				.setAvailability(RATING_D, RATING_D, RATING_C, RATING_B);
+
+	}
 }
-

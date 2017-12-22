@@ -58,6 +58,7 @@ import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -238,7 +239,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public Image imageFor(Entity entity, int secondaryPos) {
         // mechs look like they're facing their secondary facing
-        if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+        // (except QuadVees, which are using turrets instead of torso twists
+        if (((entity instanceof Mech) || (entity instanceof Protomech))
+                && !(entity instanceof QuadVee)) {
             return imageFor(entity, entity.getSecondaryFacing(), secondaryPos);
         }
         return imageFor(entity, entity.getFacing(), secondaryPos);
@@ -404,26 +407,53 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load minefield sign
-        minefieldSign = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
+        minefieldSign = ImageUtil
+                .loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
+        if (minefieldSign.getWidth(null) <= 0 || minefieldSign.getHeight(null) <= 0) {
+            System.out.println("Error opening minefield sign image!");
+        }
 
         // load night overlay
-        nightFog = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
-        
+        nightFog = ImageUtil
+                .loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
+        if (nightFog.getWidth(null) <= 0 || nightFog.getHeight(null) <= 0) {
+            System.out.println("Error opening nightFog image!");
+        }
+
         // load the hexMask
-        hexMask = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
+        hexMask = ImageUtil.loadImageFromFile(new MegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
+        if (hexMask.getWidth(null) <= 0 || hexMask.getHeight(null) <= 0) {
+            System.out.println("Error opening hexMask image!");
+        }
 
         // load artillery targets
-        artilleryAutohit = boardview.getToolkit().getImage(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString()
-        );
-        artilleryAdjusted = boardview.getToolkit().getImage(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString()
-        );
-        artilleryIncoming = boardview.getToolkit().getImage(
-                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString()
-        );
+        artilleryAutohit = ImageUtil.loadImageFromFile(
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString());
+        if (artilleryAutohit.getWidth(null) <= 0 || artilleryAutohit.getHeight(null) <= 0) {
+            System.out.println("Error opening artilleryAutohit image!");
+        }
+
+        artilleryAdjusted = ImageUtil.loadImageFromFile(
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString());
+        if (artilleryAdjusted.getWidth(null) <= 0 || artilleryAdjusted.getHeight(null) <= 0) {
+            System.out.println("Error opening artilleryAdjusted image!");
+        }
+
+        artilleryIncoming = ImageUtil.loadImageFromFile(
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString());
+        if (artilleryIncoming.getWidth(null) <= 0 || artilleryIncoming.getHeight(null) <= 0) {
+            System.out.println("Error opening artilleryIncoming image!");
+        }
 
         started = true;
+    }
+    
+    public synchronized void reloadImage(Entity en) {
+        if (en.getSecondaryPositions().isEmpty()) {
+            loadImage(en, -1);
+        } else {
+            en.getSecondaryPositions().keySet().forEach(p -> loadImage(en, p));
+        }
     }
 
     /**

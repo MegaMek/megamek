@@ -23,27 +23,29 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.ACWeapon;
-import megamek.common.weapons.CLImprovedHeavyLargeLaser;
-import megamek.common.weapons.CLImprovedHeavyMediumLaser;
-import megamek.common.weapons.CLImprovedHeavySmallLaser;
-import megamek.common.weapons.EnergyWeapon;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.HVACWeapon;
-import megamek.common.weapons.ISMekTaser;
-import megamek.common.weapons.ISRISCHyperLaser;
-import megamek.common.weapons.LBXACWeapon;
-import megamek.common.weapons.PPCWeapon;
-import megamek.common.weapons.TSEMPWeapon;
-import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.common.weapons.autocannons.UACWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
+import megamek.common.weapons.lasers.EnergyWeapon;
+import megamek.common.weapons.lasers.ISRISCHyperLaser;
+import megamek.common.weapons.other.ISMekTaser;
+import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -81,10 +83,10 @@ public abstract class Mech extends Entity {
     public static final int ACTUATOR_LOWER_LEG = 13;
 
     public static final int ACTUATOR_FOOT = 14;
-
+    
     public static final String systemNames[] = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
+            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
 
     // locations
     public static final int LOC_HEAD = 0;
@@ -277,6 +279,9 @@ public abstract class Mech extends Entity {
 
     // Cooling System Flaws quirk
     private boolean coolingFlawActive = false;
+    
+    // QuadVees, LAMs, and tracked 'Mechs can change movement mode.
+    protected EntityMovementMode originalMovementMode = EntityMovementMode.BIPED;
 
     /**
      * Construct a new, blank, mech.
@@ -325,6 +330,24 @@ public abstract class Mech extends Entity {
         // ejection systems are disabled by default or not.
         autoEject = !PreferenceManager.getClientPreferences()
                 .defaultAutoejectDisabled();
+        
+        switch (inCockpitType) {
+        case COCKPIT_TRIPOD:
+            setCrew(new Crew(CrewType.TRIPOD));
+            break;
+        case COCKPIT_SUPERHEAVY_TRIPOD:
+            setCrew(new Crew(CrewType.SUPERHEAVY_TRIPOD));
+            break;
+        case COCKPIT_DUAL:
+            setCrew(new Crew(CrewType.DUAL));
+            break;
+        case COCKPIT_COMMAND_CONSOLE:
+            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
+            break;
+        case COCKPIT_QUADVEE:
+            setCrew(new Crew(CrewType.QUADVEE));
+            break;
+        }
     }
 
     /**
@@ -893,7 +916,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have tracks?
+     * Does this mech have tracks? Used for tracks as industrial equipment; QuadVees return false.
      *
      * @return
      */
@@ -1116,11 +1139,7 @@ public abstract class Mech extends Entity {
     }
 
     public int getOriginalSprintMPwithoutMASC() {
-        if (hasHipCrit()) {
-            return getOriginalSprintMPwithoutMASC();
-        }
-        return ((int) Math.ceil(getWalkMP(false, false) * 2.0))
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
+        return ((int) Math.ceil(getOriginalWalkMP() * 2.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /**
@@ -1437,7 +1456,35 @@ public abstract class Mech extends Entity {
 
         return jump;
     }
-
+    
+    @Override
+    public boolean isEligibleForPavementBonus() {
+        //eligible if using Mech tracks
+        return movementMode == EntityMovementMode.TRACKED;
+    }
+    
+    @Override
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
+        if (hasTracks() && afterMode != EntityMovementMode.TRACKED) {
+            return EntityMovementMode.TRACKED;
+        } else {
+            return originalMovementMode;
+        }
+    }
+        
+    /**
+     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on their mode,
+     * and Mechs using tracks for movement do not have to make PSRs for damage to gyro or leg
+     * actuators.
+     * 
+     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg actuators
+     * @return              true if the Mech can fall due to failed PSR.
+     */
+    @Override
+    public boolean canFall(boolean gyroLegDamage) {
+        return !isProne() && !(gyroLegDamage && movementMode == EntityMovementMode.TRACKED);
+    }
+    
     /**
      * Return the height of this mech above the terrain.
      */
@@ -1617,6 +1664,11 @@ public abstract class Mech extends Entity {
     public int getHeatCapacity() {
         return getHeatCapacity(true, true);
     }
+    
+    @Override
+    public int getHeatCapacity(boolean radicalHeatSink) {
+        return getHeatCapacity(true, radicalHeatSink);
+    }
 
     /**
      * Returns the name of the heat sinks mounted on this 'mech.
@@ -1674,6 +1726,10 @@ public abstract class Mech extends Entity {
                 includePartialWing = false; // Only count the partial wing bonus
                                             // once.
             }
+        }
+        // AirMech mode for LAMs confers the same heat benefits as a partial wing. 
+        if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
+            capacity += getPartialWingHeatBonus();
         }
         if (includeRadicalHeatSink
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
@@ -1751,6 +1807,11 @@ public abstract class Mech extends Entity {
                 return "Jumped";
             case MOVE_SPRINT:
                 return "Sprinted";
+            //LAM AirMech modes
+            case MOVE_VTOL_WALK:
+                return "Cruised";
+            case MOVE_VTOL_RUN:
+                return "Flanked";
             default:
                 return "Unknown!";
         }
@@ -1774,6 +1835,11 @@ public abstract class Mech extends Entity {
                 return "J";
             case MOVE_SPRINT:
                 return "Sp";
+            //LAM AirMech modes
+            case MOVE_VTOL_WALK:
+                return "C";
+            case MOVE_VTOL_RUN:
+                return "F";
             default:
                 return "?";
         }
@@ -2875,8 +2941,10 @@ public abstract class Mech extends Entity {
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted,
             int critSlot)
             throws LocationFullException {
-        // if there's no actual location, then don't add criticals
-        if (loc == LOC_NONE) {
+        // if there's no actual location or this is a LAM capital fighter weapons group,
+        // or ammo for a LAM bomb weapon then don't add criticals
+        if ((loc == LOC_NONE) || mounted.isWeaponGroup()
+                || (mounted.getType() instanceof BombType)) {
             super.addEquipment(mounted, loc, rearMounted);
             return;
         }
@@ -2951,7 +3019,246 @@ public abstract class Mech extends Entity {
             }
         }
     }
+  
+    //From IO pg 50
+    public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial, int weightClass) {
+        if ((etype & ETYPE_TRIPOD_MECH) != 0) {
+            if (weightClass == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+                return new TechAdvancement(TECH_BASE_IS)
+                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_FW)
+                        .setProductionFactions(F_FW).setTechRating(RATING_D)
+                        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            } else {
+                return new TechAdvancement(TECH_BASE_IS)
+                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_TH)
+                        .setProductionFactions(F_TH).setTechRating(RATING_D)
+                        .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            }
+        } else if (primitive && industrial) {
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
+                    .setProductionFactions(F_TH).setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (primitive) {
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
+                    .setProductionFactions(F_TH).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (industrial) {
+            return new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+                    .setProductionFactions(F_TH).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        } else if (EntityWeightClass.WEIGHT_ULTRA_LIGHT == weightClass) {
+            return new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2500, 2519, 3075).setPrototypeFactions(F_TH, F_FW)
+                    .setProductionFactions(F_FW).setApproximate(true, false, true)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass) {
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(3077, 3078).setPrototypeFactions(F_WB)
+                    .setProductionFactions(F_WB).setTechRating(RATING_D)
+                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else {
+            return new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+                    .setProductionFactions(F_TH).setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.INTRO);
+        }
+    }
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return getTechAdvancement(getEntityType(), isPrimitive(), isIndustrial(), getWeightClass());
+    }
+    
+    private final static TechAdvancement[] GYRO_TA =  {
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.INTRO), //Standard
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
+                .setISApproximate(true, false, false).setPrototypeFactions(F_CS)
+                .setProductionFactions(F_CS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //XL
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3068, 3072)
+                .setISApproximate(true, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Compact
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3055, 3067, 3072)
+                .setISApproximate(true, false, false).setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Heavy duty
+            new TechAdvancement(TECH_BASE_IS).setAdvancement(DATE_NONE)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //None (placeholder)
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
+                .setISApproximate(true, false).setPrototypeFactions(F_FW)
+                .setProductionFactions(F_FW).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
+    };
+    
+    private final static TechAdvancement[] COCKPIT_TA = {
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
+                .setApproximate(true, false, false).setTechRating(RATING_D)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.INTRO), //Standard
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3060, 3067, 3080)
+                .setISApproximate(true, false, false)
+                .setClanAdvancement(DATE_NONE, 3080, 3080).setTechRating(RATING_E)
+                .setPrototypeFactions(F_FS).setProductionFactions(F_FS, F_CJF)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+                .setISApproximate(true, false, false, true, true)
+                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Cockpit command console
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
+                .setClanAdvancement(3055, 3080, 3100)
+                .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
+                .setApproximate(false, true, false).setTechRating(RATING_D) 
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Torso mounted
+            //FIXME: Dual is unofficial; these are stats for standard
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
+                .setApproximate(true, false, false).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), //Dual
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2490)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Industrial
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2430, 2439)
+                .setApproximate(true, false).setTechRating(RATING_D)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Primitive
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, DATE_NONE, 2520)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
+                .setAvailability(RATING_C, RATING_X, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Primitive industrial
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3060, 3076)
+                .setISApproximate(true, false).setTechRating(RATING_E)
+                .setPrototypeFactions(F_WB).setProductionFactions(F_WB)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3130, 3135)
+                .setISApproximate(true, false).setTechRating(RATING_E)
+                .setPrototypeFactions(F_RS).setProductionFactions(F_RS)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy tripod
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2590, 2702)
+                .setISApproximate(true, false).setTechRating(RATING_F)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Tripod
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3074).setClanAdvancement(3083)
+                .setApproximate(true).setTechRating(RATING_E)
+                .setPrototypeFactions(F_WB, F_CHH)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Cockpit interface
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3052, DATE_NONE, DATE_NONE, 3055)
+                .setPrototypeFactions(F_FS, F_LC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //VRRP
+            new TechAdvancement(TECH_BASE_CLAN).setClanAdvancement(3130, 3135)
+                .setClanApproximate(true, false).setTechRating(RATING_F)
+                .setPrototypeFactions(F_CHH).setProductionFactions(F_CHH)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //QuadVee
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(2905, 2940)
+                .setISApproximate(true, false).setTechRating(RATING_D)
+                .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
+                .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial
+    };
+    
+    // Advanced fire control for industrial mechs is implemented with a standard cockpit,
+    // but the tech progression is different.
+    public static TechAdvancement getIndustrialAdvFireConTA() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2491)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH).setTechRating(RATING_D)
+                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
 
+    public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
+        if (cockpitType >= 0 && cockpitType < COCKPIT_TA.length) {
+            return new TechAdvancement(COCKPIT_TA[cockpitType]);
+        }
+        return null;
+    }
+    
+    public TechAdvancement getCockpitTechAdvancement() {
+        if (isIndustrial() && (getCockpitType() == COCKPIT_STANDARD)) {
+            return getIndustrialAdvFireConTA();
+        }
+        return getCockpitTechAdvancement(getCockpitType());
+    }
+    
+    public static TechAdvancement getGyroTechAdvancement(int gyroType) {
+        if ((gyroType >= 0) && (gyroType < GYRO_TA.length)) {
+            return new TechAdvancement(GYRO_TA[gyroType]);
+        }
+        return null;
+    }
+
+    public TechAdvancement getGyroTechAdvancement() {
+        return getGyroTechAdvancement(getGyroType());
+    }
+    
+    public static TechAdvancement getFullHeadEjectAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3020, 3023, 3100)
+                .setClanAdvancement(DATE_NONE, 3052, 3100).setPrototypeFactions(F_LC)
+                .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        // battlemechs with non-fusion engines are experimental
+        if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
+            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+        }
+        if (getGyroTechAdvancement() != null) {
+            ctl.addComponent(getGyroTechAdvancement());
+        }
+        if (getCockpitTechAdvancement() != null) {
+            ctl.addComponent(getCockpitTechAdvancement());
+        }
+        if (hasFullHeadEject()) {
+            ctl.addComponent(getFullHeadEjectAdvancement());
+        }
+        //FIXME: Clan interface cockpit has higher tech rating
+        //if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
+        //    techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
+        //}
+    }
+    
     /**
      * This method will return the number of contiguous criticals in the given
      * location, starting at the given critical slot
@@ -3030,7 +3337,6 @@ public abstract class Mech extends Entity {
                 case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
                     armorMultiplier = 1.5;
                     break;
-                case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
                     armorMultiplier = 1.2;
@@ -3344,9 +3650,9 @@ public abstract class Mech extends Entity {
             // gauss rifles only subtract 1 point per slot, same for HVACs and
             // iHeavy Lasers and mektasers
             if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)
-                    || (etype instanceof CLImprovedHeavyLargeLaser)
-                    || (etype instanceof CLImprovedHeavyMediumLaser)
-                    || (etype instanceof CLImprovedHeavySmallLaser)
+                    || (etype instanceof CLImprovedHeavyLaserLarge)
+                    || (etype instanceof CLImprovedHeavyLaserMedium)
+                    || (etype instanceof CLImprovedHeavyLaserSmall)
                     || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)) {
@@ -3383,10 +3689,11 @@ public abstract class Mech extends Entity {
             }
 
             // RACs, LACs and ACs don't really count
-            if ((etype instanceof WeaponType)
-                    && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
-                            || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype)
-                            .getAmmoType() == AmmoType.T_LAC))) {
+            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC))) {
                 toSubtract = 0;
             }
 
@@ -3492,6 +3799,17 @@ public abstract class Mech extends Entity {
         // we use full possible movement, ignoring gravity, heat and modular
         // armor, but taking into account hit actuators
         int bvWalk = getWalkMP(false, true, true);
+        int airmechMP = 0;
+        if (((getEntityType() & ETYPE_LAND_AIR_MECH) != 0)) {
+            bvWalk = ((LandAirMech)this).getBVWalkMP();
+            if (((LandAirMech)this).getLAMType() == LandAirMech.LAM_STANDARD) {
+                airmechMP = ((LandAirMech)this).getAirMechFlankMP();
+            }
+        } else if (((getEntityType() & ETYPE_QUADVEE) != 0)
+                && (getMovementMode() == EntityMovementMode.WHEELED)) {
+            // Don't use bonus cruise MP in calculating BV
+            bvWalk = Math.max(0, walkMP);
+        }
         int runMP;
         if (hasTSM()) {
             bvWalk++;
@@ -3524,7 +3842,7 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Target Movement Modifer For Run");
+        bvText.append("Target Movement Modifier For Run");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3535,7 +3853,7 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
 
         // Calculate modifiers for jump and UMU movement where applicable.
-        final int jumpMP = getJumpMP(false, true);
+        final int jumpMP = Math.max(getJumpMP(false, true), airmechMP);
         final int tmmJumped = (jumpMP > 0) ? Compute.
                 getTargetMovementModifier(jumpMP, true, false, game).getValue()
                 : 0;
@@ -3548,7 +3866,11 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Target Movement Modifer For Jumping");
+        if (airmechMP == 0) {
+            bvText.append("Target Movement Modifier For Jumping");
+        } else {
+            bvText.append("Target Movement Modifier For AirMech Flank");
+        }
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3558,7 +3880,7 @@ public abstract class Mech extends Entity {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        bvText.append("Target Movement Modifer For UMUs");
+        bvText.append("Target Movement Modifier For UMUs");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3574,7 +3896,7 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Target Movement Modifer");
+        bvText.append("Target Movement Modifier");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -3851,6 +4173,11 @@ public abstract class Mech extends Entity {
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                     name = name.concat(" with Artemis IV");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.2;
+                    name = name.concat(" with Artemis IV Prototype");
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
@@ -4909,7 +5236,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[15 + locations()];
+        double[] costs = new double[17 + locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -4927,8 +5254,12 @@ public abstract class Mech extends Entity {
             cockpitCost = 700000;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
             cockpitCost = 175000;
+        } else if (getCockpitType() == Mech.COCKPIT_VRRP) {
+            cockpitCost = 1250000;
         } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
             cockpitCost = 100000;
+        } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {
+            cockpitCost = 375000;
         } else {
             cockpitCost = 200000;
         }
@@ -4941,7 +5272,8 @@ public abstract class Mech extends Entity {
         costs[i++] = weight * 2000;// sensors
         int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : hasIndustrialTSM() ? 12000 : 2000;
         costs[i++] = muscCost * weight;// musculature
-        costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
+        double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
+        costs[i++] = structureCost;
         costs[i++] = getActuatorCost();// arm and/or leg actuators
         if(hasEngine()) {
             costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
@@ -5010,13 +5342,33 @@ public abstract class Mech extends Entity {
                     * EquipmentType.getArmorCost(armorType[0]);
         }
 
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
-
+        double weaponCost = getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[i++] = weaponCost;
+        
+        if (this instanceof LandAirMech) {
+            costs[i++] = (structureCost + weaponCost)
+                    * (((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
+        } else if (this instanceof QuadVee) {
+            costs[i++] = (structureCost + weaponCost) * 0.5;
+        } else {
+            costs[i++] = 0;
+        }
+        
         double cost = 0; // calculate the total
         for (int x = 0; x < i; x++) {
             cost += costs[x];
         }
-
+                        
+        double quirkMultiplier = 0;
+        if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
+        	quirkMultiplier = 1.1f;
+        	cost *= quirkMultiplier;
+        } else if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_2)) {
+        	quirkMultiplier = 1.25f;
+        	cost *= quirkMultiplier;
+        }
+        costs[i++] = -quirkMultiplier; // negative just marks it as multiplier
+ 
         double omniMultiplier = 0;
         if (isOmni()) {
             omniMultiplier = 1.25f;
@@ -5033,6 +5385,26 @@ public abstract class Mech extends Entity {
         addCostDetails(cost, costs);
         return cost;
     }
+    
+    @Override
+    protected int implicitClanCASE() {
+        if (!isClan()) {
+            return 0;
+        }
+        int explicit = 0;
+        Set<Integer> caseLocations = new HashSet<>();
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+                explicit++;
+            } else if (m.getType().isExplosive(m)) {
+                caseLocations.add(m.getLocation());
+                if (m.getSecondLocation() >= 0) {
+                    caseLocations.add(m.getSecondLocation());
+                }
+            }
+        }
+        return Math.max(0, caseLocations.size() - explicit);
+    }
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
@@ -5040,7 +5412,7 @@ public abstract class Mech extends Entity {
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
                 "Heatsinks", "Full Head Ejection System",
                 "Armored System Components", "Armor", "Equipment",
-                "Omni Multiplier", "Weight Multiplier" };
+                "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -5210,6 +5582,13 @@ public abstract class Mech extends Entity {
                 roll.addModifier(4,
                         "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
+        } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
+            //Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner acting as pilot.
+            if (getCrew().getCurrentPilotIndex() != getCrew().getCrewType().getPilotPos()) {
+                roll.addModifier(1, "dual cockpit without active pilot");
+            } else if (getCrew().hasDedicatedGunner() || !isAttackingThisTurn()) {
+                roll.addModifier(-1, "dedicated pilot");
+            }
         }
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
@@ -5232,6 +5611,10 @@ public abstract class Mech extends Entity {
 
     @Override
     public int getMaxElevationChange() {
+        if (movementMode == EntityMovementMode.TRACKED
+                || movementMode == EntityMovementMode.WIGE) {
+            return 1;
+        }
         return 2;
     }
 
@@ -5977,6 +6360,9 @@ public abstract class Mech extends Entity {
             case COCKPIT_SUPERHEAVY_TRIPOD:
                 inName = "COCKPIT_SUPERHEAVY_TRIPOD";
                 break;
+            case COCKPIT_TRIPOD:
+                inName = "COCKPIT_TRIPOD";
+                break;
             case COCKPIT_INTERFACE:
                 inName = "COCKPIT_INTERFACE";
                 break;
@@ -6019,8 +6405,10 @@ public abstract class Mech extends Entity {
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
-            if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD))
+                    && (!hex.containsTerrain(Terrains.BUILDING)
+                            && !hex.containsTerrain(Terrains.RUBBLE))){
                 return true;
             }
             // Can't deploy on a bridge
@@ -6036,6 +6424,35 @@ public abstract class Mech extends Entity {
             if (hex.isClearHex()) {
                 return true;
             }
+        }
+        // Mechs using tracks and QuadVees in vehicle mode (or converting to or from) have the same
+        // restrictions and combat vehicles with the exception that QuadVees can enter water hexes
+        // except during conversion.
+        if (movementMode == EntityMovementMode.TRACKED
+                || (this instanceof QuadVee && convertingNow
+                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
+                return (hex.terrainLevel(Terrains.WOODS) > 1)
+                        || ((hex.terrainLevel(Terrains.WATER) > 0)
+                                && !hex.containsTerrain(Terrains.ICE)
+                                && (!(this instanceof QuadVee) || convertingNow))
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+        }
+        if (movementMode == EntityMovementMode.WHEELED
+                || (this instanceof QuadVee && convertingNow
+                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+            return hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.ROUGH)
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2)
+                    || ((hex.terrainLevel(Terrains.WATER) > 0)
+                            && !hex.containsTerrain(Terrains.ICE)
+                            && convertingNow);
         }
 
         return (hex.terrainLevel(Terrains.WOODS) > 2)
@@ -6070,6 +6487,8 @@ public abstract class Mech extends Entity {
             sb.append("LAM");
         } else if (this instanceof BipedMech) {
             sb.append("Biped");
+        } else if (this instanceof QuadVee) {
+            sb.append("QuadVee");
         } else if (this instanceof QuadMech) {
             sb.append("Quad");
         } else if (this instanceof TripodMech) {
@@ -6129,6 +6548,17 @@ public abstract class Mech extends Entity {
             sb.append("Standard");
         }
         sb.append(newLine);
+        
+        if (this instanceof LandAirMech) {
+            sb.append("LAM:");
+            sb.append(((LandAirMech)this).getLAMTypeString());
+            sb.append(newLine);
+        } else if (this instanceof QuadVee) {
+            sb.append("Motive:");
+            sb.append(((QuadVee)this).getMotiveTypeString());
+            sb.append(newLine);
+        }
+
 
         if (!standard) {
             sb.append("Cockpit:");
@@ -6142,6 +6572,11 @@ public abstract class Mech extends Entity {
         if (hasFullHeadEject()) {
             sb.append("Ejection:");
             sb.append(Mech.FULL_HEAD_EJECT_STRING);
+            sb.append(newLine);
+        }
+        if (this instanceof LandAirMech) {
+            sb.append("LAM:");
+            sb.append(((LandAirMech)this).getLAMTypeString());
             sb.append(newLine);
         }
         sb.append(newLine);
@@ -6302,28 +6737,27 @@ public abstract class Mech extends Entity {
                         .append(armoredText);
             } else if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
+                toReturn.append(m.getType().getInternalName());
                 switch (m.getFacing()) {
                     case 1:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FR)").append(armoredText);
+                        toReturn.append(" (FR)");
                         break;
                     case 2:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RR)").append(armoredText);
+                        toReturn.append(" (RR)");
                         break;
                     // case 3:
                         // already handled by isRearMounted() above
                     case 4:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RL)").append(armoredText);
+                        toReturn.append(" (RL)");
                         break;
                     case 5:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FL)").append(armoredText);
+                        toReturn.append(" (FL)");
                         break;
                     default:
+                        // forward facing
                         break;
                 }
+                toReturn.append(armoredText);
             } else {
                 toReturn.append(m.getType().getInternalName()).append(
                         armoredText);
@@ -6507,9 +6941,6 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    /**
-     * Dual Cockpits need to be implemented everywhere except here. FIXME
-     */
     public boolean addCommandConsole() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
@@ -6527,9 +6958,23 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    /**
-     * Dual Cockpits need to be implemented everywhere except here. FIXME
-     */
+    public boolean addQuadVeeCockpit() {
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_QUADVEE);
+        return true;
+    }
+
     public boolean addDualCockpit() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
@@ -6552,9 +6997,10 @@ public abstract class Mech extends Entity {
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
      *
-     * @return false if insufficient critical space
+     * @param vrpp  if this is a VRPP rather than a standard torso-mounted cockpit
+     * @return      false if insufficient critical space
      */
-    public boolean addTorsoMountedCockpit() {
+    public boolean addTorsoMountedCockpit(boolean vrpp) {
         boolean success = true;
         if (getEmptyCriticals(LOC_HEAD) < 2) {
             success = false;
@@ -6570,8 +7016,13 @@ public abstract class Mech extends Entity {
         } else {
             addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
                     CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
-                    CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            if (vrpp) {
+                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            } else {
+                addCritical(LOC_CT, getFirstEmptyCrit(LOC_CT), new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            }
         }
 
         if ((getEmptyCriticals(LOC_LT) < 1) || (getEmptyCriticals(LOC_RT) < 1)
@@ -6585,9 +7036,45 @@ public abstract class Mech extends Entity {
         }
 
         if (success) {
-            setCockpitType(COCKPIT_TORSO_MOUNTED);
+            if (vrpp) {
+                setCockpitType(COCKPIT_VRRP);
+            } else {
+                setCockpitType(COCKPIT_TORSO_MOUNTED);
+            }
         }
         return success;
+    }
+    
+    /**
+     * Determines which crew slot is associated with a particular cockpit critical.
+     * 
+     * @param cs    A cockpit critical slot
+     * @return      The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
+     */
+    public int getCrewForCockpitSlot(int loc, CriticalSlot cs) {
+        //For those with split cockpits, count the cockpit criticals in the location until we reach the correct
+        //one.
+        if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                || getCockpitType() == COCKPIT_DUAL
+                || getCockpitType() == COCKPIT_QUADVEE) {
+            int crewSlot = 0;
+            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                if (getCritical(loc, i) == cs) {
+                    return crewSlot;
+                } else if (getCritical(loc, i).getIndex() == SYSTEM_COCKPIT) {
+                    crewSlot++;
+                }
+            }
+        }
+        return -1;
+    }
+    
+    @Override
+    public boolean hasCommandConsoleBonus() {
+        return getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                && getCrew().hasActiveCommandConsole()
+                && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
+                && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
     }
 
     /**
@@ -6955,7 +7442,7 @@ public abstract class Mech extends Entity {
         }
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
-        if (locationIsLeg(loc)) {
+        if (locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(),
                     TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
@@ -7075,8 +7562,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getHQIniBonus() {
         int bonus = super.getHQIniBonus();
-        if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
+        if (((getGyroHits() > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
             return 0;
         }
         return bonus;
@@ -7707,6 +8193,15 @@ public abstract class Mech extends Entity {
         return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                 Mech.LOC_CT);
     }
+    
+    @Override
+    public boolean isGyroDestroyed() {
+        if (getGyroType() == GYRO_HEAVY_DUTY) {
+            return getGyroHits() > 2;
+        } else {
+            return getGyroHits() > 1;
+        }
+    }
 
     @Override
     public String getLocationDamage(int loc) {
@@ -7823,6 +8318,36 @@ public abstract class Mech extends Entity {
                 toReturn += ", ";
             }
             toReturn += "Foot";
+            first = false;
+        }
+        if ((getEntityType() & ETYPE_QUADVEE) != 0
+                && hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        QuadVee.SYSTEM_CONVERSION_GEAR, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Conversion Gear";
+            first = false;
+        }
+        if ((getEntityType() & ETYPE_LAND_AIR_MECH) != 0
+                && hasSystem(LandAirMech.LAM_AVIONICS, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        LandAirMech.LAM_AVIONICS, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Avionics";
+            first = false;
+        }
+        if ((getEntityType() & ETYPE_LAND_AIR_MECH) != 0
+                && hasSystem(LandAirMech.LAM_LANDING_GEAR, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        LandAirMech.LAM_LANDING_GEAR, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Landing Gear";
             first = false;
         }
         return toReturn;

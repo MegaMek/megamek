@@ -17,12 +17,13 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
@@ -39,16 +40,34 @@ public class Jumpship extends Aero {
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
 
+    public static final int GRAV_DECK_STANDARD_MAX = 100;
+    public static final int GRAV_DECK_LARGE_MAX = 250;
+    
+    public static final int DRIVE_CORE_STANDARD    = 0;
+    public static final int DRIVE_CORE_COMPACT     = 1;
+    public static final int DRIVE_CORE_SUBCOMPACT  = 2;
+    public static final int DRIVE_CORE_NONE        = 3;
+    public static final int DRIVE_CORE_PRIMITIVE   = 4;
+    
+    // The percentage of the total unit weight taken up by the drive core. The value
+    // given for primitive assumes a 30ly range, but the final value has to be computed.
+    private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
+
     private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
             "Aft Right Side" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
+    private int driveCoreType = DRIVE_CORE_STANDARD;
+    private int jumpRange = 30; // Primitive jumpships can have a reduced range
 
     // crew and passengers
     private int nCrew = 0;
     private int nPassenger = 0;
+    private int nMarines = 0;
+    private int nBattleArmor = 0;
+    private int nOtherCrew = 0;
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
@@ -62,11 +81,14 @@ public class Jumpship extends Aero {
     // HPG
     private boolean hasHPG = false;
 
-    // grav decks (three different kinds)
-    // regular
-    private int gravDeck = 0;
-    private int gravDeckLarge = 0;
-    private int gravDeckHuge = 0;
+    /**
+     * Keep track of all of the grav decks and their sizes.
+     *
+     * This is a new approach for storing grav decks, which allows the size of each deck to be stored.  Previously,
+     * we just stored the number of standard, large and huge grav decks, and could not specify the exact size of the
+     * deck.
+     */
+    private List<Integer> gravDecks = new ArrayList<>();
 
     // station-keeping thrust and accumulated thrust
     private double stationThrust = 0.2;
@@ -76,38 +98,162 @@ public class Jumpship extends Aero {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
     }
+    
+    
+    //ASEW Missile Effects, per location
+    //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
+    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    
+    /*
+     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     * @param turns - integer specifying the number of end phases that the effects last through
+     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
+     */
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    /*
+     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     */
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
 
+    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2100, 2200, DATE_NONE, 2500)
+            .setISApproximate(true, true, false, false)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
+    }
+
+    public CrewType defaultCrewType() {
+        return CrewType.VESSEL;
+    }
+    
     @Override
     public int locations() {
         return 6;
     }
 
+    /**
+     * Get the number of grav decks on the ship.
+     *
+     * @return
+     */
     public int getTotalGravDeck() {
-        return (gravDeck + gravDeckLarge + gravDeckHuge);
+        return gravDecks.size();
     }
 
+    /**
+     * Adds a grav deck whose size in meters is specified.
+     *
+     * @param size  The size in meters of the grav deck.
+     */
+    public void addGravDeck(int size) {
+        gravDecks.add(size);
+    }
+
+    /**
+     * Get a list of all grav decks mounted on this ship, where each value
+     * represents the size in meters of the grav deck.
+     *
+     * @return
+     */
+    public List<Integer> getGravDecks() {
+        return gravDecks;
+    }
+
+    /**
+     * Old style for setting the number of grav decks.  This allows the user to specify N standard grav decks, which
+     * will get added at a default value.
+     *
+     * @param n
+     */
     public void setGravDeck(int n) {
-        gravDeck = n;
+        for (int i = 0; i < n; i++) {
+            gravDecks.add(GRAV_DECK_STANDARD_MAX / 2);
+        }
     }
 
+    /**
+     * Get the number of standard grav decks
+     * @return
+     */
     public int getGravDeck() {
-        return gravDeck;
+        int count = 0;
+        for (int size : gravDecks) {
+            if (size < GRAV_DECK_STANDARD_MAX) {
+                count++;
+            }
+        }
+        return count;
     }
 
+    /**
+     * Old style method for adding N large grav decks.  A default value is chosen that is half-way between the standard
+     * and huge sizes.
+     *
+     * @param n
+     */
     public void setGravDeckLarge(int n) {
-        gravDeckLarge = n;
+        for (int i = 0; i < n; i++) {
+            gravDecks.add(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
+        }
     }
 
+    /**
+     * Get the number of large grav decks.
+     *
+     * @return
+     */
     public int getGravDeckLarge() {
-        return gravDeckLarge;
+        int count = 0;
+        for (int size : gravDecks) {
+            if (size >= GRAV_DECK_STANDARD_MAX && size < GRAV_DECK_LARGE_MAX) {
+                count++;
+            }
+        }
+        return count;
     }
 
+    /**
+     * Old style method for adding N huge grav decks.  A default value is chosen that is the current large maximum plus
+     * half that value.
+     *
+     * @param n
+     */
     public void setGravDeckHuge(int n) {
-        gravDeckHuge = n;
+        for (int i = 0; i < n; i++) {
+            gravDecks.add(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
+        }
     }
 
+    /**
+     * Get the number of huge grav decks.
+     *
+     * @return
+     */
     public int getGravDeckHuge() {
-        return gravDeckHuge;
+        int count = 0;
+        for (int size : gravDecks) {
+            if (size >= GRAV_DECK_LARGE_MAX) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public void setHPG(boolean b) {
@@ -155,18 +301,92 @@ public class Jumpship extends Aero {
         nCrew = crew;
     }
 
-    public void setNPassenger(int pass) {
-        nPassenger = pass;
-    }
-
     @Override
     public int getNCrew() {
         return nCrew;
     }
 
+    public void setNPassenger(int pass) {
+        nPassenger = pass;
+    }
+
     @Override
     public int getNPassenger() {
         return nPassenger;
+    }
+
+    public void setNMarines(int m) {
+        nMarines = m;
+    }
+
+    public int getNMarines() {
+        return nMarines;
+    }
+
+    public void setNBattleArmor(int m) {
+        nBattleArmor = m;
+    }
+
+    public int getNBattleArmor() {
+        return nBattleArmor;
+    }
+
+    public void setNOtherCrew(int m) {
+        nOtherCrew = m;
+    }
+
+    public int getNOtherCrew() {
+        return nOtherCrew;
+    }
+    
+    @Override
+    public double getFuelPointsPerTon() {
+        double ppt;
+        if (getWeight() < 110000) {
+            ppt = 10;
+        } else if (getWeight() < 250000) {
+            ppt = 5;
+        } else {
+            ppt = 2.5;
+        }
+        if (isPrimitive()) {
+            return ppt / primitiveFuelFactor();
+        }
+        return ppt;
+    }
+
+    @Override
+    public double getStrategicFuelUse() {
+        double fuelUse;
+    	if (weight >= 200000) {
+    		fuelUse = 3.95;
+    	} else if (weight >= 100000) {
+    	    fuelUse = 1.98;
+    	} else if (weight >= 50000) {
+    	    fuelUse = 0.98;
+    	} else {
+    	    fuelUse = 0.28;
+    	}
+    	if (isPrimitive()) {
+    	    return fuelUse * primitiveFuelFactor();
+    	}
+    	return fuelUse;
+    }
+
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2300) {
+            return 1.0;
+        } else if (year >= 2251) {
+            return 1.1;
+        } else if (year >= 2201) {
+            return 1.4;
+        } else if (year >= 2151) {
+            return 1.7;
+        } else {
+            return 2.0;
+        }
     }
 
     @Override
@@ -207,6 +427,39 @@ public class Jumpship extends Aero {
 
     public boolean canJump() {
         return kf_integrity > 0;
+    }
+    
+    public int getDriveCoreType() {
+        return driveCoreType;
+    }
+    
+    public void setDriveCoreType(int driveCoreType) {
+        this.driveCoreType = driveCoreType;
+    }
+
+    /**
+     * Get maximum range of a jump
+     */
+    public int getJumpRange() {
+        return jumpRange;
+    }
+    
+    /**
+     * Set maximum jump range (used for primitive jumpships)
+     */
+    public void setJumpRange(int range) {
+        jumpRange = range;
+    }
+    
+    /**
+     * @return The weight of the jump drive core for this unit
+     */
+    public double getJumpDriveWeight() {
+        double pct = DRIVE_CORE_WEIGHT_PCT[driveCoreType];
+        if (driveCoreType == DRIVE_CORE_PRIMITIVE) {
+            pct = 0.05 + 0.03 * jumpRange;
+        }
+        return Math.ceil(getWeight() * pct); 
     }
 
     // different firing arcs
@@ -538,6 +791,9 @@ public class Jumpship extends Aero {
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.1;
+                }
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                 }
@@ -810,13 +1066,9 @@ public class Jumpship extends Aero {
 
     @Override
     public double getArmorWeight(int loc) {
-        // first I need to subtract SI bonus from total armor
         double armorPoints = getTotalOArmor();
-        armorPoints -= Math.round((get0SI() * loc) / 10.0);
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
 
+        // now I need to determine base armor points by type and weight
         double baseArmor = 0.8;
         if (isClan()) {
             baseArmor = 1.0;
@@ -834,11 +1086,11 @@ public class Jumpship extends Aero {
             }
         }
 
-        if (armorType[0] == EquipmentType.T_ARMOR_FERRO_IMP) {
+        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
             baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
             baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
         }
 
@@ -852,86 +1104,88 @@ public class Jumpship extends Aero {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-
+        double[] costs = new double[22];
+        int costIdx = 0;
         double cost = 0;
 
-        // add in controls
-        // bridge
-        cost += 200000;
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * getArcswGuns();
+        // Control Systems
+        // Bridge
+        costs[costIdx++] += 200000 + 10 * weight;
+        // Computer
+        costs[costIdx++] += 200000;
+        // Life Support
+        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
+        // Sensors
+        costs[costIdx++] += 80000;
+        // Fire Control Computer
+        costs[costIdx++] += 100000;
+        // Gunnery Control Systems
+        costs[costIdx++] += 10000 * getArcswGuns();
+        // Structural Integrity
+        costs[costIdx++] += 100000 * getSI();
 
-        // structural integrity
-        cost += 100000 * getSI();
-
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * getWeight());
-
-        // docking hard point
-        cost += 100000 * getDocks();
-
-        double engineWeight = weight * 0.012;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += (500 * getOriginalWalkMP() * weight) / 100.0;
-        // control
-        cost += 1000;
-
-        // HPG
-        if (hasHPG()) {
-            cost += 1000000000;
-        }
-
-        // fuel tanks
-        cost += (200 * getFuel()) / getFuelPerTon();
-
-        // armor
-        cost += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
-
-        // heat sinks
-        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
-                                                     // 2000;
-        cost += sinkCost * getHeatSinks();
+        // Station-Keeping Drive
+        // Engine
+        costs[costIdx++] += 1000 * weight * 0.012;
+        // Engine Control Unit
+        costs[costIdx++] += 1000;
 
         // KF Drive
-        double driveCost = 0;
-        // coil
-        driveCost += 60000000 + (75000000 * getDocks());
-        // initiator
-        driveCost += 25000000 + (5000000 * getDocks());
-        // controller
-        driveCost += 50000000;
-        // tankage
-        driveCost += 50000 * getKFIntegrity();
-        // sail
-        driveCost += 50000 * (30 + (weight / 7500));
-        // charging system
-        driveCost += 500000 + (200000 * getDocks());
-        // is the core compact? (not for jumpships)
-        // lithium fusion?
-        if (hasLF()) {
-            driveCost *= 3;
+        double[] driveCost = new double[6];
+        int driveIdx = 0;
+        double driveCosts = 0;
+        // Drive Coil
+        driveCost[driveIdx++] += 60000000 + (75000000 * getDocks());
+        // Initiator
+        driveCost[driveIdx++] += 25000000 + (5000000 * getDocks());
+        // Controller
+        driveCost[driveIdx++] += 50000000;
+        // Tankage
+        driveCost[driveIdx++] += 50000 * getKFIntegrity();
+        // Sail
+        driveCost[driveIdx++] += 50000 * (30 + (weight / 7500));
+        // Charging System
+        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
+        
+        for (int i = 0; i < driveIdx; i++) {
+            driveCosts += driveCost[i];
         }
 
-        cost += driveCost;
+        if (hasLF()) {
+            driveCosts *= 3;
+        }
+        
+        costs[costIdx++] += driveCosts;
 
-        // grav deck
-        cost += 5000000 * getGravDeck();
-        cost += 10000000 * getGravDeckLarge();
-        cost += 40000000 * getGravDeckHuge();
+        // K-F Drive Support Systems
+        costs[costIdx++] += 10000000 * (weight / 10000);
 
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
+        // Additional Ships Systems
+        // Attitude Thrusters
+        costs[costIdx++] += 25000;
+        // Docking Collars
+        costs[costIdx++] += 100000 * getDocks();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
-        // get bays
+        // Armor
+        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
+
+        // Heat Sinks
+        int sinkCost = 2000 + (4000 * getHeatType());
+        costs[costIdx++] += sinkCost * getHeatSinks();
+
+        // Escape Craft
+        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
+
+        // Grav Decks
+        double deckCost = 0;
+        deckCost += 5000000 * getGravDeck();
+        deckCost += 10000000 * getGravDeckLarge();
+        deckCost += 40000000 * getGravDeckHuge();
+        costs[costIdx++] += deckCost;
+
+        // Transport Bays
         int baydoors = 0;
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
@@ -944,14 +1198,29 @@ public class Jumpship extends Aero {
             }
         }
 
-        cost += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000);
 
-        // life boats and escape pods
-        cost += 5000 * (getLifeBoats() + getEscapePods());
+        // Weapons and Equipment
+        // HPG
+        if (hasHPG()) {
+            costs[costIdx++] += 1000000000;
+        } else {
+            costs[costIdx++] += 0;
+        }
+        // Weapons and Equipment
+        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double weightMultiplier = 1.25f;
 
-        return Math.round(cost * weightMultiplier);
+        // Sum Costs
+        for (int i = 0; i < costIdx; i++) {
+            cost += costs[i];
+        }
+
+        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
+        cost = Math.round(cost * weightMultiplier);
+
+        return cost;
 
     }
 
@@ -1252,6 +1521,11 @@ public class Jumpship extends Aero {
         }
     }
     
+    @Override
+    public boolean isFighter() {
+        return false;
+    }
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;

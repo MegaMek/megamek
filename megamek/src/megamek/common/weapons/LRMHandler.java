@@ -34,6 +34,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.lrms.ExtendedLRMWeapon;
 import megamek.server.Server;
 
 /**
@@ -169,6 +170,30 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
+            
+        } else if (((mLinker != null)
+                && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_PROTO))
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+            if (bECMAffected) {
+                // ECM prevents bonus
+                Report r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else if (bMekTankStealthActive) {
+                // stealth prevents bonus
+                Report r = new Report(3335);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else {
+                nMissilesModifier += 1;
+            }
+            
+            
         } else if (((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -217,7 +242,9 @@ public class LRMHandler extends MissileWeaponHandler {
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_SRM)
+                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_MML)
                     || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)

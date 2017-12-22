@@ -1,0 +1,47 @@
+# Provides backward compatibility for any changes to the unit name.
+# If a name is changed, an entry should be made here so that it can still
+# be found by a previous name that may appear in a MUL file or a MekHQ
+# campaign file. Each entry should be on a separate line and have the
+# format "oldname|currentname"
+
+#Mechs
+Jagermech JM6-DG|JagerMech JM6-DG
+
+#Dropships
+Behemoth (Standard)|Behemoth (2658)
+Broadsword (Standard)|Broadsword (2979)
+Buccaneer (Standard)|Buccaneer (2708)
+Cargoking (Standard)|Cargo King (2790)
+Cargomaster (Standard)|Cargomaster (2790)
+Carrier (Standard)|Carrier (2882)
+Claymore (Standard)|Claymore (3054)
+Confederate (2703)|Confederate (2602)
+Confederate (Clan)|Confederate C (3048)
+DroST Light Bulk Transport IIA|DroST IIa Transport (2470)
+Excalibur (Pocket Warship)|Excalibur 'Pocket Warship'
+Hamilcar (Standard)|Hamilcar (3054)
+Hannibal (Standard)|Hannibal (3055)
+Hercules (Standard)|Hercules (3053)
+Interdictor Pocket Warship (Anti-Ship)|Interdictor Pocket Warship (Sub-Capital)
+Kuan Ti (Standard)|Kuan Ti (3055)
+Lion (Clan)|Lion (2835)
+Lion (Wolf's Dragoons 3052)|Lion (3052) (WD)
+Lung Wang (Standard)|Lung Wang (3055)
+M3 Drone|M3 Drone CASPAR
+Mammoth (Standard)|Mammoth (2658)
+Miraborg (Standard)|Miraborg (3053)
+Model 97 'Octopus' (Standard)|Model 97 'Octopus' (3051)
+Monarch (Standard)|Monarch (2759)
+Mule (Pocket Warship)|Mule 'Pocket Warship'
+Mule (Standard)|Mule (2737)
+Nagumo (Standard)|Nagumo (3056)
+Noruff (Standard)|Noruff (3056)
+Okinawa (Standard)|Okinawa (3055)
+Overlord C|Overlord C (2818)
+Rose (Bara no Ryu) (Hive)|Rose (Bara no Ryu) (Hive)
+Rose (Bara no Ryu) (Standard)|Rose (Bara no Ryu) (3054)
+Sassanid (Standard)|Sassanid (2875)
+Titan (Clan)|Titan (2953)
+Union C|Union C (2829)
+Vampire II|Vampire II (Standard)
+Vengeance Danai Centrella|Vengeance (Danai Centrella)

@@ -282,6 +282,13 @@
       </KeyBind>
 
       <KeyBind>
+        <command>toggleConversion</command>
+        <keyCode>77</keyCode> <!-- M -->
+        <modifier>0</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
         <command>prevMode</command>
         <keyCode>9</keyCode> <!-- Shift Tab -->
         <modifier>1</modifier>

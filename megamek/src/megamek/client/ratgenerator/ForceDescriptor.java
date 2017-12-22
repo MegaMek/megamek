@@ -738,7 +738,7 @@ public class ForceDescriptor {
 			if (ms != null) {
 				try {
 					entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-					entity.setCrew(getCo().createCrew());
+					entity.setCrew(getCo().createCrew(entity.defaultCrewType()));
 				} catch (EntityLoadingException ex) {
 					System.err.println("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
 				}
@@ -872,7 +872,7 @@ public class ForceDescriptor {
 					isMissileArtillery = false;
 				}
 				if (!fd.getRoles().contains(MissionRole.ARTILLERY)
-						&& !fd.getFlags().contains(MissionRole.MISSILE_ARTILLERY)) {
+						&& !fd.getRoles().contains(MissionRole.MISSILE_ARTILLERY)) {
 					isArtillery = false;
 				}
 				if (!fd.getRoles().contains(MissionRole.FIELD_GUN)) {
@@ -1171,20 +1171,20 @@ public class ForceDescriptor {
 				retVal.append(EntityWeightClass.getClassName(weightClass)).append(" ");
 			}
 			
-			if (roles.contains("artillery") || roles.contains("missile_artillery")) {
+			if (roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) {
 				retVal.append(unitType.equals("Infantry")?"Field":"Mobile").append(" ");
 			} else {
 				retVal.append(UnitType.getTypeName(unitType)).append(" ");
 			}
 		}
 		
-		if (roles.contains("recon")) {
+		if (roles.contains(MissionRole.RECON)) {
 			retVal.append("Recon");
-		} else if (roles.contains("fire support")) {
+		} else if (roles.contains(MissionRole.FIRE_SUPPORT)) {
 			retVal.append("Fire Support");
-		} else if (roles.contains("artillery")) {
+		} else if (roles.contains(MissionRole.ARTILLERY)) {
 			retVal.append("Artillery");
-		} else if (roles.contains("urban")) {
+		} else if (roles.contains(MissionRole.URBAN)) {
 			retVal.append("Urban");
 		}
 		Ruleset rules = Ruleset.findRuleset(this);

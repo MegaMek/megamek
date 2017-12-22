@@ -21,6 +21,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.ToolTipManager;
 
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ColorParser;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
@@ -84,6 +85,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     public static final String ADVANCED_SHOW_COORDS = "AdvancedShowCoords";
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
+    public static final String ADVANCED_ARMORMINI_UNITS_PER_BLOCK = "AdvancedArmorMiniUnitsPerBlock";
+    public static final String ADVANCED_ARMORMINI_ARMOR_CHAR = "AdvancedArmorMiniArmorChar";
+    public static final String ADVANCED_ARMORMINI_IS_CHAR = "AdvancedArmorMiniISChar";
+    public static final String ADVANCED_ARMORMINI_DESTROYED_CHAR = "AdvancedArmorMiniDestroyedChar";
+    public static final String ADVANCED_ARMORMINI_COLOR_INTACT = "AdvancedArmorMiniColorIntact";
+    public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
+    public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
+    public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     /* --End advanced settings-- */
 
 
@@ -160,6 +169,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
     public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";
     public static final String NAG_FOR_DOOMED = "NagForDoomed";
+    public static final String NAG_FOR_WIGE_LANDING = "NagForWiGELanding";
     public static final String RULER_COLOR_1 = "RulerColor1";
     public static final String RULER_COLOR_2 = "RulerColor2";
     public static final String RULER_POS_X = "RulerPosX";
@@ -170,12 +180,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_FIELD_OF_FIRE = "ShowFieldOfFire";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
+    public static final String SHOW_ARMOR_MINIVIS_TT = "showArmorMiniVisTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
     public static final String SHOW_WRECKS = "ShowWrecks";
     public static final String SOUND_BING_FILENAME = "SoundBingFilename";
     public static final String SOUND_MUTE = "SoundMute";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
+    public static final String TOOLTIP_DIST_SUPRESSION = "TooltipDistSupression";
     public static final String WINDOW_POS_X = "WindowPosX";
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
@@ -235,6 +247,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
+        setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
+        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2588");     // █
+        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u2593");       //  ▓
+        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2327");
+        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(0, 0, 0)); // HTML hex #008000
+        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
+        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
+        setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
@@ -322,6 +342,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE,true);
         store.setDefault(NAG_FOR_DOOMED, true);
+        store.setDefault(NAG_FOR_WIGE_LANDING, true);
         setDefault(RULER_COLOR_1, Color.cyan);
         setDefault(RULER_COLOR_2, Color.magenta);
         store.setDefault(RULER_POS_X, 0);
@@ -336,10 +357,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
+        store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
         store.setDefault(SHOW_WPS_IN_TT, false);
+        store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
@@ -353,8 +376,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_NUM_VEES, "0");
         store.setDefault(RAT_NUM_BA, "0");
         store.setDefault(RAT_NUM_INF, "0");
-        store.setDefault(RAT_YEAR_MIN, "2500");
-        store.setDefault(RAT_YEAR_MAX, "3100");
+        store.setDefault(RAT_YEAR_MIN, "2300");
+        store.setDefault(RAT_YEAR_MAX, "3150");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
         
@@ -652,6 +675,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForDoomed() {
         return store.getBoolean(NAG_FOR_DOOMED);
     }
+    
+    public boolean getNagForWiGELanding() {
+        return store.getBoolean(NAG_FOR_WIGE_LANDING);
+    }
 
     public Color getRulerColor1() {
         return getColor(RULER_COLOR_1);
@@ -693,6 +720,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_WPS_IN_TT);
     }
 
+    public boolean getshowArmorMiniVisTT() {
+        return store.getBoolean(SHOW_ARMOR_MINIVIS_TT);
+    }
+
     public boolean getShowMoveStep() {
         return store.getBoolean(SHOW_MOVE_STEP);
     }
@@ -715,6 +746,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getTooltipDismissDelay() {
         return store.getInt(TOOLTIP_DISMISS_DELAY);
+    }
+
+    public int getTooltipDistSuppression() {
+        return store.getInt(TOOLTIP_DIST_SUPRESSION);
     }
 
     public int getWindowPosX() {
@@ -1021,6 +1056,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNagForDoomed(boolean b){
         store.setValue(NAG_FOR_DOOMED,b);
     }
+    
+    public void setNagForWiGELanding(boolean b) {
+        store.setValue(NAG_FOR_WIGE_LANDING, b);
+    }
 
     public void setRulerPosX(int i) {
         store.setValue(RULER_POS_X, i);
@@ -1054,6 +1093,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_WPS_IN_TT, state);
     }
 
+    public void setshowArmorMiniVisTT(boolean state) {
+        store.setValue(SHOW_ARMOR_MINIVIS_TT, state);
+    }
+
     public void setShowMoveStep(boolean state) {
         store.setValue(SHOW_MOVE_STEP, state);
     }
@@ -1080,6 +1123,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         if (i > 0){
             ToolTipManager.sharedInstance().setDismissDelay(i);
         }
+    }
+
+    public void setTooltipDistSuppression(int i) {
+        store.setValue(TOOLTIP_DIST_SUPRESSION, i);
     }
 
     public void setWindowPosX(int i) {

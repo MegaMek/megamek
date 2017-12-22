@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Dave Nawton
@@ -32,7 +31,7 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
 
     public InfantryProstheticSonicStunnerWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Prosthetic Sonic Stunner";
         setInternalName(name);
         addLookupName("InfantryProstheticSonicStunner");
@@ -42,9 +41,19 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.05;
         infantryRange = 0;
-        introDate = 2375;
-        techLevel.put(2375,techLevel.get(3071));
-        availRating = new int[]{RATING_F,RATING_F,RATING_E};
-        techRating = RATING_E;
+		// Rating and Dates not available below is compiled from Specific
+		// Weapons in IO blended with the rating for the limb itself
+        rulesRefs = "84,IO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_F, RATING_E, RATING_D, RATING_D)
+            .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false, false, false);
     }
 }
+
+

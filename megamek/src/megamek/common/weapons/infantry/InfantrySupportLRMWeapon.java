@@ -18,35 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
  */
 public class InfantrySupportLRMWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -966926675003846938L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -966926675003846938L;
 
-    public InfantrySupportLRMWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "LRM Launcher (FarShot)";
-        setInternalName(name);
-        addLookupName("InfantryLRM");
-        addLookupName("LRM Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 3.44;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        setModes(new String[] { "", "Indirect" });
-        infantryDamage = 0.48;
-        infantryRange = 3;
-        introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_D;
-    }
+	public InfantrySupportLRMWeapon() {
+		super();
+
+		name = "LRM Launcher (Corean Farshot)";
+		setInternalName(name);
+		addLookupName("InfantryLRM");
+		addLookupName("LRM Launcher");
+		addLookupName("LRM Launcher (FarShot)");
+		ammoType = AmmoType.T_NA;
+		cost = 2000;
+		bv = 3.44;
+		tonnage = .03;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+		setModes(new String[] { "", "Indirect" });
+		infantryDamage = 0.48;
+		infantryRange = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW, F_CC)
+		        .setProductionFactions(F_FW).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+	}
 }

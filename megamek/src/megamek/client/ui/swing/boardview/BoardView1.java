@@ -118,29 +118,30 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
 import megamek.common.IBoard;
 import megamek.common.IGame;
-import megamek.common.Mech;
-import megamek.common.QuadMech;
-import megamek.common.TripodMech;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
+import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
+import megamek.common.QuadMech;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -193,8 +194,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int BOARD_HEX_POPUP = 4;
 
     // the dimensions of megamek's hex images
-    static final int HEX_W = HexTileset.HEX_W;
-    static final int HEX_H = HexTileset.HEX_H;
+    public static final int HEX_W = HexTileset.HEX_W;
+    public static final int HEX_H = HexTileset.HEX_H;
+    public static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
+
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -307,6 +310,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // vector of sprites for C3 network lines
     private ArrayList<C3Sprite> c3Sprites = new ArrayList<C3Sprite>();
 
+    // list of sprites for declared VTOL/airmech bombing/strafing targets
+    private ArrayList<VTOLAttackSprite> vtolAttackSprites = new ArrayList<>();
+    
     // vector of sprites for aero flyover lines
     private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
     
@@ -489,6 +495,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Holds the final Coords for a planned movement. Set by MovementDisplay,
      *  used to display the distance in the board tooltip. */ 
     private Coords movementTarget;
+
+    // Used to track the previous x/y for tooltip display
+    int prevTipX = -1, prevTipY = -1;
+
+    /**
+     * Flag to indicate if we should display informatin about illegal terrain in hexes.
+     */
+    boolean displayInvalidHexInfo = false;
+
 
 
     /**
@@ -711,19 +726,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
 
-        SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
-        SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_HIT.init();
+        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
+        SpecialHexDisplay.Type.ARTILLERY_TARGET.init();
+        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init();
+        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init();
+        SpecialHexDisplay.Type.PLAYER_NOTE.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
-        flareImage = getToolkit().getImage(
+        flareImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
                         .toString());
-        radarBlipImage = getToolkit().getImage(
+        radarBlipImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(),
                         FILENAME_RADAR_BLIP_IMAGE).toString());
     }
@@ -1288,6 +1303,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw flyover routes
         if (game.getBoard().onGround()) {
+            drawSprites(g, vtolAttackSprites);
             drawSprites(g, flyOverSprites);
         }
 
@@ -2273,6 +2289,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // draw flyover routes
             if (game.getBoard().onGround()) {
+                drawSprites(boardGraph, vtolAttackSprites);
                 drawSprites(boardGraph, flyOverSprites);
             }
 
@@ -2704,6 +2721,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), 0, 0
                     + (int) (12 * scale), font_hexnum, g);
+        }
+
+        if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
+            Point hexCenter = new Point((int)(HEX_W / 2 * scale), (int)(HEX_H / 2 * scale));
+            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED, false,
+                    new Font("SansSerif", Font.BOLD, 14));
         }
 
         // write terrain level / water depth / building height
@@ -3455,16 +3478,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || entity.hasSeenEntity(localPlayer)
-                || entity.hasDetectedEntity(localPlayer);
-
-        canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || !entity.isHidden();
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite
@@ -3519,10 +3533,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
+        for (Iterator<VTOLAttackSprite> iter = vtolAttackSprites.iterator(); iter.hasNext();) {
+            final VTOLAttackSprite s = iter.next();
+            if (s.getEntity().getId() == entity.getId()) {
+                iter.remove();
+            }
+        }
+        
         // Remove Flyover Sprites
         Iterator<FlyOverSprite> flyOverIt = flyOverSprites.iterator();
         while (flyOverIt.hasNext()) {
@@ -3533,7 +3554,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Add Flyover path, if necessary
-        if (entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
+        if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack())
+                && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
 
@@ -3630,11 +3652,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
 
-            if (entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
+            if ((entity.isAirborne() || entity.isMakingVTOLGroundAttack())
+                    && (entity.getPassedThrough().size() > 1)) {
                 addFlyOverPath(entity);
             }
         }
@@ -3858,6 +3881,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             "AdvancedMoveRunColor");
                     break;
                 case MOVE_SPRINT:
+                case MOVE_VTOL_SPRINT:
                     col = GUIPreferences.getInstance().getColor(
                             "AdvancedMoveSprintColor");
                     break;
@@ -3895,13 +3919,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // having overlap.
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
-
-            // for advanced movement, we always need to hide prior
-            // because costs will overlap and we only want the current
-            // facing
-            if ((previousStep != null) && game.useVectorMove()) {
+            
+            if (previousStep != null
+                    // for advanced movement, we always need to hide prior
+                    // because costs will overlap and we only want the current
+                    // facing
+                    && (game.useVectorMove()
+                            // A LAM converting from AirMech to Biped uses two convert steps and we
+                            // only want to show the last.
+                            || (step.getType() == MoveStepType.CONVERT_MODE
+                            && previousStep.getType() == MoveStepType.CONVERT_MODE)
+                            || step.getType() == MoveStepType.BOOTLEGGER)) {
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
+
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));           
             previousStep = step;
         }
@@ -4168,6 +4199,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
+        if (e.isMakingVTOLGroundAttack()) {
+            vtolAttackSprites.add(new VTOLAttackSprite(this, e));
+        }
         flyOverSprites.add(new FlyOverSprite(this, e));
     }
     
@@ -4198,6 +4232,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         && !fe.equals(e)
                         && !ComputeECM.isAffectedByECM(e, e.getPosition(),
                                 fe.getPosition())) {
+                    c3Sprites.add(new C3Sprite(this, e, fe));
+                }
+            }
+        } else if (e.hasNavalC3()) {
+            for (Entity fe : game.getEntitiesVector()) {
+                if (fe.getPosition() == null) {
+                    return;
+                }
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
             }
@@ -4388,6 +4431,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void clearFlyOverPaths() {
+        vtolAttackSprites.clear();
         flyOverSprites.clear();
     }
 
@@ -5041,6 +5085,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
+            //For Entities that have converted to another mode, check for a different sprite
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                    && en.isConvertingNow()) {
+                tileManager.reloadImage(en);
+            }
             redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
@@ -5163,6 +5212,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         firingSprites.clear();
         attackSprites.clear();
         c3Sprites.clear();
+        vtolAttackSprites.clear();
         flyOverSprites.clear();
         movementSprites.clear();
         fieldofFireSprites.clear();
@@ -5489,6 +5539,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         StringBuffer txt = new StringBuffer();
         IHex mhex = null;
         final Point point = e.getPoint();
+        if (prevTipX > 0 && prevTipY > 0) {
+            int deltaX = point.x - prevTipX;
+            int deltaY = point.y - prevTipY;
+            double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
+                prevTipX = -1; prevTipY = -1;
+                // This is used to fool the tooltip manager into resetting the tip
+                ToolTipManager.sharedInstance().mousePressed(null);
+                return null;
+            }
+        }
+        prevTipX = point.x; prevTipY = point.y;
         final Coords mcoords = getCoordsAt(point);
         final ArrayList<ArtilleryAttackAction> artilleryAttacks =
                 getArtilleryAttacksAtLocation(mcoords);
@@ -5651,6 +5713,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
+            if (displayInvalidHexInfo) {
+                StringBuffer errBuff = new StringBuffer();
+                if (!mhex.isValid(errBuff)) {
+                    txt.append(Messages.getString("BoardView1.invalidHex"));
+                    txt.append("<br>"); //$NON-NLS-1$
+                    String errors = errBuff.toString();
+                    errors = errors.replace("\n", "<br>");
+                    txt.append(errors);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+            }
         }
         
         // Show the player(s) that may deploy here 
@@ -5734,7 +5807,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             && ecmCenters.containsKey(eSprite.getPosition())) {
                         txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
-                                + "/Tooltip/ECM.png>&nbsp;"); //$NON-NLS-1$
+                                + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
                         txt.append("</FONT>"); //$NON-NLS-1$
                     }
@@ -5742,7 +5815,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             && eccmCenters.containsKey(eSprite.getPosition())) {
                         txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
-                                + "/Tooltip/ECM.png>&nbsp;"); //$NON-NLS-1$
+                                + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
                         txt.append("</FONT>");
                     }
@@ -6568,4 +6641,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return hexImage;
     }
 
+    public void setDisplayInvalidHexInfo(boolean v) {
+        displayInvalidHexInfo = v;
+    }
+
+    public boolean getDisplayInvalidHexInfo() {
+        return displayInvalidHexInfo;
+    }
 }

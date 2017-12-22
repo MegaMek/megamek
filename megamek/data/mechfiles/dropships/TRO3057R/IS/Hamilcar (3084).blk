@@ -1,0 +1,181 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Hamilcar
+</Name>
+
+<Model>
+(3084)
+</Model>
+
+<year>
+3084
+</year>
+
+<originalBuildYear>
+3084
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+mechbay:4.0:4
+battlearmorbay:5.0:0:2
+asfbay:2.0:2:3
+smallcraftbay:2.0:0:4
+cargobay:131.0:1:5
+2ndclassquarters:0.0:0
+1stclassquarters:60.0:0
+crewquarters:210.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+58
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2910
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+170
+140
+140
+154
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+IS Gauss Ammo:40
+(B) ISERLargeLaser
+(B) Screen Launcher
+Screen Launcher
+Screen Launcher
+Ammo Screen:30
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:60
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargeVSPLaser
+(R) (B) LRM 15
+(R) IS Ammo LRM-15 Artemis-capable:16
+(R) ISArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+(B) ISLargeVSPLaser
+(R) (B) LRM 15
+(R) IS Ammo LRM-15 Artemis-capable:16
+(R) ISArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+(B) LRM 15
+IS Ammo LRM-15 Artemis-capable:16
+ISArtemisIV
+(B) ISStreakSRM4
+IS Streak SRM 4 Ammo:25
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<tonnage>
+3600.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+88
+</crew>
+
+<officers>
+6
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

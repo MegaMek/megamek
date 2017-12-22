@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSeaEagleNeedlerPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Needler Pistol (Sea Eagle)";
-        setInternalName(name);
-        addLookupName("InfantrySeaEagleNeedler");
-        addLookupName("Sea Eagle Needler Pistolr");
-        ammoType = AmmoType.T_NA;
-        cost = 110;
-        bv = 0.10;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.11;
-        infantryRange = 0;
-        introDate = 3035;
-        techLevel.put(3035,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_D};
-        techRating = RATING_D;
-    }
+	public InfantryPistolSeaEagleNeedlerPistolWeapon() {
+		super();
+
+		name = "Needler Pistol (Sea Eagle)";
+		setInternalName(name);
+		addLookupName("InfantrySeaEagleNeedler");
+		addLookupName("Sea Eagle Needler Pistolr");
+		ammoType = AmmoType.T_NA;
+		cost = 110;
+		bv = 0.10;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.11;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3052, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_FW)
+				.setProductionFactions(F_FW).setTechRating(RATING_D)
+				.setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
+
+	}
 }

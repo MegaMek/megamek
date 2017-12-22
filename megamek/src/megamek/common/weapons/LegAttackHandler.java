@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Building;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
@@ -29,6 +30,7 @@ import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -91,11 +93,13 @@ public class LegAttackHandler extends WeaponHandler {
                 false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
         // Do criticals.
-        vPhaseReport
-                .addAll(server.criticalEntity(
-                        entityTarget,
-                        hit.getLocation(), hit.isRear(),
-                        entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
-                                : 0, damage));
+        int critMod = 0;
+        if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
+            critMod -= 2;
+        }
+        if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_MECH)) {
+            critMod += 1;
+        }
+        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
     }
 }

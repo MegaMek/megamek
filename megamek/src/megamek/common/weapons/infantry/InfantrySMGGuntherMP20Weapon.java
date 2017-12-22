@@ -18,34 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySMGGuntherMP20Weapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "SMG (Gunther MP-20)";
-        setInternalName(name);
-        addLookupName("InfantryGuntherMP20");
-        addLookupName("Gunther MP-20");
-        ammoType = AmmoType.T_NA;
-        cost = 125;
-        bv = 0.30;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.33;
-        infantryRange = 0;
-        introDate = 3007;
-        techLevel.put(3007,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_E,RATING_C};
-        techRating = RATING_C;
-    }
+	public InfantrySMGGuntherMP20Weapon() {
+		super();
+
+		name = "SMG (Gunther MP-20)";
+		setInternalName(name);
+		addLookupName("InfantryGuntherMP20");
+		addLookupName("Gunther MP-20");
+		ammoType = AmmoType.T_NA;
+		cost = 125;
+		bv = 0.30;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.33;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3007, 3025, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_E, RATING_C, RATING_C);
+
+	}
 }

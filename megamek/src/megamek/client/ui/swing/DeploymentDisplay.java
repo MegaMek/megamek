@@ -31,7 +31,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.Building;
@@ -44,7 +43,6 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
-import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
@@ -366,9 +364,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         int elevation = en.getElevation();
         // If elevation was set in lounge, try to preserve it
         // Server.processDeployment will adjust elevation, so we want to account for this
+        IHex hex = clientgui.getClient().getGame().getBoard().getHex(en.getPosition());
         if ((en instanceof VTOL) && (elevation >= 1)) {
-            IHex hex = clientgui.getClient().getGame().getBoard().getHex(en.getPosition());
             elevation = Math.max(0, elevation - (hex.ceiling() - hex.surface() + 1));
+        }
+        // Deploy grounded WiGEs on the roof of a building, and airborne at least one elevation above the roof.
+        if (en.getMovementMode() == EntityMovementMode.WIGE
+                && hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            int minElev = hex.terrainLevel(Terrains.BLDG_ELEV);
+            if (elevation > 0) {
+                minElev++;
+            }
+            elevation = Math.max(elevation, minElev);
         }
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 elevation, en.getLoadedUnits(), assaultDropPreference);
@@ -410,6 +417,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
+            return;
+        }
+        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // We want to ignore turns from other players and only listen to events we generated
+        // Except on the first turn
+        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
         if (clientgui.getClient().getGame().getPhase() 
@@ -493,9 +508,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final IGame game = clientgui.getClient().getGame();
         final IHex deployhex = board.getHex(moveto);
         final Building bldg = board.getBuildingAt(moveto);
-        boolean isAero = ce() instanceof Aero;
+        boolean isAero = ce().isAero();
         boolean isVTOL = ce() instanceof VTOL;
-        boolean isTankOnPavement = (ce() instanceof Tank)
+        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
+        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK) 
+                && !ce().hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
+                && !ce().isNaval()
                 && (deployhex.containsTerrain(Terrains.PAVEMENT)
                         || deployhex.containsTerrain(Terrains.ROAD)
                         || deployhex.containsTerrain(Terrains.BRIDGE_ELEV));
@@ -518,7 +536,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) 
                     || assaultDropPreference)
-                || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
+                || (ce().isLocationProhibited(moveto)
+                        && !isTankOnPavement)) {
             msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                     new Object[] { ce().getShortName(), moveto.getBoardNum() });
             title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$
@@ -541,7 +560,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else {
             // check for buildings and if found ask what level they want to
             // deploy at
-            if ((null != bldg) && !isAero && !isVTOL) {
+            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
                 if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
                     boolean success = processBuildingDeploy(moveto);
                     if (!success) {
@@ -553,7 +572,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                 }
-            } else if (!isAero) {
+            } else if (!isAero && !isWiGE) {
                 // hovers and naval units go on the surface
                 if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
                         || (ce().getMovementMode() == EntityMovementMode.SUBMARINE)
@@ -594,6 +613,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final IGame game = clientgui.getClient().getGame();
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
+        if (ce().getMovementMode() == EntityMovementMode.WIGE) {
+            
+        }
         ArrayList<String> floorNames = new ArrayList<>(height + 1);
         ArrayList<Integer> floorValues = new ArrayList<>(height + 1);
 
@@ -654,7 +676,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!ce().isLocationProhibited(moveto)) {
             floors.add(Messages.getString("DeploymentDisplay.belowbridge"));
         }
-        floors.add(Messages.getString("DeploymentDisplay.topbridge"));
+        
+        // ships can't deploy to the top of a bridge
+        if(!ce().isNaval()) {
+            floors.add(Messages.getString("DeploymentDisplay.topbridge"));
+        }
         
         String i18nString = "DeploymentDisplay.bridgeDialog.title"; 
         String title = Messages
@@ -668,7 +694,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (input.equals(Messages.getString("DeploymentDisplay.topbridge"))) {
                 ce().setElevation(height);
             } else {
-                ce().setElevation(deployhex.floor() - deployhex.surface());
+                if(ce().isNaval() && (ce().getMovementMode() != EntityMovementMode.SUBMARINE)) {
+                    ce().setElevation(0);
+                } else {
+                    ce().setElevation(deployhex.floor() - deployhex.surface());
+                }
             }
             return true;
         } else {

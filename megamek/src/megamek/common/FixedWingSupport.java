@@ -109,6 +109,22 @@ public class FixedWingSupport extends ConvFighter {
         return false;
     }
 
+    protected static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    protected static final TechAdvancement TA_FIXED_WING_SUPPORT_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+            return TA_FIXED_WING_SUPPORT_LARGE;
+        } else {
+            return TA_FIXED_WING_SUPPORT;
+        }
+    }
+
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps

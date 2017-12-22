@@ -47,7 +47,7 @@ Jump
 <Squad Equipment>
 BAHeavyBattleClawVibro:LA
 BABasicManipulator:RA
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm

@@ -18,36 +18,40 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportPulseLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportPulseLaserWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Support Pulse Laser";
-        setInternalName(name);
-        addLookupName("InfantrySupportPulseLaser");
-        addLookupName("Infantry Support Pulse Laser");
-        addLookupName("InfantrySmallPulseLaser");
-        ammoType = AmmoType.T_NA;
-        cost = 16000;
-        bv = 5.81;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
-        infantryDamage = 0.81;
-        infantryRange = 3;
-        crew = 2;
-        introDate = 2610;
-        techLevel.put(2610,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_E,RATING_D};
-        techRating = RATING_E;
-    }
+	public InfantrySupportPulseLaserWeapon() {
+		super();
+
+		name = "Support Pulse Laser";
+		setInternalName(name);
+		addLookupName("InfantrySupportPulseLaser");
+		addLookupName("Infantry Support Pulse Laser");
+		addLookupName("InfantrySmallPulseLaser");
+		ammoType = AmmoType.T_NA;
+		cost = 16000;
+		bv = 5.81;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
+		infantryDamage = 0.81;
+		infantryRange = 3;
+		crew = 2;
+		rulesRefs = "273,TM";
+		tonnage = .150;
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2605, 2610, 2650, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2605, 2610, 2650, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setTechRating(RATING_E)
+		        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_C);
+
+	}
 }

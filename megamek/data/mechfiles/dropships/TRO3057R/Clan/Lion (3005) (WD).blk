@@ -1,0 +1,242 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Lion
+</Name>
+
+<Model>
+(3005) (WD)
+</Model>
+
+<year>
+3005
+</year>
+
+<originalBuildYear>
+3005
+</originalBuildYear>
+
+<type>
+Mixed (Clan Chassis) Advanced
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:10.0:2
+heavyvehiclebay:10.0:2:2
+cargobay:1681.5:1:3
+2ndclassquarters:0.0:0
+1stclassquarters:80.0:0
+crewquarters:294.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+110
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6300
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+300
+200
+200
+246
+</armor>
+
+<Nose Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+(R) (B) LRM 15
+(R) LRM 15
+(R) IS Ammo LRM-20 Artemis-capable:64
+(R) ISArtemisIV
+(R) ISArtemisIV
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) (B) ISStreakSRM2
+(R) ISStreakSRM2
+(R) ISStreakSRM2
+(R) IS Streak SRM 2 Ammo:50
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:96
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+(R) (B) LRM 15
+(R) LRM 15
+(R) IS Ammo LRM-20 Artemis-capable:64
+(R) ISArtemisIV
+(R) ISArtemisIV
+(R) (B) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) (B) ISStreakSRM2
+(R) ISStreakSRM2
+(R) ISStreakSRM2
+(R) IS Streak SRM 2 Ammo:50
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:96
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:64
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+IS Streak SRM 2 Ammo:50
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:96
+</Aft Equipment>
+
+<structural_integrity>
+14
+</structural_integrity>
+
+<source>
+TRO 3057R - Late Succession War - Lostech
+</source>
+
+<tonnage>
+7300.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+150
+</crew>
+
+<officers>
+8
+</officers>
+
+<gunners>
+10
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

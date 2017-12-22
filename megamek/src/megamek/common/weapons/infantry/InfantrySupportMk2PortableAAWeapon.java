@@ -18,43 +18,44 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportMk2PortableAAWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "AA Weapon (Mk. 2, Man-Portable)";
-        setInternalName(name);
-        addLookupName("InfantryMk2PortableAA");
-        addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
-        ammoType = AmmoType.T_NA;
-        cost = 3500;
-        bv = 4.14;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
-        infantryDamage = 0.81;
-        infantryRange = 2;
-        crew = 2;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 2;
-        mediumRange = 4;
-        longRange = 6;
-        extremeRange = 8;
-        introDate = 2510;
-        techLevel.put(2510,techLevel.get(3071));
-        extinctDate = 2790;
-        reintroDate = 3058;
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
-        techRating = RATING_D;
-    }
+	public InfantrySupportMk2PortableAAWeapon() {
+		super();
+
+		name = "AA Weapon (Mk. 2, Man-Portable)";
+		setInternalName(name);
+		addLookupName("InfantryMk2PortableAA");
+		addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
+		ammoType = AmmoType.T_NA;
+		cost = 3500;
+		bv = 4.14;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+		infantryDamage = 0.81;
+		infantryRange = 2;
+		crew = 2;
+		damage = 1;
+		minimumRange = 0;
+		shortRange = 2;
+		mediumRange = 4;
+		longRange = 6;
+		extremeRange = 8;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2498, 2510, 2590, DATE_NONE, 3056)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setReintroductionFactions(F_FW).setTechRating(RATING_D)
+		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D);
+
+	}
 }

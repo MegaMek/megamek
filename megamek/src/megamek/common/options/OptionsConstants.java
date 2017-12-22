@@ -19,17 +19,21 @@ package megamek.common.options;
  * @since 2/21/14 7:57 AM
  */
 public class OptionsConstants {
-     
+
+    public static final String QUIRK_POS_ANIMALISTIC = "animalistic"; //$NON-NLS-1$
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
-    public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la"; //$NON-NLS-1$
     public static final String QUIRK_POS_BARREL_FIST_RA = "barrel_fists_ra"; //$NON-NLS-1$
-    public static final String QUIRK_POS_BATTLE_FIST = "battle_fists"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BATTLE_FIST_LA = "battle_fists_la"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BATTLE_FIST_RA = "battle_fists_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMBAT_COMPUTER= "combat_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMMAND_MECH = "command_mech"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMPACT = "compact_mech"; //$NON-NLS-1$
     public static final String QUIRK_POS_COWL= "cowl"; //$NON-NLS-1$
+    //TODO - Code directional torso mount for play
+    public static final String QUIRK_POS_DIRECTIONAL_TORSO_MOUNT = "directional_torso_mount"; //$NON-NLS-1$
     public static final String QUIRK_POS_DISTRACTING= "distracting"; //$NON-NLS-1$
     public static final String QUIRK_POS_DOCKING_ARMS= "docking_arms"; //$NON-NLS-1$
     public static final String QUIRK_POS_EASY_MAINTAIN= "easy_maintain"; //$NON-NLS-1$
@@ -40,6 +44,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_GOOD_REP_1= "good_rep_1"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_2= "good_rep_2"; //$NON-NLS-1$
     public static final String QUIRK_POS_HYPER_ACTUATOR= "hyper_actuator"; //$NON-NLS-1$
+    //TODO Improved Comms changed in BMM see pg 84
     public static final String QUIRK_POS_IMP_COM= "imp_com"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMP_LIFE_SUPPORT= "imp_life_support"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMP_TARG_L = "imp_target_long"; //$NON-NLS-1$
@@ -47,8 +52,9 @@ public class OptionsConstants {
     public static final String QUIRK_POS_IMP_TARG_S = "imp_target_short"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMPROVED_SENSORS = "imp_sensors"; //$NON-NLS-1$
     public static final String QUIRK_POS_INTERNAL_BOMB= "internal_bomb"; //$NON-NLS-1$
+    //TODO Low profile has changed considerably in BMM needs to be updated see BMM pg 85
     public static final String QUIRK_POS_LOW_PROFILE = "low_profile"; //$NON-NLS-1$
-    public static final String QUIRK_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
+//    public static final String QUIRK_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
     public static final String QUIRK_POS_MULTI_TRAC= "multi_trac"; //$NON-NLS-1$
     public static final String QUIRK_POS_NIMBLE_JUMPER= "nimble_jumper"; //$NON-NLS-1$
     public static final String QUIRK_POS_OVERHEAD_ARMS = "overhead_arms"; //$NON-NLS-1$
@@ -65,14 +71,19 @@ public class OptionsConstants {
     public static final String QUIRK_POS_UBIQUITOUS_CLAN="ubiquitous_clan"; //$NON-NLS-1$
     public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long"; //$NON-NLS-1$
     public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short"; //$NON-NLS-1$
-    public static final String QUIRK_POS_VERSTIGAL_HANDS = "vestigial_hands"; //$NON-NLS-1$
+    //TODO Game Rules
+    public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la"; //$NON-NLS-1$
+    public static final String QUIRK_POS_VESTIGIAL_HANDS_RA = "vestigial_hands_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_VTOL_ROTOR= "vtol_rotor"; //$NON-NLS-1$
     
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_IMP_COOLING = "imp_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_JETTISON_CAPABLE = "jettison_capable"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_STABLE_WEAPON = "stable_weapon"; //$NON-NLS-1$
-    public static final String QUIRK_WEAPN_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount"; //$NON-NLS-1$
+    //These have been made specific to weapons.
+    public static final String QUIRK_WEAP_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_POS_FAST_RELOAD= "fast_reload"; //$NON-NLS-1$
  
     public static final String QUIRK_NEG_ATMO_INSTABILITY= "atmo_instability"; //$NON-NLS-1$
     public static final String QUIRK_NEG_BAD_REP_IS= "bad_rep_is"; //$NON-NLS-1$
@@ -80,6 +91,7 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_CRAMPED_COCKPIT= "cramped_cockpit"; //$NON-NLS-1$
     public static final String QUIRK_NEG_DIFFICULT_EJECT= "difficult_eject"; //$NON-NLS-1$
     public static final String QUIRK_NEG_DIFFICULT_MAINTAIN= "difficult_maintain"; //$NON-NLS-1$
+    public static final String QUIRK_NEG_EM_INTERFERENCE_WHOLE= "em_inter_whole"; //$NON-NLS-1$
     public static final String QUIRK_NEG_EXP_ACTUATOR= "exp_actuator"; //$NON-NLS-1$
     public static final String QUIRK_NEG_FLAWED_COOLING= "flawed_cooling"; //$NON-NLS-1$
     public static final String QUIRK_NEG_FRAGILE_FUEL= "fragile_fuel"; //$NON-NLS-1$
@@ -101,6 +113,7 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_POOR_TARG_S = "poor_target_short"; //$NON-NLS-1$
     public static final String QUIRK_NEG_POOR_WORK= "poor_work"; //$NON-NLS-1$
     public static final String QUIRK_NEG_PROTOTYPE= "prototype"; //$NON-NLS-1$
+    public static final String QUIRK_NEG_RAMSHACKLE= "ramshackle"; //$NON-NLS-1$
     public static final String QUIRK_NEG_SENSOR_GHOSTS= "sensor_ghosts"; //$NON-NLS-1$
     public static final String QUIRK_NEG_SUSCEPTIBLE_CWS= "susceptible_cws"; //$NON-NLS-1$
     public static final String QUIRK_NEG_UNBALANCED= "unbalanced"; //$NON-NLS-1$
@@ -122,12 +135,15 @@ public class OptionsConstants {
     public static final String QUIRK_WEAP_NEG_NON_FUNCTIONAL = "non_functional"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_POOR_COOLING = "poor_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed"; //$NON-NLS-1$
+    //Technically, these are partial repairs, not quirks, but I don't think we need to iterate 
+    //through all the weapons on both the quirk and partial repairs tabs just to add these.
+    public static final String QUIRK_WEAP_NEG_MISREPAIRED = "misrepaired_weapon"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_MISREPLACED = "misreplaced_weapon"; //$NON-NLS-1$
 
     // PILOTING SKILLS
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery"; //$NON-NLS-1$
     public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting"; //$NON-NLS-1$
-    // public static final String PILOT_ANIMAL_MIMIC= "animal_mimic";
-    // //$NON-NLS$
+    public static final String PILOT_ANIMAL_MIMIC= "animal_mimic"; //$NON-NLS$
     // public static final String PILOT_CROSS_COUNTRY= "cross_country";
     // //$NON-NLS$
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver"; // $NON-NLS$
@@ -149,6 +165,10 @@ public class OptionsConstants {
     // public static final String PILOT_STAND_ASIDE= "stand_aside"; //$NON-NLS$
     // public static final String PILOT_SWORDSMAN= "swordsman"; //$NON-NLS$
     // public static final String PILOT_TM_= "tm_"; //$NON-NLS$
+    public static final String PILOT_TM_FOREST_RANGER= "tm_forest_ranger"; //$NON-NLS$
+    public static final String PILOT_TM_FROGMAN= "tm_frogman"; //$NON-NLS$
+    public static final String PILOT_TM_MOUNTAINEER= "tm_mountaineer"; //$NON-NLS$
+    public static final String PILOT_TM_SWAMP_BEAST= "tm_swamp_beast"; //$NON-NLS$
     // public static final String PILOT_WIND_WALKER= "wind_walker"; //$NON-NLS$
     // public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
 
@@ -183,7 +203,7 @@ public class OptionsConstants {
     // public static final String MISC_ENV_SPECIALIST= "env_specialist";
     // //$NON-NLS$
     public static final String MISC_FORWARD_OBSERVER = "forward_observer"; // $NON-NLS$
-    // public static final String MISC_HUMAN_TRO= "human_tro"; //$NON-NLS$
+    public static final String MISC_HUMAN_TRO= "human_tro"; //$NON-NLS$
     public static final String MISC_IRON_MAN = "iron_man"; // $NON-NLS$
     public static final String MISC_PAIN_RESISTANCE = "pain_resistance"; // $NON-NLS$
     public static final String MISC_TACTICAL_GENIUS = "tactical_genius"; // $NON-NLS$
@@ -288,6 +308,7 @@ public class OptionsConstants {
     public static final String ALLOWED_CANON_ONLY= "canon_only";  //$NON-NLS$
     public static final String ALLOWED_YEAR= "year";  //$NON-NLS$
     public static final String ALLOWED_TECHLEVEL= "techlevel";  //$NON-NLS$
+    public static final String ALLOWED_ERA_BASED = "era_based"; //$NON_NLS$
     public static final String ALLOWED_ALLOW_ILLEGAL_UNITS= "allow_illegal_units";  //$NON-NLS$
     public static final String ALLOWED_CLAN_IGNORE_EQ_LIMITS= "clan_ignore_eq_limits";  //$NON-NLS$
     public static final String ALLOWED_NO_CLAN_PHYSICAL= "no_clan_physical";  //$NON-NLS$
@@ -374,6 +395,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_WOODS_COVER= "tacops_woods_cover";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE= "tacops_vehicle_effective";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS= "tacops_vehicle_arcs";  //$NON-NLS$
+    public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
     public static final String ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS= "tacops_advanced_mech_hit_locations";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE= "tacops_coolant_failure";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_BA_VS_BA= "tacops_ba_vs_ba";  //$NON-NLS$
@@ -381,6 +403,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_VEHICLES_THRESHOLD= "vehicles_threshold";  //$NON-NLS$
     public static final String ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE= "vehicles_threshold_variable";  //$NON-NLS$
     public static final String ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR= "vehicles_threshold_divisor";  //$NON-NLS$
+    public static final String ADVCOMBAT_VTOL_STRAFING = "vtol_strafing"; //$NON-NLS$
     public static final String ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS= "vehicles_safe_from_infernos";  //$NON-NLS$
     public static final String ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS= "protos_safe_from_infernos";  //$NON-NLS$
     public static final String ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE= "indirect_always_possible";  //$NON-NLS$
@@ -413,6 +436,10 @@ public class OptionsConstants {
     public static final String ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE= "tacops_fast_infantry_move";  //$NON-NLS$
     public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT= "vehicle_lance_movement";  //$NON-NLS$
     public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER= "vehicle_lance_movement_number";  //$NON-NLS$
+    public static final String ADVGRNDMOV_TURN_MODE = "vehicle_turn_mode";  //$NON-NLS$
+    public static final String ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS = "vehicle_advanced_maneuvers";  //$NON-NLS$
+    public static final String ADVGRNDMOV_VEHICLE_ACCELERATION = "vehicle_acceleration";  //$NON-NLS$
+    public static final String ADVGRNDMOV_REVERSE_GEAR = "reverse_gear";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_HULL_DOWN= "tacops_hull_down";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_FALLING_EXPANDED= "tacops_falling_expanded";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_ATTEMPTING_STAND= "tacops_attempting_stand";  //$NON-NLS$
@@ -442,11 +469,13 @@ public class OptionsConstants {
     public static final String ADVAERORULES_AMMO_EXPLOSIONS= "ammo_explosions";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_AA_FIRE= "stratops_aa_fire";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_AAA_LASER= "stratops_aaa_laser";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_ADV_POINTDEF= "stratops_adv_pointdef";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_BRACKET_FIRE= "stratops_bracket_fire";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_ECM= "stratops_ecm";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_SENSOR_SHADOW= "stratops_sensor_shadow";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_OVER_PENETRATE= "stratops_over_penetrate";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_SPACE_BOMB= "stratops_space_bomb";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH= "stratops_bearings_only";  //$NON-NLS$
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
     public static final String ADVAERORULES_AT2_NUKES= "at2_nukes";  //$NON-NLS$
     public static final String ADVAERORULES_AERO_SANITY= "aero_sanity";  //$NON-NLS$

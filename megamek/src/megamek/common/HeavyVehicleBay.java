@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying vehicles <= 100 tons
+ * aboard large spacecraft and mobile structures
  */
 
 public final class HeavyVehicleBay extends Bay {
@@ -51,6 +51,7 @@ public final class HeavyVehicleBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -67,31 +68,32 @@ public final class HeavyVehicleBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
-        if (unit instanceof Tank) {
+        // Only tanks or vehicle-mode quadvees equal or less than 100 tons
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if (((unit instanceof Tank) || (((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)))) && (unit.getWeight() <= 100)) {
             result = true;
         }
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
         // is the door functional
-        if (doors < loadedThisTurn) {
+        if (currentdoors < loadedThisTurn) {
             result = false;
         }
-
+        
         // Return our result.
         return result;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Heavy Vehicle Bay (" + getDoors() + " doors) - "
-                + String.format("%1$,.0f", currentSpace)
-                + (currentSpace > 1 ? " units" : " unit");
+        return "Heavy Vehicle Bay " + numDoorsString() + " - "
+                + String.format("%1$,.0f", getUnused())
+                + (getUnused() > 1 ? " units" : " unit");
     }
 
     @Override
@@ -105,8 +107,25 @@ public final class HeavyVehicleBay extends Bay {
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 8;
+    }
+
+    @Override
     public String toString() {
         return "heavyvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+    }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setTechRating(RATING_A)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return HeavyVehicleBay.techAdvancement();
     }
 
 } // End package class TroopSpace implements Transporter

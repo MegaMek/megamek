@@ -237,10 +237,8 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         }
 
         boolean matched = false;
-        for (@SuppressWarnings("unchecked")
-        Enumeration<DefaultMutableTreeNode> e = node.children(); e
-                .hasMoreElements();) {
-            DefaultMutableTreeNode childNode = e.nextElement();
+        for (Enumeration<?> e = node.children(); e.hasMoreElements();) {
+            DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) e.nextElement();
             String nodeName = (String) childNode.getUserObject();
             if (nodeName.equals(names[0])) {
                 if (names.length > 1) {
@@ -357,10 +355,8 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeCategories
                 .getModel().getRoot();
         for (int i = 0; i < names.length; i++) {
-            for (@SuppressWarnings("unchecked")
-            Enumeration<DefaultMutableTreeNode> e = node.children(); e
-                    .hasMoreElements();) {
-                DefaultMutableTreeNode child = e.nextElement();
+            for (Enumeration<?> e = node.children(); e.hasMoreElements();) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) e.nextElement();
                 if (names[i].equals(child.getUserObject())) {
                     node = child;
                     break;
@@ -394,10 +390,8 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeCategories
                 .getModel().getRoot();
         for (int i = 0; i < names.length; i++) {
-            for (@SuppressWarnings("unchecked")
-            Enumeration<DefaultMutableTreeNode> enm = node.children(); enm
-                    .hasMoreElements();) {
-                DefaultMutableTreeNode child = enm.nextElement();
+            for (Enumeration<?> enm = node.children(); enm.hasMoreElements();) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
                 if (names[i].equals(child.getUserObject())) {
                     node = child;
                     break;
@@ -638,6 +632,10 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
     public void valueChanged(TreeSelectionEvent ev) {
         if (ev.getSource().equals(treeCategories)) {
             TreePath[] paths = treeCategories.getSelectionPaths();
+            // If nothing is selected, there's nothing to populate the table with.
+            if (null == paths) {
+                return;
+            }
             for (TreePath path : paths) {
                 Object[] values = path.getPath();
                 String category = "";

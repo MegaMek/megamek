@@ -24,7 +24,6 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MiscType;
-import megamek.common.UnitRole;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 
@@ -54,7 +53,6 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean starLeague;
 	private int weightClass;
 	private EntityMovementMode movementMode;
-	private UnitRole unitRole = UnitRole.UNDETERMINED;
 	private EnumSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
@@ -132,10 +130,11 @@ public class ModelRecord extends AbstractUnitRecord {
         			apWeapons = true;
         		}
         		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
+        		        || ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM_IMP
         				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
         		
-        		if (eq instanceof megamek.common.weapons.MGWeapon ||
-        				eq instanceof megamek.common.weapons.BPodWeapon) {
+        		if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
+        				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
         			apWeapons = true;
         		}
         		if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
@@ -232,18 +231,6 @@ public class ModelRecord extends AbstractUnitRecord {
 	
 	public boolean isSL() {
 		return starLeague;
-	}
-	
-	public UnitRole getUnitRole() {
-	    return unitRole;
-	}
-	
-	public void setUnitRole (UnitRole role) {
-	    if (role == null) {
-	        unitRole = UnitRole.UNDETERMINED;
-	    } else {
-	        unitRole = role;
-	    }
 	}
 	
 	public Set<MissionRole> getRoles() {

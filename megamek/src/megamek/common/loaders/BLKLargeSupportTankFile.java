@@ -170,6 +170,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         }
 
         t.autoSetInternal();
+        t.recalculateTechAdvancement();
 
         loadEquipment(t, "Front", Tank.LOC_FRONT);
         loadEquipment(t, "Front Right", LargeSupportTank.LOC_FRONTRIGHT);

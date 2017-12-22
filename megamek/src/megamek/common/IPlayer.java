@@ -165,6 +165,12 @@ public interface IPlayer extends ITurnOrdered {
 
     void setInitialBV();
 
+    /**
+     * Used to increase the initial BV by the specified value, which may be necessary if the player reinforces.
+     * @param bv
+     */
+    void increaseInitialBV(int bv);
+
     int getInitialBV();
 
     void setCompensationInitBonus(int newBonus);
@@ -181,8 +187,8 @@ public interface IPlayer extends ITurnOrdered {
     int getTurnInitBonus();
 
     /**
-     * @return the bonus to this player's initiative rolls for
-     *         the highest value initiative (i.e. the 'commander')
+     * @return the bonus to this player's initiative rolls for the highest value initiative
+     *         (i.e. the 'commander')
      */
     int getCommandBonus();
 

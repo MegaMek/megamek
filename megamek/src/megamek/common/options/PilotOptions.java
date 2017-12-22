@@ -35,7 +35,7 @@ public class PilotOptions extends AbstractOptions {
     public void initialize() {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES); //$NON-NLS-1$
 
-        // addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false); // $NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false); //$NON-NLS-1$
@@ -56,6 +56,10 @@ public class PilotOptions extends AbstractOptions {
         // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_TM_, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_MOUNTAINEER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_TM_SWAMP_BEAST, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false); //$NON-NLS-1$
 
@@ -85,7 +89,7 @@ public class PilotOptions extends AbstractOptions {
          addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false); //$NON-NLS-1$
          // addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, false); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false); //$NON-NLS-1$
-         // addOption(adv, OptionsConstants.MISC_HUMAN_TRO, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_HUMAN_TRO, new Vector<String>()); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_IRON_MAN, false); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_PAIN_RESISTANCE, false); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_TACTICAL_GENIUS, false); //$NON-NLS-1$

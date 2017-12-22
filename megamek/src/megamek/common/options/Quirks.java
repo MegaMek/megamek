@@ -43,16 +43,19 @@ public class Quirks extends AbstractOptions {
     public synchronized void initialize() {
         //positive quirks
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_ANIMALISTIC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ATMO_FLYER, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_COMP, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_BARREL_FIST_LA, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_BARREL_FIST_RA, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST_LA, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST_RA, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COMBAT_COMPUTER, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COMMAND_MECH, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COMPACT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COWL, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_DISTRACTING, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_DOCKING_ARMS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_MAINTAIN, false);
@@ -71,7 +74,6 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_IMPROVED_SENSORS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_INTERNAL_BOMB, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
@@ -80,7 +82,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); 	
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
@@ -88,7 +90,8 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false); 
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         
@@ -108,6 +111,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EM_INTERFERENCE_WHOLE, false);        
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_EXP_ACTUATOR, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FLAWED_COOLING, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FRAGILE_FUEL, false);
@@ -129,6 +133,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_S, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_WORK, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_PROTOTYPE, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_RAMSHACKLE, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_SUSCEPTIBLE_CWS, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_UNBALANCED, false);
@@ -150,6 +155,7 @@ public class Quirks extends AbstractOptions {
         //Un-streamlined
         //Weak Head Armor
         //Weak Undercarriage (no landing)
+        //Ramshackle
     }
 
     /*
@@ -172,16 +178,23 @@ public class Quirks extends AbstractOptions {
             return true;
         }
 
-        if(en instanceof Mech) {
-            if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
-                // Mechs with a hand actuator can have battlefists
-                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) 
-                        || en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+		if (en instanceof Mech) {
+			if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)) {
+				// Mechs with a hand actuator can have battlefists
+				if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+					return true;
+				} else {
+					return false;
+				}		
+			}
+	         if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
+	                // Mechs with a hand actuator can have battlefists
+	                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }       
+	            }
             if (qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)) {
                 if (en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)
                         && !en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
@@ -198,6 +211,7 @@ public class Quirks extends AbstractOptions {
                     return false;
                 }
             }
+            
             if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
@@ -212,30 +226,43 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNSTREAMLINED)) {
                 return false;
             }
+            
+        	if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
+        		return false;
+        	}
+        	
+        	if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
+        		return false;
+        	}
+            
             return true;
         }
-
+		        
 		// Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
 		// made sense to him. Uncertain at this time if CGL would adopt them but
-		// including them since Quirks is alread an option. Hammer
+		// including them since Quirks is already an option. Hammer
         if(en instanceof GunEmplacement) {
         	if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+        	        || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
         	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
         	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EASY_PILOT)
                     || qName.equals(OptionsConstants.QUIRK_POS_EASY_MAINTAIN)
-                    || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
+                    || qName.equals(OptionsConstants.QUIRK_POS_GOOD_REP_1)
+                    || qName.equals(OptionsConstants.QUIRK_POS_GOOD_REP_2)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)
-                    || qName.equals(OptionsConstants.QUIRK_POS_MOD_WEAPONS)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
+                    || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
@@ -244,7 +271,8 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
 
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
@@ -279,7 +307,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_2)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_3)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)) {
+                    || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
         	}
             return true;
@@ -300,24 +330,29 @@ public class Quirks extends AbstractOptions {
             } else if (en.hasEngine() && en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
             } else if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EASY_PILOT)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
+                    || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
@@ -327,6 +362,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_NEG_LARGE_DROPPER)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_LOW_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNBALANCED)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_LEGS)
@@ -339,7 +375,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_2)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_3)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)) {
+                    || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
             
@@ -358,6 +396,7 @@ public class Quirks extends AbstractOptions {
               
         if(en instanceof BattleArmor) {
             if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
@@ -365,8 +404,10 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
@@ -374,8 +415,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_TARG_M)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_TARG_L)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
-                    || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
+                    || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
@@ -389,6 +431,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_NEG_LARGE_DROPPER)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_LOW_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNBALANCED)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_LEGS)
@@ -408,8 +451,11 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
                     || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)   
-                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)                    
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
+                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
             return true;
@@ -417,6 +463,7 @@ public class Quirks extends AbstractOptions {
 
         if(en instanceof Jumpship) {
             if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
@@ -424,29 +471,33 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
+                    || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
-                    || qName.equals(OptionsConstants.QUIRK_POS_MOD_WEAPONS)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
-                    || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_LOW_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_LARGE_DROPPER)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNBALANCED)
@@ -469,33 +520,43 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
             return true;
         } else if (en instanceof Dropship) {
             if (qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
-                    || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_LOW_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
@@ -516,33 +577,45 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
             return true;
         } else if (en instanceof Aero) {
             if (qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
+                    || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_SEARCHLIGHT)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_NEG_LARGE_DROPPER)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_LOW_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNBALANCED)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_VTOL_ROTOR)
@@ -555,12 +628,17 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
             return true;
         } else if (en instanceof Protomech) {
+            //Not the reverse is true in the code. Returns positivs.
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_DISTRACTING)
                     || qName.equals(OptionsConstants.QUIRK_POS_EASY_MAINTAIN)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)

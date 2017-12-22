@@ -18,33 +18,36 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryRifleGyroslugRifleWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleGyroslugRifleWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Gyroslug Rifle";
-        setInternalName(name);
-        addLookupName("InfantryGyroslugRifle");
-        ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv =  1.07;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.35;
-        infantryRange = 1;
-        introDate = 2530;
-        techLevel.put(2530,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantryRifleGyroslugRifleWeapon() {
+		super();
+
+		name = "Gyroslug Rifle";
+		setInternalName(name);
+		addLookupName("InfantryGyroslugRifle");
+		ammoType = AmmoType.T_NA;
+		cost = 1000;
+		bv = 1.07;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.35;
+		infantryRange = 1;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2520, 2530, 2570, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2520, 2530, 2570, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setTechRating(RATING_D)
+		        .setAvailability(RATING_B, RATING_C, RATING_C, RATING_C);
+
+	}
 }

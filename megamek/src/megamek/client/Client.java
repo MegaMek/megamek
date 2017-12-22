@@ -80,6 +80,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.UnitLocation;
+import megamek.common.UnitRoleHandler;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -495,6 +496,7 @@ public class Client implements IClientCommandHandler {
                 System.out.println(e);
                 e.printStackTrace();
             }
+            UnitRoleHandler.initialize();
             RandomNameGenerator.initialize();
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {
@@ -558,8 +560,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Change whose turn it is.
      */
-    protected void changeTurnIndex(int index) {
-        game.setTurnIndex(index);
+    protected void changeTurnIndex(int index, int prevPlayerId) {
+        game.setTurnIndex(index, prevPlayerId);
     }
 
     /**
@@ -1301,7 +1303,7 @@ public class Client implements IClientCommandHandler {
             changePhase((IGame.Phase) c.getObject(0));
             break;
         case Packet.COMMAND_TURN:
-            changeTurnIndex(c.getIntValue(0));
+            changeTurnIndex(c.getIntValue(0), c.getIntValue(1));
             break;
         case Packet.COMMAND_ROUND_UPDATE:
             game.setRoundCount(c.getIntValue(0));
@@ -1461,6 +1463,9 @@ public class Client implements IClientCommandHandler {
                 cfrEvt.setEntityId((int) c.getObject(1));
                 cfrEvt.setTargetId((int) c.getObject(2));
                 break;
+            case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                cfrEvt.setTeleguidedMissileTargets((List<String>)c.getObject(1));
+                break;
             }
             game.processGameEvent(cfrEvt);
             break;
@@ -1510,6 +1515,12 @@ public class Client implements IClientCommandHandler {
 
     public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
         Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
+    public void sendTelemissileTargetCFRResponse(int index) {
+        Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

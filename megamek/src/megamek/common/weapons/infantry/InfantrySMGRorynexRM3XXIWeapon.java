@@ -18,34 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySMGRorynexRM3XXIWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "SMG (Rorynex RM-3/XXI)";
-        setInternalName(name);
-        addLookupName("InfantryRorynexRM3XXI");
-        addLookupName("Rorynex RM-3/XXI");
-        ammoType = AmmoType.T_NA;
-        cost = 80;
-        bv = 0.18;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.20;
-        infantryRange = 0;
-        introDate = 2660;
-        techLevel.put(2660,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_B,RATING_C};
-        techRating = RATING_D;
-    }
+	public InfantrySMGRorynexRM3XXIWeapon() {
+		super();
+
+		name = "SMG (Rorynex RM-3/XXI)";
+		setInternalName(name);
+		addLookupName("InfantryRorynexRM3XXI");
+		addLookupName("Rorynex RM-3/XXI");
+		ammoType = AmmoType.T_NA;
+		cost = 80;
+		bv = 0.18;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.20;
+		infantryRange = 0;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2655, 2660, 2663, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setTechRating(RATING_D)
+		        .setAvailability(RATING_C, RATING_B, RATING_C, RATING_D);
+
+	}
 }

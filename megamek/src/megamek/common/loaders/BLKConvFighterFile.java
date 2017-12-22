@@ -144,6 +144,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
 
         a.autoSetInternal();
+        a.recalculateTechAdvancement();
         a.autoSetSI();
         // This is not working right for arrays for some reason
         a.autoSetThresh();

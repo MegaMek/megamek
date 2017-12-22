@@ -1,0 +1,177 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mule
+</Name>
+
+<Model>
+'Pocket Warship'
+</Model>
+
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+crewquarters:119.0:0
+1stclassquarters:40.0:0
+cargobay:316.5:1:1
+asfbay:6.0:1:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+160
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+9570
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+176
+154
+154
+132
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:40
+(B) Medium Laser
+(B) Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 White Shark:20
+Ammo AR10 Barracuda:20
+(B) SRM 6
+IS Ammo SRM-6:15
+(B) Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:20
+Ammo AR10 White Shark:20
+Ammo AR10 Barracuda:20
+(B) SRM 6
+IS Ammo SRM-6:15
+(B) Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+11200.0
+</tonnage>
+
+<crew>
+29
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+11
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

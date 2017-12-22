@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying liquid cargo
+ * Represents a volume of space set aside for carrying liquid cargo
  */
 
 public final class LiquidCargoBay extends Bay {
@@ -46,11 +46,12 @@ public final class LiquidCargoBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      */
     public LiquidCargoBay(double space, int doors, int bayNumber) {
-        totalSpace = space * 0.91;
-        weight = space;
-        currentSpace = space * 0.91;
+        totalSpace = space;
+        weight = space / 0.91;
+        currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors;
     }
 
     /**
@@ -72,13 +73,13 @@ public final class LiquidCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Liquid Cargo Space ("
-                + getDoors() + " doors) - ");
+        StringBuffer returnString = new StringBuffer("Liquid Cargo Space "
+                + numDoorsString() + " - ");
 
-        if (currentSpace != Math.round(currentSpace)) {
-            returnString.append(String.format("%1$,.3f", currentSpace));
+        if (getUnused() != Math.round(getUnused())) {
+            returnString.append(String.format("%1$,.3f", getUnused()));
         } else {
-            returnString.append(String.format("%1$,.0f", currentSpace));
+            returnString.append(String.format("%1$,.0f", getUnused()));
         }
 
         returnString.append(" tons");
@@ -99,4 +100,11 @@ public final class LiquidCargoBay extends Bay {
     public String toString() {
         return "liquidcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
+    
+    
+    @Override
+    public boolean isCargo() {
+        return true;
+    }
+
 }

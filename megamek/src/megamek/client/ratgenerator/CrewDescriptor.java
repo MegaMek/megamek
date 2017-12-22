@@ -18,6 +18,7 @@ import java.util.Iterator;
 import megamek.client.RandomNameGenerator;
 import megamek.common.Compute;
 import megamek.common.Crew;
+import megamek.common.CrewType;
 import megamek.common.UnitType;
 
 /**
@@ -109,7 +110,7 @@ public class CrewDescriptor {
 					break;
 				}
 			}
-			if (assignment.getRoles().contains("support")) {
+			if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
 				bonus--;
 			}
 		} else {
@@ -119,7 +120,7 @@ public class CrewDescriptor {
 			if (ratingLevel >= 5) {
 				bonus++;
 			}
-			if (assignment.getRoles().contains("support")) {
+			if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
 				bonus--;
 			}
 			if (assignment.getFaction().equals("WOB.SD")) {
@@ -128,8 +129,8 @@ public class CrewDescriptor {
 		}
 		
 		gunnery = randomSkillRating(gExp, bonus);
-		if (assignment.getUnitType() != null && assignment.getUnitType().equals("Infantry")
-				&& !assignment.getRoles().contains("anti_mek")) {
+		if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
+				&& !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
 			piloting = 8;
 		} else {
 			piloting = randomSkillRating(pExp, bonus);
@@ -292,7 +293,7 @@ public class CrewDescriptor {
 		this.piloting = piloting;
 	}
 
-	public Crew createCrew() {
-		return new Crew(name, 1, gunnery, piloting);
+	public Crew createCrew(CrewType crewType) {
+		return new Crew(crewType, name, 1, gunnery, piloting);
 	}
 }

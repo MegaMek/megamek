@@ -27,69 +27,114 @@ public class SpaceStation extends Jumpship {
      *
      */
     private static final long serialVersionUID = -3160156173650960985L;
+    
+    
+    //ASEW Missile Effects, per location
+    //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
+    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
+    
+    
+    /*
+     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     * @param turns - integer specifying the number of end phases that the effects last through
+     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
+     * Space Stations should use the same method as Jumpships, but because Warships have a different number of arcs
+     * we run into problems if this isn't explicitly specified here.
+     */
+    @Override
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    /*
+     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     * Also an override to prevent issues with Warships having a different number of arcs
+     */
+    @Override
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
+    
+    public SpaceStation() {
+        super();
+        setDriveCoreType(DRIVE_CORE_NONE);
+    }
+    
+    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    /*
+    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setReintroductionFactions(F_RS).setTechRating(RATING_D)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+            */
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_SPACE_STATION;
+    }
 
     @Override
     public double getCost(boolean ignoreAmmo) {
+        double[] costs = new double[20];
+        int costIdx = 0;
+        double cost = 0;
 
-        double cost = 0.0f;
+        // Control Systems
+        // Bridge
+        costs[costIdx++] += 200000 + 10 * weight;
+        // Computer
+        costs[costIdx++] += 200000;
+        // Life Support
+        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
+        // Sensors
+        costs[costIdx++] += 80000;
+        // Fire Control Computer
+        costs[costIdx++] += 100000;
+        // Gunnery Control Systems
+        costs[costIdx++] += 10000 * getArcswGuns();
+        // Structural Integrity
+        costs[costIdx++] += 100000 * getSI();
 
-        // Double.MAX
-        // add in controls
-        // bridge
-        cost += 200000 + 10 * weight;
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * getArcswGuns();
+        // Station-Keeping Drive
+        // Engine
+        costs[costIdx++] += 1000 * weight * 0.012;
+        // Engine Control Unit
+        costs[costIdx++] += 1000;
 
-        // structural integrity
-        cost += 100000 * getSI();
+        // Additional Ships Systems
+        // Attitude Thrusters
+        costs[costIdx++] += 25000;
+        // Docking Collars
+        costs[costIdx++] += 100000 * getDocks();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000;
+        // Armor
+        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
 
-        // docking hard point
-        cost += 100000 * getDocks();
+        // Heat Sinks
+        int sinkCost = 2000 + (4000 * getHeatType());
+        costs[costIdx++] += sinkCost * getHeatSinks();
 
-        double engineWeight = getOriginalWalkMP() * weight * 0.06;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += 500 * getOriginalWalkMP() * weight / 100.0;
-        // control equipment
-        cost += 1000;
+        // Escape Craft
+        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
-        // HPG
-        if (hasHPG()) {
-            cost += 1000000000;
-        }
+        // Grav Decks
+        double deckCost = 0;
+        deckCost += 5000000 * getGravDeck();
+        deckCost += 10000000 * getGravDeckLarge();
+        deckCost += 40000000 * getGravDeckHuge();
+        costs[costIdx++] += deckCost;
 
-        // fuel tanks
-        cost += 200 * getFuel() / getFuelPerTon();
-
-        // armor
-        cost += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);
-
-        // heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
-                                                   // 2000;
-        cost += sinkCost * getHeatSinks();
-
-        // grav deck
-        cost += 5000000 * getGravDeck();
-        cost += 10000000 * getGravDeckLarge();
-        cost += 40000000 * getGravDeckHuge();
-
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // get bays
-        // Bay doors are not counted in the AT2r example
+        // Transport Bays
         int baydoors = 0;
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
@@ -102,14 +147,29 @@ public class SpaceStation extends Jumpship {
             }
         }
 
-        cost += bayCost + baydoors * 1000;
+        costs[costIdx++] += bayCost + (baydoors * 1000);
 
-        // life boats and escape pods
-        cost += 5000 * (getLifeBoats() + getEscapePods());
+        // Weapons and Equipment
+        // HPG
+        if (hasHPG()) {
+            costs[costIdx++] += 1000000000;
+        } else {
+            costs[costIdx++] += 0;
+        }
+        // Weapons and Equipment
+        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double weightMultiplier = 5.00f;
 
-        return Math.round(cost * weightMultiplier);
+        // Sum Costs
+        for (int i = 0; i < costIdx; i++) {
+            cost += costs[i];
+        }
+
+        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
+        cost = Math.round(cost * weightMultiplier);
+
+        return cost;
 
     }
 

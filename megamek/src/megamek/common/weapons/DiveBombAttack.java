@@ -13,8 +13,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -28,10 +28,13 @@ public class DiveBombAttack extends Weapon {
      *
      */
     private static final long serialVersionUID = -179884141546884171L;
+    
+    public static final int DIVE_BOMB_MIN_ALTITUDE = 3;
+    public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
 
     public DiveBombAttack() {
         name = "Dive Bomb";
-        setInternalName(Aero.DIVE_BOMB_ATTACK);
+        setInternalName(IBomber.DIVE_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
         ammoType = AmmoType.T_NA;

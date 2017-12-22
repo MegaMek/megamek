@@ -18,8 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
-import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -35,8 +34,7 @@ public class CLBASupportPPC extends PPCWeapon {
      */
     public CLBASupportPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "BA Support PPC";
+        name = "Support PPC";
         setInternalName("BA Support PPC");
         addLookupName("CLBASupportPPC");
         damage = 2;
@@ -45,13 +43,19 @@ public class CLBASupportPPC extends PPCWeapon {
         mediumRange = 5;
         longRange = 7;
         extremeRange = 10;
+        waterShortRange = 1;
+        waterMediumRange = 3;
+        waterLongRange = 5;
+        waterExtremeRange = 6;
         bv = 14;
+        tonnage = 0.240;
+        criticals = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;
-        introDate = 2470;
-        techLevel.put(2470, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_B, RATING_A };
-        techRating = RATING_D;
+        rulesRefs = "267,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+            .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE);
     }
 }

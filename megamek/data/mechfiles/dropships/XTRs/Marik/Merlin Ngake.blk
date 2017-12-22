@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,72 +16,37 @@ Dropship
 Merlin
 </Name>
 
-<model>
+<Model>
 Ngake
-</model>
+</Model>
 
-<Tonnage>
-2500
-</Tonnage>
+<year>
+3078
+</year>
+
+<originalBuildYear>
+3078
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:150.0:2:1
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:84.0:0
+cargobay:147.0:3:2
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
-
-<Armor>
-250
-200
-200
-230
-</Armor>
-
-<Nose Equipment>
-SCL1
-SCL1
-SCL1
-SCL1
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-(R) ISLargeXPulseLaser
-(R) ISLargeXPulseLaser
-(R) IS Laser AMS
-(R) IS Laser AMS
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-IS Laser AMS
-(R) ISLargeXPulseLaser
-(R) ISLargeXPulseLaser
-(R) IS Laser AMS
-(R) IS Laser AMS
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-IS Laser AMS
-IS Laser AMS
-</Aft Equipment>
-
-<structural_integrity>
-20
-</structural_integrity>
 
 <heatsinks>
 140
@@ -95,55 +60,118 @@ IS Laser AMS
 6000
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3078
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-spheroid
-</motion_type>
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+250
+200
+200
+230
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISLargeXPulseLaser
+(R) ISLargeXPulseLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(R) (B) ISLargeXPulseLaser
+(R) ISLargeXPulseLaser
+(R) (B) ISLaserAntiMissileSystem
+(R) ISLaserAntiMissileSystem
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISLargeXPulseLaser
+ISLargeXPulseLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Equipment>
+
+<structural_integrity>
+20
+</structural_integrity>
 
 <source>
 XTRO Marik - Jihad
 </source>
 
-<transporters>
-CargoBay:150:2
-CargoBay:150:3
-</transporters>
+<tonnage>
+2500.0
+</tonnage>
 
-<escape_pod>
-2
-</escape_pod>
-
-<life_boat>
-0
-</life_boat>
+<designtype>
+1
+</designtype>
 
 <crew>
 15
 </crew>
 
+<officers>
+3
+</officers>
+
+<gunners>
+9
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

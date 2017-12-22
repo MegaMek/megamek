@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,46 +20,32 @@ Foxhound Gunboat
 TIG-40
 </Model>
 
-<Tonnage>
-180
-</Tonnage>
+<year>
+3083
+</year>
+
+<originalBuildYear>
+3083
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:20.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-96
-89
-89
-89
-</Armor>
-
-<Nose Equipment>
-ISERLargeLaser
-ISERLargeLaser
-IS Laser AMS
-</Nose Equipment>
-
-<Left Side Equipment>
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-</Right Side Equipment>
-
-<Aft Equipment>
-IS Laser AMS
-</Aft Equipment>
-
-<structural_integrity>
-9
-</structural_integrity>
 
 <heatsinks>
 20
@@ -70,49 +56,99 @@ IS Laser AMS
 </sink_type>
 
 <fuel>
-640
+600
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3083
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-6
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-spheroid
-</motion_type>
+<armor_type>
+20
+</armor_type>
 
-<escape_pod>
-0
-</escape_pod>
+<armor_tech>
+1
+</armor_tech>
 
-<life_boat>
+<armor>
+96
+89
+89
+89
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLaserAntiMissileSystem
+</Nose Equipment>
+
+<Left Side Equipment>
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+</Right Side Equipment>
+
+<Aft Equipment>
+ISLaserAntiMissileSystem
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<tonnage>
+180.0
+</tonnage>
+
+<designtype>
 0
-</life_boat>
+</designtype>
 
 <crew>
 4
 </crew>
 
-<source>
-TRO:Prototypes
-</sources>
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

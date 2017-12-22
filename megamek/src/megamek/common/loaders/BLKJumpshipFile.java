@@ -80,15 +80,39 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         }
         a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
+        if (dataFile.exists("originalBuildYear")) {
+            a.setOriginalBuildYear(dataFile.getDataAsInt("originalBuildYear")[0]);
+        }
+
+        // Crew
         if (!dataFile.exists("crew")) {
             throw new EntityLoadingException("Could not find crew block.");
         }
         a.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
+        // Marines
+        if (!dataFile.exists("marines")) {
+            //throw new EntityLoadingException("Could not find marines block.");
+        }
+        a.setNMarines(dataFile.getDataAsInt("marines")[0]);
+
+        // Battle Armor
+        if (!dataFile.exists("battlearmor")) {
+            //throw new EntityLoadingException("Could not find battlearmor block.");
+        }
+        a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
+
+        // Passengers
         if (!dataFile.exists("passengers")) {
             throw new EntityLoadingException("Could not find passenger block.");
         }
         a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
+
+        // Other Passengers
+        if (!dataFile.exists("other_crew")) {
+            //throw new EntityLoadingException("Could not find other_crew block.");
+        }
+        a.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
 
         if (!dataFile.exists("life_boat")) {
             throw new EntityLoadingException("Could not find life boat block.");
@@ -115,6 +139,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find heatsinks block.");
         }
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
@@ -138,7 +163,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
             a.setHPG(true);
         }
 
-        // grav decks
+        // Grav Decks - two approaches
+        // First, the old method, where a number of grav decks for each category is specified
+        //  This doesn't allow us to specify precise size
         if (dataFile.exists("grav_deck")) {
             a.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
         }
@@ -148,12 +175,24 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("grav_deck_huge")) {
             a.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
         }
-
-        if (dataFile.exists("armor_type")) {
-            a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-        } else {
-            a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        // Second, the new method, where a white space separated list of numbers is given
+        //  Each number represents a distinct grav deck, with the specified size
+        if (dataFile.exists("grav_decks")) {
+            String[] toks = dataFile.getDataAsString("grav_decks");
+            for (String t : toks) {
+                a.addGravDeck(Integer.parseInt(t));
+            }
         }
+
+        // Switch older files with standard armor to aerospace
+        int at = EquipmentType.T_ARMOR_AEROSPACE;
+        if (dataFile.exists("armor_type")) {
+            at = dataFile.getDataAsInt("armor_type")[0];
+            if (at == EquipmentType.T_ARMOR_STANDARD) {
+                at = EquipmentType.T_ARMOR_AEROSPACE;
+            }
+        }
+        a.setArmorType(at);
         if (dataFile.exists("armor_tech")) {
             a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
@@ -184,6 +223,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         a.autoSetThresh();
         a.initializeKFIntegrity();
         a.initializeSailIntegrity();
+        a.recalculateTechAdvancement();
 
         loadEquipment(a, "Nose", Aero.LOC_NOSE);
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);

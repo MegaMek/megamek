@@ -13,8 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.RLWeapon;
+import megamek.common.weapons.missiles.RLWeapon;
 
 
 /**
@@ -32,7 +31,6 @@ public class ISBARL1 extends RLWeapon {
      */
     public ISBARL1() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Rocket Launcher 1";
         setInternalName("ISBARL1");
         addLookupName("BA RL 1");
@@ -46,12 +44,18 @@ public class ISBARL1 extends RLWeapon {
         extremeRange = 14;
         bv = 2;
         cost = 1500;
-        introDate = 3050;
-        techLevel.put(3050, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_E;
-        tonnage = .025f;
+        tonnage = .025;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "261,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+        .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FS,F_LC)
+        .setProductionFactions(F_FS,F_LC);
     }
 }

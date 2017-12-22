@@ -18,35 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportSnubNoseSupportPPCWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Snub-Nose Support PPC";
-        setInternalName(name);
-        addLookupName("InfantrySnubNoseSupportPPC");
-        addLookupName("SnubNoseSupportPPC");
-        ammoType = AmmoType.T_NA;
-        cost = 60000;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
-        infantryDamage = 1.58;
-        infantryRange = 5;
-        crew = 3;
-        introDate = 3082;
-        techLevel.put(3082,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
-        techRating = RATING_F;
-    }
+	public InfantrySupportSnubNoseSupportPPCWeapon() {
+		super();
+
+		name = "Support PPC (Snub-Nose)";
+		setInternalName(name);
+		addLookupName("InfantrySnubNoseSupportPPC");
+		addLookupName("SnubNoseSupportPPC");
+		ammoType = AmmoType.T_NA;
+		cost = 60000;
+		bv = 0.0;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
+		infantryDamage = 1.58;
+		infantryRange = 5;
+		crew = 3;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3082, 3090, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_DC)
+		        .setProductionFactions(F_DC).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+
+	}
 }

@@ -25,6 +25,11 @@ exact "default_medium" "small_boom.png"
 exact "default_heavy" "large_boom.png"
 exact "default_assault" "large_boom.png"
 exact "default_quad" "large_boom.png"
+exact "default_quadvee" "large_boom.png"
+exact "default_quadvee_vehicle" "default_tank_wreck.png"
+exact "default_lam_mech" "small_boom.png"
+exact "default_lam_airmech" "default_naval_wreck.png"
+exact "default_lam_fighter" "default_naval_wreck.png"
 exact "default_tracked" "default_tank_wreck.png"
 exact "default_tracked_heavy" "default_tank_wreck.png"
 exact "default_tracked_assault" "default_tank_wreck.png"
@@ -1046,6 +1051,15 @@ exact "Shadow Hawk SHD-5D" "Shadow Hawk SHD-5D.png"
 #exact "Warlord WAR-TT1" " .png"
 #exact "Warlord WLD-1P" " .png"
 
+#ASF named after Mech ones.
+exact "Centurion CNT-1D" "default_naval_wreck.png"
+exact "Centurion CNT-1A" "default_naval_wreck.png"
+exact "Centurion CNT-2D" "default_naval_wreck.png"
+exact "Centurion CNT-3S" "default_naval_wreck.png"
+exact "Vulcan VLC-3N" "default_naval_wreck.png"
+exact "Vulcan VLC-5N" "default_naval_wreck.png"
+exact "Vulcan VLC-6N" "default_naval_wreck.png"
+exact "Vulcan VLC-8N" "default_naval_wreck.png"
 
 
 # Local Client moved here to support overrides of existing images!

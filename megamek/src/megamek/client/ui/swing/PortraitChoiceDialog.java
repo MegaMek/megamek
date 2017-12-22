@@ -207,9 +207,9 @@ public class PortraitChoiceDialog extends JDialog {
        return filename;
    }
    
-   public void setPilot(Crew pilot) {
-       category = pilot.getPortraitCategory();
-       filename = pilot.getPortraitFileName();
+   public void setPilot(Crew pilot, int slot) {
+       category = pilot.getPortraitCategory(slot);
+       filename = pilot.getPortraitFileName(slot);
        sourceButton.setIcon(generateIcon(category, filename));
        comboCategories.getModel().setSelectedItem(category);
            fillTable(category);

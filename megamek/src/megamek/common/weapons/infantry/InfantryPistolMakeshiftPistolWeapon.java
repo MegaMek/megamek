@@ -18,36 +18,38 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryPistolMakeshiftPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolMakeshiftPistolWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Pistol (Makeshift)";
-        setInternalName(name);
-        addLookupName("InfantryMakeshiftpistol");
-        addLookupName("Makeshift Pistol");
-        addLookupName("ClanInfantryMakeshiftpistol");
-        addLookupName("Makeshift Pistol(Clan)");
-        ammoType = AmmoType.T_NA;
-        cost = 15;
-        bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.02;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
-        techRating = RATING_B;
-    }
+	public InfantryPistolMakeshiftPistolWeapon() {
+		super();
+
+		name = "Pistol (Makeshift)";
+		setInternalName(name);
+		addLookupName("InfantryMakeshiftpistol");
+		addLookupName("Makeshift Pistol");
+		addLookupName("ClanInfantryMakeshiftpistol");
+		addLookupName("Makeshift Pistol(Clan)");
+		ammoType = AmmoType.T_NA;
+		cost = 15;
+		bv = 0.02;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.02;
+		infantryRange = 0;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
+				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+	}
 }

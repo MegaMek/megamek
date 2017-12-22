@@ -231,7 +231,8 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         		}
         	}
         }
-        
+        t.recalculateTechAdvancement();
+
         return t;
     }
 }

@@ -1735,10 +1735,10 @@ public class TestBot extends BotClient {
 
         Coords pointing_to = new Coords();
 
-        int entNum = game.getFirstDeployableEntityNum();
+        int entNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
         assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";
 
-        List<Coords> cStart = getStartingCoordsArray();
+        List<Coords> cStart = getStartingCoordsArray(game.getEntity(entNum));
         Coords cDeploy = getFirstValidCoords(getEntity(entNum), cStart);
 
         if (cDeploy == null) {

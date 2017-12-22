@@ -57,15 +57,15 @@ public class TeleMissile extends Aero {
             fuel = 25;
         name = "Kraken-T Missile";
         break;
-        case(AmmoType.T_WHITE_SHARK):
+        case(AmmoType.T_WHITE_SHARK_T):
             fuel = 40;
         name = "White Shark-T Missile";
         break;
-        case(AmmoType.T_KILLER_WHALE):
+        case(AmmoType.T_KILLER_WHALE_T):
             fuel = 30;
         name = "Killer Whale-T Missile";
         break;
-        case(AmmoType.T_BARRACUDA):
+        case(AmmoType.T_BARRACUDA_T):
             fuel = 30;
         name = "Barracuda-T Missile";
         break;

@@ -1,12 +1,13 @@
 Nova Cat Dropships (FMU)
-Broadsword (Standard),1
-Overlord C,2
+Broadsword (2979),1
 Nekohono'o (Standard),3
-Overlord C,4
-Union C,5
-Union C,6
-Broadsword (Standard),5
+Broadsword (2979),5
 Nekohono'o (Standard),4
-Confederate (Clan),3
+Confederate C (3048),3
 Gazelle (3055),2
-Noruff (Standard),1
+Noruff (3056),1
+Union C (2829),6
+Union C (2829) (Tank),2
+Union C (2840) (Cargo),3
+Overlord C (2818),5
+Overlord C (2818) (Tank),1

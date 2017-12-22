@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -32,7 +32,7 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
 
     public InfantryPistolAutoPistolNissanWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Auto-Pistol (Nissan SG-12)";
         setInternalName(name);
         addLookupName("InfantryAutopistolNissan");
@@ -43,9 +43,10 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 1;
-        introDate = 2600;
-        techLevel.put(2600,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        rulesRefs = "273,TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2600, 2620, 2630);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

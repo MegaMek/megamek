@@ -49,14 +49,14 @@ ISBALightMachineGun:LA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 ISImprovedSensors:Body
-BARemoteSensorDispenser:Body
 Camo System:Body
-Infantry Auto Rifle:APM:RA
+Auto-Rifle (Modern, Generic):APM:RA
 IS BA Stealth (Improved):LA
 IS BA Stealth (Improved):LA
 IS BA Stealth (Improved):RA
 IS BA Stealth (Improved):RA
 IS BA Stealth (Improved):RA
+ISBARemoteSensorDispenser:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

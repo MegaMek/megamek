@@ -19,7 +19,6 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -41,8 +40,7 @@ public class CLBAMicroBomb extends Weapon {
      */
     public CLBAMicroBomb() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Micro Bomb";
+        name = "Bomb Rack (Micro)";
         setInternalName("CLBAMicroBomb");
         addLookupName("CLBAMicro Bomb");
         heat = 0;
@@ -55,13 +53,19 @@ public class CLBAMicroBomb extends Weapon {
         extremeRange = 0;
         bv = 11;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .1f;
+        tonnage = .1;
         criticals = 2;
         cost = 30000;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
+        rulesRefs = "253,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_CCC)
+        .setProductionFactions(F_CCC);
     }
 
     @Override

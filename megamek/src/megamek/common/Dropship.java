@@ -23,7 +23,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
@@ -34,16 +34,82 @@ public class Dropship extends SmallCraft {
      *
      */
     private static final long serialVersionUID = 1528728632696989565L;
-    // escape pods and lifeboats
-    int escapePods = 0;
-    int lifeBoats = 0;
-
+    
+    
+    //ASEW Missile Effects, per location
+    //Values correspond to Locations: NOS,Left,Right,AFT
+    private int asewAffectedTurns[] = {0,0,0,0};
+    
+    /*
+     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     * @param turns - integer specifying the number of end phases that the effects last through
+     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
+     */
+    public void setASEWAffected(int arc, int turns) {
+        asewAffectedTurns[arc] = turns;
+    }
+    
+    /*
+     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
+     * @param arc - integer representing the desired firing arc
+     */
+    public int getASEWAffected(int arc) {
+        return asewAffectedTurns[arc];
+    }
+  
+    
+    /**
+     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
+     * 
+     */
+    public static final int COLLAR_STANDARD  = 0;
+    public static final int COLLAR_PROTOTYPE = 1;
+    public static final int COLLAR_NO_BOOM   = 2;
+    
+    private static final String[] COLLAR_NAMES = {
+            "KF-Boom", "Prototype KF-Boom", "No Boom"
+    };
+    
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
+    private boolean kfBoomDamaged = false;
+    private int collarType = COLLAR_STANDARD;
+
+    public CrewType defaultCrewType() {
+        return CrewType.VESSEL;
+    }
 
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
+    }
+    
+    public boolean isKFBoomDamaged() {
+        return kfBoomDamaged;
+    }
+    
+    public int getCollarType() {
+        return collarType;
+    }
+    
+    public void setCollarType(int collarType) {
+        this.collarType = collarType;
+    }
+    
+    public String getCollarName() {
+        return COLLAR_NAMES[collarType];
+    }
+    
+    public static String getCollarName(int type) {
+        return COLLAR_NAMES[type];
+    }
+    
+    public static TechAdvancement getCollarTA() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2458, 2470, 2500)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     public String getCritDamageString() {
@@ -54,6 +120,13 @@ public class Dropship extends SmallCraft {
                 toReturn += ", ";
             }
             toReturn += "Docking Collar";
+            first = false;
+        }
+        if (isKFBoomDamaged()) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "K-F Boom";
             first = false;
         }
         return toReturn;
@@ -170,107 +243,168 @@ public class Dropship extends SmallCraft {
     public void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
     }
-
-    public void setEscapePods(int n) {
-        escapePods = n;
-    }
-
-    public int getEscapePods() {
-        return escapePods;
-    }
-
-    public void setLifeBoats(int n) {
-        lifeBoats = n;
-    }
-
-    public int getLifeBoats() {
-        return lifeBoats;
-    }
-
-    public int getFuelPerTon() {
-
-        int points = 80;
-
-        if (weight >= 40000) {
-            points = 10;
-            return points;
-        } else if (weight >= 20000) {
-            points = 20;
-            return points;
-        } else if (weight >= 3000) {
-            points = 30;
-            return points;
-        } else if (weight >= 1900) {
-            points = 40;
-            return points;
-        } else if (weight >= 1200) {
-            points = 50;
-            return points;
-        } else if (weight >= 800) {
-            points = 60;
-            return points;
-        } else if (weight >= 400) {
-            points = 70;
-            return points;
-        }
-
-        return points;
+    
+    public void setDamageKFBoom(boolean b) {
+        kfBoomDamaged = b;
     }
 
     @Override
+    public double getFuelPointsPerTon() {
+        double ppt;
+        if (getWeight() < 400) {
+            ppt = 80;
+        } else if (getWeight() < 800) {
+            ppt = 70;
+        } else if (getWeight() < 1200) {
+            ppt = 60;
+        } else if (getWeight() < 1900) {
+            ppt = 50;
+        } else if (getWeight() < 3000) {
+            ppt = 40;
+        } else if (getWeight() < 20000) {
+            ppt = 30;
+        } else if (getWeight() < 40000) {
+            ppt = 20;
+        } else {
+            ppt = 10;
+        }
+        if (isPrimitive()) {
+            return ppt / primitiveFuelFactor();
+        }
+        return ppt;
+    }
+
+    @Override
+    public double getStrategicFuelUse() {
+        double fuelUse = 1.84; // default for military designs and civilian < 1000
+        if ((getDesignType() == CIVILIAN) || isPrimitive()) {
+            if (getWeight() >= 70000) {
+                fuelUse = 8.83;
+            } else if (getWeight() >= 50000) {
+                fuelUse = 8.37;
+            } else if (getWeight() >= 40000) {
+                fuelUse = 7.71;
+            } else if (getWeight() >= 30000) {
+                fuelUse = 6.52;
+            } else if (getWeight() >= 20000) {
+                fuelUse = 5.19;
+            } else if (getWeight() >= 9000) {
+                fuelUse = 4.22;
+            } else if (getWeight() >= 4000) {
+                fuelUse = 2.82;
+            }
+        }
+        if (isPrimitive()) {
+            return fuelUse * primitiveFuelFactor();
+        }
+        return fuelUse;
+    }
+    
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2500) {
+            return 1.0;
+        } else if (year >= 2400) {
+            return 1.1;
+        } else if (year >= 2351) {
+            return 1.3;
+        } else if (year >= 2251) {
+            return 1.4;
+        } else if (year >= 2201) {
+            return 1.6;
+        } else if (year >= 2151) {
+            return 1.8;
+        } else {
+            return 2.0;
+        }
+    }
+
+    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+            .setISApproximate(false, true, false, false)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        if (collarType != COLLAR_NO_BOOM) {
+            ctl.addComponent(getCollarTA());
+        }
+    }
+    
+    @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[18];
+        double[] costs = new double[19];
         int costIdx = 0;
         double cost = 0;
 
-        // add in controls
-        // bridge
+        // Control Systems
+        // Bridge
         costs[costIdx++] += 200000 + (10 * weight);
-        // computer
+        // Computer
         costs[costIdx++] += 200000;
-        // life support
+        // Life Support
         costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
-        // sensors
+        // Sensors
         costs[costIdx++] += 80000;
-        // fcs
+        // Fire Control Computer
         costs[costIdx++] += 100000;
-        // gunnery/control systems
+        // Gunnery Control Systems
         costs[costIdx++] += 10000 * getArcswGuns();
 
-        // structural integrity
+        // Structural Integrity
         costs[costIdx++] += 100000 * getSI();
 
-        // additional flight systems (attitude thruster and landing gear)
-        costs[costIdx++] += 25000 + (10 * getWeight());
+        // Additional Flight Systems
+        // Attitude Thruster
+        costs[costIdx++] += 25000;
+        // Landing Gear
+        costs[costIdx++] += 10 * getWeight();
+        // Docking Collar
+        if (collarType == COLLAR_STANDARD) {
+            costs[costIdx++] += 10000;
+        } else if (collarType == COLLAR_PROTOTYPE) {
+            costs[costIdx++] += 1010000;
+        }
 
-        // docking collar
-        costs[costIdx++] += 10000;
-
-        // engine
+        // Engine
         double engineMultiplier = 0.065;
         if (isClan()) {
             engineMultiplier = 0.061;
         }
         double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
         costs[costIdx++] += engineWeight * 1000;
-        // drive unit
+        // Drive Unit
         costs[costIdx++] += (500 * getOriginalWalkMP() * weight) / 100.0;
 
-        // fuel tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPointsPerTon() * 1.02;
 
-        // armor
+        // Armor
         costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
-        // heat sinks
+        // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
         costs[costIdx++] += sinkCost * getHeatSinks();
 
-        // weapons
+        // Weapons and Equipment
         costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        // get bays
+        // Transport Bays
         int baydoors = 0;
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
@@ -285,7 +419,7 @@ public class Dropship extends SmallCraft {
 
         costs[costIdx++] += bayCost + (baydoors * 1000);
 
-        // life boats and escape pods
+        // Life Boats and Escape Pods
         costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
         double weightMultiplier = 36.0;
@@ -306,10 +440,10 @@ public class Dropship extends SmallCraft {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunner/Control Systems",
-                "Structural Integrity", "Additional Flight Systems", "Docking Collar", "Engine", "Drive Unit",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays", "Life Boats/Escape Pods",
-                "Weight Multiplier" };
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Attitude Thruster", "Landing Gear", "Docking Collar",
+                "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays",
+                "Life Boats/Escape Pods", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -802,6 +936,10 @@ public class Dropship extends SmallCraft {
                     if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         dBV *= 1.2;
                     }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                        dBV *= 1.1;
+                    }
+                    
                     if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                         dBV *= 1.3;
                     }
@@ -1307,7 +1445,7 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        // for large craft, ammo must be in the same ba
+        // for large craft, ammo must be in the same bay
         Mounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;
@@ -1692,11 +1830,6 @@ public class Dropship extends SmallCraft {
         } else {
             return super.rollHitLocation(table, side);
         }
-    }
-
-    @Override
-    public boolean isPrimitive() {
-        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE;
     }
 
     @Override

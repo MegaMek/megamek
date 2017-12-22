@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,37 +20,34 @@ S7-P Bus
 'Scarab'
 </Model>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:19.0:1:1
+infantrybay:1.0:1:2:Jump
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:20.0:0
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
-
-<Armor>
-80
-24
-24
-32
-</Armor>
-
-<Nose Equipment>
-ISBoobyTrap
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment> 
-</Right Side Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
-
-<structural_integrity>
-6
-</structural_integrity>
 
 <heatsinks>
 10
@@ -64,47 +61,87 @@ ISBoobyTrap
 160
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-3073
-</year>
+<armor_type>
+41
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+80
+24
+24
+32
+</armor>
+
+<Nose Equipment>
+ISBoobyTrap
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<source>
+XTRO:Pirates - Jihad
+</source>
+
+<tonnage>
+100.0
+</tonnage>
 
 <designtype>
 0
 </designtype>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-CargoBay:19:2
-InfantryBay:6:2
-</transporters>
-
 <crew>
-3
+24
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+0
+</gunners>
+
 <passengers>
-4
+0
 </passengers>
 
-<source>
-XTRO:Pirates
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

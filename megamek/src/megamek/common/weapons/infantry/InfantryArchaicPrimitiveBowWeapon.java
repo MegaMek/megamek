@@ -18,35 +18,37 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantryArchaicPrimitiveBowWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicPrimitiveBowWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Bow (Primitive)";
-        setInternalName(name);
-        addLookupName("InfantryPrimitiveBow");
-        addLookupName("Primitive Bow");
-        ammoType = AmmoType.T_NA;
-        cost = 5;
-        tonnage = 0.001f;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
-        infantryDamage = 0.02;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
-        techRating = RATING_A;
-    }
+	public InfantryArchaicPrimitiveBowWeapon() {
+		super();
+
+		name = "Bow (Primitive)";
+		setInternalName(name);
+		addLookupName("InfantryPrimitiveBow");
+		addLookupName("Primitive Bow");
+		ammoType = AmmoType.T_NA;
+		cost = 5;
+		tonnage = 0.001f;
+		bv = 0.0;
+		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
+		infantryDamage = 0.02;
+		infantryRange = 0;
+		rulesRefs = " 272,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+	}
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,56 +20,32 @@ Aquarius Escort
 W1
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+crewquarters:0.0:0
+1stclassquarters:0.0:0
+steeragequarters:30.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-182
-161
-161
-101
-</Armor>
-
-<Nose Equipment>
-ISArrowIVSystem
-ISArrowIVSystem
-ISArrowIVAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
-ISArrowIVHomingAmmo
-ISArrowIVHomingAmmo
-ISArrowIVHomingAmmo
-</Nose Equipment>
-
-<Left Side Equipment>
-ISERMediumLaser
-ISSRM6
-ISSRM6 Ammo
-ISSRM6 Ammo
-(R) ISERMediumLaser
-</Left Side Equipment>
-
-<Right Side Equipment>
-ISERMediumLaser
-ISSRM6
-ISSRM6 Ammo
-ISSRM6 Ammo
-(R) ISERMediumLaser
-</Right Side Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-8
-</structural_integrity>
 
 <heatsinks>
 10
@@ -83,38 +59,102 @@ ISERMediumLaser
 480
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3073
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-17
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+182
+161
+161
+101
+</armor>
+
+<Nose Equipment>
+ISArrowIV
+ISArrowIV
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+</Nose Equipment>
+
+<Left Side Equipment>
+SRM 6
+IS Ammo SRM-6
+(R) ISERMediumLaser 
+</Left Side Equipment>
+
+<Right Side Equipment>
+SRM 6
+IS Ammo SRM-6
+(R) ISERMediumLaser 
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
 
 <crew>
 6
 </crew>
 
+<officers>
+2
+</officers>
+
+<gunners>
+2
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

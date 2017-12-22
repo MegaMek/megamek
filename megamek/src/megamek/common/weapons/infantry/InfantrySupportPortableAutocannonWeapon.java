@@ -18,36 +18,38 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Ben Grills
  */
 public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportPortableAutocannonWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Autocannon (Semi-Portable)";
-        setInternalName(name);
-        addLookupName("InfantryPortableAutocannon");
-        addLookupName("InfantrySemiPortableAutocannon");
-        addLookupName("Infantry Semi Portable Autocannon");
-        ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 2.35;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.77;
-        infantryRange = 1;
-        crew = 2;
-        introDate = 2255;
-        techLevel.put(2255,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
-        techRating = RATING_C;
-    }
+	public InfantrySupportPortableAutocannonWeapon() {
+		super();
+
+		name = "Autocannon (Semi-Portable)";
+		setInternalName(name);
+		addLookupName("InfantryPortableAutocannon");
+		addLookupName("InfantrySemiPortableAutocannon");
+		addLookupName("Infantry Semi Portable Autocannon");
+		ammoType = AmmoType.T_NA;
+		cost = 2000;
+		bv = 2.35;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		infantryDamage = 0.77;
+		infantryRange = 1;
+		crew = 2;
+		rulesRefs = "273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setProductionFactions(F_TA)
+		        .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+
+	}
 }

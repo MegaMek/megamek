@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -18,43 +18,84 @@ Lyonesse Escort
 
 <Model>
 M1
-</model>
+</Model>
 
-<Tonnage>
-175
-</Tonnage>
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:30.0:0
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
 
-<Armor>
+<heatsinks>
+19
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 165
 133
 133
 101
-</Armor>
+</armor>
 
 <Nose Equipment>
-ISLRM20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISSRM6
-ISSRM6 Ammo
-ISSRM6 Ammo
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+SRM 6
+IS Ammo SRM-6
+IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Side Equipment>
-ISHeavyPPC
+Heavy PPC
 ISERMediumLaser
 ISERMediumLaser
-(R) ISERMediumLaser
+(R) ISERMediumLaser 
 </Left Side Equipment>
 
 <Right Side Equipment>
-ISHeavyPPC
+Heavy PPC
 ISERMediumLaser
 ISERMediumLaser
 (R) ISERMediumLaser
@@ -71,50 +112,51 @@ ISERSmallLaser
 7
 </structural_integrity>
 
-<heatsinks>
-19
-</heatsinks>
+<source>
+TRO 3075 - Jihad
+</source>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3073
-</year>
-
-<internal_type>
-0
-</internal_type>
+<tonnage>
+175.0
+</tonnage>
 
 <designtype>
-1
-</designtype>
-
-<armor_type>
-17
-</armor_type>
-
-<engine_type>
 0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+</designtype>
 
 <crew>
 6
 </crew>
 
+<officers>
+2
+</officers>
+
+<gunners>
+3
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

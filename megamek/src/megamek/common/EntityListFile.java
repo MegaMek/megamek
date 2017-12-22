@@ -105,6 +105,10 @@ public class EntityListFile {
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getBaseShotsLeft()));
+                if (mount.getEntity().usesWeaponBays()) {
+                    output.append("\" capacity=\"")
+                        .append(String.valueOf(mount.getAmmoCapacity()));
+                }
             }
             if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
@@ -727,11 +731,11 @@ public class EntityListFile {
             output.write(String.valueOf(entity.getStartingPos(false)));
             output.write("\" neverDeployed=\"");
             output.write(String.valueOf(entity.wasNeverDeployed()));
-            if (entity instanceof Aero){
+            if (entity.isAero()) {
                 output.write("\" velocity=\"");
-                output.write(((Aero)entity).getCurrentVelocity() + "");
+                output.write(((IAero)entity).getCurrentVelocity() + "");
                 output.write("\" altitude=\"");
-                output.write(((Aero)entity).getAltitude() + "");
+                output.write(entity.getAltitude() + "");
             }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
@@ -747,7 +751,7 @@ public class EntityListFile {
                         .getEntity(entity.getC3Master().getId())
                         .getC3UUIDAsString());
             }
-            if (entity.hasC3() || entity.hasC3i()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 output.write("\" c3UUID=\"");
                 output.write(entity.getC3UUIDAsString());
             }
@@ -800,110 +804,30 @@ public class EntityListFile {
 
             // Add the crew this entity.
             final Crew crew = entity.getCrew();
-            output.write(indentStr(indentLvl+1) + "<pilot name=\"");
-            output.write(crew.getName().replaceAll("\"", "&quot;"));
-            output.write("\" size=\"");
-            output.write(String.valueOf(crew.getSize()));
-            output.write("\" nick=\"");
-            output.write(crew.getNickname().replaceAll("\"", "&quot;"));
-            output.write("\" gunnery=\"");
-            output.write(String.valueOf(crew.getGunnery()));
-            if ((null != entity.getGame())
-                    && entity.getGame().getOptions()
-                            .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-                output.write("\" gunneryL=\"");
-                output.write(String.valueOf(crew.getGunneryL()));
-                output.write("\" gunneryM=\"");
-                output.write(String.valueOf(crew.getGunneryM()));
-                output.write("\" gunneryB=\"");
-                output.write(String.valueOf(crew.getGunneryB()));
-            }
-            output.write("\" piloting=\"");
-            output.write(String.valueOf(crew.getPiloting()));
-            if ((null != entity.getGame())
-                    && entity.getGame().getOptions()
-                            .booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
-                output.write("\" artillery=\"");
-                output.write(String.valueOf(crew.getArtillery()));
-            }
-            if (crew.getToughness() != 0) {
-                output.write("\" toughness=\"");
-                output.write(String.valueOf(crew.getToughness()));
-            }
-            if (crew.getInitBonus() != 0) {
-                output.write("\" initB=\"");
-                output.write(String.valueOf(crew.getInitBonus()));
-            }
-            if (crew.getCommandBonus() != 0) {
-                output.write("\" commandB=\"");
-                output.write(String.valueOf(crew.getCommandBonus()));
-            }
-            if (crew.isDead() || (crew.getHits() > 5)) {
-                output.write("\" hits=\"Dead");
-            } else if (crew.getHits() > 0) {
-                output.write("\" hits=\"");
-                output.write(String.valueOf(crew.getHits()));
-            }
-            output.write("\" ejected=\"");
-            output.write(String.valueOf(crew.isEjected()));
-            if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
-                output.write("\" advantages=\"");
-                output.write(String.valueOf(crew.getOptionList("::",
-                        PilotOptions.LVL3_ADVANTAGES)));
-            }
-            if (crew.countOptions(PilotOptions.EDGE_ADVANTAGES) > 0) {
-                output.write("\" edge=\"");
-                output.write(String.valueOf(crew.getOptionList("::",
-                        PilotOptions.EDGE_ADVANTAGES)));
-            }
-            if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
-                output.write("\" implants=\"");
-                output.write(String.valueOf(crew.getOptionList("::",
-                        PilotOptions.MD_ADVANTAGES)));
-            }
-            if (entity instanceof Mech) {
-                if (((Mech) entity).isAutoEject()) {
-                    output.write("\" autoeject=\"true");
-                } else {
-                    output.write("\" autoeject=\"false");
+            if (crew.getSlotCount() > 1) {
+                output.write(indentStr(indentLvl+1) + "<crew crewType=\"");
+                output.write(crew.getCrewType().toString().toLowerCase());
+                writeCrewAttributes(output, entity, crew);
+                output.write("\">");
+                output.write(CommonConstants.NL);
+                
+                for (int pos = 0; pos < crew.getSlotCount(); pos++) {
+                    if (crew.isMissing(pos)) {
+                        continue;
+                    }
+                    output.write(indentStr(indentLvl+2) + "<crewMember slot=\"" + pos);
+                    writePilotAttributes(output, entity, crew, pos);
+                    output.write("\"/>");
+                    output.write(CommonConstants.NL);
                 }
-                if (entity.game.getOptions().booleanOption(
-                        OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
-                    if (((Mech) entity).isCondEjectAmmo()) {
-                        output.write("\" condejectammo=\"true");
-                    } else {
-                        output.write("\" condejectammo=\"false");
-                    }
-                    if (((Mech) entity).isCondEjectEngine()) {
-                        output.write("\" condejectengine=\"true");
-                    } else {
-                        output.write("\" condejectengine=\"false");
-                    }
-                    if (((Mech) entity).isCondEjectCTDest()) {
-                        output.write("\" condejectctdest=\"true");
-                    } else {
-                        output.write("\" condejectctdest=\"false");
-                    }
-                    if (((Mech) entity).isCondEjectHeadshot()) {
-                        output.write("\" condejectctheadshot=\"true");
-                    } else {
-                        output.write("\" condejectctheadshot=\"false");
-                    }
-                }
+                output.write(indentStr(indentLvl+1) + "</crew>");
+            } else {
+                output.write(indentStr(indentLvl+1) + "<pilot size=\"");
+                output.write(String.valueOf(crew.getSize()));
+                writePilotAttributes(output, entity, crew, 0);
+                writeCrewAttributes(output, entity, crew);
+                output.write("\"/>");
             }
-            if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
-                output.write("\" portraitCat=\"");
-                output.write(crew.getPortraitCategory());
-            }
-            if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
-                output.write("\" portraitFile=\"");
-                output.write(crew.getPortraitFileName());
-            }
-            if (!crew.getExternalIdAsString().equals("-1")) {
-                output.write("\" externalId=\"");
-                output.write(crew.getExternalIdAsString());
-            }
-            output.write("\"/>");
             output.write(CommonConstants.NL);
 
             // If it's a tank, add a movement tag.
@@ -916,8 +840,53 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
+            
+            // Aero stuff that also applies to LAMs
+            if (entity instanceof IAero) {
+                IAero a = (IAero)entity;
+                // fuel
+                output.write(indentStr(indentLvl+1) + "<fuel left=\"");
+                output.write(String.valueOf(a.getCurrentFuel()));
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            }
 
-            // add a bunch of stuff for aeros
+                // Write the Bomb Data if needed
+            if (entity.isBomber()) {
+                IBomber b = (IBomber)entity;
+                int[] bombChoices = new int[BombType.B_NUM];
+                bombChoices = b.getBombChoices();
+                if (bombChoices.length > 0) {
+                    output.write(indentStr(indentLvl+1) + "<bombs>");
+                    output.write(CommonConstants.NL);
+                    for (int type = 0; type < BombType.B_NUM; type++) {
+                        String typeName = BombType.getBombInternalName(type);
+                        if (bombChoices[type] > 0) {
+                            output.write(indentStr(indentLvl+2) + "<bomb type=\"");
+                            output.write(typeName);
+                            output.write("\" load=\"");
+                            output.write(String.valueOf(bombChoices[type]));
+                            output.write("\"/>");
+                            output.write(CommonConstants.NL);
+                        }
+                    }
+                    for (Mounted m : b.getBombs()) {
+                        if (!(m.getType() instanceof BombType)) {
+                            continue;
+                        }
+                        output.write(indentStr(indentLvl+2) + "<bomb type=\"");
+                        output.write(m.getType().getShortName());
+                        output.write("\" load=\"");
+                        output.write(String.valueOf(m.getBaseShotsLeft()));
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                    output.write(indentStr(indentLvl+1) + "</bombs>");
+                    output.write(CommonConstants.NL);
+                }
+            }
+
+            // aero stuff that does not apply to LAMs
             if (entity instanceof Aero) {
                 Aero a = (Aero) entity;
 
@@ -933,47 +902,21 @@ public class EntityListFile {
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                // fuel
-                output.write(indentStr(indentLvl+1) + "<fuel left=\"");
-                output.write(String.valueOf(a.getFuel()));
-                output.write("\"/>");
-                output.write(CommonConstants.NL);
-
-                // Write the Bomb Data if needed
-                int[] bombChoices = new int[BombType.B_NUM];
-                bombChoices = a.getBombChoices();
-                if (bombChoices.length > 0) {
-                    output.write(indentStr(indentLvl+1) + "<bombs>");
-                    output.write(CommonConstants.NL);
-                    for (int type = 0; type < BombType.B_NUM; type++) {
-                        String typeName = BombType.getBombInternalName(type);
-                        if (bombChoices[type] > 0) {
-                            output.write(indentStr(indentLvl+2) + "<bomb type=\"");
-                            output.write(typeName);
-                            output.write("\" load=\"");
-                            output.write(String.valueOf(bombChoices[type]));
-                            output.write("\"/>");
-                            output.write(CommonConstants.NL);
-                        }
-                    }
-                    for (Mounted m : a.getBombs()) {
-                        if (!(m.getType() instanceof BombType)) {
-                            continue;
-                        }
-                        output.write(indentStr(indentLvl+2) + "<bomb type=\"");
-                        output.write(m.getType().getShortName());
-                        output.write("\" load=\"");
-                        output.write(String.valueOf(m.getBaseShotsLeft()));
-                        output.write("\"/>");
+                //large craft bays and doors. 
+                if ((a instanceof Dropship) || (a instanceof Jumpship)) {
+                	for (Bay nextbay : a.getTransportBays()) {
+                		output.write(indentStr(indentLvl+1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">");
                         output.write(CommonConstants.NL);
-                    }
-                    output.write(indentStr(indentLvl+1) + "</bombs>");
-                    output.write(CommonConstants.NL);
+                        output.write(indentStr(indentLvl + 2) + "<damage>" + nextbay.getBayDamage() + "</damage>");
+                        output.write(CommonConstants.NL);
+                        output.write(indentStr(indentLvl + 2) + "<doors>" + nextbay.getCurrentDoors() + "</doors>");
+                        output.write(CommonConstants.NL);
+                		output.write(indentStr(indentLvl+1) + "</transportBay>");
+                        output.write(CommonConstants.NL);
+                	}
                 }
 
-                // TODO: dropship docking collars, bays
-
-                // large craft stuff
+                // jumpship, warship and space station stuff
                 if (a instanceof Jumpship) {
                     Jumpship j = (Jumpship) a;
 
@@ -990,8 +933,14 @@ public class EntityListFile {
                     output.write(CommonConstants.NL);
                 }
 
-                // crits
+                // general aero crits
                 output.write(EntityListFile.getAeroCritString(a));
+                
+                // dropship only crits
+                if (a instanceof Dropship) {
+                	Dropship d = (Dropship) a;
+                	output.write(EntityListFile.getDropshipCritString(d));
+                }
 
             }
 
@@ -1058,6 +1007,25 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl+1) + "</c3iset>");
                 output.write(CommonConstants.NL);
             }
+            
+            // Write the NC3 Data if needed
+            if (entity.hasNavalC3()) {
+                output.write(indentStr(indentLvl+1) + "<NC3set>");
+                output.write(CommonConstants.NL);
+                Iterator<Entity> NC3List = list.iterator();
+                while (NC3List.hasNext()) {
+                    final Entity NC3Entity = NC3List.next();
+
+                    if (NC3Entity.onSameC3NetworkAs(entity, true)) {
+                        output.write(indentStr(indentLvl+1) + "<NC3_link link=\"");
+                        output.write(NC3Entity.getC3UUIDAsString());
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                }
+                output.write(indentStr(indentLvl+1) + "</NC3set>");
+                output.write(CommonConstants.NL);
+            }
 
             // Finish writing this entity to the file.
             output.write(indentStr(indentLvl) + "</entity>");
@@ -1065,6 +1033,152 @@ public class EntityListFile {
             output.write(CommonConstants.NL);
 
         } // Handle the next entity
+    }
+
+    /**
+     * Writes crew attributes that are tracked individually for multi-crew cockpits.
+     * 
+     * @param output
+     * @param entity
+     * @param crew
+     * @param pos
+     * @throws IOException
+     */
+    private static void writePilotAttributes(Writer output, final Entity entity, final Crew crew, int pos)
+            throws IOException {
+        output.write("\" name=\"" + crew.getName(pos).replaceAll("\"", "&quot;"));
+        output.write("\" nick=\"");
+        output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
+        output.write("\" gunnery=\"");
+        output.write(String.valueOf(crew.getGunnery(pos)));
+        if ((null != entity.getGame())
+                && entity.getGame().getOptions()
+                        .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+            output.write("\" gunneryL=\"");
+            output.write(String.valueOf(crew.getGunneryL(pos)));
+            output.write("\" gunneryM=\"");
+            output.write(String.valueOf(crew.getGunneryM(pos)));
+            output.write("\" gunneryB=\"");
+            output.write(String.valueOf(crew.getGunneryB(pos)));
+        }
+        output.write("\" piloting=\"");
+        output.write(String.valueOf(crew.getPiloting(pos)));
+        if (crew instanceof LAMPilot) {
+            writeLAMAeroAttributes(output, (LAMPilot)crew,
+                    (null != entity.getGame())
+                    && entity.getGame().getOptions()
+                    .booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
+        }
+        if ((null != entity.getGame())
+                && entity.getGame().getOptions()
+                        .booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+            output.write("\" artillery=\"");
+            output.write(String.valueOf(crew.getArtillery(pos)));
+        }
+        if (crew.getToughness(0) != 0) {
+            output.write("\" toughness=\"");
+            output.write(String.valueOf(crew.getToughness(pos)));
+        }
+        if (crew.isDead(pos) || (crew.getHits(pos) > 5)) {
+            output.write("\" hits=\"Dead");
+        } else if (crew.getHits(pos) > 0) {
+            output.write("\" hits=\"");
+            output.write(String.valueOf(crew.getHits(pos)));
+        }
+        if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory(pos))) {
+            output.write("\" portraitCat=\"");
+            output.write(crew.getPortraitCategory(pos));
+        }
+        if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName(pos))) {
+            output.write("\" portraitFile=\"");
+            output.write(crew.getPortraitFileName(pos));
+        }
+        if (!crew.getExternalIdAsString(pos).equals("-1")) {
+            output.write("\" externalId=\"");
+            output.write(crew.getExternalIdAsString(pos));
+        }
+    }
+    
+    private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew,
+            boolean rpgGunnery) throws IOException {
+        output.write("\" gunneryAero=\"");
+        output.write(String.valueOf(crew.getGunneryAero()));
+        if (rpgGunnery) {
+            output.write("\" gunneryAeroL=\"");
+            output.write(String.valueOf(crew.getGunneryAeroL()));
+            output.write("\" gunneryAeroM=\"");
+            output.write(String.valueOf(crew.getGunneryAeroM()));
+            output.write("\" gunneryAeroB=\"");
+            output.write(String.valueOf(crew.getGunneryAeroB()));
+        }
+        output.write("\" pilotingAero=\"");
+        output.write(String.valueOf(crew.getPilotingAero()));
+    }    
+
+    /**
+     * Writes attributes that pertain to entire crew.
+     * 
+     * @param output
+     * @param entity
+     * @param crew
+     * @throws IOException
+     */
+    private static void writeCrewAttributes(Writer output, final Entity entity, final Crew crew) throws IOException {
+        if (crew.getInitBonus() != 0) {
+            output.write("\" initB=\"");
+            output.write(String.valueOf(crew.getInitBonus()));
+        }
+        if (crew.getCommandBonus() != 0) {
+            output.write("\" commandB=\"");
+            output.write(String.valueOf(crew.getCommandBonus()));
+        }
+        output.write("\" ejected=\"");
+        output.write(String.valueOf(crew.isEjected()));
+        if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
+            output.write("\" advantages=\"");
+            output.write(String.valueOf(crew.getOptionList("::",
+                    PilotOptions.LVL3_ADVANTAGES)));
+        }
+        if (crew.countOptions(PilotOptions.EDGE_ADVANTAGES) > 0) {
+            output.write("\" edge=\"");
+            output.write(String.valueOf(crew.getOptionList("::",
+                    PilotOptions.EDGE_ADVANTAGES)));
+        }
+        if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
+            output.write("\" implants=\"");
+            output.write(String.valueOf(crew.getOptionList("::",
+                    PilotOptions.MD_ADVANTAGES)));
+        }
+        if (entity instanceof Mech) {
+            if (((Mech) entity).isAutoEject()) {
+                output.write("\" autoeject=\"true");
+            } else {
+                output.write("\" autoeject=\"false");
+            }
+            if (entity.game.getOptions().booleanOption(
+                    OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
+                if (((Mech) entity).isCondEjectAmmo()) {
+                    output.write("\" condejectammo=\"true");
+                } else {
+                    output.write("\" condejectammo=\"false");
+                }
+                if (((Mech) entity).isCondEjectEngine()) {
+                    output.write("\" condejectengine=\"true");
+                } else {
+                    output.write("\" condejectengine=\"false");
+                }
+                if (((Mech) entity).isCondEjectCTDest()) {
+                    output.write("\" condejectctdest=\"true");
+                } else {
+                    output.write("\" condejectctdest=\"false");
+                }
+                if (((Mech) entity).isCondEjectHeadshot()) {
+                    output.write("\" condejectctheadshot=\"true");
+                } else {
+                    output.write("\" condejectctheadshot=\"false");
+                }
+            }
+        }
     }
 
     private static String getTurretLockedString(Tank e) {
@@ -1082,7 +1196,7 @@ public class EntityListFile {
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
-
+    
     // Aero crits
     private static String getAeroCritString(Aero a) {
 
@@ -1143,8 +1257,31 @@ public class EntityListFile {
         return retVal;
 
     }
+    // Dropship crits
+    private static String getDropshipCritString(Dropship a) {
+    	String retVal = "      <dcriticals";
+    	String critVal = "";
+    	
+    	//crits
+    	if (a.isDockCollarDamaged()) {
+    		critVal = critVal.concat(" dockingcollar=\"none\"");
+    	}
+    	if (a.isKFBoomDamaged()) {
+    		critVal = critVal.concat(" kfboom=\"none\"");
+    	}
+    	
+        if (!critVal.equals("")) {
+            // then add beginning and end
+            retVal = retVal.concat(critVal);
+            retVal = retVal.concat("/>\n");
+        } else {
+            return critVal;
+        }
 
-    // Aero crits
+        return retVal;
+    }
+
+    // Tank crits
     private static String getTankCritString(Tank t) {
 
         String retVal = "      <tcriticals";
@@ -1171,6 +1308,10 @@ public class EntityListFile {
         if (t.isCommanderHit()) {
             critVal = critVal.concat(" commander=\"");
             critVal = critVal.concat("hit");
+            critVal = critVal.concat("\"");
+        } else if (t.isUsingConsoleCommander()) {
+            critVal = critVal.concat(" commander=\"");
+            critVal = critVal.concat("console");
             critVal = critVal.concat("\"");
         }
 

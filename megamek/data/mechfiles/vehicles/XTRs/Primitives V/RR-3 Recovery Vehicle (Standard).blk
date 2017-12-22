@@ -25,7 +25,7 @@ RR-3 Recovery Vehicle
 </year>
 
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
@@ -75,7 +75,7 @@ Lift Hoist
 </Rear Equipment>
 
 <transporters>
-cargospace:20:1
+cargobay:20:1
 </transporters>
 
 <source>

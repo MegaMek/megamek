@@ -1,5 +1,5 @@
 Word of Blake Dropships Late 3075
-Hamilcar (Standard),1
+Hamilcar (3054),1
 Overlord (3056),2
 Overlord (3056),3
 Assault Triumph (3062),4
@@ -9,4 +9,4 @@ Leopard (3056),5
 Assault Triumph (3062),4
 Fury (3056),3
 Merlin (3063),2
-Hannibal (Standard),1
+Hannibal (3055),1

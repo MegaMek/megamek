@@ -26,25 +26,29 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
+import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.MegaMekFile;
 
 /**
- * Set of elements to reperesent general unit information in MechDisplay
+ * Set of elements to represent general unit information in MechDisplay
  */
 
 public class GeneralInfoMapSet implements DisplayMapSet {
@@ -59,8 +63,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMSimpleLabel statusR, pilotR, playerR, teamR, weightR, bvR, mpR0,
             mpR1, mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR,
             elevationR, fuelR, curSensorsR, visualRangeR;
-    private PMSimpleLabel[] quirksR;
-    private PMSimpleLabel[] partRepsR;
+    private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
@@ -244,20 +247,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 visualRangeL.getSize().width + 10, getYCoord());
         content.addArea(visualRangeR);
 
-        quirksR = new PMSimpleLabel[40];
-        for (int i = 0; i < quirksR.length; i++) {
-            quirksR[i] = createLabel(new Integer(i).toString(), fm, 0,
-                    getNewYCoord());
-            content.addArea(quirksR[i]);
-        }
-
-        partRepsR = new PMSimpleLabel[20];
-        for (int i = 0; i < partRepsR.length; i++) {
-            partRepsR[i] = createLabel(new Integer(i).toString(), fm, 0,
-                    getNewYCoord());
-            content.addArea(partRepsR[i]);
-        }
-
+        getNewYCoord(); // skip a line for readability
+        
+        quirksAndPartReps = new PMMultiLineLabel(fm, Color.white);
+        quirksAndPartReps.moveTo(0, getNewYCoord());
+        content.addArea(quirksAndPartReps);
     }
 
     /**
@@ -307,7 +301,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         
         if (en.getCrew() != null) {
             Crew c = en.getCrew();
-            String pilotString = c.getDesc() + " (";
+            String pilotString = c.getDesc(c.getCurrentPilotIndex()) + " (";
             pilotString += c.getGunnery() + "/" + c.getPiloting();
             int crewAdvCount = c.countOptions(PilotOptions.LVL3_ADVANTAGES);
             if (crewAdvCount > 0) {
@@ -345,46 +339,19 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     .getString("GeneralInfoMapSet.elevationL"));
         }
 
-        for (PMSimpleLabel element : quirksR) {
-            element.setString(""); //$NON-NLS-1$
-        }
-        for (PMSimpleLabel element : partRepsR) {
-            element.setString(""); //$NON-NLS-1$
-        }
+        quirksAndPartReps.clear();
 
-        int i = 0;
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups
-                    .hasMoreElements();) {
-                IOptionGroup qGroup = qGroups.nextElement();
-                if (en.countQuirks(qGroup.getKey()) > 0) {
-                    quirksR[i++].setString(qGroup.getDisplayableName());
-                    for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks
-                            .hasMoreElements();) {
-                        IOption quirk = quirks.nextElement();
-                        if (quirk.booleanValue()) {
-                            quirksR[i++].setString("  "
-                                    + quirk.getDisplayableNameWithValue());
-                        }
-                    }
-                }
-            }
+            addOptionsToList(en.getQuirks(), quirksAndPartReps);
         }
-        for (Enumeration<IOptionGroup> repGroups = en.getPartialRepairs()
-                .getGroups(); repGroups.hasMoreElements();) {
-            IOptionGroup repGroup = repGroups.nextElement();
-            if (en.countPartialRepairs() > 0) {
-                partRepsR[i++].setString(repGroup.getDisplayableName());
-                for (Enumeration<IOption> partreps = repGroup.getOptions(); partreps
-                        .hasMoreElements();) {
-                    IOption partrep = partreps.nextElement();
-                    if (partrep.booleanValue()) {
-                        partRepsR[i++].setString("  "
-                                + partrep.getDisplayableNameWithValue());
-                    }
-                }
-            }
+        
+        if ((null != en.getGame())
+                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
+            // skip a line for readability
+            quirksAndPartReps.addString("");
+                        
+            addOptionsToList(en.getPartialRepairs(), quirksAndPartReps);
         }
 
         if (en.mpUsed > 0) {
@@ -407,18 +374,26 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
             mpR4.setString(Integer.toString(en.getActiveUMUCount()));
+        } else if (en instanceof LandAirMech
+                && en.getMovementMode() == EntityMovementMode.WIGE) {
+            mpL4.setVisible(true);
+            mpR4.setVisible(true);
+            mpR1.setString(Integer.toString(((LandAirMech)en).getAirMechWalkMP()));
+            mpR2.setString(Integer.toString(((LandAirMech)en).getAirMechRunMP()));
+            mpR3.setString(Integer.toString(((LandAirMech)en).getAirMechCruiseMP()));
+            mpR4.setString(Integer.toString(((LandAirMech)en).getAirMechFlankMP()));
         } else {
             mpL4.setVisible(false);
             mpR4.setVisible(false);
         }
 
-        if (en instanceof Aero) {
-            Aero a = (Aero) en;
+        if (en.isAero()) {
+            IAero a = (IAero) en;
             curMoveR.setString(Integer.toString(a.getCurrentVelocity())
                     + Messages.getString("GeneralInfoMapSet.velocity"));
-            int currentFuel = a.getFuel();
-            int safeThrust = a.getWalkMP();
-            fuelR.setString(Integer.toString(a.getFuel()));
+            int currentFuel = a.getCurrentFuel();
+            int safeThrust = en.getWalkMP();
+            fuelR.setString(Integer.toString(a.getCurrentFuel()));
             if (currentFuel < (5 * safeThrust)) {
                 fuelR.setColor(Color.red);
             } else if (currentFuel < (10 * safeThrust)) {
@@ -455,9 +430,24 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         if (en instanceof Tank) {
+            movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementTypeL"));
             movementTypeL.setVisible(true);
             movementTypeR.setString(Messages.getString("MovementType."
                     + en.getMovementModeAsString()));
+            movementTypeR.setVisible(true);
+        } else if (en instanceof QuadVee || en instanceof LandAirMech
+                || (en instanceof Mech && ((Mech)en).hasTracks())) {
+            movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
+            if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
+                //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
+                movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
+            } else if (en.getMovementMode() == EntityMovementMode.WIGE) {
+                movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));
+            } else {
+                movementTypeR.setString(Messages.getString("MovementType."
+                        + en.getMovementModeAsString()));
+            }
+            movementTypeL.setVisible(true);
             movementTypeR.setVisible(true);
         } else {
             movementTypeL.setVisible(false);
@@ -507,11 +497,9 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curMoveR.setVisible(true);
         }
 
-        if (en instanceof Aero) {
+        if (en.isAero()) {
             heatL.setVisible(true);
             heatR.setVisible(true);
-            mpR3.setVisible(false);
-            mpL3.setVisible(false);
             curMoveL.setVisible(true);
             curMoveR.setVisible(true);
             fuelL.setVisible(true);
@@ -519,12 +507,48 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.thrust"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
+            if (en.getMovementMode() == EntityMovementMode.WHEELED) {
+                mpR1.setString(Integer.toString(((IAero)en).getCurrentThrust()));
+                mpR2.setString(Integer.toString((int)Math.ceil(((IAero)en).getCurrentThrust() * 1.5)));
+                mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
+                mpR3.setString(Integer.toString(en.getWalkMP()));
+                mpR3.setVisible(true);
+                mpL3.setVisible(true);
+            } else {
+                mpR3.setVisible(false);
+                mpL3.setVisible(false);
+            }
+        } else if (en instanceof Tank
+                || (en instanceof QuadVee && en.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
+            mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
+            mpL1.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
+            mpL2.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
+            mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
+            fuelL.setVisible(false);
+            fuelR.setVisible(false);
+        } else if (en instanceof LandAirMech
+                && en.getMovementMode() == EntityMovementMode.WIGE) {
+            mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
+            mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));
+            mpL2.setString(Messages.getString("GeneralInfoMapSet.mpL2"));
+            mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
+            mpL4.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
+            fuelL.setVisible(false);
+            fuelR.setVisible(false);
         } else {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.mpL2"));
+            mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
+            if (en instanceof LandAirMech
+                    && en.getMovementMode() == EntityMovementMode.WIGE) {
+                mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
+                mpL4.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
+            } else {
+                mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
+            }
         }
         if ((en.getGame() != null) && en.getGame().getBoard().inSpace()) {
             elevationL.setVisible(false);
@@ -536,6 +560,27 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
     }
 
+    /**
+     * Add all options from the given IOptions instance into an array of PMSimpleLabel elements.
+     * @param optionsInstance IOptions instance
+     * @param labels label array
+     */
+    public void addOptionsToList(IOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
+        for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
+            IOptionGroup group = optionGroups.nextElement();
+            if (optionsInstance.count(group.getKey()) > 0) {
+                quirksAndPartReps.addString(group.getDisplayableName());
+                
+                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    IOption option = options.nextElement();
+                    if (option != null && option.booleanValue()) {
+                        quirksAndPartReps.addString("  " + option.getDisplayableNameWithValue());
+                    }
+                }
+            }
+        }
+    }
+    
     public PMAreasGroup getContentGroup() {
         return content;
     }

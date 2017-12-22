@@ -36,16 +36,40 @@ Jump
 3
 </cruiseMP>
 
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
 <Squad Equipment>
 BAParafoil:Body
-ISBADavidLightGaussRifle:RA
-BARemoteSensorDispenser:LA
+BADavidLightGaussRifle:RA
 BABasicManipulator:LA
 BABasicManipulator:RA
 IS BA Stealth (Basic):LA
 IS BA Stealth (Basic):RA
 IS BA Stealth (Basic):Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+ISBARemoteSensorDispenser:Body
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth - Late Republic
@@ -70,11 +94,4 @@ biped
 <weightclass>
 2
 </weightclass>
-
-<armor_type>
-31
-</armor_type>
-<armor_tech>
-3
-</armor_tech>
 

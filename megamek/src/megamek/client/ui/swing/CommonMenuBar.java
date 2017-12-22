@@ -125,6 +125,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveUnload;
     private JMenuItem moveJump;
     private JMenuItem moveSwim;
+    private JMenuItem moveModeConvert;
     private JMenuItem moveBackUp;
     private JMenuItem moveCharge;
     private JMenuItem moveDFA;
@@ -141,6 +142,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveLower;
     private JMenuItem moveReckless;
     private JMenuItem moveEvade;
+    private JMenuItem moveBootlegger;
     private JMenuItem moveShutdown;
     private JMenuItem moveStartup;
     private JMenuItem moveSelfDestruct;
@@ -163,6 +165,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveThrust = null;
     private JMenuItem moveYaw = null;
     private JMenuItem moveEndOver= null;
+    private JMenuItem moveStrafe = null;
+    private JMenuItem moveBomb = null;
     private JMenuItem fireFire;
     private JMenuItem fireSkip;
     private JMenuItem fireNextTarg;
@@ -533,6 +537,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveSwim = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveSwim"), MovementDisplay.MoveCommand.MOVE_SWIM.getCmd(), KeyEvent.VK_S); //$NON-NLS-1$
+        moveModeConvert = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveModeConvert"), MovementDisplay.MoveCommand.MOVE_MODE_CONVERT.getCmd(), KeyEvent.VK_C); //$NON-NLS-1$
         moveBackUp = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveBackUp"), MovementDisplay.MoveCommand.MOVE_BACK_UP.getCmd()); //$NON-NLS-1$
@@ -562,6 +569,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveEvade = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveEvade"), MovementDisplay.MoveCommand.MOVE_EVADE.getCmd()); //$NON-NLS-1$
+        moveBootlegger = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveBootlegger"), MovementDisplay.MoveCommand.MOVE_BOOTLEGGER.getCmd()); //$NON-NLS-1$
         moveShutdown = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveShutdown"), MovementDisplay.MoveCommand.MOVE_SHUTDOWN.getCmd()); //$NON-NLS-1$
@@ -591,6 +601,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveThrust = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MoveCommand.MOVE_THRUST.getCmd()); //$NON-NLS-1$
         moveYaw = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MoveCommand.MOVE_YAW.getCmd()); //$NON-NLS-1$
         moveEndOver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MoveCommand.MOVE_END_OVER.getCmd()); //$NON-NLS-1$
+        moveStrafe = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveStrafe"), MovementDisplay.MoveCommand.MOVE_STRAFE.getCmd()); //$NON-NLS-1$
+        moveBomb = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveBomb"), MovementDisplay.MoveCommand.MOVE_BOMB.getCmd()); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add(aeromenu);
@@ -1127,6 +1139,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     public synchronized void setMoveSwimEnabled(boolean enabled) {
         moveSwim.setEnabled(enabled);
     }
+    
+    public synchronized void setMoveModeConvertEnabled(boolean enabled) {
+        moveModeConvert.setEnabled(enabled);
+    }
 
     public synchronized void setMoveLayMineEnabled(boolean enabled) {
         moveLayMine.setEnabled(enabled);
@@ -1205,6 +1221,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     public synchronized void setMoveEvadeEnabled(boolean enabled) {
         moveEvade.setEnabled(enabled);
     }
+    public synchronized void setMoveBootleggerEnabled(boolean enabled) {
+        moveBootlegger.setEnabled(enabled);
+    }
     public synchronized void setMoveShutdownEnabled(boolean enabled) {
         moveShutdown.setEnabled(enabled);
     }
@@ -1258,6 +1277,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     }
     public synchronized void setMoveEndOverEnabled(boolean enabled) {
         moveEndOver.setEnabled(enabled);
+    }
+    public synchronized void setMoveStrafeEnabled(boolean enabled) {
+        moveStrafe.setEnabled(enabled);
+    }
+    public synchronized void setMoveBombEnabled(boolean enabled) {
+        moveBomb.setEnabled(enabled);
     }
 
     // Manages deploy menu items...

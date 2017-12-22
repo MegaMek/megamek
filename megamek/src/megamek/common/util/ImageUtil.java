@@ -28,18 +28,12 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.thoughtworks.xstream.XStream;
-
+import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
-import megamek.common.Configuration;
 import megamek.common.Coords;
 import sun.awt.image.ToolkitImage;
 
@@ -215,7 +209,7 @@ public final class ImageUtil {
          * @param c
          * @return
          */
-        private Coords parseCoords(String c) {
+        protected Coords parseCoords(String c) {
             if(null == c || c.isEmpty()) {
                 return null;
             }
@@ -255,7 +249,12 @@ public final class ImageUtil {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
-            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseName);
+            File baseFile = new File(baseName);
+            if (!baseFile.exists()) {
+                return null;
+            }
+            System.out.println("Loading atlas: " + baseFile);
+            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if(null == base) {
                 return null;
             }
@@ -279,33 +278,65 @@ public final class ImageUtil {
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
 
-        Map<File, String> imgFileToAtlasMap;
+        ImageAtlasMap imgFileToAtlasMap;
 
-        @SuppressWarnings("unchecked")
         public AtlasImageLoader() {
-            if (!Configuration.imageFileAtlasMapFile().exists()) {
-                imgFileToAtlasMap = null;
-                return;
-            }
-
-            try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
-                XStream xstream = new XStream();
-                imgFileToAtlasMap = (Map<File, String>) xstream.fromXML(is);
-            } catch (FileNotFoundException e) {
-                imgFileToAtlasMap = null;
-                e.printStackTrace();
-            } catch (IOException e) {
-                imgFileToAtlasMap = null;
-                e.printStackTrace();
-            }
+            imgFileToAtlasMap = ImageAtlasMap.readFromFile();
         }
 
         public Image loadImage(String fileName) {
-            File fn = new File(fileName);
-            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fn)) {
+            // The tileset could be using the tiling syntax to flip the image
+            // We may still need to look up the base file name in an atlas and then modify the image
+            int tileStart = fileName.indexOf('(');
+            int tileEnd = fileName.indexOf(')');
+
+            String baseName;
+            Coords start, size;
+            start = size = null;
+            boolean tileAdjusting = (tileStart != -1) && (tileEnd != -1) && (tileEnd > tileStart);
+            if (tileAdjusting) {
+                String coords = fileName.substring(tileStart + 1, tileEnd);
+                int coordsSplitter = coords.indexOf('-');
+                // It's possible we have a unit with a paren in the name, we still want to try to load that
+                if(coordsSplitter == -1) {
+                    baseName = fileName;
+                    tileAdjusting = false;
+                } else {
+                    start = parseCoords(coords.substring(0, coordsSplitter));
+                    size = parseCoords(coords.substring(coordsSplitter + 1));
+                    if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
+                        return null;
+                    }
+                    // If we don't have any negative values, this entry isn't doing any image manipulation
+                    // therefore, it must be a TileMapImageLoader entry, and we should ignore it
+                    if (size.getX() > 0 && size.getY() > 0) {
+                        return null;
+                    }
+                    baseName = fileName.substring(0, tileStart);
+                }
+            } else {
+                baseName = fileName;
+            }
+
+            // Check to see if the base file is in an atlas
+            File fn = new File(baseName);
+            Path p = fn.toPath();
+            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(p)) {
                 return null;
             }
-            return super.loadImage(imgFileToAtlasMap.get(fn));
+
+            // Check to see if we need to flip the image
+            if (tileAdjusting) {
+               Image img = super.loadImage(imgFileToAtlasMap.get(p));
+               BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
+               Graphics2D g2d = result.createGraphics();
+               g2d.drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
+                   start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+               g2d.dispose();
+               return img;
+            } else { // Otherwise just return the image loaded from the atlas
+                return super.loadImage(imgFileToAtlasMap.get(p));
+            }
         }
     }
 

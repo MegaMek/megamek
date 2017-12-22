@@ -40,6 +40,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.TechConstants;
 import megamek.common.TripodMech;
 import megamek.common.WeaponType;
@@ -66,6 +67,8 @@ public class MtfFile implements IMechLoader {
     String myomerType;
     String gyroType;
     String cockpitType;
+    String lamType;
+    String motiveType;
     String ejectionType;
 
     String heatSinks;
@@ -221,10 +224,30 @@ public class MtfFile implements IMechLoader {
                 fullHead = ejectionType.substring(9).equals(Mech.FULL_HEAD_EJECT_STRING);
             } catch (Exception e) {
             }
-            if (chassisConfig.indexOf("Quad") != -1) {
+            if (chassisConfig.indexOf("QuadVee") != -1) {
+                int iMotiveType = QuadVee.MOTIVE_TRACK;
+                try {
+                    iMotiveType = QuadVee.getMotiveTypeForString(motiveType.substring(7));
+                    if (iMotiveType == QuadVee.MOTIVE_UNKNOWN) {
+                        iMotiveType = QuadVee.MOTIVE_TRACK;
+                    }
+                } catch (Exception e) {
+                    iMotiveType = QuadVee.MOTIVE_TRACK;
+                }
+                mech = new QuadVee(iGyroType, iMotiveType);
+            } else if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
-                mech = new LandAirMech(iGyroType, iCockpitType);
+                int iLAMType = LandAirMech.LAM_STANDARD;
+                try {
+                    iLAMType = LandAirMech.getLAMTypeForString(lamType.substring(4));
+                    if (iCockpitType == LandAirMech.LAM_UNKNOWN) {
+                        iCockpitType = LandAirMech.LAM_STANDARD;
+                    }
+                } catch (Exception e) {
+                    iLAMType = LandAirMech.LAM_STANDARD;
+                }
+                mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
             } else if (chassisConfig.indexOf("Tripod") != -1) {
                 mech = new TripodMech(iGyroType, iCockpitType);
             } else {
@@ -403,6 +426,8 @@ public class MtfFile implements IMechLoader {
             if (!(thisArmorType.length() > 0)) {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
+            mech.recalculateTechAdvancement();
+
             for (int x = 0; x < locationOrder.length; x++) {
                 if ((locationOrder[x] == Mech.LOC_CLEG) && !(mech instanceof TripodMech)) {
                     continue;
@@ -465,6 +490,12 @@ public class MtfFile implements IMechLoader {
             }
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
+            }
+            
+            // Set capital fighter stats for LAMs
+            if (mech instanceof LandAirMech) {
+                ((LandAirMech)mech).autoSetCapArmor();
+                ((LandAirMech)mech).autoSetFatalThresh();
             }
 
             // oog, crits.
@@ -581,6 +612,12 @@ public class MtfFile implements IMechLoader {
             } else if ((critName.indexOf("Actuator") != -1) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
                 continue;
+            } else if (critName.equalsIgnoreCase("Landing Gear")) {
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, true, isArmored));
+                continue;
+            } else if (critName.equalsIgnoreCase("Avionics")) {
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, true, isArmored));
+                continue;
             }
             // if the slot's full already, skip it.
             if (mech.getCritical(loc, i) != null) {
@@ -665,7 +702,7 @@ public class MtfFile implements IMechLoader {
                             }
                         }
                         if (bFound && (m != null)) {
-                            m.setFoundCrits(m.getFoundCrits() + 1);
+                            m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 2 : 1));
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);
                             }
@@ -897,6 +934,16 @@ public class MtfFile implements IMechLoader {
             gyroType = line;
             return true;
         }
+        
+        if (line.trim().toLowerCase().startsWith("lam:")) {
+            lamType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("motive:")) {
+            motiveType = line;
+            return true;
+        }
 
         if (line.trim().toLowerCase().startsWith("ejection:")) {
             ejectionType = line;
@@ -920,6 +967,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("myomer:")) {
             myomerType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("lam:")) {
+            lamType = line;
             return true;
         }
 

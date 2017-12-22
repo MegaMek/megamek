@@ -9,4 +9,4 @@ CattleMaster CTL-3R 'Herder' IndustrialMech,5
 Harvester Ant KIC-3 AgroMech,4
 Harvester HVR-99 AgroMech (Standard),3
 Pompier Firemech GM-3A,2
-Marco MR-8C,1
+Marco MR-8C ExplorerMech,1

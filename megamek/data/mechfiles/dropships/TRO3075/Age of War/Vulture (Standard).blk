@@ -1,0 +1,170 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Vulture
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2312
+</year>
+
+<originalBuildYear>
+2312
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+1stclassquarters:30.0:0
+crewquarters:77.0:0
+infantrybay:6.0:1:2:Foot
+lightvehiclebay:12.0:2:1
+cargobay:1336.5:1:3
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<collartype>
+0
+</collartype>
+
+<heatsinks>
+33
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6922
+</fuel>
+
+<armor_type>
+40
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+95
+77
+77
+66
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:120
+(B) LRM 5
+LRM 5
+IS Ammo LRM-5:72
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:40
+(R) (B) Autocannon/5
+(R) IS Ammo AC/5:40
+(B) Medium Laser
+(R) (B) LRM 5
+(R) LRM 5
+(R) IS Ammo LRM-5:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:40
+(R) (B) Autocannon/5
+(R) IS Ammo AC/5:40
+(B) Medium Laser
+(R) (B) LRM 5
+(R) LRM 5
+(R) IS Ammo LRM-5:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3075 - Age of War
+</source>
+
+<tonnage>
+3500.0
+</tonnage>
+
+<crew>
+239
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+7
+</escape_pod>
+

@@ -4,18 +4,18 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
-import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
-import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
+import megamek.common.Terrains;
 
 /**
  * Implementation of MovePathFinder designed to find the shortest path between
@@ -184,8 +184,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             int h1 = 0, h2 = 0;
             // We cannot estimate the needed cost for aeros
             // However, Dropships basically follow ground movement rules
-            if ((first.getEntity() instanceof Aero) 
-                    && !((Aero)first.getEntity()).isSpheroid()) {
+            if ((first.getEntity().isAero()) 
+                    && !((IAero)first.getEntity()).isSpheroid()) {
                 // We want to pick paths that use fewer MP, and are also shorter
                 // unlike ground units which could benefit from better target
                 // movement modifiers for longer paths

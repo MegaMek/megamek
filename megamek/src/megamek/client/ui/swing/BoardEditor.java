@@ -14,17 +14,20 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,8 +42,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -54,6 +60,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
@@ -81,6 +88,62 @@ import megamek.common.util.BoardUtilities;
 public class BoardEditor extends JComponent implements ItemListener,
                                                        ListSelectionListener, ActionListener, DocumentListener,
                                                        IMapSettingsObserver {
+    
+    private static class TerrainHelper implements Comparable<TerrainHelper> {
+
+        private int terrainType;
+
+        TerrainHelper (int terrain) {
+            terrainType = terrain;
+        }
+
+        public int getTerrainType() {
+            return terrainType;
+        }
+
+        public String toString() {
+            return Terrains.getEditorName(terrainType);
+        }
+
+        public String getTerrainTooltip() {
+            return Terrains.getEditorTooltip(terrainType);
+        }
+
+        @Override
+        public int compareTo(TerrainHelper o) {
+            return toString().compareTo(o.toString());
+        }
+
+    }
+    
+
+    private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7428395938750335593L;
+
+        TerrainHelper[] terrains;
+
+        @SuppressWarnings("rawtypes")
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+
+            JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index, isSelected,
+                    cellHasFocus);
+
+            if (-1 < index && null != value && null != terrains) {
+                list.setToolTipText(terrains[index].getTerrainTooltip());
+            }
+            return comp;
+        }
+
+        public void setTerrains(TerrainHelper[] terrains) {
+            this.terrains = terrains;
+        }
+    }
+
     /**
      *
      */
@@ -107,7 +170,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JList<String> lisTerrain;
     private JButton butDelTerrain;
     private JPanel panTerrainType;
-    private JComboBox<String> choTerrainType;
+    private JComboBox<TerrainHelper> choTerrainType;
     private JTextField texTerrainLevel;
     private JPanel panTerrExits;
     private JCheckBox cheTerrExitSpecified;
@@ -127,6 +190,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JButton butBoardSaveAs;
     private JButton butBoardSaveAsImage;
     private JButton butMiniMap;
+    private JButton butBoardValidate;
     private JDialog minimapW;
     private MiniMap minimap;
     private MapSettings mapSettings = MapSettings.getInstance();
@@ -150,6 +214,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         try {
             bv = new BoardView1(game, controller, null);
             bvc = bv.getComponent(true);
+            bv.setDisplayInvalidHexInfo(true);
         } catch (IOException e) {
             JOptionPane
                     .showMessageDialog(
@@ -259,12 +324,16 @@ public class BoardEditor extends JComponent implements ItemListener,
         butDelTerrain = new JButton(Messages
                                             .getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
         butDelTerrain.addActionListener(this);
-        String[] terrainArray = new String[Terrains.SIZE - 1];
+        TerrainHelper[] terrains = new TerrainHelper[Terrains.SIZE - 1];
         for (int i = 1; i < Terrains.SIZE; i++) {
-            terrainArray[i - 1] = Terrains.getName(i);
+            terrains[i - 1] = new TerrainHelper(i);
         }
+        Arrays.sort(terrains);
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
-        choTerrainType = new JComboBox<String>(terrainArray);
+        choTerrainType = new JComboBox<>(terrains);
+        ComboboxToolTipRenderer renderer = new ComboboxToolTipRenderer();
+        renderer.setTerrains(terrains);
+        choTerrainType.setRenderer(renderer);
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
         butAddTerrain = new JButton(Messages
                                             .getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
@@ -290,34 +359,37 @@ public class BoardEditor extends JComponent implements ItemListener,
                                                  .getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
         panRoads.add(cheRoadsAutoExit);
-        labTheme = new JLabel(
-                Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
+        labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
         texTheme = new JTextField("", 15); //$NON-NLS-1$
         texTheme.getDocument().addDocumentListener(this);
-        labBoard = new JLabel(
-                Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
+        labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
         butBoardNew.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         butBoardNew.addActionListener(this);
+
         butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap")); //$NON-NLS-1$
         butExpandMap.setActionCommand("fileBoardExpand"); //$NON-NLS-1$
         butExpandMap.addActionListener(this);
-        butBoardLoad = new JButton(Messages
-                                           .getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
+
+        butBoardLoad = new JButton(Messages.getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
         butBoardLoad.setActionCommand("fileBoardOpen"); //$NON-NLS-1$
         butBoardLoad.addActionListener(this);
-        butBoardSave = new JButton(Messages
-                                           .getString("BoardEditor.butBoardSave")); //$NON-NLS-1$
+        butBoardSave = new JButton(Messages.getString("BoardEditor.butBoardSave")); //$NON-NLS-1$
         butBoardSave.setActionCommand("fileBoardSave"); //$NON-NLS-1$
         butBoardSave.addActionListener(this);
-        butBoardSaveAs = new JButton(Messages
-                                             .getString("BoardEditor.butBoardSaveAs")); //$NON-NLS-1$
+
+        butBoardSaveAs = new JButton(Messages.getString("BoardEditor.butBoardSaveAs")); //$NON-NLS-1$
         butBoardSaveAs.setActionCommand("fileBoardSaveAs"); //$NON-NLS-1$
         butBoardSaveAs.addActionListener(this);
-        butBoardSaveAsImage = new JButton(Messages
-                                                  .getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
+
+        butBoardSaveAsImage = new JButton(Messages.getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
         butBoardSaveAsImage.setActionCommand("fileBoardSaveAsImage"); //$NON-NLS-1$
         butBoardSaveAsImage.addActionListener(this);
+
+        butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate")); //$NON-NLS-1$
+        butBoardValidate.setActionCommand("fileBoardValidate"); //$NON-NLS-1$
+        butBoardValidate.addActionListener(this);
+
         panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
         panButtons.add(labBoard);
         panButtons.add(new JLabel("")); // Spacer Label
@@ -328,6 +400,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         panButtons.add(butExpandMap);
         panButtons.add(butBoardSaveAs);
         panButtons.add(butBoardSaveAsImage);
+        panButtons.add(Box.createHorizontalStrut(5));
+        panButtons.add(butBoardValidate);
         blankL = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -476,12 +550,11 @@ public class BoardEditor extends JComponent implements ItemListener,
      * terrain input fields
      */
     private ITerrain enteredTerrain() {
-        int type = Terrains.getType((String) choTerrainType.getSelectedItem());
+        int type = ((TerrainHelper)choTerrainType.getSelectedItem()).getTerrainType();
         int level = Integer.parseInt(texTerrainLevel.getText());
         boolean exitsSpecified = cheTerrExitSpecified.isSelected();
         int exits = Integer.parseInt(texTerrExits.getText());
-        return Terrains.getTerrainFactory().createTerrain(type, level,
-                                                          exitsSpecified, exits);
+        return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
     }
 
     /**
@@ -617,7 +690,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             if (errBuff.length() > 0) {
                 String msg = Messages.getString("BoardEditor.invalidBoard.message");
                 String title =  Messages.getString("BoardEditor.invalidBoard.title");
-                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
             }
             menuBar.setBoard(true);
         } catch (IOException ex) {
@@ -842,6 +915,18 @@ public class BoardEditor extends JComponent implements ItemListener,
         setdlg.setVisible(true);
     }
 
+    private void showBoardValidationReport(StringBuffer errBuff) {
+        String title = Messages.getString("BoardEditor.invalidBoard.title");
+        String msg = Messages.getString("BoardEditor.invalidBoard.report");
+        msg += errBuff;
+        JTextArea textArea = new JTextArea(msg);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight() / 2));
+        JOptionPane.showMessageDialog(this, scrollPane, title, JOptionPane.ERROR_MESSAGE);
+    }
+
     //
     // ActionListener
     //
@@ -870,6 +955,16 @@ public class BoardEditor extends JComponent implements ItemListener,
             ignoreHotKeys = true;
             boardSaveAsImage(false);
             ignoreHotKeys = false;
+        } else if ("fileBoardValidate".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$StringBuffer errBuff = new StringBuffer();
+            StringBuffer errBuff = new StringBuffer();
+            board.isValid(errBuff);
+            if (errBuff.length() > 0) {
+                showBoardValidationReport(errBuff);
+            } else {
+                String title =  Messages.getString("BoardEditor.validBoard.title");
+                String msg = Messages.getString("BoardEditor.validBoard.report");
+                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+            }
         } else if (ae.getSource().equals(butDelTerrain)
                    && (lisTerrain.getSelectedValue() != null)) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
@@ -950,7 +1045,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             super.paintComponent(g);
             if (curHex != null) {
                 TilesetManager tm = bv.getTilesetManager();
-                g.drawImage(tm.baseFor(curHex), 0, 0, this);
+                g.drawImage(tm.baseFor(curHex), 0, 0, BoardView1.HEX_W, BoardView1.HEX_H, this);
                 g.setColor(getForeground());
                 if (tm.supersFor(curHex) != null) {
                     for (final Object newVar : tm.supersFor(curHex)) {
@@ -960,9 +1055,19 @@ public class BoardEditor extends JComponent implements ItemListener,
                     }
                 }
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
-                g
-                        .drawString(
-                                Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
+                g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
+                StringBuffer errBuf = new StringBuffer();
+                if (!curHex.isValid(errBuf)) {
+                    g.setFont(new Font("SansSerif", Font.BOLD, 14)); //$NON-NLS-1$
+                    Point hexCenter = new Point(BoardView1.HEX_W / 2, BoardView1.HEX_H / 2);
+                    bv.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
+                            false);
+                    String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
+                    tooltip = tooltip.replace("\n", "<br>");
+                    setToolTipText(tooltip);
+                } else {
+                    setToolTipText(null);
+                }
             } else {
                 g.clearRect(0, 0, 72, 72);
             }

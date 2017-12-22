@@ -251,8 +251,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weighty = 0.0;
         add(cbUnitType, c);
         for (int i = 0; i < UNIT_TYPES.length; i++) {
-            if (i < UnitType.JUMPSHIP || !use.equals(Use.FORMATION_BUILDER)) {
-                cbUnitType.addItem(UnitType.getTypeName(i));
+            if (UNIT_TYPES[i] < UnitType.JUMPSHIP || !use.equals(Use.FORMATION_BUILDER)) {
+                cbUnitType.addItem(UnitType.getTypeName(UNIT_TYPES[i]));
             }
         }
         cbUnitType.addActionListener(this);

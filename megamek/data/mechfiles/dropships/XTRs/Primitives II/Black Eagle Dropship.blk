@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,89 +20,36 @@ Black Eagle
 (Standard)
 </Model>
 
-<Tonnage>
-4500
-</Tonnage>
+<year>
+2453
+</year>
+
+<originalBuildYear>
+2453
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:12.0:2
+1stclassquarters:50.0:0
+crewquarters:161.0:0
+cargobay:545.5:2:2
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-191
-171
-171
-120
-</Armor>
-
-<Nose Equipment>
-ISLargeLaser
-ISLargeLaser
-IS LRM-20
-IS LRM-20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargeLaser
-ISLargeLaser
-IS LRM-20
-IS LRM-20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-(R) IS LRM-20
-(R) ISLRM20 Ammo
-(R) ISLRM20 Ammo
-(R) ISLargeLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-
-</Left Side Equipment>
-
-<Right Side Equipment> 
-ISLargeLaser
-ISLargeLaser
-IS LRM-20
-IS LRM-20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-(R) IS LRM-20
-(R) ISLRM20 Ammo
-(R) ISLRM20 Ammo
-(R) ISLargeLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-(R) ISMediumLaser
-
-</Right Side Equipment>
-
-<Aft Equipment> 
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-16
-</structural_integrity>
+<collartype>
+0
+</collartype>
 
 <heatsinks>
 156
@@ -113,57 +60,123 @@ ISMediumLaser
 </sink_type>
 
 <fuel>
-7500
+6819
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<armor_type>
+40
+</armor_type>
 
-<year>
-2453
-</year>
-
-<source>
-XTRO Primitives II - Age of War
-</source>
+<armor_tech>
+1
+</armor_tech>
 
 <internal_type>
-0
+-1
 </internal_type>
+
+<armor>
+188
+168
+168
+120
+</armor>
+
+<Nose Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:36
+(B) Large Laser
+Large Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:36
+(B) Large Laser
+Large Laser
+(R) (B) LRM 20
+(R) IS Ammo LRM-20:18
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:36
+(B) Large Laser
+Large Laser
+(R) (B) LRM 20
+(R) IS Ammo LRM-20:18
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+
+<source>
+TRO Primitives II - Age of War
+</source>
+
+<tonnage>
+4500.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
-17
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-spheroid
-</motion_type>
-
-<transporters>
-MechBay:12:2
-CargoBay:540:2
-</transporters>
-
-<escape_pod>
-8
-</escape_pod>
-<life_boat>
-1
-</life_boat>
-
 <crew>
 52
 </crew>
 
+<officers>
+5
+</officers>
+
+<gunners>
+5
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

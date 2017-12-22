@@ -13,11 +13,11 @@ ProtoMech
 </UnitType>
 
 <Name>
-Svartalfa
+Svartalfa Ultra ProtoMech
 </Name>
 
 <Model>
-Ultra
+(Standard)
 </Model>
 
 <Tonnage>
@@ -25,7 +25,7 @@ Ultra
 </Tonnage>
 
 <cruiseMP>
-1
+4
 </cruiseMP>
 
 <jumpingMP>
@@ -37,8 +37,8 @@ Ultra
 23
 6
 6
-15
-6
+14
+7
 </Armor>
 
 <Main Gun Equipment>
@@ -49,7 +49,6 @@ CLStreakSRM6 Ammo (10)
 <Torso Equipment>
 Clan Machine Gun
 Clan Machine Gun Ammo (50)
-ProtoMechPartialWing
 </Torso Equipment>
 
 <Right Arm Equipment>
@@ -82,8 +81,12 @@ Clan Level 4
 0
 </engine_type>
 
+<glider>
+true
+</glider
+
 <motion_type>
-Biped
+WiGE
 </motion_type>
 
 <source>

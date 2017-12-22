@@ -17,8 +17,8 @@ package megamek.common;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying ASFs and Small Craft
+ * aboard large spacecraft and mobile structures
  */
 
 public final class SmallCraftBay extends Bay {
@@ -52,6 +52,7 @@ public final class SmallCraftBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.currentdoors = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
     }
@@ -70,14 +71,18 @@ public final class SmallCraftBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only ASFs
-        if ((unit instanceof Aero) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
+        // Only ASFs, Fighter-mode LAMs or Small Craft
+        if (((unit.isAero()) 
+        		&& !(unit instanceof FighterSquadron) 
+        		&& !(unit instanceof Dropship) 
+        		&& !(unit instanceof Jumpship)) 
+        		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
 
         // System.err.print("Current space to load " + unit.getShortName() +
         // " is " + this.currentSpace + "\n");
-        if (currentSpace < 1) {
+        if (getUnused() < 1) {
             result = false;
         }
 
@@ -85,7 +90,7 @@ public final class SmallCraftBay extends Bay {
         if (getRecoverySlots() < 1) {
             result = false;
         }
-
+        
         // Return our result.
         return result;
     }
@@ -103,7 +108,7 @@ public final class SmallCraftBay extends Bay {
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= 1;
@@ -117,7 +122,7 @@ public final class SmallCraftBay extends Bay {
     public void recover(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + getUnused());
         }
 
         currentSpace -= 1;
@@ -132,14 +137,14 @@ public final class SmallCraftBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Small Craft (" + getDoors() + " doors) - "
-                    + String.format("%1$,.0f", currentSpace)
-                    + (currentSpace > 1 ? " units (" : " unit (")
+            return "Small Craft " + numDoorsString() + " - "
+                    + String.format("%1$,.0f", getUnused())
+                    + (getUnused() > 1 ? " units (" : " unit (")
                     + getRecoverySlots() + " recovery open)";
         } else {
-            return "Small Craft (" + getDoors() + " doors) - "
-                    + String.format("%1$,.0f", currentSpace)
-                    + (currentSpace > 1 ? " units" : " unit");
+            return "Small Craft " + numDoorsString() + " - "
+                    + String.format("%1$,.0f", getUnused())
+                    + (getUnused() > 1 ? " units" : " unit");
         }
     }
 
@@ -166,12 +171,14 @@ public final class SmallCraftBay extends Bay {
     public Vector<Integer> initializeRecoverySlots() {
 
         Vector<Integer> slots = new Vector<Integer>();
-
-        for (int i = 0; i < doors; i++) {
+        // We have to account for changes in the number of doors, so remove all slots first.
+    	slots.removeAllElements();
+    	//now add 2 slots back on for each functional door.
+        for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
         }
-
+        recoverySlots = slots;
         return slots;
     }
 
@@ -219,9 +226,10 @@ public final class SmallCraftBay extends Bay {
     // destroy a door
     @Override
     public void destroyDoor() {
-
-        doors -= 1;
-
+    	if (getCurrentDoors() > 0) {
+    		setCurrentDoors(getCurrentDoors() - 1);
+    	}
+    
         // get rid of two empty recovery slots
         // it doesn't matter which ones
         if (recoverySlots.size() > 0) {
@@ -232,24 +240,30 @@ public final class SmallCraftBay extends Bay {
         }
     }
 
-    // get doors should be different - first I must subtract the number of
-    // active recoveries
-    @Override
-    public int getDoors() {
-
-        // just take the available recovery slots, divided by two
-        return (int) Math.floor(getRecoverySlots() / 2.0);
-
-    }
-
     @Override
     public double getWeight() {
         return totalSpace * 200;
     }
 
     @Override
+    public int getPersonnel(boolean clan) {
+        return (int)totalSpace * 5;
+    }
+
+    @Override
     public String toString() {
         return "smallcraftbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+    }
+
+    public static TechAdvancement techAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+    
+    public TechAdvancement getTechAdvancement() {
+        return SmallCraftBay.techAdvancement();
     }
 
 } // End package class TroopSpace implements Transporter

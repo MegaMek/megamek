@@ -188,16 +188,19 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox autoDeclareSearchlight;
     private JCheckBox nagForMASC;
     private JCheckBox nagForPSR;
+    private JCheckBox nagForWiGELanding;
     private JCheckBox nagForNoAction;
     private JCheckBox animateMove;
     private JCheckBox showWrecks;
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
     private JCheckBox showWpsinTT;
+    private JCheckBox showArmorMiniVisTT;
     private JCheckBox chkAntiAliasing;
     private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
+    private JTextField tooltipDistSupression;
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
@@ -474,9 +477,25 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(tooltipDismissDelay);
         comps.add(row);
         
+        tooltipDistSupression = new JTextField(4);
+        tooltipDistSupression.setMaximumSize(new Dimension(150,40));
+        tooltipDistSupression.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
+        JLabel tooltipDistSupressionLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDistSuppression")); //$NON-NLS-1$
+        tooltipDistSupressionLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
+        row = new ArrayList<>();
+        row.add(tooltipDistSupressionLabel);
+        row.add(tooltipDistSupression);
+        comps.add(row);
+
         showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showWpsinTT);
+        comps.add(row);
+
+        // copied from showWpsinTT, kept comment as it looks like a relevant compiler/editor flag?
+        showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showArmorMiniVisTT);
         comps.add(row);
         
         // Horizontal Line and Spacer
@@ -530,6 +549,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         nagForPSR = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(nagForPSR);
+        comps.add(row);
+
+        nagForWiGELanding = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForWiGELanding")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(nagForWiGELanding);
         comps.add(row);
 
         nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
@@ -696,6 +720,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
         nagForMASC.setSelected(gs.getNagForMASC());
         nagForPSR.setSelected(gs.getNagForPSR());
+        nagForWiGELanding.setSelected(gs.getNagForWiGELanding());
         nagForNoAction.setSelected(gs.getNagForNoAction());
         animateMove.setSelected(gs.getShowMoveStep());
         showWrecks.setSelected(gs.getShowWrecks());
@@ -703,8 +728,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
+        tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
         showWpsinTT.setSelected(gs.getShowWpsinTT());
-        
+        showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
+
         defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
 
         mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
@@ -860,14 +887,17 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setDefaultWeaponSortOrder(defaultWeaponSortOrder.getSelectedIndex());
         gs.setNagForMASC(nagForMASC.isSelected());
         gs.setNagForPSR(nagForPSR.isSelected());
+        gs.setNagForWiGELanding(nagForWiGELanding.isSelected());
         gs.setNagForNoAction(nagForNoAction.isSelected());
         gs.setShowMoveStep(animateMove.isSelected());
         gs.setShowWrecks(showWrecks.isSelected());
         gs.setSoundMute(soundMute.isSelected());
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setShowWpsinTT(showWpsinTT.isSelected());
+        gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
+        gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
 

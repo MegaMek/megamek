@@ -48,7 +48,7 @@ UMU
 BACuttingTorch:RA
 ISBASRM1OS:LA
 ISBALightMachineGun:Body
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body
 BAArmoredGlove:RA
 BAArmoredGlove:LA

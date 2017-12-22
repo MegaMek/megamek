@@ -281,7 +281,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // attacker is spotting
-        if (ae.isSpotting()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting");
         }
         // piloting skill differential

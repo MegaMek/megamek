@@ -108,7 +108,7 @@ public class ForceNode extends RulesetNode {
 					String content = n.getContent();
 					if (content.startsWith("-")) {
 						for (String p : content.replaceFirst("\\-", "").split(",")) {
-							fd.getMovementModes().remove(p);
+							fd.getMovementModes().remove(EntityMovementMode.getMode(p));
 						}
 						break;
 					}
@@ -149,7 +149,7 @@ public class ForceNode extends RulesetNode {
 					}
 					if (content.startsWith("-")) {
 						for (String p : content.replaceFirst("\\-", "").split(",")) {
-							fd.getRoles().remove(p);
+							fd.getRoles().remove(MissionRole.parseRole(p));
 						}
 						break;
 					}

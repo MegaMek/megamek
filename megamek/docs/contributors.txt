@@ -120,6 +120,7 @@
 	 Mike V
      Dervishx5 (Jihad MapPack and Derv MapPack)
 	 DancefloorLandmine
+	 arekP64
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -158,7 +159,7 @@
      Solarmech (MekTek Development Team)
      #player2player on Sorcery
 
-  Various Images:
+  Various Images(including Sprites):
      Nehal Mistry
      Paolo D'Inca <paolodinca@hotmail.com>
      Ian Hamilton <jabberwocky@planethalflife.com>
@@ -216,6 +217,9 @@
   Camo Pack
   	 SeaVea
      Colonel Sanders Light (Folders noted with CSL)
+	 
+  Splash Screen
+	 Florian "SpOoKy777" Mellies <spooky777@t-online.de>
 	 
   Princess Behaviours
 	 Peter Farland

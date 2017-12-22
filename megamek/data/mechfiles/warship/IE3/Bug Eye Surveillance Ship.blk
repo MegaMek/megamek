@@ -39,8 +39,10 @@ Bug-Eye Surveillance Ship
 
 <Nose Equipment>
 ISPPC
+ISLargeNavalCommScannerSuite
 ISLookDownRadar
-ISHypersprectralImager
+ISInfraredImager
+ISHighResImager
 </Nose Equipment>
 
 <Front Left Side Equipment>
@@ -65,8 +67,10 @@ ISLargeLaser
 <Aft Equipment> 
 ISAC20
 ISAC20 Ammo:30
-ISLargeNavalCommScannerSuite
+
 </Aft Equipment>
+
+
 
 <structural_integrity>
 20

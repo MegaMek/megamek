@@ -42,7 +42,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -73,21 +82,19 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
+import megamek.common.IBomber;
 import megamek.common.IGame;
-import megamek.common.Jumpship;
-import megamek.common.SmallCraft;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.WeaponOrderHandler;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameCFREvent;
@@ -102,12 +109,13 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.logging.Logger;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
@@ -145,7 +153,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
     private String helpFileName = 
-            Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
+            SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
+                                                          Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
 
     public MegaMekController controller = null;
     // keep me
@@ -433,6 +442,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             @Override
             protected void processKeyEvent(KeyEvent e) {
                 //menuBar.dispatchEvent(e);
+                // Make the source be the ClientGUI and not the dialog
+                // This prevents a ClassCastException in ToolTipManager
+                e.setSource(ClientGUI.this);
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);
@@ -590,7 +602,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
                     JOptionPane.ERROR_MESSAGE);
-            new Logger().log(getClass(), "showSkinningHowTo", e);
+            DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
         }
     }
 
@@ -640,7 +652,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Called when the user selects the "View->Round Report" menu item.
      */
     private void showRoundReport() {
+        ignoreHotKeys = true;
         new MiniReportDisplay(frame, client).setVisible(true);
+        ignoreHotKeys = false;
     }
 
     /**
@@ -1515,10 +1529,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         // the movement turn are considered selectable
                         entity.setDone(true);
                         entity.setUnloaded(true);
-                        if ((entity instanceof Aero)
-                                && !((entity instanceof SmallCraft) 
-                                        || (entity instanceof Jumpship))) {
-                            ((Aero)entity).applyBombs();
+                        if (entity instanceof IBomber) {
+                            ((IBomber)entity).applyBombs();
                         }
                     }
                 }
@@ -1726,7 +1738,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             camo = bv.getTilesetManager().getPlayerCamo(player);
         }
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp)));
+        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
+        if (icon != null) {
+            bp.setIcon(new ImageIcon(icon));
+        } else {
+            bp.setIcon(null);
+        }
     }
 
     /**
@@ -2091,6 +2108,28 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         client.sendHiddenPBSCFRResponse(null);
                     }
                     break;
+                case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    //Set up the selection pane
+                    String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
+                    msg = Messages.getString(i18nString);
+                    i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
+                    title = Messages.getString(i18nString);
+                    String input = (String) JOptionPane.showInputDialog(frame, msg,
+                            title, JOptionPane.QUESTION_MESSAGE, null,
+                            targetDescriptions.toArray(), targetDescriptions.get(0));
+                    if (input != null) {
+                        for (int i = 0; i < targetDescriptions.size(); i++) {
+                            if (input.equals(targetDescriptions.get(i))) {
+                                client.sendTelemissileTargetCFRResponse(i);
+                                break;
+                            }
+                        }
+                    } else {
+                        //If input IS null, as in the case of pressing the close or cancel buttons...
+                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        client.sendTelemissileTargetCFRResponse(0);
+                    }
             }
         }
     };

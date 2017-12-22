@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.43.6-git
+v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.
 + Account for Clan CASE in unit cost calculations.
 + Fixes for Princess aircraft refusing to engage ground targets, being stuck on the edge of the map

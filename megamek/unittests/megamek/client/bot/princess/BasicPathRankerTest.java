@@ -120,58 +120,7 @@ public class BasicPathRankerTest {
         if (!StringUtil.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
-    }
-
-    @Test
-    public void testDoAeroSpecificRanking() {
-
-        final BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
-
-        final Aero mockAero = Mockito.mock(Aero.class);
-        Mockito.when(mockAero.isAero()).thenReturn(true);
-        Mockito.when(mockAero.isAirborne()).thenReturn(true);
-        Mockito.when(mockAero.isSpheroid()).thenReturn(false);
-
-        // Test a normal flight.
-        final MoveStep mockLastStep = Mockito.mock(MoveStep.class);
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
-        final MovePath mockPath = Mockito.mock(MovePath.class);
-        Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
-        Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
-        Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
-        Mockito.when(mockPath.getEntity()).thenReturn(mockAero);
-        Mockito.when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
-        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath));
-
-        // Test a stall
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
-        Mockito.when(mockPath.getFinalVelocity()).thenReturn(0);
-        Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
-        RankedPath expected = new RankedPath(-1000d, mockPath, "stall");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
-
-        // Test a crash.
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
-        Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
-        Mockito.when(mockPath.getFinalAltitude()).thenReturn(0);
-        expected = new RankedPath(-10000d, mockPath, "crash");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
-
-        // Test flying off the board.
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.RETURN);
-        Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
-        Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
-        Mockito.when(mockPath.fliesOffBoard()).thenReturn(true);
-        expected = new RankedPath(-5d, mockPath, "off-board");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
-        
-        // VTOL flying off board.
-        final VTOL mockVtol = Mockito.mock(VTOL.class);
-        Mockito.when(mockVtol.getEntityType()).thenReturn(Entity.ETYPE_VTOL);
-        Mockito.when(mockPath.getEntity()).thenReturn(mockVtol);
-        expected = new RankedPath(-5000d, mockPath, "off-board");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath));
-    }
+    }   
 
     @Test
     public void testGetMovePathSuccessProbability() {

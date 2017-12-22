@@ -2005,8 +2005,12 @@ public class MULParser {
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0){
-                        bombChoices[BombType.getBombTypeFromInternalName(type)] 
-                                += Integer.parseInt(load);
+                        int bombType = BombType.getBombTypeFromInternalName(type);
+                        if(bombType <= BombType.B_NONE || bombType >= BombType.B_NUM) {
+                            continue;
+                        }
+                        
+                        bombChoices[bombType] += Integer.parseInt(load);
                         ((IBomber) entity).setBombChoices(bombChoices);
                     }
                 }

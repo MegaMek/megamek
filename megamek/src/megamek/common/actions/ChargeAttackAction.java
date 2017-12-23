@@ -509,9 +509,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
      */
     public static int getDamageTakenBy(Entity entity, Building bldg,
                                        Coords coords) {
-        // ASSUMPTION: 10% of buildings CF at start of phase, round up.
-        return (int) Math.floor(bldg.getDamageFromScale()
-                                * Math.ceil(bldg.getPhaseCF(coords) / 10.0));
+        // Charges against targets that have no tonnage use the attacker's tonnage to compute damage.
+        return getDamageTakenBy(entity, entity, false, entity.delta_distance);
     }
 
     public static int getDamageTakenBy(Entity entity, Entity target) {

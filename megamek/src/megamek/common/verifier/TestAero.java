@@ -1107,7 +1107,7 @@ public class TestAero extends TestEntity {
                         "heatsinks!");
                 return false;
             } 
-            heatDissipation = aero.getHeatSinks();
+            heatDissipation = aero.getHeatSinks() + aero.getEngine().integralHeatSinkCapacity(false);
             
             if(maxWeapHeat > heatDissipation) {
                 buff.append("Conventional fighters must be able to " +
@@ -1156,7 +1156,8 @@ public class TestAero extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
-        if (getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks()) {
+        if ((getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks())
+                && !aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             buff.append("Heat Sinks:\n");
             buff.append(" Engine    "
                     + engine.integralHeatSinkCapacity(false) + "\n");

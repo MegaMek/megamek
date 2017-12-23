@@ -221,6 +221,10 @@ public abstract class TestEntity implements TestEntityOption {
     public boolean showIncorrectIntroYear() {
         return options.showIncorrectIntroYear();
     }
+    
+    public int getIntroYearMargin() {
+        return options.getIntroYearMargin();
+    }
 
     public boolean skip() {
         return options.skip();
@@ -1035,13 +1039,14 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public boolean hasIncorrectIntroYear(StringBuffer buff) {
         boolean retVal = false;
-        if (getEntity().getEarliestTechDate() <= getEntity().getYear()) {
+        if (getEntity().getEarliestTechDate() <= getEntity().getYear() + getIntroYearMargin()) {
             return false;
         }
+        int useIntroYear = getEntity().getYear() + getIntroYearMargin();
         if (getEntity().isOmni()) {
             int introDate = Entity.getOmniAdvancement()
                     .getIntroductionDate(getEntity().isClan() || getEntity().isMixedTech());
-            if (getEntity().getYear() < introDate) {
+            if (useIntroYear < introDate) {
                 retVal = true;
                 buff.append("Omni technology has intro date of ");
                 buff.append(introDate);
@@ -1059,7 +1064,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = nextE.getIntroductionDate();
             }
-            if (introDate > getEntity().getYear()) {
+            if (introDate > useIntroYear) {
                 retVal = true;
                 buff.append(nextE.getName());
                 buff.append(" has intro date of ");
@@ -1075,7 +1080,7 @@ public abstract class TestEntity implements TestEntityOption {
             int intro = getEntity().isMixedTech()?
                     Entity.getPatchworkArmorAdvancement().getIntroductionDate() :
                         Entity.getPatchworkArmorAdvancement().getIntroductionDate(getEntity().isClan());
-            if (getEntity().getYear() < intro) {
+            if (useIntroYear < intro) {
                 retVal = true;
                 buff.append("Patchwork armor has intro date of ");
                 buff.append(intro);
@@ -1101,7 +1106,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = at.getIntroductionDate();
             }
-            if (introDate > getEntity().getYear()) {
+            if (introDate > useIntroYear) {
                 retVal = true;
                 buff.append(at.getName());
                 buff.append(" armor has intro date of ");
@@ -1124,7 +1129,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = cockpit.getIntroductionDate();
             }
-            if (introDate > getEntity().getYear()) {
+            if (introDate > useIntroYear) {
                 retVal = true;
                 buff.append(cockpitName);
                 buff.append(" has intro date of ");
@@ -1139,7 +1144,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (getEntity().isMixedTech()) {
                     introDate = gyro.getIntroductionDate();
                 }
-                if (introDate > getEntity().getYear()) {
+                if (introDate > useIntroYear) {
                     retVal = true;
                     buff.append(((Mech)getEntity()).getGyroTypeString());
                     buff.append(" has intro date of ");
@@ -1154,7 +1159,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = engine.getIntroductionDate();
             }
-            if (introDate > getEntity().getYear()) {
+            if (introDate > useIntroYear) {
                 retVal = true;
                 buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append(" has intro date of ");

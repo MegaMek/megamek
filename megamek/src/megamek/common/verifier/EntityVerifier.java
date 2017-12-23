@@ -200,9 +200,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(infOption.printOptions());
 
         int failures = 0;
-        int failedMek, failedTank, failedAero, failedConvFighter, failedSmallCraft, failedDropship,
+        int failedMek, failedTank, failedAero, // failedConvFighter, failedSmallCraft, failedDropship,
             failedBA, failedInfantry;
-        failedMek = failedTank = failedAero = failedConvFighter = failedSmallCraft = failedDropship
+        failedMek = failedTank = failedAero // = failedConvFighter = failedSmallCraft = failedDropship
                 = failedBA = failedInfantry = 0;
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
@@ -227,12 +227,14 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                         failedTank++;
                     } else if (ms[i].getUnitType().equals("Aero")) {
                         failedAero++;
+                        /*
                     } else if (ms[i].getUnitType().equals("Conventional Fighter")) {
                         failedConvFighter++;
                     } else if (ms[i].getUnitType().equals("Small Craft")) {
                         failedSmallCraft++;
                     } else if (ms[i].getUnitType().equals("Dropship")) {
                         failedDropship++;
+                        */
                     } else if (ms[i].getUnitType().equals("BattleArmor")) {
                         failedBA++;
                     } else if (ms[i].getUnitType().equals("Infantry")) {
@@ -245,9 +247,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println("\t Failed Meks: " + failedMek);
         System.out.println("\t Failed Tanks: " + failedTank);
         System.out.println("\t Failed ASFs: " + failedAero);
-        System.out.println("\t Failed CFs: " + failedConvFighter);
-        System.out.println("\t Failed Small Craft: " + failedSmallCraft);
-        System.out.println("\t Failed Dropships: " + failedDropship);
+//        System.out.println("\t Failed CFs: " + failedConvFighter);
+//        System.out.println("\t Failed Small Craft: " + failedSmallCraft);
+//        System.out.println("\t Failed Dropships: " + failedDropship);
         System.out.println("\t Failed BA: " + failedBA);
         System.out.println("\t Failed Infantry: " + failedInfantry);
     }

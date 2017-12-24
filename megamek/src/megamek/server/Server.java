@@ -9598,7 +9598,7 @@ public class Server implements Runnable {
                     addReport(r);
                     // check for quicksand
                     addReport(checkQuickSand(curPos));
-                } else {
+                } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                     rollTarget = new PilotingRollData(entity.getId(),
                             5, "entering boggy terrain");
                     rollTarget.append(new PilotingRollData(entity.getId(),

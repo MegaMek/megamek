@@ -2,6 +2,7 @@
 ----------------
 v0.43.7-git
 + Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)
++ Issue #637: Infantry in swamp/mud terrain should not have a psr check (Bog Down)
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

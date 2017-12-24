@@ -746,6 +746,11 @@ public class TestSmallCraft extends TestAero {
         return illegal;
     }
     
+    /**
+     * Checks that the unit meets minimum crew and quarters requirements.
+     * @param buffer Where to write messages explaining failures.
+     * @return  true if the crew data is valid.
+     */
     public boolean correctCrew(StringBuffer buffer) {
         boolean illegal = false;
         int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
@@ -772,7 +777,7 @@ public class TestSmallCraft extends TestAero {
             buffer.append("Requires quarters for " + crewSize + " crew but only has " + quarters + "\n");
             illegal = true;
         }
-        return illegal;
+        return !illegal;
     }
 
     @Override

@@ -792,7 +792,11 @@ public class TestAero extends TestEntity {
     public String printWeightMisc() {
         double weight = getWeightMisc();
         if (weight > 0){
-            return "VSTOL equipment: " + weight + "\n";
+            StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
+                    "VSTOL equipment:", getPrintSize() - 5));
+            retVal.append(makeWeightString(weight));
+            retVal.append("\n");
+            return retVal.toString();
         }
         return "";
     }
@@ -883,7 +887,7 @@ public class TestAero extends TestEntity {
         }
         if (armorTotal > maxArmorPoints){
             buff.append("Total armor," + armorTotal + 
-                    ", is greater than the maximum: " + maxArmorPoints);
+                    ", is greater than the maximum: " + maxArmorPoints + "\n");
             correct = false;
         }
 
@@ -1104,7 +1108,7 @@ public class TestAero extends TestEntity {
             int heatDissipation = 0;
             if (aero.getHeatType() == Aero.HEAT_DOUBLE){
                 buff.append("Conventional fighters may only use single " +
-                        "heatsinks!");
+                        "heatsinks!\n");
                 return false;
             } 
             heatDissipation = aero.getHeatSinks() + aero.getEngine().integralHeatSinkCapacity(false);

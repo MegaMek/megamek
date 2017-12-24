@@ -218,6 +218,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 if (entity == null) {
                     continue;
                 }
+                if (entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
+                    continue;
+                }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
                         loadingVerbosity,entity.getTechLevel(),failsOnly)) {
                     failures++;

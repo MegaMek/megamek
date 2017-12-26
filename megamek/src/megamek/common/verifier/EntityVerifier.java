@@ -16,6 +16,8 @@
 package megamek.common.verifier;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -107,6 +109,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     
     public boolean checkEntity(Entity entity, String fileString,
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
+        final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
         TestEntity testEntity = null;
         if (entity instanceof Mech) {
@@ -148,7 +151,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 }
                 System.out.print(testEntity.printEntity());                        
                 System.out.println("BV: " + entity.calculateBattleValue()
-                        + "    Cost: " + entity.getCost(false));
+                        + "    Cost: " + FMT.format(entity.getCost(false)));
             }
         } else {
             StringBuffer buff = new StringBuffer();
@@ -159,7 +162,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 System.out.println("Found in: " + testEntity.fileString);
                 System.out.println("Intro year: " + entity.getYear());
                 System.out.println("BV: " + entity.calculateBattleValue()
-                + "    Cost: " + entity.getCost(false));
+                + "    Cost: " + FMT.format(entity.getCost(false)));
                 System.out.println(buff);
 
             }

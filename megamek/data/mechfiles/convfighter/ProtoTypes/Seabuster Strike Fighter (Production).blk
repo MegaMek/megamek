@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,38 +20,32 @@ SeaBuster Strike Fighter
 (Standard)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3081
+</year>
+
+<originalBuildYear>
+3081
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-19
-10
-10
-10
-</Armor>
-
-<Nose Equipment>
-ISUltraAC20
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISReconCamera
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -65,30 +59,49 @@ ISReconCamera
 320
 </fuel>
 
-<type>
-IS Level 3
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3081
-</year>
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+19
+10
+10
+10
+</armor>
+
+<Nose Equipment>
+ISUltraAC20
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+ISReconCamera
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISFlotationHull
+</Aft Equipment>
 
 <source>
 TRO Prototypes - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-6
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

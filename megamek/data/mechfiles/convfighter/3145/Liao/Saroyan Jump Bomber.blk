@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,63 @@ Saroyan Jump Bomber
 (Standard)
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3096
+</year>
+
+<originalBuildYear>
+3096
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+640
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
 8
 6
 6
 4
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISTAG
@@ -46,45 +89,15 @@ ISTAG
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISGuardianECM
+IS Vehicular Stealth
+ISGuardianECMSuite
 </Aft Equipment>
-
-<heatsinks>
-10
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-640	
-</fuel>
-
-<type>
-IS Level 3
-</type>
-
-<year>
-3096
-</year>
 
 <source>
 TRO 3145 Capellan Confederation - Early Republic
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+25.0
+</tonnage>
 
-<armor_type>
-22
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

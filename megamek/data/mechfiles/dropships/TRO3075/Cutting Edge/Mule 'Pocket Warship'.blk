@@ -37,10 +37,10 @@ Spheroid
 </motion_type>
 
 <transporters>
-crewquarters:119.0:0
+asfbay:6.0:1:1
 1stclassquarters:40.0:0
-cargobay:316.5:1:1
-asfbay:6.0:1:2
+crewquarters:126.0:0
+cargobay:371.5:1:2
 </transporters>
 
 <SafeThrust>
@@ -139,8 +139,12 @@ TRO 3075 - Jihad
 11200.0
 </tonnage>
 
+<designtype>
+1
+</designtype>
+
 <crew>
-29
+31
 </crew>
 
 <officers>

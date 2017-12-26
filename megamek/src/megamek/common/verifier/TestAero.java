@@ -1192,7 +1192,7 @@ public class TestAero extends TestEntity {
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
         
-        if (weapon.isSubCapital() || (weapon.hasFlag(WeaponType.F_MISSILE))
+        if (weapon.isSubCapital() || (weapon.isCapital() && (weapon.hasFlag(WeaponType.F_MISSILE)))
                 || (weapon.getAtClass() == WeaponType.CLASS_SCREEN)) {
             return en.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);

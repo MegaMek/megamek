@@ -61,10 +61,7 @@ import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -780,7 +777,12 @@ public class TestAero extends TestEntity {
 
     @Override
     public double getWeightHeatSinks() {
-        return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);        
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            int required = countHeatEnergyWeapons();
+            return Math.max(0, required - engine.getWeightFreeEngineHeatSinks());
+        } else {
+            return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);
+        }
     }
 
     @Override
@@ -1101,30 +1103,9 @@ public class TestAero extends TestEntity {
             buff.append("Invalid heatsink type!  Valid types are "
                     + Aero.HEAT_SINGLE + " and " + Aero.HEAT_DOUBLE
                     + ".  Found " + aero.getHeatType() + ".");
+            return false;
         }
-        // Conventional Fighters must be heat neutral
-        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            int maxWeapHeat = countHeatEnergyWeapons();
-            int heatDissipation = 0;
-            if (aero.getHeatType() == Aero.HEAT_DOUBLE){
-                buff.append("Conventional fighters may only use single " +
-                        "heatsinks!\n");
-                return false;
-            } 
-            heatDissipation = aero.getHeatSinks() + aero.getEngine().integralHeatSinkCapacity(false);
-            
-            if(maxWeapHeat > heatDissipation) {
-                buff.append("Conventional fighters must be able to " +
-                        "dissipate all heat from energy weapons! \n" +
-                        "Max energy heat: " + maxWeapHeat + 
-                        ", max dissipation: " + heatDissipation);
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }        
+        return true;
     }
 
     @Override

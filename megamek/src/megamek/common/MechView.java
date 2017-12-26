@@ -48,6 +48,7 @@ public class MechView {
     private boolean isProto;
     private boolean isGunEmplacement;
     private boolean isAero;
+    private boolean isConvFighter;
     private boolean isFixedWingSupport;
     private boolean isSquadron;
     private boolean isSmallCraft;
@@ -74,6 +75,7 @@ public class MechView {
         isProto = entity instanceof Protomech;
         isGunEmplacement = entity instanceof GunEmplacement;
         isAero = entity instanceof Aero;
+        isConvFighter = entity instanceof ConvFighter;
         isFixedWingSupport = entity instanceof FixedWingSupport;
         isSquadron = entity instanceof FighterSquadron;
         isSmallCraft = entity instanceof SmallCraft;
@@ -303,7 +305,7 @@ public class MechView {
             sBasic.append("<br>"); //$NON-NLS-1$
         }
 
-        if (isAero) {
+        if (isAero && !isConvFighter) {
             Aero a = (Aero) entity;
             sBasic.append("<b>").append(Messages.getString("MechView.HeatSinks")) //$NON-NLS-1$
                     .append("</b>").append(a.getHeatSinks());

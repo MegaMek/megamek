@@ -975,8 +975,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // targeting mods for evasive action by large craft
             // Per TW, this does not apply when firing Capital Missiles
-            if (aero.isEvading() && 
-                    (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE 
+            if (aero.isEvading() &&
+                    (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE
                             || wtype.getAtClass() == WeaponType.CLASS_AR10
                             || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
                 toHit.addModifier(+2, "attacker is evading");

@@ -37,12 +37,12 @@ Aerodyne
 </motion_type>
 
 <transporters>
-battlearmorbay:3.0:1:1
 cargobay:1.0:1:2
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
+battlearmorbay:3.0:1:1
 </transporters>
 
 <SafeThrust>

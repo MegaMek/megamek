@@ -22459,6 +22459,22 @@ public class Server implements Runnable {
             return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag,
                                 damageIS, areaSatArty, throughFront, underWater, nukeS2S);
         }
+        
+        // Battle Armor takes full damage to each trooper from area-effect.
+        if (areaSatArty && (te instanceof BattleArmor)) {
+            r = new Report(6044);
+            r.subject = te.getId();
+            r.indent(2);
+            vDesc.add(r);
+            for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
+                hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
+                if (te.getInternal(hit) > 0) {
+                    vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, bFrag,
+                            damageIS, false, throughFront, underWater, nukeS2S));
+                }
+            }
+            return vDesc;
+        }
 
         // This is good for shields if a shield absorps the hit it shouldn't
         // effect the pilot.
@@ -24645,6 +24661,9 @@ public class Server implements Runnable {
 
             while (damage > 0) {
                 int cluster = Math.min(clusterAmt, damage);
+                if (entity instanceof Infantry) {
+                    cluster = damage;
+                }
                 int table = ToHitData.HIT_NORMAL;
                 if (entity instanceof Protomech) {
                     table = ToHitData.HIT_SPECIAL_PROTO;

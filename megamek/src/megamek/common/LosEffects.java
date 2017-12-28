@@ -418,6 +418,9 @@ public class LosEffects {
             return los;
         }
 
+        // this will adjust the effective height of a building target by 1 if the hex contains a rooftop gun emplacement
+        int targetHeightAdjustment = game.hasRooftopGunEmplacement(targetHex.getCoords()) ? 1 : 0;
+        
         final AttackInfo ai = new AttackInfo();
         ai.attackerIsMech = ae instanceof Mech;
         ai.attackPos = attackPos;
@@ -433,14 +436,14 @@ public class LosEffects {
         
         ai.targetInfantry = target instanceof Infantry;
         ai.attackHeight = ae.getHeight();
-        ai.targetHeight = target.getHeight();
+        ai.targetHeight = target.getHeight() + targetHeightAdjustment;
 
         int attEl = ae.relHeight() + attHex.getLevel();
         // for spotting, a mast mount raises our elevation by 1
         if (spotting && ae.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
             attEl += 1;
         }
-        int targEl = target.relHeight() + targetHex.getLevel();
+        int targEl = target.relHeight() + targetHex.getLevel() + targetHeightAdjustment;
 
         ai.attackAbsHeight = attEl;
         ai.targetAbsHeight = targEl;

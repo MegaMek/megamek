@@ -7,6 +7,7 @@ v0.43.7-git
 + Issue #520: MM allows boats to be deployed under bridges, where they become entrapped.
 + Issue #554: Possible Unexpected Princess Indirect Fire Causes Crash
 + Issue #556: Ammo Explosion not treated as Area Effect vs Battle Armor
++ Issue #831: Fixed a few situations where hostile players were able to incorrectly detect hidden units
 + Issue #834: (PlayerColors) java.lang.ArrayIndexOutOfBoundsException
 + Issue #835: MRM-30 ammo does not explode when hit
 

@@ -461,6 +461,13 @@ public class Princess extends BotClient {
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
                 }
             }
+            
+            // TODO: Make hidden units spot since they can't do anything else
+            if(shooter.isHidden()) {
+                sendAttackData(shooter.getId(), new Vector<>(0));
+                log(getClass(), METHOD_NAME, LogLevel.INFO, "Hidden unit skips firing.");
+                return;
+            }
 
             // Set up ammo conservation.
             final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);

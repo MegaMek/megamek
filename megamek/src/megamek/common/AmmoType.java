@@ -8302,6 +8302,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.shortName = "MRM 30";
 	            ammo.setInternalName("IS MRM 30 Ammo");
 	            ammo.addLookupName("ISMRM30 Ammo");
+	            ammo.damagePerShot = 1;
 	            ammo.rackSize = 30;
 	            ammo.ammoType = AmmoType.T_MRM;
 	            ammo.shots = 8;

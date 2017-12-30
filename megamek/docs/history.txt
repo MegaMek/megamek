@@ -8,6 +8,7 @@ v0.43.7-git
 + Issue #554: Possible Unexpected Princess Indirect Fire Causes Crash
 + Issue #556: Ammo Explosion not treated as Area Effect vs Battle Armor
 + Issue #834: (PlayerColors) java.lang.ArrayIndexOutOfBoundsException
++ Issue #835: MRM-30 ammo does not explode when hit
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

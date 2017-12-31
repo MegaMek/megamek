@@ -629,7 +629,7 @@ public class MoveStep implements Serializable {
         }
 
         // if this is a flying aero, then there is no MP cost for moving
-        if (prev.getAltitude() > 0) {
+        if ((prev.getAltitude() > 0) || game.getBoard().inSpace()) {
             setMp(0);
             // if this a spheroid in atmosphere then the cost is always two
             if (useSpheroidAtmosphere(game, entity)) {

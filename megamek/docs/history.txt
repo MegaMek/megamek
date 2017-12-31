@@ -14,6 +14,7 @@ v0.43.7-git
 + Issue #737: Oblique Attacker can't indirect fire without a spotter
 + Changed ghost target ECM modifier from +2 to +3 per errata.
 + Issue #761: Protomechs and ghost targets
++ Issue #815: Space movement for aero units being resolved incorrectly
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

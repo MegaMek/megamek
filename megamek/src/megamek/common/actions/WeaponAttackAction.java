@@ -516,7 +516,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
         boolean narcSpotter = false;
-        if (isIndirect) {
+        if (isIndirect && !ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             if ((target instanceof Entity) && !isTargetECMAffected && (te != null) && (atype != null) && usesAmmo
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     && (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam()))) {
@@ -563,7 +563,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         LosEffects los;
         ToHitData losMods;
 
-        if (!isIndirect || (spotter == null)) {
+        if (isIndirect && ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+                && !underWater) {
+            los = new LosEffects();
+            losMods = new ToHitData();
+        } else if (!isIndirect || (spotter == null)) {
             if (!exchangeSwarmTarget) {
                 los = LosEffects.calculateLos(game, attackerId, target);
             } else {
@@ -3737,7 +3741,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
-        if (!isIndirect || (isIndirect && (spotter == null))) {
+        if (isIndirect && ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+                && !underWater) {
+            // Assume that no LOS mods apply
+            los = new LosEffects();
+            losMods = new ToHitData();
+            
+        } else if (!isIndirect || (isIndirect && (spotter == null))) {
             if (!exchangeSwarmTarget) {
                 los = LosEffects.calculateLos(game, attackerId, target);
             } else {
@@ -3761,7 +3771,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((wtype instanceof MekMortarWeapon) && isIndirect) {
                 los.setArcedAttack(true);
             }
-
+            
             losMods = los.losModifiers(game, eistatus, underWater);
         } else {
             if (!exchangeSwarmTarget) {

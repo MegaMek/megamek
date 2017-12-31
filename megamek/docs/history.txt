@@ -10,6 +10,7 @@ v0.43.7-git
 + Issue #831: Fixed a few situations where hostile players were able to incorrectly detect hidden units
 + Issue #834: (PlayerColors) java.lang.ArrayIndexOutOfBoundsException
 + Issue #835: MRM-30 ammo does not explode when hit
++ Issue #696: Arrow IV infernos calculate cover incorrectly?
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

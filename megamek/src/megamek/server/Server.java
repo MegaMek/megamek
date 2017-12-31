@@ -10701,7 +10701,7 @@ public class Server implements Runnable {
             if (entity instanceof Tank) {
                 Report.addNewline(vPhaseReport);
             }
-            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5);
+            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5, true);
             Report.indentAll(vDamageReport, 2);
             vPhaseReport.addAll(vDamageReport);
         }
@@ -10734,7 +10734,7 @@ public class Server implements Runnable {
                     Report.addNewline(vPhaseReport);
                 }
                 Vector<Report> vDamageReport = deliverInfernoMissiles(ae,
-                        entity, 5);
+                        entity, 5, true);
                 Report.indentAll(vDamageReport, 2);
                 vPhaseReport.addAll(vDamageReport);
             }
@@ -10828,11 +10828,43 @@ public class Server implements Runnable {
      * @param ae       the <code>Entity</code> that fired the missiles
      * @param t        the <code>Targetable</code> that is the target
      * @param missiles the <code>int</code> amount of missiles
+     * @param areaEffect a <code>boolean</code> indicating whether the attack is from an
+     *                   area effect weapon such as Arrow IV inferno, and partial cover should
+     *                   be ignored.                
+     */
+    public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
+                                                 int missiles, boolean areaEffect) {
+        return deliverInfernoMissiles(ae, t, missiles, CalledShot.CALLED_NONE, areaEffect);
+    }
+
+    /**
+     * deliver inferno missiles
+     *
+     * @param ae       the <code>Entity</code> that fired the missiles
+     * @param t        the <code>Targetable</code> that is the target
+     * @param missiles the <code>int</code> amount of missiles
      * @param called   an <code>int</code> indicated the aiming mode used to fire the
      *                 inferno missiles (for called shots)
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
-                                                 int missiles, int called) {
+            int missiles, int called) {
+        return deliverInfernoMissiles(ae, t, missiles, called, false);
+    }
+    
+    /**
+     * deliver inferno missiles
+     *
+     * @param ae         the <code>Entity</code> that fired the missiles
+     * @param t          the <code>Targetable</code> that is the target
+     * @param missiles   the <code>int</code> amount of missiles
+     * @param called     an <code>int</code> indicated the aiming mode used to fire the
+     *                   inferno missiles (for called shots)
+     * @param areaEffect a <code>boolean</code> indicating whether the attack is from an
+     *                   area effect weapon such as Arrow IV inferno, and partial cover should
+     *                   be ignored.                
+     */
+    public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
+                int missiles, int called, boolean areaEffect) {
         IHex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -10924,7 +10956,7 @@ public class Server implements Runnable {
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;
-                if (te instanceof Mech) {
+                if ((te instanceof Mech) && (!areaEffect)) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
                     LosEffects le = LosEffects.calculateLos(game, ae.getId(), t);

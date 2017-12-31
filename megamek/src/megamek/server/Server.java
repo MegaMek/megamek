@@ -14618,7 +14618,8 @@ public class Server implements Runnable {
                 r = new Report(3630);
                 r.subject = ent.getId();
                 r.addDesc(ent);
-                int target = ent.getCrew().getPiloting() + 2;
+                // Ghost target mod is +3 per errata
+                int target = ent.getCrew().getPiloting() + 3;
                 int roll = ent.getGhostTargetRoll();
                 r.add(target);
                 r.add(roll);

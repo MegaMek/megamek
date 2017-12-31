@@ -14620,6 +14620,9 @@ public class Server implements Runnable {
                 r.addDesc(ent);
                 // Ghost target mod is +3 per errata
                 int target = ent.getCrew().getPiloting() + 3;
+                if (ent.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    target = ent.getCrew().getGunnery() + 3;
+                }
                 int roll = ent.getGhostTargetRoll();
                 r.add(target);
                 r.add(roll);

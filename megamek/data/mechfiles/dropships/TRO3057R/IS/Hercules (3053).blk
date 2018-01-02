@@ -1,0 +1,190 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Hercules
+</Name>
+
+<Model>
+(3053)
+</Model>
+
+<year>
+3053
+</year>
+
+<originalBuildYear>
+3053
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+heavyvehiclebay:36.0:2:1
+infantrybay:12.0:2:2:Foot
+cargobay:1381.0:2:3
+2ndclassquarters:0.0:0
+1stclassquarters:50.0:0
+crewquarters:161.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+101
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4350
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+146
+120
+120
+130
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+ISGaussRifle
+IS Ammo AC/5:20
+IS Gauss Ammo:16
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:12
+ISArtemisIV
+(B) ISERPPC
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Medium Laser
+Medium Laser
+(B) LRM 15
+IS Ammo LRM-15 Artemis-capable:16
+ISArtemisIV
+(B) ISERPPC
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) Medium Laser
+(R) (B) ISLargePulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Medium Laser
+Medium Laser
+(B) LRM 15
+IS Ammo LRM-15 Artemis-capable:16
+ISArtemisIV
+(B) ISERPPC
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(R) (B) Medium Laser
+(R) (B) ISLargePulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 15
+IS Ammo LRM-15 Artemis-capable:16
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+9
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+7200.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+652
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

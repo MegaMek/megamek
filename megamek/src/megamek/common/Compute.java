@@ -1053,9 +1053,13 @@ public class Compute {
         }
 
         // if Aero then adjust to standard ranges
-        if (ae.isAirborne()
-            || (ae.usesWeaponBays() && game.getBoard().onGround())) {
+        if (ae.isAero() && (ae.isAirborne()
+            || (ae.usesWeaponBays() && game.getBoard().onGround()))) {
             weaponRanges = wtype.getATRanges();
+        }
+        // And if you're using bearings-only capital missiles, update the extreme range
+        if (weapon.isInBearingsOnlyMode()) {
+            weaponRanges = new int[] { Integer.MIN_VALUE, 12, 24, 40, RangeType.RANGE_BEARINGS_ONLY_OUT };
         }
 
         // determine base distance & range bracket
@@ -1258,25 +1262,6 @@ public class Compute {
             && Compute.isGroundToGround(ae, target)) {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
-        }
-        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
-        // if its a non physical attack
-        if (ae.getPartialRepairs() != null) {
-            if (ae.getPartialRepairs().booleanOption("sensors_1_crit")) {
-                mods.addModifier(1, "sensor damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("mech_sensors_2_crit")) {
-                mods.addModifier(2, "sensor damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
-                mods.addModifier(1, "stabilizer damage");
-            }
-            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
-                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
-            } 
-            if (ae.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
-                 mods.addModifier(1, "faulty cic/fcs repairs"); 
-            }
         }
 
         // if this is an infantry weapon then we use a whole different
@@ -1588,6 +1573,11 @@ public class Compute {
             } else {
                 distance += (2 * target.getAltitude());
             }
+        }
+        
+        // Attacking a ground unit while dropping
+        if (attacker.isDropping() && target.getAltitude() == 0) {
+            distance += (2 * attacker.getAltitude());
         }
 
         return distance;
@@ -2041,6 +2031,25 @@ public class Compute {
                 mods.addModifier(1, "attacker sensors damaged");
             } else {
                 mods.addModifier(2, "attacker sensors damaged");
+            }
+        }
+        
+        // if partial sensor/stabilizer/fcs/cic repairs are present the shot will be more difficult
+        if (attacker.getPartialRepairs() != null) {
+            if (attacker.getPartialRepairs().booleanOption("sensors_1_crit")) {
+                mods.addModifier(1, "sensor damage");
+            }
+            if (attacker.getPartialRepairs().booleanOption("mech_sensors_2_crit")) {
+                mods.addModifier(2, "sensor damage");
+            }
+            if (attacker.getPartialRepairs().booleanOption("veh_stabilizer_crit")) {
+                mods.addModifier(1, "stabilizer damage");
+            }
+            if (attacker.getPartialRepairs().booleanOption("aero_cic_fcs_replace")) { 
+                mods.addModifier(1, "misreplaced cic/fcs equipment"); 
+            } 
+            if (attacker.getPartialRepairs().booleanOption("aero_cic_fcs_crit")) { 
+                 mods.addModifier(1, "faulty cic/fcs repairs"); 
             }
         }
 
@@ -5878,7 +5887,7 @@ public class Compute {
             return false;
         }
         // According to errata, VTOL and WiGes are considered ground targets
-        return attacker.isAirborne() && !target.isAirborne();
+        return attacker.isAirborne() && !target.isAirborne() && attacker.isAero();
         
     }
 

@@ -21,6 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.RangeType;
 import megamek.common.WeaponType;
 
 /**
@@ -38,17 +39,28 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                                         // until it lands.
     protected int playerId;
     private Coords firingCoords;
+    private Coords oldTargetCoords;
 
     public ArtilleryAttackAction(int entityId, int targetType, int targetId,
             int weaponId, IGame game) {
         super(entityId, targetType, targetId, weaponId);
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
+        this.launchVelocity = 50;
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
         // adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
+        WeaponType wType = (WeaponType) eType;
+        //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
+        //An aaa will only be returned if the weapon is set to the correct mode
+        if (((wType.getAtClass() == WeaponType.CLASS_AR10)
+                || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
+                || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
+                && (distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
+            turnsTilHit = (int) (distance / launchVelocity);
+        }
         if(getEntity(game).isAirborne()) {
             if(getEntity(game).getAltitude() < 9) {
                 turnsTilHit = 1;
@@ -80,7 +92,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
     public int getPlayerId() {
         return playerId;
     }
-
+    
     public void setSpotterIds(Vector<Integer> spotterIds) {
         this.spotterIds = spotterIds;
     }
@@ -91,5 +103,27 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
 
     public Coords getCoords() {
         return this.firingCoords;
+    }
+    
+    // For use with AMS and artillery to-hit tables
+    public void setOldTargetCoords(Coords coords) {
+        this.oldTargetCoords = coords;
+    }
+
+    public Coords getOldTargetCoords() {
+        return this.oldTargetCoords;
+    }
+    
+    /*
+     * Updates the turnsTilHit value of this aaa
+     * Needed after aaa setup by bearings-only missiles, which have a variable velocity
+     */
+    @Override
+    public void updateTurnsTilHit(IGame game) {
+        int distance = Compute.effectiveDistance(game, getEntity(game),
+                getTarget(game));
+        // adjust distance for gravity
+        distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
+        this.turnsTilHit = (int) (distance / launchVelocity); 
     }
 }

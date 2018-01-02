@@ -23,9 +23,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
@@ -5383,6 +5385,26 @@ public abstract class Mech extends Entity {
         addCostDetails(cost, costs);
         return cost;
     }
+    
+    @Override
+    protected int implicitClanCASE() {
+        if (!isClan()) {
+            return 0;
+        }
+        int explicit = 0;
+        Set<Integer> caseLocations = new HashSet<>();
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+                explicit++;
+            } else if (m.getType().isExplosive(m)) {
+                caseLocations.add(m.getLocation());
+                if (m.getSecondLocation() >= 0) {
+                    caseLocations.add(m.getSecondLocation());
+                }
+            }
+        }
+        return Math.max(0, caseLocations.size() - explicit);
+    }
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
@@ -6715,28 +6737,27 @@ public abstract class Mech extends Entity {
                         .append(armoredText);
             } else if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
+                toReturn.append(m.getType().getInternalName());
                 switch (m.getFacing()) {
                     case 1:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FR)").append(armoredText);
+                        toReturn.append(" (FR)");
                         break;
                     case 2:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RR)").append(armoredText);
+                        toReturn.append(" (RR)");
                         break;
                     // case 3:
                         // already handled by isRearMounted() above
                     case 4:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RL)").append(armoredText);
+                        toReturn.append(" (RL)");
                         break;
                     case 5:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FL)").append(armoredText);
+                        toReturn.append(" (FL)");
                         break;
                     default:
+                        // forward facing
                         break;
                 }
+                toReturn.append(armoredText);
             } else {
                 toReturn.append(m.getType().getInternalName()).append(
                         armoredText);

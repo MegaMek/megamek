@@ -8302,6 +8302,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.shortName = "MRM 30";
 	            ammo.setInternalName("IS MRM 30 Ammo");
 	            ammo.addLookupName("ISMRM30 Ammo");
+	            ammo.damagePerShot = 1;
 	            ammo.rackSize = 30;
 	            ammo.ammoType = AmmoType.T_MRM;
 	            ammo.shots = 8;
@@ -12999,7 +13000,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.kgPerShot = 33.3;
+        ammo.kgPerShot = 33.4;
         ammo.rulesRefs = "261,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

@@ -2,9 +2,9 @@
 Leopard (2537),1
 Seeker (3054),2
 Overlord (3056),3
-Kuan Ti (Standard),4
-Lung Wang (Standard),5
-Kuan Ti (Standard),6
+Kuan Ti (3055),4
+Lung Wang (3055),5
+Kuan Ti (3055),6
 Union (3055),5
 Achilles (3055),4
 Leopard CV (3054),3

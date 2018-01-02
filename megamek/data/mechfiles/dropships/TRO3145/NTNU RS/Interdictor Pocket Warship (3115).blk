@@ -42,7 +42,7 @@ smallcraftbay:2.0:2:1
 crewquarters:154.0:0
 steeragequarters:180.0:0
 2ndclassquarters:0.0:0
-cargobay:569.0:2:2
+cargobay:511.0:1:2
 </transporters>
 
 <SafeThrust>
@@ -190,6 +190,10 @@ RS 3145 NTNU - Late Republic
 <tonnage>
 9400.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 32

@@ -33,6 +33,8 @@ public class SubCapCannonWeaponLight extends SubCapCannonWeapon {
         this.name = "Sub-Capital Cannon (Light)";
         this.setInternalName(this.name);
         this.addLookupName("LightSCC");
+        this.addLookupName("Light Sub-Capital Cannon");
+        this.shortName = "Light SCC";
         this.heat = 12;
         this.damage = 2;
         this.rackSize = 2;

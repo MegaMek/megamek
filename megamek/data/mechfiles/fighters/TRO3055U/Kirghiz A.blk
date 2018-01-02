@@ -24,6 +24,10 @@ A
 2874
 </year>
 
+<originalBuildYear>
+2874
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -86,6 +93,7 @@ CLCASE
 CLCASE
 CLCASE
 CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -93,6 +101,7 @@ CLLBXAC2:OMNI
 Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
+CLCASE
 CLCASE
 CLCASE
 CLCASE

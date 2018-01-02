@@ -153,7 +153,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         setCritical(Mech.LOC_RT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
         setCritical(Mech.LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
         setCritical(Mech.LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
-        setCritical(Mech.LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+        for (int i = 0; i < getNumberOfCriticals(Mech.LOC_CT); i++) {
+            if (null == getCritical(Mech.LOC_CT, i)) {
+                setCritical(Mech.LOC_CT, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+                break;
+            }
+        }
 
         previousMovementMode = movementMode;
         setFuel(80);

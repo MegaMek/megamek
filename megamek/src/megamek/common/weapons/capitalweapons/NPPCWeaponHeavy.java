@@ -34,6 +34,8 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
         this.name = "Naval PPC (Heavy)";
         this.setInternalName(this.name);
         this.addLookupName("HeavyNPPC");
+        this.addLookupName("Heavy NPPC (Clan)");
+        this.shortName = "Heavy NPPC";
         this.heat = 225;
         this.damage = 15;
         this.shortRange = 13;

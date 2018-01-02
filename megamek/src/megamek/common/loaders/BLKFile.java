@@ -603,6 +603,9 @@ public class BLKFile {
             }
             
             String name = m.getType().getInternalName();
+            if (m.isRearMounted()) {
+                name = "(R) " + name;
+            }
             if (m.isSponsonTurretMounted()) {
                 name = name + "(ST)";
             }

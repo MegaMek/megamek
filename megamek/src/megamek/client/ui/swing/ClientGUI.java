@@ -442,6 +442,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             @Override
             protected void processKeyEvent(KeyEvent e) {
                 //menuBar.dispatchEvent(e);
+                // Make the source be the ClientGUI and not the dialog
+                // This prevents a ClassCastException in ToolTipManager
+                e.setSource(ClientGUI.this);
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);
@@ -2105,6 +2108,28 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         client.sendHiddenPBSCFRResponse(null);
                     }
                     break;
+                case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                    List<String> targetDescriptions = evt.getTelemissileTargetDescriptions();
+                    //Set up the selection pane
+                    String i18nString = "TeleMissileTargetDialog.message"; //$NON-NLS-1$;
+                    msg = Messages.getString(i18nString);
+                    i18nString = "TeleMissileTargetDialog.title"; //$NON-NLS-1$
+                    title = Messages.getString(i18nString);
+                    String input = (String) JOptionPane.showInputDialog(frame, msg,
+                            title, JOptionPane.QUESTION_MESSAGE, null,
+                            targetDescriptions.toArray(), targetDescriptions.get(0));
+                    if (input != null) {
+                        for (int i = 0; i < targetDescriptions.size(); i++) {
+                            if (input.equals(targetDescriptions.get(i))) {
+                                client.sendTelemissileTargetCFRResponse(i);
+                                break;
+                            }
+                        }
+                    } else {
+                        //If input IS null, as in the case of pressing the close or cancel buttons...
+                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        client.sendTelemissileTargetCFRResponse(0);
+                    }
             }
         }
     };

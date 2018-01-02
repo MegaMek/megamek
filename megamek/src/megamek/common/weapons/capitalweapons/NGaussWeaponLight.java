@@ -36,6 +36,8 @@ public class NGaussWeaponLight extends NGaussWeapon {
         this.setInternalName(this.name);
         this.addLookupName("LightNGauss");
         this.addLookupName("CLLightNGauss");
+        this.addLookupName("Light N-Gauss (Clan)");
+        this.shortName = "Light NGauss";
         this.heat = 9;
         this.damage = 15;
         this.ammoType = AmmoType.T_LIGHT_NGAUSS;

@@ -60,6 +60,7 @@ import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.SmallCraft;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -1166,7 +1167,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wInfantryRange5L.setVisible(false);
         wInfantryRange5R.setVisible(false);
 
-        if (entity.isAirborne() || entity.usesWeaponBays()) {
+        if (entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays())) {
             wAVL.setVisible(true);
             wShortAVR.setVisible(true);
             wMedAVR.setVisible(true);
@@ -1186,7 +1187,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         // If MaxTech range rules are in play, display the extreme range.
         if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
-                || (entity.isAirborne() || entity.usesWeaponBays())) { // $NON-NLS-1$
+                || (entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays()))) { // $NON-NLS-1$
             wExtL.setVisible(true);
             wExtR.setVisible(true);
         } else {
@@ -1417,6 +1418,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         Mounted mounted = ((WeaponListModel) weaponList.getModel())
                 .getWeaponAt(weaponList.getSelectedIndex());
         WeaponType wtype = (WeaponType) mounted.getType();
+        // The rules are a bit sparse on airborne (dropping) ground units, but it seems they should
+        // still attack like ground units.
+        boolean aerospaceAttack = entity.isAero() && (entity.isAirborne() || entity.usesWeaponBays());
         // update weapon display
         wNameR.setText(mounted.getDesc());
         wHeatR.setText(Integer.toString(mounted.getCurrentHeat()));
@@ -1677,13 +1681,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             wMedR.setVisible(true);
             wLongR.setVisible(true);
 
-            if (!(entity.isAirborne() || entity.usesWeaponBays())) {
+            if (!aerospaceAttack) {
                 wMinL.setVisible(true);
                 wMinR.setVisible(true);
             }
             if (((entity.getGame() != null)
                     && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
-                    || (entity.isAirborne() || entity.usesWeaponBays())) {
+                    || aerospaceAttack) {
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             }
@@ -1735,6 +1739,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         int mediumR = wtype.getMediumRange();
         int longR = wtype.getLongRange();
         int extremeR = wtype.getExtremeRange();
+        if (mounted.isInBearingsOnlyMode()) {
+            extremeR = RangeType.RANGE_BEARINGS_ONLY_OUT;
+        }
         if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
             || (longR == 0)) {
             shortR = wtype.getWShortRange();
@@ -1802,7 +1809,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             updateRangeDisplayForAmmo(mounted.getLinked());
         }
 
-        if (entity.isAirborne() || entity.usesWeaponBays()) {
+        if (aerospaceAttack) {
             // change damage report to a statement of standard or capital
             if (wtype.isCapital()) {
                 wDamR.setText(Messages.getString("MechDisplay.CapitalD")); //$NON-NLS-1$

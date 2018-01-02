@@ -3,10 +3,10 @@ Seeker (3054),1
 Leopard (3056),2
 Triumph (2593),3
 Intruder (2655),4
-Lung Wang (Standard),5
+Lung Wang (3055),5
 Leopard CV (2581),6
 Achilles (3055),5
 Avenger (2816),4
-Kuan Ti (Standard),3
+Kuan Ti (3055),3
 Vengeance DC,2
 Overlord A3,1

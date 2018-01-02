@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,56 +20,34 @@ NL-45 Gunboat
 (Standard)
 </Model>
 
-<Tonnage>
-190
-</Tonnage>
+<year>
+3094
+</year>
+
+<originalBuildYear>
+3094
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:0.5:1:1
+battlearmorbay:1.0:1:2
+2ndclassquarters:0.0:0
+crewquarters:0.0:0
+1stclassquarters:0.0:0
+steeragequarters:20.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-160
-140
-140
-120
-</Armor>
-
-<Nose Equipment>
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLERPPC
-CLERPPC
-ClActiveProbe
-</Nose Equipment>
-
-<Left Side Equipment>
-ClAMS
-ClAMS
-ClAMS Ammo
-</Left Side Equipment>
-
-<Right Side Equipment>
-ClAMS
-ClAMS
-ClAMS Ammo
-</Right Side Equipment>
-
-<Aft Equipment>
-CLECMSuite
-CLERLargeLaser
-CLERLargeLaser
-</Aft Equipment>
-
-<structural_integrity>
-5
-</structural_integrity>
 
 <heatsinks>
 21
@@ -83,47 +61,98 @@ CLERLargeLaser
 800
 </fuel>
 
-<type>
-Clan Level 2
-</type>
-
-<year>
-3094
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-17
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+160
+140
+140
+120
+</armor>
+
+<Nose Equipment>
+CLERPPC
+CLERPPC
+CLActiveProbe
+</Nose Equipment>
+
+<Left Side Equipment>
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo
+</Left Side Equipment>
+
+<Right Side Equipment>
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo
+</Right Side Equipment>
+
+<Aft Equipment>
+CLECMSuite
+CLERLargeLaser
+CLERLargeLaser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+TRO 3145 Mercenaries - Late Republic
+</source>
+
+<tonnage>
+190.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
 
 <crew>
 10
 </crew>
 
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
 <passengers>
 0
 </passengers>
 
-<transporters>
-cargobay:.5:1
-battlearmorbay:1:1
-</transporters>
+<marines>
+0
+</marines>
 
-<source>
-TRO 3145 Mercenaries - Late Republic
-</source>
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

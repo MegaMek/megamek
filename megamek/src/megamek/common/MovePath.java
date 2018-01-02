@@ -462,6 +462,24 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
         
+        // If running on pavement we don't know to mark the danger steps if we turn before expending
+        // enough MP to require running movement.
+        if (steps.size() > 1) {
+            MoveStep lastStep = steps.get(steps.size() - 1);
+            MoveStep prevStep = steps.get(0);
+            for (MoveStep s : steps) {
+                if (s.getMovementType(false) == EntityMovementType.MOVE_ILLEGAL) {
+                    break;
+                }
+                s.setDanger(s.isDanger() || Compute.isPilotingSkillNeeded(game, entity.getId(),
+                        prevStep.getPosition(), s.getPosition(), lastStep.getMovementType(true),
+                        prevStep.isTurning(), prevStep.isPavementStep(), prevStep.getElevation(),
+                                s.getElevation(), s));
+                s.setPastDanger(s.isPastDanger() || s.isDanger());
+                prevStep = s;
+            }
+        }
+        
         if(step.useAeroAtmosphere(game, entity) 
         		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
         		&& step.getPosition() != null  											//null

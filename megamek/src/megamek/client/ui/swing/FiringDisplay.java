@@ -54,6 +54,7 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
@@ -96,6 +97,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -859,8 +861,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
-                && (!enemyTarget || target.hasSeenEntity(localPlayer)
-                    || target.hasDetectedEntity(localPlayer))
+                && (!enemyTarget || EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, target))
                 && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
@@ -1953,6 +1954,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         .getString("FiringDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
+            } else if (m.isInBearingsOnlyMode()) {
+                clientgui.mechD.wPan.wToHitR.setText(Messages
+                        .getString("FiringDisplay.bearingsOnlyWrongPhase"));
+                //$NON-NLS-1$
+                setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);
@@ -2555,11 +2561,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             Targetable t = choices.next();
             boolean isSensorReturn = false;
             boolean isVisible = true;
+            boolean isHidden = false;
             if (t instanceof Entity) {
                 isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
                 isVisible = ((Entity) t).hasSeenEntity(localPlayer);
+                isHidden = ((Entity) t).isHidden();
             }
-            if (!ce().equals(t) && !isSensorReturn && isVisible) {
+            if (!ce().equals(t) && !isSensorReturn && isVisible && !isHidden) {
                 targets.add(t);
             }
         }

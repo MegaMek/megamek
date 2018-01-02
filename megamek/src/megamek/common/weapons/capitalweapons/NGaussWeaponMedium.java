@@ -36,6 +36,8 @@ public class NGaussWeaponMedium extends NGaussWeapon {
         this.setInternalName(this.name);
         this.addLookupName("MediumNGauss");
         this.addLookupName("CLMediumNGauss");
+        this.addLookupName("Medium N-Gauss (Clan)");
+        this.shortName = "Medium NGauss";
         this.heat = 15;
         this.damage = 25;
         this.ammoType = AmmoType.T_MED_NGAUSS;

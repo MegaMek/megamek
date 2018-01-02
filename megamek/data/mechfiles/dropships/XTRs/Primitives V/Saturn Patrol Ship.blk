@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,82 +20,37 @@ Saturn Patrol Ship
 (Standard)
 </Model>
 
-<Tonnage>
-1200
-</Tonnage>
+<year>
+2243
+</year>
+
+<originalBuildYear>
+2243
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+1stclassquarters:20.0:0
+crewquarters:77.0:0
+steeragequarters:85.0:0
+cargobay:273.5:1:1
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-110
-95
-95
-81
-</Armor>
-
-<armor_type>
-17
-</armor_type>
-
-<Nose Equipment>
-Autocannon/5 Primitive
-ISAC5p Ammo
-ISMG
-ISMG
-ISMG
-ISMG
-ISMG Ammo (200)
-</Nose Equipment>
-
-<Left Side Equipment>
-Autocannon/5 Primitive
-ISAC5p Ammo
-ISMG
-ISMG
-ISMG
-ISMG
-ISMG Ammo (200)
-(R) Autocannon/5 Primitive
-(R) ISAC5p Ammo
-(R) ISMG
-(R) ISMG
-(R) ISMG
-(R) ISMG
-(R) ISMG Ammo (200)
-</Left Side Equipment>
-
-<Right Side Equipment>
-Autocannon/5 Primitive
-ISAC5p Ammo
-ISMG
-ISMG
-ISMG
-ISMG
-ISMG Ammo (200)
-(R) Autocannon/5 Primitive
-(R) ISAC5p Ammo
-(R) ISMG
-(R) ISMG
-(R) ISMG
-(R) ISMG
-(R) ISMG Ammo (200)
-</Right Side Equipment>
-
-<Aft Equipment>
-Autocannon/5 Primitive
-ISAC5p Ammo
-ISMG
-ISMG
-ISMG
-ISMG
-ISMG Ammo (200)
-</Aft Equipment>
-
-<structural_integrity>
-15
-</structural_integrity>
+<collartype>
+2
+</collartype>
 
 <heatsinks>
 28
@@ -109,49 +64,106 @@ ISMG Ammo (200)
 4687
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2243
-</year>
+<armor_type>
+40
+</armor_type>
 
-<internal_type>
-0
-</internal_type>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+110
+95
+95
+82
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5 Primitive
+IS Ammo AC/5 Primitive:15
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/5 Primitive
+IS Ammo AC/5 Primitive:15
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+(R) (B) Autocannon/5 Primitive
+(R) IS Ammo AC/5 Primitive:15
+(R) (B) Machine Gun
+(R) Machine Gun
+(R) Machine Gun
+(R) Machine Gun
+(R) IS Ammo MG - Full:200
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/5 Primitive
+IS Ammo AC/5 Primitive:15
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+(R) (B) Autocannon/5 Primitive
+(R) IS Ammo AC/5 Primitive:15
+(R) (B) Machine Gun
+(R) Machine Gun
+(R) Machine Gun
+(R) Machine Gun
+(R) IS Ammo MG - Full:200
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Autocannon/5 Primitive
+IS Ammo AC/5 Primitive:15
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Aft Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>
+
+<tonnage>
+1200.0
+</tonnage>
 
 <designtype>
 1
 </designtype>
 
-<armor_type>
-17
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Spheroid
-</motion_type>
-
-<transporters>
-CargoBay:43.5:2
-</transporters>
-
-<escape_pod>
-1
-</escape_pod>
-
-<life_boat>
-2
-</life_boat>
-
 <crew>
 13
 </crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+5
+</gunners>
 
 <passengers>
 2
@@ -161,6 +173,19 @@ CargoBay:43.5:2
 15
 </marines>
 
-<source>
-XTRO Primitives IV - Age of War
-</source>
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

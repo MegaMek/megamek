@@ -612,6 +612,12 @@ public class MtfFile implements IMechLoader {
             } else if ((critName.indexOf("Actuator") != -1) || critName.equalsIgnoreCase("Shoulder") || critName.equalsIgnoreCase("Hip")) {
                 mech.getCritical(loc, i).setArmored(isArmored);
                 continue;
+            } else if (critName.equalsIgnoreCase("Landing Gear")) {
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_LANDING_GEAR, true, isArmored));
+                continue;
+            } else if (critName.equalsIgnoreCase("Avionics")) {
+                mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LandAirMech.LAM_AVIONICS, true, isArmored));
+                continue;
             }
             // if the slot's full already, skip it.
             if (mech.getCritical(loc, i) != null) {

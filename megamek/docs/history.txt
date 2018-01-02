@@ -1,6 +1,37 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.43.5-git
+v0.43.7-git
++ Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)
++ Issue #637: Infantry in swamp/mud terrain should not have a psr check (Bog Down)
++ Data: Fixing Validation Errors
++ Issue #520: MM allows boats to be deployed under bridges, where they become entrapped.
++ Issue #554: Possible Unexpected Princess Indirect Fire Causes Crash
++ Issue #556: Ammo Explosion not treated as Area Effect vs Battle Armor
++ Issue #831: Fixed a few situations where hostile players were able to incorrectly detect hidden units
++ Issue #834: (PlayerColors) java.lang.ArrayIndexOutOfBoundsException
++ Issue #835: MRM-30 ammo does not explode when hit
++ Issue #696: Arrow IV infernos calculate cover incorrectly?
++ Issue #737: Oblique Attacker can't indirect fire without a spotter
++ Changed ghost target ECM modifier from +2 to +3 per errata.
++ Issue #761: Protomechs and ghost targets
++ Issue #815: Space movement for aero units being resolved incorrectly
++ Issue #837: Mauser IIc and other clan infantry weapons missing in customization
++ Issue #838: NPE Princess.calculatePhysicalTurn
++ Issue #463: Megamek sometimes fails to show the * symbol to warn that movement will require a PSR
+
+v0.43.6 (2017-12-22 10:00 UTC)
++ Bug: Weight issues with BA LRM5 and Ammo.
++ Account for Clan CASE in unit cost calculations.
++ Fixes for Princess aircraft refusing to engage ground targets, being stuck on the edge of the map
++ Enable Princess to properly consider standing still and firing for infantry units that have "move OR fire" rules (field guns, etc)
++ Issue #351: Dropping units cannot attack ground targets
++ Feature: Capital missile bearings only launch
++ Issue #362: Tooltips are a lot less sticky
++ Issue #819: Leap check for LAM passing over terrain.
++ Issue #818: Fighter stuck on atmospheric map with no movement options
++ Data: New Sprites
+
+v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.
 + PR #686: Large Craft Advanced Point Defense Rules from Stratops p96
 + PR #686: Expanded AMS functionality. Now works against Arrow IV Homing and LAA/AAA/AS missiles per the rules for
@@ -62,6 +93,11 @@ v0.43.5-git
 + Fixed LAM conversion gear cost calculation.
 + Princess can now take point blank shots with hidden units
 + Naval C3 (space, not water)
++ Board editor hex preview indicates if hex is invalid, tool tip lists why
++ Board view in board editor shows invalid terrain and adds the reason why to the tooltip
++ Board editor now has validate button which will report all of the errors on the board
++ Board editor sorts terrains by alphabetical order, supports terrain type tooltips
++ Data: RAT fixes, New Sprites, Unit file fixes.
 
 v0.43.4 (2017-10-01 11:00 UTC)
 + Issue #573: Jumping through buildings.

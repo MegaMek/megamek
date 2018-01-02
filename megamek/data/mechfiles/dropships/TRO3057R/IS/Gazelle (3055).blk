@@ -1,0 +1,170 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Gazelle
+</Name>
+
+<Model>
+(3055)
+</Model>
+
+<year>
+3055
+</year>
+
+<originalBuildYear>
+0
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+heavyvehiclebay:12.0:1:1
+lightvehiclebay:3.0:1:2
+cargobay:347.0:0:3
+1stclassquarters:20.0:0
+2ndclassquarters:0.0:0
+crewquarters:56.0:0
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+45
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4160
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+144
+120
+120
+120
+</armor>
+
+<Nose Equipment>
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+ISArtemisIV
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(B) Medium Laser
+Medium Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:15
+ISArtemisIV
+(B) Medium Laser
+Medium Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+TRO 3057R - Early Succession War
+</source>
+
+<tonnage>
+2900.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+121
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

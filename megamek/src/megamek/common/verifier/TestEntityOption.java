@@ -57,6 +57,8 @@ public interface TestEntityOption {
     public boolean showFailedEquip();
     
     public boolean showIncorrectIntroYear();
+    
+    public int getIntroYearMargin();
 
     public double getMinUnderweight();
 

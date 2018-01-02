@@ -1,5 +1,5 @@
 Crucis March Militia Dropship
-Confederate (2703),1
+Confederate (2602),1
 Colossus Mk I,2
 Vampire (Standard),3
 Leopard (2537),4

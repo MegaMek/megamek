@@ -1,0 +1,169 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Condor
+</Name>
+
+<Model>
+(3079)
+</Model>
+
+<year>
+3079
+</year>
+
+<originalBuildYear>
+3079
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+infantrybay:16.0:1:1:Foot
+cargobay:1575.5:0:2
+lightvehiclebay:20.0:1:3
+2ndclassquarters:21.0:0
+1stclassquarters:60.0:0
+crewquarters:140.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+62
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6240
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+150
+140
+140
+122
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+(B) ISLightGaussRifle
+IS Light Gauss Ammo:16
+(B) MRM 20
+IS MRM 20 Ammo:12
+(B) ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Light Auto Cannon/5
+IS Ammo LAC/5:20
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Light Auto Cannon/5
+IS Ammo LAC/5:20
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+MASH core component
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3057R - Jihad
+</source>
+
+<tonnage>
+4500.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+572
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+5
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+14
+</life_boat>
+
+<escape_pod>
+7
+</escape_pod>
+

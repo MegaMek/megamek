@@ -41,6 +41,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.DisplacementAttackAction;
@@ -59,14 +60,20 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
+import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
+import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
+import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
@@ -2019,7 +2026,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case SPHEROID:
                 assumedAlt = assumedElevation;
                 if (game.getBoard().inAtmosphere()) {
-                    minAlt = hex.ceiling(true) + 1;
+                    minAlt = Math.max(0, hex.ceiling(true)) + 1;
                 } else if (game.getBoard().onGround() && isAirborne()) {
                     minAlt = 1;
                 }
@@ -3438,9 +3445,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 weaponList.add(mounted);
             }
+            
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
-            }
+            } 
 
             // one-shot launchers need their single shot of ammo added.
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
@@ -3619,8 +3627,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
 
-            // Artillery only in the correct phase...
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+            // Artillery and Bearings-Only Capital Missiles only in the correct phase...
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || mounted.isInBearingsOnlyMode())
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 continue;
             }
@@ -3678,9 +3687,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return false;
             }
 
-            // Artillery only in the correct phase...
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+            // Artillery or Bearings-only missiles only in the targeting phase...
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || mounted.isInBearingsOnlyMode())
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                return false;
+            }
+            // No Bearings-only missiles in the firing phase
+            if (mounted.isInBearingsOnlyMode() && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 return false;
             }
 
@@ -6286,10 +6300,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
                     vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
-                if (!targets.contains(wr.waa)
-                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                game.getEntity(wr.waa.getEntityId()))) {
-                    vAttacksInArc.addElement(wr.waa);
+                if (wr instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (!targets.contains(wr.waa)
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
+                        vAttacksInArc.addElement(wr.waa);
+                    } 
+                } else {
+                    if (!targets.contains(wr.waa)
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    game.getEntity(wr.waa.getEntityId()))) {
+                        vAttacksInArc.addElement(wr.waa);
+                    }
                 }
             }
             //AMS Bays can fire at all incoming attacks each round
@@ -9417,7 +9439,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
             return true;
         }
-
+        
         // must be active
         if (!isActive()) {
             return false;
@@ -9640,6 +9662,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return true;
             }
+            //Bearings-only capital missiles fire during the targeting phase
+            if ((wtype instanceof TeleOperatedMissileBayWeapon)
+                    || (wtype instanceof CapitalMissileBayWeapon)
+                    || (wtype instanceof AR10BayWeapon)) {
+                if (mounted.isInBearingsOnlyMode()) {
+                    return true;
+                } 
+            }            
         }
         return false;
     }
@@ -10299,7 +10329,33 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 bvText.append(endRow);
             }
         }
+        int count = implicitClanCASE();
+        if (count > 0) {
+            long itemCost = 50000;
+            cost += 50000 * itemCost;
+            if (null != bvText) {
+                for (int i = 0; i < count; i++) {
+                    bvText.append(startColumn);
+                    bvText.append("CASE");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append(commafy.format(itemCost));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
+            }
+        }
         return cost;
+    }
+    
+    /**
+     * Used to for cost calculations. Though the TM rules allow a Clan unit to be designed without CASE,
+     * MM assumes that CASE is present in any location that has explosive equipment.
+     * 
+     * @return The number of locations protected by Clan CASE beyond what is explicitly mounted.
+     */
+    protected int implicitClanCASE() {
+        return 0;
     }
 
     public boolean removePartialCoverHits(int location, int cover, int side) {
@@ -11597,6 +11653,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                        && (((WeaponType) mounted.getType()).getAtClass()
                            != WeaponType.CLASS_CAPITAL_MISSILE)
                        && (((WeaponType) mounted.getType()).getAtClass()
+                               != WeaponType.CLASS_TELE_MISSILE)
+                       && (((WeaponType) mounted.getType()).getAtClass()
                            != WeaponType.CLASS_AR10)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
@@ -11616,6 +11674,42 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     ((WeaponType) mounted.getType()).setModes(modes
                                                                       .toArray(stringArray));
                 }
+            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
+                        || (((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_AR10)) {
+                 ArrayList<String> modes = new ArrayList<String>();
+                 String[] stringArray = {};
+                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
+                 modes.add("Normal");
+                 if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                     modes.add("Bearings-Only Extreme Detection Range");
+                     modes.add("Bearings-Only Long Detection Range");
+                     modes.add("Bearings-Only Medium Detection Range");
+                     modes.add("Bearings-Only Short Detection Range");
+                 }
+
+                 if (modes.size() > 1) {
+                     ((WeaponType) mounted.getType()).setModes(modes
+                                                                       .toArray(stringArray));
+                 }
+                 
+            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_TELE_MISSILE)) {
+                ArrayList<String> modes = new ArrayList<String>();
+                String[] stringArray = {};
+                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
+                modes.add("Normal");
+                modes.add("Tele-Operated");                
+                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                    modes.add("Bearings-Only Extreme Detection Range");
+                    modes.add("Bearings-Only Long Detection Range");
+                    modes.add("Bearings-Only Medium Detection Range");
+                    modes.add("Bearings-Only Short Detection Range");
+                }
+
+                if (modes.size() > 1) {
+                    ((WeaponType) mounted.getType()).setModes(modes
+                                                                      .toArray(stringArray));
+                }
+                
             } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
                        && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();

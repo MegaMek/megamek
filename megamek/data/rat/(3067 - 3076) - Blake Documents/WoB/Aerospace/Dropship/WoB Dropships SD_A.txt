@@ -9,4 +9,4 @@ Assault Triumph (3082),5
 Leopard (3056),4
 Merlin (3063),3
 Union 'Pocket Warship',2
-Excalibur (Pocket Warship),1
+Excalibur 'Pocket Warship',1

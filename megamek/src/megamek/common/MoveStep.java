@@ -1621,6 +1621,10 @@ public class MoveStep implements Serializable {
     public boolean isPastDanger() {
         return pastDanger;
     }
+    
+    public void setPastDanger(boolean pastDanger) {
+        this.pastDanger = pastDanger;
+    }
 
     /**
      * @return
@@ -2749,11 +2753,10 @@ public class MoveStep implements Serializable {
         if (movementType == EntityMovementType.MOVE_ILLEGAL) {
             return;
         }
-
-        int prevEl = prev.getElevation();
-        danger |= Compute.isPilotingSkillNeeded(game, entity.getId(), lastPos,
-                curPos, movementType, isTurning, prevStepOnPavement, prevEl,
-                getElevation(), this);
+        
+        // Danger is flagged for PSR checks by entire path when a new step is added, since turning
+        // while running on pavement does cannot trigger the danger flag if the turn occurs before
+        // enough MP are spent to require running.
 
         // getting up is also danger
         if (stepType == MoveStepType.GET_UP) {

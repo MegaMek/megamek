@@ -807,7 +807,7 @@ public class Princess extends BotClient {
 
             do {
                 final Entity hitter = game.getEntity(nextEntityId);
-                nextEntityId = game.getNextEntityNum(hitter.getId());
+                nextEntityId = game.getNextEntityNum(getMyTurn(), hitter.getId());
 
                 if (null == hitter.getPosition()) {
                     continue;

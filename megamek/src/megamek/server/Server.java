@@ -2268,7 +2268,7 @@ public class Server implements Runnable {
         boolean turnsChanged = false;
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
-        if (game.isPhaseSimultaneous() && (entityUsed != null)
+        if (game.isPhaseSimultaneous()
             && (entityUsed != null)
             && !turn.isValid(entityUsed.getOwnerId(), game)) {
             // turn played out of order
@@ -2452,9 +2452,9 @@ public class Server implements Runnable {
 
         // move along
         if (outOfOrder) {
-            send(createTurnIndexPacket(entityUsed.getOwnerId()));
+            send(createTurnIndexPacket(playerId));
         } else {
-            changeToNextTurn(entityUsed.getOwnerId());
+            changeToNextTurn(playerId);
         }
     }
 
@@ -3444,7 +3444,7 @@ public class Server implements Runnable {
         if (prevPlayerId != -1) {
             send(createTurnIndexPacket(prevPlayerId));
         } else {
-            send(createTurnIndexPacket(player.getId()));
+            send(createTurnIndexPacket(player != null ? player.getId() : IPlayer.PLAYER_NONE));
         }
 
         if ((null != player) && player.isGhost()) {

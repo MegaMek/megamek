@@ -1586,6 +1586,14 @@ public class Game implements Serializable, IGame {
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
+                
+                // if the entity with the given ID doesn't exist, we will update the lookup table
+                // and move on
+                if(e == null) {
+                    entityPosLookup.remove(eId);
+                    continue;
+                }
+                
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
 

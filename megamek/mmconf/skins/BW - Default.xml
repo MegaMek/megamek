@@ -75,7 +75,7 @@
 			<!-- Border lines: these images will be tiled -->
 			<edge>
 				<edgeIcon>
-					<icon>Bloodwolf/Default/boardview/TLCT.gif</icon>
+					<icon>Bloodwolf/Parts/boardview/TLCT.gif</icon>
 					<tiled>false</tiled>
 				</edgeIcon>
 				<edgeIcon>
@@ -91,7 +91,7 @@
 					<tiled>true</tiled>
 				</edgeIcon>
 				<edgeIcon>
-					<icon>Bloodwolf/Default/boardview/TRCT.gif</icon>
+					<icon>Bloodwolf/Parts/boardview/TRCT.gif</icon>
 					<tiled>false</tiled>
 				</edgeIcon>
 				<edgeName>top</edgeName>
@@ -118,7 +118,7 @@
 				<edgeName>right</edgeName>
 			</edge>
 		</border>
-		<background_image>Bloodwolf/Default/boardview/background.gif</background_image>
+		<background_image>Bloodwolf/Parts/boardview/background.png</background_image>
 		<background_image>Bloodwolf/Parts/boardview/backdrop.png</background_image>
 		<tile_background>true</tile_background>
 		<font_color>#ffffff</font_color>
@@ -177,7 +177,7 @@
 		<name>MainMenuBorder</name>
 		<no_border>true</no_border>
         <background_image>../misc/megamek_splash_spooky_fhd.png</background_image>
-        <background_image>Bloodwolf/Parts/title/background.png</background_image>
+        <background_image>Bloodwolf/Parts/boardview/background.png</background_image>
         <background_image>../misc/megamek_splash_spooky_uhd.png</background_image>
         <background_image>../misc/megamek_splash_spooky_hd.png</background_image>
 		<tile_background>true</tile_background>

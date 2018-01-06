@@ -19,6 +19,7 @@ v0.43.7-git
 + Issue #838: NPE Princess.calculatePhysicalTurn
 + Issue #463: Megamek sometimes fails to show the * symbol to warn that movement will require a PSR
 + Fixes for multiple hangs during turn change when deploying minefields and unloading stranded passengers from transports.
++ PR#842 - Inner Sphere & Periphery skins update
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

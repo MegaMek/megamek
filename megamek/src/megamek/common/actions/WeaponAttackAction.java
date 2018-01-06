@@ -3127,8 +3127,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) && !isStrafing) {
                 // a friendly unit can never be the target of a direct attack.
                 // but we do allow vehicle flamers to cool
-                if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((te.getOwnerId() == ae.getOwnerId())
-                        || (te.getOwner().getTeam() == ae.getOwner().getTeam()))) {
+                if ((target.getTargetType() == Targetable.TYPE_ENTITY) && !te.getOwner().isEnemyOf(ae.getOwner())) {
                     if (!(usesAmmo && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
                         return "A friendly unit can never be the target of a direct attack.";
                     }

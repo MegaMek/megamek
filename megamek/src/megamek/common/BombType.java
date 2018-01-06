@@ -78,7 +78,7 @@ public class BombType extends AmmoType {
     
     public static int getBombTypeFromInternalName(String name) {
         for (int i = 0; i < B_NUM; i++) {
-            if (bombInternalNames[i].equals(name)) {
+            if (bombInternalNames[i].equalsIgnoreCase(name)) {
                 return i;
             }
         }

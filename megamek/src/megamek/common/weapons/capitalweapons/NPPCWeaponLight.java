@@ -34,6 +34,8 @@ public class NPPCWeaponLight extends NPPCWeapon {
         this.name = "Naval PPC (Light)";
         this.setInternalName(this.name);
         this.addLookupName("LightNPPC");
+        this.addLookupName("Light NPPC (Clan)");
+        this.shortName = "Light NPPC";
         this.heat = 105;
         this.damage = 7;
         this.shortRange = 11;

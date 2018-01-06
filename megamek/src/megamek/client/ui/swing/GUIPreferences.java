@@ -21,6 +21,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.ToolTipManager;
 
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ColorParser;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
@@ -186,6 +187,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_MUTE = "SoundMute";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
+    public static final String TOOLTIP_DIST_SUPRESSION = "TooltipDistSupression";
     public static final String WINDOW_POS_X = "WindowPosX";
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
@@ -355,6 +357,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
+        store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
@@ -745,6 +748,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(TOOLTIP_DISMISS_DELAY);
     }
 
+    public int getTooltipDistSuppression() {
+        return store.getInt(TOOLTIP_DIST_SUPRESSION);
+    }
+
     public int getWindowPosX() {
         return store.getInt(WINDOW_POS_X);
     }
@@ -1116,6 +1123,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         if (i > 0){
             ToolTipManager.sharedInstance().setDismissDelay(i);
         }
+    }
+
+    public void setTooltipDistSuppression(int i) {
+        store.setValue(TOOLTIP_DIST_SUPRESSION, i);
     }
 
     public void setWindowPosX(int i) {

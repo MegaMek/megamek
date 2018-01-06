@@ -23,6 +23,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
@@ -600,17 +601,7 @@ class EntitySprite extends Sprite {
      * mechs and teammates mechs (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-        IPlayer localPlayer = bv.getLocalPlayer();
-        if (localPlayer == null) {
-            return false;
-        }
-        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
-                && ((e.getOwner().getId() == localPlayer.getId()) || (bv.game
-                        .getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
-                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
-            return true;
-        }
-        return false;
+        return EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(bv.getLocalPlayer(), e);
     }
 
     /**
@@ -620,22 +611,7 @@ class EntitySprite extends Sprite {
      * @return
      */
     public boolean onlyDetectedBySensors() {
-        boolean sensors = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
-        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
-        boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
-
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && !trackThisEntitiesVisibilityInfo(entity)
-                && hasDetected && !hasVisual) {
-            return true;
-        } else {
-            return false;
-        }
+        return EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity);
     }
 
     private Color getStatusBarColor(double percentRemaining) {

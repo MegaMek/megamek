@@ -80,6 +80,7 @@ import megamek.common.weapons.autocannons.ISUAC5;
 import megamek.common.weapons.battlearmor.*;
 import megamek.common.weapons.bayweapons.ACBayWeapon;
 import megamek.common.weapons.bayweapons.AMSBayWeapon;
+import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.ATMBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalACBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalGaussBayWeapon;
@@ -104,7 +105,9 @@ import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapCannonBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapitalMissileBayWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bayweapons.ThunderboltBayWeapon;
+
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
@@ -117,7 +120,6 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
-import megamek.common.weapons.capitalweapons.AR10BayWeapon;
 import megamek.common.weapons.capitalweapons.AR10Weapon;
 import megamek.common.weapons.capitalweapons.CapMissBarracudaWeapon;
 import megamek.common.weapons.capitalweapons.CapMissKillerWhaleWeapon;
@@ -590,7 +592,6 @@ public class WeaponType extends EquipmentType {
     
     //Hyper-Laser
     public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
-        
     
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
@@ -624,9 +625,10 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
     public static final int CLASS_AMS = 24;
-    public static final int CLASS_GAUSS = 25;
-    public static final int CLASS_THUNDERBOLT = 26;
-    public static final int NUM_CLASSES = 27;
+    public static final int CLASS_TELE_MISSILE = 25;
+    public static final int CLASS_GAUSS = 26;
+    public static final int CLASS_THUNDERBOLT = 27;
+    public static final int NUM_CLASSES = 28;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -853,6 +855,10 @@ public class WeaponType extends EquipmentType {
         		sRange = 6;
         	}
     	}
+        //Allow extremely long-range shots for bearings-only capital missiles
+        if (weapon.isInBearingsOnlyMode()) {
+            eRange = RangeType.RANGE_BEARINGS_ONLY_OUT;
+        }
         int[] weaponRanges =
             { minRange, sRange, mRange, lRange, eRange };
         return weaponRanges;
@@ -877,7 +883,7 @@ public class WeaponType extends EquipmentType {
     public int getExtremeRange() {
         return extremeRange;
     }
-
+    
     public int[] getWRanges() {
         return new int[]
             { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
@@ -1041,6 +1047,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Capital Mass Driver Bay");
             case (CLASS_CAPITAL_MISSILE):
                 return EquipmentType.get("Capital Missile Bay");
+            case (CLASS_TELE_MISSILE):
+                return EquipmentType.get("Tele-Operated Capital Missile Bay");
             case (CLASS_AR10):
                 return EquipmentType.get("AR10 Bay");
             case (CLASS_SCREEN):
@@ -2148,6 +2156,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapitalMissileBayWeapon());
         EquipmentType.addType(new MiscBayWeapon());
         EquipmentType.addType(new AMSBayWeapon());
+        EquipmentType.addType(new TeleOperatedMissileBayWeapon());
 
         // Improved OS Weapons
         EquipmentType.addType(new ISLRM5IOS());

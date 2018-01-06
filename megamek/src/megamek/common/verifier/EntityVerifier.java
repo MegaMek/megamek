@@ -16,6 +16,8 @@
 package megamek.common.verifier;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -107,6 +109,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     
     public boolean checkEntity(Entity entity, String fileString,
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
+        final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
         TestEntity testEntity = null;
         if (entity instanceof Mech) {
@@ -148,7 +151,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 }
                 System.out.print(testEntity.printEntity());                        
                 System.out.println("BV: " + entity.calculateBattleValue()
-                        + "    Cost: " + entity.getCost(false));
+                        + "    Cost: " + FMT.format(entity.getCost(false)));
             }
         } else {
             StringBuffer buff = new StringBuffer();
@@ -159,7 +162,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 System.out.println("Found in: " + testEntity.fileString);
                 System.out.println("Intro year: " + entity.getYear());
                 System.out.println("BV: " + entity.calculateBattleValue()
-                + "    Cost: " + entity.getCost(false));
+                + "    Cost: " + FMT.format(entity.getCost(false)));
                 System.out.println(buff);
 
             }
@@ -200,22 +203,25 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(infOption.printOptions());
 
         int failures = 0;
-        int failedMek, failedTank, failedAero, failedConvFighter, failedSmallCraft, failedDropship,
+        int failedMek, failedTank, failedAero,  failedConvFighter, failedSmallCraft, failedDropship,
             failedBA, failedInfantry;
-        failedMek = failedTank = failedAero = failedConvFighter = failedSmallCraft = failedDropship
+        failedMek = failedTank = failedAero  = failedConvFighter = failedSmallCraft = failedDropship
                 = failedBA = failedInfantry = 0;
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
                     || ms[i].getUnitType().equals("Tank")
                     || ms[i].getUnitType().equals("Aero")
-//                    || ms[i].getUnitType().equals("Small Craft")
-//                    || ms[i].getUnitType().equals("Dropship")
-//                    || ms[i].getUnitType().equals("Conventional Fighter")
+                    || ms[i].getUnitType().equals("Small Craft")
+                    || ms[i].getUnitType().equals("Dropship")
+                    || ms[i].getUnitType().equals("Conventional Fighter")
                     || ms[i].getUnitType().equals("BattleArmor")
             		|| ms[i].getUnitType().equals("Infantry")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
+                    continue;
+                }
+                if (entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),

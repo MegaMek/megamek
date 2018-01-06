@@ -196,6 +196,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // the dimensions of megamek's hex images
     public static final int HEX_W = HexTileset.HEX_W;
     public static final int HEX_H = HexTileset.HEX_H;
+    public static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
+
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -494,10 +496,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      *  used to display the distance in the board tooltip. */ 
     private Coords movementTarget;
 
+    // Used to track the previous x/y for tooltip display
+    int prevTipX = -1, prevTipY = -1;
+
     /**
      * Flag to indicate if we should display informatin about illegal terrain in hexes.
      */
     boolean displayInvalidHexInfo = false;
+
 
 
     /**
@@ -3472,7 +3478,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = EntityVisibilityUtils.hasVisual(localPlayer, game, entity);
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite
@@ -5533,6 +5539,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         StringBuffer txt = new StringBuffer();
         IHex mhex = null;
         final Point point = e.getPoint();
+        if (prevTipX > 0 && prevTipY > 0) {
+            int deltaX = point.x - prevTipX;
+            int deltaY = point.y - prevTipY;
+            double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
+                prevTipX = -1; prevTipY = -1;
+                // This is used to fool the tooltip manager into resetting the tip
+                ToolTipManager.sharedInstance().mousePressed(null);
+                return null;
+            }
+        }
+        prevTipX = point.x; prevTipY = point.y;
         final Coords mcoords = getCoordsAt(point);
         final ArrayList<ArtilleryAttackAction> artilleryAttacks =
                 getArtilleryAttacksAtLocation(mcoords);

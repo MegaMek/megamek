@@ -34,6 +34,8 @@ public class NPPCWeaponMedium extends NPPCWeapon {
         this.name = "Naval PPC (Medium)";
         this.setInternalName(this.name);
         this.addLookupName("MediumNPPC");
+        this.addLookupName("Medium NPPC (Clan)");
+        this.shortName = "Medium NPPC";
         this.heat = 135;
         this.damage = 9;
         this.shortRange = 12;

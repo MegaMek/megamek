@@ -41,7 +41,7 @@ Aerodyne
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
-cargobay:6.5:1:1
+cargobay:3.5:1:1
 </transporters>
 
 <SafeThrust>

@@ -62,9 +62,6 @@ import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.capitalweapons.AR10BayWeapon;
-import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -780,7 +777,12 @@ public class TestAero extends TestEntity {
 
     @Override
     public double getWeightHeatSinks() {
-        return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);        
+        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            int required = countHeatEnergyWeapons();
+            return Math.max(0, required - engine.getWeightFreeEngineHeatSinks());
+        } else {
+            return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);
+        }
     }
 
     @Override
@@ -792,7 +794,11 @@ public class TestAero extends TestEntity {
     public String printWeightMisc() {
         double weight = getWeightMisc();
         if (weight > 0){
-            return "VSTOL equipment: " + weight + "\n";
+            StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
+                    "VSTOL equipment:", getPrintSize() - 5));
+            retVal.append(makeWeightString(weight));
+            retVal.append("\n");
+            return retVal.toString();
         }
         return "";
     }
@@ -883,7 +889,7 @@ public class TestAero extends TestEntity {
         }
         if (armorTotal > maxArmorPoints){
             buff.append("Total armor," + armorTotal + 
-                    ", is greater than the maximum: " + maxArmorPoints);
+                    ", is greater than the maximum: " + maxArmorPoints + "\n");
             correct = false;
         }
 
@@ -1097,30 +1103,9 @@ public class TestAero extends TestEntity {
             buff.append("Invalid heatsink type!  Valid types are "
                     + Aero.HEAT_SINGLE + " and " + Aero.HEAT_DOUBLE
                     + ".  Found " + aero.getHeatType() + ".");
+            return false;
         }
-        // Conventional Fighters must be heat neutral
-        if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            int maxWeapHeat = countHeatEnergyWeapons();
-            int heatDissipation = 0;
-            if (aero.getHeatType() == Aero.HEAT_DOUBLE){
-                buff.append("Conventional fighters may only use single " +
-                        "heatsinks!");
-                return false;
-            } 
-            heatDissipation = aero.getHeatSinks();
-            
-            if(maxWeapHeat > heatDissipation) {
-                buff.append("Conventional fighters must be able to " +
-                        "dissipate all heat from energy weapons! \n" +
-                        "Max energy heat: " + maxWeapHeat + 
-                        ", max dissipation: " + heatDissipation);
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
-        }        
+        return true;
     }
 
     @Override
@@ -1156,7 +1141,8 @@ public class TestAero extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
-        if (getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks()) {
+        if ((getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks())
+                && !aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
             buff.append("Heat Sinks:\n");
             buff.append(" Engine    "
                     + engine.integralHeatSinkCapacity(false) + "\n");
@@ -1206,9 +1192,7 @@ public class TestAero extends TestEntity {
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
         
-        if (weapon.isSubCapital() || (weapon instanceof CapitalMissileWeapon)
-                || (weapon instanceof CapitalMissileBayWeapon)
-                || (weapon instanceof AR10BayWeapon)
+        if (weapon.isSubCapital() || (weapon.isCapital() && (weapon.hasFlag(WeaponType.F_MISSILE)))
                 || (weapon.getAtClass() == WeaponType.CLASS_SCREEN)) {
             return en.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);

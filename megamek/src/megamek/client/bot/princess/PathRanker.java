@@ -137,7 +137,7 @@ public abstract class PathRanker {
         HomeEdge homeEdge = getOwner().getHomeEdge();
         boolean fleeing = getOwner().isFallingBack(mover);
         //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
-        boolean isZeroMoveInfantry = mover instanceof Infantry && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
+        boolean isZeroMoveInfantry = mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
         if (isZeroMoveInfantry) {
             startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
         }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,41 +17,35 @@ Raubvogel Aerobomber
 </Name>
 
 <Model>
-AB-18C 
+AB-18C
 </Model>
 
-<Tonnage>
-45
-</Tonnage>
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-10
-9
-9
-8
-</Armor>
-
-<Nose Equipment>
-ISLargeLaser
-ISSRM2
-ISSRM2 Ammo
-ISStreakSRM4 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISStreakSRM4
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISStreakSRM4
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 8
@@ -65,30 +59,40 @@ ISStreakSRM4
 320
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-3064
-</year>
+<armor>
+9
+8
+8
+7
+</armor>
+
+<Nose Equipment>
+Large Laser
+SRM 2
+IS Ammo SRM-2
+IS Streak SRM 4 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISStreakSRM4
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISStreakSRM4
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <source>
 HB:House Steiner - Civil War
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+45.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

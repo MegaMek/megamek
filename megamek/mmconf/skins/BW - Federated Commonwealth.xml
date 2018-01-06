@@ -59,6 +59,7 @@
 		<tile_background>true</tile_background>
 		<font_color>#ffffff</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
 	</UI_Element>
 
 	<UI_Element>
@@ -74,7 +75,7 @@
 			<!-- Border lines: these images will be tiled -->
 			<edge>
 				<edgeIcon>
-					<icon>Bloodwolf/Federated Commonwealth/boardview/TLCT.gif</icon>
+					<icon>Bloodwolf/Parts/boardview/TLCT.gif</icon>
 					<tiled>false</tiled>
 				</edgeIcon>
 				<edgeIcon>
@@ -90,7 +91,7 @@
 					<tiled>true</tiled>
 				</edgeIcon>
 				<edgeIcon>
-					<icon>Bloodwolf/Federated Commonwealth/boardview/TRCT.gif</icon>
+					<icon>Bloodwolf/Parts/boardview/TRCT.gif</icon>
 					<tiled>false</tiled>
 				</edgeIcon>
 				<edgeName>top</edgeName>
@@ -117,11 +118,12 @@
 				<edgeName>right</edgeName>
 			</edge>
 		</border>
-		<background_image>Bloodwolf/Federated Commonwealth/boardview/background.gif</background_image>
+		<background_image>Bloodwolf/Parts/boardview/background.png</background_image>
 		<background_image>Bloodwolf/Parts/boardview/backdrop.png</background_image>
 		<tile_background>true</tile_background>
-		<font_color>#ffffff</font_color>
+		<font_color>#f8d42c</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
 	</UI_Element>
 
 	<UI_Element>
@@ -166,23 +168,24 @@
 		</border>
 		<background_image>Bloodwolf/Parts/phase/background.png</background_image>
 		<tile_background>true</tile_background>
-		<font_color>#ffffff</font_color>
+		<font_color>#f8d42c</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
 	</UI_Element>
 
 	<UI_Element>
 		<name>MainMenuBorder</name>
 		<no_border>true</no_border>
         <background_image>../misc/megamek_splash_spooky_fhd.png</background_image>
-        <background_image>Bloodwolf/Parts/title/background.png</background_image>
+        <background_image>Bloodwolf/Parts/boardview/background.png</background_image>
         <background_image>../misc/megamek_splash_spooky_uhd.png</background_image>
         <background_image>../misc/megamek_splash_spooky_hd.png</background_image>
 		<tile_background>true</tile_background>
-		<font_color>#ffffff</font_color>
+		<font_color>#f8d42c</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
 		<should_bold_mouseover>false</should_bold_mouseover>
 	</UI_Element>
-
+	
 	<UI_Element>
 		<name>MainMenuButton</name>
 		<no_border>true</no_border>
@@ -191,11 +194,11 @@
 		<tile_background>false</tile_background>
 		<font_color>#7f7f7f</font_color>
 		<font_color>#000000</font_color>
-		<font_color>#ffffff</font_color>
-		<font_name>Battletech Oldstyle</font_name>
-		<font_size>12</font_size>
+		<font_color>#f8d42c</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
 		<should_bold_mouseover>false</should_bold_mouseover>
+		<font_name>Battletech Oldstyle</font_name>
+		<font_size>12</font_size>
 	</UI_Element>	
 	
 	<UI_Element>
@@ -204,10 +207,11 @@
 		<background_image>Bloodwolf/Federated Commonwealth/button/buttonNormal.png</background_image>
 		<background_image>Bloodwolf/Federated Commonwealth/button/buttonPushed.png</background_image>
 		<tile_background>false</tile_background>
-		<font_color>#facc0b</font_color>
+		<font_color>#f8d42c</font_color>
 		<font_color>#7f7f7f</font_color>
-		<font_color>#facc0b</font_color>
+		<font_color>#f8d42c</font_color>
 		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>true</should_bold_mouseover>
 	</UI_Element>
 
 	<UI_Element>

@@ -240,6 +240,7 @@ import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
@@ -2267,7 +2268,7 @@ public class Server implements Runnable {
         boolean turnsChanged = false;
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
-        if (game.isPhaseSimultaneous() && (entityUsed != null)
+        if (game.isPhaseSimultaneous()
             && (entityUsed != null)
             && !turn.isValid(entityUsed.getOwnerId(), game)) {
             // turn played out of order
@@ -2451,9 +2452,9 @@ public class Server implements Runnable {
 
         // move along
         if (outOfOrder) {
-            send(createTurnIndexPacket(entityUsed.getOwnerId()));
+            send(createTurnIndexPacket(playerId));
         } else {
-            changeToNextTurn(entityUsed.getOwnerId());
+            changeToNextTurn(playerId);
         }
     }
 
@@ -3443,7 +3444,7 @@ public class Server implements Runnable {
         if (prevPlayerId != -1) {
             send(createTurnIndexPacket(prevPlayerId));
         } else {
-            send(createTurnIndexPacket(player.getId()));
+            send(createTurnIndexPacket(player != null ? player.getId() : IPlayer.PLAYER_NONE));
         }
 
         if ((null != player) && player.isGhost()) {
@@ -6483,9 +6484,10 @@ public class Server implements Runnable {
         }
         // we must be in atmosphere
         // if we're off the map, assume hex ceiling 0
+        // Hexes with elevations < 0 are treated as 0 altitude
         int ceiling = 0;
         if (game.getBoard().getHex(pos) != null) {
-            ceiling = game.getBoard().getHex(pos).ceiling(true);
+            ceiling = Math.max(0, game.getBoard().getHex(pos).ceiling(true));
         }
         return ceiling >= altitude;
     }
@@ -8233,7 +8235,7 @@ public class Server implements Runnable {
             // check for leap
             if (!lastPos.equals(curPos)
                     && (stepMoveType != EntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech)
+                    && (entity instanceof Mech) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
                         + game.getBoard().getHex(lastPos).getLevel())
@@ -9596,7 +9598,7 @@ public class Server implements Runnable {
                     addReport(r);
                     // check for quicksand
                     addReport(checkQuickSand(curPos));
-                } else {
+                } else if (!entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                     rollTarget = new PilotingRollData(entity.getId(),
                             5, "entering boggy terrain");
                     rollTarget.append(new PilotingRollData(entity.getId(),
@@ -10196,6 +10198,44 @@ public class Server implements Runnable {
         }
     }
 
+    public int processTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
+        final String METHOD_NAME = "processTeleguidedMissileCFR(Entity, Entity)";
+        sendTeleguidedMissileCFR(playerId, targetDescriptions);
+        while (true) {
+            synchronized (cfrPacketQueue) {
+                try {
+                    while (cfrPacketQueue.isEmpty()) {
+                        cfrPacketQueue.wait();
+                    }
+                } catch (InterruptedException e) {
+                    return 0;
+                }
+                // Get the packet, if there's something to get
+                ReceivedPacket rp;
+                if (cfrPacketQueue.size() > 0) {
+                    rp = cfrPacketQueue.poll();
+                    int cfrType = rp.packet.getIntValue(0);
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
+                        logError(METHOD_NAME,
+                                "Expected a " + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet, " + "received: " + cfrType);
+                        continue;
+                    }
+                    // Check packet came from right ID
+                    if (rp.connId != playerId) {
+                        logError(METHOD_NAME,
+                                "Exected a " + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
+                                + " but instead it came from player " + rp.connId);
+                        continue;
+                    }
+                    return (int)rp.packet.getData()[1];
+                } else { // If no packets, wait again
+                    continue;
+                }
+            }
+        }
+    }
+
     /**
      * If an aero unit takes off in the same turn that other units loaded, then
      * it risks damage to itself and those units
@@ -10661,7 +10701,7 @@ public class Server implements Runnable {
             if (entity instanceof Tank) {
                 Report.addNewline(vPhaseReport);
             }
-            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5);
+            Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5, true);
             Report.indentAll(vDamageReport, 2);
             vPhaseReport.addAll(vDamageReport);
         }
@@ -10694,7 +10734,7 @@ public class Server implements Runnable {
                     Report.addNewline(vPhaseReport);
                 }
                 Vector<Report> vDamageReport = deliverInfernoMissiles(ae,
-                        entity, 5);
+                        entity, 5, true);
                 Report.indentAll(vDamageReport, 2);
                 vPhaseReport.addAll(vDamageReport);
             }
@@ -10788,11 +10828,43 @@ public class Server implements Runnable {
      * @param ae       the <code>Entity</code> that fired the missiles
      * @param t        the <code>Targetable</code> that is the target
      * @param missiles the <code>int</code> amount of missiles
+     * @param areaEffect a <code>boolean</code> indicating whether the attack is from an
+     *                   area effect weapon such as Arrow IV inferno, and partial cover should
+     *                   be ignored.                
+     */
+    public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
+                                                 int missiles, boolean areaEffect) {
+        return deliverInfernoMissiles(ae, t, missiles, CalledShot.CALLED_NONE, areaEffect);
+    }
+
+    /**
+     * deliver inferno missiles
+     *
+     * @param ae       the <code>Entity</code> that fired the missiles
+     * @param t        the <code>Targetable</code> that is the target
+     * @param missiles the <code>int</code> amount of missiles
      * @param called   an <code>int</code> indicated the aiming mode used to fire the
      *                 inferno missiles (for called shots)
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
-                                                 int missiles, int called) {
+            int missiles, int called) {
+        return deliverInfernoMissiles(ae, t, missiles, called, false);
+    }
+    
+    /**
+     * deliver inferno missiles
+     *
+     * @param ae         the <code>Entity</code> that fired the missiles
+     * @param t          the <code>Targetable</code> that is the target
+     * @param missiles   the <code>int</code> amount of missiles
+     * @param called     an <code>int</code> indicated the aiming mode used to fire the
+     *                   inferno missiles (for called shots)
+     * @param areaEffect a <code>boolean</code> indicating whether the attack is from an
+     *                   area effect weapon such as Arrow IV inferno, and partial cover should
+     *                   be ignored.                
+     */
+    public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t,
+                int missiles, int called, boolean areaEffect) {
         IHex hex = game.getBoard().getHex(t.getPosition());
         Report r;
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -10884,7 +10956,7 @@ public class Server implements Runnable {
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;
-                if (te instanceof Mech) {
+                if ((te instanceof Mech) && (!areaEffect)) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
                     LosEffects le = LosEffects.calculateLos(game, ae.getId(), t);
@@ -13167,6 +13239,12 @@ public class Server implements Runnable {
                                 hidden.getId(), target.getId() }));
     }
 
+    private void sendTeleguidedMissileCFR(int playerId, List<String> targetDescriptions) {
+        // Send target descriptions to Client
+        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetDescriptions}));
+    }
+
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
             Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -13880,7 +13958,7 @@ public class Server implements Runnable {
      * assign AMS (and APDS) to those attacks.
      */
     public void assignAMS() {
-
+        final String METHOD_NAME = "assignAMS()";
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
         // Map target to a list of missile attacks directed at it
@@ -13896,7 +13974,7 @@ public class Server implements Runnable {
             // might no longer be in the game.
             //TODO: Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
             if (game.getEntity(waa.getEntityId()) == null) {
-                System.out.println("Can't Assign AMS: Artillery firer is null!");
+                logInfo(METHOD_NAME, "Can't Assign AMS: Artillery firer is null!");
                 continue;
             }
             
@@ -13913,24 +13991,39 @@ public class Server implements Runnable {
                 continue;
             }
 
-            // Can only use AMS versus missles.
+            // Can only use AMS versus missiles.
             if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
                 continue;
             }
             
             if (waa instanceof ArtilleryAttackAction) {
-                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                        .getTarget(game) : null;
-                if (target == null) {
-                    //this will pick our TAG target back up and assign it to the waa
-                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                    hh.convertHomingShotToEntityTarget();
+                Entity target;
+                ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+                if (wh instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (aaa.turnsTilHit > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
+                        continue;
+                    }
+                    //For Bearings-only Capital Missiles
                     target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
                             .getTarget(game) : null;
                     if (target == null) {
-                        //in case our target really is null. 
                         continue;
-                    }
+                    } 
+                } else {
+                    //For all other types of homing artillery
+                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                        .getTarget(game) : null;
+                    if (target == null) {
+                        //this will pick our TAG target back up and assign it to the waa                    
+                        ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
+                        hh.convertHomingShotToEntityTarget();
+                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                                .getTarget(game) : null;
+                        if (target == null) {
+                            //in case our target really is null. 
+                            continue;
+                        }
+                    }            
                 }
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {
@@ -14525,7 +14618,11 @@ public class Server implements Runnable {
                 r = new Report(3630);
                 r.subject = ent.getId();
                 r.addDesc(ent);
-                int target = ent.getCrew().getPiloting() + 2;
+                // Ghost target mod is +3 per errata
+                int target = ent.getCrew().getPiloting() + 3;
+                if (ent.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    target = ent.getCrew().getGunnery() + 3;
+                }
                 int roll = ent.getGhostTargetRoll();
                 r.add(target);
                 r.add(roll);
@@ -22398,6 +22495,22 @@ public class Server implements Runnable {
             return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag,
                                 damageIS, areaSatArty, throughFront, underWater, nukeS2S);
         }
+        
+        // Battle Armor takes full damage to each trooper from area-effect.
+        if (areaSatArty && (te instanceof BattleArmor)) {
+            r = new Report(6044);
+            r.subject = te.getId();
+            r.indent(2);
+            vDesc.add(r);
+            for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
+                hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
+                if (te.getInternal(hit) > 0) {
+                    vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, bFrag,
+                            damageIS, false, throughFront, underWater, nukeS2S));
+                }
+            }
+            return vDesc;
+        }
 
         // This is good for shields if a shield absorps the hit it shouldn't
         // effect the pilot.
@@ -24090,7 +24203,7 @@ public class Server implements Runnable {
                     }
 
                     // Torso destruction in airborne LAM causes immediate crash.
-                    if (te instanceof LandAirMech) {
+                    if ((te instanceof LandAirMech) && !te.isDestroyed() && !te.isDoomed()) {
                         r = new Report(9710);
                         r.subject = te.getId();
                         r.addDesc(te);
@@ -24584,6 +24697,9 @@ public class Server implements Runnable {
 
             while (damage > 0) {
                 int cluster = Math.min(clusterAmt, damage);
+                if (entity instanceof Infantry) {
+                    cluster = damage;
+                }
                 int table = ToHitData.HIT_NORMAL;
                 if (entity instanceof Protomech) {
                     table = ToHitData.HIT_SPECIAL_PROTO;

@@ -1,286 +1,199 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Dropship
-
 </UnitType>
 
 <Name>
-
 Achilles
-
 </Name>
 
 <Model>
-
 (2721)
-
 </Model>
 
-<Tonnage>
+<year>
+2721
+</year>
 
-4500
+<originalBuildYear>
+2721
+</originalBuildYear>
 
-</Tonnage>
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:2.0:1:1
+infantrybay:1.0:0:2:Foot
+2ndclassquarters:0.0:0
+1stclassquarters:70.0:0
+crewquarters:231.0:0
+cargobay:467.5:1:3
+</transporters>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
-
-290
-
-260
-
-260
-
-176
-
-</Armor>
-
-<Nose Equipment>
-
-ISERPPC
-
-ISERPPC
-
-ISLRM15
-
-IS Artemis IV FCS
-
-ISLRM15
-
-IS Artemis IV FCS
-
-ISLRM15 Ammo Artemis-capable:24
-
-ISLargePulseLaser
-
-ISLargePulseLaser
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser
-
-</Nose Equipment>
-
-<Left Side Equipment>
-
-ISERPPC
-
-ISUltraAC5
-
-ISUltraAC5
-
-ISUltraAC5 Ammo:60
-
-ISGaussRifle
-
-ISGauss Ammo:16
-
-ISLRM15
-
-IS Artemis IV FCS
-
-ISLRM15
-
-IS Artemis IV FCS
-
-ISLRM15 Ammo Artemis-capable:32
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser
-
-(R) ISERPPC
-
-(R) ISUltraAC5
-
-(R) ISUltraAC5 Ammo:20
-
-(R) ISLargePulseLaser
-
-(R) ISMediumPulseLaser
-
-(R) ISMediumPulseLaser
-
-</Left Side Equipment>
-
-<Right Side Equipment> 
-
-ISERPPC
-
-ISUltraAC5
-
-ISUltraAC5
-
-ISUltraAC5 Ammo:60
-
-ISGaussRifle
-
-ISGauss Ammo:16
-
-ISLRM15
-
-IS Artemis IV FCS
-
-ISLRM15
-
-IS Artemis IV FCS
-
-ISLRM15 Ammo Artemis-capable:32
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser
-
-(R) ISERPPC
-
-(R) ISUltraAC5
-
-(R) ISUltraAC5 Ammo:20
-
-(R) ISLargePulseLaser
-
-(R) ISMediumPulseLaser
-
-(R) ISMediumPulseLaser
-
-</Right Side Equipment>
-
-<Aft Equipment> 
-
-ISUltraAC5
-
-ISUltraAC5
-
-ISUltraAC5 Ammo:40
-
-ISLRM10
-
-IS Artemis IV FCS
-
-ISLRM10 Ammo Artemis-capable:12
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser
-
-</Aft Equipment>
-
-<structural_integrity>
-
-16
-
-</structural_integrity>
-
 <heatsinks>
-
 124
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 9000
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2721
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-
-</armor_type>
-
 <engine_type>
-
-0
-
+1
 </engine_type>
 
-<motion_type>
+<armor_type>
+19
+</armor_type>
 
-aerodyne
-
-</motion_type>
-
-
-
-<transporters>
-
-ASFBay:2:1
-
-SmallCraft:2:1
-
-InfantryBay:1:0
-
-CargoBay:160.5:1 
-
-</transporters>
-
-<escape_pod>
-
-4
-
-</escape_pod>
-
-<life_boat>
-
+<armor_tech>
 1
+</armor_tech>
 
-</life_boat>
+<armor>
+290
+260
+260
+176
+</armor>
+
+<Nose Equipment>
+(B) ISERPPC
+ISERPPC
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) ISUltraAC5
+ISUltraAC5
+ISGaussRifle
+IS Ultra AC/5 Ammo:60
+IS Gauss Ammo:16
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:32
+ISArtemisIV
+ISArtemisIV
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISERPPC
+(R) (B) ISUltraAC5
+(R) IS Ultra AC/5 Ammo:20
+(R) (B) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) ISUltraAC5
+ISUltraAC5
+ISGaussRifle
+IS Ultra AC/5 Ammo:60
+IS Gauss Ammo:16
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:32
+ISArtemisIV
+ISArtemisIV
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISERPPC
+(R) (B) ISUltraAC5
+(R) IS Ultra AC/5 Ammo:20
+(R) (B) ISLargePulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISUltraAC5
+ISUltraAC5
+IS Ultra AC/5 Ammo:40
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:12
+ISArtemisIV
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+
+<tonnage>
+4500.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
-
 72
-
 </crew>
 
+<officers>
+7
+</officers>
+
+<gunners>
+7
+</gunners>
+
 <passengers>
-
 0
-
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+1
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

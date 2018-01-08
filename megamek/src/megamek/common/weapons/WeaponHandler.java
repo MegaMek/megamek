@@ -290,18 +290,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                     if (isAMSBay) {
                         // get the attack value
-                        amsAV += bayWType.getShortAV(); 
+                        amsAV += bayWType.getShortAV();
+                        // set the ams as having fired, if it did
+                        setAMSBayReportingFlag();
                     }
                     if (isPDBay) {
                         // get the attack value
-                        pdAV += bayWType.getShortAV();  
-                    }
-                    // set the ams as having fired, if it did
-                    if (amsAV > 0) {
-                        setAMSBayReportingFlag();
-                    }
-                    // set the pdbay as having fired, if it was able to
-                    if (pdAV > 0 ) {
+                        pdAV += bayWType.getShortAV();
+                        // set the pdbay as having fired, if it was able to
                         counter.setUsedThisRound(true); 
                         setPDBayReportingFlag();
                     }

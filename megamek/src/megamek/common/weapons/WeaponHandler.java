@@ -184,6 +184,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
     
     /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     */
+    protected void setAMSBayReportingFlag() {
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     */
+    protected void setPDBayReportingFlag() {
+    }
+    
+    /**
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
@@ -241,9 +253,66 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         continue;
                     }
                 }
-            }        
-        }
-        return true;
+                
+                // Now for heat, damage and ammo we need the individual weapons in the bay
+                for (int wId : counter.getBayWeapons()) {
+                    Mounted bayW = pdEnt.getEquipment(wId);
+                    Mounted bayWAmmo = bayW.getLinked();
+                    WeaponType bayWType = ((WeaponType) bayW.getType());
+                    
+                    // build up some heat
+                    //First Check to see if we have enough heat capacity to fire
+                    if (pdOverheated) {
+                        continue;
+                    } else if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                        pdOverheated = true;
+                        continue;
+                    }
+                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        int heatDice = Compute.d6(bayW
+                                .getCurrentHeat());
+                        pdEnt.heatBuildup += heatDice;
+                        weaponHeat += heatDice;
+                    } else {
+                        pdEnt.heatBuildup += bayW.getCurrentHeat();
+                        weaponHeat += bayW.getCurrentHeat();
+                    }
+                    
+                    //Bays use lots of ammo. Check to make sure we haven't run out
+                    if (bayWAmmo != null) {
+                        if (bayWAmmo.getBaseShotsLeft() == 0) {
+                            continue;
+                        }
+                        // decrement the ammo
+                        bayWAmmo.setShotsLeft(Math.max(0,
+                            bayWAmmo.getBaseShotsLeft() - 1));
+                    }
+                    if (isAMSBay) {
+                        // get the attack value
+                        amsAV += bayWType.getShortAV(); 
+                    }
+                    if (isPDBay) {
+                        // get the attack value
+                        pdAV += bayWType.getShortAV();  
+                    }
+                    // set the ams as having fired, if it did
+                    if (amsAV > 0) {
+                        setAMSBayReportingFlag();
+                    }
+                    // set the pdbay as having fired, if it was able to
+                    if (pdAV > 0 ) {
+                        counter.setUsedThisRound(true); 
+                        setPDBayReportingFlag();
+                    }
+                }
+                // non-AMS only add half their damage, rounded up
+                counterAV += (int) Math.ceil(pdAV / 2.0); 
+                // AMS add their full damage
+                counterAV += amsAV;
+            } //end "for Mounted counter"
+        } // end check for counterfire
+        CounterAV = (int) counterAV;
+        return counterAV;
     }
 
     

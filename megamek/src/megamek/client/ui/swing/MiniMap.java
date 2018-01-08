@@ -98,7 +98,6 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
 
 /**

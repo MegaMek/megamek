@@ -256,6 +256,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
                 
                 // Now for heat, damage and ammo we need the individual weapons in the bay
+                // First, reset the temporary damage counters
+                amsAV = 0;
+                pdAV = 0;
                 for (int wId : counter.getBayWeapons()) {
                     Mounted bayW = pdEnt.getEquipment(wId);
                     Mounted bayWAmmo = bayW.getLinked();

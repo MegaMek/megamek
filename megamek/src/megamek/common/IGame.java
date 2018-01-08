@@ -911,15 +911,6 @@ public interface IGame {
     abstract Entity getNextEntity(int start);
 
     /**
-     * Returns the next selectable entity ID that can act this turn, or null if
-     * none can.
-     *
-     * @param start the index number to start at (and index into the entities
-     *                  collection)
-     */
-    abstract int getNextEntityNum(int start);
-
-    /**
      * Returns the entity id of the next entity that can move during the
      * specified
      *

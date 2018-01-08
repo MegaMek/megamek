@@ -1849,16 +1849,6 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Returns the Entity id of the next entity that can move during the current
-     * turn.
-     *
-     * @param start the Entity Id to start at
-     */
-    public int getNextEntityNum(int start) {
-        return getNextEntityNum(getTurn(), start);
-    }
-
-    /**
      * Returns the entity id of the next entity that can move during the
      * specified
      *

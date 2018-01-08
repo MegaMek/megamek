@@ -145,6 +145,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setAMSBayReportingFlag() {
         amsBayEngaged = true;
     }
@@ -152,6 +153,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setPDBayReportingFlag() {
         pdBayEngaged = true;
     }

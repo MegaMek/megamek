@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;

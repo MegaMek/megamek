@@ -47,12 +47,12 @@ public class BattleArmor extends Infantry {
      * Clan points usually have 5. Have a location that represents the entire
      * squad.
      */
-    private static final int[] IS_NUM_OF_SLOTS = { 7, 2, 2, 2, 2, 2, 2 };
+    private static final int[] IS_NUM_OF_SLOTS = { 20, 2, 2, 2, 2, 2, 2 };
     private static final String[] IS_LOCATION_ABBRS = { "Squad", "Trooper 1",
         "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
         "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
-    private static final int[] CLAN_NUM_OF_SLOTS = { 10, 2, 2, 2, 2, 2, 2 };
+    private static final int[] CLAN_NUM_OF_SLOTS = { 20, 2, 2, 2, 2, 2, 2 };
     private static final String[] CLAN_LOCATION_ABBRS = { "Point", "Trooper 1",
         "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final String[] CLAN_LOCATION_NAMES = { "Point", "Trooper 1",

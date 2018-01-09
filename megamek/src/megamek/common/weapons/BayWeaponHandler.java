@@ -94,10 +94,6 @@ public class BayWeaponHandler extends WeaponHandler {
         return (int) Math.ceil(av);
     }
     
-    // Return the attack value of any Point Defense bay weapons
-    protected int calcCounterAV() {
-    	return 0;
-    }
 
     @Override
     protected void addHeat() {

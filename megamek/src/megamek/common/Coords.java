@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import megamek.common.util.HashCodeUtil;
 
@@ -457,6 +458,20 @@ public class Coords implements Serializable {
                 new IdealHex(destination), directions);
     }
 
+    /**
+     * Convenience function that returns a list of all adjacent coordinates, regardless of whether they're on the board or not.
+     * @return List of adjacent coordinates.
+     */
+    public final List<Coords> allAdjacent() {
+        List<Coords> retVal = new ArrayList<>();
+        
+        for(int dir = 0; dir < 6; dir++) {
+            retVal.add(translated(dir));
+        }
+        
+        return retVal;
+    }
+    
     /**
      * this makes the coordinates 1 based instead of 0 based to match the tiles
      * diaplayed on the grid.

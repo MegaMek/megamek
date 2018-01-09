@@ -302,6 +302,14 @@ public class BoardEdgePathFinder {
     public MovePath findPathToEdge(Entity entity) {
         int destinationRegion = determineOppositeEdge(entity);
         
+        if(entity.getMovementMode() == EntityMovementMode.WHEELED) {
+            int alpha = 1;
+        }
+        
+        if(entity.getMovementMode() == EntityMovementMode.TRACKED) {
+            int alpha = 1;
+        }
+        
         // back up and restore the entity's original facing, as it's not nice to have side effects
         int originalFacing = entity.getFacing();
         setAppropriateFacing(entity, destinationRegion);
@@ -341,9 +349,10 @@ public class BoardEdgePathFinder {
             MovePath cachedPath = this.getCachedPathForCoordinates(candidates.get(0).getFinalCoords(), destinationRegion);
             
             if(cachedPath != null || isOnBoardEdge(candidates.get(0), destinationRegion)) {
-                // if we've found a cached path and the length of the current candidate is 0, then we should
-                // return the cached path instead
-                MovePath returnPath = ((candidates.get(0).length() == 0) && (cachedPath != null)) ? cachedPath : candidates.get(0);
+                // if we've found a cached path and the length of the current candidate is 1 
+                // (it's always at least 1 due to adding the climb mode switch explicitly), 
+                // then we should return the cached path instead
+                MovePath returnPath = ((candidates.get(0).length() == 1) && (cachedPath != null)) ? cachedPath : candidates.get(0);
                 
                 cacheGoodPath(returnPath, destinationRegion);
                 return returnPath;
@@ -493,6 +502,10 @@ public class BoardEdgePathFinder {
         IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
         
+        if(entity.getMovementMode() == EntityMovementMode.WHEELED && dest.getX() == 4 && dest.getY() == 12) {
+            int alpha = 1;
+        }
+        
         boolean destinationInBounds = board.contains(dest);
         if(!destinationInBounds) {
             return false;
@@ -516,15 +529,15 @@ public class BoardEdgePathFinder {
         int srcHexElevation = calculateUnitElevationInHex(srcHex, entity);
         
         boolean destinationImpassable = destHex.containsTerrain(Terrains.IMPASSABLE);
-        boolean destinationHasBuilding = destinationBuilding != null;
+        boolean destinationHasBuildingOrBridge = destinationBuilding != null;
+        boolean destinationHasBridge = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BRIDGE_CF);
+        boolean destinationHasBuilding = destinationHasBuildingOrBridge && destHex.containsTerrain(Terrains.BLDG_CF);
         
         // if we're going to step onto a bridge that will collapse, let's not consider going there
-        boolean destinationHasWeakBridge = destinationHasBuilding && destHex.containsTerrain(Terrains.BRIDGE_CF) &&
-                destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+        boolean destinationHasWeakBridge =  destinationHasBridge && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
                 
         // if we're going to step onto a building that will collapse, let's not consider going there
-        boolean destinationHasWeakBuilding = destinationHasBuilding && destHex.containsTerrain(Terrains.BLDG_CF) &&
-                destinationBuilding.getCurrentCF(dest) < entity.getWeight();
+        boolean destinationHasWeakBuilding = destinationHasBuilding && destinationBuilding.getCurrentCF(dest) < entity.getWeight();
                 
         // this condition indicates that that we are unable to go to the destination because it's too high compared to the source
         boolean goingUpTooHigh = destHexElevation - srcHexElevation > maxUpwardElevationChange; 
@@ -547,12 +560,17 @@ public class BoardEdgePathFinder {
                 || destHex.containsTerrain(Terrains.BLDG_CF) || (destHex.containsTerrain(Terrains.SNOW) && destHex.terrainLevel(Terrains.SNOW) > 1));
         
         // tracked and wheeled tanks cannot go into water without a bridge
-        boolean groundTankIntoWater = isTracked && !isHovercraft &&
+        boolean groundTankIntoWater = (isTracked || isWheeled) &&
                 destHex.containsTerrain(Terrains.WATER) && (destHex.depth() > 0) && !destHex.containsTerrain(Terrains.BRIDGE);
         
         // naval units cannot go out of water
         boolean shipOutofWater = entity.isNaval() &&
                 (!destHex.containsTerrain(Terrains.WATER) || destHex.depth() < 1);
+        
+        // for future expansion of this functionality, we may consider the possibility that a building or bridge
+        // will be destroyed intentionally by the bot to make way for a unit to cross
+        // for now, vehicles simply will not consider going through buildings as an option
+        boolean tankGoingThroughBuilding = (isWheeled || isTracked || isHovercraft) && destinationHasBuilding;
         
         return !destinationImpassable &&
                 !destinationHasWeakBridge &&
@@ -563,7 +581,8 @@ public class BoardEdgePathFinder {
                 !weakTankIntoWoods &&
                 !wheeledTankRestriction &&
                 !groundTankIntoWater &&
-                !shipOutofWater;
+                !shipOutofWater &&
+                !tankGoingThroughBuilding;
     }
     
     /**

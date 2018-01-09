@@ -302,14 +302,6 @@ public class BoardEdgePathFinder {
     public MovePath findPathToEdge(Entity entity) {
         int destinationRegion = determineOppositeEdge(entity);
         
-        if(entity.getMovementMode() == EntityMovementMode.WHEELED) {
-            int alpha = 1;
-        }
-        
-        if(entity.getMovementMode() == EntityMovementMode.TRACKED) {
-            int alpha = 1;
-        }
-        
         // back up and restore the entity's original facing, as it's not nice to have side effects
         int originalFacing = entity.getFacing();
         setAppropriateFacing(entity, destinationRegion);
@@ -501,10 +493,6 @@ public class BoardEdgePathFinder {
         Coords src = movePath.getSecondLastStep().getPosition();
         IHex srcHex = board.getHex(src);
         Entity entity = movePath.getEntity();
-        
-        if(entity.getMovementMode() == EntityMovementMode.WHEELED && dest.getX() == 4 && dest.getY() == 12) {
-            int alpha = 1;
-        }
         
         boolean destinationInBounds = board.contains(dest);
         if(!destinationInBounds) {

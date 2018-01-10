@@ -6312,7 +6312,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             //AMS Bays can fire at all incoming attacks each round
-            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
+            //So can standard AMS if the unofficial option is turned on
+            if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
+                    || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
+                            && ams.getType().hasFlag(WeaponType.F_AMS))) {
                 for (WeaponAttackAction waa : vAttacksInArc) {
                     if (waa != null) {
                         waa.addCounterEquipment(ams);

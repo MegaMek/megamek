@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -1581,11 +1582,19 @@ public class Game implements Serializable, IGame {
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
-        HashSet<Integer> posEntities = entityPosLookup.get(c);
-        ArrayList<Entity> vector = new ArrayList<Entity>();
+        Set<Integer> posEntities = entityPosLookup.get(c);
+        List<Entity> vector = new ArrayList<Entity>();
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
+                
+                // if the entity with the given ID doesn't exist, we will update the lookup table
+                // and move on
+                if(e == null) {
+                    posEntities.remove(eId);
+                    continue;
+                }
+                
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
 
@@ -1837,16 +1846,6 @@ public class Game implements Serializable, IGame {
         start = start % entities.size();
         int entityId = entities.get(start).getId();
         return getEntity(getNextEntityNum(getTurn(), entityId));
-    }
-
-    /**
-     * Returns the Entity id of the next entity that can move during the current
-     * turn.
-     *
-     * @param start the Entity Id to start at
-     */
-    public int getNextEntityNum(int start) {
-        return getNextEntityNum(getTurn(), start);
     }
 
     /**

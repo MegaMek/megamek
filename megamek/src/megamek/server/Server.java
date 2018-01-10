@@ -2268,7 +2268,7 @@ public class Server implements Runnable {
         boolean turnsChanged = false;
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
-        if (game.isPhaseSimultaneous() && (entityUsed != null)
+        if (game.isPhaseSimultaneous()
             && (entityUsed != null)
             && !turn.isValid(entityUsed.getOwnerId(), game)) {
             // turn played out of order
@@ -2452,9 +2452,9 @@ public class Server implements Runnable {
 
         // move along
         if (outOfOrder) {
-            send(createTurnIndexPacket(entityUsed.getOwnerId()));
+            send(createTurnIndexPacket(playerId));
         } else {
-            changeToNextTurn(entityUsed.getOwnerId());
+            changeToNextTurn(playerId);
         }
     }
 
@@ -3444,7 +3444,7 @@ public class Server implements Runnable {
         if (prevPlayerId != -1) {
             send(createTurnIndexPacket(prevPlayerId));
         } else {
-            send(createTurnIndexPacket(player.getId()));
+            send(createTurnIndexPacket(player != null ? player.getId() : IPlayer.PLAYER_NONE));
         }
 
         if ((null != player) && player.isGhost()) {
@@ -33286,8 +33286,15 @@ public class Server implements Runnable {
                 final int startingCF = curCF;
                 curCF -= Math.min(curCF, damage);
                 bldg.setCurrentCF(curCF, coords);
-                final int damageThresh = (int) Math.ceil(bldg
-                        .getPhaseCF(coords) / 10.0);
+                
+                r = new Report(6436, Report.PUBLIC);
+                r.indent(1);
+                String fontColorOpen = curCF <= 0 ? "<font color='C00000'>" : "";
+                String fontColorClose = curCF <= 0 ? "</font>" : "";
+                r.add(String.format("%s%s%s", fontColorOpen, curCF, fontColorClose));
+                vPhaseReport.add(r);
+                
+                final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
 
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {

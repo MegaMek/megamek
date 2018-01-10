@@ -207,6 +207,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false); // $NON-NLS-1$
     
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false); //$NON-NLS-1$

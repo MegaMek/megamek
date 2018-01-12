@@ -7231,6 +7231,10 @@ public class Server implements Runnable {
                             r.add(e.getPosition().getBoardNum());
                             vPhaseReport.addElement(r);
                             continueTurnFromPBS = true;
+                            
+                            curFacing = entity.getFacing();
+                            curPos = entity.getPosition();
+                            mpUsed = step.getMpUsed();
                             break;
                         }
                     }
@@ -9214,6 +9218,10 @@ public class Server implements Runnable {
         }
         entity.setAltitude(curAltitude);
         entity.setClimbMode(curClimbMode);
+        
+        if(entity.isAirborne() && entity.isAero()) {
+            ((IAero) entity).setCurrentVelocity(md.getFinalVelocityLeft());
+        }
 
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);

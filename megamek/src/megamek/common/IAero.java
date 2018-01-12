@@ -309,11 +309,16 @@ public interface IAero {
     default PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(md.getLastStepMovementType());
 
-        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
+        // if the entity has already moved, its movement got interrupted (probably by a hidden unit, not much else can interrupt an aero unit)
+        // in which case, the movement is complete. We just need to allow the user to hit 'done'.
+        if(((Entity) this).delta_distance > 0) {
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: aero has already moved");
+        // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere, 
+        // hovering, landing, or going off board 
+        } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
                 && !((Entity) this).getGame().getBoard().inSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
                 && !md.contains(MoveStepType.OFF) && !md.contains(MoveStepType.FLEE)) {
-            // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), 0, "stalled out"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity not stalled out");

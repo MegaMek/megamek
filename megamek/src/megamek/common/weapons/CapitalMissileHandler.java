@@ -13,10 +13,7 @@
  */
 package megamek.common.weapons;
 
-import java.util.Enumeration;
-
 import megamek.common.AmmoType;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;

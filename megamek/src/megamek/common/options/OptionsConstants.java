@@ -421,6 +421,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_FULL_ROTOR_HITS= "full_rotor_hits";  //$NON-NLS$
     public static final String ADVCOMBAT_FOREST_FIRES_NO_SMOKE= "forest_fires_no_smoke";  //$NON-NLS$
     public static final String ADVCOMBAT_HOTLOAD_IN_GAME= "hotload_in_game";  //$NON-NLS$
+    public static final String ADVCOMBAT_MULTI_USE_AMS= "multiuse_ams"; //$NON-NLS$
 
 
     public static final String ADVGRNDMOV_TACOPS_SPRINT= "tacops_sprint";  //$NON-NLS$

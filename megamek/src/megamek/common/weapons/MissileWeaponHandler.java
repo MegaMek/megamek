@@ -53,6 +53,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean apdsEngaged = false;
     boolean advancedAMS = false;
     boolean advancedPD = false;
+    boolean multiAMS = false;
     
 
 
@@ -68,6 +69,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         generalDamageType = HitData.DAMAGE_MISSILE;
         advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        multiAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS);
         sSalvoType = " missile(s) ";
     }
     
@@ -547,9 +549,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     }
                     apdsMod = Math.min(minApdsMod + dist, 0);
 
-                    // set the ams as having fired
-                    counter.setUsedThisRound(true);
-                    apdsEngaged = true;
+                    
+                    //Optional rule to allow multiple AMS shots per round
+                    if (!multiAMS) {
+                        // set the apds as having fired
+                        counter.setUsedThisRound(true);
+                        apdsEngaged = true;
+                    }
                     Report r = new Report(3351);
                     r.subject = entityTarget.getId();
                     r.add(apdsMod);
@@ -585,9 +591,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                                 mAmmo.getBaseShotsLeft() - 1));
                     }
 
-                    // set the ams as having fired
-                    counter.setUsedThisRound(true);
-                    amsEngaged = true;
+                    
+                    //Optional rule to allow multiple AMS shots per round
+                    if (!multiAMS) {
+                        // set the ams as having fired
+                        counter.setUsedThisRound(true);
+                        amsEngaged = true;
+                    }
                     Report r = new Report(3350);
                     r.subject = entityTarget.getId();
                     r.newlines = 0;

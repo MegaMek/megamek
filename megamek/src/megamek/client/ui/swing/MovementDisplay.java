@@ -905,21 +905,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateStartupButton();
         updateShutdownButton();
 
-        if (ce.isAero()) {
-            getBtn(MoveCommand.MOVE_THRUST).setEnabled(true);
-            getBtn(MoveCommand.MOVE_YAW).setEnabled(true);
-            getBtn(MoveCommand.MOVE_END_OVER).setEnabled(true);
-            getBtn(MoveCommand.MOVE_TURN_LEFT).setEnabled(true);
-            getBtn(MoveCommand.MOVE_TURN_RIGHT).setEnabled(true);
-            setEvadeAeroEnabled(true);
-            setEjectEnabled(true);
-            // no turning for spheroids in atmosphere
-            if ((((IAero) ce).isSpheroid() || clientgui.getClient().getGame()
-                    .getPlanetaryConditions().isVacuum())
-                    && !clientgui.getClient().getGame().getBoard().inSpace()) {
-                setTurnEnabled(false);
-            }
-        }
+        updateAeroButtons();
 
         updateSpeedButtons();
         updateThrustButton();
@@ -1010,6 +996,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         setupButtonPanel();
+    }
+    
+    private void updateAeroButtons() {
+        if (ce() != null && ce().isAero()) {
+            getBtn(MoveCommand.MOVE_THRUST).setEnabled(true);
+            getBtn(MoveCommand.MOVE_YAW).setEnabled(true);
+            getBtn(MoveCommand.MOVE_END_OVER).setEnabled(true);
+            getBtn(MoveCommand.MOVE_TURN_LEFT).setEnabled(true);
+            getBtn(MoveCommand.MOVE_TURN_RIGHT).setEnabled(true);
+            setEvadeAeroEnabled(cmd != null && !cmd.contains(MoveStepType.EVADE));
+            setEjectEnabled(true);
+            // no turning for spheroids in atmosphere
+            if ((((IAero) ce()).isSpheroid() || clientgui.getClient().getGame()
+                    .getPlanetaryConditions().isVacuum())
+                    && !clientgui.getClient().getGame().getBoard().inSpace()) {
+                setTurnEnabled(false);
+            }
+        }
     }
 
     /**
@@ -1188,6 +1192,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
+        updateAeroButtons();
 
         loadedUnits = ce.getLoadedUnits();
         if (ce instanceof Aero) {
@@ -4650,6 +4655,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE_AERO.getCmd())) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
+            setEvadeAeroEnabled(false);
         } else if (actionCmd.equals(MoveCommand.MOVE_ROLL.getCmd())) {
             cmd.addStep(MoveStepType.ROLL);
             clientgui.bv.drawMovementData(ce, cmd);

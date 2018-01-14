@@ -248,12 +248,18 @@ public class FighterSquadron extends Aero {
         }
 
         int bv = 0;
-        /*
-         * for(Aero fighter : fighters) { bv +=
-         * fighter.calculateBattleValue(ignoreC3, ignorePilot); }
-         */
+        
+        // We'll just add up the BV of all non-destroyed fighters in the squadron.
+        for (Integer fid : fighters) {
+            final Entity fighter = game.getEntity(fid);
+            if ((null != fighter) && !fighter.isDoomed() && !fighter.isDestroyed()) {
+                bv += fighter.calculateBattleValue(ignoreC3, ignorePilot);
+            }
+        }
+
         return bv;
     }
+    
 
     /*
      * (non-Javadoc)
@@ -546,15 +552,10 @@ public class FighterSquadron extends Aero {
 
     /**
      * This method looks at the bombs equipped on all the fighters in the
-<<<<<<< HEAD
-     * squadron and determines what possible bombing attacks the squadrons can
-     * make.
-=======
      * squadron and determines what possible bombing attacks the squadrons
      * can make.
      * 
      * TODO: Make this into a generic "clean up bomb loadout" method
->>>>>>> master
      */
     public void computeSquadronBombLoadout() {
         // Remove any currently equipped bombs

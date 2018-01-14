@@ -27,6 +27,7 @@ v0.43.7-git
 + Fixes for multiple issues relating to unit movement when unit is subjected to a point blank shot from a hidden unit
 + Errata: Infantry no longer get -1 modifier on bog down checks
 + Unofficial feature: option to allow AMS to engage multiple times per round.
++ Issue #862: Fighter Squadron BV
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

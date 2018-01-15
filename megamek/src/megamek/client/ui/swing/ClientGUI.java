@@ -504,6 +504,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             @Override
             protected void processKeyEvent(KeyEvent e) {
                 //menuBar.dispatchEvent(e);
+                e.setSource(ClientGUI.this);// avoid ClassCastException in TooltipManager
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);

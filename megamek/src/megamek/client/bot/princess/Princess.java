@@ -718,9 +718,10 @@ public class Princess extends BotClient {
         final StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (final Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
-            if (entity.isOffBoard() || (null == entity.getPosition())
-                || !entity.isSelectableThisTurn()
-                || !getGame().getTurn().isValidEntity(entity, getGame())) {
+            if ((entity.isOffBoard() 
+                || (null == entity.getPosition())
+                || !getGame().getTurn().isValidEntity(entity, getGame()))
+                && !getGame().isPhaseSimultaneous()) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -731,6 +732,7 @@ public class Princess extends BotClient {
                 movingEntity = entity;
                 break;
             }
+            
             if (entity instanceof MechWarrior) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;

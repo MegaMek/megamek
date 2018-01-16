@@ -452,7 +452,7 @@ public class Compute {
 
         // arguments valid?
         if (entity == null) {
-            throw new IllegalArgumentException("Entity invalid.");
+            throw new IllegalArgumentException("Entity invalid. ID " + entityId);
         }
         if (src.distance(dest) > 1) {
             throw new IllegalArgumentException("Coordinates must be adjacent.");

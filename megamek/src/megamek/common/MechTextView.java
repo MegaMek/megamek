@@ -29,6 +29,13 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * A utility class for retrieving mech information in a formatted string.
+ * 
+ * @deprecated Use {@link MechView#MechView(Entity, boolean, boolean, false)} instead.
+ * 
+ * This class has not been maintained and rather than copy the changes from MechView
+ * and continuing to maintain two nearly-identical classes, MechView has been reworked
+ * to provide the functionality of both.
+ * 
  */
 public class MechTextView {
 

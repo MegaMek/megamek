@@ -289,7 +289,8 @@ public class PrincessTest {
         IGame mockGame = Mockito.mock(IGame.class);
         GameTurn mockTurn = Mockito.mock(GameTurn.class);
         Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);
-        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenReturn(true);
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenCallRealMethod();
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class), Mockito.anyBoolean())).thenCallRealMethod();
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
         List<Entity> testEntityList = new ArrayList<>();

@@ -635,12 +635,13 @@ public class MechView {
         List<ViewElement> retVal = new ArrayList<>();
 
         retVal.add(new LabeledElement(Messages.getString("MechView.SI"), //$NON-NLS-1$
-                String.valueOf(a.getSI())));
+                renderArmor(a.getSI(), a.get0SI(), html)));
 
         // if it is a jumpship get sail and KF integrity
         if (isJumpship & !isSpaceStation) {
             Jumpship js = (Jumpship) entity;
 
+            // TODO: indicate damage.
             retVal.add(new LabeledElement(Messages.getString("MechView.SailIntegrity"), //$NON-NLS-1$
                     String.valueOf(js.getSailIntegrity())));
 

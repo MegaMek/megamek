@@ -400,19 +400,28 @@ public class MechView {
                     gyroString));
         }
 
-        if (isAero && !((Aero) entity).getCritDamageString().equals("")) {
-            sBasic.add(new LabeledElement("System Damage",
-                    warningStart() + ((Aero) entity).getCritDamageString() + warningEnd()));
-        }
+        if (isAero) {
+            Aero a = (Aero) entity;
+            if (!a.getCritDamageString().equals("")) {
+                sBasic.add(new LabeledElement(Messages.getString("MechView.SystemDamage"), //$NON-NLS-1$
+                        warningStart() + a.getCritDamageString() + warningEnd()));
+            }
+            
+            String fuel = String.valueOf(a.getCurrentFuel());
+            if (a.getCurrentFuel() < a.getFuel()) {
+                fuel += "/" + a.getFuel(); //$NON-NLS-1$
+            }
+            sBasic.add(new LabeledElement(Messages.getString("MechView.FuelPoints"), //$NON-NLS-1$
+                    String.format(Messages.getString("MechView.Fuel.format"), fuel, a.getFuelTonnage()))); //$NON-NLS-1$
 
-        //Display Strategic Fuel Use for Small Craft and up
-        if (isSmallCraft || isJumpship) {
-            sBasic.add(new LabeledElement("Strategic Fuel Use", ""));
-            sBasic.add(new LabeledElement("Tons per Burn Day",
-                    String.format("%2.2f", ((Aero) entity).getStrategicFuelUse())));
+            //Display Strategic Fuel Use for Small Craft and up
+            if (isSmallCraft || isJumpship) {
+                sBasic.add(new LabeledElement(Messages.getString("MechView.TonsPerBurnDay"), //$NON-NLS-1$
+                        String.format("%2.2f", a.getStrategicFuelUse()))); //$NON-NLS-1$
+            }
         }
         if (!isGunEmplacement) {
-            sBasic.add(new SingleLine()); //$NON-NLS-1$
+            sBasic.add(new SingleLine());
             if (isSquadron) {
                 sBasic.addAll(getArmor());
             } else if (isAero) {

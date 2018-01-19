@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
    This is the default key binding for MegaMek.  
-    Key code numeric values are defined in awt.event.KeyEvent.
-    See: http://docs.oracle.com/javase/7/docs/api/constant-values.html#java.awt.event.KeyEvent.CHAR_UNDEFINED
-    The modifier numeric value is a mask that determines what modifier keys are pressed (ie; ctrl, shift, etc). 
-    These are defined at the same webpage, however they should be combined using bitwise ors.
-     Commands are strings used to represent the possible actions MegaMek recognizes.
-     These are defined and listed in megamek.client.ui.swing.util.KeyBindCommand
+   Key code numeric values are defined in awt.event.KeyEvent.
+   See: http://docs.oracle.com/javase/7/docs/api/constant-values.html#java.awt.event.KeyEvent.CHAR_UNDEFINED
+   The modifier numeric value is a mask that determines what modifier keys are pressed (ie; ctrl, shift, etc). 
+   These are defined at the same webpage, however they should be combined using bitwise ors.
+   Commands are strings used to represent the possible actions MegaMek recognizes.
+   These are defined and listed in megamek.client.ui.swing.util.KeyBindCommand
  -->
 <KeyBindings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="keyBindingSchema.xsl">
     <KeyBind>

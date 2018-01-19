@@ -32,6 +32,7 @@ v0.43.7-git
 + Data: New Sprites and adding MWO Canon Mechs(Sun Spider and Roughneck)
 + Issue #859: Game Options Tooltip Exception
 + Princess will no longer waste firepower targeting solitary mechwarriors in buildings.
++ PR#851 Change Default KeyBinds (adds ctrl to overlay and unit label toggles).
 
 v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.

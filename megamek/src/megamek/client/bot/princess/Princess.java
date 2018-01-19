@@ -1441,7 +1441,7 @@ public class Princess extends BotClient {
 
     private boolean isEnemyGunEmplacement(final Entity entity,
                                           final Coords coords) {
-        return entity instanceof GunEmplacement
+        return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
                && (null != entity.getCrew()) && !entity.getCrew().isDead();
@@ -1449,7 +1449,7 @@ public class Princess extends BotClient {
 
     private boolean isEnemyInfantry(final Entity entity,
                                     final Coords coords) {
-        return (entity instanceof Infantry)
+        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords);
     }

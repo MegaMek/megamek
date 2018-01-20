@@ -29,7 +29,7 @@ import megamek.common.QuirksHandler;
  * program knows about the possible unit types, and checks to see if a quirk
  * entry would match another unit type, and if it does, it adds a quirks entry
  * with the same quirks for that unit type.
- * 
+ *
  * @author arlith
  * @date April 2016
  */

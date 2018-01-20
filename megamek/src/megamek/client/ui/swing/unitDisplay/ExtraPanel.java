@@ -54,7 +54,7 @@ import megamek.common.weapons.other.TSEMPWeapon;
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
     /**
-     * 
+     *
      */
     private final UnitDisplay unitDisplay;
 
@@ -155,7 +155,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         heatR.setEditable(false);
         heatR.setOpaque(false);
         heatR.setForeground(Color.WHITE);
-        
+
         lblLastTarget = new JLabel(
                 Messages.getString("MechDisplay.LastTarget"),
                 SwingConstants.CENTER);
@@ -250,11 +250,11 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         c.insets = new Insets(1, 9, 18, 9);
         gridbag.setConstraints(heatR, c);
         add(heatR);
-        
+
         c.insets = new Insets(0, 0, 0, 0);
         gridbag.setConstraints(lblLastTarget, c);
         add(lblLastTarget);
-        
+
         c.insets = new Insets(1, 9, 18, 9);
         gridbag.setConstraints(lastTargetR, c);
         add(lastTargetR);
@@ -622,7 +622,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             curSensorsL.setText((Messages
                     .getString("MechDisplay.CurrentSensors")).concat(" ")); //$NON-NLS-1$
         }
-        
+
         if (en.getLastTarget() != Entity.NONE) {
             lastTargetR.setText(en.getLastTargetDisplayName());
         } else {

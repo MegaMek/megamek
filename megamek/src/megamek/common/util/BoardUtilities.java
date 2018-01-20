@@ -47,7 +47,7 @@ public class BoardUtilities {
     public static int getAmountElevationGenerators() {
         return 3 + elevationGenerators.size();
     }
-    
+
     /**
      * Combines one or more boards into one huge megaboard!
      *

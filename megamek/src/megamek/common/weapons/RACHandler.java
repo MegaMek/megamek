@@ -48,7 +48,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -91,7 +91,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override
@@ -158,5 +158,5 @@ public class RACHandler extends UltraWeaponHandler {
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }
-    
+
 }

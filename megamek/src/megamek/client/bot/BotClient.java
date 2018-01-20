@@ -85,7 +85,7 @@ public abstract class BotClient extends Client {
 
     // a frame, to show stuff in
     public JFrame frame;
-    
+
     /**
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
@@ -123,7 +123,7 @@ public abstract class BotClient extends Client {
                 boolean ignoreSimTurn = game.isPhaseSimultaneous() && (e.getPreviousPlayerId() != localPlayerNumber)
                         && calculatedTurnThisPhase;
 
-                
+
                 if (isMyTurn() && !ignoreSimTurn) {
                     calculatedTurnThisPhase = true;
                     // Run bot's turn processing in a separate thread.
@@ -191,7 +191,7 @@ public abstract class BotClient extends Client {
                     case Packet.COMMAND_CFR_HIDDEN_PBS:
                         try {
                             Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
-                            
+
                             if(pointBlankShots == null) {
                                 sendHiddenPBSCFRResponse(null);
                             } else {
@@ -237,8 +237,8 @@ public abstract class BotClient extends Client {
 
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
-    
-    protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) { 
+
+    protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
         return null;
     }
 
@@ -258,31 +258,31 @@ public abstract class BotClient extends Client {
     protected abstract void checkMoral();
 
     /**
-     * Helper function that determines which of this bot's entities are stranded inside immobilized transports. 
+     * Helper function that determines which of this bot's entities are stranded inside immobilized transports.
      * @return Array of entity IDs.
      */
     public int[] getStrandedEntities() {
         List<Integer> entitiesToUnload = new ArrayList<>();
-        
+
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
         // For future development, consider not unloading a particular entity if doing so would kill it.
         for(Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ? game.getEntity(currentEntity.getTransportId()) : null;
-            
+
             if(transport != null && transport.isPermanentlyImmobilized(true)) {
                 entitiesToUnload.add(currentEntity.getId());
             }
         }
-        
+
         int[] entityIDs = new int[entitiesToUnload.size()];
         for(int x = 0; x < entitiesToUnload.size(); x++) {
             entityIDs[x] = entitiesToUnload.get(x);
         }
-        
+
         return entityIDs;
     }
-    
+
     public List<Entity> getEntitiesOwned() {
         ArrayList<Entity> result = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
@@ -510,7 +510,7 @@ public abstract class BotClient extends Client {
 
         return mass;
     }
-    
+
     /**
      * Gets valid & empty starting coords around the specified point. This
      * method iterates through the list of Coords and returns the first Coords
@@ -641,7 +641,7 @@ public abstract class BotClient extends Client {
         }
 
         double highestFitness = -5000;
-        
+
         for (RankedCoords coord : validCoords) {
 
             // Calculate the fitness factor for each hex and save it to the array
@@ -807,7 +807,7 @@ public abstract class BotClient extends Client {
                 coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }
-            
+
             // ProtoMech
             // ->
             // -> Trees increase fitness by +2 (minor)
@@ -822,7 +822,7 @@ public abstract class BotClient extends Client {
             if (!hasPathToEdge(deployed_ent, board)) {
                 coord.fitness -= 100;
             }
-            
+
             if(coord.fitness > highestFitness) {
                 highestFitness = coord.fitness;
             }
@@ -836,7 +836,7 @@ public abstract class BotClient extends Client {
                 rc.fitness += deploymentPathFinders.get(deployed_ent.getMovementMode()).getLongestNonEdgePath(rc.getCoords()).getHexesMoved();
             }
         }
-        
+
         // Now sort the valid array.
         Collections.sort(validCoords);
 
@@ -861,7 +861,7 @@ public abstract class BotClient extends Client {
         if (entity.isAero() || entity instanceof VTOL) {
             return true;
         }
-        
+
         BoardEdgePathFinder boardEdgePathFinder;
 
         if(deploymentPathFinders.containsKey(entity.getMovementMode())) {
@@ -871,7 +871,7 @@ public abstract class BotClient extends Client {
             boardEdgePathFinder = new BoardEdgePathFinder();
             deploymentPathFinders.put(entity.getMovementMode(), boardEdgePathFinder);
         }
-        
+
         MovePath mp = boardEdgePathFinder.findPathToEdge(entity);
         return mp != null;
     }
@@ -1113,17 +1113,17 @@ public abstract class BotClient extends Client {
     public void endOfTurnProcessing() {
         // Do nothing;
     }
-    
+
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
-        
+
         // once we've updated the game board with the building collapse, it is time to update
         // the board edge pathfinder by purging any paths that go through or next to the collapsed hexes
         for(BoardEdgePathFinder edgePathFinder : deploymentPathFinders.values()) {
             for(Coords coords : (Vector<Coords>) packet.getObject(0)) {
                 edgePathFinder.invalidatePaths(coords);
-                
+
                 for(Coords neighbor : coords.allAdjacent()) {
                     edgePathFinder.invalidatePaths(neighbor);
                 }

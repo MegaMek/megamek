@@ -32,7 +32,7 @@ public class ArtilleryTracker implements Serializable {
      * for all the different coords it's got mods to.
      */
     private Hashtable<Mounted, Vector<ArtilleryModifier>> weapons;
-    
+
     private boolean spotterIsForwardObs;
 
     /**
@@ -50,7 +50,7 @@ public class ArtilleryTracker implements Serializable {
     public void addWeapon(Mounted mounted) {
         weapons.put(mounted, new Vector<ArtilleryModifier>());
     }
-    
+
     /**
      * Removes a weapon - needed when capital missile bays change modes
      *
@@ -61,7 +61,7 @@ public class ArtilleryTracker implements Serializable {
             weapons.remove(mounted);
         }
     }
-    
+
     /**
      * Returns the size of the weapons hashtable
      *
@@ -181,11 +181,11 @@ public class ArtilleryTracker implements Serializable {
         }
 
     }
-    
+
     public boolean getSpotterHasForwardObs() {
         return spotterIsForwardObs;
     }
-    
+
     public void setSpotterHasForwardObs(boolean forwardObserver) {
         spotterIsForwardObs = forwardObserver;
     }

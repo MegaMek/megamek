@@ -46,7 +46,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -78,9 +78,9 @@ public abstract class PPCWeapon extends EnergyWeapon {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
             if (getToHitModifier() != 0) {
-                damage -= damage * getToHitModifier() * 0.05; 
+                damage -= damage * getToHitModifier() * 0.05;
             }
         }
-        return damage / 10.0;        
+        return damage / 10.0;
     }
 }

@@ -137,9 +137,9 @@ public interface IPlayer extends ITurnOrdered {
     void setAdmitsDefeat(boolean admitsDefeat);
 
     boolean admitsDefeat();
-    
+
     void setAllowTeamChange(boolean allowChange);
-    
+
     boolean isAllowingTeamChange();
 
     void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes);
@@ -198,9 +198,9 @@ public interface IPlayer extends ITurnOrdered {
      * @return a vector of relevant entity ids
      */
     Vector<Integer> getAirborneVTOL();
-    
+
     // Make sure IPlayer implements both
     boolean equals(Object obj);
-    
+
     int hashCode();
 }

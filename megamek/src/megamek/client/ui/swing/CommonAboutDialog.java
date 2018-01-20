@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.client.ui.swing;
@@ -46,7 +46,7 @@ import megamek.common.util.MegaMekFile;
 public class CommonAboutDialog extends JDialog {
     private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif"; //$NON-NLS-1$
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9019180090528719535L;
     /**
@@ -56,7 +56,7 @@ public class CommonAboutDialog extends JDialog {
 
     /**
      * Get the single title image in a threadsafe way.
-     * 
+     *
      * @param frame - a <code>JFrame</code> object to instantiate the image.
      * @return the title <code>Image</code> common to all "about" dialogs.
      *         This value should <b>not</b> be <code>null</code>.
@@ -84,7 +84,7 @@ public class CommonAboutDialog extends JDialog {
 
     /**
      * Create an "about" dialog for MegaMek.
-     * 
+     *
      * @param frame - the parent <code>JFrame</code> for this dialog.
      */
     public CommonAboutDialog(JFrame frame) {

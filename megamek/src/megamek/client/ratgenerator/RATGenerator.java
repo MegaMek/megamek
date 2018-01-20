@@ -47,12 +47,12 @@ import megamek.common.util.MegaMekFile;
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
  * including faction, era, unit type, weight class, equipment rating, faction subcommand, vehicle
  * movement mode, and mission role.
- * 
+ *
  * @author Neoancient
  *
  */
 public class RATGenerator {
-	
+
 	private HashMap<String, ModelRecord> models = new HashMap<String,ModelRecord>();
 	private HashMap<String, ChassisRecord> chassis = new HashMap<String,ChassisRecord>();
 	private HashMap<String, FactionRecord> factions = new HashMap<String,FactionRecord>();
@@ -71,7 +71,7 @@ public class RATGenerator {
     private boolean initializing;
 
     private ArrayList<ActionListener> listeners;
-    
+
     protected RATGenerator() {
     	models = new HashMap<String,ModelRecord>();
     	chassis = new HashMap<String,ChassisRecord>();
@@ -79,7 +79,7 @@ public class RATGenerator {
     	modelIndex = new HashMap<>();
     	chassisIndex = new HashMap<>();
     	eraSet = new TreeSet<Integer>();
-    	
+
     	listeners = new ArrayList<ActionListener>();
     }
 
@@ -188,7 +188,7 @@ public class RATGenerator {
 	public TreeSet<Integer> getEraSet() {
 		return eraSet;
 	}
-	
+
 	public Collection<ModelRecord> getModelList() {
 		return models.values();
 	}
@@ -208,7 +208,7 @@ public class RATGenerator {
 	public Collection<FactionRecord> getFactionList() {
 		return factions.values();
 	}
-	
+
 	public FactionRecord getFaction(String key) {
 		return factions.get(key);
 	}
@@ -228,14 +228,14 @@ public class RATGenerator {
 	public Collection<String> getFactionKeySet() {
 		return factions.keySet();
 	}
-	
+
 	public int eraForYear(int year) {
 		if (year < eraSet.first()) {
 			return eraSet.first();
 		}
 		return eraSet.floor(year);
 	}
-	
+
 	public boolean eraIsLoaded(int era) {
 		return chassisIndex.containsKey(era);
 	}
@@ -243,7 +243,7 @@ public class RATGenerator {
 	/**
 	 * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find the average
 	 * availability among the parents. Based on average weight rather than av rating.
-	 * 
+	 *
 	 * @param faction The faction code to use for the new AvailabilityRecord
 	 * @param list A list of ARs for the various parent factions
 	 * @return A new AR with the average availability code from the various factions.
@@ -259,20 +259,20 @@ public class RATGenerator {
 			totalAdj += ar.ratingAdjustment;
 		}
 		AvailabilityRating retVal = list.get(0).makeCopy(faction);
-		
+
 		retVal.availability = (int)(AvailabilityRating.calcAvRating(totalWt / list.size()));
 		if (totalAdj < 0) {
-			retVal.ratingAdjustment = (int)((totalAdj - 1)/ list.size());			
+			retVal.ratingAdjustment = (int)((totalAdj - 1)/ list.size());
 		} else {
 			retVal.ratingAdjustment = (int)((totalAdj + 1)/ list.size());
 		}
 		return retVal;
 	}
-	
+
 	/**
 	 * Given values for two years, interpolates or extrapolates value for another given year.
 	 * If one of the two values is null, it is treated as 0.
-	 * 
+	 *
 	 * @param av1 The first value.
 	 * @param av2 The second value.
 	 * @param year1 The year for the first value.
@@ -280,7 +280,7 @@ public class RATGenerator {
 	 * @param now The year for which to calculate a value.
 	 * @return The value for the year in question. Returns null if av1 and av2 are both null.
 	 */
-	
+
 	private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
 		if (av1 == null && av2 == null) {
 			return null;
@@ -297,7 +297,7 @@ public class RATGenerator {
 		return av1.doubleValue()
 				+ (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
 	}
-	
+
 	public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
 			String rating, Collection<Integer> weightClasses, int networkMask,
 			Collection<EntityMovementMode> movementModes,
@@ -305,13 +305,13 @@ public class RATGenerator {
 			FactionRecord user) {
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
 		HashMap<FactionRecord, Double> salvageWeights = new HashMap<FactionRecord, Double>();
-		
+
 		loadYear(year);
-		
+
 		if (fRec == null) {
 			fRec = new FactionRecord();
 		}
-		
+
 		Integer early = eraSet.floor(year);
 		if (early == null) {
 			early = eraSet.first();
@@ -323,7 +323,7 @@ public class RATGenerator {
 		if (late == null) {
 			late = early;
 		}
-		
+
 		/* Adjustments for unit rating require knowing both how many ratings are available
 		 * to the faction and where the rating falls within the whole. If a faction does
 		 * not have designated rating levels, it inherits those of the parent faction;
@@ -332,7 +332,7 @@ public class RATGenerator {
 		 * of -1. A faction that has one rating level is a special case that always has
 		 * the indicated rating within the parent faction's system.
 		 */
-		
+
 		int ratingLevel = -1;
 		ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
 		int numRatingLevels = factionRatings.size();
@@ -342,14 +342,14 @@ public class RATGenerator {
 		if (rating != null && numRatingLevels > 1) {
 			ratingLevel = factionRatings.indexOf(rating);
 		}
-		
+
 		for (String chassisKey : chassisIndex.get(early).keySet()) {
 			ChassisRecord cRec = chassis.get(chassisKey);
 			if (cRec == null) {
 				System.err.println("Could not locate chassis " + chassisKey);
 				continue;
 			}
-			
+
 			if (cRec.getUnitType() != unitType &&
 					!(unitType == UnitType.TANK
 						&& cRec.getUnitType() == UnitType.VTOL
@@ -398,13 +398,13 @@ public class RATGenerator {
 						}
 					}
 				}
-			}						
+			}
 		}
 
 		if (unitWeights.size() == 0) {
 			return new ArrayList<UnitTable.TableEntry>();
 		}
-		
+
 		/* If there is more than one weight class and the faction record (or parent)
 		 * indicates a certain distribution of weight classes, adjust the weight value
 		 * to conform to the given ratio.
@@ -413,26 +413,26 @@ public class RATGenerator {
 		if (weightClasses.size() > 1) {
 			// Get standard weight class distribution for faction
 			ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
-			
+
 			if (wcd != null && wcd.size() > 0) {
 				/* Ultra-light and superheavy are too rare to warrant their own values and
 				 * for weight class distribution purposes are grouped with light and
 				 * assault, respectively.
 				 */
 				final int[] wcdIndex = {0, 0, 1, 2, 3, 3};
-				//Find the totals of the weight for the generated table 
+				//Find the totals of the weight for the generated table
 				double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 				//Find the sum of the weight distribution values for all weight classes in use.
 				int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
 				        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
-				
+
 				if (totalWCDWeights > 0) {
 					//Group all the models of the generated table by weight class.
 					java.util.function.Function<ModelRecord,Integer> grouper =
 							mr -> wcdIndex[mr.getWeightClass()];
 					Map<Integer,List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
 							.collect(Collectors.groupingBy(grouper));
-					
+
 					/* Go through the weight class groups and adjust the table weights so the
 					 * total of each group corresponds to the distribution for this faction. */
 					for (int i : weightGroups.keySet()) {
@@ -446,7 +446,7 @@ public class RATGenerator {
 				}
 			}
 		}
-		
+
 		double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 
 		if (fRec.getPctSalvage(early) != null) {
@@ -464,8 +464,8 @@ public class RATGenerator {
 								entry.getValue(), early, late, year));
 					}
 				}
-			}			
-			
+			}
+
 			double salvage = fRec.getPctSalvage(early);
 			if (salvage >= 100) {
 				salvage = total;
@@ -485,15 +485,15 @@ public class RATGenerator {
 				}
 			}
 		}
-		
+
 		if (ratingLevel >= 0) {
 			adjustForRating(fRec, unitType, year, ratingLevel,
 					unitWeights, salvageWeights, early, late);
 		}
-		
-		
+
+
 		/* Increase weights if necessary to keep smallest from rounding down to zero */
-		
+
 		double adj = 1.0;
 		DoubleSummaryStatistics stats = Stream.concat(salvageWeights.values().stream(),
 				unitWeights.values().stream())
@@ -506,7 +506,7 @@ public class RATGenerator {
 				adj = 1000.0 / stats.getMax();
 			}
 		}
-		
+
 		List<UnitTable.TableEntry> retVal = new ArrayList<UnitTable.TableEntry>();
 		for (FactionRecord faction : salvageWeights.keySet()) {
 			int wt = (int)(salvageWeights.get(faction) * adj + 0.5);
@@ -597,7 +597,7 @@ public class RATGenerator {
 					} else if (pct > pctSL + techMargin) {
 						pctSL += techMargin;
 					}
-				}					
+				}
 			}
 			Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
 					fRec.getUpgradeMargin(late),
@@ -611,9 +611,9 @@ public class RATGenerator {
 				}
 				/* If clan, sl, and other are all adjusted, the values probably
 				 * don't add up to 100, which is fine unless the upgradeMargin is
-				 * <= techMargin. Then pctOther is more certain, and we adjust 
+				 * <= techMargin. Then pctOther is more certain, and we adjust
 				 * the values of clan and sl to keep the value of "other" equal to
-				 * a percentage. 
+				 * a percentage.
 				 */
 				if (techMargin != null) {
 					if (upgradeMargin <= techMargin) {
@@ -642,8 +642,8 @@ public class RATGenerator {
 				}
 			}
 			pctNonOmni = 100.0 - pctOmni;
-		}			
-				
+		}
+
 		/* For non-Clan factions, the amount of salvage from Clan factions is
 		 * part of the overall Clan percentage.
 		 */
@@ -665,7 +665,7 @@ public class RATGenerator {
 				unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
 			}
 			if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));						
+				unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));
 			}
 			if (pctSL != null && mRec.isSL()
 					&& totalSL > 0) {
@@ -717,9 +717,9 @@ public class RATGenerator {
                 // Ignore
             }
         }
-        
+
         loadFactions();
-        
+
 		for (File f : Configuration.forceGeneratorDir().listFiles()) {
 			if (f.getName().matches("\\d+\\.xml")) {
 				eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
@@ -736,7 +736,7 @@ public class RATGenerator {
             dispose = false;
         }
 	}
-	
+
 	/**
 	 * If year is equal to one of the era marks, loads that era. If it is between,
 	 * loads eras on both sides.
@@ -752,7 +752,7 @@ public class RATGenerator {
 			loadEra(eraSet.ceiling(year));
 		}
 	}
-	
+
 	private void loadFactions() {
 		File file = new MegaMekFile(Configuration.forceGeneratorDir(), "factions.xml").getFile();
 		FileInputStream fis = null;
@@ -787,10 +787,10 @@ public class RATGenerator {
 				} else {
 					System.err.println("Faction key not found in " + file.getPath());
 				}
-			}			
+			}
 		}
 	}
-	
+
 	private synchronized void loadEra(int era) {
 		if (eraIsLoaded(era)) {
 			return;
@@ -890,7 +890,7 @@ public class RATGenerator {
 			}
 		}
 	}
-	
+
 	private void parseModelNode(int era, ChassisRecord cr, Node wn) {
 		String modelKey = (cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent()).trim();
 		boolean newEntry = false;
@@ -913,13 +913,13 @@ public class RATGenerator {
         if (wn.getAttributes().getNamedItem("mechanized") != null) {
             mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
         }
-		
+
 		for (int k = 0; k < wn.getChildNodes().getLength(); k++) {
 			Node wn2 = wn.getChildNodes().item(k);
 			if (wn2.getNodeName().equalsIgnoreCase("roles") && newEntry) {
 				mr.addRoles(wn2.getTextContent().trim());
 			} else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
-				mr.setRequiredUnits(wn2.getTextContent().trim());            							
+				mr.setRequiredUnits(wn2.getTextContent().trim());
 			} else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
 				modelIndex.get(era).put(mr.getKey(), new HashMap<String, AvailabilityRating>());
 				String [] codes = wn2.getTextContent().trim().split(",");
@@ -928,8 +928,8 @@ public class RATGenerator {
 					mr.getIncludedFactions().add(code.split(":")[0]);
 					modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
 				}
-			} 
-		}		
+			}
+		}
 	}
 
     public synchronized void registerListener(ActionListener l){

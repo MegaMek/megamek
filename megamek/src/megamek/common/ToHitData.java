@@ -230,7 +230,7 @@ public class ToHitData extends TargetRoll {
      * MoS returns a positive while
      * MoF returns a negative
      *
-     * @return <code>int</code> 
+     * @return <code>int</code>
      */
     public int getMoS() {
         return margineOfSuccess;

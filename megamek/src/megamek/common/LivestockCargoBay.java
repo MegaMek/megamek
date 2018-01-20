@@ -102,7 +102,7 @@ public final class LivestockCargoBay extends Bay {
         return "livestockcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
-    
+
     @Override
     public boolean isCargo() {
         return true;

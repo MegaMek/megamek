@@ -122,7 +122,7 @@ public class QuadMech extends Mech {
                 } else {
                     wmp = 0;
                 }
-            }        
+            }
             if (wmp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
@@ -290,7 +290,7 @@ public class QuadMech extends Mech {
         }
         return true;
     }
-    
+
     public PilotingRollData addQuadPilotingBonus(PilotingRollData roll, int destroyedLegs) {
         if (destroyedLegs == 0) {
             roll.addModifier(-2, "Quad bonus");
@@ -797,7 +797,7 @@ public class QuadMech extends Mech {
     @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
-        
+
         // Handle upper cover specially, as treating it as a bitmask will lead
         //  to every location being covered
         if (cover  == LosEffects.COVER_UPPER) {
@@ -808,7 +808,7 @@ public class QuadMech extends Mech {
                 return true;
             }
         }
-        
+
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {

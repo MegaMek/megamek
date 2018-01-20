@@ -24,7 +24,7 @@ import megamek.server.Server;
 
 /**
  * Resets the server
- * 
+ *
  * @author Ben
  * @version
  */

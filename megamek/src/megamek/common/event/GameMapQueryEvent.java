@@ -22,7 +22,7 @@ import megamek.common.MapSettings;
 public class GameMapQueryEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2525971548410030612L;
     protected MapSettings settings;

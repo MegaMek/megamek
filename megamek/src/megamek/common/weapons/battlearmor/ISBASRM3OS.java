@@ -55,5 +55,5 @@ public class ISBASRM3OS extends SRMWeapon {
         .setPrototypeFactions(F_FS,F_LC)
         .setProductionFactions(F_FS,F_LC);
     }
-    
+
 }

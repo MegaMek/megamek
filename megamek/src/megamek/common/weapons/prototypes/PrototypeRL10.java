@@ -56,4 +56,3 @@ public class PrototypeRL10 extends PrototypeRLWeapon {
             .setClanApproximate(true, false, false, true, false);
     }
 }
-

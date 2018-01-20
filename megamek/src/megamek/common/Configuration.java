@@ -1,8 +1,8 @@
 /**
  * Central configuration for MegaMek library.
- * 
+ *
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License,
  * version 2, as published by the Free Software Foundation.
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, it is available online at:
- *   http://www.gnu.org/licenses/gpl-2.0.html 
+ *   http://www.gnu.org/licenses/gpl-2.0.html
  */
 package megamek.common;
 
@@ -28,9 +28,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Stores and provides access to the configuration of the MegaMek library.
- * 
+ *
  * @author Edward Cullen
- * 
+ *
  */
 public final class Configuration {
     // **************************************************************************
@@ -41,7 +41,7 @@ public final class Configuration {
 
     /** The default directory for user data */
     private static final String DEFAULT_USER_DATA_DIR = "userdata";
-    
+
     /** The default configuration directory. */
     private static final String DEFAULT_DIR_NAME_CONFIG = "mmconf";
 
@@ -88,10 +88,10 @@ public final class Configuration {
 
     /** The default sounds directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_SOUNDS = "sounds";
-    
+
     /** The default force generator directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_FORCE_GENERATOR = "forcegenerator";
-    
+
     /** The default force generator directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_FONTS = "fonts";
 
@@ -124,7 +124,7 @@ public final class Configuration {
 
     /**
      * Return the configured userdata directory.
-     * 
+     *
      * @return {@link File} containing the path to the userdata directory.
      */
     public static File userdataDir() {
@@ -138,7 +138,7 @@ public final class Configuration {
 
     /**
      * Return the configured configuration file directory.
-     * 
+     *
      * @return {@link File} containing the path to the config directory.
      */
     public static File configDir() {
@@ -152,7 +152,7 @@ public final class Configuration {
 
     /**
      * Set the configuration directory.
-     * 
+     *
      * @param config_dir_path
      *            The path to the config directory.
      */
@@ -165,7 +165,7 @@ public final class Configuration {
 
     /**
      * Return the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the data directory.
      */
     public static File dataDir() {
@@ -179,7 +179,7 @@ public final class Configuration {
 
     /**
      * Set the data directory.
-     * 
+     *
      * @param data_dir_path
      *            The path to the data directory.
      */
@@ -192,7 +192,7 @@ public final class Configuration {
 
     /**
      * Return the configured documentation directory.
-     * 
+     *
      * @return {@link File} containing the path to the documentation directory.
      */
     public static File docsDir() {
@@ -206,7 +206,7 @@ public final class Configuration {
 
     /**
      * Set the documentation directory.
-     * 
+     *
      * @param docs_dir_path
      *            The path to the documentation directory.
      */
@@ -247,7 +247,7 @@ public final class Configuration {
     /**
      * Return the configured army tables directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the army tables directory.
      */
     public static File armyTablesDir() {
@@ -263,7 +263,7 @@ public final class Configuration {
     /**
      * Set the army tables directory to an arbitrary location (<b>not</b>
      * relative to the data directory).
-     * 
+     *
      * @param army_tables_dir_path
      *            The path to the army tables directory.
      */
@@ -276,7 +276,7 @@ public final class Configuration {
     /**
      * Return the configured boards directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the boards directory.
      */
     public static File boardsDir() {
@@ -292,7 +292,7 @@ public final class Configuration {
     /**
      * Set the boards directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
-     * 
+     *
      * @param boards
      *            dir path The path to the boards directory.
      */
@@ -304,7 +304,7 @@ public final class Configuration {
 
     /**
      * Return the camo directory, which is relative to the images directory.
-     * 
+     *
      * @return {@link File} containing the path to the camo directory.
      */
     public static File camoDir() {
@@ -313,7 +313,7 @@ public final class Configuration {
 
     /**
      * Return the hexes directory, which is relative to the images directory.
-     * 
+     *
      * @return {@link File} containing the path to the camo directory.
      */
     public static File hexesDir() {
@@ -323,7 +323,7 @@ public final class Configuration {
     /**
      * Get the fluff images directory, which is relative to the images
      * directory.
-     * 
+     *
      * @return {@link File} containing the path to the fluff images directory.
      */
     public static File fluffImagesDir() {
@@ -333,7 +333,7 @@ public final class Configuration {
     /**
      * Return the configured images directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the images directory.
      */
     public static File imagesDir() {
@@ -363,7 +363,7 @@ public final class Configuration {
      * Return the configured file that maps an image file to a location within
      * an image atlas, if set, otherwise return the default path, relative to
      * the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the image file to atlas loc file.
      */
     public static File imageFileAtlasMapFile() {
@@ -422,7 +422,7 @@ public final class Configuration {
     /**
      * Return the configured units directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the units directory.
      */
     public static File unitsDir() {
@@ -438,7 +438,7 @@ public final class Configuration {
     /**
      * Set the units directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
-     * 
+     *
      * @param units_dir_path
      *            The path to the units directory.
      */
@@ -451,7 +451,7 @@ public final class Configuration {
     /**
      * Return the misc images directory, which is relative to the images
      * directory.
-     * 
+     *
      * @return {@link File} containing the path to the misc directory.
      */
     public static File miscImagesDir() {
@@ -461,7 +461,7 @@ public final class Configuration {
     /**
      * Return the portrait images directory, which is relative to the images
      * directory.
-     * 
+     *
      * @return {@link File} containing the path to the portrait directory.
      */
     public static File portraitImagesDir() {
@@ -471,7 +471,7 @@ public final class Configuration {
     /**
      * Return the configured names directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the names directory.
      */
     public static File namesDir() {
@@ -487,7 +487,7 @@ public final class Configuration {
     /**
      * Set the names directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
-     * 
+     *
      * @param names_dir_path
      *            The path to the names directory.
      */
@@ -500,7 +500,7 @@ public final class Configuration {
     /**
      * Return the configured scenarios directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the scenarios directory.
      */
     public static File scenariosDir() {
@@ -516,7 +516,7 @@ public final class Configuration {
     /**
      * Set the scenarios directory to an arbitrary location (<b>not</b> relative
      * to the data directory).
-     * 
+     *
      * @param scenarios_dir_path
      *            The path to the scenarios directory.
      */
@@ -529,7 +529,7 @@ public final class Configuration {
     /**
      * Return the configured sounds directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the sounds directory.
      */
     public static File soundsDir() {
@@ -545,7 +545,7 @@ public final class Configuration {
     /**
      * Set the sounds directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
-     * 
+     *
      * @param sounds_dir_path
      *            The path to the sounds directory.
      */
@@ -558,7 +558,7 @@ public final class Configuration {
     /**
      * Return the configured force generator data directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the force generator directory.
      */
     public static File forceGeneratorDir() {
@@ -574,7 +574,7 @@ public final class Configuration {
     /**
      * Set the force generator directory to an arbitrary location (<b>not</b>
      * relative to the data directory).
-     * 
+     *
      * @param force_generator_dir_path
      *            The path to the force generator directory.
      */
@@ -588,7 +588,7 @@ public final class Configuration {
     /**
      * Return the configured fonts data directory, if set, otherwise return the
      * default path, relative to the configured data directory.
-     * 
+     *
      * @return {@link File} containing the path to the force generator directory.
      */
     public static File fontsDir() {
@@ -604,7 +604,7 @@ public final class Configuration {
     /**
      * Set the force generator directory to an arbitrary location (<b>not</b>
      * relative to the data directory).
-     * 
+     *
      * @param force_generator_dir_path
      *            The path to the force generator directory.
      */
@@ -616,7 +616,7 @@ public final class Configuration {
 
     /**
      * Get the unit images directory, which is relative to the images directory.
-     * 
+     *
      * @return {@link File} containing the path to the unit images directory.
      */
     public static File unitImagesDir() {
@@ -625,7 +625,7 @@ public final class Configuration {
 
     /**
      * Get the widgets directory, which is relative to the images directory.
-     * 
+     *
      * @return {@link File} containing the path to the widgets directory.
      */
     public static File widgetsDir() {
@@ -637,7 +637,7 @@ public final class Configuration {
 
     /**
      * Read/write lock for the static data.
-     * 
+     *
      * This is a little paranoid, but at least I know it will work...
      */
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -669,7 +669,7 @@ public final class Configuration {
 
     /** The path to the imgFileAtlasMapFile. */
     private static File imgFileAtlasMapFile = null;
-    
+
     /** The configured images directory. */
     private static File board_backgrounds_dir = null;
 
@@ -687,7 +687,7 @@ public final class Configuration {
 
     /** The configured force generator directory. */
     private static File force_generator_dir = null;
-    
+
     /** The configured force generator directory. */
     private static File fonts_dir = null;
 }

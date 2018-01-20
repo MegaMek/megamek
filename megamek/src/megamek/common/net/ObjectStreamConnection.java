@@ -38,7 +38,7 @@ class ObjectStreamConnection extends AbstractConnection {
 
     /**
      * Creates new server connection
-     * 
+     *
      * @param socket
      * @param id
      */
@@ -48,7 +48,7 @@ class ObjectStreamConnection extends AbstractConnection {
 
     /**
      * Creates new Client connection
-     * 
+     *
      * @param host
      * @param port
      * @param id
@@ -84,7 +84,7 @@ class ObjectStreamConnection extends AbstractConnection {
     private static class NetworkPacket implements INetworkPacket, Serializable {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -6526944082619874044L;
 
@@ -105,7 +105,7 @@ class ObjectStreamConnection extends AbstractConnection {
 
         /**
          * Creates new packet
-         * 
+         *
          * @param compressed
          * @param marshallingType
          * @param data

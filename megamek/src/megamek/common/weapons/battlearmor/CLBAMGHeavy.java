@@ -62,7 +62,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
         .setISApproximate(false, false, false,false, false)
         .setClanAdvancement(3055, 3059, 3068, DATE_NONE, DATE_NONE)
         .setClanApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_CSJ)	
+        .setPrototypeFactions(F_CSJ)
         .setProductionFactions(F_CSJ);
     }
 

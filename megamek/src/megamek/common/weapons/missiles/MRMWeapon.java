@@ -54,7 +54,7 @@ public abstract class MRMWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new MRMHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         double damage = 0;
@@ -66,7 +66,7 @@ public abstract class MRMWeapon extends MissileWeapon {
             damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
         } else {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize());
-            damage *= 0.95; // +1 to hit            
+            damage *= 0.95; // +1 to hit
         }
         if (range == 0 && getMinimumRange() > 0) {
             damage = adjustBattleForceDamageForMinRange(damage);

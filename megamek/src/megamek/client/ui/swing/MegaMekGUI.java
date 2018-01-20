@@ -457,9 +457,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         launch(editor.getFrame());
         editor.boardNew();
     }
-    
+
     void showSkinEditor() {
-        int response = JOptionPane.showConfirmDialog(frame, 
+        int response = JOptionPane.showConfirmDialog(frame,
                 "The skin editor is currently "
                 + "in beta and is a work in progress.  There are likely to "
                 + "be issues. \nContinue?", "Continue?",
@@ -470,7 +470,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
         skinEditor.switchPanel(IGame.Phase.PHASE_MOVEMENT);
-        launch(skinEditor.getFrame());        
+        launch(skinEditor.getFrame());
     }
 
     /**

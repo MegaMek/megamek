@@ -45,11 +45,11 @@ public class SmallCraft extends Aero {
     public static final int CIVILIAN = 0;
     public static final int MILITARY = 1;
     private int designType = 0;
-    
+
     // escape pods and lifeboats
     private int escapePods = 0;
     private int lifeBoats = 0;
-    
+
     private final static TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
             .setProductionFactions(F_TH).setTechRating(RATING_D)
@@ -70,7 +70,7 @@ public class SmallCraft extends Aero {
             return TA_SM_CRAFT;
         }
     }
-    
+
     @Override
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
@@ -83,19 +83,19 @@ public class SmallCraft extends Aero {
     public int getDesignType() {
         return designType;
     }
-    
+
     public void setNCrew(int crew) {
         nCrew = crew;
     }
-    
+
     public void setNOfficers(int officer) {
         nOfficers = officer;
     }
-    
+
     public void setNGunners(int gunners) {
         nGunners = gunners;
     }
-    
+
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -121,17 +121,17 @@ public class SmallCraft extends Aero {
     public int getNPassenger() {
         return nPassenger;
     }
-    
+
     @Override
     public int getNOfficers() {
         return nOfficers;
     }
-    
+
     @Override
     public int getNGunners() {
         return nGunners;
     }
-    
+
     @Override
     public int getNBattleArmor() {
         return nBattleArmor;
@@ -145,7 +145,7 @@ public class SmallCraft extends Aero {
     public int getNOtherPassenger() {
         return nOtherPassenger;
     }
-    
+
     public void setEscapePods(int n) {
         escapePods = n;
     }
@@ -161,7 +161,7 @@ public class SmallCraft extends Aero {
     public int getLifeBoats() {
         return lifeBoats;
     }
-    
+
     @Override
     public double getStrategicFuelUse() {
         if (isPrimitive()) {
@@ -218,7 +218,7 @@ public class SmallCraft extends Aero {
 
         // special rules for spheroids in atmosphere
         // http://www.classicbattletech.com/forums/index.php/topic,54077.0.html
-        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH && 
+        if (isSpheroid() && table != ToHitData.HIT_SPHEROID_CRASH &&
                 !game.getBoard().inSpace()) {
             int preroll = Compute.d6(1);
             if ((table == ToHitData.HIT_ABOVE) && (preroll < 4)) {
@@ -557,7 +557,7 @@ public class SmallCraft extends Aero {
 
         return Math.ceil(2.0 * armorPoints / armorPerTon) / 2.0;
     }
-    
+
     public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {
         double base = 16.0;
         if (spheroid) {
@@ -776,17 +776,17 @@ public class SmallCraft extends Aero {
         }
         return 3;
     }
-    
+
     @Override
     public int getNumBattleForceWeaponsLocations() {
         return 4;
     }
-    
+
     @Override
     public String getBattleForceLocationName(int index) {
         return getLocationAbbrs()[index];
     }
-    
+
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
@@ -831,7 +831,7 @@ public class SmallCraft extends Aero {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
-    
+
     @Override
     public boolean isFighter() {
         return false;

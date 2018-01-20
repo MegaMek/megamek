@@ -187,7 +187,7 @@ public class PlanetaryConditions implements Serializable {
         }
         throw new IllegalArgumentException("Unknown fog condition");
     }
-    
+
     public String getWindDirDisplayableName() {
         return getWindDirDisplayableName(windDirection);
     }
@@ -815,7 +815,7 @@ public class PlanetaryConditions implements Serializable {
         lightConditions = type;
     }
 
-    
+
     /** @return The time of day lighting conditions (one of PlanetaryConditions.L_*). */
     public int getLight() {
         return lightConditions;
@@ -959,7 +959,7 @@ public class PlanetaryConditions implements Serializable {
         terrainAffected = conditions.terrainAffected;
         blowingSand = conditions.blowingSand;
         runOnce = conditions.runOnce;
-        
+
         if (runOnce) {
             setTempFromWeather();
             setWindFromWeather();

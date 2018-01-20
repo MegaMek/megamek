@@ -93,7 +93,7 @@ public final class CargoBay extends Bay {
     public String toString() {
         return "cargobay:" + totalSpace + ":" + doors + ":" + bayNumber;
     }
-    
+
     @Override
     public boolean isCargo() {
         return true;

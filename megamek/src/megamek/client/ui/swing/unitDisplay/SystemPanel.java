@@ -58,14 +58,14 @@ import megamek.common.util.MegaMekFile;
  */
 class SystemPanel extends PicMap implements ItemListener, ActionListener,
         ListSelectionListener {
-    
+
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
     private static int LOC_SPACER = 2;
     private static int LOC_OFFSET = 3;
-    
+
     /**
-     * 
+     *
      */
     private final UnitDisplay unitDisplay;
 
@@ -227,7 +227,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
         setBackGround();
         onResize();
-        
+
         addListeners();
     }
 
@@ -263,20 +263,20 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
     private Mounted getSelectedEquipment() {
         if ((locList.getSelectedIndex() == LOC_ALL_EQUIP)) {
-            if (slotList.getSelectedIndex() != -1) { 
+            if (slotList.getSelectedIndex() != -1) {
                 return en.getMisc().get(slotList.getSelectedIndex());
             } else {
                 return null;
             }
         }
         if (locList.getSelectedIndex() == LOC_ALL_WEAPS) {
-            if (slotList.getSelectedIndex() != -1) { 
+            if (slotList.getSelectedIndex() != -1) {
                 return en.getWeaponList().get(slotList.getSelectedIndex());
             } else {
                 return null;
             }
         }
-        
+
         final CriticalSlot cs = getSelectedCritical();
         if ((cs == null) || (unitDisplay.getClientGUI() == null)) {
             return null;
@@ -341,7 +341,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         displayLocations();
         addListeners();
     }
-    
+
     public void selectLocation(int loc) {
         locList.setSelectedIndex(loc + LOC_OFFSET);
     }
@@ -367,10 +367,10 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
     private void displaySlots() {
         int loc = locList.getSelectedIndex();
-        DefaultListModel<String> slotModel = 
-                ((DefaultListModel<String>) slotList.getModel()); 
-        slotModel.removeAllElements();        
-        
+        DefaultListModel<String> slotModel =
+                ((DefaultListModel<String>) slotList.getModel());
+        slotModel.removeAllElements();
+
         // Display all Equipment
         if (loc == LOC_ALL_EQUIP) {
             for (Mounted m : en.getMisc()) {
@@ -378,7 +378,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
             }
             return;
         }
-        
+
         // Display all Weapons
         if (loc == LOC_ALL_WEAPS) {
             for (Mounted m : en.getWeaponList()) {
@@ -386,11 +386,11 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
             }
             return;
         }
-        
+
         // Display nothing for a spacer
         if (loc == LOC_SPACER) {
             return;
-        }        
+        }
 
         // Standard location handling
         loc -= LOC_OFFSET;
@@ -429,15 +429,15 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         }
         onResize();
     }
-    
+
     private String getMountedDisplay(Mounted m, int loc) {
         return getMountedDisplay(m, loc, null);
     }
-    
+
     private String getMountedDisplay(Mounted m, int loc, CriticalSlot cs) {
         String hotLoaded = Messages.getString("MechDisplay.isHotLoaded"); //$NON-NLS-1$
         StringBuffer sb = new StringBuffer();
-        
+
         sb.append(m.getDesc());
 
         if ((cs != null) && cs.getMount2() != null) {
@@ -499,7 +499,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().getGame().getPhase() 
+                                && (clientgui.getClient().getGame().getPhase()
                                         != IGame.Phase.PHASE_PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
@@ -842,7 +842,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
-                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) 
+                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND)
                                 <= client.getGame().getRoundCount())
                         && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
@@ -926,21 +926,21 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
             addListeners();
         }
     }
-    
+
     private void addListeners() {
         locList.addListSelectionListener(this);
         slotList.addListSelectionListener(this);
         unitList.addListSelectionListener(this);
-        
+
         m_chMode.addItemListener(this);
         m_bDumpAmmo.addActionListener(this);
     }
-    
+
     private void removeListeners() {
         locList.removeListSelectionListener(this);
         slotList.removeListSelectionListener(this);
         unitList.removeListSelectionListener(this);
-        
+
         m_chMode.removeItemListener(this);
         m_bDumpAmmo.removeActionListener(this);
     }

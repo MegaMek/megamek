@@ -84,7 +84,7 @@ public final class LightVehicleBay extends Bay {
         if (currentdoors < loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -122,7 +122,7 @@ public final class LightVehicleBay extends Bay {
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         return LightVehicleBay.techAdvancement();

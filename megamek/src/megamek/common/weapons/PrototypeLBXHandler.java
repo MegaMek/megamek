@@ -50,7 +50,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -83,7 +83,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

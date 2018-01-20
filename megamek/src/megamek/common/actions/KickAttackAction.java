@@ -66,7 +66,7 @@ public class KickAttackAction extends PhysicalAttackAction {
 
     /**
      * Damage that the specified mech does with a kick
-     * 
+     *
      * @return The kick damage for the 'Mech, or 0 for non-'Mech entities.
      */
     public static int getDamageFor(Entity entity, int leg,
@@ -138,7 +138,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (!(ae instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Mechs can't kick.");
         }
-        
+
         String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
         if (impossible != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
@@ -223,7 +223,7 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");
         }
-        
+
         // check facing
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
@@ -299,8 +299,8 @@ public class KickAttackAction extends PhysicalAttackAction {
         } else {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
-        
-        //What to do with grounded dropships? Awaiting rules clarification, but 
+
+        //What to do with grounded dropships? Awaiting rules clarification, but
         //until then, we will assume that if the attacker height is less than half
         //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
         //See Dropship.rollHitLocation to see how HIT_KICK is handled

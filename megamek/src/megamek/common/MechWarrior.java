@@ -35,7 +35,7 @@ public class MechWarrior extends EjectedCrew {
         super(originalRide);
         setChassis(EjectedCrew.MW_EJECT_NAME);
     }
-    
+
     public MechWarrior(Crew crew, IPlayer owner, IGame game) {
         super(crew, owner, game);
         setChassis(EjectedCrew.MW_EJECT_NAME);
@@ -48,7 +48,7 @@ public class MechWarrior extends EjectedCrew {
         super();
         setChassis(EjectedCrew.MW_EJECT_NAME);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -67,7 +67,7 @@ public class MechWarrior extends EjectedCrew {
     public int getPickedUpByExternalId() {
         return Integer.parseInt(pickedUpByExternalId);
     }
-    
+
     public String getPickedUpByExternalIdAsString() {
         return pickedUpByExternalId;
     }
@@ -78,7 +78,7 @@ public class MechWarrior extends EjectedCrew {
     public void setPickedUpByExternalId(String pickedUpByExternalId) {
         this.pickedUpByExternalId = pickedUpByExternalId;
     }
-    
+
     public void setPickedUpByExternalId(int pickedUpByExternalId) {
         this.pickedUpByExternalId = Integer.toString(pickedUpByExternalId);
     }
@@ -125,8 +125,8 @@ public class MechWarrior extends EjectedCrew {
     public boolean isCrippled() {
         return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
     }
-    
-    
+
+
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
     }

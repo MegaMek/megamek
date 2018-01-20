@@ -532,7 +532,7 @@ public class GunEmplacement extends Tank {
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_GUN_EMPLACEMENT;
     }
-    
+
     @Override
     public boolean hasEngine() {
         // TODO: Power generators and energy grid setup

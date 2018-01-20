@@ -105,10 +105,10 @@ public class DedicatedServer {
         public int getPort() {
             return port;
         }
-        
+
         /**
          * Returns the password option value, will be null if not set.
-         * 
+         *
          * @return
          */
         public String getPassword() {
@@ -155,9 +155,9 @@ public class DedicatedServer {
                     // Do nothing, although this shouldn't happen
                     break;
                 default:
-                    error("unexpected input"); //$NON-NLS-1$                        
+                    error("unexpected input"); //$NON-NLS-1$
                 }
-                nextToken();                
+                nextToken();
             }
         }
 
@@ -185,7 +185,7 @@ public class DedicatedServer {
                 error("meta server announce URL expected"); //$NON-NLS-1$
             }
         }
-        
+
         private void parsePassword() throws ParseException {
             if (getToken() == TOK_LITERAL) {
                 password = getTokenValue();

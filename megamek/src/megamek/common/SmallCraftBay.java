@@ -72,10 +72,10 @@ public final class SmallCraftBay extends Bay {
         boolean result = false;
 
         // Only ASFs, Fighter-mode LAMs or Small Craft
-        if (((unit.isAero()) 
-        		&& !(unit instanceof FighterSquadron) 
-        		&& !(unit instanceof Dropship) 
-        		&& !(unit instanceof Jumpship)) 
+        if (((unit.isAero())
+        		&& !(unit instanceof FighterSquadron)
+        		&& !(unit instanceof Dropship)
+        		&& !(unit instanceof Jumpship))
         		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
@@ -90,7 +90,7 @@ public final class SmallCraftBay extends Bay {
         if (getRecoverySlots() < 1) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -229,7 +229,7 @@ public final class SmallCraftBay extends Bay {
     	if (getCurrentDoors() > 0) {
     		setCurrentDoors(getCurrentDoors() - 1);
     	}
-    
+
         // get rid of two empty recovery slots
         // it doesn't matter which ones
         if (recoverySlots.size() > 0) {
@@ -261,7 +261,7 @@ public final class SmallCraftBay extends Bay {
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     public TechAdvancement getTechAdvancement() {
         return SmallCraftBay.techAdvancement();
     }

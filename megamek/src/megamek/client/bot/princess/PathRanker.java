@@ -50,7 +50,7 @@ public abstract class PathRanker {
     }
 
     private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<MovePath.Key, Double>();
-    
+
     /**
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
@@ -84,7 +84,7 @@ public abstract class PathRanker {
 
             // the cached path probability data is really only relevant for one iteration through this method
             pathSuccessProbabilities.clear();
-            
+
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
             getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
@@ -143,13 +143,13 @@ public abstract class PathRanker {
         }
 
         boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
-        
+
         for (MovePath path : startingPathList) {
             // just in case
             if(path == null) {
                 continue;
             }
-            
+
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
@@ -163,7 +163,7 @@ public abstract class PathRanker {
             		    continue;
             		}
             	}
-            	
+
                 Coords finalCoords = path.getFinalCoords();
 
                 // If fleeing, skip any paths that don't get me closer to home.
@@ -252,7 +252,7 @@ public abstract class PathRanker {
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
                 // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-                if ((e.isAero() && e.isAirborne()) || 
+                if ((e.isAero() && e.isAirborne()) ||
                         getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
                     continue;
                 }
@@ -282,7 +282,7 @@ public abstract class PathRanker {
         if(pathSuccessProbabilities.containsKey(movePath.getKey())) {
             return pathSuccessProbabilities.get(movePath.getKey());
         }
-        
+
         MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
@@ -321,7 +321,7 @@ public abstract class PathRanker {
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
         pathSuccessProbabilities.put(movePath.getKey(), successProbability);
-        
+
         return successProbability;
     }
 

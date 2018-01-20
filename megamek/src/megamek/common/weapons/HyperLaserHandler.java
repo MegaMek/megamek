@@ -55,7 +55,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             int wloc = weapon.getLocation();
             for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
                 CriticalSlot slot1 = ae.getCritical(wloc, i);
-                if ((slot1 == null) || 
+                if ((slot1 == null) ||
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
@@ -75,7 +75,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -119,7 +119,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
-            if ((target instanceof Infantry) 
+            if ((target instanceof Infantry)
                     && !(target instanceof BattleArmor) ) {
                 toReturn -= 1;
             } else { // Else, treat as pulse weapon
@@ -129,7 +129,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
          // Against conventional infantry, treat as direct fire energy
-            if ((target instanceof Infantry) 
+            if ((target instanceof Infantry)
                     && !(target instanceof BattleArmor) ) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             } else { // Else, treat as pulse weapon

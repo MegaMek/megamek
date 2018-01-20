@@ -19,12 +19,12 @@ import megamek.common.Entity;
 
 /**
  * Instances of this class are sent as a result of changes in BoardView
- * 
+ *
  * @see BoardViewListener
  */
 public class BoardViewEvent extends java.util.EventObject {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4823618884833399318L;
     public static final int BOARD_HEX_CLICKED = 0;

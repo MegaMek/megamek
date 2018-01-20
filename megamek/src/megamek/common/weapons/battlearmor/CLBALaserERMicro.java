@@ -61,6 +61,6 @@ public class CLBALaserERMicro extends LaserWeapon {
         .setClanAdvancement(3055, 3060, 3064, DATE_NONE, DATE_NONE)
         .setClanApproximate(true, false, false, false, false)
         .setPrototypeFactions(F_CSJ)
-        .setProductionFactions(F_CSJ);        
+        .setProductionFactions(F_CSJ);
     }
 }

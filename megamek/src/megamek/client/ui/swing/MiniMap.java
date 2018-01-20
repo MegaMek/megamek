@@ -171,7 +171,7 @@ public class MiniMap extends JPanel {
     boolean dirtyMap = true;
     boolean[][] dirty;
     private Image terrainBuffer;
-    
+
     // Here come the Strat Ops / NATO unit symbols
     Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
     private final static Path2D STRAT_BASERECT;
@@ -187,7 +187,7 @@ public class MiniMap extends JPanel {
     private final static Dimension SYMBOLSIZE = new Dimension(167,103);
     private final static String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
     private final static double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
-    
+
     static {
         // Base rectangle for all units
         STRAT_BASERECT = new Path2D.Double();
@@ -196,7 +196,7 @@ public class MiniMap extends JPanel {
         STRAT_BASERECT.lineTo( SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
         STRAT_BASERECT.lineTo(-SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
         STRAT_BASERECT.closePath();
-        
+
         // Infantry Symbol
         STRAT_INFANTRY = new Path2D.Double();
         STRAT_INFANTRY.append(STRAT_BASERECT, false);
@@ -204,22 +204,22 @@ public class MiniMap extends JPanel {
         STRAT_INFANTRY.lineTo( SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
         STRAT_INFANTRY.moveTo(-SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
         STRAT_INFANTRY.lineTo( SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
-        
+
         STRAT_VTOL = new Path2D.Double();
         STRAT_VTOL.append(STRAT_BASERECT, false);
         STRAT_VTOL.moveTo(-SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
         STRAT_VTOL.lineTo(-SYMBOLSIZE.getWidth()/4,  SYMBOLSIZE.getHeight()/4);
         STRAT_VTOL.lineTo( 0,  0);
         STRAT_VTOL.lineTo(-SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
-        
+
         STRAT_VTOL.moveTo( SYMBOLSIZE.getWidth()/4,  SYMBOLSIZE.getHeight()/4);
         STRAT_VTOL.lineTo( SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
         STRAT_VTOL.lineTo( 0, 0);
         STRAT_VTOL.closePath();
-        
+
         STRAT_TANKTRACKED = new Path2D.Double();
         STRAT_TANKTRACKED.append(STRAT_BASERECT, false);
-        double small = SYMBOLSIZE.getWidth()/20; 
+        double small = SYMBOLSIZE.getWidth()/20;
         STRAT_TANKTRACKED.moveTo(-SYMBOLSIZE.getWidth()/3+small, -SYMBOLSIZE.getHeight()/4);
         STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3-small, -SYMBOLSIZE.getHeight()/4);
         STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3,       -SYMBOLSIZE.getHeight()/4+small);
@@ -229,16 +229,16 @@ public class MiniMap extends JPanel {
         STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3,        SYMBOLSIZE.getHeight()/4-small);
         STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3,       -SYMBOLSIZE.getHeight()/4+small);
         STRAT_TANKTRACKED.closePath();
-        
+
         STRAT_MECH = new Path2D.Double();
         STRAT_MECH.append(STRAT_BASERECT, false);
-        
+
         STRAT_MECH.moveTo(-STRAT_CX-1.5*small, -SYMBOLSIZE.getHeight()/4);
         STRAT_MECH.lineTo(-STRAT_CX-3.0*small,  SYMBOLSIZE.getHeight()/4);
         STRAT_MECH.lineTo(-STRAT_CX+3.0*small,  SYMBOLSIZE.getHeight()/4);
         STRAT_MECH.lineTo(-STRAT_CX+1.5*small, -SYMBOLSIZE.getHeight()/4);
         STRAT_MECH.closePath();
-        
+
         STRAT_AERO = new Path2D.Double();
         STRAT_AERO.append(STRAT_BASERECT, false);
         double rad = SYMBOLSIZE.getWidth()/5;
@@ -254,7 +254,7 @@ public class MiniMap extends JPanel {
         STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+3*r72), rad/3*Math.sin(Math.PI/2+3*r72));
         STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2),       -rad*Math.sin(Math.PI/2));
         STRAT_AERO.closePath();
-        
+
         STRAT_SPHEROID = new Path2D.Double();
         STRAT_SPHEROID.append(STRAT_BASERECT, false);
         STRAT_SPHEROID.moveTo(rad*Math.cos(Math.PI/2),       -rad*Math.sin(Math.PI/2));
@@ -263,7 +263,7 @@ public class MiniMap extends JPanel {
         STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+3*r72), -rad*Math.sin(Math.PI/2+3*r72));
         STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+4*r72), -rad*Math.sin(Math.PI/2+4*r72));
         STRAT_SPHEROID.closePath();
-        
+
         STRAT_HOVER = new Path2D.Double();
         STRAT_HOVER.append(STRAT_BASERECT, false);
         STRAT_HOVER.moveTo(-SYMBOLSIZE.getWidth()/3,  small);
@@ -277,7 +277,7 @@ public class MiniMap extends JPanel {
         STRAT_HOVER.lineTo(0, +small);
         STRAT_HOVER.moveTo( SYMBOLSIZE.getWidth()/6, -small);
         STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/6, +small);
-        
+
         STRAT_WHEELED = new Path2D.Double();
         STRAT_WHEELED.append(STRAT_BASERECT, false);
         double smallr = SYMBOLSIZE.getWidth()/17;
@@ -298,14 +298,14 @@ public class MiniMap extends JPanel {
         STRAT_WHEELED.lineTo(0, +smallr);
         STRAT_WHEELED.lineTo(smallr, 0);
         STRAT_WHEELED.closePath();
-        
+
         STRAT_NAVAL = new Path2D.Double();
         STRAT_NAVAL.append(STRAT_BASERECT, false);
         STRAT_NAVAL.moveTo(0, -SYMBOLSIZE.getHeight()/3);
         STRAT_NAVAL.lineTo(0,  SYMBOLSIZE.getHeight()/3);
         STRAT_NAVAL.moveTo(-STRAT_CX/2, -SYMBOLSIZE.getHeight()/5);
         STRAT_NAVAL.lineTo( STRAT_CX/2, -SYMBOLSIZE.getHeight()/5);
-        
+
         STRAT_NAVAL.moveTo(rad, 0);
         STRAT_NAVAL.curveTo(
                 rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
@@ -316,7 +316,7 @@ public class MiniMap extends JPanel {
                 -rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
                 -rad, 0);
     }
-    
+
     // are we drag-scrolling?
     private boolean dragging = false;
 
@@ -567,7 +567,7 @@ public class MiniMap extends JPanel {
 
         dirty = new boolean[(m_board.getWidth() / 10) + 1][(m_board.getHeight() / 10) + 1];
         dirtyMap = true;
-        
+
         unitSize = unitSizes[zoom];
 
         // ensure its on screen
@@ -622,11 +622,11 @@ public class MiniMap extends JPanel {
                 yTemp = SCROLL_PANE_HEIGHT;
             }
         }
-        
+
         if (minimized) {
             yTemp = 14;
         }
-        
+
         setSize(xTemp, yTemp);
         setPreferredSize(new Dimension(xTemp, yTemp));
         if (m_dialog instanceof JDialog) {
@@ -706,7 +706,7 @@ public class MiniMap extends JPanel {
                     RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        
+
         Color oldColor = g.getColor();
         // g.setColor(BACKGROUND);
         // g.fillRect(0, 0, getSize().width, getSize().height);
@@ -766,7 +766,7 @@ public class MiniMap extends JPanel {
                         if (depEnt != null &&
                             depEnt.getOwnerId() == turn.getPlayerNum()) {
                             dir = depEnt.getStartingPos();
-                        } else { // if we can't get the deploy zone from the 
+                        } else { // if we can't get the deploy zone from the
                             // board view, punt and use the players zone
                             dir = m_client.getLocalPlayer().getStartingPos();
                         }
@@ -782,7 +782,7 @@ public class MiniMap extends JPanel {
                         }
                     }
                 }
-                
+
                 // draw declared fire
                 if ((IGame.Phase.PHASE_FIRING == m_game.getPhase())
                     || (IGame.Phase.PHASE_PHYSICAL == m_game.getPhase())) {
@@ -818,27 +818,27 @@ public class MiniMap extends JPanel {
 
         repaint();
     }
-    
+
     private void paintBVSection(Graphics g) {
         if (minimized || (m_bview == null)) {
             return;
         }
         double[] relSize = m_bview.getVisibleArea();
         for (int i=0;i<4;i++) relSize[i] = Math.min(1, Math.max(0,relSize[i]));
-        
+
         Color sc = g.getColor();
         Stroke sbs = ((Graphics2D) g).getStroke();
-        
+
         // thicker but translucent rect
         g.setColor(new Color(100,100,160,80));
         ((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
-        
+
         g.drawRect(
                 (int)(relSize[0]*             (hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
                 (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
                 (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
                 (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
-        
+
         // thin less translucent rect
         g.setColor(new Color(255,255,255,180));
         ((Graphics2D) g).setStroke(new BasicStroke(zoom/2));
@@ -848,11 +848,11 @@ public class MiniMap extends JPanel {
                 (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
                 (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
                 (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
-        
+
         // restore values
         ((Graphics2D) g).setStroke(sbs);
         g.setColor(sc);
-        
+
     }
 
     /**
@@ -1151,8 +1151,8 @@ public class MiniMap extends JPanel {
         int[] yPoints;
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(m_bview.getLocalPlayer(), entity)) { // Sensor Return
-            String sensorReturn = "?";           
-            Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$            
+            String sensorReturn = "?";
+            Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$
             int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
             int height = getFontMetrics(font).getHeight() / 2 - 2;
             g.setFont(font);
@@ -1291,7 +1291,7 @@ public class MiniMap extends JPanel {
                     form = STRAT_WHEELED;
                 } else if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL) ||
                         (entity.getMovementMode() == EntityMovementMode.NAVAL)) {
-                    form = STRAT_NAVAL; 
+                    form = STRAT_NAVAL;
                 } else {
                     form = STRAT_TANKTRACKED;
                 }
@@ -1338,7 +1338,7 @@ public class MiniMap extends JPanel {
             g2.draw(form);
 
             g2.setTransform(svTransform);
-            
+
         } else {
             // Drawn a circle for MechWarriors
             if (entity instanceof MechWarrior) {
@@ -1379,11 +1379,11 @@ public class MiniMap extends JPanel {
             }
 
         }
-        
+
         // Create a colored circle if this is the selected unit
-        Entity se = (clientgui == null) ? null : 
+        Entity se = (clientgui == null) ? null :
             m_game.getEntity(clientgui.getSelectedEntityNum());
-        
+
         if (entity == se) {
             g2.setStroke(new BasicStroke(unitBorder[zoom]+1));
             g2.setColor(GUIPreferences.getInstance().getColor(
@@ -1705,7 +1705,7 @@ public class MiniMap extends JPanel {
 
                     minimized = true;
                     initializeMap();
-                }  
+                }
             }
         } else if (m_bview != null) {
             if ((x < margin) || (x > (getSize().width - leftMargin))
@@ -1797,7 +1797,7 @@ public class MiniMap extends JPanel {
         public void hexCursor(BoardViewEvent b) {
             update();
         }
-        
+
         @Override
         public void hexMoused(BoardViewEvent b) {
             update();

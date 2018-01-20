@@ -42,7 +42,7 @@ public class CLLRT2 extends LRTWeapon {
         tonnage = 0.4f;
         criticals = 0;
         bv = 24;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "231,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

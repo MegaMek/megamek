@@ -167,7 +167,7 @@ public class EquipmentType implements ITechnology {
     protected int toHitModifier = 0;
 
 //    protected Map<Integer,Integer> techLevel = new HashMap<>();
-    
+
     protected TechAdvancement techAdvancement = new TechAdvancement();
 
     protected BigInteger flags = BigInteger.valueOf(0);
@@ -199,7 +199,7 @@ public class EquipmentType implements ITechnology {
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
-    
+
     /**
     * Keeps track of page numbers for rules references.
     */
@@ -217,7 +217,7 @@ public class EquipmentType implements ITechnology {
     public long getSubType() {
         return subType;
     }
-    
+
     public void setSubType(int newFlags) {
         subType = newFlags;
     }
@@ -245,7 +245,7 @@ public class EquipmentType implements ITechnology {
     public String getInternalName() {
         return internalName;
     }
-    
+
     public String getRulesRefs() {
         return rulesRefs;
     }
@@ -291,11 +291,11 @@ public class EquipmentType implements ITechnology {
     public int getTechLevel(int date) {
         return techAdvancement.getTechLevel(date);
     }
-    
+
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
     }
-    
+
     public SimpleTechLevel getStaticTechLevel() {
         if (null != techAdvancement.getStaticTechLevel()) {
             return techAdvancement.getStaticTechLevel();
@@ -332,7 +332,7 @@ public class EquipmentType implements ITechnology {
         if(null == mounted) {
             return explosive;
         }
-        
+
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon))
                 && ((mounted.getLinked() == null) || (mounted.getLinked()
@@ -676,7 +676,7 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
-    
+
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -759,7 +759,7 @@ public class EquipmentType implements ITechnology {
             return 0.05;
         }
     }
-    
+
     /* Armor and structure are stored as integers and standard uses a generic MiscType that
      * does not have its own TechAdvancement.
      */
@@ -779,7 +779,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Tech advancement for armor based on the armor type index and tech base
-     * 
+     *
      * @param at   The armor type constant
      * @param clan The armor tech base
      * @return     The tech advancement for the armor
@@ -846,15 +846,15 @@ public class EquipmentType implements ITechnology {
     public String getAvailabilityName(int era) {
         return getEraAvailabilityName(era);
     }
-    
+
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }
-    
+
     public boolean isMixedTech() {
         return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
-    
+
     public int getTechBase() {
         return techAdvancement.getTechBase();
     }
@@ -867,17 +867,17 @@ public class EquipmentType implements ITechnology {
         }
 
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan) {
         return techAdvancement.getIntroductionDate(clan);
     }
-    
+
     @Override
     public int getIntroductionDate() {
         return techAdvancement.getIntroductionDate();
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan, int faction) {
         return techAdvancement.getIntroductionDate(clan, faction);
@@ -972,7 +972,7 @@ public class EquipmentType implements ITechnology {
         final EquipmentType other = (EquipmentType) obj;
         return Objects.equals(internalName, other.internalName);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(internalName);

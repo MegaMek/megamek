@@ -27,7 +27,7 @@ import megamek.server.Server;
 
 /**
  * Team Chat
- * 
+ *
  * @author Torren
  * @version
  */

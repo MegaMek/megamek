@@ -23,7 +23,7 @@ import megamek.common.actions.AbstractAttackAction;
  */
 public class PhysicalResult implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4011084578252131074L;
     public AbstractAttackAction aaa = null;

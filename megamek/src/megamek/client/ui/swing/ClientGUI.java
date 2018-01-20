@@ -141,7 +141,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope"; //$NON-NLS-1$
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme"; //$NON-NLS-1$
-    
+
     public static final String SAVE_WEAP_ORDER = "saveWeapOrder";
 
     // a frame, to show stuff in
@@ -152,7 +152,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private String helpFileName = 
+    private String helpFileName =
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
                                                           Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
 
@@ -220,7 +220,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
-    
+
     private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
@@ -239,7 +239,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private int selectedEntityNum = Entity.NONE;
 
     /**
-     * Flag that indicates whether hotkeys should be ignored or not.  This is 
+     * Flag that indicates whether hotkeys should be ignored or not.  This is
      * used for disabling hot keys when various dialogs are displayed.
      */
     private boolean ignoreHotKeys = false;
@@ -302,11 +302,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         cb.systemMessage(message);
         cb2.addChatMessage("Megamek: " + message);
     }
-    
+
     /**
      * Returns the 'virtual bounds' of the screen.  That is, the union of the
      * displayable space on all available screen devices.
-     * 
+     *
      * @return
      */
     private Rectangle getVirtualBounds() {
@@ -583,7 +583,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // Show the help dialog.
         help.setVisible(true);
     }
-    
+
     private void showSkinningHowTo(){
         try {
             // Get the correct help file.
@@ -597,11 +597,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
             // Launch the help dialog.
             HelpDialog helpDialog = new HelpDialog(
-                    Messages.getString("ClientGUI.skinningHelpPath.title"), 
+                    Messages.getString("ClientGUI.skinningHelpPath.title"),
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR",
                     JOptionPane.ERROR_MESSAGE);
             DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
         }
@@ -633,7 +633,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         getGameOptionsDialog().update(client.getGame().getOptions());
         getGameOptionsDialog().setVisible(true);
     }
-    
+
     public void customizePlayer() {
         PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client);
         psd.setVisible(true);
@@ -724,7 +724,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 String title = Messages.getString(
                         "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
                 String msg = Messages.getString(
-                        "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
+                        "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$
                 JOptionPane.showMessageDialog(frame, msg, title,
                         JOptionPane.OK_OPTION, null);
                 return;
@@ -962,12 +962,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
-        
+
         if (controller != null) {
             controller.removeAllActions();
             controller.clientgui = null;
         }
-        
+
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;
@@ -1093,12 +1093,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void updateButtonPanel(IGame.Phase phase) {
-        if ((currPhaseDisplay != null) 
+        if ((currPhaseDisplay != null)
                 && client.getGame().getPhase().equals(phase)) {
             currPhaseDisplay.setupButtonPanel();
-        }        
+        }
     }
-    
+
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -1148,7 +1148,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(this);                
+                component = new DeploymentDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
@@ -1267,9 +1267,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.showPopup(popup, c);
         }
     }
-    
+
     /** Switches the Minimap and the MechDisplay an and off together.
-     *  If the MechDisplay is active, both will be hidden, else 
+     *  If the MechDisplay is active, both will be hidden, else
      *  both will be shown.
      */
     public void toggleMMUDDisplays() {
@@ -1481,7 +1481,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             String title = Messages.getString(
                     "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
             String msg = Messages.getString(
-                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
+                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$
             JOptionPane.showMessageDialog(frame, msg, title,
                     JOptionPane.OK_OPTION, null);
             return;
@@ -1538,7 +1538,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (loadedUnits.size() > 0){
                     client.sendAddEntity(loadedUnits);
                     addedUnits = true;
-                }                
+                }
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
@@ -1623,10 +1623,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
     }
-    
+
     protected void saveVictoryList() {
         String filename = client.getLocalPlayer().getName();
-        
+
         // Build the "save unit" dialog, if necessary.
         if (dlgSaveList == null) {
             dlgSaveList = new JFileChooser(".");
@@ -1763,12 +1763,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
-             if ((curPanel instanceof ReportDisplay) 
+             if ((curPanel instanceof ReportDisplay)
                      && !client.getLocalPlayer().isDone()) {
                  ((ReportDisplay) curPanel).resetReadyButton();
              }
         }
-        
+
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane.showMessageDialog(frame,
@@ -1796,7 +1796,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
             // Make sure the ChatterBox starts out deactived.
-            bv.setChatterBoxActive(false);            
+            bv.setChatterBoxActive(false);
 
             // Swap to this phase's panel.
             switchPanel(getClient().getGame().getPhase());
@@ -1925,13 +1925,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         public void gameMapQuery(GameMapQueryEvent e) {
 
         }
-        
+
         @Override
         public void gameClientFeedbackRquest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;
             switch (evt.getCFRType()){
-                case Packet.COMMAND_CFR_DOMINO_EFFECT:                    
+                case Packet.COMMAND_CFR_DOMINO_EFFECT:
                     // If the client connects to a game as a bot, it's possible
                     //  to have the bot respond AND have the client ask the
                     //  player.  This is bad, ignore this if the client is a bot
@@ -1944,7 +1944,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     stepBackward.addStep(MoveStepType.BACKWARDS);
                     stepForward.compile(client.getGame(), e);
                     stepBackward.compile(client.getGame(), e);
-                    
+
                     String title = Messages.getString("CFRDomino.Title");
                     String msg = Messages.getString("CFRDomino.Message",
                             new Object[] { e.getDisplayName() });
@@ -1952,7 +1952,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     Object options[];
                     MovePath paths[];
                     int optionType;
-                    if (stepForward.isMoveLegal() 
+                    if (stepForward.isMoveLegal()
                             && stepBackward.isMoveLegal()){
                         options = new Object[3];
                         paths = new MovePath[3];
@@ -1983,9 +1983,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         paths[0] = stepBackward;
                         paths[1] = null;
                         optionType = JOptionPane.YES_NO_OPTION;
-                    }            
-                    choice = JOptionPane.showOptionDialog(frame, msg, title, 
-                            optionType, JOptionPane.QUESTION_MESSAGE, null, 
+                    }
+                    choice = JOptionPane.showOptionDialog(frame, msg, title,
+                            optionType, JOptionPane.QUESTION_MESSAGE, null,
                             options, options[0]);
                     // If they closed it, assume no action
                     if (choice == JOptionPane.CLOSED_OPTION){
@@ -2008,21 +2008,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         }
                         amsOptions.add(waaMsg);
                     }
-                    
+
                     optionType = JOptionPane.OK_CANCEL_OPTION;
                     title = Messages.getString("CFRAMSAssign.Title",
                             new Object[] { e.getDisplayName() });
                     msg = Messages.getString("CFRAMSAssign.Message",
                             new Object[] { e.getDisplayName() });
                     result = JOptionPane.showInputDialog(frame, msg, title,
-                            JOptionPane.QUESTION_MESSAGE, null, 
+                            JOptionPane.QUESTION_MESSAGE, null,
                            amsOptions.toArray(), null);
                     // If they closed it, assume no action
                     if ((result == null) || result.equals("None")) {
                         client.sendAMSAssignCFRResponse(null);
                     } else {
                         client.sendAMSAssignCFRResponse(
-                                amsOptions.indexOf(result) - 1);                 
+                                amsOptions.indexOf(result) - 1);
                     }
                     break;
                 case Packet.COMMAND_CFR_APDS_ASSIGN:
@@ -2340,7 +2340,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void unitSelected(BoardViewEvent b) {
         // ignored
     }
-    
+
     /**
      * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
      * For example, the <code>MegaMekController</code> should ignore hotkeys
@@ -2348,10 +2348,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * @return
      */
     public boolean shouldIgnoreHotKeys(){
-        return ignoreHotKeys 
+        return ignoreHotKeys
                 || (gameOptionsDialog != null && gameOptionsDialog.isVisible())
-                || (about != null && about.isVisible()) 
-                || (help != null && help.isVisible()) 
+                || (about != null && about.isVisible())
+                || (help != null && help.isVisible())
                 || (setdlg != null && setdlg.isVisible());
     }
 
@@ -2365,7 +2365,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     @Override
     public void componentResized(ComponentEvent arg0) {
-        bv.setPreferredSize(getSize());        
+        bv.setPreferredSize(getSize());
     }
 
     @Override
@@ -2421,13 +2421,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
         }
     }
-    
+
     /**
      * Returns the panel for the current phase.  The ClientGUI is split into
      * the main panel (view) at the top, which takes up the majority of the view
      * and the the "current panel" which has different controls  based on the
      * phase.
-     * 
+     *
      * @return
      */
     public JComponent getCurrentPanel() {

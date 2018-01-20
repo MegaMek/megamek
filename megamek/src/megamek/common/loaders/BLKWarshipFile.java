@@ -216,11 +216,11 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("overview")) {
             a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
         }
-        
+
         if (dataFile.exists("capabilities")) {
             a.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
         }
-        
+
         if (dataFile.exists("deployment")) {
             a.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
         }

@@ -17,7 +17,7 @@ package megamek.client.ui.swing.widget;
 /**
  * A class that contains state information that specifies a skin for the
  * UnitDisplay.
- * 
+ *
  * @author arlith
  *
  */

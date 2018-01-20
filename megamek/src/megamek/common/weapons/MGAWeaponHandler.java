@@ -52,7 +52,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -83,7 +83,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -116,7 +116,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -128,7 +128,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -195,7 +195,7 @@ public class MGAWeaponHandler extends MGHandler {
             Report r = new Report(9976);
             r.subject = ae.getId();
             r.indent(2);
-            vPhaseReport.add(r);            
+            vPhaseReport.add(r);
         // Cases where absorbed damage doesn't reduce incoming damage
         } else if (bldgAbsorbs < 0) {
             int toBldg = -bldgAbsorbs;

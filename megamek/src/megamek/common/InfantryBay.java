@@ -27,7 +27,7 @@ public final class InfantryBay extends Bay {
      *
      */
     private static final long serialVersionUID = 946578184870030662L;
-    
+
     /** The amount of space taken up by an infantry unit in a transport bay differs from the space
      * in an infantry compartment (used in APCs) due to quarters, equipment storage, and maintenance
      * equipment. A single cubicle holds a platoon, except in the case of mechanized which requires
@@ -37,34 +37,34 @@ public final class InfantryBay extends Bay {
         JUMP (6, 21, 20),
         MOTORIZED (7, 28, 25),
         MECHANIZED (8, 7, 5);
-        
+
         private int weight;
         private int isPersonnel;
         private int clanPersonnel;
-        
+
         PlatoonType(int weight, int isPersonnel, int clanPersonnel) {
             this.weight = weight;
             this.isPersonnel = isPersonnel;
             this.clanPersonnel = clanPersonnel;
         }
-        
+
         public int getWeight() {
             return weight;
         }
-        
+
         public int getISPersonnel() {
             return isPersonnel;
         }
-        
+
         public int getClanPersonnel() {
             return clanPersonnel;
         }
-        
+
         @Override
         public String toString() {
             return name().substring(0, 1) + name().substring(1).toLowerCase();
         }
-        
+
         public static PlatoonType getPlatoonType(Entity en) {
             switch (en.getMovementMode()) {
                 case TRACKED:
@@ -82,11 +82,11 @@ public final class InfantryBay extends Bay {
             }
         }
     }
-    
+
     // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
     // In practice we support loading any type of infantry into the bay as long as there is room to avoid
     // the headache of having to do formal reconfigurations.
-    private PlatoonType platoonType = PlatoonType.FOOT; 
+    private PlatoonType platoonType = PlatoonType.FOOT;
 
     /**
      * The default constructor is only for serialization.
@@ -117,7 +117,7 @@ public final class InfantryBay extends Bay {
         currentdoors = doors;
         this.platoonType = bayType;
     }
-    
+
     @Override
     public double spaceForUnit(Entity unit) {
         PlatoonType type = PlatoonType.getPlatoonType(unit);
@@ -152,7 +152,7 @@ public final class InfantryBay extends Bay {
         if (currentdoors < loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -173,7 +173,7 @@ public final class InfantryBay extends Bay {
         }
         return sb.toString();
     }
-    
+
     @Override
     public double getUnusedSlots() {
         return currentSpace / platoonType.getWeight() - getBayDamage();
@@ -199,7 +199,7 @@ public final class InfantryBay extends Bay {
     public String toString() {
         return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"+ bayNumber + ":" + platoonType.toString();
     }
-    
+
     public PlatoonType getPlatoonType() {
         return platoonType;
     }

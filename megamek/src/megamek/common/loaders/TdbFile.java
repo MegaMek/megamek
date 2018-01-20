@@ -60,22 +60,22 @@ public class TdbFile implements IMechLoader {
 
     @XmlElement
     private Creator creator;
-    
+
     @XmlElement(name = "basics")
     private BasicInformation basics;
-    
+
     @XmlElement(name = "mounteditems")
     MountedItems mounted;
-    
+
     @XmlElement(name = "critdefs")
     private CriticalDefinitions critdefs;
-    
+
     private Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
     private List<Mounted> vSplitWeapons = new ArrayList<>();
 
     /**
      * Creates new TdbFile.
-     * 
+     *
      * @param is an input stream that contains a "The Drawing Board" generated XML file.
      * @return an instance of a parsed file
      * @throws megamek.common.loaders.EntityLoadingException
@@ -83,17 +83,17 @@ public class TdbFile implements IMechLoader {
     public static TdbFile getInstance(final InputStream is) throws EntityLoadingException {
         try {
             JAXBContext jc = JAXBContext.newInstance(TdbFile.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             TdbFile tdbFile = (TdbFile) um.unmarshal(is);
-            
+
             return tdbFile;
         } catch (JAXBException e) {
             throw new EntityLoadingException("   Failure to parse XML ("
                     + e.getLocalizedMessage() + ")", e);
         }
     }
-    
+
     /**
      * JAXB required constructor.
      */
@@ -126,7 +126,7 @@ public class TdbFile implements IMechLoader {
             if ("Torso-Mounted".equals(cockpitType)) {
                 cockpitType = "Torso Mounted";
             }
-            
+
             if ("Quad".equals(basics.chassisConfig)) {
                 mech = new QuadMech(gyroType, cockpitType);
             } else {
@@ -197,7 +197,7 @@ public class TdbFile implements IMechLoader {
                     throw new EntityLoadingException("Unsupported tech base: "
                             + basics.technology.techBase);
             }
-            
+
             if (basics.structure.structureType.substring(0, 3).equals("(C)")) {
                 basics.structure.structureType = basics.structure.structureType.substring(4);
             }
@@ -218,20 +218,20 @@ public class TdbFile implements IMechLoader {
                     || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(basics.structure.engine.engineType))) {
                 engineFlags = megamek.common.Engine.CLAN_ENGINE;
             }
-            mech.setEngine(new megamek.common.Engine(basics.structure.engine.engineRating, 
+            mech.setEngine(new megamek.common.Engine(basics.structure.engine.engineRating,
                     megamek.common.Engine.getEngineTypeByString(basics.structure.engine.engineType), engineFlags));
 
             mech.autoSetInternal();
 
             Collections.sort(critdefs.locations);
-            
+
             for (Location loc : critdefs.locations) {
                 mech.initializeArmor(loc.armor, loc.bodyPart);
-                
+
                 if (Mech.LOC_LT == loc.bodyPart || Mech.LOC_RT == loc.bodyPart || Mech.LOC_CT == loc.bodyPart) {
                     mech.initializeRearArmor(loc.rearArmor, loc.bodyPart);
                 }
-                
+
                 // Don't sort the Head criticals, the empty slot (if there) needs to stay
                 // right where it is.
                 if (Mech.LOC_HEAD != loc.bodyPart) {
@@ -252,7 +252,7 @@ public class TdbFile implements IMechLoader {
             mech.setArmorTonnage(mech.getArmorWeight());
 
             // add any heat sinks not allocated
-            mech.addEngineSinks(basics.structure.heatSink.count - mech.heatSinks(), 
+            mech.addEngineSinks(basics.structure.heatSink.count - mech.heatSinks(),
                     basics.structure.heatSink.isDouble() ? MiscType.F_DOUBLE_HEAT_SINK : MiscType.F_HEAT_SINK);
 
             return mech;
@@ -277,7 +277,7 @@ public class TdbFile implements IMechLoader {
                         if (!"Lower Arm Actuator".equals(l.criticalSlots.get(2).content)) {
                             mech.setCritical(loc, 2, null);
                         }
-                        
+
                         if (!"Hand Actuator".equals(l.criticalSlots.get(3).content)) {
                             mech.setCritical(loc, 3, null);
                         }
@@ -287,7 +287,7 @@ public class TdbFile implements IMechLoader {
         }
 
         Location location = findLocation(loc);
-        
+
         // go thru file, add weapons
         for (int i = 0; i < mech.getNumberOfCriticals(loc); i++) {
 
@@ -297,7 +297,7 @@ public class TdbFile implements IMechLoader {
             }
 
             CriticalSlot crit = location.criticalSlots.get(i);
-            
+
             // parse out and add the critical
             if (basics.structure.isClanTC() && "Targeting Computer".equals(crit.content)) {
                 crit.content = "(C) " + crit.content;
@@ -387,7 +387,7 @@ public class TdbFile implements IMechLoader {
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
                         hSharedEquip.put(etype, m);
-                    } else if (((etype instanceof WeaponType) && ((WeaponType)etype).isSplitable()) 
+                    } else if (((etype instanceof WeaponType) && ((WeaponType)etype).isSplitable())
                             || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
                         // location?
@@ -456,17 +456,17 @@ public class TdbFile implements IMechLoader {
             // which will mess up parsing if compacted.
             return;
         }
-        
+
         Collections.sort(loc.criticalSlots);
     }
-    
+
     private Location findLocation(final int loc) {
         for (Location l : critdefs.locations) {
             if (l.bodyPart == loc) {
                 return l;
             }
         }
-        
+
         return null;
     }
 
@@ -530,7 +530,7 @@ public class TdbFile implements IMechLoader {
         }
 
     }
-    
+
     /**
      * JAXB helper class for the structural tag.
      */
@@ -568,7 +568,7 @@ public class TdbFile implements IMechLoader {
             return (targSysStr.length() >= 3)
                     && (targSysStr.substring(0, 3).equals("(C)"));
         }
-        
+
     }
 
     /**
@@ -650,13 +650,13 @@ public class TdbFile implements IMechLoader {
         }
 
     }
-    
+
     /**
      * JAXB helper class for the mounteditems tag.
      */
     @XmlType
     static class MountedItems {
-    
+
         @XmlElement(name = "mounteditem")
         List<MountedItem> items = new ArrayList<>();
 
@@ -687,13 +687,13 @@ public class TdbFile implements IMechLoader {
         private MountedItem() {
         }
     }
-    
+
     /**
      * JAXB helper class for the critdefs tag.
      */
     @XmlType
     private static class CriticalDefinitions {
-        
+
         @XmlElement(name = "location")
         List<Location> locations = new ArrayList<>();
 
@@ -719,7 +719,7 @@ public class TdbFile implements IMechLoader {
         @XmlAttribute(name = "name")
         @XmlJavaTypeAdapter(LocationAdapter.class)
         Integer bodyPart;
-        
+
         @XmlElement(name = "criticalslot")
         List<CriticalSlot> criticalSlots = new ArrayList<>();
 
@@ -737,7 +737,7 @@ public class TdbFile implements IMechLoader {
             return bodyPart.compareTo(o.bodyPart);
         }
     }
-    
+
     /**
      * JAXB helper class for the criticalslot tag.
      */
@@ -745,7 +745,7 @@ public class TdbFile implements IMechLoader {
     static class CriticalSlot implements Comparable<CriticalSlot> {
 
         private static final String EMPTY = "Empty";
-        
+
         @XmlAttribute(name = "slotindex")
         Integer itemIndex;
 
@@ -771,7 +771,7 @@ public class TdbFile implements IMechLoader {
             if (EMPTY.equals(this.content)) {
                 return 1;
             }
-            
+
             // The other is empty, so this is always "more"
             if (EMPTY.equals(o.content)) {
                 return -1;
@@ -819,9 +819,9 @@ public class TdbFile implements IMechLoader {
                     return Mech.LOC_NONE;
             }
         }
-        
+
     }
-    
+
     private static class BooleanAdapter extends XmlAdapter<String, Boolean> {
 
         @Override
@@ -833,6 +833,6 @@ public class TdbFile implements IMechLoader {
         public Boolean unmarshal(final String v) throws Exception {
             return Boolean.getBoolean(v);
         }
-        
+
     }
 }

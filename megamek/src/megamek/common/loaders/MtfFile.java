@@ -491,7 +491,7 @@ public class MtfFile implements IMechLoader {
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
             }
-            
+
             // Set capital fighter stats for LAMs
             if (mech instanceof LandAirMech) {
                 ((LandAirMech)mech).autoSetCapArmor();
@@ -593,7 +593,7 @@ public class MtfFile implements IMechLoader {
                 critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
                 isArmored = true;
             }
-            
+
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
                 continue;
@@ -627,7 +627,7 @@ public class MtfFile implements IMechLoader {
             if (critName.toLowerCase().trim().endsWith(OMNIPOD)) {
                 critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
                 isOmniPod = true;
-            }            
+            }
 
             if (critName.toUpperCase().endsWith("(T)")) {
                 isTurreted = true;
@@ -934,12 +934,12 @@ public class MtfFile implements IMechLoader {
             gyroType = line;
             return true;
         }
-        
+
         if (line.trim().toLowerCase().startsWith("lam:")) {
             lamType = line;
             return true;
         }
-        
+
         if (line.trim().toLowerCase().startsWith("motive:")) {
             motiveType = line;
             return true;
@@ -969,7 +969,7 @@ public class MtfFile implements IMechLoader {
             myomerType = line;
             return true;
         }
-        
+
         if (line.trim().toLowerCase().startsWith("lam:")) {
             lamType = line;
             return true;
@@ -1023,7 +1023,7 @@ public class MtfFile implements IMechLoader {
             armorType = line;
             return true;
         }
-        
+
         if (line.trim().toLowerCase().startsWith("overview:")) {
             overview = line.substring("overview:".length());
             return true;
@@ -1033,12 +1033,12 @@ public class MtfFile implements IMechLoader {
             capabilities = line.substring("capabilities:".length());
             return true;
         }
-                
+
         if (line.trim().toLowerCase().startsWith("deployment:")) {
             deployment = line.substring("deployment:".length());
             return true;
         }
-        
+
         if (line.trim().toLowerCase().startsWith("history:")) {
             history = line.substring("history:".length());
             return true;

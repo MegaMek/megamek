@@ -43,7 +43,7 @@ public class FighterSquadron extends Aero {
     public static int ALTERNATE_MAX_SIZE = 10;
 
     private static final Predicate<Entity> ACTIVE_CHECK = ent -> !(ent.isDestroyed() || ent.isDoomed());
-    
+
     private Vector<Integer> fighters = new Vector<Integer>();
 
     // fighter squadrons need to keep track of heat capacity apart from their
@@ -68,7 +68,7 @@ public class FighterSquadron extends Aero {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Aero#getCost(boolean)
      */
     @Override
@@ -137,7 +137,7 @@ public class FighterSquadron extends Aero {
         return fighters.stream().map(fid -> game.getEntity(fid))
             .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getFuel()).min().orElse(0);
     }
-    
+
     @Override
     public int getCurrentFuel() {
         return fighters.stream().map(fid -> game.getEntity(fid))
@@ -248,7 +248,7 @@ public class FighterSquadron extends Aero {
         }
 
         int bv = 0;
-        
+
         // We'll just add up the BV of all non-destroyed fighters in the squadron.
         for (Integer fid : fighters) {
             final Entity fighter = game.getEntity(fid);
@@ -259,11 +259,11 @@ public class FighterSquadron extends Aero {
 
         return bv;
     }
-    
+
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Aero#calculateBattleValue()
      */
     @Override
@@ -279,7 +279,7 @@ public class FighterSquadron extends Aero {
         return fighters.stream().map(fid -> game.getEntity(fid))
             .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getHeatSinks()).sum();
     }
-    
+
     @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink){
         if (includeRadicalHeatSink){
@@ -554,7 +554,7 @@ public class FighterSquadron extends Aero {
      * This method looks at the bombs equipped on all the fighters in the
      * squadron and determines what possible bombing attacks the squadrons
      * can make.
-     * 
+     *
      * TODO: Make this into a generic "clean up bomb loadout" method
      */
     public void computeSquadronBombLoadout() {
@@ -790,12 +790,12 @@ public class FighterSquadron extends Aero {
     /**
      * Returns the current amount of cargo space for an entity of the given
      * type.
-     * 
+     *
      * @param e
      *            An entity that defines the unit class
      * @return The number of units of the given type that can be loaded in this
      *         Entity
-     * 
+     *
      *         TODO: Fix this so we can't actually "load" warships or
      *         tele-operated missiles into fighter squadrons ...
      */
@@ -861,7 +861,7 @@ public class FighterSquadron extends Aero {
     public Engine getEngine() {
         return null;
     }
-    
+
     @Override
     public boolean hasEngine() {
         return false;
@@ -885,13 +885,13 @@ public class FighterSquadron extends Aero {
         }
         return moveMode;
     }
-    
+
     @Override
     public Optional<List<Entity>> getSubEntities() {
         return Optional.of(fighters.stream().map(fid -> game.getEntity(fid))
             .collect(Collectors.toList()));
     }
-    
+
     @Override
     public Optional<List<Entity>> getActiveSubEntities() {
         return Optional.of(fighters.stream().map(fid -> game.getEntity(fid))

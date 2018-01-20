@@ -61,5 +61,5 @@ public class CLASMissileWeapon extends ThunderBoltWeapon {
         .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
 }

@@ -483,7 +483,7 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(leftEngineCrit, gridBagConstraints);
-    
+
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
@@ -534,7 +534,7 @@ public class UnitEditorDialog extends JDialog {
         cockpitCrit = new CheckCritPanel(cockpitCrits, cockpitHits);
         gridBagConstraints.gridx = 1;
         panSystem.add(cockpitCrit, gridBagConstraints);
-        
+
         if (entity instanceof LandAirMech) {
             lamAvionicsCrit = new TreeMap<>();
             lamLandingGearCrit = new TreeMap<>();
@@ -903,7 +903,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(engineCrit, gridBagConstraints);
-        
+
     if (!(aero instanceof Jumpship)) {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy++;
@@ -919,7 +919,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 1.0;
         panSystem.add(gearCrit, gridBagConstraints);
     }
-    
+
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy++;
         gridBagConstraints.weightx = 0.0;
@@ -971,7 +971,7 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(dockCollarCrit, gridBagConstraints);
-            
+
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
@@ -986,7 +986,7 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 1.0;
             panSystem.add(kfboomCrit, gridBagConstraints);
         }
-        
+
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
         	int b = 0;
         	JSpinner bayCrit;
@@ -999,20 +999,20 @@ public class UnitEditorDialog extends JDialog {
         		gridBagConstraints.weightx = 0.0;
         		panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + nextbay.getBayNumber()
         				+ "</b><br></html>"), gridBagConstraints);
-    		
+
         		bayCrit = new JSpinner(new SpinnerNumberModel(nextbay.getCapacity() - nextbay.getBayDamage(),
                         0, nextbay.getCapacity(), nextbay.isCargo()? 0.5: 1.0));
         		bayDamage[b] = bayCrit;
         		gridBagConstraints.gridx = 1;
         		gridBagConstraints.weightx = 1.0;
         		panSystem.add(bayCrit, gridBagConstraints);
-    		
+
         		gridBagConstraints.gridx = 0;
         		gridBagConstraints.gridy++;
         		gridBagConstraints.weightx = 0.0;
         		panSystem.add(new JLabel("<html><b>" + "Bay # " + nextbay.getBayNumber() + " Doors"
         				+ "</b><br></html>"), gridBagConstraints);
-    		
+
         		CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
         		bayDoorCrit[b] = doorCrit;
         		gridBagConstraints.gridx = 1;
@@ -1265,11 +1265,11 @@ public class UnitEditorDialog extends JDialog {
         			// for ASF and SC bays, we have to update recovery slots as doors are changed
         			if (bay instanceof ASFBay) {
         				ASFBay a = (ASFBay) bay;
-        				a.initializeRecoverySlots();        				
-        			} 
+        				a.initializeRecoverySlots();
+        			}
         			if (bay instanceof SmallCraftBay) {
     					SmallCraftBay s = (SmallCraftBay) bay;
-    					s.initializeRecoverySlots();    					
+    					s.initializeRecoverySlots();
         			}
             	b++;
             	}

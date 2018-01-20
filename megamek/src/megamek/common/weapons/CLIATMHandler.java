@@ -227,7 +227,7 @@ public class CLIATMHandler extends ATMHandler {
                 && (nRange > ranges[RangeType.RANGE_EXTREME])) {
             nMissilesModifier -= 3;
         }
-        
+
 
         // Don't need to check for ECM here since we can't have artemis boni.
         // And Streak bonus is allready handled.
@@ -819,7 +819,7 @@ public class CLIATMHandler extends ATMHandler {
                     && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
-            
+
             // Attacking infantry in buildings from same building
             if (targetInBuilding && (bldg != null)
                     && (toHit.getThruBldg() != null)

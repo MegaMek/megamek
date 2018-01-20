@@ -11,18 +11,18 @@ import megamek.common.Configuration;
  * see if it exists within the userdata directory, and if it does, that file is
  * opened.  However, if it doesn't exist, then the file is opened from MM's
  * install directory instead.
- * 
+ *
  * @author arlith
  *
  */
 public class MegaMekFile {
-    
+
     File file;
-    
+
     public MegaMekFile(File parent, String child) {
         this(new File(parent, child).toString());
     }
-    
+
     public MegaMekFile(String pathname) {
         File userdataVersion = new File(Configuration.userdataDir(), pathname);
         if (userdataVersion.exists()) {
@@ -31,13 +31,13 @@ public class MegaMekFile {
             file = new File(pathname);
         }
     }
-    
+
     public File getFile() {
         return file;
     }
-    
+
     public String toString() {
         return file.toString();
     }
-    
+
 }

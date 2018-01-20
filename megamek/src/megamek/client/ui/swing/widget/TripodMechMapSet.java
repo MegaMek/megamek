@@ -47,7 +47,7 @@ public class TripodMechMapSet implements DisplayMapSet {
     private static final int INT_STRUCTURE_OFFSET = 12;
 
     private UnitDisplay unitDisplay;
-    
+
     // Array of polygonal areas - parts of mech body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[21];
     // Array of fixed labels - short names of body parts

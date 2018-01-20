@@ -313,7 +313,7 @@ public class MechSummaryCache {
          * loadReport.append(" --")
          * .append(failedUnitsDesc.nextElement()).append("\n"); }
          */
-        
+
         System.out.print(loadReport.toString());
 
         done();
@@ -325,7 +325,7 @@ public class MechSummaryCache {
         }
 
         initialized = true;
-        
+
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).doneLoading();
         }
@@ -459,20 +459,20 @@ public class MechSummaryCache {
                             entityVerifier.tankOption, null);
                 }
             }else if (e.getEntityType() == Entity.ETYPE_AERO
-                    && e.getEntityType() != 
+                    && e.getEntityType() !=
                             Entity.ETYPE_DROPSHIP
-                    && e.getEntityType() != 
+                    && e.getEntityType() !=
                             Entity.ETYPE_SMALL_CRAFT
-                    && e.getEntityType() != 
+                    && e.getEntityType() !=
                             Entity.ETYPE_FIGHTER_SQUADRON
-                    && e.getEntityType() != 
+                    && e.getEntityType() !=
                             Entity.ETYPE_JUMPSHIP
-                    && e.getEntityType() != 
+                    && e.getEntityType() !=
                             Entity.ETYPE_SPACE_STATION) {
-                testEntity = new TestAero((Aero)e, 
+                testEntity = new TestAero((Aero)e,
                         entityVerifier.mechOption, null);
             } else if (e instanceof BattleArmor){
-                testEntity = new TestBattleArmor((BattleArmor) e, 
+                testEntity = new TestBattleArmor((BattleArmor) e,
                         entityVerifier.baOption, null);
             }
             if (testEntity != null &&
@@ -499,7 +499,7 @@ public class MechSummaryCache {
         } else {
             ms.setMyomerName("None");
         }
-        
+
         return ms;
     }
 
@@ -722,7 +722,7 @@ public class MechSummaryCache {
 
         return bNeedsUpdate;
     }
-    
+
     private boolean addLookupNames(long lLastCheck) {
         final String METHOD_NAME = "addLookupNames(long)"; //$NON-NLS-1$
         File lookupNames = new MegaMekFile(getUnitCacheDir(),

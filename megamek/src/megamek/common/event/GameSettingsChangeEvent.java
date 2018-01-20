@@ -20,7 +20,7 @@ package megamek.common.event;
 public class GameSettingsChangeEvent extends GameEvent {
 
     protected boolean mapSettingsOnlyChange  = false;
-    
+
     /**
      *
      */

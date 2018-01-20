@@ -34,7 +34,7 @@ public class ISLRM10Primitive extends LRMWeapon {
 
     public ISLRM10Primitive() {
         super();
-  
+
         name = "Primitive Prototype LRM 10";
         setInternalName(name);
         addLookupName("IS LRM-10 Primitive");

@@ -30,27 +30,27 @@ import static org.junit.Assert.*;
  * @author nderwin
  */
 public class GameOptionsTest {
-    
+
     private GameOptions testMe;
-    
+
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
-    
+
     @Before
     public void setUp() {
         testMe = new GameOptions();
     }
-    
+
     @Test
     public void testSaveAndLoadOptions() throws IOException {
         File f = tmpFolder.newFile("test-game-options.xml");
-        
+
         Vector<IBasicOption> options = new Vector<>();
         Enumeration<IOption> opts = testMe.getOptions();
         int count = 0;
         while (opts.hasMoreElements()) {
             IOption io = opts.nextElement();
-            
+
             switch (io.getType()) {
                 case IOption.STRING:
                 case IOption.CHOICE:
@@ -73,22 +73,22 @@ public class GameOptionsTest {
                     io.setValue(new Float(""+count));
                     break;
             }
-            
+
             options.add(io);
             count++;
         }
-        
+
         GameOptions.saveOptions(options, f.getAbsolutePath());
-        
+
         assertTrue(f.exists());
         assertTrue(f.length() > 0);
-        
+
         testMe.loadOptions(f, true);
         opts = testMe.getOptions();
         count = 0;
         while (opts.hasMoreElements()) {
             IOption io = opts.nextElement();
-            
+
             switch (io.getType()) {
                 case IOption.STRING:
                 case IOption.CHOICE:
@@ -106,9 +106,9 @@ public class GameOptionsTest {
                     assertEquals(new Float(""+count), io.floatValue(), 0.0f);
                     break;
             }
-            
+
             count++;
         }
     }
-    
+
 }

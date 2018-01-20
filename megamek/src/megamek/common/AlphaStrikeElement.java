@@ -27,13 +27,13 @@ import java.util.stream.IntStream;
  *
  */
 public class AlphaStrikeElement extends BattleForceElement {
-    
+
     // AP weapon mounts have a set damage value.
     static final double AP_MOUNT_DAMAGE = 0.05;
 
     public enum ASUnitType {
         BM, IM, PM, CV, SV, MS, BA, CI, AF, CF, SC, DS, DA, JS, WS, SS;
-        
+
         static ASUnitType getUnitType(Entity en) {
             if (en instanceof Mech) {
                 return ((Mech)en).isIndustrial()? IM : BM;
@@ -67,7 +67,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     };
 
     protected ASUnitType asUnitType;
-    
+
     public AlphaStrikeElement(Entity en) {
         super(en);
         asUnitType = ASUnitType.getUnitType(en);
@@ -97,24 +97,24 @@ public class AlphaStrikeElement extends BattleForceElement {
             }
         }
     }
-    
+
     protected double locationMultiplier(Entity en, int loc, Mounted mount) {
     	return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
-    
+
     @Override
     protected void computeMovement(Entity en) {
-    	en.setAlphaStrikeMovement(movement);    	
+    	en.setAlphaStrikeMovement(movement);
     }
-    
+
     @Override
     public String getMovementAsString() {
     	return movement.entrySet().stream()
     			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
     					+ "\"" + e.getKey())
-    			.collect(Collectors.joining("/"));    	
+    			.collect(Collectors.joining("/"));
     }
-    
+
     public int getTargetMoveModifier() {
     	int base = getPrimaryMovementValue();
     	if (base > 34) {
@@ -130,13 +130,13 @@ public class AlphaStrikeElement extends BattleForceElement {
     	}
     	return 0;
     }
-    
+
     protected static final int[] TROOP_FACTOR = {
         0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
         7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
         13, 14, 15, 16, 16, 17, 17, 17, 18, 18
     };
-    
+
     @Override
     protected double getConvInfantryStandardDamage(int range, Infantry inf) {
         if (inf.getPrimaryWeapon() == null) {
@@ -146,7 +146,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             return 0;
         }
     }
-    
+
     @Override
     protected double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba, boolean apmMount) {
         double dam = 0;
@@ -157,19 +157,19 @@ public class AlphaStrikeElement extends BattleForceElement {
         } else {
             dam = weapon.getBattleForceDamage(range);
         }
-        return dam * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);        
+        return dam * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);
     }
-    
+
     public ASUnitType getUnitType() {
         return asUnitType;
     }
-    
+
     //TODO: Override calculatePointValue(Entity en)
-    
+
     public String getASDamageString(int loc) {
     	return getASDamageString(loc, true);
     }
-    
+
     public String getASDamageString(int loc, boolean showIfNoDamage) {
     	if (!weaponLocations[loc].hasDamage()) {
     		return "";
@@ -199,7 +199,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
         return str.toString();
     }
-    
+
     @Override
     public void writeCsv(BufferedWriter w) throws IOException {
         w.write(name);
@@ -253,7 +253,7 @@ public class AlphaStrikeElement extends BattleForceElement {
                 .collect(Collectors.joining(", ")));
         w.newLine();
     }
-    
+
     protected String formatSPAString(BattleForceSPA spa) {
         /* BOMB rating for ASFs and CFs is one less than for BF */
         if (spa.equals(BattleForceSPA.BOMB)

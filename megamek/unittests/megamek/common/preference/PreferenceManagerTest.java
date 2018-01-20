@@ -33,7 +33,7 @@ public class PreferenceManagerTest {
     private static final String DAMAGE_LEVEL_KEY = "ShowDamageLevel";
 
     private static final String GUI_PREFERENCES_STORE = "megamek.client.ui.swing.GUIPreferences";
-    
+
     private static final String LOCALE_KEY = "Locale";
 
     private PreferenceManager testMe;

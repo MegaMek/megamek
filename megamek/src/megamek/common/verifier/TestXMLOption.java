@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * 
+ *
  * @author Reinhard Vicinus
  */
 public class TestXMLOption implements TestEntityOption {
 
     @XmlElement(name = "ceilWeight")
     private WeightCeiling weightCeiling = new WeightCeiling();
-    
+
     @XmlElement
     private double maxOverweight = 0.25;
 
@@ -58,10 +58,10 @@ public class TestXMLOption implements TestEntityOption {
 
     @XmlElement
     private boolean showFailedEquip = true;
-    
+
     @XmlElement(name = "showIncorrectIntroYear")
     private boolean showIncorrectIntroYear = true;
-    
+
     @XmlElement(name = "introYearMargin")
     private int introYearMargin = 5;
 
@@ -118,7 +118,7 @@ public class TestXMLOption implements TestEntityOption {
     public TestEntity.Ceil getWeightCeilingLifting() {
         return weightCeiling.lifting;
     }
-    
+
     @Override
     public TestEntity.Ceil getWeightCeilingPowerAmp() {
         return weightCeiling.powerAmp;
@@ -173,12 +173,12 @@ public class TestXMLOption implements TestEntityOption {
     public boolean showFailedEquip() {
         return showFailedEquip;
     }
-    
+
     @Override
     public boolean showIncorrectIntroYear() {
         return showIncorrectIntroYear;
     }
-    
+
     @Override
     public int getIntroYearMargin() {
         return introYearMargin;
@@ -237,7 +237,7 @@ public class TestXMLOption implements TestEntityOption {
                 + Double.toString(1 / getWeightCeilingPowerAmp().mult) + "\n"
                 + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
-    
+
     /**
      * JAXB helper class for the ceilWeight tag.
      */
@@ -276,7 +276,7 @@ public class TestXMLOption implements TestEntityOption {
         WeightCeiling() {
         }
     }
-    
+
     /**
      * An adapter that unmarshals a comma-separated string of values into a list of values.
      */
@@ -291,13 +291,13 @@ public class TestXMLOption implements TestEntityOption {
         public List<String> unmarshal(final String v) throws Exception {
             List<String> list = new ArrayList<>();
             StringTokenizer st = new StringTokenizer(v, ",");
-            
+
             while (st.hasMoreTokens()) {
                 list.add(st.nextToken().trim());
             }
-            
+
             return list;
         }
-        
+
     }
 }

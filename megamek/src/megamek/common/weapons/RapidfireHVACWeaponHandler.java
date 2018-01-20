@@ -50,7 +50,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
      * java.util.Vector)
@@ -87,7 +87,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -100,7 +100,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
             int wloc = weapon.getLocation();
             for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
                 CriticalSlot slot1 = ae.getCritical(wloc, i);
-                if ((slot1 == null) || 
+                if ((slot1 == null) ||
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }

@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class PMMultiLineLabel extends PMSimpleLabel {
     private List<String> labels = new ArrayList<>();
-    
+
     /**
      * Constructs a new multi-line label
      * @param fm Font metrics object
@@ -23,7 +23,7 @@ public class PMMultiLineLabel extends PMSimpleLabel {
     public PMMultiLineLabel(FontMetrics fm, Color c) {
         super("", fm, c);
     }
-    
+
     /**
      * Clear the contents of this multi-line label
      */
@@ -32,22 +32,22 @@ public class PMMultiLineLabel extends PMSimpleLabel {
         height = 0;
         width = 0;
     }
-    
+
     /**
      * Add a string to this multi-line label
      * @param s The string to add
      */
     public void addString(String s) {
         labels.add(s);
-        
+
         int newWidth = fm.stringWidth(s);
         if(newWidth > width) {
             width = newWidth;
         }
-        
+
         height += fm.getHeight();
     }
-    
+
     /*
      * Draw the label.
      */
@@ -59,16 +59,16 @@ public class PMMultiLineLabel extends PMSimpleLabel {
         Color temp = g.getColor();
         g.setColor(color);
         g.setFont(fm.getFont());
-        
+
         int currentY = y;
 
         for(String s : labels) {
             g.drawString(s, x, currentY);
             currentY += fm.getHeight();
         }
-        
+
         g.setColor(temp);
         g.setFont(font);
     }
-    
+
 }

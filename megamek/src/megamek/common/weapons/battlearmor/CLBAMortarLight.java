@@ -64,7 +64,7 @@ public class CLBAMortarLight extends Weapon {
         .setISApproximate(true, false, false,false, false)
         .setClanAdvancement(DATE_NONE, DATE_NONE, 3065, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, false, true, false, false)
-        .setPrototypeFactions(F_FS,F_LC)	
+        .setPrototypeFactions(F_FS,F_LC)
         .setProductionFactions(F_LC);
     }
 

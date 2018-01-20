@@ -45,7 +45,7 @@ public class TankMapSet implements DisplayMapSet {
     private PMValueLabel[] vLabels = new PMValueLabel[13];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
-    
+
     private UnitDisplay unitDisplay;
 
     private static final int INT_STR_OFFSET = 6;

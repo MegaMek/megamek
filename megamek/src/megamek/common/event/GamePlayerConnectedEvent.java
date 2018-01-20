@@ -22,7 +22,7 @@ import megamek.common.IPlayer;
 public class GamePlayerConnectedEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4745294587017447893L;
 
@@ -36,7 +36,7 @@ public class GamePlayerConnectedEvent extends GamePlayerEvent {
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gamePlayerConnected(this);    
+        gl.gamePlayerConnected(this);
     }
 
     @Override

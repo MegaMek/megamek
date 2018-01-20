@@ -25,38 +25,38 @@ import megamek.common.logging.LogLevel;
 
 /**
  * Singleton class used to get configuration values shared across different applications.
- * 
- * Use this class to get configuration values that might need to be different between 
- * Megamek and any application that is launching Megamek, e.g. MekHQ. There should be 
+ *
+ * Use this class to get configuration values that might need to be different between
+ * Megamek and any application that is launching Megamek, e.g. MekHQ. There should be
  * a properties file in the <code>mmconf</code> folder called <code>shared.properties</code>.
- * This file will have configuration values that might need to differ based on the application 
- * using it. 
- * 
+ * This file will have configuration values that might need to differ based on the application
+ * using it.
+ *
  * @author James Allred (wildj79 at gmail dot com)
  * @since 10/31/2017 9:24 AM
  */
 public class SharedConfiguration {
     private Properties properties = new Properties();
     private static SharedConfiguration instance;
-    
+
     private SharedConfiguration() {
         final MMLogger logger = DefaultMmLogger.getInstance();
-        
+
         try {
             InputStream is = new FileInputStream("mmconf/shared.properties");
             properties.load(is);
         } catch (Exception e) {
-            logger.log(SharedConfiguration.class, 
-                       "SharedConfiguration()", 
-                       LogLevel.ERROR, 
-                       "Error trying to load shared.properties", 
+            logger.log(SharedConfiguration.class,
+                       "SharedConfiguration()",
+                       LogLevel.ERROR,
+                       "Error trying to load shared.properties",
                        e);
         }
     }
 
     /**
      * Get's the single instance of the {@link SharedConfiguration} class.
-     * 
+     *
      * @return A single instance of the {@link SharedConfiguration} class.
      */
     public static SharedConfiguration getInstance() {
@@ -67,13 +67,13 @@ public class SharedConfiguration {
                 }
             }
         }
-        
+
         return instance;
     }
 
     /**
      * Get's the configuration value of the provided key.
-     * 
+     *
      * @param key The name of the property.
      * @return The value of the property or an empty string if the key doesn't exist.
      */
@@ -83,7 +83,7 @@ public class SharedConfiguration {
 
     /**
      * Get's the configuration value of the provided key.
-     * 
+     *
      * @param key The name of the property.
      * @param defaultValue The default value to return if the key doesn't exist.
      * @return The value of the property or the provided default value if the key doesn't exist.

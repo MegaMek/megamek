@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * Allows an observer to see all units
- * 
+ *
  * @author Dave Smith
  * @version
  */

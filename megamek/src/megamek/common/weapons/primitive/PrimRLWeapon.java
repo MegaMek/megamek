@@ -57,4 +57,3 @@ public abstract class PrimRLWeapon extends RLWeapon {
         return new RLHandler(toHit, waa, game, server);
     }
 }
-

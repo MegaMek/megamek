@@ -32,7 +32,7 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), 
+        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(),
                 "artyauto.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
@@ -44,7 +44,7 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_ADJUSTED(new MegaMekFile(Configuration.hexesDir(), 
+        ARTILLERY_ADJUSTED(new MegaMekFile(Configuration.hexesDir(),
                 "artyadj.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
@@ -56,23 +56,23 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_INCOMING(new MegaMekFile(Configuration.hexesDir(), 
+        ARTILLERY_INCOMING(new MegaMekFile(Configuration.hexesDir(),
                 "artyinc.gif").toString()), //$NON-NLS-1$
-        ARTILLERY_TARGET(new MegaMekFile(Configuration.hexesDir(), 
+        ARTILLERY_TARGET(new MegaMekFile(Configuration.hexesDir(),
                 "artytarget.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(), 
+        ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(),
                 "artyhit.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(), 
+        PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(),
                 "note.png").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
@@ -129,8 +129,8 @@ public class SpecialHexDisplay implements Serializable {
      * Defines that everyone can see an obscured display.
      */
     public static int SHD_OBSCURED_ALL = 2;
-    
-    
+
+
     private String info;
     private Type type;
     private int round;
@@ -217,23 +217,23 @@ public class SpecialHexDisplay implements Serializable {
             obscured = o;
         }
     }
-    
+
     public int getObscuredLevel(){
         return obscured;
     }
-    
+
     /**
      * Determines whether this special hex should be obscurred from the given
      * <code>IPlayer</code>.
-     * 
+     *
      * @param other
      * @return
      */
     public boolean isObscured(IPlayer other) {
-        if (obscured == SHD_OBSCURED_OWNER && other != null 
+        if (obscured == SHD_OBSCURED_OWNER && other != null
                 && owner.equals(other)){
             return false;
-        } else if (obscured == SHD_OBSCURED_TEAM && other != null 
+        } else if (obscured == SHD_OBSCURED_TEAM && other != null
                 && owner.getTeam() == other.getTeam()){
             return false;
         } else if (obscured == SHD_OBSCURED_ALL){
@@ -258,17 +258,17 @@ public class SpecialHexDisplay implements Serializable {
                 || (futureRound(curRound) && type.drawAfter());
 
         if (phase.isBefore(IGame.Phase.PHASE_OFFBOARD)
-                && ((type == Type.ARTILLERY_TARGET) 
+                && ((type == Type.ARTILLERY_TARGET)
                         || (type == Type.ARTILLERY_HIT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
-        
+
         // Arty icons for the owner are drawn in BoardView1.drawArtillery
         //  and shouldn't be drawn twice
         if (isOwner(playerChecking)
                 && (type == Type.ARTILLERY_AUTOHIT
                         || type == Type.ARTILLERY_ADJUSTED
-                        || type == Type.ARTILLERY_INCOMING 
+                        || type == Type.ARTILLERY_INCOMING
                         || type == Type.ARTILLERY_TARGET)){
             return false;
         }
@@ -291,7 +291,7 @@ public class SpecialHexDisplay implements Serializable {
         }
         return false;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if(this == obj) {
@@ -303,12 +303,12 @@ public class SpecialHexDisplay implements Serializable {
         final SpecialHexDisplay other = (SpecialHexDisplay) obj;
         return (type == other.type) && Objects.equals(owner, other.owner) && (round == other.round);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(type, owner, round);
     }
-    
+
     public String toString() {
         return "SHD: " + type.name() + ", " + "round " + round + ", by "
                 + owner.getName();

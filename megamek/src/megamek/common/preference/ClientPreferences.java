@@ -172,7 +172,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
     public boolean memoryDumpOn() {
         return store.getBoolean(MEMORY_DUMP_ON);
     }
-    
+
     public boolean debugOutputOn() {
         return store.getBoolean(DEBUG_OUTPUT_ON);
     }

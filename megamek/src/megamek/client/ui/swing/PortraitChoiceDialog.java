@@ -62,7 +62,7 @@ import megamek.common.util.DirectoryItems;
 public class PortraitChoiceDialog extends JDialog {
 
     private static final long serialVersionUID = -4495461837182817406L;
-    
+
     private JFrame frame;
     private JButton sourceButton;
     private JButton btnCancel;
@@ -79,13 +79,13 @@ public class PortraitChoiceDialog extends JDialog {
 
    /** Creates new form CamoChoiceDialog */
    public PortraitChoiceDialog(JFrame parent, JButton button) {
-       
+
     // Initialize our superclass and record our parent frame.
        super(parent, Messages
                .getString("PortraitChoiceDialog.select_portrait"), true); //$NON-NLS-1$
        frame = parent;
        sourceButton = button;
-     
+
        // Parse the camo directory.
        try {
            portraits = new DirectoryItems(
@@ -96,10 +96,10 @@ public class PortraitChoiceDialog extends JDialog {
        } catch (Exception e) {
            portraits = null;
        }
-       
+
        portraitMouseAdapter = new PortraitTableMouseAdapter();
        portraitModel = new PortraitTableModel();
-       
+
        scrPortraits = new JScrollPane();
        tablePortrait = new JTable();
        tablePortrait.setModel(portraitModel);
@@ -141,7 +141,7 @@ public class PortraitChoiceDialog extends JDialog {
                cancel();
            }
        });
-       
+
        setLayout(new GridBagLayout());
        GridBagConstraints c;
 
@@ -168,7 +168,7 @@ public class PortraitChoiceDialog extends JDialog {
        c.gridy = 2;
        c.weightx = 0.5;
        getContentPane().add(btnSelect, c);
-       
+
        c = new GridBagConstraints();
        c.gridx = 1;
        c.gridy = 2;
@@ -176,13 +176,13 @@ public class PortraitChoiceDialog extends JDialog {
        add(btnCancel, c);
 
        pack();
-   }                
+   }
 
-    private void cancel() {                                          
+    private void cancel() {
        setVisible(false);
-    }                                         
+    }
 
-    private void select() {                                          
+    private void select() {
        category = portraitModel.getCategory();
        if(tablePortrait.getSelectedRow() != -1) {
            filename = (String) portraitModel.getValueAt(tablePortrait.getSelectedRow(), 0);
@@ -191,13 +191,13 @@ public class PortraitChoiceDialog extends JDialog {
        }
        sourceButton.setIcon(generateIcon(category, filename));
        setVisible(false);
-    }                                         
-    
-    private void comboCategoriesItemStateChanged(java.awt.event.ItemEvent evt) {                                                 
+    }
+
+    private void comboCategoriesItemStateChanged(java.awt.event.ItemEvent evt) {
        if (evt.getStateChange() == ItemEvent.SELECTED) {
            fillTable((String) evt.getItem());
        }
-    }                                                
+    }
 
    public String getCategory() {
        return category;
@@ -206,7 +206,7 @@ public class PortraitChoiceDialog extends JDialog {
    public String getFileName() {
        return filename;
    }
-   
+
    public void setPilot(Crew pilot, int slot) {
        category = pilot.getPortraitCategory(slot);
        filename = pilot.getPortraitFileName(slot);
@@ -220,7 +220,7 @@ public class PortraitChoiceDialog extends JDialog {
                break;
            }
        }
-       tablePortrait.setRowSelectionInterval(rowIndex, rowIndex);     
+       tablePortrait.setRowSelectionInterval(rowIndex, rowIndex);
    }
 
     private void fillTable(String category) {
@@ -246,17 +246,17 @@ public class PortraitChoiceDialog extends JDialog {
            tablePortrait.setRowSelectionInterval(0, 0);
        }
    }
-    
+
     Icon generateIcon(String cat, String item) {
         if((null == cat) || (null == item)) {
             return null;
         }
-        
+
         String actualItem = item;
         if (Crew.PORTRAIT_NONE.equals(actualItem)) {
             actualItem = "default.gif"; //$NON-NLS-1$
         }
-        
+
         String actualCat = cat;
         // Replace the ROOT_PORTRAIT string with "".
         if (Crew.ROOT_PORTRAIT.equals(actualCat)) {
@@ -378,24 +378,24 @@ public class PortraitChoiceDialog extends JDialog {
                    } else {
                        setBackground(Color.WHITE);
                    }
-    
+
                    return c;
-            }      
+            }
        }
    }
-   
+
    public class PortraitPanel extends JPanel {
 
        private static final long serialVersionUID = -6497926619314613457L;
        private JLabel lblImage;
-        
+
         public PortraitPanel() {
             GridBagConstraints c = new GridBagConstraints();
 
             lblImage = new JLabel();
 
             setLayout(new GridBagLayout());
-            
+
             c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = 0;
@@ -408,13 +408,13 @@ public class PortraitChoiceDialog extends JDialog {
         public void setText(String text) {
             lblImage.setText(text);
         }
-        
+
         public void setImage(String category, String name) {
 
             if (null == category || null == name) {
                 return;
             }
-            
+
             if(name.equals(Crew.PORTRAIT_NONE)) {
                 name = "default.gif";
             }

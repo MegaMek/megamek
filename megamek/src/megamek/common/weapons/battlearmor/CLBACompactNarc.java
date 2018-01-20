@@ -59,7 +59,7 @@ public class CLBACompactNarc extends NarcWeapon {
         .setISApproximate(false, false, false,false, false)
         .setClanAdvancement(2870, 2875, 3065, DATE_NONE, DATE_NONE)
         .setClanApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_CSV)	
+        .setPrototypeFactions(F_CSV)
         .setProductionFactions(F_CSV);
     }
 

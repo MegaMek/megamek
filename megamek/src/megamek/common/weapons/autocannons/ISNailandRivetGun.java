@@ -51,4 +51,3 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
             .setProductionFactions(F_FW);
     }
 }
-

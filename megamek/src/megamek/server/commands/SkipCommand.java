@@ -24,7 +24,7 @@ import megamek.server.Server;
 
 /**
  * Skips the current player's turn, if possible.
- * 
+ *
  * @author Ben
  * @version
  */

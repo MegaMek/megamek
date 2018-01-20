@@ -28,10 +28,10 @@ public class EntityVisibilityUtils {
                 || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || !entity.isHidden();
-        
+
         return canSee;
     }
-    
+
     /**
      * Used to determine if this entity is only detected by an enemies
      * sensors and hence should only be a sensor return.
@@ -56,7 +56,7 @@ public class EntityVisibilityUtils {
             return false;
         }
     }
-    
+
     /**
      * We only want to show double-blind visibility indicators on our own
      * mechs and teammates mechs (assuming team vision option).
@@ -65,14 +65,14 @@ public class EntityVisibilityUtils {
         if (localPlayer == null) {
             return false;
         }
-        
+
         if (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
-                && ((e.getOwner().getId() == localPlayer.getId()) || 
+                && ((e.getOwner().getId() == localPlayer.getId()) ||
                         (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
                 && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
-        
+
         return false;
     }
 }

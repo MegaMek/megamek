@@ -67,7 +67,7 @@ public class VTOL extends Tank implements IBomber {
     public int getLocTurret() {
         return LOC_TURRET;
     }
-    
+
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
@@ -253,18 +253,18 @@ public class VTOL extends Tank implements IBomber {
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
     @Override
     public boolean isBomber() {
         return (game != null)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS);
     }
-    
+
     @Override
     public int availableBombLocation(int cost) {
         return LOC_FRONT;
     }
-    
+
     public int getMaxBombPoints() {
         return (int) Math.round(getWeight() / 5);
     }
@@ -278,7 +278,7 @@ public class VTOL extends Tank implements IBomber {
             bombChoices = bc;
         }
     }
-    
+
     @Override
     public void clearBombChoices() {
         Arrays.fill(bombChoices, 0);
@@ -288,16 +288,16 @@ public class VTOL extends Tank implements IBomber {
     public Targetable getVTOLBombTarget() {
         return bombTarget;
     }
-    
+
     @Override
     public void setVTOLBombTarget(Targetable t) {
         bombTarget = t;
     }
-    
+
     public List<Coords> getStrafingCoords() {
         return strafingCoords;
     }
-    
+
     @Override
     public boolean isMakingVTOLGroundAttack() {
         return bombTarget != null || strafingCoords.size() > 0;
@@ -565,7 +565,7 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
-        
+
         bombTarget = null;
         strafingCoords.clear();
     }
@@ -639,7 +639,7 @@ public class VTOL extends Tank implements IBomber {
 
         return move;
     }
-    
+
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if (index == 1 && location == LOC_REAR) {
@@ -649,14 +649,14 @@ public class VTOL extends Tank implements IBomber {
                 || (index == 1 && location < LOC_TURRET)) {
             return 0.0;
         }
-        return 1.0; 
+        return 1.0;
     }
 
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         specialAbilities.put(BattleForceSPA.ATMO, null);
     }
-    
+
     @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
@@ -675,7 +675,7 @@ public class VTOL extends Tank implements IBomber {
             ctl.addComponent(getChinTurretTA());
         }
     }
-    
+
     /**
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other

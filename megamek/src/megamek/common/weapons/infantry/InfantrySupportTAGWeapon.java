@@ -23,14 +23,14 @@ import megamek.server.Server;
 /**
  * TAG for conventional infantry. Rules not found in TacOps 2nd printing are in
  * this forum post: http://bg.battletech.com/forums/index.php?topic=5902.0
- * 
+ *
  * @author Neoancient
  *
  */
 public class InfantrySupportTAGWeapon extends InfantryWeapon {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4986981464279987117L;
 

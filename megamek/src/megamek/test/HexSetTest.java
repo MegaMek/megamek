@@ -35,7 +35,7 @@ import megamek.common.util.StringUtil;
 /**
  * This class provides a utility to read in a HexTileSet and test to make
  * sure all images are accessible
- * 
+ *
  * @author arlith
  *
  */
@@ -48,12 +48,12 @@ public class HexSetTest {
             return arg0.compareToIgnoreCase(arg1);
         }
     }
-    
+
     /**
      * Reads the *set file in the given directory and filename.  It looks at the
      * given image file and prints a message if the file cannot be opened and
      * if the case does not match.
-     * 
+     *
      * @param dir
      * @param filename
      * @throws IOException
@@ -82,7 +82,7 @@ public class HexSetTest {
             String theme = null;
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && (st.sval.equals("base") || st.sval.equals("super") || 
+                    && (st.sval.equals("base") || st.sval.equals("super") ||
                         st.sval.equals("ortho"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 boolean bas = st.sval.equals("base"); //$NON-NLS-1$
                 boolean sup = st.sval.equals("super"); //$NON-NLS-1$
@@ -122,7 +122,7 @@ public class HexSetTest {
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD) &&
                     st.sval.equals("include")) {
-                st.nextToken(); 
+                st.nextToken();
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
@@ -134,11 +134,11 @@ public class HexSetTest {
         System.out.println("\n");
         incDepth--;
     }
-    
+
     private static void testImageName(File dir, String imageName,
             String entryName) throws IOException {
         File imgFile = new File(dir, imageName);
-        
+
         boolean exactmatch = imgFile.exists()
                 && imgFile.getCanonicalPath().endsWith(imgFile.getName());
         if (!exactmatch) {
@@ -160,12 +160,12 @@ public class HexSetTest {
             }
         }
     }
-    
-    
+
+
     public static void main(String[] args) {
         try {
             File hexesDir = Configuration.hexesDir();
-            
+
             String[] tilesetFiles = Configuration.hexesDir().list(
                     new FilenameFilter() {
                         public boolean accept(File directory, String fileName) {

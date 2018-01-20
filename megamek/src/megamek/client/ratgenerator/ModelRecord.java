@@ -30,7 +30,7 @@ import megamek.common.WeaponType;
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
  * of missions in addition to what is formally declared in the data files.
- * 
+ *
  * @author Neoancient
  *
  */
@@ -42,10 +42,10 @@ public class ModelRecord extends AbstractUnitRecord {
 	public static final int NETWORK_C3I = 1 << 2;
 	public static final int NETWORK_NAVAL_C3 = 1 << 2;
 	public static final int NETWORK_NOVA = 1 << 3;
-	
+
 	public static final int NETWORK_BOOSTED = 1 << 4;
 	public static final int NETWORK_COMPANY_COMMAND = 1 << 5;
-	
+
 	public static final int NETWORK_BOOSTED_SLAVE = NETWORK_C3_SLAVE | NETWORK_BOOSTED;
 	public static final int NETWORK_BOOSTED_MASTER = NETWORK_C3_MASTER | NETWORK_BOOSTED;
 
@@ -64,7 +64,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private double ammoRequirement; //used to determine suitability for raider role
 	private boolean incendiary; //used to determine suitability for incindiary role
 	private boolean apWeapons; //used to determine suitability for anti-infantry role
-	
+
 	private boolean mechanizedBA;
 
 	public ModelRecord(String chassis, String model) {
@@ -77,7 +77,7 @@ public class ModelRecord extends AbstractUnitRecord {
 		flak = 0.0;
 		longRange = 0.0;
 	}
-	
+
 	public ModelRecord(MechSummary ms) {
 		this(ms.getChassis(), ms.getModel());
 		mechSummary = ms;
@@ -124,7 +124,7 @@ public class ModelRecord extends AbstractUnitRecord {
         		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
         		        || ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM_IMP
         				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
-        		
+
         		if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
         				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
         			apWeapons = true;
@@ -148,7 +148,7 @@ public class ModelRecord extends AbstractUnitRecord {
 					networkMask |= NETWORK_BOOSTED_MASTER;
    					if (ms.getEquipmentQuantities().get(i) > 1) {
    						networkMask |= NETWORK_COMPANY_COMMAND;
-    				}        			
+    				}
         		}
     		} else if (eq.hasFlag(MiscType.F_UMU)){
    				movementMode = EntityMovementMode.BIPED_SWIM;
@@ -200,7 +200,7 @@ public class ModelRecord extends AbstractUnitRecord {
     		speed++;
     	}
 	}
-	
+
 	public String getModel() {
 		return mechSummary.getModel();
 	}
@@ -208,19 +208,19 @@ public class ModelRecord extends AbstractUnitRecord {
 	public int getWeightClass() {
 		return weightClass;
 	}
-	
+
 	public EntityMovementMode getMovementMode() {
 		return movementMode;
 	}
-	
+
 	public boolean isClan() {
 		return clan;
 	}
-	
+
 	public boolean isSL() {
 		return starLeague;
 	}
-	
+
 	public Set<MissionRole> getRoles() {
 		return roles;
 	}
@@ -245,31 +245,31 @@ public class ModelRecord extends AbstractUnitRecord {
 	public void setFlak(double flak) {
 		this.flak = flak;
 	}
-	
+
 	public double getLongRange() {
 		return longRange;
 	}
-	
+
 	public int getSpeed() {
 		return speed;
 	}
-	
+
 	public double getAmmoRequirement() {
 		return ammoRequirement;
 	}
-	
+
 	public boolean hasIncendiaryWeapon() {
 		return incendiary;
 	}
-	
+
 	public boolean hasAPWeapons() {
 		return apWeapons;
 	}
-	
+
 	public MechSummary getMechSummary() {
 		return mechSummary;
 	}
-	
+
 	public void addRoles(String str) {
 		String[] fields = str.split(",");
 		for (String role : fields) {
@@ -282,7 +282,7 @@ public class ModelRecord extends AbstractUnitRecord {
 			}
 		}
 	}
-	
+
 	public void setRequiredUnits(String str) {
 		String [] subfields = str.split(",");
 		for (String unit : subfields) {
@@ -291,7 +291,7 @@ public class ModelRecord extends AbstractUnitRecord {
 			} else {
 				deployedWith.add(unit);
 			}
-		}		
+		}
 	}
 
 	public void setExcludedFactions(String str) {
@@ -301,11 +301,11 @@ public class ModelRecord extends AbstractUnitRecord {
 			excludedFactions.add(faction);
 		}
 	}
-	
+
 	public boolean factionIsExcluded(FactionRecord fRec) {
 		return excludedFactions.contains(fRec.getKey());
 	}
-	
+
 	public boolean factionIsExcluded(String faction, String subfaction) {
 		if (subfaction == null) {
 			return excludedFactions.contains(faction);
@@ -313,18 +313,17 @@ public class ModelRecord extends AbstractUnitRecord {
 			return excludedFactions.contains(faction + "." + subfaction);
 		}
 	}
-	
+
 	@Override
 	public String getKey() {
 		return mechSummary.getName();
 	}
-	
+
 	public boolean canDoMechanizedBA() {
 		return mechanizedBA;
 	}
-	
+
 	public void setMechanizedBA(boolean mech) {
 		mechanizedBA = mech;
 	}
 }
-

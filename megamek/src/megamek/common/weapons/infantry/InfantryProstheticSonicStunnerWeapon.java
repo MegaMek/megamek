@@ -55,5 +55,3 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
             .setClanApproximate(true, false, false, false, false);
     }
 }
-
-

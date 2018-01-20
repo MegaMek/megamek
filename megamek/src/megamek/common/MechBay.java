@@ -68,8 +68,8 @@ public final class MechBay extends Bay {
         boolean result = false;
 
         // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs
-        if ((unit instanceof Mech) 
-        		|| ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH)) 
+        if ((unit instanceof Mech)
+        		|| ((unit instanceof QuadVee) && (unit.getConversionMode() == QuadVee.CONV_MODE_MECH))
         		|| ((unit instanceof LandAirMech) && (unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER))) {
             result = true;
         }
@@ -84,7 +84,7 @@ public final class MechBay extends Bay {
         if (doors <= loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -115,14 +115,14 @@ public final class MechBay extends Bay {
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
     }
-    
+
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2445, 2470, 2500)
                 .setApproximate(true, false, false).setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         return MechBay.techAdvancement();

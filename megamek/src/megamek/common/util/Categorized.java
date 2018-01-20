@@ -20,7 +20,7 @@ import java.util.Iterator;
  * This interface represents a collection of items organized according to
  * categories. These categories are not necessarily hierarchical. Created on
  * January 17, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
@@ -28,7 +28,7 @@ public interface Categorized {
 
     /**
      * Get the names of all the categories.
-     * 
+     *
      * @return an <code>Enumeration</code> of <code>String</code> names.
      *         This value will not be <code>null</code>, but it may be empty.
      */
@@ -36,7 +36,7 @@ public interface Categorized {
 
     /**
      * Get the names of all the items in one of the categories.
-     * 
+     *
      * @param categoryName - the <code>String</code> name of the category
      *            whose item names are required.
      * @return an <code>Enumeration</code> of <code>String</code> names.
@@ -46,7 +46,7 @@ public interface Categorized {
 
     /**
      * Get the indicated item from the correct catagory.
-     * 
+     *
      * @param categoryName - the <code>String</code> name of the category
      *            whose item names are required.
      * @param itemName - the <code>String</code> name of the indicated item.

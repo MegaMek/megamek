@@ -290,7 +290,7 @@ public class WeaponFireInfo {
     }
 
     private ToHitData calcRealToHit(final WeaponAttackAction weaponAttackAction) {
-        return weaponAttackAction.toHit(getGame(), 
+        return weaponAttackAction.toHit(getGame(),
                 owner.getPrecognition().getECMInfo());
     }
 
@@ -359,9 +359,9 @@ public class WeaponFireInfo {
                                                                    getTarget().getTargetType(),
                                                                    getTarget().getTargetId(),
                                                                    getShooter().getEquipmentNum(getWeapon()));
-        
+
         diveBomb.setBombPayload(bombPayload);
-        
+
         return diveBomb;
     }
 
@@ -370,7 +370,7 @@ public class WeaponFireInfo {
         if(weapon.isGroundBomb()) {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
         }
-        
+
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
@@ -380,20 +380,20 @@ public class WeaponFireInfo {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
-                        weaponType.getExtremeRange() : weaponType.getLongRange(); 
+                        weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
-                
+
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
-                // then we can count it. Otherwise, it's not going to contribute to damage, and we want 
+                // then we can count it. Otherwise, it's not going to contribute to damage, and we want
                 // to avoid grossly overestimating damage.
                 if(targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
                     bayDamage += weaponType.getDamage();
                 }
             }
-            
+
             return bayDamage;
         }
-        
+
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
@@ -411,7 +411,7 @@ public class WeaponFireInfo {
         }
         return weaponType.getDamage();
     }
-    
+
     /**
      * Worker function to compute expected bomb damage given the shooter
      * @param shooter The unit making the attack.
@@ -423,38 +423,38 @@ public class WeaponFireInfo {
                                              final Mounted weapon,
                                              final Coords bombedHex) {
         double damage = 0D; //lol double damage I wish
-        
+
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
         if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
                 final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
-        
-                // HE, thunder, laser and inferno bombs just affect the target hex 
+
+                // HE, thunder, laser and inferno bombs just affect the target hex
                 final List<Coords> affectedHexes = new ArrayList<>();
                 affectedHexes.add(bombedHex);
-                
+
                 // a cluster bomb affects all hexes around the target
                 if (BombType.B_CLUSTER == ((BombType) bomb.getType()).getBombType()) {
                     for (int dir = 0; 5 >= dir; dir++) {
                         affectedHexes.add(bombedHex.translated(dir));
                     }
                 }
-                
+
                 // now we go through all affected hexes and add up the damage done
                 for (final Coords coords : affectedHexes) {
-                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {                        
+                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {
                         if(currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
                             damage += damagePerShot;
                         } else { // we prefer not to blow up friendlies if we can help it
                             damage -= damagePerShot;
-                        }                    
+                        }
                     }
                 }
             }
         }
-        
+
         damage = damage * getProbabilityToHit();
-        
+
         return damage;
     }
 
@@ -486,7 +486,7 @@ public class WeaponFireInfo {
             else {
                 setAction(buildBombAttackAction(bombPayload));
             }
-            
+
             if (!guess) {
                 setToHit(calcRealToHit(getWeaponAttackAction()));
             } else if (null != shooterPath) {

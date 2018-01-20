@@ -20,7 +20,7 @@ import megamek.client.ui.Messages;
  */
 public class BoardNewDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6109373881940834702L;
     private int xvalue;

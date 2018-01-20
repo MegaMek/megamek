@@ -1,15 +1,15 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -32,7 +32,7 @@ import megamek.common.Jumpship;
 import megamek.common.util.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to 
+ * Class which keeps set of all areas required to
  * represent ASF unit in MechDsiplay.ArmorPanel class.
  */
 public class JumpshipMapSet implements DisplayMapSet{
@@ -43,7 +43,7 @@ public class JumpshipMapSet implements DisplayMapSet{
     private PMValueLabel[] vLabels = new PMValueLabel[13];
     private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
-    
+
     UnitDisplay unitDisplay;
 
     //private static final int INT_STR_OFFSET = 4;
@@ -55,16 +55,16 @@ public class JumpshipMapSet implements DisplayMapSet{
             new int[]{60,60,160,160},4);
     //Left front armor
     private Polygon leftFSArmor = new Polygon(new int[]{20,40,40,20},
-            new int[]{60,60,120,120},4);  
+            new int[]{60,60,120,120},4);
     //Left aft armor
     private Polygon leftASArmor = new Polygon(new int[]{20,40,40,20},
-            new int[]{120,120,160,160},4);  
+            new int[]{120,120,160,160},4);
 
     private Polygon rightFSArmor = new Polygon(new int[]{60,80,80,60},
-            new int[]{60,60,120,120},4);  
+            new int[]{60,60,120,120},4);
     //right aft armor
     private Polygon rightASArmor = new Polygon(new int[]{60,80,80,60},
-            new int[]{120,120,160,160},4);  
+            new int[]{120,120,160,160},4);
 
     //Rear armor
     private Polygon aftArmor = new Polygon (new int[]{20,0,40,40,60,60,100,80},
@@ -189,7 +189,7 @@ public class JumpshipMapSet implements DisplayMapSet{
 
         //Value labels for all parts of mek
         //front
-        fm =  comp.getFontMetrics(FONT_VALUE);   
+        fm =  comp.getFontMetrics(FONT_VALUE);
         vLabels[Jumpship.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm); //$NON-NLS-1$
         //vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm); //$NON-NLS-1$
         vLabels[Jumpship.LOC_FLS] = WidgetUtils.createValueLabel(30, 95, "", fm); //$NON-NLS-1$

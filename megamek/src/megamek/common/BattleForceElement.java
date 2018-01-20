@@ -36,27 +36,27 @@ import megamek.common.weapons.missiles.MissileWeapon;
 /**
  * Primarily concerned with calculating BattleForce values for an undamaged entity, and exporting
  * stats in csv form.
- * 
+ *
  * @author Neoancient
  *
  */
 public class BattleForceElement {
-    
+
     static final int RANGE_BAND_SHORT = 0;
     static final int RANGE_BAND_MEDIUM = 1;
     static final int RANGE_BAND_LONG = 2;
     static final int RANGE_BAND_EXTREME = 3;
     static final int RANGE_BAND_NUM_GROUND = 3;
     static final int RANGE_BAND_NUM_AERO = 4;
-    
+
     static final int[] STANDARD_RANGES = {0, 4, 16, 24};
     static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
-    
+
     public static final int SHORT_RANGE = STANDARD_RANGES[RANGE_BAND_SHORT];
     public static final int MEDIUM_RANGE = STANDARD_RANGES[RANGE_BAND_MEDIUM];
     public static final int LONG_RANGE = STANDARD_RANGES[RANGE_BAND_LONG];
     public static final int EXTREME_RANGE = STANDARD_RANGES[RANGE_BAND_EXTREME];
-    
+
     protected String name;
     protected int size;
     protected LinkedHashMap<String,Integer> movement = new LinkedHashMap<>();
@@ -69,7 +69,7 @@ public class BattleForceElement {
     protected int[] heat;
     protected double points;
     protected EnumMap<BattleForceSPA,Integer> specialAbilities = new EnumMap<>(BattleForceSPA.class);
-    
+
     public BattleForceElement(Entity en) {
         name = en.getShortName();
         size = en.getBattleForceSize();
@@ -88,7 +88,7 @@ public class BattleForceElement {
         points = calculatePointValue(en);
         en.addBattleForceSpecialAbilities(specialAbilities);
     }
-    
+
     protected void initWeaponLocations(Entity en) {
         weaponLocations = new WeaponLocation[en.getNumBattleForceWeaponsLocations()];
         locationNames = new String[weaponLocations.length];
@@ -100,86 +100,86 @@ public class BattleForceElement {
             }
         }
     }
-    
+
     protected void computeMovement(Entity en) {
-    	en.setBattleForceMovement(movement);    	
+    	en.setBattleForceMovement(movement);
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public int getSize() {
         return size;
     }
-    
+
     public Set<String> getMovementModes() {
     	return movement.keySet();
     }
-    
+
     public int getMovement(String mode) {
     	return movement.get(mode);
     }
-    
+
     public int getPrimaryMovementValue() {
     	return movement.values().iterator().next();
     }
-    
+
     public String getMovementAsString() {
     	return movement.entrySet().stream()
     			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
     					+ e.getKey())
-    			.collect(Collectors.joining("/"));    	
+    			.collect(Collectors.joining("/"));
     }
-    
+
     public int getFinalArmor() {
         return (int)Math.round(armor);
     }
-    
+
     public double getArmor() {
         return armor;
     }
-    
+
     public int getFinalThreshold() {
         return (int)Math.ceil(threshold);
     }
-    
+
     public double getThreshold() {
         return threshold;
     }
-    
+
     public int getStructure() {
         return structure;
     }
-    
+
     public double getDamage(int loc, int rangeIndex, int damageClass) {
     	return weaponLocations[loc].getDamage(damageClass, rangeIndex);
     }
-    
+
     public double getDamage(int rangeIndex) {
     	return weaponLocations[0].getDamage(rangeIndex);
     }
-    
+
     public double getDamage(int rangeIndex, int damageClass) {
     	return getDamage(0, rangeIndex, damageClass);
     }
-    
+
     public double getIndirectFire() {
     	return getIndirectFire(0);
     }
-    
+
     public double getIndirectFire(int loc) {
     	return weaponLocations[loc].getIF();
     }
-    
+
     public String getLocationName(int loc) {
         return locationNames[loc];
     }
-    
+
     public Integer getSPA(BattleForceSPA spa) {
     	return specialAbilities.get(spa);
     }
-    
+
     public boolean hasSPA(BattleForceSPA spa) {
     	return specialAbilities.containsKey(spa);
     }
@@ -187,11 +187,11 @@ public class BattleForceElement {
     public int getFinalPoints() {
         return Math.max(1, (int)Math.round(points));
     }
-    
+
     public double getPoints() {
         return points;
     }
-    
+
     public void computeDamage(Entity en) {
         double[] baseDamage = new double[rangeBands];
         boolean hasTC = en.hasTargComp();
@@ -214,9 +214,9 @@ public class BattleForceElement {
             }
 
             WeaponType weapon = (WeaponType) mount.getType();
-            
+
             ranges = weapon.isCapital()? CAPITAL_RANGES : STANDARD_RANGES;
-            
+
             if (weapon.getAmmoType() == AmmoType.T_INARC) {
                specialAbilities.merge(BattleForceSPA.INARC, 1, Integer::sum);
                continue;
@@ -228,7 +228,7 @@ public class BattleForceElement {
                 }
                 continue;
             }
-            
+
             if (weapon.getAtClass() == WeaponType.CLASS_SCREEN) {
                 specialAbilities.merge(BattleForceSPA.SCR, 1, Integer::sum);
                 continue;
@@ -254,7 +254,7 @@ public class BattleForceElement {
                 }
                 continue;
             }
-            
+
             if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 addArtillery(weapon);
                 continue;
@@ -267,12 +267,12 @@ public class BattleForceElement {
                     }
                 }
             }
-            
+
             if (weapon.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
                 bombRacks++;
                 continue;
             }
-            
+
             if (weapon.getAmmoType() == AmmoType.T_TASER) {
                 if (en instanceof BattleArmor) {
                     specialAbilities.merge(BattleForceSPA.BTA, 1, Integer::sum);
@@ -281,7 +281,7 @@ public class BattleForceElement {
                 }
                 continue;
             }
-            
+
             if (weapon.hasFlag(WeaponType.F_TSEMP)) {
                 if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
                     specialAbilities.merge(BattleForceSPA.TSEMPO, 1, Integer::sum);
@@ -290,7 +290,7 @@ public class BattleForceElement {
                 }
                 continue;
             }
-            
+
             if (weapon instanceof InfantryAttack) {
                 specialAbilities.put(BattleForceSPA.AM, null);
                 continue;
@@ -306,23 +306,23 @@ public class BattleForceElement {
                         if (nextPos == pos) {
                             continue;
                         }
-                        
+
                         Mounted nextWeapon = weaponsList.get(nextPos);
-    
+
                         if (nextWeapon == null) {
                             continue;
                         }
-    
+
                         if (nextWeapon.getType().equals(weapon)) {
                             weaponsForAmmo++;
                         }
-    
+
                     }
                     int ammoCount = 0;
                     // Check if they have enough ammo for all the guns to last at
                     // least 10 rounds
                     for (Mounted ammo : en.getAmmo()) {
-    
+
                         AmmoType at = (AmmoType) ammo.getType();
                         if ((at.getAmmoType() == weapon.getAmmoType())
                                 && (at.getRackSize() == weapon.getRackSize())) {
@@ -339,7 +339,7 @@ public class BattleForceElement {
                             }
                         }
                     }
-    
+
                     ammoForWeapon.put(weapon.getName(), (ammoCount / weaponsForAmmo) >= 10);
                 }
                 if (!ammoForWeapon.get(weapon.getName())) {
@@ -350,7 +350,7 @@ public class BattleForceElement {
             if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
                 damageModifier *= .1;
             }
-            
+
             if (weapon instanceof BayWeapon) {
                 for (int index : mount.getBayWeapons()) {
                     Mounted m = en.getEquipment(index);
@@ -379,7 +379,7 @@ public class BattleForceElement {
                     && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
                 damageModifier *= 1.10;
             }
-            
+
             for (int loc = 0; loc < weaponLocations.length; loc++) {
                 double locMultiplier = locationMultiplier(en, loc, mount);
                 if (locMultiplier == 0) {
@@ -397,7 +397,7 @@ public class BattleForceElement {
                             weaponLocations[loc].addDamage(WeaponType.BFCLASS_SRM, r, dam / 2.0);
                             weaponLocations[loc].addDamage(WeaponType.BFCLASS_LRM, r, dam / 2.0);
                         } else {
-                            weaponLocations[loc].addDamage(WeaponType.BFCLASS_LRM, r, dam);                            
+                            weaponLocations[loc].addDamage(WeaponType.BFCLASS_LRM, r, dam);
                         }
                     } else {
                         weaponLocations[loc].addDamage(weapon.getBattleForceClass(), r, dam);
@@ -411,7 +411,7 @@ public class BattleForceElement {
                 pointDefense += baseDamage[RANGE_BAND_SHORT] * damageModifier;
             }
         }
-        
+
         if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
             int baseRange = 0;
             if (((Infantry)en).getSecondaryWeapon() != null && ((Infantry)en).getSecondaryN() >= 2) {
@@ -429,7 +429,7 @@ public class BattleForceElement {
                 }
             }
         }
-        
+
         if (en instanceof BattleArmor) {
             int vibroClaws = en.countWorkingMisc(MiscType.F_VIBROCLAW);
             if (vibroClaws > 0) {
@@ -441,7 +441,7 @@ public class BattleForceElement {
                         (bombRacks * ((BattleArmor)en).getShootingStrength()) / 5);
             }
         }
-        
+
         if (en instanceof Aero && pointDefense > 0) {
             specialAbilities.put(BattleForceSPA.PNT, (int)Math.ceil(pointDefense / 10.0));
         }
@@ -454,11 +454,11 @@ public class BattleForceElement {
             specialAbilities.put(BattleForceSPA.HT, 1);
         }
     }
-    
+
     protected double locationMultiplier(Entity en, int loc, Mounted mount) {
     	return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
-    
+
     protected void addArtillery(WeaponType weapon) {
         BattleForceSPA artType = null;
         switch (weapon.getAmmoType()) {
@@ -508,9 +508,9 @@ public class BattleForceElement {
         }
         if (artType != null) {
             specialAbilities.merge(artType, 1, Integer::sum);
-        }        
+        }
     }
-    
+
     /* BattleForce and AlphaStrike calculate infantry damage differently */
     protected double getConvInfantryStandardDamage(int range, Infantry inf) {
         if (inf.getPrimaryWeapon() == null) {
@@ -520,13 +520,13 @@ public class BattleForceElement {
             return 0;
         }
     }
-    
+
     protected double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba,
             boolean apmMounted) {
         return weapon.getBattleForceDamage(range,
-                ba.getShootingStrength());        
+                ba.getShootingStrength());
     }
-    
+
     protected void adjustForHeat(Entity en) {
         double totalHeat;
         totalHeat = en.getBattleForceTotalHeatGeneration(false) - 4;
@@ -542,7 +542,7 @@ public class BattleForceElement {
                     int base = (int)Math.round(weaponLocations[loc].getDamage(1));
                     if (base == 0) {
                         rangeIndex = 0;
-                        base = (int)Math.round(weaponLocations[loc].getDamage(0));                        
+                        base = (int)Math.round(weaponLocations[loc].getDamage(0));
                     }
                     if (base == 0) {
                         continue;
@@ -588,7 +588,7 @@ public class BattleForceElement {
     public double calculatePointValue(Entity en) {
         return en.calculateBattleValue(true, true) / 100.0;
     }
-    
+
     public String getBFDamageString(int loc) {
         StringBuilder str = new StringBuilder(locationNames[loc]);
         if (locationNames[loc].length() > 0) {
@@ -615,7 +615,7 @@ public class BattleForceElement {
         }
         return str.toString();
     }
-    
+
     protected String getASRangeString(double[] damage) {
         return IntStream.range(0, damage.length).mapToDouble(i -> damage[i] / 10.0)
                 .mapToObj(d -> {
@@ -628,7 +628,7 @@ public class BattleForceElement {
                     }
                 }).collect(Collectors.joining("/"));
     }
-    
+
     public void writeCsv(BufferedWriter w) throws IOException {
         w.write(name);
         w.write("\t");
@@ -679,7 +679,7 @@ public class BattleForceElement {
                 .collect(Collectors.joining(", ")));
         w.newLine();
     }
-    
+
     protected String formatSPAString(BattleForceSPA spa) {
         Integer val = specialAbilities.get(spa);
         if (val == null) {
@@ -711,57 +711,57 @@ public class BattleForceElement {
         Map<Integer,List<Double>> specialDamage = new HashMap<>();
         double indirect;
         double overheat;
-        
+
         public boolean hasStandardDamage() {
             return standardDamage.stream().mapToDouble(Double::doubleValue).sum() > 0;
         }
-        
+
         public boolean hasStandardDamageRounded() {
             return standardDamage.stream()
                     .filter(d -> d >= 0.5)
                     .mapToDouble(Double::doubleValue).sum() > 0;
         }
-        
+
         public boolean hasDamage() {
         	return hasStandardDamage()
         			|| specialDamage.keySet().stream().anyMatch(dc -> hasDamageClass(dc));
         }
-        
+
         public boolean hasDamageRounded() {
         	return hasStandardDamageRounded()
         			|| specialDamage.keySet().stream().anyMatch(dc -> hasDamageClassRounded(dc));
         }
-        
+
         public boolean hasDamageClass(int damageClass) {
             return specialDamage.containsKey(damageClass)
                     && specialDamage.get(damageClass).stream().mapToDouble(Double::doubleValue).sum() > 0;
         }
-        
+
         public boolean hasDamageClassRounded(int damageClass) {
             return specialDamage.containsKey(damageClass)
                     && specialDamage.get(damageClass).stream()
                     .filter(d -> d >= 0.5)
                     .mapToDouble(Double::doubleValue).sum() > 0;
         }
-        
+
         public void addDamage(int rangeIndex, double val) {
             addDamage(standardDamage, rangeIndex, val);
         }
-        
+
         public void addDamage(int damageClass, int rangeIndex, double val) {
             if (!specialDamage.containsKey(damageClass)) {
                 specialDamage.put(damageClass, new ArrayList<Double>());
             }
             addDamage(specialDamage.get(damageClass), rangeIndex, val);
         }
-        
+
         public double getDamage(int rangeIndex) {
             if (standardDamage.size() > rangeIndex) {
                 return standardDamage.get(rangeIndex);
             }
             return 0;
         }
-        
+
         public double getDamage(int damageClass, int rangeIndex) {
             if (specialDamage.containsKey(damageClass)
                     && specialDamage.get(damageClass).size() > rangeIndex) {
@@ -769,7 +769,7 @@ public class BattleForceElement {
             }
             return 0;
         }
-        
+
         public String formatDamageUp() {
             return formatDamageUp(standardDamage);
         }
@@ -780,7 +780,7 @@ public class BattleForceElement {
             }
             return rangeBands > 3? "0/0/0/0" : "0/0/0";
         }
-        
+
         public String formatDamageRounded(boolean showMinDamage) {
             return formatDamageRounded(standardDamage, showMinDamage);
         }
@@ -791,23 +791,23 @@ public class BattleForceElement {
             }
             return rangeBands > 3? "0/0/0/0" : "0/0/0";
         }
-        
+
         public double getIF() {
             return indirect;
         }
-        
+
         public void addIF(double val) {
             indirect += val;
         }
-        
+
         public double getOverheat() {
             return overheat;
         }
-        
+
         public void setOverheat(double val) {
             overheat = val;
         }
-        
+
         public void adjustForHeat(double mul) {
             for (int i = 0; i < standardDamage.size(); i++) {
                 standardDamage.set(i, standardDamage.get(i) * mul);
@@ -818,14 +818,14 @@ public class BattleForceElement {
                 }
             }
         }
-        
+
         private void addDamage(List<Double> damage, int rangeIndex, double val) {
             while (damage.size() <= rangeIndex) {
                 damage.add(0.0);
             }
             damage.set(rangeIndex, damage.get(rangeIndex) + val);
         }
-        
+
         private String formatDamageUp(List<Double> damage) {
             while (damage.size() < rangeBands) {
                 damage.add(0.0);

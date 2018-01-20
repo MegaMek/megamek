@@ -42,7 +42,7 @@ public class ACFlakHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override

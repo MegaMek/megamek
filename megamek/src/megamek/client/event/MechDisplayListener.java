@@ -23,7 +23,7 @@ package megamek.client.event;
  * and removed using the <code>removeMechDisplayListener</code> method. When
  * MechDisplay is changed the appropriate method will be invoked.
  * </p>
- * 
+ *
  * @see MechDisplayListenerAdapter
  * @see MechDisplayEvent
  */
@@ -31,7 +31,7 @@ public interface MechDisplayListener extends java.util.EventListener {
 
     /**
      * Sent when user selects a weapon in the weapon panel.
-     * 
+     *
      * @param b an event
      */
     public void weaponSelected(MechDisplayEvent b);

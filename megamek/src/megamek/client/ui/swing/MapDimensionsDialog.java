@@ -16,7 +16,7 @@
  * MapDimensionsDialog.java
  *
  * Created on February 12, 2010
- * 
+ *
  */
 
 package megamek.client.ui.swing;
@@ -44,20 +44,20 @@ import megamek.common.MapSettings;
 
 /**
  * Display a small dialog with adjustable settings for the dimensions of the playing board
- * 
+ *
  * @author Taharqa
  */
 
 public class MapDimensionsDialog extends JDialog implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6941422625466067948L;
 
     private ClientGUI clientGUI;
     private MapSettings mapSettings;
-    
+
     private JPanel panMapSize = new JPanel();
     private JLabel labBoardSize = new JLabel(Messages
             .getString("BoardSelectionDialog.BoardSize"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -70,20 +70,20 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
     private JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
     private JSpinner spnMapWidth = new JSpinner();
     private JSpinner spnMapHeight = new JSpinner();
-    
+
     private JPanel panButtons = new JPanel();
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    
+
     public MapDimensionsDialog(ClientGUI clientGUI, MapSettings mapSettings) {
         super(clientGUI.frame, Messages
                 .getString("MapDimensionsDialog.MapDimensions"), true); //$NON-NLS-1$
         this.clientGUI = clientGUI;
         this.mapSettings = MapSettings.getInstance(mapSettings);
-     
+
         setupMapSize();
         setupButtons();
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -99,7 +99,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridheight = 1;
         gridbag.setConstraints(panMapSize, c);
         add(panMapSize);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -109,7 +109,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridheight = 1;
         gridbag.setConstraints(panButtons, c);
         add(panButtons);
-        
+
         pack();
         setResizable(false);
         setLocation(clientGUI.frame.getLocation().x
@@ -118,9 +118,9 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
                         + clientGUI.frame.getSize().height / 2
                         - getSize().height / 2);
     }
-    
+
     private void setupMapSize() {
-        
+
         SpinnerModel boardHeightModel = new SpinnerNumberModel(mapSettings.getMapHeight(), 1, 15, 1);
         SpinnerModel boardWidthModel = new SpinnerNumberModel(mapSettings.getMapWidth(), 1, 15, 1);
         spnMapHeight = new JSpinner(boardHeightModel);
@@ -129,12 +129,12 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         texBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
         texBoardWidth.addActionListener(this);
         texBoardHeight.addActionListener(this);
-        
+
         if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             spnMapHeight.setEnabled(false);
             spnMapWidth.setEnabled(false);
         }
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panMapSize.setLayout(gridbag);
@@ -146,11 +146,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMapSize, c);
         panMapSize.add(labBoardSize);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -158,11 +158,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(texBoardWidth, c);
         panMapSize.add(texBoardWidth);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -170,11 +170,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 2;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labBoardDivider, c);
         panMapSize.add(labBoardDivider);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -182,11 +182,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 3;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(texBoardHeight, c);
         panMapSize.add(texBoardHeight);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -194,11 +194,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMapSize, c);
         panMapSize.add(labMapSize);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -206,11 +206,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(spnMapHeight, c);
         panMapSize.add(spnMapHeight);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -218,11 +218,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 2;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMapDivider, c);
         panMapSize.add(labMapDivider);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -230,17 +230,17 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridx = 3;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(spnMapWidth, c);
         panMapSize.add(spnMapWidth);
     }
-    
+
     private void setupButtons() {
-        
+
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panButtons.setLayout(gridbag);
@@ -266,7 +266,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         c.gridheight = 1;
         gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
-        
+
     }
 
     /**
@@ -282,7 +282,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         // read map size settings
         try {
             boardWidth = Integer.parseInt(texBoardWidth.getText());
-            boardHeight = Integer.parseInt(texBoardHeight.getText());         
+            boardHeight = Integer.parseInt(texBoardHeight.getText());
             mapWidth = (Integer) spnMapWidth.getModel().getValue();
             mapHeight = (Integer) spnMapHeight.getModel().getValue();
         } catch (NumberFormatException ex) {
@@ -307,14 +307,14 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         mapSettings.setMapSize(mapWidth, mapHeight);
         clientGUI.getClient().sendMapDimensions(mapSettings);
     }
-    
-    
+
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             apply();
             setVisible(false);
         } else if (e.getSource().equals(butCancel)) {
             setVisible(false);
-        }   
+        }
     }
 }

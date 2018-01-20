@@ -43,7 +43,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -53,7 +53,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -96,7 +96,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building, java.util.Vector)
@@ -119,7 +119,7 @@ public class TAGHandler extends WeaponHandler {
             }
         }
         // add even misses, as they waste homing missiles.
-        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), 
+        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(),
                 target, priority, true);
         game.addTagInfo(info);
         return false;
@@ -127,7 +127,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override

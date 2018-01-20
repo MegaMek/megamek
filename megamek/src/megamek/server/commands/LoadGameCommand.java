@@ -31,7 +31,7 @@ import megamek.server.Server;
 
 /**
  * Resets the server
- * 
+ *
  * @author Taharqa
  * @version
  */
@@ -55,7 +55,7 @@ public class LoadGameCommand extends ServerCommand {
         }
         if (args.length > 1) {
             String sFinalFile = args[1];
-            if (!sFinalFile.endsWith(".sav") 
+            if (!sFinalFile.endsWith(".sav")
                     && !sFinalFile.endsWith(".sav.gz")) {
                 sFinalFile = sFinalFile + ".sav";
             }

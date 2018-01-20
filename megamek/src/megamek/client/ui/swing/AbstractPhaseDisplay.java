@@ -57,7 +57,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 import megamek.common.util.MegaMekFile;
 
-public abstract class AbstractPhaseDisplay extends JPanel implements 
+public abstract class AbstractPhaseDisplay extends JPanel implements
         BoardViewListener, GameListener, Distractable {
 
     /**
@@ -72,7 +72,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     protected MegamekButton butDone;
 
     protected ClientGUI clientgui;
-    
+
     ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay(ClientGUI cg) {
@@ -87,7 +87,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
         try {
             if (pdSkinSpec.backgrounds.size() > 0){
-                File file = new MegaMekFile(Configuration.widgetsDir(), 
+                File file = new MegaMekFile(Configuration.widgetsDir(),
                         pdSkinSpec.backgrounds.get(0)).getFile();
                 URI imgURL = file.toURI();
                 if (!file.exists()){
@@ -101,7 +101,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
             System.out.println("Error loading PhaseDisplay background image!");
             System.out.println(e.getMessage());
         }
-        
+
         setBorder(new MegamekBorder(borderSkinComp));
         butDone = new MegamekButton("",buttonSkinComp);
         butDone.setActionCommand("doneButton");
@@ -150,7 +150,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     });
         }
     }
-    
+
     protected void paintComponent(Graphics g) {
         if (backgroundIcon == null){
             super.paintComponent(g);
@@ -166,7 +166,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         }
         for (int x = 0; x < w; x+=iW){
             for (int y = 0; y < h; y+=iH){
-                g.drawImage(backgroundIcon.getImage(), x, y, 
+                g.drawImage(backgroundIcon.getImage(), x, y,
                         backgroundIcon.getImageObserver());
             }
         }
@@ -299,12 +299,12 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     public void gameNewAction(GameNewActionEvent e) {
         //noaction default
     }
-    
+
     @Override
     public void gameClientFeedbackRquest(GameCFREvent evt) {
         //noaction default
     }
-    
+
     @Override
     public void gameVictory(GameVictoryEvent e) {
         //noaction default

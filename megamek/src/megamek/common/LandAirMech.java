@@ -252,7 +252,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return mp;
     }
-    
+
     // Use Mech mode to determine walk MP for BV calculations
     public int getBVWalkMP() {
         return super.getWalkMP(false, true, true);
@@ -1030,7 +1030,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean canFall(boolean gyroLegDamage) {
         return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE();
     }
-    
+
     private final static TechAdvancement[] TA_LAM = {
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
                 .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
@@ -1043,12 +1043,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) //bimodal
     };
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_LAM[lamType];
     }
-    
+
     public int height() {
         if (getConversionMode() == CONV_MODE_MECH) {
             return super.height();
@@ -1058,7 +1058,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     /**
      * LAMs can only carry mechanized BA in mech mode
-     * 
+     *
      * @return
      */
     @Override
@@ -1341,7 +1341,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return hits > 3 ? 5 : hits;
         }
     }
-    
+
     //Landing mods for partial repairs
     public int getLandingGearPartialRepairs() {
     	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
@@ -1352,7 +1352,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     	return 0;
     	}
     }
-    
+
     //Avionics mods for partial repairs
     public int getAvionicsMisreplaced() {
     	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
@@ -1361,14 +1361,14 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     	return 0;
     	}
     }
-    
+
     public int getAvionicsMisrepaired() {
     	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
     	} else {
     	return 0;
     	}
-    }    
+    }
 
     /**
      * In fighter mode the weapon arcs need to be translated to Aero arcs.
@@ -1575,7 +1575,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return fuel;
         }
     }
-    
+
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
             	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
@@ -1587,7 +1587,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     /**
      * Sets the number of fuel points.
-     * 
+     *
      * @param gas
      *            Number of fuel points.
      */
@@ -1596,7 +1596,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         fuel = gas;
         currentfuel = gas;
     }
-    
+
     public void setCurrentFuel(int gas) {
     	currentfuel = gas;
     }

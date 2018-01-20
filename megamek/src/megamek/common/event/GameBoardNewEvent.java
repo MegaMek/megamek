@@ -19,14 +19,14 @@ import megamek.common.IGame;
 
 /**
  * Instances of this class are sent when the new board for game is set
- * 
+ *
  * @see IGame#setBoard(IBoard)
  * @see GameListener
  */
 public class GameBoardNewEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4444092727458493689L;
     protected IBoard oldBoard;
@@ -34,7 +34,7 @@ public class GameBoardNewEvent extends GameEvent {
 
     /**
      * Constructs the new event with the specified old/new board objects
-     * 
+     *
      * @param source The event source
      * @param oldBoard old game board
      * @param newBoard new game board

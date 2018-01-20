@@ -20,14 +20,14 @@ import java.io.Serializable;
  * This class implements the <code>Distractable</code> interface. It is
  * intended to be the underlying implementation for any class that implements
  * the interface. Created on February 29, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
 public class DistractableAdapter implements Distractable, Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9093831078254025400L;
     /** Current state of distraction. */
@@ -42,7 +42,7 @@ public class DistractableAdapter implements Distractable, Serializable {
 
     /**
      * Determine if the listener is currently distracted.
-     * 
+     *
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
@@ -51,7 +51,7 @@ public class DistractableAdapter implements Distractable, Serializable {
 
     /**
      * Specify if the listener should be distracted.
-     * 
+     *
      * @param distract <code>true</code> if the listener should ignore events
      *            <code>false</code> if the listener should pay attention
      *            again. Events that occured while the listener was distracted

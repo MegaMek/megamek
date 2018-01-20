@@ -59,5 +59,5 @@ public class CLBASRM3OS extends SRMWeapon {
 	    .setPrototypeFactions(F_CWF)
 	    .setProductionFactions(F_CWF);
     }
-    
+
 }

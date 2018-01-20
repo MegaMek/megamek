@@ -44,50 +44,50 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the select arty auto hit phase.  Each command has a 
-     * string for the command plus a flag that determines what unit type it is 
+     * carried out during the select arty auto hit phase.  Each command has a
+     * string for the command plus a flag that determines what unit type it is
      * appropriate for.
      * @author arlith
      *
      */
     public static enum ArtyAutoHitCommand implements PhaseCommand {
     SET_HIT_HEX("setAutoHitHex");
-    
+
     String cmd;
-    
+
         /**
          * Priority that determines this buttons order
          */
        public int priority;
-    
+
     private ArtyAutoHitCommand(String c){
     cmd = c;
     }
-    
+
     public String getCmd(){
     return cmd;
     }
-    
+
         public int getPriority() {
             return priority;
         }
-        
+
         public void setPriority(int p) {
             priority = p;
         }
-    
+
     public String toString(){
             return Messages
                     .getString("SelectArtyAutoHitHexDisplay." + getCmd());
     }
     }
-    
+
     // buttons
     protected Map<ArtyAutoHitCommand,MegamekButton> buttons;
 
     private IPlayer p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
-    
+
     private int startingHexes;
 
     /**
@@ -99,7 +99,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
-        
+
         setupStatusBar(Messages
                 .getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
@@ -132,7 +132,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         layoutScreen();
 
         setupButtonPanel();
-        
+
         registerKeyCommands();
     }
 
@@ -334,7 +334,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private void setArtyEnabled(int nbr) {
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setText(Messages.getString(
-        "SelectArtyAutoHitHexDisplay." +ArtyAutoHitCommand.SET_HIT_HEX.getCmd(), 
+        "SelectArtyAutoHitHexDisplay." +ArtyAutoHitCommand.SET_HIT_HEX.getCmd(),
         new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
@@ -372,7 +372,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             }
 
             private boolean thisKeyPressed = false;
-            
+
             @Override
             public void performAction() {
                 if (!thisKeyPressed) {
@@ -381,18 +381,18 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                 }
                 thisKeyPressed = true;
             }
-            
+
             @Override
             public void releaseAction() {
                 thisKeyPressed = false;
             }
-            
+
             @Override
             public boolean hasReleaseAction() {
                 return true;
             }
         });
     }
-    
+
 
 }

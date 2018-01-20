@@ -77,7 +77,7 @@ public abstract class HAGWeapon extends GaussWeapon {
         }
         return damage / 10.0;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_FLAK;

@@ -6,11 +6,11 @@ import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
 
 // Helper class that contains functionality relating exclusively to aero units
-public class AeroPathUtil 
-{	
+public class AeroPathUtil
+{
 	/**
-	 * Determines if the aircraft undertaking the given path will stall at the end of the turn. 
-	 * Only relevant for aerodyne units 
+	 * Determines if the aircraft undertaking the given path will stall at the end of the turn.
+	 * Only relevant for aerodyne units
 	 * @param movePath the path to check
 	 * @return whether the aircraft will stall at the end of the path
 	 */
@@ -19,39 +19,39 @@ public class AeroPathUtil
 		if(!movePath.isOnAtmosphericGroundMap()) {
 			return false;
 		}
-		
+
 		// aircraft that are not vtols or spheroids will stall if the final velocity is zero after all acc/dec
 		// aerodyne units can actually land or "vertical land" and it's ok to do so (even though you're unlikely to find the 20 clear spaces)
 		// spheroids will stall if they don't move or land
-		
+
 		boolean isAirborne = movePath.getEntity().isAirborne();
 		boolean isSpheroid = UnitType.isSpheroidDropship(movePath.getEntity());
-		
+
         if ((movePath.getFinalVelocity() == 0) && isAirborne && !isSpheroid) {
             return true;
         }
-        
-        if (isSpheroid && (movePath.getFinalNDown() == 0) 
-        		&& (movePath.getMpUsed() == 0) 
+
+        if (isSpheroid && (movePath.getFinalNDown() == 0)
+        		&& (movePath.getMpUsed() == 0)
         		&& !movePath.contains(MoveStepType.VLAND)) {
             return true;
         }
-        
+
         return false;
 	}
-	
+
 	/**
      * Determines if the aircraft undertaking the given path will become a lawn dart
      * @param movePath the path to check
      * @return True or false
      */
 	public static boolean willCrash(MovePath movePath) {
-		return movePath.getEntity().isAero() && 
-		        (movePath.getFinalAltitude() < 1) && 
-		        !movePath.contains(MoveStepType.VLAND) && 
+		return movePath.getEntity().isAero() &&
+		        (movePath.getFinalAltitude() < 1) &&
+		        !movePath.contains(MoveStepType.VLAND) &&
 		        !movePath.contains(MoveStepType.LAND);
 	}
-	
+
 	/**
 	 * A quick determination that checks the given path for the most common causes of a PSR and whether it leads us off board.
 	 * The idea being that a safe path off board should not include any PSRs.
@@ -63,10 +63,10 @@ public class AeroPathUtil
 	    // stalling your aircraft
 	    // crashing your aircraft into the ground
 	    // executing maneuvers
-	    // thrusting too hard 
+	    // thrusting too hard
 	    // see your doctor if you experience any of these symptoms as it may lead to your aircraft transforming into a lawn dart
 		return !willStall(movePath) && !willCrash(movePath) && movePath.fliesOffBoard() && !movePath.contains(MoveStepType.MANEUVER) &&
-		        (movePath.getMpUsed() <= movePath.getEntity().getWalkMP()) && 
+		        (movePath.getMpUsed() <= movePath.getEntity().getWalkMP()) &&
 		        (movePath.getEntity().isAero() && (movePath.getMpUsed() <= ((IAero) movePath.getEntity()).getSI()));
 	}
 

@@ -119,11 +119,11 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             illuminated = te.isIlluminated();
             // hack for unresolved actions so client shows right BTH
             if (!illuminated) {
-                for (Enumeration<EntityAction> actions = game.getActions(); 
+                for (Enumeration<EntityAction> actions = game.getActions();
                         actions.hasMoreElements();) {
                     EntityAction a = actions.nextElement();
                     if (a instanceof SearchlightAttackAction) {
-                        SearchlightAttackAction saa = 
+                        SearchlightAttackAction saa =
                                 (SearchlightAttackAction) a;
                         if (saa.willIlluminate(game, te)) {
                             illuminated = true;
@@ -133,7 +133,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                 }
             }
         }
-        // Searchlights reduce the penalty to zero (or 1 for pitch-black) 
+        // Searchlights reduce the penalty to zero (or 1 for pitch-black)
         //  (except for dusk/dawn)
         int searchlightMod = Math.min(3, night_modifier);
         if ((te != null) && (lightCond > PlanetaryConditions.L_DUSK)
@@ -163,7 +163,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
-        } 
+        }
         else if (hexIllumLvl == Game.ILLUMINATED_LIGHT) {
             toHit.addModifier(-searchlightMod,
                     "target illuminated by searchlight");
@@ -171,12 +171,12 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         }
         // Certain ammunitions reduce the penalty
         else if (atype != null) {
-            if (((atype.getAmmoType() == AmmoType.T_AC) 
+            if (((atype.getAmmoType() == AmmoType.T_AC)
                     || (atype.getAmmoType() == AmmoType.T_LAC)
                     || (atype.getAmmoType() == AmmoType.T_AC_IMP)
                     || (atype.getAmmoType() == AmmoType.T_PAC))
-                    && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) 
-                            || (atype.getMunitionType() 
+                    && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC)
+                            || (atype.getMunitionType()
                                     == AmmoType.M_TRACER))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");
                 night_modifier--;
@@ -200,7 +200,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                 // because isUsedThisRound() is not valid if the attacker
                 // declared first.
                 // therefore, enumerate WeaponAttackActions...
-                for (Enumeration<EntityAction> actions = game.getActions(); 
+                for (Enumeration<EntityAction> actions = game.getActions();
                         actions.hasMoreElements();) {
                     EntityAction a = actions.nextElement();
                     if (a instanceof WeaponAttackAction) {
@@ -226,8 +226,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
 
 
         //now check for general hit bonuses for heat
-        if((te != null) 
-                && !((attacker instanceof Infantry) 
+        if((te != null)
+                && !((attacker instanceof Infantry)
                         && !(attacker instanceof BattleArmor))) {
             int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(
                     te.heat);
@@ -235,7 +235,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
                 toHit.addModifier(heatBonus, "target excess heat at night");
             }
         }
-        
+
         PilotOptions pOpts = attacker.getCrew().getOptions();
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
                 && pOpts.booleanOption(OptionsConstants.UNOFF_BLIND_FIGHTER)) {

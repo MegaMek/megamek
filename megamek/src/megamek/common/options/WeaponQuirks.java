@@ -68,7 +68,7 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED, false); //$NON-NLS-1$
 
     }
-    
+
     //TODO
     //unimplemented
     //ammo feed problem
@@ -80,7 +80,7 @@ public class WeaponQuirks extends AbstractOptions {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     @Override
@@ -125,11 +125,11 @@ public class WeaponQuirks extends AbstractOptions {
         if (!(wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             return false;
         }
-        
+
 /*        if ((wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
             return false;
         }*/
-        
+
         if (en instanceof Protomech) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
@@ -167,7 +167,7 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
             if (en instanceof Protomech
                 || en instanceof BattleArmor
@@ -177,7 +177,7 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
             if (en instanceof Aero
                 || en instanceof BattleArmor
@@ -189,7 +189,7 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
             if (en instanceof Aero
                 || en instanceof Jumpship
@@ -198,7 +198,7 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
             if (en instanceof Aero
                 || en instanceof Jumpship
@@ -207,7 +207,7 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-        
+
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             if (en instanceof Jumpship) {
 

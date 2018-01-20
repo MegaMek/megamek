@@ -20,7 +20,7 @@ import java.util.TimerTask;
 /**
  * a singleton class (I hate singletons) to act as a central point for things
  * requiring timer services in clients.
- * 
+ *
  * note: acts as a daemon thread so will exit when other threads have exited.
  */
 public class TimerSingleton {

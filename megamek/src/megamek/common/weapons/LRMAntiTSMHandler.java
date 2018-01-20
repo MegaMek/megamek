@@ -52,7 +52,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -73,7 +73,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        
+
         // AMS mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {

@@ -32,7 +32,7 @@ import megamek.common.util.ItemFileFactory;
  * This class will produce <code>Image</code> objects from files. If an image
  * file is inside of JAR and ZIP file, then it must save the contents to a
  * temporary file. <p/> <p/> Created on January 18, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
@@ -53,7 +53,7 @@ public class ImageFileFactory implements ItemFileFactory {
 
     /**
      * Get the Singleton <code>ImageFileFactory</code>.
-     * 
+     *
      * @return the Singleton <code>ImageFileFactory</code>.
      */
     public static ImageFileFactory getInstance() {
@@ -64,7 +64,7 @@ public class ImageFileFactory implements ItemFileFactory {
 
     /**
      * Get the <code>ItemFile</code> for the given <code>File</code>.
-     * 
+     *
      * @param file - the input <code>File</code> object that will be read to
      *            produce the item. This value must not be <code>null</code>.
      * @return an <code>ItemFile</code> for the given file.
@@ -101,7 +101,7 @@ public class ImageFileFactory implements ItemFileFactory {
     /**
      * Get the <code>ItemFile</code> for the given <code>ZipEntry</code> in
      * the <code>ZipFile</code>.
-     * 
+     *
      * @param zipEntry - the <code>ZipEntry</code> that will be read to
      *            produce the item. This value must not be <code>null</code>.
      * @param zipFile - the <code>ZipFile</code> object that contains the
@@ -180,7 +180,7 @@ public class ImageFileFactory implements ItemFileFactory {
      * (i.e., selects a subset of filenames from a list of filenames). <p/> This
      * definition is copied from <code>java.io.FilenameFilter</code> for
      * completeness.
-     * 
+     *
      * @param dir - the <code>File</code> object of the directory containing
      *            the named file.
      * @param name - the <code>String</code> name of the file.
@@ -198,7 +198,7 @@ public class ImageFileFactory implements ItemFileFactory {
      * The method that must be implemented by any object that filters filenames
      * within a <code>ZipFile</code> (i.e., selects a subset of filenames from
      * a list of filenames in a ZIP archive).
-     * 
+     *
      * @param zipFile - the <code>ZipFile</code> object that contains the
      *            named file's entry.
      * @param name - the <code>String</code> name of the file.

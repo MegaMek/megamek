@@ -37,7 +37,7 @@ class CursorSprite extends Sprite {
         Image tempImage = new BufferedImage(bounds.width, bounds.height,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
-        
+
         if (GUIPreferences.getInstance().getAntiAliasing()) {
             ((Graphics2D) graph).setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
@@ -53,7 +53,7 @@ class CursorSprite extends Sprite {
 
         // create final image
         image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
-        
+
         graph.dispose();
         tempImage.flush();
     }
@@ -62,7 +62,7 @@ class CursorSprite extends Sprite {
         bounds.setLocation(-100, -100);
         hexLoc = new Coords(-2, -2);
     }
-    
+
     public boolean isOffScreen() {
         return !bv.game.getBoard().contains(hexLoc);
     }
@@ -88,7 +88,7 @@ class CursorSprite extends Sprite {
     public void setColor(Color color) {
         this.color = color;
     }
-    
+
     public boolean isHidden() {
         return hidden || isOffScreen();
     }

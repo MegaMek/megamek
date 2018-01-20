@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * Causes automatic victory at the end of the current turn.
- * 
+ *
  * @author Ben
  * @version
  */

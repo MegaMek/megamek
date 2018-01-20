@@ -17,9 +17,9 @@ package megamek.common;
 import java.util.Comparator;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by damage 
+ * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by damage
  * with ties arbitrated based on heat (lower heat wins).
- * 
+ *
  * @author arlith
  */
 public class WeaponComparatorDamage implements Comparator<Mounted> {
@@ -29,7 +29,7 @@ public class WeaponComparatorDamage implements Comparator<Mounted> {
      * value will be -1 and orders will be multiplied by -1.
      */
     private int ascending = 1;
-    
+
     public WeaponComparatorDamage(boolean ascending) {
         if (!ascending)
             this.ascending = -1;
@@ -40,7 +40,7 @@ public class WeaponComparatorDamage implements Comparator<Mounted> {
                 && obj2.getType() instanceof WeaponType) {
             WeaponType weap1 = (WeaponType) obj1.getType();
             WeaponType weap2 = (WeaponType) obj2.getType();
-            
+
             // If types are equal, pick front facing first
             if (weap1 == weap2) {
                 if (obj1.isRearMounted())

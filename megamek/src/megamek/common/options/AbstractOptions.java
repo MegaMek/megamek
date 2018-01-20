@@ -43,10 +43,10 @@ public abstract class AbstractOptions implements IOptions, Serializable {
      * Returns a count of all options in this object.
      * @return Option count.
      */
-    public int count() { 
+    public int count() {
         return count(null);
     }
-    
+
     /**
      * Returns a count of all options in this object with the given group key.
      * @param groupKey the group key to filter on. Null signifies to return all options indiscriminately.
@@ -54,7 +54,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
      */
     public int count(String groupKey) {
         int count = 0;
-        
+
         for (Enumeration<IOptionGroup> i = getGroups(); i
                 .hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
@@ -70,10 +70,10 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                 }
             }
         }
-        
+
         return count;
     }
-    
+
     /**
      * Returns a string of all the quirk "codes" for this entity, using sep as
      * the separator
@@ -82,7 +82,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     public String getOptionList(String separator) {
         return getOptionListString(separator, null);
     }
-    
+
     /**
      * Returns a string of all the quirk "codes" for this entity, using sep as
      * the separator, filtering on a specific group key.
@@ -91,18 +91,18 @@ public abstract class AbstractOptions implements IOptions, Serializable {
      */
     public String getOptionListString(String separator, String groupKey) {
         StringBuffer listBuilder = new StringBuffer();
-        
+
         if (null == separator) {
             separator = "";
         }
 
         for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-            
+
             if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
                 continue;
             }
-            
+
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
@@ -121,7 +121,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         }
         return listBuilder.toString();
     }
-    
+
     public Enumeration<IOptionGroup> getGroups() {
         return new GroupsEnumeration();
     }

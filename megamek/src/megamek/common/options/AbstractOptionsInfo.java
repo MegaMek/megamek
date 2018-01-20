@@ -35,7 +35,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * The OptionsInfo name that must be unique. Every instance of the
      * AbstractOptionsInfo must have unique name, it's used to query the NLS
      * dependent information from the common resource bundle.
-     * 
+     *
      * @see getOptionDisplayableName
      * @see getGroupDisplayableName
      * @see getOptionDescription
@@ -59,7 +59,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * Flag that indicates that this filling the the options info data is
      * completed. <code>addGroup</code> and <code>addOptionInfo</code> will
      * have no effect if it's <code>true</code>
-     * 
+     *
      * @see finish
      * @see addGroup
      * @see addOptionInfo
@@ -69,7 +69,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * The <code>HashSet</code> used to check if the options info is already
      * registered
-     * 
+     *
      * @see AbstractOptionsInfo()
      */
     private static HashSet<String> names = new HashSet<String>();
@@ -78,7 +78,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * Protected constructor. It is called only by descendants. The name must be
      * unique because it's used to query the NLS dependent information from the
      * resource bundle.
-     * 
+     *
      * @param name options info name
      */
     protected AbstractOptionsInfo(String name) {
@@ -91,7 +91,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
      */
     public IOptionInfo getOptionInfo(String name) {
@@ -100,7 +100,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.IOptionsInfo#getGroups()
      */
     public Enumeration<IBasicOptionGroup> getGroups() {
@@ -142,7 +142,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * Returns the user friendly NLS dependent name suitable for displaying in
      * the options editor dialogs etc.
-     * 
+     *
      * @param groupName
      * @return group displayable name
      */
@@ -161,7 +161,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * Records that filling of this structure is finished. <code>addGroup</code>
      * and <code>addOptionInfo</code> will have no effect after call of this
      * function
-     * 
+     *
      * @see addGroup
      * @see addOptionInfo
      */
@@ -185,7 +185,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     /**
      * Private model class to store the option info
-     * 
+     *
      * @see addOptionInfo
      * @see getOptionInfo
      */

@@ -15,7 +15,7 @@ import megamek.common.Flare;
  */
 class FlareSprite extends Sprite {
 
-    Flare flare;  
+    Flare flare;
 
     public FlareSprite(BoardView1 boardView1, final Flare f) {
         super(boardView1);
@@ -28,7 +28,7 @@ class FlareSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
 
-        Dimension dim = new Dimension(bv.hex_size.width, 
+        Dimension dim = new Dimension(bv.hex_size.width,
                 bv.hex_size.height);
         bounds = new Rectangle(dim);
         bounds.setLocation(this.bv.getHexLocation(flare.position));
@@ -47,7 +47,7 @@ class FlareSprite extends Sprite {
 
     @Override
     public StringBuffer getTooltip() {
-        return new StringBuffer(Messages.getString("BoardView1.flare", 
+        return new StringBuffer(Messages.getString("BoardView1.flare",
                 new Object [] {flare.turnsToBurn} ));
     }
 }

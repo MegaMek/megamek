@@ -119,7 +119,7 @@ public class FiringPlanTest {
         //noinspection PointlessArithmeticExpression
         double expected = 1 - ((1 - 0) * (1 - 0.0024) * (1 - 0));
         Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
-        
+
         Mockito.when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(1.0);
         Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
@@ -127,7 +127,7 @@ public class FiringPlanTest {
         //noinspection PointlessArithmeticExpression
         expected = 1 - ((1 - 1) * (1 - 0.0024) * (1 - 0));
         Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
-        
+
         Mockito.when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(0.5);
         Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.5);
         Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.5);

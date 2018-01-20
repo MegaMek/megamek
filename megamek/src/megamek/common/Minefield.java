@@ -1,15 +1,15 @@
 /**
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Minefield implements Serializable, Cloneable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1556863068173491352L;
     public static final int TYPE_CONVENTIONAL = 0;
@@ -52,7 +52,7 @@ public class Minefield implements Serializable, Cloneable {
             "Vibrabomb", "Active", "EMP", "Inferno"};
             //"Thunder", "Thunder-Inferno", "Thunder-Active",
             //"Thunder-Vibrabomb" };
-    
+
     public static int TYPE_SIZE = names.length;
 
     private Coords coords = null;
@@ -70,22 +70,22 @@ public class Minefield implements Serializable, Cloneable {
     private Minefield() {
         //Creates a minefield
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density) {
         return createMinefield(coords, playerId, type, density, 0);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, boolean sea, int depth) {
         return createMinefield(coords, playerId, type, density, 0, sea, depth);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting) {
         return createMinefield(coords, playerId, type, density, setting, false, 0);
     }
 
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting, boolean sea, int depth) {
         Minefield mf = new Minefield();
-        
+
         mf.type = type;
         mf.density = density;
         mf.coords = coords;
@@ -95,8 +95,8 @@ public class Minefield implements Serializable, Cloneable {
         mf.depth = depth;
         return mf;
     }
-    
-    
+
+
     public static String getDisplayableName(int type) {
         if (type >= 0 && type < TYPE_SIZE) {
             return names[type];
@@ -130,7 +130,7 @@ public class Minefield implements Serializable, Cloneable {
         final Minefield other = (Minefield) obj;
         return (playerId == other.playerId) && Objects.equals(coords, other.coords) && (type == other.type);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(playerId, coords, type);
@@ -152,7 +152,7 @@ public class Minefield implements Serializable, Cloneable {
      * what do we need to roll to trigger this mine
      * @return
      */
-    public int getTrigger() {    
+    public int getTrigger() {
         if(density < 15) {
             return 9;
         } else if (density < 25) {
@@ -177,7 +177,7 @@ public class Minefield implements Serializable, Cloneable {
     public int getType() {
         return type;
     }
-    
+
     public int getDepth() {
         return depth;
     }
@@ -189,15 +189,15 @@ public class Minefield implements Serializable, Cloneable {
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setDetonated(boolean b) {
         this.detonated = b;
     }
-    
+
     public boolean hasDetonated() {
         return detonated;
     }
-    
+
     /**
      * check for a reduction in density
      * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
@@ -211,7 +211,7 @@ public class Minefield implements Serializable, Cloneable {
         }
         if(isReduced) {
             setDensity(getDensity() - 5);
-        }    
+        }
     }
-    
+
 }

@@ -102,7 +102,7 @@ public final class RefrigeratedCargoBay extends Bay {
         return "refrigeratedcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
-    
+
     @Override
     public boolean isCargo() {
         return true;

@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 public class TagInfo implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8428068101269842100L;
     public int attackerId; // who fired the TAG

@@ -53,7 +53,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -77,7 +77,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
-            }            
+            }
         } else {
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;

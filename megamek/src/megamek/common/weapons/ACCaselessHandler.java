@@ -70,4 +70,3 @@ public class ACCaselessHandler extends ACWeaponHandler {
         return false;
     }
 }
-

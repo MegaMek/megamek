@@ -26,7 +26,7 @@ import megamek.common.IPlayer;
 public class ForceVictory implements IVictoryConditions, Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1782762191476942976L;
 

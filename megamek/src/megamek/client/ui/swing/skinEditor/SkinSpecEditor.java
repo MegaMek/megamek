@@ -49,21 +49,21 @@ import megamek.common.Configuration;
 /**
  * Panel with elements for viewing and adjusting different SkinSpecification
  * instances.
- * 
+ *
  * @author arlith
  */
 public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -37452332974426228L;
-    
+
     private SkinEditorMainGUI mainGUI;
-    
+
     private JComboBox<String> currSkinCombo = new JComboBox<>();
-    
+
     /**
      * Adds a new SkinSpecification
      */
@@ -85,14 +85,14 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     /**
      * Lists all SkinSpecifications for the current skin.
      */
-    private DefaultListModel<SkinSpecification.UIComponents> skinSpecCompModel = 
+    private DefaultListModel<SkinSpecification.UIComponents> skinSpecCompModel =
             new DefaultListModel<>();
     private JList<SkinSpecification.UIComponents> skinSpecCompList = new JList<>(
             skinSpecCompModel);
-    
+
     private JCheckBox enableBorders = new JCheckBox(
             Messages.getString("SkinEditor.EnableBorders"));
-    
+
     private JPanel editPanel = new JPanel();
     /**
      * Panel that holds UI widgets for editing the selected skin spec.
@@ -102,14 +102,14 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     private UnitDisplaySpecPanel udEditPanel = new UnitDisplaySpecPanel(this);
 
     /**************************************************************************/
-    
+
     /**
-     * 
+     *
      */
     public SkinSpecEditor(SkinEditorMainGUI mainGUI) {
         super(new GridBagLayout());
         this.mainGUI = mainGUI;
-        
+
         skinSpecCompList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
@@ -144,7 +144,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         JScrollPane editPanelScroll = new JScrollPane(editPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        
+
         JPanel tmpHolding;
 
         enableBorders.setToolTipText(Messages
@@ -157,7 +157,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridx = 0; c.gridy = 0;
-        
+
         tmpHolding = new JPanel();
         tmpHolding.add(currSkinCombo);
         tmpHolding.add(addButton);
@@ -195,19 +195,19 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1,0,1,0);
         add(editPanelScroll, c);
-        
+
         updateSkinCombo();
         populateSkinSpecComponents();
         setupEditPanel();
         validate();
     }
-    
+
     /**
      * Add this SkinSpecEditor as a listener to all components.
      */
     private void addListeners() {
         skinSpecCompList.addListSelectionListener(this);
-        
+
         enableBorders.addActionListener(this);
         currSkinCombo.addActionListener(this);
         addButton.addActionListener(this);
@@ -216,13 +216,13 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         saveSkinButton.addActionListener(this);
         resetSkinButton.addActionListener(this);
     }
-    
+
     /**
      * Remove thsi SkinSpecEditor as a listener from all components.
      */
     private void removeListeners() {
         skinSpecCompList.removeListSelectionListener(this);
-        
+
         enableBorders.removeActionListener(this);
         currSkinCombo.removeActionListener(this);
         addButton.removeActionListener(this);
@@ -231,19 +231,19 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         saveSkinButton.removeActionListener(this);
         resetSkinButton.removeActionListener(this);
     }
-    
+
     /**
-     * 
+     *
      */
     private void updateSkinCombo() {
         removeListeners();
-        
+
         currSkinCombo.removeAllItems();
-        String[] xmlFiles = 
+        String[] xmlFiles =
             Configuration.skinsDir().list(new FilenameFilter() {
                 public boolean accept(File directory, String fileName) {
                     return fileName.endsWith(".xml");
-                } 
+                }
             });
         for (String file : xmlFiles) {
             if (SkinXMLHandler.validSkinSpecFile(file)) {
@@ -255,10 +255,10 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         // If this select fails, the default skin will be selected
         currSkinCombo.setSelectedItem(GUIPreferences.getInstance()
                 .getSkinFile());
-        
+
         addListeners();
     }
-    
+
     /**
      * Updates the List model to display all of the current components with
      * SkinSpecifications.
@@ -275,7 +275,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         skinSpecCompList.setSelectedIndex(0);
         addListeners();
     }
-    
+
     /**
      * Update the editing panel with the currently selected SkinSpecification.
      */
@@ -286,7 +286,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         if (skinSpecCompList.getSelectedIndex() == -1) {
             skinEditPanel.removeAll();
             udEditPanel.removeAll();
-            return;            
+            return;
         }
         SkinSpecification.UIComponents selectedComp = skinSpecCompList
                 .getSelectedValue();
@@ -313,7 +313,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             skinEditPanel.setupSkinEditPanel(skinSpec);
             editPanel.add(skinEditPanel);
         }
-        
+
         revalidate();
         addListeners();
     }
@@ -323,7 +323,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         if (e.getValueIsAdjusting()) {
             return;
         }
-        
+
         if (e.getSource().equals(skinSpecCompList)) {
             setupEditPanel();
         }

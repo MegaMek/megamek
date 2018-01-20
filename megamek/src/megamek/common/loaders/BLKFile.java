@@ -121,7 +121,7 @@ public class BLKFile {
                 }
                 boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
                 equipName = equipName.replace(":OMNI", "");
-                
+
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
@@ -217,7 +217,7 @@ public class BLKFile {
             return Engine.BATTERY;
         } else if (code == BLKFile.SOLAR) {
             return Engine.SOLAR;
-          
+
         } else {
             return -1;
         }
@@ -567,7 +567,7 @@ public class BLKFile {
                     && m.getLinkedBy().isOneShot()){
                 continue;
             }
-            
+
             if (m.getType() instanceof BayWeapon) {
                 int loc = m.getLocation();
                 if (loc == Entity.LOC_NONE) {
@@ -601,7 +601,7 @@ public class BLKFile {
                     || (m.getType() instanceof AmmoType))) {
                 continue;
             }
-            
+
             String name = m.getType().getInternalName();
             if (m.isRearMounted()) {
                 name = "(R) " + name;
@@ -659,11 +659,11 @@ public class BLKFile {
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
-        
+
         if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
         }
-        
+
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                 || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             blk.writeBlockData("structural_integrity", ((Aero)t).get0SI());
@@ -727,11 +727,11 @@ public class BLKFile {
                 blk.writeBlockData("Secondary", infantry.getSecondaryWeapon()
                         .getInternalName());
             }
-            
+
             if (infantry.canMakeAntiMekAttacks()) {
                 blk.writeBlockData("antimek", (infantry.getAntiMekSkill() + ""));
             }
-            
+
             EquipmentType et = infantry.getArmorKit();
             if (et != null) {
             	blk.writeBlockData("armorKit", et.getInternalName());
@@ -795,7 +795,7 @@ public class BLKFile {
                 blk.writeBlockData("hasNoControlSystems", 1);
             }
         }
-        
+
         if (t instanceof SmallCraft) {
             SmallCraft sc = (SmallCraft) t;
             blk.writeBlockData("designtype", sc.getDesignType());

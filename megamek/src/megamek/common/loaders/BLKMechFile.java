@@ -256,7 +256,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     armored = true;
                     critName = critName.substring(4);
                 }
-                
+
                 boolean isOmniMounted = critName.endsWith(":OMNI");
                 critName.replace(":OMNI", "");
                 int facing = -1;

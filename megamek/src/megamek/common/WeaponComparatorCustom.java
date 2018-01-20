@@ -20,13 +20,13 @@ import java.util.Comparator;
  * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by a custom
  * ordering.  The ordering is stored in the Entity instance, using a map that
  * maps the weapon's ID to it's custom order index.
- * 
+ *
  * @author arlith
  */
 public class WeaponComparatorCustom implements Comparator<Mounted> {
-    
+
     private Entity entity;
-    
+
     public WeaponComparatorCustom(Entity e) {
         entity = e;
     }

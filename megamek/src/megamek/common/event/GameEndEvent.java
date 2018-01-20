@@ -18,14 +18,14 @@ import megamek.common.IGame;
 
 /**
  * Instances of this class are sent when the game finished
- * 
+ *
  * @see IGame#end(int, int)
  * @see GameListener
  */
 public class GameEndEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8470655646019563063L;
 

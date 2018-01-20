@@ -23,7 +23,7 @@ import megamek.common.IPlayer;
  */
 public abstract class AbstractBVVictory implements IVictoryConditions, Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -689891568905531049L;
 

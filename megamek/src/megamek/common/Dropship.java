@@ -34,12 +34,12 @@ public class Dropship extends SmallCraft {
      *
      */
     private static final long serialVersionUID = 1528728632696989565L;
-    
-    
+
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,Left,Right,AFT
     private int asewAffectedTurns[] = {0,0,0,0};
-    
+
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -49,7 +49,7 @@ public class Dropship extends SmallCraft {
     public void setASEWAffected(int arc, int turns) {
         asewAffectedTurns[arc] = turns;
     }
-    
+
     /*
      * Returns the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -57,20 +57,20 @@ public class Dropship extends SmallCraft {
     public int getASEWAffected(int arc) {
         return asewAffectedTurns[arc];
     }
-  
-    
+
+
     /**
-     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar. 
-     * 
+     * Primitive Dropships may be constructed with no docking collar, or with a pre-boom collar.
+     *
      */
     public static final int COLLAR_STANDARD  = 0;
     public static final int COLLAR_PROTOTYPE = 1;
     public static final int COLLAR_NO_BOOM   = 2;
-    
+
     private static final String[] COLLAR_NAMES = {
             "KF-Boom", "Prototype KF-Boom", "No Boom"
     };
-    
+
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
@@ -84,27 +84,27 @@ public class Dropship extends SmallCraft {
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
     }
-    
+
     public boolean isKFBoomDamaged() {
         return kfBoomDamaged;
     }
-    
+
     public int getCollarType() {
         return collarType;
     }
-    
+
     public void setCollarType(int collarType) {
         this.collarType = collarType;
     }
-    
+
     public String getCollarName() {
         return COLLAR_NAMES[collarType];
     }
-    
+
     public static String getCollarName(int type) {
         return COLLAR_NAMES[type];
     }
-    
+
     public static TechAdvancement getCollarTA() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2458, 2470, 2500)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setTechRating(RATING_C)
@@ -243,7 +243,7 @@ public class Dropship extends SmallCraft {
     public void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
     }
-    
+
     public void setDamageKFBoom(boolean b) {
         kfBoomDamaged = b;
     }
@@ -299,7 +299,7 @@ public class Dropship extends SmallCraft {
         }
         return fuelUse;
     }
-    
+
     @Override
     public double primitiveFuelFactor() {
         int year = getOriginalBuildYear();
@@ -331,12 +331,12 @@ public class Dropship extends SmallCraft {
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
     }
-    
+
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
@@ -344,7 +344,7 @@ public class Dropship extends SmallCraft {
             ctl.addComponent(getCollarTA());
         }
     }
-    
+
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -939,7 +939,7 @@ public class Dropship extends SmallCraft {
                     if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                         dBV *= 1.1;
                     }
-                    
+
                     if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                         dBV *= 1.3;
                     }
@@ -1845,7 +1845,7 @@ public class Dropship extends SmallCraft {
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT | Entity.ETYPE_DROPSHIP;
     }
-    
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

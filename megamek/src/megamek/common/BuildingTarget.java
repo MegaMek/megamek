@@ -224,7 +224,7 @@ public class BuildingTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     public boolean isAero() {
         return false;
     }
@@ -248,7 +248,7 @@ public class BuildingTarget implements Targetable {
     public int getAltitude() {
         return 0;
     }
-    
+
     public boolean isEnemyOf(Entity other) {
         return true;
     }

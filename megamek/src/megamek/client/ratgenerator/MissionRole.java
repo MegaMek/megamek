@@ -20,7 +20,7 @@ import megamek.common.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.
- * 
+ *
  * @author Neoancient
  *
  */
@@ -45,24 +45,24 @@ public enum MissionRole {
 	/* Infantry roles */
 	MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
 	/* allows artillery but does not filter out all other roles */
-	MIXED_ARTILLERY; 
-	
+	MIXED_ARTILLERY;
+
 	public boolean fitsUnitType(int unitType) {
 		switch (this) {
 		case RECON:
 		case CIVILIAN:
 		case COMMAND:
 			return true;
-			
+
 		case SUPPORT:
 		case SPECOPS:
 			return unitType < UnitType.JUMPSHIP;
-			
+
 		case URBAN:
 		case ANTI_INFANTRY:
 		case INF_SUPPORT:
 			return unitType <= UnitType.TANK;
-			
+
 		case FIRE_SUPPORT:
 		case CAVALRY:
 		case RAIDER:
@@ -70,11 +70,11 @@ public enum MissionRole {
 		case MISSILE_ARTILLERY:
 		case APC:
 			return unitType <= UnitType.TANK || unitType == UnitType.VTOL;
-			
+
 		case INCENDIARY:
 		case ANTI_AIRCRAFT:
 			return unitType <= UnitType.PROTOMEK; // all ground units
-			
+
 		case ENGINEER:
 		case MINESWEEPER:
 		case MINELAYER:
@@ -82,23 +82,23 @@ public enum MissionRole {
 
 		case CARGO:
 			return unitType < UnitType.BATTLE_ARMOR || unitType > UnitType.PROTOMEK;
-			
+
 		case EW_SUPPORT:
 			return unitType <= UnitType.TANK || unitType == UnitType.AERO;
 
 		case TRAINING:
 			return unitType < UnitType.SMALL_CRAFT;
-		
+
 		case SPOTTER:
 			return unitType <= UnitType.AERO;
-			
+
 		case BOMBER:
 		case ESCORT:
 		case INTERCEPTOR:
 		case GROUND_SUPPORT:
 		//case STRIKE:
 			return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
-			
+
 		case ASSAULT:
 		case MECH_CARRIER:
 		case ASF_CARRIER:
@@ -109,34 +109,34 @@ public enum MissionRole {
 		case TUG:
 		case POCKET_WARSHIP:
 			return unitType == UnitType.DROPSHIP;
-			
+
 		case CORVETTE:
 		case DESTROYER:
 		case FRIGATE:
 		case CRUISER:
 		case BATTLESHIP:
 			return unitType == UnitType.WARSHIP;
-			
+
 		case MECHANIZED_BA:
 			return unitType <= UnitType.TANK || unitType == UnitType.BATTLE_ARMOR;
-			
+
 		case MARINE:
 		case XCT:
 			return unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR;
-			
+
 		case MOUNTAINEER:
 		case PARATROOPER:
 		case ANTI_MEK:
 		case FIELD_GUN:
 			return unitType == UnitType.INFANTRY;
-			
+
 		case MIXED_ARTILLERY:
-		    /* TODO: allow inclusion of artillery without binary either/or */ 
+		    /* TODO: allow inclusion of artillery without binary either/or */
 		default:
 			return false;
 		}
 	}
-	
+
 	public static Double adjustAvailabilityByRole(double avRating, Collection<MissionRole> desiredRoles,
 			ModelRecord mRec, int year, int strictness) {
 		boolean roleApplied = false;
@@ -268,7 +268,7 @@ public enum MissionRole {
 					}
 					if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
 							&& !mRec.canDoMechanizedBA()) {
-						return null;						
+						return null;
 					}
 					break;
 				case URBAN:
@@ -305,7 +305,7 @@ public enum MissionRole {
 						}
 					}
 					break;
-					
+
 				case RAIDER:
 					if (mRec.getRoles().contains(RAIDER)) {
 						avRating += avAdj[2];
@@ -362,7 +362,7 @@ public enum MissionRole {
 						avRating -= avAdj[2];
 					}
 					break;
-					
+
 				case GROUND_SUPPORT:
 					if (mRec.getRoles().contains(GROUND_SUPPORT)) {
 						avRating += avAdj[2];
@@ -382,7 +382,7 @@ public enum MissionRole {
 						return null;
 					}
 					break;
-					
+
 				case BOMBER:
 					if (mRec.getRoles().contains(BOMBER)) {
 						avRating += avAdj[2];
@@ -402,7 +402,7 @@ public enum MissionRole {
 							|| mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
 						avRating += avAdj[2] * (mRec.getSpeed() - 3);
 					} else {
-						avRating += avAdj[2] * (mRec.getSpeed() - (7 - mRec.getWeightClass()));					
+						avRating += avAdj[2] * (mRec.getSpeed() - (7 - mRec.getWeightClass()));
 					}
 					break;
 				default:
@@ -464,7 +464,7 @@ public enum MissionRole {
 				(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY)
 				        && !desiredRoles.contains(MIXED_ARTILLERY));
 	}
-	
+
 	public static MissionRole parseRole(String role) {
 		switch (role.toLowerCase().replace("_", " ")) {
 		case "recon":
@@ -577,7 +577,7 @@ public enum MissionRole {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return name().toLowerCase();

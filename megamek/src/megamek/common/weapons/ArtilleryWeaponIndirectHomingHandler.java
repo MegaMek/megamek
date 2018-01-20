@@ -230,17 +230,17 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             }
         }
         int hits = 1;
-        int nCluster = 1;       
+        int nCluster = 1;
         if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
             if (aaa.getCoords() != null) {
                 toHit.setSideTable(entityTarget.sideTable(aaa.getCoords()));
             }
-           
+
         }
-        
+
         //Any AMS/Point Defense fire against homing rounds?
         hits = handleAMS(vPhaseReport);
-        
+
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
@@ -292,12 +292,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
         Coords coords = target.getPosition();
         int ratedDamage = 5; // splash damage is 5 from all launchers
-        
+
         //If AMS shoots down a missile, it shouldn't deal any splash damage
         if (hits == 0) {
             ratedDamage = 0;
         }
-        
+
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
@@ -466,7 +466,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             Vector<Report> vPhaseReport) {
         return true;
     }
-        
+
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
@@ -585,7 +585,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         return apdsMod + amsMod;
     }
-    
+
     /**
      * Checks to see if the basic conditions needed for point defenses to work are in place
      * Artillery weapons need to change this slightly
@@ -597,7 +597,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         return true;
     }
-        
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -605,7 +605,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     protected void setAMSBayReportingFlag() {
         amsBayEngaged = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
@@ -613,9 +613,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     protected void setPDBayReportingFlag() {
         pdBayEngaged = true;
     }
-    
+
     protected int handleAMS(Vector<Report> vPhaseReport) {
-        
+
         int hits = 1;
         if (((AmmoType) ammo.getType()).getAmmoType() == AmmoType.T_ARROW_IV
                 || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
@@ -625,7 +625,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             getAMSHitsMod(vPhaseReport);
             calcCounterAV();
             // Report AMS/Pointdefense failure due to Overheating.
-            if (pdOverheated 
+            if (pdOverheated
                     && (!(amsBayEngaged
                             || amsBayEngagedCap
                             || amsBayEngagedMissile
@@ -637,7 +637,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.indent();
                 vPhaseReport.addElement(r);
             }
-            //They all do the same thing in this case...             
+            //They all do the same thing in this case...
             if (amsEngaged || apdsEngaged || amsBayEngaged || pdBayEngaged) {
                 bSalvo = true;
                 Report r = new Report(3235);
@@ -655,7 +655,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                     r.add(destroyRoll);
                     vPhaseReport.add(r);
                     hits = 0;
-                                           
+
                 } else {
                     r = new Report(3241);
                     r.add("missile");

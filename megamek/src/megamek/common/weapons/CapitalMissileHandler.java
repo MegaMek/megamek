@@ -46,7 +46,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
-    
+
     /**
      * Calculate the attack value based on range
      *
@@ -82,14 +82,14 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
-        
+
         if (ammo.getType().hasFlag(AmmoType.F_NUCLEAR)) {
             nukeS2S = true;
         }
-        
+
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
-        
+
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
@@ -98,21 +98,21 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
 
         }
         av = (int) Math.floor(getBracketingMultiplier() * av);
-        
+
         return av;
     }
-  
+
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
         return CapMissileAMSMod;
     }
-    
+
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return getCritMod((AmmoType) ammo.getType());
@@ -153,7 +153,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             return 11;
         }
     }
-    
+
     /**
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
@@ -165,7 +165,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             return true;
         }
     }
-    
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -173,7 +173,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */

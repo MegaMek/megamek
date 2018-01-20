@@ -205,7 +205,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         targetsListModel.clear();
         for (String t : princessBehavior.getStrategicBuildingTargets()) {
             //noinspection unchecked
-            targetsListModel.addElement(BUILDING_TARGET + ": " + t);            
+            targetsListModel.addElement(BUILDING_TARGET + ": " + t);
         }
         for (int id : princessBehavior.getPriorityUnitTargets()) {
             targetsListModel.addElement(UNIT_TARGET + ": " + id);

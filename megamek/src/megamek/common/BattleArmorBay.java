@@ -89,7 +89,7 @@ public final class BattleArmorBay extends Bay {
         if (currentdoors < loadedThisTurn) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -132,12 +132,12 @@ public final class BattleArmorBay extends Bay {
                 .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         return BattleArmorBay.techAdvancement();
     }
-    
+
     @Override
     public boolean isClan() {
         return isClan;

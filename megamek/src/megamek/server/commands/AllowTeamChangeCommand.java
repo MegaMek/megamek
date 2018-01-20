@@ -20,7 +20,7 @@ import megamek.server.Server;
 
 /**
  * This command allows a player to allow another player to switch teams.
- * 
+ *
  * @author arlith
  */
 public class AllowTeamChangeCommand extends ServerCommand {
@@ -34,7 +34,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -42,13 +42,13 @@ public class AllowTeamChangeCommand extends ServerCommand {
         try {
             IPlayer player = server.getPlayer(connId);
             player.setAllowTeamChange(true);
-            
+
             if (!server.isTeamChangeRequestInProgress()){
                 server.sendServerChat(connId, "No vote to change " +
                         "teams in progress!");
                 return;
             }
-            
+
             // Tally votes
             boolean changeTeam = true;
             int voteCount = 0;
@@ -61,24 +61,24 @@ public class AllowTeamChangeCommand extends ServerCommand {
                     }
                     eligiblePlayerCount++;
                 }
-                
+
             }
-            
+
             // Inform all players about the vote
-            server.sendServerChat(player.getName() + " has voted to allow " 
+            server.sendServerChat(player.getName() + " has voted to allow "
                     + server.getPlayerRequestingTeamChange().getName()
                     + " to join Team " + server.getRequestedTeam()
                     + ", " + voteCount
                     + " vote(s) received out of " + eligiblePlayerCount
                     + " vote(s) needed");
-            
+
             // If all votes are received, perform team change
             if (changeTeam){
                 server.sendServerChat("All votes received, "
                         + server.getPlayerRequestingTeamChange().getName()
                         + " will join Team " + server.getRequestedTeam()
                         + " at the end of the turn.");
-                server.allowTeamChange();                
+                server.allowTeamChange();
             }
         } catch (NumberFormatException nfe) {
             server.sendServerChat(connId,"Failed to parse team number!");

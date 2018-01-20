@@ -50,10 +50,10 @@ public class UnitLoadingDialog extends JDialog {
     // Determines how often to update the loading dialog.
     // Setting this too low causes noticeable loading delays.
     private static final long UPDATE_FREQUENCY = 50;
-    
+
     boolean loadingDone = false;
-    
-    private MechSummaryCache.Listener mechSummaryCacheListener = 
+
+    private MechSummaryCache.Listener mechSummaryCacheListener =
         new MechSummaryCache.Listener() {
             public void doneLoading() {
                 loadingDone = true;
@@ -82,7 +82,7 @@ public class UnitLoadingDialog extends JDialog {
 
         Runnable r = new Runnable() {
             public void run() {
-                while (!loadingDone && 
+                while (!loadingDone &&
                         !MechSummaryCache.getInstance().isInitialized()) {
                     updateCounts();
                     try {

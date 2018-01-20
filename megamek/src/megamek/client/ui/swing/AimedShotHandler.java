@@ -23,7 +23,7 @@ import megamek.common.ToHitData;
 
 class AimedShotHandler implements ActionListener, ItemListener {
     /**
-     * 
+     *
      */
     private final FiringDisplay firingDisplay;
 

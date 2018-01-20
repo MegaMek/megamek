@@ -46,11 +46,11 @@ public class Warship extends Jumpship {
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
         setDriveCoreType(DRIVE_CORE_COMPACT);
     }
-    
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};
-    
+
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -62,7 +62,7 @@ public class Warship extends Jumpship {
     public void setASEWAffected(int arc, int turns) {
         asewAffectedTurns[arc] = turns;
     }
-    
+
     /*
      * Returns the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -71,8 +71,8 @@ public class Warship extends Jumpship {
     public int getASEWAffected(int arc) {
         return asewAffectedTurns[arc];
     }
- 
-    
+
+
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
             .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
@@ -80,7 +80,7 @@ public class Warship extends Jumpship {
             .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
             .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_WARSHIP;
@@ -137,11 +137,11 @@ public class Warship extends Jumpship {
     public boolean canJump() {
         return kf_integrity > 0;
     }
-    
+
     @Override
     public double getJumpDriveWeight() {
         double pct = 0.45; //TODO: compact
-        return Math.ceil(getWeight() * pct); 
+        return Math.ceil(getWeight() * pct);
     }
 
     // broadside weapon arcs
@@ -223,7 +223,7 @@ public class Warship extends Jumpship {
         }
         return armWeight;
     }
-    
+
     @Override
     //Jumpships and Space Stations use 10% of the fuel Warships do...
     public double getStrategicFuelUse() {
@@ -235,7 +235,7 @@ public class Warship extends Jumpship {
         } else {
             //Per Stratops, this is impossible for Warships, but Primitive Jumpships in IO can be this small
             fuelUse = 9.77;
-        } 
+        }
         if (isPrimitive()) {
             return fuelUse * primitiveFuelFactor();
         }
@@ -287,8 +287,8 @@ public class Warship extends Jumpship {
         // Sail
         driveCost[driveIdx++] += 50000 * (30 + (weight / 20000));
         // Charging System
-        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
-        
+        driveCost[driveIdx++] += 500000 + (200000 * getDocks());
+
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
         }
@@ -496,7 +496,7 @@ public class Warship extends Jumpship {
         }
         return 0;
     }
-    
+
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (location) {
         case LOC_NOSE:
@@ -510,12 +510,12 @@ public class Warship extends Jumpship {
             if (index == 1) {
                 return 1.0;
             }
-            break;            
+            break;
         case LOC_RBS:
             if (index == 2) {
                 return 1.0;
             }
-            break;            
+            break;
         case LOC_AFT:
         case LOC_ALS:
         case LOC_ARS:
@@ -531,7 +531,7 @@ public class Warship extends Jumpship {
     public String getBattleForceLocationName(int index) {
         return getLocationAbbrs()[index];
     }
-    
+
     @Override
     public String getAlphaStrikeLocationName(int index) {
         switch (index) {
@@ -546,7 +546,7 @@ public class Warship extends Jumpship {
         }
         return "";
     }
-    
+
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }

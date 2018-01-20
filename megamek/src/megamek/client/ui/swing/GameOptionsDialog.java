@@ -513,7 +513,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         } else if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             // Disable if any lance movement is on
-            if (!options.getOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT).booleanValue() 
+            if (!options.getOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT).booleanValue()
                     && !options.getOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT).booleanValue()) {
                 optionComp.setEditable(editable);
             } else {

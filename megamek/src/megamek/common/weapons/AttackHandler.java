@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -26,7 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 /**
  * Describes a set of methods a class can use to represent
  *         an attack from some weapon.
- *         
+ *
  * @author Andrew Hunter
  */
 public interface AttackHandler {
@@ -47,25 +47,25 @@ public interface AttackHandler {
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring);
 
     public WeaponAttackAction getWaa();
-    
+
     /**
      * Used to determine if the AttackHandler is handling a strafing run.
-     * 
+     *
      * @return
      */
     public boolean isStrafing();
-    
+
     public void setStrafing(boolean isStrafing);
-    
+
     /**
      * Used to determine if this is the firt time a weapon is firing as part of
      * a strafing run.  This is used for handling heat, to prevent shots after
      * the first one from generating heat.
-     * 
+     *
      * @return
      */
     public boolean isStrafingFirstShot();
-    
+
     public void setStrafingFirstShot(boolean isFirstShotStrafing);
 
 }

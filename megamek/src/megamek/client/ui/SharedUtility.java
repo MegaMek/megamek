@@ -77,7 +77,7 @@ public class SharedUtility {
         int curFacing = entity.getFacing();
         EntityMovementType moveType = EntityMovementType.MOVE_NONE;
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
-        
+
         PilotingRollData rollTarget;
 
         // Compile the move
@@ -88,7 +88,7 @@ public class SharedUtility {
         // iterate through steps
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
-            
+
             // stop for illegal movement
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
@@ -121,7 +121,7 @@ public class SharedUtility {
                         step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             if (step.getType() == MoveStepType.VLAND) {
                 rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, true);
@@ -129,7 +129,7 @@ public class SharedUtility {
             }
 
             // Check for Ejecting
-            if (step.getType() == MoveStepType.EJECT 
+            if (step.getType() == MoveStepType.EJECT
                     && (entity instanceof Mech)) {
                 rollTarget = Server.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
@@ -168,7 +168,7 @@ public class SharedUtility {
         }
         return psrList;
     }
-    
+
     /**
      * Checks to see if piloting skill rolls are needed for the currently
      * selected movement. This code is basically a simplified version of
@@ -480,14 +480,14 @@ public class SharedUtility {
                         entity.getBasePilotingRoll(overallMoveType), nagReport,
                         psrList);
             }
-            
+
             // Check for Ejecting
-            if (step.getType() == MoveStepType.EJECT 
+            if (step.getType() == MoveStepType.EJECT
                     && (entity instanceof Mech)) {
                 rollTarget = Server.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable targ = step.getTarget(game);
                 if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
@@ -505,13 +505,13 @@ public class SharedUtility {
                     checkNag(rollTarget, nagReport, psrList);
                 }
             }
-            
+
             if (step.isTurning()) {
                 rollTarget = entity.checkTurnModeFailure(overallMoveType,
                         prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             if (step.getType() == MoveStepType.BOOTLEGGER) {
                 rollTarget = entity.getBasePilotingRoll(overallMoveType);
                 entity.addPilotingModifierForTerrain(rollTarget);
@@ -544,7 +544,7 @@ public class SharedUtility {
 
         rollTarget = entity.checkUsingOverdrive(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
-            
+
         rollTarget = entity.checkGunningIt(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
 
@@ -841,7 +841,7 @@ public class SharedUtility {
                 for (Entity ent : game.getEntitiesVector(left)) {
                     leftTonnage += ent.getWeight();
                 }
-                
+
                 double rightTonnage = 0;
                 for (Entity ent : game.getEntitiesVector(right)) {
                     rightTonnage += ent.getWeight();
@@ -899,7 +899,7 @@ public class SharedUtility {
         if (!leftMap && (lastStep != null) && (lastStep.getType() == MoveStepType.LAUNCH)) {
             md.addStep(MoveStepType.LAUNCH, lastStep.getLaunched());
         }
-        
+
         if (!leftMap && (lastStep != null) && (lastStep.getType() == MoveStepType.UNDOCK)) {
             md.addStep(MoveStepType.UNDOCK, lastStep.getLaunched());
         }

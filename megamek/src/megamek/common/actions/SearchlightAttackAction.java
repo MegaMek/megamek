@@ -132,16 +132,16 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         return reports;
     }
-    
+
     /**
      * Updates the supplied Game's list of hexes illuminated.
-     * 
+     *
      * @param game      The game to update
      * @return          True if new hexes were added, else false.
      */
     public boolean setHexesIlluminated(IGame game) {
         boolean hexesAdded = false;
-        
+
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);

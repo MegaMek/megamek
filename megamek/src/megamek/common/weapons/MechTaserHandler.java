@@ -49,7 +49,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -78,7 +78,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
             entityTarget.destroyLocation(hit.getLocation());
             // Check to see if the squad has been eliminated
-            if (entityTarget.getTransferLocation(hit).getLocation() == 
+            if (entityTarget.getTransferLocation(hit).getLocation() ==
                     Entity.LOC_DESTROYED) {
                 vPhaseReport.addAll(server.destroyEntity(entityTarget,
                         "all troopers eliminated", false));

@@ -40,7 +40,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         techAdvancement.setClanAdvancement(3049, 3070);
         techAdvancement.setTechRating(RATING_F);
         techAdvancement.setAvailability(new int[]{ RATING_X, RATING_X, RATING_F, RATING_E });
-        
+
         setModes(new String[] { "", "Indirect" }); // iATMS can IDF
     }
 
@@ -54,7 +54,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        
+
         // MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
         return new CLIATMHandler(toHit, waa, game, server);
     }
@@ -75,12 +75,12 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         }
         return damage / 10.0;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_IATM;
     }
-    
+
     @Override
     public boolean hasIndirectFire() {
         return true;

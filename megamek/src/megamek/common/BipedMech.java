@@ -85,7 +85,7 @@ public class BipedMech extends Mech {
 
         return canFlip;
     }
-    
+
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
@@ -102,7 +102,7 @@ public class BipedMech extends Mech {
                     }
                 }
             }
-            wmp = (wmp * (2 - legsDestroyed)) / 2; 
+            wmp = (wmp * (2 - legsDestroyed)) / 2;
         } else {
             for (int i = 0; i < locations(); i++) {
                 if (locationIsLeg(i)) {

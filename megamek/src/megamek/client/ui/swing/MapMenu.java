@@ -187,12 +187,12 @@ public class MapMenu extends JPopupMenu {
                 }
 
             } else if (currentPanel instanceof TargetingPhaseDisplay) {
-                
+
                 if (itemCount > 0) {
                     addSeparator();
                     itemCount++;
                 }
-                    
+
                 menu = createTorsoTwistMenu();
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
@@ -204,7 +204,7 @@ public class MapMenu extends JPopupMenu {
                     this.add(menu);
                     itemCount++;
                 }
-                
+
             } else if ((currentPanel instanceof FiringDisplay)) {
 
                 if (itemCount > 0) {
@@ -229,13 +229,13 @@ public class MapMenu extends JPopupMenu {
                     this.add(menu);
                     itemCount++;
                 }
-                
+
                 menu = createRotateTurretMenu();
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
                     itemCount++;
                 }
-                
+
             } else if ((currentPanel instanceof PhysicalDisplay)) {
                 menu = createPhysicalMenu(false);
 
@@ -265,7 +265,7 @@ public class MapMenu extends JPopupMenu {
             });
             this.add(item);
         }
-        
+
         menu = touchOffExplosivesMenu();
         if (menu.getItemCount() > 0) {
             this.add(menu);
@@ -501,9 +501,9 @@ public class MapMenu extends JPopupMenu {
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
         IGame game = client.getGame();
-                
+
         IPlayer localPlayer = client.getLocalPlayer();
-        
+
         for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
@@ -868,14 +868,14 @@ public class MapMenu extends JPopupMenu {
                     // Get all weapons
                     ArrayList<Mounted> weapons = myEntity.getWeaponList();
                     // We will need to map a Mounted to it's weapon number
-                    HashMap<Mounted, Integer> weapToId = 
+                    HashMap<Mounted, Integer> weapToId =
                             new HashMap<Mounted, Integer>();
                     for (Mounted weapon : weapons) {
                         weapToId.put(weapon, myEntity.getEquipmentNum(weapon));
                     }
                     // Sort weapons from high damage to low
                     Collections.sort(weapons, new WeaponComparatorDamage(false));
-                    
+
                     Targetable target = panel.getTarget();
                     for (Mounted weapon : weapons) {
                         // If the weapon has been used at all this turn, ignore
@@ -888,7 +888,7 @@ public class MapMenu extends JPopupMenu {
                                 myEntity.getId(), target.getTargetType(),
                                 target.getTargetId(), weaponNum);
                         // Only fire weapons that have a chance to hit
-                        int toHitVal = waa.toHit(game).getValue(); 
+                        int toHitVal = waa.toHit(game).getValue();
                         if ((toHitVal != TargetRoll.IMPOSSIBLE)
                                 && (toHitVal <= 12)) {
                             gui.mechD.wPan.selectWeapon(weaponNum);
@@ -1164,7 +1164,7 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createConvertMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
-        
+
         if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
@@ -1176,7 +1176,7 @@ public class MapMenu extends JPopupMenu {
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_MECH));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                    myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));            
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
         } else if (myEntity instanceof LandAirMech) {
             int currentMode = myEntity.getConversionMode();
             JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
@@ -1205,7 +1205,7 @@ public class MapMenu extends JPopupMenu {
         }
         return menu;
     }
-    
+
     private JMenuItem createConvertMenuItem(String resourceKey, MovementDisplay.MoveCommand cmd,
             boolean isCurrent) {
         String text = Messages.getString(resourceKey);
@@ -1243,9 +1243,9 @@ public class MapMenu extends JPopupMenu {
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE); //$NON-NLS-1$
-        
+
         IPlayer localPlayer = client.getLocalPlayer();
-        
+
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible

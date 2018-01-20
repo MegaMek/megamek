@@ -83,7 +83,7 @@ class IsometricSprite extends Sprite {
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
             boolean makeTranslucent) {
-        
+
         if (!isReady()) {
             prepare();
             return;
@@ -96,7 +96,7 @@ class IsometricSprite extends Sprite {
                     secondaryPos));
         }
         Graphics2D g2 = (Graphics2D) g;
-        
+
         if (onlyDetectedBySensors()) {
             Image blipImage = bv.getScaledImage(radarBlipImage, true);
             if (makeTranslucent) {
@@ -107,7 +107,7 @@ class IsometricSprite extends Sprite {
                         AlphaComposite.SRC_OVER, 1.0f));
             } else {
                 g.drawImage(blipImage, x, y, observer);
-            }            
+            }
         } else if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                     entity, entity.getFacing(), secondaryPos));
@@ -166,11 +166,11 @@ class IsometricSprite extends Sprite {
                 Transparency.TRANSLUCENT);
         Graphics2D g = (Graphics2D)image.getGraphics();
 
-        // draw the unit icon translucent if hidden from the enemy 
+        // draw the unit icon translucent if hidden from the enemy
         // (and activated graphics setting); or submerged
         boolean translucentHiddenUnits = GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
-        
+
         if ((trackThisEntitiesVisibilityInfo(entity)
                 && !entity.isVisibleToEnemy() && translucentHiddenUnits)
                 || (entity.relHeight() < 0)) {
@@ -182,7 +182,7 @@ class IsometricSprite extends Sprite {
                 this);
         g.dispose();
     }
-    
+
     /**
      * We only want to show double-blind visibility indicators on our own
      * mechs and teammates mechs (assuming team vision option).
@@ -194,18 +194,18 @@ class IsometricSprite extends Sprite {
         }
         IOptions opts = this.bv.game.getOptions();
         if (opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
-                && ((e.getOwner().getId() == localPlayer.getId()) 
+                && ((e.getOwner().getId() == localPlayer.getId())
                         || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
                 && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
         return false;
     }
-    
+
     /**
      * Used to determine if this EntitySprite is only detected by an enemies
      * sensors and hence should only be a sensor return.
-     * 
+     *
      * @return
      */
     private boolean onlyDetectedBySensors() {

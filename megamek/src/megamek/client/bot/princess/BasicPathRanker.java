@@ -67,7 +67,7 @@ public class BasicPathRanker extends PathRanker {
     private FireControl fireControl;
     private PathEnumerator pathEnumerator;
 
-    // the best damage enemies could expect were I not here. Used to determine 
+    // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
     private Map<Integer, Double> bestDamageByEnemies;
 
@@ -159,13 +159,13 @@ public class BasicPathRanker extends PathRanker {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 
-            //Aeros always move after other units, and would require an 
+            //Aeros always move after other units, and would require an
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
             if (enemy.isAero()) {
                 return returnResponse;
             }
-            
+
             Coords finalCoords = path.getFinalCoords();
             int myFacing = path.getFinalFacing();
             Coords behind = finalCoords.translated((myFacing + 3) % 6);
@@ -177,9 +177,9 @@ public class BasicPathRanker extends PathRanker {
             }
             int range = closest.distance(finalCoords);
 
-            // I would prefer if the enemy must end its move in my line of fire 
-            // if so, I can guess that I may do some damage to it (cover 
-            // notwithstanding).  At the very least, I can force the enemy to 
+            // I would prefer if the enemy must end its move in my line of fire
+            // if so, I can guess that I may do some damage to it (cover
+            // notwithstanding).  At the very least, I can force the enemy to
             // take cover on its move.
             HexLine leftBounds;
             HexLine rightBounds;
@@ -313,7 +313,7 @@ public class BasicPathRanker extends PathRanker {
         // If I don't have range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
         boolean aeroAttackingGroundUnitOnGroundMap = path.getEntity().isAirborne() && !enemy.isAero() && game.getBoard().onGround();
-        
+
         int maxRange = me.getMaxWeaponRange();
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
             return 0;
@@ -325,7 +325,7 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
-        // If I am an infantry unit that cannot both move and fire, and I am 
+        // If I am an infantry unit that cannot both move and fire, and I am
         // moving, I can't do damage.
         boolean isZeroMpInfantry =
                 me instanceof Infantry && (me.getWalkMP() == 0);
@@ -404,7 +404,7 @@ public class BasicPathRanker extends PathRanker {
         return returnResponse;
     }
 
-    // The further I am from a target, the lower this path ranks (weighted by 
+    // The further I am from a target, the lower this path ranks (weighted by
     // Hyper Aggression.
     private double calculateAggreesionMod(Entity movingUnit, MovePath path,
                                           IGame game, StringBuilder formula) {
@@ -424,7 +424,7 @@ public class BasicPathRanker extends PathRanker {
         return aggressionMod;
     }
 
-    // The further I am from my teammates, the lower this path ranks (weighted 
+    // The further I am from my teammates, the lower this path ranks (weighted
     // by Herd Mentality).
     private double calculateHerdingMod(Coords friendsCoords, MovePath path,
                                        StringBuilder formula) {
@@ -612,7 +612,7 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
 
-            // If I cannot kick because I am a clan unit and "No physical 
+            // If I cannot kick because I am a clan unit and "No physical
             // attacks for the clans"
             // is enabled, set maximum physical damage for this path to zero.
             if (game.getOptions()
@@ -621,12 +621,12 @@ public class BasicPathRanker extends PathRanker {
                 maximumPhysicalDamage = 0;
             }
 
-            // I can kick a different target than I shoot, so add physical to 
+            // I can kick a different target than I shoot, so add physical to
             // total damage after I've looked at all enemies
             maximumDamageDone += maximumPhysicalDamage;
 
-            // My bravery modifier is based on my chance of getting to the 
-            // firing position (successProbability), how much damage I can do 
+            // My bravery modifier is based on my chance of getting to the
+            // firing position (successProbability), how much damage I can do
             // (weighted by bravery), less the damage I might take.
             double braveryValue =
                     getOwner().getBehaviorSettings().getBraveryValue();
@@ -649,12 +649,12 @@ public class BasicPathRanker extends PathRanker {
 
             } else {
 
-                // The further I am from a target, the lower this path ranks 
+                // The further I am from a target, the lower this path ranks
                 // (weighted by Hyper Aggression.
                 utility -= calculateAggreesionMod(movingUnit, pathCopy, game,
                                                   formula);
 
-                // The further I am from my teammates, the lower this path 
+                // The further I am from my teammates, the lower this path
                 // ranks (weighted by Herd Mentality).
                 utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
             }
@@ -986,7 +986,7 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
-        // If there is no water under the ice, don't worry about breaking 
+        // If there is no water under the ice, don't worry about breaking
         // through.
         if (hex.depth() < 1) {
             logMsg.append("No water under ice (0).");
@@ -1079,7 +1079,7 @@ public class BasicPathRanker extends PathRanker {
                 continue;
             }
 
-            // Mechs or Protomechs having a head or torso breach is deadly.  
+            // Mechs or Protomechs having a head or torso breach is deadly.
             // For other units, any breach is deadly.
             //noinspection ConstantConditions
             if (Mech.LOC_HEAD == loc ||

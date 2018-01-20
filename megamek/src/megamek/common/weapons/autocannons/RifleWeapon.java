@@ -32,7 +32,7 @@ import megamek.server.Server;
 public abstract class RifleWeapon extends AmmoWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5777058832149749312L;
 
@@ -48,7 +48,7 @@ public abstract class RifleWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,

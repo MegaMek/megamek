@@ -52,10 +52,10 @@ import org.w3c.dom.NodeList;
  * @since 2012-03-05
  */
 public class QuirksHandler {
-    
+
     private static final String CUSTOM_QUIRKS_FOOTER = "</unitQuirks>";
     private static final String CUSTOM_QUIRKS_HEADER;
-    
+
     static {
         CUSTOM_QUIRKS_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n" +
                                "<!--\n" +
@@ -136,7 +136,7 @@ public class QuirksHandler {
                                "-->\n\n" +
                                "<unitQuirks xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"../data/unitQuirksSchema.xsl\">\n";
     }
-    
+
     private static final String UNIT = "unit";
     private static final String CHASSIS = "chassis";
     private static final String MODEL = "model";
@@ -149,7 +149,7 @@ public class QuirksHandler {
     private static final String WEAPON_QUIRK_NAME = "weaponQuirkName";
 
     private static final String MODEL_ALL = "all";
-    
+
     private static Map<String, List<QuirkEntry>> canonQuirkMap;
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean customQuirksDirty = new AtomicBoolean(false);
@@ -171,7 +171,7 @@ public class QuirksHandler {
         }
         return logger;
     }
-    
+
     /**
      * Generate a Quirk's Unit ID given an Entity.
      *
@@ -187,7 +187,7 @@ public class QuirksHandler {
             return ent.getChassis() + "~~" + typeText;
         }
     }
-    
+
     public static String getUnitId(String chassis, String model, String type) {
         return chassis + "~" + (model.equals(MODEL_ALL) ? "" : model) + "~" + type;
     }
@@ -227,7 +227,7 @@ public class QuirksHandler {
 
     private static Map<String, List<QuirkEntry>> loadQuirksFile(String path) throws IOException {
         final String METHOD_NAME = "loadQuirksFile(String)";
-        
+
         Map<String, List<QuirkEntry>> quirkMap = new HashMap<>();
 
         File file = new File(path);
@@ -330,7 +330,7 @@ public class QuirksHandler {
                         throw new IllegalArgumentException(unitId
                                 + " weapon quirk " + weaponQuirkName
                                 + " has an illegal slot entry!");
-                    } 
+                    }
 
                     // Get the weapon's name.
                     Element weapElement = (Element) quirkElement.getElementsByTagName(WEAPON_NAME).item(0);
@@ -394,20 +394,20 @@ public class QuirksHandler {
 
         initialized.set(true);
     }
-    
+
     public static void saveCustomQuirksList() throws IOException {
         final String METHOD_NAME = "saveCustomQuirksList()";
-        
+
         // If customQuirkMap wasn't initialized, no reason to save it
         if (customQuirkMap == null) {
             return;
         }
-        
+
         // If the custom quirks map wasn't ever changed, no reason to save
         if (!customQuirksDirty.get()) {
             return;
         }
-        
+
         // Get the path to the unitQuirksOverride.xml file.
         String userDir = System.getProperty("user.dir");
         if (!userDir.endsWith(File.separator)) {
@@ -415,7 +415,7 @@ public class QuirksHandler {
         }
         String filePath = userDir + "mmconf" + File.separator
                 + "unitQuirksOverride.xml";
-        
+
         Writer output = null;
         try {
             output = new BufferedWriter(new OutputStreamWriter(
@@ -425,14 +425,14 @@ public class QuirksHandler {
                 String chassis = getChassis(unitId);
                 String model = getModel(unitId);
                 String unitType = getUnitType(unitId);
-                
+
                 output.write("\t" + getOpenTag(UNIT) + "\n");
-                
+
                 // Write Chassis
                 output.write("\t\t" + getOpenTag(CHASSIS));
                 output.write(chassis);
                 output.write(getCloseTag(CHASSIS) + "\n");
-                
+
                 // Write Model
                 if ((null != model) && model.length() > 0) {
                     output.write("\t\t" + getOpenTag(MODEL));
@@ -474,10 +474,10 @@ public class QuirksHandler {
                         output.write(quirk.getQuirk());
                         output.write(getCloseTag(QUIRK) + "\n");
                     }
-                }               
+                }
                 output.write("\t" + getCloseTag(UNIT) + "\n\n");
             }
-            
+
             output.write(CUSTOM_QUIRKS_FOOTER);
         } catch (IOException e) {
             getLogger().log(QuirksHandler.class, METHOD_NAME, LogLevel.ERROR,
@@ -486,13 +486,13 @@ public class QuirksHandler {
             if (output != null) {
                 output.close();
             }
-        }        
+        }
     }
-    
+
     private static String getOpenTag(String s) {
         return "<" + s + ">";
     }
-    
+
     private static String getCloseTag(String s) {
         return "</" + s + ">";
     }
@@ -573,10 +573,10 @@ public class QuirksHandler {
             throw new RuntimeException(msg, e);
         }
     }
-    
+
     public static void addCustomQuirk(Entity entity, boolean useModel) {
         final String METHOD_NAME = "addCustomQuirk(Entity, boolean)";
-        
+
         // Shouldn't happen, but lets be careful
         if (customQuirkMap == null) {
             try {
@@ -585,9 +585,9 @@ public class QuirksHandler {
                 getLogger().log(QuirksHandler.class, METHOD_NAME, e);
             }
         }
-        
+
         customQuirksDirty.set(true);
-        
+
         // Generate Unit ID
         String unitId;
         unitId = getUnitId(entity, useModel);
@@ -599,7 +599,7 @@ public class QuirksHandler {
             customQuirkMap.put(unitId, quirkEntries);
         }
         quirkEntries.clear();
-        
+
         // Add Entity Quirks
         if (entity.countQuirks() > 0) {
             Quirks entQuirks = entity.getQuirks();
@@ -621,7 +621,7 @@ public class QuirksHandler {
                 }
             }
         }
-        
+
         // Handle Weapon/Equipment Quirks
         // Need to keep track of processed mounts, for multi-crit equipment
         List<Mounted> addedEquipment = new ArrayList<>();
@@ -652,7 +652,7 @@ public class QuirksHandler {
             }
         }
     }
-    
+
     /**
      * Convenience method for adding a weapon quirk to the quirk entries list.
      *
@@ -679,7 +679,7 @@ public class QuirksHandler {
                 quirkOptions = group.getSortedOptions();
                 while (quirkOptions.hasMoreElements()) {
                     IOption option = quirkOptions.nextElement();
-                    // Don't add quirk if it's not on 
+                    // Don't add quirk if it's not on
                     if (!option.booleanValue()) {
                         continue;
                     }
@@ -703,7 +703,7 @@ public class QuirksHandler {
      */
     public static void mungeQuirks(String quirkId, String newId) {
         final String METHOD_NAME = "mungeQuirks(String, String)";
-        
+
         // Shouldn't happen, but lets be careful
         if (customQuirkMap == null) {
             try {

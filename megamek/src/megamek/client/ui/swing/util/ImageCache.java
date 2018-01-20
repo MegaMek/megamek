@@ -19,22 +19,22 @@ import java.util.Hashtable;
 
 /**
  * An ImageCache that keeps a Hashtable of mapped keys and values.
- * 
+ *
  * @author Arlith
  */
 public class ImageCache<K, V> {
-    
+
     /**
      * Default maximum size
      */
     public static int MAX_SIZE = 20000;
-    
+
 
     /**
      * The cache of Key/Value pairs.
      */
     private Hashtable<K, V> cache;
-        
+
     /**
      * Create a cache with the default maximum size.
      */
@@ -42,14 +42,14 @@ public class ImageCache<K, V> {
         cache = new Hashtable<K, V>(MAX_SIZE * 5 / 4, .75f);
     }
 
-    
+
     public ImageCache(int max) {
         cache = new Hashtable<K, V>(max * 5 / 4, .75f);
     }
 
     /**
      * Adds a new key/value pair into the cache.
-     * 
+     *
      * @param key
      * @param value
      * @return
@@ -57,7 +57,7 @@ public class ImageCache<K, V> {
     public synchronized V put(K key, V value) {
         if ((key == null) || (value == null))
             return null;
-      
+
         cache.put(key, value);
         return value;
     }
@@ -72,13 +72,13 @@ public class ImageCache<K, V> {
     public void remove(Object key) {
         cache.remove(key);
     }
-    
+
     public int size(){
         return cache.size();
     }
-    
+
     public void clear() {
         cache.clear();
     }
-    
+
 }

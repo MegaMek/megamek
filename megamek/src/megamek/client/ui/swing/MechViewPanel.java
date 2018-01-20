@@ -42,34 +42,34 @@ import megamek.common.MechView;
 
 
 public class MechViewPanel extends JPanel {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2438490306644271135L;
-    
+
     private JTextPane txtMek;
     private JLabel lblMek;
     private JScrollPane scrMek;
     private Icon icon;
-    
+
     public final static int DEFAULT_WIDTH = 350;
     public final static int DEFAULT_HEIGHT = 600;
-    
+
     public MechViewPanel() {
         this(DEFAULT_WIDTH, DEFAULT_HEIGHT,true);
     }
-    
+
     public MechViewPanel(int width, int height) {
         this(width,height,true);
     }
-    
+
     public MechViewPanel(int width, int height, boolean noBorder) {
- 
+
         setBackground(Color.WHITE);
-        
+
         icon = null;
-        
+
         txtMek = new JTextPane();
         ReportDisplay.setupStylesheet(txtMek);
         txtMek.setText("");
@@ -89,7 +89,7 @@ public class MechViewPanel extends JPanel {
         GridBagConstraints c;
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -110,9 +110,9 @@ public class MechViewPanel extends JPanel {
         gridbag.setConstraints(lblMek, c);
         add(lblMek);
     }
-    
+
     public void setMech(Entity entity, MechView mechView){
-        reset();        
+        reset();
         txtMek.setText(mechView.getMechReadout());
         txtMek.setCaretPosition(0);
         Image image = FluffImageHelper.getFluffImage(entity);
@@ -122,29 +122,29 @@ public class MechViewPanel extends JPanel {
             if (image.getWidth(this) > DEFAULT_WIDTH)
             {
                 double aspect_ratio = (float)image.getWidth(this) / image.getHeight(this);
-                image = image.getScaledInstance(DEFAULT_WIDTH, 
+                image = image.getScaledInstance(DEFAULT_WIDTH,
                         (int)(DEFAULT_WIDTH/aspect_ratio), Image.SCALE_FAST);
-            }            
+            }
             icon = new ImageIcon(image);
             lblMek.setIcon(icon);
-        }  
+        }
     }
-    
+
     public void setMech(Entity entity) {
         MechView mechView = new MechView(entity, false);
         setMech(entity,mechView);
     }
-    
+
     public void setMech(Entity entity, boolean useAlternateCost) {
         MechView mechView = new MechView(entity, false, useAlternateCost);
         setMech(entity,mechView);
     }
-    
+
     public void reset() {
         txtMek.setText("");
         lblMek.setIcon(null);
     }
-    
+
     public int getBestWidth() {
         int width = DEFAULT_WIDTH;
         if(null != icon) {
@@ -152,7 +152,7 @@ public class MechViewPanel extends JPanel {
         }
         return width;
     }
-    
+
     public int getBestHeight() {
         int height = DEFAULT_HEIGHT;
         if(null != icon) {
@@ -160,5 +160,5 @@ public class MechViewPanel extends JPanel {
         }
         return height;
     }
-    
+
 }

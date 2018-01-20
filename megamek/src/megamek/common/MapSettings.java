@@ -320,7 +320,7 @@ public class MapSettings implements Serializable {
 
     /**
      * Creates and returns a new default instance of MapSettings.
-     * 
+     *
      * @return a MapSettings with default settings values
      */
     public static MapSettings getInstance() {
@@ -341,7 +341,7 @@ public class MapSettings implements Serializable {
     /**
      * Creates and returns a new instance of MapSettings with default values
      * loaded from the given input stream.
-     * 
+     *
      * @param is
      *            the input stream that contains an XML representation of the
      *            map settings
@@ -474,7 +474,7 @@ public class MapSettings implements Serializable {
      * the boards as a File object, they are stored as lists of Strings. This
      * means that, a Windows server will generate Windows paths that could then
      * be sent to non-windows machines.
-     * 
+     *
      * While the available and selected boards should really be stored as lists
      * of Files, they have infrastructure built up around them and it's far
      * easier to use this kludgy hack.

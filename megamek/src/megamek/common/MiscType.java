@@ -36,7 +36,7 @@ import megamek.common.weapons.ppc.ISSnubNosePPC;
  * @version
  */
 public class MiscType extends EquipmentType {
-  
+
     // equipment flags (okay, like every type of equipment has its own flag)
     public static final BigInteger F_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(0);
     public static final BigInteger F_DOUBLE_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(1);
@@ -260,7 +260,7 @@ public class MiscType extends EquipmentType {
     // Prototype Stuff
     public static final BigInteger F_ARTEMIS_PROTO = BigInteger.valueOf(1).shiftLeft(201);
     public static final BigInteger F_CASEP = BigInteger.valueOf(1).shiftLeft(202);
-    
+
     public static final BigInteger F_VEEDC = BigInteger.valueOf(1).shiftLeft(203);
     public static final BigInteger F_SC_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(204);
     public static final BigInteger F_DS_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(205);
@@ -281,7 +281,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SDS_DESTRUCT = BigInteger.valueOf(1).shiftLeft(219);
     public static final BigInteger F_SDS_JAMMER = BigInteger.valueOf(1).shiftLeft(220);
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
-    
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -355,7 +355,7 @@ public class MiscType extends EquipmentType {
     public static final long S_STANDARD = 1L << 0;
     public static final long S_IMPROVED = 1L << 1;
     public static final long S_PROTOTYPE = 1L << 2;
-    
+
     // Secondary flag for robotic constrol systems; standard and improved borrow jj flags
     public static final long S_ELITE = 1L << 2;
 
@@ -860,7 +860,7 @@ public class MiscType extends EquipmentType {
             } else {
                 return Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
             }
-        } 
+        }
        // okay, I'm out of ideas
         return 1.0f;
     }
@@ -982,8 +982,8 @@ public class MiscType extends EquipmentType {
                 costValue = getTonnage(entity, loc) * 10000;
             } else if (hasFlag(F_NAVAL_C3)) {
                 costValue = getTonnage(entity, loc) * 100000;
-                
-             //TODO NEO- Not sure how to add in the base control weights see IO pg 187   
+
+             //TODO NEO- Not sure how to add in the base control weights see IO pg 187
             } else if (hasFlag(MiscType.F_SRCS)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_SASRCS)) {
@@ -994,10 +994,10 @@ public class MiscType extends EquipmentType {
                 costValue = (getTonnage(entity, loc) * 20000) + 50000;
             } else if (hasFlag(MiscType.F_ATAC)) {
                 costValue = (getTonnage(entity, loc) * 100000);
-            //TODO NEO - ARTS see IO pg 188    
+            //TODO NEO - ARTS see IO pg 188
             } else if (hasFlag(MiscType.F_DTAC)) {
                 costValue = (getTonnage(entity, loc) * 50000);
-                             
+
             } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_LANCE))) {
                 costValue = (int) Math.ceil(entity.getWeight() * 150);
             } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
@@ -1974,7 +1974,7 @@ public class MiscType extends EquipmentType {
     }
 
     // TODO Protomech Jump Jets See IO, pg 35
-    
+
     public static MiscType createProtomechJumpJet() {
         MiscType misc = new MiscType();
         misc.name = "Jump Jet";
@@ -3017,7 +3017,7 @@ public class MiscType extends EquipmentType {
                 .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
-    
+
     // Separate IS/Clan standard aerospace armor, which provides different points per ton.
     public static MiscType createISAeroSpaceArmor() {
         MiscType misc = new MiscType();
@@ -3040,7 +3040,7 @@ public class MiscType extends EquipmentType {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
-    
+
     public static MiscType createClanAeroSpaceArmor() {
         MiscType misc = new MiscType();
 
@@ -3061,7 +3061,7 @@ public class MiscType extends EquipmentType {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
-    
+
     public static MiscType createImpFerroAluminumArmor() {
         MiscType misc = new MiscType();
 
@@ -3086,7 +3086,7 @@ public class MiscType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
-    
+
     public static MiscType createLCFerroCarbideArmor() {
         MiscType misc = new MiscType();
 
@@ -3109,7 +3109,7 @@ public class MiscType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
-    
+
     public static MiscType createLCLamellorFerroCarbideArmor() {
         MiscType misc = new MiscType();
 
@@ -3132,9 +3132,9 @@ public class MiscType extends EquipmentType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
-    
-    
-    
+
+
+
 
     // Armor (ProtoMech)
 
@@ -7633,7 +7633,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("LithumFusion");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
-        
+
         misc.cost = 0;
         misc.flags = misc.flags.or(F_LF_STORAGE_BATTERY).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT);
         misc.bv = 0;
@@ -9820,7 +9820,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISCVDuneBuggyChassis() {
         MiscType misc = new MiscType();
         // TODO this is Combat Vee, and SV combined chassis. Their really needs
-        // to be two different chassis types. 
+        // to be two different chassis types.
         misc.name = "Combat Vehicle Chassis Mod [Dune Buggy]";
         misc.setInternalName("ISCVDuneBuggyChassis");
         misc.addLookupName("ISCVDuneBuggy");
@@ -9830,7 +9830,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
-        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);               
+        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303,TO";
@@ -9955,7 +9955,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISSVDuneBuggyChassis() {
         MiscType misc = new MiscType();
         // TODO this is Combat Vee, and SV combined chassis. Their really needs
-        // to be two different chassis types. 
+        // to be two different chassis types.
         misc.name = "SV Chassis Mod [Dune Buggy]";
         misc.setInternalName("ISSVDuneBuggyChassis");
         misc.addLookupName("ISSVDuneBuggy");
@@ -9965,7 +9965,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
-        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);               
+        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303,TO";
@@ -11596,7 +11596,7 @@ public class MiscType extends EquipmentType {
     /*
      * public static MiscType createCoolantSystem() { MiscType misc = new
      * MiscType();
-     * 
+     *
      * misc.name = "Coolant System"; misc.setInternalName(misc.name); misc.tonnage =
      * 9; misc.criticals = 2; misc.cost = 90000; misc.flags =
      * misc.flags.or(F_COOLANT_SYSTEM).or(F_MECH_EQUIPMENT); misc.bv = 15;

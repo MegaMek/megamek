@@ -75,9 +75,9 @@ public final class Player extends TurnOrdered implements IPlayer {
     private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
 
     private boolean admitsDefeat = false;
-    
+
     /**
-     * Boolean that keeps track of whether a player has accepted another 
+     * Boolean that keeps track of whether a player has accepted another
      * player's request to chang teams.
      */
     private boolean allowingTeamChange = false;
@@ -322,7 +322,7 @@ public final class Player extends TurnOrdered implements IPlayer {
         if(null == other) {
             return true;
         }
-        return (id != other.getId()) 
+        return (id != other.getId())
             && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
@@ -355,12 +355,12 @@ public final class Player extends TurnOrdered implements IPlayer {
     public boolean admitsDefeat() {
         return admitsDefeat;
     }
-    
+
     @Override
     public void setAllowTeamChange(boolean allowChange){
         allowingTeamChange = allowChange;
     }
-    
+
     @Override
     public boolean isAllowingTeamChange(){
         return allowingTeamChange;
@@ -496,9 +496,9 @@ public final class Player extends TurnOrdered implements IPlayer {
                     && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
                     bonusHQ = entity.getHQIniBonus();
                 }
-                
+
 				/*
-				 * REMOVED IN IO. 
+				 * REMOVED IN IO.
 				 * if (game.getOptions().booleanOption(OptionsConstants.
 				 * RPG_MANEI_DOMINI) && (bonusMD == 0) &&
 				 * (entity.getMDIniBonus() > 0)) { bonusMD =
@@ -573,7 +573,7 @@ public final class Player extends TurnOrdered implements IPlayer {
         }
         return units;
     }
-    
+
     public String toString() {
         return "Player " + getId() + " (" + getName() + ")";
     }

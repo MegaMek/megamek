@@ -180,7 +180,7 @@ class QuirkEntry {
         copy.setLocation(String.copyValueOf(getLocation().toCharArray()));
         return copy;
     }
-    
+
     public boolean isWeaponQuirk() {
         return (weaponName != null);
     }

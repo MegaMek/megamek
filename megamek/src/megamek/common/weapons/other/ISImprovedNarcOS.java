@@ -56,6 +56,6 @@ public class ISImprovedNarcOS extends NarcWeapon {
             .setISAdvancement(3054, 3062, 3070, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false ,false, false)
             .setPrototypeFactions(F_CS)
-            .setProductionFactions(F_CS/F_WB);   
+            .setProductionFactions(F_CS/F_WB);
     }
 }

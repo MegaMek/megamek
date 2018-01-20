@@ -45,14 +45,14 @@ import megamek.common.preference.PreferenceManager;
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab.
  * For multi-crew cockpits there is a separate tab for each crew member and another that shows common options
  * for the entire crew.
- * 
+ *
  * @author Neoancient
  *
  */
 public class CustomPilotView extends JPanel {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 345126674612500365L;
 
@@ -74,9 +74,9 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldPilotingAero = new JTextField(3);
     private final JTextField fldArtillery = new JTextField(3);
     private final JTextField fldTough = new JTextField(3);
-    
+
     private final JComboBox<String> cbBackup = new JComboBox<String>();
-    
+
     private final ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
     private final JComboBox<String> choUnitNum = new JComboBox<String>();
 
@@ -84,7 +84,7 @@ public class CustomPilotView extends JPanel {
         this.entity = entity;
         setLayout(new GridBagLayout());
         JLabel label;
-        
+
         if (entity.getCrew().getSlotCount() > 1) {
             chkMissing.setActionCommand("missing");
             chkMissing.addActionListener(parent);
@@ -92,7 +92,7 @@ public class CustomPilotView extends JPanel {
             chkMissing.setSelected(entity.getCrew().isMissing(slot));
             add(chkMissing, GBC.eop());
         }
-        
+
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(72, 72));
         button.setText(Messages.getString("CustomMechDialog.labPortrait"));
@@ -102,7 +102,7 @@ public class CustomPilotView extends JPanel {
                 portraitDialog.setVisible(true);
             }
         });
-        
+
         portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(),
                 button);
         portraitDialog.setPilot(entity.getCrew(), slot);
@@ -148,7 +148,7 @@ public class CustomPilotView extends JPanel {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldGunneryB, GBC.eol());
-            
+
             if (entity.getCrew() instanceof LAMPilot) {
                 label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT); //$NON-NLS-1$
                 add(label, GBC.std());
@@ -231,7 +231,7 @@ public class CustomPilotView extends JPanel {
             add(fldTough, GBC.eop());
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
-        
+
         if (entity.getCrew().getSlotCount() > 2) {
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
                 if (i != slot) {
@@ -318,7 +318,7 @@ public class CustomPilotView extends JPanel {
 
         missingToggled();
     }
-    
+
     /**
      * Populate the list of entities in other units from the given enumeration.
      *
@@ -352,82 +352,82 @@ public class CustomPilotView extends JPanel {
         }
         choUnitNum.setSelectedIndex(0);
     }
-    
+
     public boolean getMissing() {
         return chkMissing.isSelected();
     }
-    
+
     public String getPilotName() {
         return fldName.getText();
     }
-    
+
     public String getNickname() {
         return fldNick.getText();
     }
-    
+
     public int getGunnery() {
         return Integer.parseInt(fldGunnery.getText());
     }
-    
+
     public int getGunneryL() {
         return Integer.parseInt(fldGunneryL.getText());
     }
-    
+
     public int getGunneryM() {
         return Integer.parseInt(fldGunneryM.getText());
     }
-    
+
     public int getGunneryB() {
         return Integer.parseInt(fldGunneryB.getText());
     }
-    
+
     public int getGunneryAero() {
         return Integer.parseInt(fldGunneryAero.getText());
     }
-    
+
     public int getGunneryAeroL() {
         return Integer.parseInt(fldGunneryAeroL.getText());
     }
-    
+
     public int getGunneryAeroM() {
         return Integer.parseInt(fldGunneryAeroM.getText());
     }
-    
+
     public int getGunneryAeroB() {
         return Integer.parseInt(fldGunneryAeroB.getText());
     }
-    
+
     public int getArtillery() {
         return Integer.parseInt(fldArtillery.getText());
     }
-    
+
     public int getPiloting() {
         return Integer.parseInt(fldPiloting.getText());
     }
-    
+
     public int getPilotingAero() {
         return Integer.parseInt(fldPilotingAero.getText());
     }
-    
+
     public int getToughness() {
         return Integer.parseInt(fldTough.getText());
     }
-    
+
     public String getPortraitCategory() {
         return portraitDialog.getCategory();
     }
-    
+
     public String getPortraitFilename() {
         return portraitDialog.getFileName();
     }
-    
+
     public Entity getEntityUnitNumSwap() {
         if (entityUnitNum.isEmpty() || choUnitNum.getSelectedIndex() <= 0) {
             return null;
         }
         return entityUnitNum.get(choUnitNum.getSelectedIndex());
     }
-    
+
     public int getBackup() {
         if (null != cbBackup.getSelectedItem()) {
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
@@ -438,7 +438,7 @@ public class CustomPilotView extends JPanel {
         }
         return -1;
     }
-    
+
     private void missingToggled() {
         for (int i = 0; i < getComponentCount(); i++) {
             if (!getComponent(i).equals(chkMissing)) {
@@ -446,7 +446,7 @@ public class CustomPilotView extends JPanel {
             }
         }
     }
-    
+
     void enableMissing(boolean enable) {
         chkMissing.setEnabled(enable);
     }

@@ -20,14 +20,14 @@ package megamek.common.net;
 public class PacketReceivedEvent extends ConnectionEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3542045596045067466L;
     private Packet packet;
 
     /**
      * Constructs connection event
-     * 
+     *
      * @param source The object on which the Event initially occurred.
      * @param packet The received packet
      */
@@ -38,7 +38,7 @@ public class PacketReceivedEvent extends ConnectionEvent {
 
     /**
      * Returns the received packet
-     * 
+     *
      * @return the received packet
      */
     public Packet getPacket() {

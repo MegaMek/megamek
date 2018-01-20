@@ -37,7 +37,7 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
     public static final int LOC_TURRET_2 = 8;
-    
+
     private double fuelTonnage = 0;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
@@ -45,7 +45,7 @@ public class LargeSupportTank extends SupportTank {
 
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Turret"};
-    
+
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
             "Front Turret" };
@@ -267,7 +267,7 @@ public class LargeSupportTank extends SupportTank {
     public int height() {
         return 1;
     }
-    
+
     @Override
     public boolean isSuperHeavy() {
         return true;
@@ -406,7 +406,7 @@ public class LargeSupportTank extends SupportTank {
             }
             return true;
         }
-        
+
         if (isPermanentlyImmobilized(true)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out

@@ -23,7 +23,7 @@ import megamek.common.actions.WeaponAttackAction;
  */
 public class WeaponResult implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4843539676132886847L;
     public WeaponAttackAction waa = null;

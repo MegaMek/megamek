@@ -74,7 +74,7 @@ class ArmorPanel extends PicMap {
     private int minLeftMargin;
     private int minBottomMargin;
     private int minRightMargin;
-    
+
     private UnitDisplay unitDisplay;
 
     private static final int minTankTopMargin = 8;

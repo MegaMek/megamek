@@ -29,11 +29,11 @@ public enum OffBoardDirection {
     OffBoardDirection(int value) {
         this.value = value;
     }
-    
+
     public int getValue() {
         return value;
     }
-    
+
     public static OffBoardDirection getDirection(int value) {
         for (OffBoardDirection dir : OffBoardDirection.values()) {
             if (dir.getValue() == value) {

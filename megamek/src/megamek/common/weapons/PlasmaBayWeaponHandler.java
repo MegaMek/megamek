@@ -54,7 +54,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -83,8 +83,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                 Report r = new Report(3400);
                 r.subject = subjectId;
                 r.indent(2);
-                if (entityTarget.getArmor(hit) > 0 &&                        
-                        (entityTarget.getArmorType(hit.getLocation()) == 
+                if (entityTarget.getArmor(hit) > 0 &&
+                        (entityTarget.getArmorType(hit.getLocation()) ==
                            EquipmentType.T_ARMOR_REFLECTIVE)){
                    entityTarget.heatFromExternal += Math.max(1, extraHeat/2);
                    r.messageId=3406;
@@ -93,8 +93,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                    r.add(extraHeat);
                    r.add(EquipmentType.armorNames
                            [entityTarget.getArmorType(hit.getLocation())]);
-                } else if (entityTarget.getArmor(hit) > 0 &&  
-                       (entityTarget.getArmorType(hit.getLocation()) == 
+                } else if (entityTarget.getArmor(hit) > 0 &&
+                       (entityTarget.getArmorType(hit.getLocation()) ==
                            EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
                     entityTarget.heatFromExternal += extraHeat/2;
                     r.messageId=3406;
@@ -107,8 +107,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     entityTarget.heatFromExternal += extraHeat;
                     r.add(extraHeat);
                     r.choose(true);
-                }                
-                vPhaseReport.addElement(r);                
+                }
+                vPhaseReport.addElement(r);
             }
         }
     }

@@ -638,7 +638,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                             (!cannonOnly || mech.isCanon() || useAlternate) &&
                             /*Technology Level*/
                             (techLevelMatch)
-                            && ((nUnit == -1) 
+                            && ((nUnit == -1)
                                     || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                                     || (checkSupportVee && mech.isSupport()))
                             /*Advanced Search*/
@@ -749,10 +749,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             if (cs.useAverageSkills()) {
                 int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
                         true);
-    
+
                 int gunnery = skills[0];
                 int piloting = skills[1];
-    
+
                 e.getCrew().setGunnery(gunnery, i);
                 // For infantry, piloting doubles as antimek skill, and this is
                 // set based on whether the unit has antimek training, which gets

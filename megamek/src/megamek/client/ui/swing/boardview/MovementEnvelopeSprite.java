@@ -18,7 +18,7 @@ class MovementEnvelopeSprite extends HexSprite {
     private final static int borderThickness = 10;
     private final static int borderOpacity = 60;
     private final static float lineThickness = 2;
-    
+
     // sprite settings
     protected final Color drawColor;
     protected final int borders;
@@ -28,12 +28,12 @@ class MovementEnvelopeSprite extends HexSprite {
         drawColor = c;
         this.borders = borders;
     }
-    
+
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
         updateBounds();
-        
+
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D)image.getGraphics();
@@ -49,15 +49,15 @@ class MovementEnvelopeSprite extends HexSprite {
         for (int i=0;i<6;i++) {
             if ((borders & (1<<i))>0) {
                 // 1) thick transparent border
-                int cut = ((borders & (1 << ((i + 1) % 6))) == 0)? 
+                int cut = ((borders & (1 << ((i + 1) % 6))) == 0)?
                     CUT_RBORDER : CUT_RINSIDE;
-                cut |= ((borders & (1 << ((i + 5) % 6))) == 0)? 
+                cut |= ((borders & (1 << ((i + 5) % 6))) == 0)?
                     CUT_LBORDER : CUT_LINSIDE;
 
                 graph.setColor(new Color(drawColor.getRed(), drawColor.getGreen(),
                         drawColor.getBlue(), borderOpacity));
                 graph.fill(getHexBorderArea(i, cut, borderThickness));
-                
+
                 // 2) thin dashed line border
                 graph.setColor(drawColor);
                 graph.draw(getHexBorderLine(i, cut, lineThickness / 2));
@@ -65,5 +65,5 @@ class MovementEnvelopeSprite extends HexSprite {
         }
         graph.dispose();
     }
-    
+
 }

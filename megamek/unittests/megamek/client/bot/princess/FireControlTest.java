@@ -2496,7 +2496,7 @@ public class FireControlTest {
         Mockito.when(mockMGFireInfo.getShooter()).thenReturn(mockShooter);
         Mockito.when(mockMGFireInfo.getDebugDescription()).thenReturn("mock MG");
         alphaStrike.add(mockMGFireInfo);
-        
+
         Mockito.doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(Mockito.any(Targetable.class), Mockito.anyDouble());
 
         final FiringPlan[] expected = new FiringPlan[15];
@@ -2625,7 +2625,7 @@ public class FireControlTest {
         Mockito.when(mockLRMFireInfo.getExpectedDamageOnHit()).thenReturn(3.0);
 
         Mockito.doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(Mockito.any(Targetable.class), Mockito.anyDouble());
-        
+
         Mockito.when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);

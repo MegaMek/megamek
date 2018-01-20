@@ -22,7 +22,7 @@ import org.mockito.Mockito;
 
 
 /**
- * 
+ *
  *
  * @version $Id$
  * @lastEditBy Nicholas Walczak (walczak@cs.umn.edu)
@@ -53,14 +53,14 @@ public class TeamTest {
         Mockito.when(mockPlayer2.getTurnInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getCompensationInitBonus()).thenReturn(0);
         Mockito.when(mockPlayer2.getCommandBonus()).thenReturn(0);
-        
+
         testTeam.addPlayer(mockPlayer1);
         testTeam.addPlayer(mockPlayer2);
         testTeam.addPlayer(mockPlayer3);
-        
+
         int initBonus;
         boolean useInitCompBonus = false;
-        
+
         // Sanity test
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(initBonus,0);
@@ -70,28 +70,28 @@ public class TeamTest {
         Mockito.when(mockPlayer3.getConstantInitBonus()).thenReturn(-3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(-1, initBonus);
-        
+
         Mockito.when(mockPlayer1.getConstantInitBonus()).thenReturn(0);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(0, initBonus);
-        
+
         Mockito.when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(1, initBonus);
-        
+
         Mockito.when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         Mockito.when(mockPlayer2.getCommandBonus()).thenReturn(2);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(1, initBonus);
-        
+
         Mockito.when(mockPlayer1.getCommandBonus()).thenReturn(1);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(1, initBonus);
-        
+
         Mockito.when(mockPlayer3.getCommandBonus()).thenReturn(4);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(3, initBonus);
-        
+
         Mockito.when(mockPlayer1.getConstantInitBonus()).thenReturn(1);
         Mockito.when(mockPlayer2.getConstantInitBonus()).thenReturn(2);
         Mockito.when(mockPlayer3.getConstantInitBonus()).thenReturn(3);
@@ -100,42 +100,42 @@ public class TeamTest {
         Mockito.when(mockPlayer3.getCommandBonus()).thenReturn(0);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(3, initBonus);
-        
+
         Mockito.when(mockPlayer1.getCommandBonus()).thenReturn(1);
         Mockito.when(mockPlayer2.getCommandBonus()).thenReturn(2);
         Mockito.when(mockPlayer3.getCommandBonus()).thenReturn(3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(6, initBonus);
-        
+
         Mockito.when(mockPlayer1.getTurnInitBonus()).thenReturn(1);
         Mockito.when(mockPlayer2.getTurnInitBonus()).thenReturn(2);
         Mockito.when(mockPlayer3.getTurnInitBonus()).thenReturn(3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(12, initBonus);
-        
+
         Mockito.when(mockPlayer1.getTurnInitBonus()).thenReturn(-1);
         Mockito.when(mockPlayer2.getTurnInitBonus()).thenReturn(-2);
         Mockito.when(mockPlayer3.getTurnInitBonus()).thenReturn(-3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(0, initBonus);
-        
+
         useInitCompBonus = true;
-        
+
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(0, initBonus);
-        
+
         Mockito.when(mockPlayer1.getCompensationInitBonus()).thenReturn(-1);
         Mockito.when(mockPlayer2.getCompensationInitBonus()).thenReturn(-2);
         Mockito.when(mockPlayer3.getCompensationInitBonus()).thenReturn(-3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         Assert.assertEquals(0, initBonus);
-        
+
         Mockito.when(mockPlayer1.getCompensationInitBonus()).thenReturn(1);
         Mockito.when(mockPlayer2.getCompensationInitBonus()).thenReturn(2);
         Mockito.when(mockPlayer3.getCompensationInitBonus()).thenReturn(3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        Assert.assertEquals(3, initBonus);        
+        Assert.assertEquals(3, initBonus);
     }
 
-    
+
 }

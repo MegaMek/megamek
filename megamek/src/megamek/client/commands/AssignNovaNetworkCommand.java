@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.client.commands;
 
@@ -11,7 +11,7 @@ import megamek.client.Client;
 import megamek.common.Entity;
 
 /**
- * @author dirk 
+ * @author dirk
  * This command exists to print entity information to the chat
  * window, it's primarily intended for vissually impaired users.
  */
@@ -28,10 +28,10 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         /*
          * This command will change the nova net at end of turn.
          *  /nova print
-         *  will print info about your current nova linksp    
+         *  will print info about your current nova linksp
          *  /nova print ID
          *  will print the network for ID
-         *  /nova link ID ID 
+         *  /nova link ID ID
          *  will link the two IDs into their own network. Unlinks from all other networks
          *  /nova link ID ID ID
          *  will link the 3 IDs in their own network. Unlinks from all other networks
@@ -39,18 +39,18 @@ public class AssignNovaNetworkCommand extends ClientCommand {
          *  will unlink all
          *  /nova unlink ID
          *  will unlink ID
-         * 
+         *
          */
     }
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
     public String run(String[] args) {
-        
+
         if (args.length == 1) {
             String help = "#nova print : will print all of your current nova networks and unlinked units.\n";
             help += "#nova print 5 : will print the network status for the Unit with ID 5.\n";
@@ -76,7 +76,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
                         // do /nova print
                         return strListNetworks(true);
                     }
-                    
+
                 } else if(cmd == "link")
                 {
                     if(args.length > 4)
@@ -115,42 +115,42 @@ public class AssignNovaNetworkCommand extends ClientCommand {
 
         return "Error parsing the command.";
     }
-    
+
     private void setNewNetworkID(Entity ent, String net)
     {
-        ent.setNewRoundNovaNetworkString(net);       
+        ent.setNewRoundNovaNetworkString(net);
         client.sendNovaChange(ent.getId(), net);
     }
-    
 
-    
+
+
     private String strLink3(int id1, int id2, int id3)
     {
         String rval = "";
-        
+
         Entity ent1 = client.getEntity(id1);
         Entity ent2 = client.getEntity(id2);
         Entity ent3 = client.getEntity(id3);
-        
+
         if(ent1 == null || ent2 == null || ent3 == null)
         {
             return "ID Mismatch!\n";
         }
-        
+
         rval += strUnlinkID(id1);
         rval += strUnlinkID(id2);
         rval += strUnlinkID(id3);
-        
+
         setNewNetworkID(ent2, ent1.getNewRoundNovaNetworkString());
         setNewNetworkID(ent3, ent1.getNewRoundNovaNetworkString());
-        
+
         return rval+"New Network! Linked Units: "+id1+", "+id2+", "+id3+"\n";
     }
-    
+
     private String strLink2(int id1, int id2)
     {
         String rval = "";
-        
+
         Entity ent1 = client.getEntity(id1);
         Entity ent2 = client.getEntity(id2);
         if(ent1 == null || ent2 == null)
@@ -160,19 +160,19 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         rval += strUnlinkID(id1);
         rval += strUnlinkID(id2);
         setNewNetworkID(ent2, ent1.getNewRoundNovaNetworkString());
-        
+
         return rval+"New Network! Linked Units: "+id1+", "+id2+"\n";
     }
-    
+
     private String strUnlinkID(int id)
     {
         Entity ent = client.getEntity(id);
-        
+
         if(ent == null)
         {
             return "ID Mismatch\n";
         }
-        
+
         List<Entity> network = listNetwork(ent, true);
         if(network.size()<2)
         {
@@ -199,7 +199,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         setNewNetworkID(ent, ent.getOriginalNovaC3NetId());
         return "Unit "+id+" unlinked\n";
     }
-    
+
     private String strUnlinkAll()
     {
         List<Entity> novaUnits = getMyNovaUnits();
@@ -209,8 +209,8 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
         return "Everything unlinked";
     }
-    
-    
+
+
     private String strListNetworks(boolean planned)
     {
         String rval = "";
@@ -218,7 +218,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         List<Integer> allreadyReported = new LinkedList<Integer>();
         List<Entity> novaUnits = getMyNovaUnits();
         List<Entity> network;
-        
+
         for(Entity ent : novaUnits)
         {
             if(!allreadyReported.contains(ent.getId()))
@@ -234,17 +234,17 @@ public class AssignNovaNetworkCommand extends ClientCommand {
                     }
                     rval += "+-----\n";
                 } else {
-                    
+
                 }
             }
-            
+
         }
         if (rval == "")
         {
             // no networks found
             rval = "No Networks found. Create some with the #nova command\n";
         }
-        
+
         if (planned)
         {
             rval = "Status for next turn networks:\n" + rval;
@@ -253,7 +253,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
         return rval;
     }
-        
+
     private String strListNetwork(int id, boolean planned)
     {
         String rval = "";
@@ -265,17 +265,17 @@ public class AssignNovaNetworkCommand extends ClientCommand {
                 rval += "+ "+e.getId()+" "+e.getDisplayName()+"\n";
             }
         }
-        
+
         if(rval != "")
         {
             rval = "Unit "+id+" is in the Network consisting of:\n";
         } else {
             rval = "Error. No ID match.\n";
         }
-        
+
         return rval;
     }
-    
+
     /**
      * Returns a list with all members of e 's nova network, including e.
      * @param e the entity.
@@ -286,7 +286,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     {
         List<Entity> novaNetworkMembers = new LinkedList<Entity>();
         List<Entity> novaUnits = getMyNovaUnits();
-        
+
         for (Entity ent : novaUnits)
         {    if(planned)
         {
@@ -303,7 +303,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         }
         return novaNetworkMembers;
     }
-    
+
     /**
      * Return a list of all nova CEWS units the clients player owns.
      * @return

@@ -18,7 +18,7 @@ public class TerrainFactory implements ITerrainFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.ITerrainFactory#createTerrain(int, int)
      */
     public ITerrain createTerrain(int type, int level) {
@@ -27,7 +27,7 @@ public class TerrainFactory implements ITerrainFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.ITerrainFactory#createTerrain(int, int, boolean, int)
      */
     public ITerrain createTerrain(int type, int level, boolean exitsSpecified,
@@ -37,7 +37,7 @@ public class TerrainFactory implements ITerrainFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.ITerrainFactory#createTerrain(java.lang.String)
      */
     public ITerrain createTerrain(String terrain) {
@@ -46,7 +46,7 @@ public class TerrainFactory implements ITerrainFactory {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.ITerrainFactory#createTerrain(megamek.common.ITerrain)
      */
     public ITerrain createTerrain(ITerrain other) {

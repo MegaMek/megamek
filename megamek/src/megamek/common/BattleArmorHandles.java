@@ -225,7 +225,7 @@ import java.util.Vector;
     public void resetTransporter() {
         troopers = Entity.NONE;
     }
-    
+
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.

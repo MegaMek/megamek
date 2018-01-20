@@ -143,7 +143,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
                 t.setBARRating(dataFile.getDataAsInt(t.getLocationName(i) + "_barrating")[0], i);
             }
         }
-        
+
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
@@ -154,12 +154,12 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         // Set armor tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("armor_tech_rating")) {
             t.setArmorTechRating(dataFile
-                    .getDataAsInt("armor_tech_rating")[0]);            
+                    .getDataAsInt("armor_tech_rating")[0]);
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
             t.setEngineTechRating(dataFile
-                    .getDataAsInt("engine_tech_rating")[0]);            
+                    .getDataAsInt("engine_tech_rating")[0]);
         }
 
         t.autoSetInternal();

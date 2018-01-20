@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -32,7 +32,7 @@ import megamek.server.Server;
 public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     /**
-     * 
+     *
      */
 
     private static final long serialVersionUID = -1618484541772117621L;
@@ -101,11 +101,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 } else if (range == WeaponType.RANGE_EXT) {
                     current_av = bayWType.getExtAV();
                 }
-                
+
                 if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
                     nukeS2S = true;
                 }
-                
+
                 current_av = updateAVforAmmo(current_av, atype, bayWType,
                         range, wId);
                 av = av + current_av;
@@ -125,7 +125,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         }
                     }
                 }
-                
+
                 // check for tele-missiles and if they are there then
                 // I will need to
                 // add them to an inserted attack list and reset the av
@@ -136,11 +136,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 } */
             }
         }
-        
+
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
-        
-        
+
+
             if (bDirect) {
                 av = Math.min(av + (toHit.getMoS() / 3), av * 2);
             }
@@ -151,15 +151,15 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return (int) Math.ceil(av);
         // }
     }
-    
-    
-        
+
+
+
     @Override
     protected int calcCapMissileAMSMod() {
         CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
         return CapMissileAMSMod;
     }
-    
+
     @Override
     protected int getCapMissileAMSMod() {
         return CapMissileAMSMod;
@@ -212,7 +212,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 11;
         }
     }
-    
+
     @Override
     protected double updateAVforAmmo(double current_av, AmmoType atype,
             WeaponType bayWType, int range, int wId) {
@@ -235,9 +235,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     	    current_av = 100;
     	} else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
             current_av = 1000;
-        }    	
+        }
         return current_av;
-    } 
+    }
     /**
      * Insert any additional attacks that should occur before this attack
      */
@@ -266,7 +266,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             vPhaseReport.addAll(newReports);
         }
     }
-    
+
     /**
      * Checks to see if this point defense/AMS bay can engage a capital missile
      * This should return true. Only when handling capital missile attacks can this be false.
@@ -278,7 +278,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return true;
         }
     }
-    
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -286,7 +286,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */

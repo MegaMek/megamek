@@ -76,7 +76,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -88,4 +88,3 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         return new PrototypeLaserHandler(toHit, waa, game, server);
     }
 }
-

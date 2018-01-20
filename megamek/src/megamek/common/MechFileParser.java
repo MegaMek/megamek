@@ -320,7 +320,7 @@ public class MechFileParser {
             }
 
             // Link Artemis IV fire-control systems to their missle racks.
-            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) 
+            if ((m.getType().hasFlag(MiscType.F_ARTEMIS)
                     || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
                     || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
                     && (m.getLinked() == null)) {
@@ -487,7 +487,7 @@ public class MechFileParser {
                     ent.setNextSensor(ent.getSensors().lastElement());
                } else if (m.getType().getInternalName().equals(Sensor.BAPP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAPP));
-                    ent.setNextSensor(ent.getSensors().lastElement());      
+                    ent.setNextSensor(ent.getSensors().lastElement());
                } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
@@ -894,10 +894,10 @@ public class MechFileParser {
         } catch (IOException e) {
         }
         int index = Collections.binarySearch(canonUnitNames,
-                ent.getShortNameRaw()); 
+                ent.getShortNameRaw());
         if (index >= 0) {
             ent.setCanon(true);
-        }        
+        }
         ent.initMilitary();
 
     } // End private void postLoadInit(Entity) throws EntityLoadingException

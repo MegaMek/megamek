@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
@@ -14,7 +14,7 @@
 
 /*
  * RamAttackAction.java
- * 
+ *
  * Created on May 28, 2008
  */
 
@@ -47,13 +47,13 @@ import megamek.common.options.OptionsConstants;
  * Represents one unit charging another. Stores information about where the
  * target is supposed to be for the charge to be successful, as well as normal
  * attack info.
- * 
+ *
  * @author Ben Mazur
  */
 public class RamAttackAction extends AbstractAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3549351664290057785L;
 
@@ -73,10 +73,10 @@ public class RamAttackAction extends AbstractAttackAction {
     public ToHitData toHit(IGame game) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()),
-                     entity.getPosition(), entity.getElevation(), 
+                     entity.getPosition(), entity.getElevation(),
                      entity.getPriorPosition(), entity.moved);
     }
-    
+
     /**
      * To-hit number for a ram, assuming that movement has been handled
      */
@@ -93,15 +93,15 @@ public class RamAttackAction extends AbstractAttackAction {
         if (target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
-        
+
         if(!ae.isAero()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not Aero");
         }
-        
+
         if(!target.isAero()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
-        }   
-        
+        }
+
         if(ae instanceof FighterSquadron || target instanceof FighterSquadron) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "fighter squadrons may not ram nor be the target of a ramming attc");
         }
@@ -112,7 +112,7 @@ public class RamAttackAction extends AbstractAttackAction {
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
-        
+
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -128,7 +128,7 @@ public class RamAttackAction extends AbstractAttackAction {
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();
         ToHitData toHit = null;
- 
+
         // can't target yourself
         if (ae.equals(te)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -158,21 +158,21 @@ public class RamAttackAction extends AbstractAttackAction {
                     "Target is already making a ramming attack");
         }
 
-        //attacker 
-        
+        //attacker
+
         // target must have moved already
         if (!te.isDone()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target must be done with movement");
         }
-        
-        //Set the base BTH       
-        int base = 6 + te.getCrew().getPiloting() - ae.getCrew().getPiloting(); 
-        
+
+        //Set the base BTH
+        int base = 6 + te.getCrew().getPiloting() - ae.getCrew().getPiloting();
+
         toHit = new ToHitData(base, "base");
 
         IAero a = (IAero)ae;
-        
+
         //target type
         if(target instanceof SpaceStation) {
             toHit.addModifier(-1,"target is a space station");
@@ -185,7 +185,7 @@ public class RamAttackAction extends AbstractAttackAction {
         } else {
             toHit.addModifier(+4,"target is a fighter/small craft");
         }
-        
+
         //attacker type
         if(a instanceof SpaceStation) {
             toHit.addModifier(+0,"attacker is a space station");
@@ -198,30 +198,30 @@ public class RamAttackAction extends AbstractAttackAction {
         } else {
             toHit.addModifier(-2,"attacker is a fighter/small craft");
         }
-        
+
         //can the target unit move
         if(target.isImmobile() || te.getWalkMP() == 0)
             toHit.addModifier(-2,"target cannot spend thrust");
-            
+
         //sensor damage
-        if(a.getSensorHits() > 0) 
+        if(a.getSensorHits() > 0)
             toHit.addModifier(+1, "sensor damage");
-            
+
         //avionics damage
         int avionics = a.getAvionicsHits();
-        if(avionics > 3) 
+        if(avionics > 3)
             avionics = 3;
         if(avionics > 0)
             toHit.addModifier(avionics, "avionics damage");
-        
+
         //evading bonuses
         if (target.getTargetType() == Targetable.TYPE_ENTITY && te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
-        
+
         //determine hit direction
         toHit.setSideTable(te.sideTable(priorSrc));
-        
+
         toHit.setHitTable(ToHitData.HIT_NORMAL);
 
         // done!
@@ -256,7 +256,7 @@ public class RamAttackAction extends AbstractAttackAction {
                 ramStep = step;
                 ramSrc = step.getPosition();
                 ramEl = step.getElevation();
-            } 
+            }
         }
 
         // need to reach target
@@ -265,13 +265,13 @@ public class RamAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Could not reach target with movement");
         }
-        
+
         return toHit(game, target, ramSrc, ramEl, priorSrc, ramStep.getMovementType(true));
     }
 
     /**
      * Damage that an Aero does on a successful ramming attack
-     * 
+     *
      */
    public static int getDamageFor(IAero attacker, Entity target) {
        int avel = attacker.getCurrentVelocity();
@@ -281,13 +281,13 @@ public class RamAttackAction extends AbstractAttackAction {
        }
        return getDamageFor(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
    }
-   
+
    public static int getDamageFor(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(
                (((Entity)attacker).getWeight() / 10.0) * netv);
    }
-     
+
    /**
     * Damage that an Aero suffers after a successful charge.
     */
@@ -299,7 +299,7 @@ public class RamAttackAction extends AbstractAttackAction {
        }
        return getDamageTakenBy(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
    }
-   
+
    public static int getDamageTakenBy(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(

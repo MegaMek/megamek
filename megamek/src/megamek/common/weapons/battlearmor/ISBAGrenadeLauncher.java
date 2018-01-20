@@ -62,8 +62,6 @@
 /* PER IO there are only two types of BA Grenade launchers - Micro and Heavy.
  * Checking TM it also only shows the two types.  I think at some point this was
  * added and never modified.
- * 
+ *
  * Per the errata the Original GL becomes the Heavy Grenade Launcher
  */
-
-

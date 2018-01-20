@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -68,7 +68,7 @@ public class StringUtil {
      * <code>false</code>. The default is <code>false</code>. This ensures
      * the <code>String</code> will always be parsed against the English
      * "true"
-     * 
+     *
      * @param input - the <code>String</code> to be evaluated. This value may
      *            be <code>null</code>.
      * @return The <code>boolean</code> equivalent of the input.
@@ -94,7 +94,7 @@ public class StringUtil {
 
     /**
      * A utility for padding out a string with spaces.
-     * 
+     *
      * @param s the string to pad
      * @param n the desired length of the resultant string
      * @param bRightJustify true if the string should be right justified
@@ -119,7 +119,7 @@ public class StringUtil {
      * the end. The format of the stamp is dictated by the client option
      * "StampFormat", which must use the same formatting as Java's
      * SimpleDateFormat class.
-     * 
+     *
      * @param filename the String containing the filename (with extension)
      * @return the filname with date/time stamp added
      */
@@ -210,7 +210,7 @@ public class StringUtil {
             return false;
         }
     }
-    
+
     /**
      * Returns TRUE if the passed string is an integer value.
      *
@@ -229,5 +229,5 @@ public class StringUtil {
         } catch (NumberFormatException ex) {
             return false;
         }
-    }    
+    }
 }

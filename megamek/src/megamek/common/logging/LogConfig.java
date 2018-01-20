@@ -19,7 +19,7 @@ public class LogConfig {
     public static final String SIMPLE_LOGGING_PATTERN =
             "%d{HH:mm:ss,SSS} %p [%c] {%t} %m%n";  //NON-NLS
     public static final String CAT_MEGAMEK = "megamek"; //NON-NLS
-    
+
     private static final LogConfig instance = new LogConfig();
 
     private final AtomicBoolean simpleLoggingConfigured =

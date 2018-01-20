@@ -48,20 +48,20 @@ import megamek.common.options.OptionsConstants;
  *
  */
 public class BayMunitionsChoicePanel extends JPanel {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7741380967676720496L;
-    
+
     private final Entity entity;
     private final IGame game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
-    
+
     public BayMunitionsChoicePanel(Entity entity, IGame game) {
         this.entity = entity;
         this.game = game;
-        
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
@@ -89,7 +89,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
         }
     }
-    
+
     /**
      * Change the munition types of the bay ammo mounts to the selected values. If there are more
      * munition types than there were originally, additional ammo bin mounts will be added. If fewer,
@@ -143,26 +143,26 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
         }
     }
-    
+
     class AmmoRowPanel extends JPanel implements ChangeListener {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 7251618728823971065L;
-        
+
         private final JLabel lblTonnage = new JLabel();
-        
+
         private final Mounted bay;
         private final int at;
         private final int rackSize;
         private final int techBase;
         private final List<Mounted> ammoMounts;
-        
+
         private final List<JSpinner> spinners;
         private final List<AmmoType> munitions;
-        
+
         private double tonnage = 0;
-        
+
         AmmoRowPanel(Mounted bay, int at, int rackSize, int techBase, List<Mounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
@@ -171,7 +171,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
             Dimension spinnerSize =new Dimension(55, 25);
-            
+
             munitions = AmmoType.getMunitionsFor(at).stream()
                     .filter(this::includeMunition).collect(Collectors.toList());
             tonnage = ammoMounts.stream().mapToDouble(m -> m.getAmmoCapacity()).sum();
@@ -192,7 +192,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                 }
                 spinners.add(spn);
             }
-            
+
             setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -226,7 +226,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
             recalcMaxValues();
         }
-        
+
         private boolean includeMunition(AmmoType atype) {
             if (!atype.canAeroUse()
                     || (atype.getAmmoType() != at)
@@ -252,7 +252,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
             return true;
         }
-        
+
         private String createMunitionLabel(AmmoType atype) {
             if (atype.getAmmoType() == AmmoType.T_MML) {
                 if ((atype.getMunitionType() & (AmmoType.M_ARTEMIS_CAPABLE | AmmoType.M_ARTEMIS_V_CAPABLE))
@@ -264,7 +264,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis"); //$NON-NLS-1$  //$NON-NLS-2$
                 }
             }
-            
+
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE)? "-T":"";
                 if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
@@ -279,15 +279,15 @@ public class BayMunitionsChoicePanel extends JPanel {
                     return Messages.getString("CustomMechDialog.Barracuda") + tele; //$NON-NLS-1$
                 }
             }
-            
+
             if ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
                     || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
                 return Messages.getString("CustomMechDialog.Artemis"); //$NON-NLS-1$
             }
-            
+
             return Messages.getString("CustomMechDialog.StandardMunition"); //$NON-NLS-1$
         }
-        
+
         private void recalcMaxValues() {
             double[] currentWeight = new double[spinners.size()];
             double remaining = tonnage;

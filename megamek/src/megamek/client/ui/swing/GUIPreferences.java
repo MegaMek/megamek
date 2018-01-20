@@ -200,7 +200,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
-    
+
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
     public static String RAT_BV_MIN = "RATBVMin";
@@ -213,7 +213,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static String RAT_YEAR_MAX = "RATYearMax";
     public static String RAT_PAD_BV = "RATPadBV";
     public static String RAT_SELECTED_RAT = "RATSelectedRAT";
-    
+
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -272,7 +272,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
         store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
-        store.setDefault(ADVANCED_ECM_TRANSPARENCY, 0x80);        
+        store.setDefault(ADVANCED_ECM_TRANSPARENCY, 0x80);
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, "false");
@@ -380,10 +380,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_YEAR_MAX, "3150");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
-        
+
         store.setDefault(DEFAULT_WEAP_SORT_ORDER,
                 Entity.WeaponSortOrder.DEFAULT.ordinal());
-        
+
     }
 
     public void setDefault(String name, Color color) {
@@ -401,11 +401,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getAOHexShadows() {
         return store.getBoolean(AOHEXSHADOWS);
     }
-    
+
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
     }
-    
+
     public boolean getMmSymbol() {
         return store.getBoolean(MMSYMBOL);
     }
@@ -429,7 +429,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getChatLoungeTabs() {
         return store.getBoolean(CHAT_LOUNGE_TABS);
     }
-    
+
     public int getCustomUnitHeight() {
         return store.getInt(CUSTOM_UNIT_HEIGHT);
     }
@@ -473,7 +473,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getFiringSolutions() {
         return store.getBoolean(FIRING_SOLUTIONS);
     }
-    
+
     public boolean getMoveEnvelope() {
         return store.getBoolean(MOVE_ENVELOPE);
     }
@@ -501,11 +501,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getFovDarkenAlpha() {
         return store.getInt(FOV_DARKEN_ALPHA);
     }
-    
+
     public int getFovStripes() {
         return store.getInt(FOV_STRIPES);
     }
-    
+
     public boolean getFovGrayscale() {
         return store.getBoolean(FOV_GRAYSCALE);
     }
@@ -675,7 +675,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForDoomed() {
         return store.getBoolean(NAG_FOR_DOOMED);
     }
-    
+
     public boolean getNagForWiGELanding() {
         return store.getBoolean(NAG_FOR_WIGE_LANDING);
     }
@@ -715,7 +715,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShowMapHexPopup() {
         return store.getBoolean(SHOW_MAPHEX_POPUP);
     }
-    
+
     public boolean getShowWpsinTT() {
         return store.getBoolean(SHOW_WPS_IN_TT);
     }
@@ -783,7 +783,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShowUnitOverview(){
         return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
-    
+
     public String getSkinFile() {
         return store.getString(SKIN_FILE);
     }
@@ -875,10 +875,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setFiringSolutions(boolean state){
         store.setValue(FIRING_SOLUTIONS,state);
     }
-    
+
     public void setMoveEnvelope(boolean state){
         store.setValue(MOVE_ENVELOPE,state);
-    }   
+    }
 
     public void setFovHighlight(boolean state){
         store.setValue(FOV_HIGHLIGHT,state);
@@ -903,11 +903,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setFovDarkenAlpha(int i) {
         store.setValue(FOV_DARKEN_ALPHA,i);
     }
-    
+
     public void setFovStripes(int i) {
         store.setValue(FOV_STRIPES,i);
     }
-    
+
     public void setFovGrayscale(boolean state) {
         store.setValue(FOV_GRAYSCALE, state);
     }
@@ -1056,7 +1056,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setNagForDoomed(boolean b){
         store.setValue(NAG_FOR_DOOMED,b);
     }
-    
+
     public void setNagForWiGELanding(boolean b) {
         store.setValue(NAG_FOR_WIGE_LANDING, b);
     }
@@ -1088,7 +1088,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShowMapHexPopup(boolean state) {
         store.setValue(SHOW_MAPHEX_POPUP, state);
     }
-    
+
     public void setShowWpsinTT(boolean state) {
         store.setValue(SHOW_WPS_IN_TT, state);
     }
@@ -1168,11 +1168,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShowDamageLevel(boolean b){
         store.setValue(SHOW_DAMAGE_LEVEL, b);
     }
-    
+
     public void setSkinFile(String s) {
         store.setValue(SKIN_FILE, s);
     }
-    
+
     public void setDefaultWeaponSortOrder(int i) {
         store.setValue(DEFAULT_WEAP_SORT_ORDER, i);
     }
@@ -1232,7 +1232,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setRATNumInf(String v) {
         store.setValue(RAT_NUM_INF, v);
     }
-    
+
     public String getRATYearMin() {
         return store.getString(RAT_YEAR_MIN);
     }
@@ -1256,7 +1256,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setRATPadBV(boolean v) {
         store.setValue(RAT_PAD_BV, v);
     }
-    
+
     public String getRATSelectedRAT() {
         return store.getString(RAT_SELECTED_RAT);
     }
@@ -1284,10 +1284,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
         return Color.black;
     }
-    
+
     /**
      * Activates AntiAliasing for the <code>Graphics</code> graph
-     * if AA is activated in the Client settings. 
+     * if AA is activated in the Client settings.
      * @param graph Graphics context to activate AA for
      */
     public static void AntiAliasifSet(Graphics graph) {

@@ -36,7 +36,7 @@ public class EntityWeightClass {
     public static final int WEIGHT_LARGE_DROP = 9;
     public static final int WEIGHT_SMALL_WAR = 10;
     public static final int WEIGHT_LARGE_WAR = 11;
-    
+
     // Support Vehicles
     public static final int WEIGHT_SMALL_SUPPORT = 12;
     public static final int WEIGHT_MEDIUM_SUPPORT = 13;

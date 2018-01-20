@@ -86,15 +86,15 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
      * Models the probability of each individual weapon getting a kill shot.
      * We treat each weapon shot as a Bernoulli trial and compute the probiblity
      * of the target surviving each shot.  We can then take 1 - surviveChance to
-     * get the chance of getting a kill.  This model doesn't take into 
-     * consideration multiple weapons hitting the same location. 
-     *   
-     * @return The odds of getting a kill based on the odds of each individual 
+     * get the chance of getting a kill.  This model doesn't take into
+     * consideration multiple weapons hitting the same location.
+     *
+     * @return The odds of getting a kill based on the odds of each individual
      *      weapon getting a kill.  The result will be between 0 and 1.
      */
     synchronized double getKillProbability() {
         double surviveProbability = 1;
-        
+
         for (WeaponFireInfo weaponFireInfo : this) {
             surviveProbability *= 1 - weaponFireInfo.getKillProbability();
         }
@@ -126,12 +126,12 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         if (size() == 0) {
             return actionVector;
         }
-        
+
         if(getTwist() != 0) {
         	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
         		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
-        
+
         for (WeaponFireInfo weaponFireInfo : this) {
             actionVector.add(weaponFireInfo.getWeaponAttackAction());
         }
@@ -206,7 +206,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
 
         return true;
     }
-    
+
     @Override
     public String toString() {
         String desc = "Utility: " + utility + " ";

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -27,7 +27,7 @@ import java.awt.event.MouseEvent;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 
 /**
- * Class for drawing a simple polygon, used to display the polgyon areas for 
+ * Class for drawing a simple polygon, used to display the polgyon areas for
  * different locations on an Entity.
  *
  */
@@ -37,12 +37,12 @@ public class PMSimplePolygonArea implements PMHotArea {
      * References to the UnitDisplay for call-back purposes
      */
     private UnitDisplay unitDisplay;
-    
+
     /**
      * The location of systems corresponding to this polygon area
      */
     private int loc;
-    
+
     private ActionListener actionListener = null;
 
     public Color backColor = Color.lightGray;
@@ -77,7 +77,7 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     public PMSimplePolygonArea(Polygon p, UnitDisplay unitDisplay, int loc) {
         this(p, null, null, null, true, unitDisplay, loc);
-        
+
     }
 
     // PMElement interface methods

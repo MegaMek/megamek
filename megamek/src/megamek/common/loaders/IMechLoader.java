@@ -27,7 +27,7 @@ import megamek.common.Entity;
  * with the getMech method or throw an EntityLoadingException. Implementing
  * classes will probably be constructed with a file, or file location as an
  * argument.
- * 
+ *
  * @author Ben
  * @version
  */

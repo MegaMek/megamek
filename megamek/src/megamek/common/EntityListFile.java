@@ -515,13 +515,13 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
         output.write("<record version=\"" + MegaMek.VERSION + "\" >");
-        
+
         ArrayList<Entity> living = new ArrayList<Entity>();
         ArrayList<Entity> allied = new ArrayList<Entity>();
         ArrayList<Entity> salvage = new ArrayList<Entity>();
         ArrayList<Entity> retreated = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
-        Hashtable<String, String> kills = new Hashtable<String, String>();        
+        Hashtable<String, String> kills = new Hashtable<String, String>();
 
         //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
         Iterator<Entity> entities = client.getGame().getEntities();
@@ -584,7 +584,7 @@ public class EntityListFile {
             }
             devastated.add(entity);
         }
-        
+
         if(!living.isEmpty()) {
             output.write(CommonConstants.NL);
             output.write(indentStr(1) + "<survivors>");
@@ -810,7 +810,7 @@ public class EntityListFile {
                 writeCrewAttributes(output, entity, crew);
                 output.write("\">");
                 output.write(CommonConstants.NL);
-                
+
                 for (int pos = 0; pos < crew.getSlotCount(); pos++) {
                     if (crew.isMissing(pos)) {
                         continue;
@@ -840,7 +840,7 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
-            
+
             // Aero stuff that also applies to LAMs
             if (entity instanceof IAero) {
                 IAero a = (IAero)entity;
@@ -902,7 +902,7 @@ public class EntityListFile {
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                //large craft bays and doors. 
+                //large craft bays and doors.
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
                 	for (Bay nextbay : a.getTransportBays()) {
                 		output.write(indentStr(indentLvl+1) + "<transportBay index=\"" + nextbay.getBayNumber() + "\">");
@@ -935,7 +935,7 @@ public class EntityListFile {
 
                 // general aero crits
                 output.write(EntityListFile.getAeroCritString(a));
-                
+
                 // dropship only crits
                 if (a instanceof Dropship) {
                 	Dropship d = (Dropship) a;
@@ -1007,7 +1007,7 @@ public class EntityListFile {
                 output.write(indentStr(indentLvl+1) + "</c3iset>");
                 output.write(CommonConstants.NL);
             }
-            
+
             // Write the NC3 Data if needed
             if (entity.hasNavalC3()) {
                 output.write(indentStr(indentLvl+1) + "<NC3set>");
@@ -1037,7 +1037,7 @@ public class EntityListFile {
 
     /**
      * Writes crew attributes that are tracked individually for multi-crew cockpits.
-     * 
+     *
      * @param output
      * @param entity
      * @param crew
@@ -1098,7 +1098,7 @@ public class EntityListFile {
             output.write(crew.getExternalIdAsString(pos));
         }
     }
-    
+
     private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew,
             boolean rpgGunnery) throws IOException {
         output.write("\" gunneryAero=\"");
@@ -1113,11 +1113,11 @@ public class EntityListFile {
         }
         output.write("\" pilotingAero=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
-    }    
+    }
 
     /**
      * Writes attributes that pertain to entire crew.
-     * 
+     *
      * @param output
      * @param entity
      * @param crew
@@ -1196,7 +1196,7 @@ public class EntityListFile {
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
-    
+
     // Aero crits
     private static String getAeroCritString(Aero a) {
 
@@ -1261,7 +1261,7 @@ public class EntityListFile {
     private static String getDropshipCritString(Dropship a) {
     	String retVal = "      <dcriticals";
     	String critVal = "";
-    	
+
     	//crits
     	if (a.isDockCollarDamaged()) {
     		critVal = critVal.concat(" dockingcollar=\"none\"");
@@ -1269,7 +1269,7 @@ public class EntityListFile {
     	if (a.isKFBoomDamaged()) {
     		critVal = critVal.concat(" kfboom=\"none\"");
     	}
-    	
+
         if (!critVal.equals("")) {
             // then add beginning and end
             retVal = retVal.concat(critVal);

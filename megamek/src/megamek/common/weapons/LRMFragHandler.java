@@ -52,7 +52,7 @@ public class LRMFragHandler extends LRMHandler {
 
     /**
      * Calculate the damage per hit.
-     * 
+     *
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override
@@ -86,7 +86,7 @@ public class LRMFragHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      * megamek.common.Building, int, boolean)
@@ -133,7 +133,7 @@ public class LRMFragHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector
      * , megamek.common.Building, int, boolean, Coords)

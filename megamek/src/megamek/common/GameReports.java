@@ -27,7 +27,7 @@ import java.util.Vector;
 public class GameReports implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2388197938278797669L;
     private Vector<Vector<Report>> reports;

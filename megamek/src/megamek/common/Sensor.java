@@ -200,7 +200,7 @@ public class Sensor implements Serializable {
         // null sig
         switch (type) {
             case (TYPE_BAP):
-            case (TYPE_BAPP):    
+            case (TYPE_BAPP):
             case (TYPE_EW_EQUIPMENT):
                 if (te.isVoidSigActive()) {
                     mod += 6;
@@ -347,11 +347,11 @@ public class Sensor implements Serializable {
 
     /**
      * Computes the sensor check modifier for ECM.
-     * 
+     *
      * @param en
      * @param allECMInfo  A collection of ECMInfo for all entities, this value
      *                      can be null and it will be computed when it's
-     *                      needed, however passing in the pre-computed 
+     *                      needed, however passing in the pre-computed
      *                      collection is much faster
      * @return
      */

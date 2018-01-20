@@ -36,7 +36,7 @@ import java.util.zip.ZipFile;
  * author plans to eventually handle nested ZIP files, but the effort was deemed
  * to be unnecessary for the needs that led to the initial implementation.
  * Created on January 18, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
@@ -63,7 +63,7 @@ public class ZippedItems implements Categorized {
 
     /**
      * Identify when a name belongs to a ZIP file.
-     * 
+     *
      * @param name - the <code>String</code> which may be a ZIP file name.
      *            This value must not be <code>null</code>.
      * @return <code>true</code> if the name is for a ZIP file.
@@ -85,7 +85,7 @@ public class ZippedItems implements Categorized {
      * note, the name of any directories in the ZIP file will be added to the
      * root category name to create the name of the category names of the
      * directories.
-     * 
+     *
      * @param zipFile - the <code>File</code> object for the ZIP file
      *            containing the image files. All files in this ZIP file, will
      *            be included in this collection, categorized by directory. This
@@ -261,7 +261,7 @@ public class ZippedItems implements Categorized {
 
     /**
      * Get the names of all the categories.
-     * 
+     *
      * @return an <code>Enumeration</code> of <code>String</code> names.
      *         This value will not be <code>null</code>, but it may be empty.
      */
@@ -271,7 +271,7 @@ public class ZippedItems implements Categorized {
 
     /**
      * Get the names of all the items in one of the categories.
-     * 
+     *
      * @param categoryName - the <code>String</code> name of the category
      *            whose item names are required.
      * @return an <code>Enumeration</code> of <code>String</code> names.
@@ -288,7 +288,7 @@ public class ZippedItems implements Categorized {
 
     /**
      * Get the indicated item from the correct catagory.
-     * 
+     *
      * @param categoryName - the <code>String</code> name of the category
      *            whose item names are required.
      * @param itemName - the <code>String</code> name of the indicated item.

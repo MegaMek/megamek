@@ -43,14 +43,14 @@ import megamek.common.Warship;
 /**
  * This program will generate a list of all of the units that use the default
  * (generic) icons.
- * 
+ *
  * @author arlith
  * @date January 2016
  */
 public class GenerateGenericIconList implements MechSummaryCache.Listener {
 
     private static MechSummaryCache mechSummaryCache = null;
-    
+
     public static void main(String[] args) {
         boolean ignoreUnofficial = true;
         for (int i = 0; i < args.length; i++) {
@@ -64,7 +64,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                 return;
             }
         }
-        
+
         GenerateGenericIconList gen = new GenerateGenericIconList();
         mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);
         mechSummaryCache.addListener(gen);
@@ -81,10 +81,10 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         }
         int genericCount = 0;
         Map<String, List<String>> typeNameMap = new HashMap<>();
-        
+
         System.out.println("\n"); //$NON-NLS-1$
         System.out.println("Units using Generic Icons:"); //$NON-NLS-1$
-        
+
         for (int i = 0; i < ms.length; i++) {
             Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                     .getEntryName());
@@ -121,11 +121,11 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                     names = new ArrayList<>();
                     typeNameMap.put(type, names);
                 }
-                names.add(name);       
-                genericCount++;        
+                names.add(name);
+                genericCount++;
             }
         }
-        
+
         for (String type : typeNameMap.keySet()) {
             System.out.println(type);
             List<String> names = typeNameMap.get(type);
@@ -134,7 +134,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
             }
             System.out.println("\n");
         }
-        
+
         System.out.println("\n");
         System.out.println("Total units with generic icons: " + genericCount);
         for (String type : typeNameMap.keySet()) {
@@ -142,7 +142,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                     + typeNameMap.get(type).size());
         }
     }
-    
+
     public Entity loadEntity(File f, String entityName) {
         Entity entity = null;
         try {
@@ -152,5 +152,5 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         }
         return entity;
     }
-    
+
 }

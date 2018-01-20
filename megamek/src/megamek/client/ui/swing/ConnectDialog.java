@@ -21,7 +21,7 @@ import megamek.common.preference.PreferenceManager;
  */
 public class ConnectDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5895056240077042429L;
     public String playerName;

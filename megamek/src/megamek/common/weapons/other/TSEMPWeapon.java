@@ -23,7 +23,7 @@ import megamek.server.Server;
 
 /**
  * Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon.  Found in FM:3145 pg 255.
- * 
+ *
  * @author arlith
  *
  */
@@ -50,10 +50,10 @@ public class TSEMPWeapon extends EnergyWeapon {
         explosive = true;
         explosionDamage = 10;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -63,6 +63,6 @@ public class TSEMPWeapon extends EnergyWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new TSEMPHandler(toHit, waa, game, server);
-    }    
+    }
 
 }

@@ -120,7 +120,7 @@ public class BasicPathRankerTest {
         if (!StringUtil.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
-    }   
+    }
 
     @Test
     public void testGetMovePathSuccessProbability() {

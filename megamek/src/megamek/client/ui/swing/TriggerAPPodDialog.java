@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -46,7 +46,7 @@ import megamek.common.actions.TriggerAPPodAction;
  */
 public class TriggerAPPodDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9009039614015364943L;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -87,7 +87,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
 
         /**
          * See if this AP Pod should be triggered
-         * 
+         *
          * @return <code>true</code> if the pod should be triggered.
          */
         public boolean isTriggered() {
@@ -96,7 +96,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
 
         /**
          * Get the equipment number of this AP Pod.
-         * 
+         *
          * @return the <code>int</code> of the pod.
          */
         public int getNum() {
@@ -107,7 +107,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
     /**
      * Display a dialog that shows the AP Pods on the entity, and allows the
      * player to fire any active pods.
-     * 
+     *
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that can fire AP Pods.
      */
@@ -214,7 +214,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
 
     /**
      * Get the trigger actions that the user selected.
-     * 
+     *
      * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
      *         objects that match the user's selections.
      */

@@ -69,12 +69,12 @@ public class Report implements Serializable {
      */
 
     private static final long serialVersionUID = -5586008091586682078L;
-        
+
     private static final int MESSAGE_NONE = -1;
-    
+
     /** Report Type: visible to all players. */
     public static final int PUBLIC = 0;
-    
+
     /**
      * Report Type: visible to all players, but all data marked for obscuration
      * remains hidden. Note: Not used at this time, since all reports are
@@ -82,17 +82,17 @@ public class Report implements Serializable {
      * <code>public</code>.
      */
     public static final int OBSCURED = 1;
-    
+
     /**
      * Report is only visible to those players who can see the subject. Note:
      * Not used at this time, since all reports are considered
      * <code>obscured</code> unless explicitly marked <code>public</code>.
      */
     public static final int HIDDEN = 2;
-    
+
     /** Testing only - remove me later. */
     public static final int TESTING = 3;
-    
+
     /**
      * Messages which should be sent only to the player indicated by "player"
      */
@@ -105,10 +105,10 @@ public class Report implements Serializable {
 
     /** Number of spaces to use per indentation level. */
     private static final int DEFAULT_INDENTATION = 4;
-    
+
     /** Required - associates this object with its text. */
     public int messageId = Report.MESSAGE_NONE;
-    
+
     /** The number of spaces this report should be indented. */
     private int indentation = 0;
 
@@ -134,7 +134,7 @@ public class Report implements Serializable {
      * then the report will be considered <code>public</code>.
      */
     public transient int subject = Entity.NONE;
-    
+
     /**
      * The player this report concerns, if applicable. This should be filled in
      * if this report is not public and still does not belong to a specific
@@ -147,7 +147,7 @@ public class Report implements Serializable {
      * to be obscured before sending to clients. This only applies when the
      * report type is "obscured".
      */
-    private Hashtable<Integer, Boolean> obscuredIndexes = 
+    private Hashtable<Integer, Boolean> obscuredIndexes =
             new Hashtable<Integer, Boolean>();
 
     /**

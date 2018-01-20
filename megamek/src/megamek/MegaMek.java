@@ -778,7 +778,7 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-                        
+
                         BattleForceElement bfe = new BattleForceElement(entity);
                         bfe.writeCsv(w);
                     }
@@ -821,7 +821,7 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-                        
+
                         AlphaStrikeElement ase = new AlphaStrikeElement(entity);
                         ase.writeCsv(w);
                    }

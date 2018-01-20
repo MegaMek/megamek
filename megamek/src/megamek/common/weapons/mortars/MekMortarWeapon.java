@@ -60,7 +60,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        
+
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_AIRBURST) {
@@ -78,7 +78,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         // If it doesn't match other types, it's the default armor-piercing
         return new MekMortarHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         if (range > getLongRange()) {

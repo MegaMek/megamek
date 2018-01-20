@@ -42,13 +42,13 @@ public class Jumpship extends Aero {
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
-    
+
     public static final int DRIVE_CORE_STANDARD    = 0;
     public static final int DRIVE_CORE_COMPACT     = 1;
     public static final int DRIVE_CORE_SUBCOMPACT  = 2;
     public static final int DRIVE_CORE_NONE        = 3;
     public static final int DRIVE_CORE_PRIMITIVE   = 4;
-    
+
     // The percentage of the total unit weight taken up by the drive core. The value
     // given for primitive assumes a 30ly range, but the final value has to be computed.
     private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
@@ -98,12 +98,12 @@ public class Jumpship extends Aero {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
     }
-    
-    
+
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
-    
+
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -113,7 +113,7 @@ public class Jumpship extends Aero {
     public void setASEWAffected(int arc, int turns) {
         asewAffectedTurns[arc] = turns;
     }
-    
+
     /*
      * Returns the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -133,7 +133,7 @@ public class Jumpship extends Aero {
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
@@ -142,7 +142,7 @@ public class Jumpship extends Aero {
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
-    
+
     @Override
     public int locations() {
         return 6;
@@ -338,7 +338,7 @@ public class Jumpship extends Aero {
     public int getNOtherCrew() {
         return nOtherCrew;
     }
-    
+
     @Override
     public double getFuelPointsPerTon() {
         double ppt;
@@ -428,11 +428,11 @@ public class Jumpship extends Aero {
     public boolean canJump() {
         return kf_integrity > 0;
     }
-    
+
     public int getDriveCoreType() {
         return driveCoreType;
     }
-    
+
     public void setDriveCoreType(int driveCoreType) {
         this.driveCoreType = driveCoreType;
     }
@@ -443,14 +443,14 @@ public class Jumpship extends Aero {
     public int getJumpRange() {
         return jumpRange;
     }
-    
+
     /**
      * Set maximum jump range (used for primitive jumpships)
      */
     public void setJumpRange(int range) {
         jumpRange = range;
     }
-    
+
     /**
      * @return The weight of the jump drive core for this unit
      */
@@ -459,7 +459,7 @@ public class Jumpship extends Aero {
         if (driveCoreType == DRIVE_CORE_PRIMITIVE) {
             pct = 0.05 + 0.03 * jumpRange;
         }
-        return Math.ceil(getWeight() * pct); 
+        return Math.ceil(getWeight() * pct);
     }
 
     // different firing arcs
@@ -1145,8 +1145,8 @@ public class Jumpship extends Aero {
         // Sail
         driveCost[driveIdx++] += 50000 * (30 + (weight / 7500));
         // Charging System
-        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
-        
+        driveCost[driveIdx++] += 500000 + (200000 * getDocks());
+
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
         }
@@ -1154,7 +1154,7 @@ public class Jumpship extends Aero {
         if (hasLF()) {
             driveCosts *= 3;
         }
-        
+
         costs[costIdx++] += driveCosts;
 
         // K-F Drive Support Systems
@@ -1359,7 +1359,7 @@ public class Jumpship extends Aero {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // accumulate some more 
+        // accumulate some more
         // We assume that  will be accumulated. If this is proven wrong by
         // the movement
         // then we make the proper adjustments in server#processMovement
@@ -1437,7 +1437,7 @@ public class Jumpship extends Aero {
     public boolean usesWeaponBays() {
         return true;
     }
-    
+
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> moves) {
         moves.put("k", (int)(getStationKeepingThrust() * 10));
@@ -1459,12 +1459,12 @@ public class Jumpship extends Aero {
     public int getBattleForceStructurePoints() {
         return 1;
     }
-    
+
     @Override
     public int getNumBattleForceWeaponsLocations() {
         return 4;
     }
-    
+
     @Override
     public String getBattleForceLocationName(int index) {
         // Remove leading F from FLS and FRS
@@ -1508,19 +1508,19 @@ public class Jumpship extends Aero {
         }
         return 0;
     }
-    
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         specialAbilities.put(BattleForceSPA.KF, null);
         if (hasLF()) {
             specialAbilities.put(BattleForceSPA.LF, null);
-        }        
+        }
         if (getNCrew() >= 60) {
             specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 120.0));
         }
     }
-    
+
     @Override
     public boolean isFighter() {
         return false;

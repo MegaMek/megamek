@@ -81,23 +81,23 @@ import megamek.server.SmokeCloud;
 public class Precognition implements Runnable {
 
     private final Princess owner;
-    
+
     /**
      *  Precognition's version of the game, which should mirror the game in
      *  Princess, but should not be the same reference.  If Precognition and
      *  Princess share the same game reference, than this will cause concurrency
-     *  issues. 
+     *  issues.
      */
     private IGame game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
-     * Computing ECMInfo requires iterating over all Entities in the Game and 
+     * Computing ECMInfo requires iterating over all Entities in the Game and
      * this can be an expensive operation, so it's cheaper to use cache it and
      * re-use the cache.
      */
     private List<ECMInfo> ecmInfo;
-        
+
     private PathEnumerator pathEnumerator;
     private final ReentrantReadWriteLock PATH_ENUMERATOR_LOCK = new ReentrantReadWriteLock();
 
@@ -133,7 +133,7 @@ public class Precognition implements Runnable {
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
                 getGame().getEntitiesVector());
     }
-    
+
     /**
      * Pared down version of Client.handlePacket; essentially it's only looking
      * for packets that update Game.  This ensures that Precognition's Game
@@ -167,7 +167,7 @@ public class Precognition implements Runnable {
                 getGame().removePlayer(c.getIntValue(0));
                 break;
             case Packet.COMMAND_CHAT:
-                getGame().processGameEvent(new GamePlayerChatEvent(this, null, 
+                getGame().processGameEvent(new GamePlayerChatEvent(this, null,
                         (String) c.getObject(0)));
                 break;
             case Packet.COMMAND_ENTITY_ADD:
@@ -403,7 +403,7 @@ public class Precognition implements Runnable {
                 if (getDone().get()) {
                     return;
                 }
-                
+
                 Integer entityId = getDirtyUnits().pollFirst();
                 Entity entity = getGame().getEntity(entityId);
                 if (entity != null) {
@@ -677,7 +677,7 @@ public class Precognition implements Runnable {
             PATH_ENUMERATOR_LOCK.writeLock().unlock();
         }
     }
-    
+
     public List<ECMInfo> getECMInfo() {
         return Collections.unmodifiableList(ecmInfo);
     }
@@ -731,7 +731,7 @@ public class Precognition implements Runnable {
                            LogLevel.DEBUG, "GAME_LOCK read unlocked.");
         }
     }
-   
+
     /**
      * Returns the individual player assigned the index parameter.
      */
@@ -927,7 +927,7 @@ public class Precognition implements Runnable {
             }
         }
     }
-    
+
     /**
      * receive and process an entity nova network mode change packet
      *

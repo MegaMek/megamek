@@ -11,7 +11,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 
 public class TextMarkerSprite extends HexSprite {
-    
+
     private String spriteText;
     private Color spriteColor;
 
@@ -39,13 +39,13 @@ public class TextMarkerSprite extends HexSprite {
         Rectangle2D rect = fm.getStringBounds(spriteText, graph);
 
         float factor = 1;
-        if (rect.getHeight() > bounds.getHeight()) 
+        if (rect.getHeight() > bounds.getHeight())
             factor = (float)bounds.getHeight()/(float)rect.getHeight();
         if ((rect.getWidth()*factor) > bounds.getWidth())
             factor = Math.min(factor, ((float)bounds.getWidth()/(float)rect.getWidth()));
         // make smaller to actually fit the hex shape
         factor = factor*0.7f;
-        
+
         // set the font and draw the text
         Font textFontS = new Font("SansSerif", 0, (int)(factor*1000));
         graph.setFont(textFontS);

@@ -77,14 +77,14 @@ public class EntityTest {
         actual = testEntity.calculateBattleValue(true, true);
         TestCase.assertEquals(expected, actual);
     }
-    
+
     @Test
     public void testCalculateWeight() {
-        File f; 
+        File f;
         MechFileParser mfp;
         Entity e;
         int expectedWeight, computedWeight;
-        
+
         // Test 1/1
         try {
             f = new File("data/mechfiles/mechs/3050U/Exterminator EXT-4A.mtf");
@@ -97,5 +97,5 @@ public class EntityTest {
             TestCase.fail(exc.getMessage());
         }
     }
-    
+
 }

@@ -21,10 +21,10 @@ import megamek.common.UnitType;
  * Base functionality for chassis and model records for RAT generator.
  *
  * @author Neoancient
- * 
+ *
  */
 public class AbstractUnitRecord {
-	
+
 	protected String chassis = "";
 	protected boolean omni;
 	protected boolean clan;
@@ -39,10 +39,10 @@ public class AbstractUnitRecord {
 		clan = false;
 		includedFactions = new HashSet<String>();
 	}
-	
+
 	/**
 	 * Adjusts availability rating for the first couple years after introduction.
-	 * 
+	 *
 	 * @param ar The AvailabilityRecord for the chassis or model.
 	 * @param rating The force equipment rating.
 	 * @param ratingLevels The number of equipment rating levels used by the faction.
@@ -52,7 +52,7 @@ public class AbstractUnitRecord {
 	public int calcAvailability(AvailabilityRating ar,
 			int rating, int ratingLevels, int year) {
 		int retVal = ar.adjustForRating(rating, ratingLevels);
-		
+
 		if (introYear == year) {
 			retVal -= 2;
 		}
@@ -110,7 +110,7 @@ public class AbstractUnitRecord {
 	public void setIntroYear(int year) {
 		this.introYear = year;
 	}
-	
+
 	public HashSet<String> getIncludedFactions() {
 		return includedFactions;
 	}
@@ -153,6 +153,5 @@ public class AbstractUnitRecord {
 			return UnitType.SPACE_STATION;
 		}
 		return -1;
-	}	
+	}
 }
-

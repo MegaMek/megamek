@@ -1,7 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -31,7 +31,7 @@ import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.util.MegaMekFile;
 
-/** 
+/**
  * This class sets up a random name generator that can then
  * be used to generate random pilot names. it will have a couple different
  * settings and flexible input files
@@ -81,7 +81,7 @@ public class RandomNameGenerator implements Serializable {
 
     /** Default filename for the list of male first names. */
     private static final String FILENAME_FIRSTNAMES_MALE = "firstnames_male.txt"; //$NON-NLS-1$
-    
+
     /** Default filename for the list of female first names. */
     private static final String FILENAME_FIRSTNAMES_FEMALE = "firstnames_female.txt"; //$NON-NLS-1$
 
@@ -294,18 +294,18 @@ public class RandomNameGenerator implements Serializable {
             pcs.removePropertyChangeListener(listener);
         }
     }
-    
+
     protected void setInitialized(boolean initialized) {
         pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
     }
-    
+
     public boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
      * Generate a single random name
-     * 
+     *
      * @return - a string giving the name
      */
     public String generate() {
@@ -381,7 +381,7 @@ public class RandomNameGenerator implements Serializable {
 
     /**
      * randomly select gender
-     * 
+     *
      * @return true if female
      */
     public boolean isFemale() {
@@ -416,7 +416,7 @@ public class RandomNameGenerator implements Serializable {
         }
         return rng;
     }
-    
+
     // Deactivated methods
     public void dispose() {}
     public void clear() {}

@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * Kicks a player off the server.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -69,7 +69,7 @@ public class KickCommand extends ServerCommand {
                 server.sendServerChat(server.getPlayer(connId).getName()
                         + " attempts to kick player #" + kickedId + " ("
                         + server.getPlayer(kickedId).getName() + ")...");
-                
+
                 server.send(kickedId, new Packet(Packet.COMMAND_CLOSE_CONNECTION));
                 server.getConnection(kickedId).close();
 

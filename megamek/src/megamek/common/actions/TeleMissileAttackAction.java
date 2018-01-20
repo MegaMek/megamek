@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
@@ -14,7 +14,7 @@
 
 /*
  * TeleMissileAttackAction.java
- * 
+ *
  */
 
 package megamek.common.actions;
@@ -30,13 +30,13 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * Represents one tele-controlled missile attack
- * 
+ *
  * @author Ben Mazur
  */
 public class TeleMissileAttackAction extends AbstractAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1054613811287285482L;
 
@@ -44,20 +44,20 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());
     }
 
-    public static int getDamageFor(Entity entity) {      
+    public static int getDamageFor(Entity entity) {
         if(entity instanceof TeleMissile) {
             return ((TeleMissile)entity).getDamageValue();
         }
         return 0;
     }
-    
+
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
     public ToHitData toHit(IGame game) {
         return toHit(game, game.getTarget(getTargetType(), getTargetId()));
     }
-    
+
     public ToHitData toHit(IGame game, Targetable target) {
         final Entity ae = getEntity(game);
 
@@ -70,7 +70,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         if (target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
-        
+
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -85,18 +85,18 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         ToHitData toHit = new ToHitData(2, "base");
 
         TeleMissile tm = (TeleMissile)ae;
-        
+
         //thrust used
-        if(ae.mpUsed > 0) 
+        if(ae.mpUsed > 0)
             toHit.addModifier(ae.mpUsed, "thrust used");
-        
+
         //out of fuel
-        if(tm.getCurrentFuel() <= 0) 
+        if(tm.getCurrentFuel() <= 0)
             toHit.addModifier(+6, "out of fuel");
-        
+
         //modifiers for the originating unit need to be added later, because
         //they may change as a result of damage
-        
+
         // done!
         return toHit;
     }

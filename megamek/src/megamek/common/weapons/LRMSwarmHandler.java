@@ -57,7 +57,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -206,7 +206,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 && (toHit.getThruBldg() == null)) {
             bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
         }
-        
+
         // Attacking infantry in buildings from same building
         if (targetInBuilding && (bldg != null)
                 && (toHit.getThruBldg() != null)
@@ -358,7 +358,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building, java.util.Vector)
@@ -429,7 +429,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override

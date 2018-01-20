@@ -20,7 +20,7 @@ import megamek.server.Server;
 
 /**
  * This command allows a player to join a specified team.
- * 
+ *
  * @author arlith
  */
 public class JoinTeamCommand extends ServerCommand {
@@ -28,7 +28,7 @@ public class JoinTeamCommand extends ServerCommand {
     public static String SERVER_VOTE_PROMPT_MSG = "All players with an assigned team "
             + "must allow this change.  Use /allowTeamChange "
             + "to allow this change.";
-    
+
     public JoinTeamCommand(Server server) {
         super(server, "joinTeam", "Switches a player's team at the end phase. "
                 + "Usage: /joinTeam # where the first number is the team "
@@ -38,7 +38,7 @@ public class JoinTeamCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -46,7 +46,7 @@ public class JoinTeamCommand extends ServerCommand {
         try {
             IPlayer player = server.getPlayer(connId);
             int numEntities = server.getGame().getEntitiesOwnedBy(player);
-            
+
             if (args.length != 2) {
                 server.sendServerChat(connId, "Incorrect number of arguments "
                         + "for joinTeam command!  Expected 1, received, "
@@ -54,9 +54,9 @@ public class JoinTeamCommand extends ServerCommand {
                 server.sendServerChat(connId, getHelp());
                 return;
             }
-            
+
             int teamId = Integer.parseInt(args[1]);
-            
+
             if(IPlayer.TEAM_UNASSIGNED == teamId && numEntities != 0) {
                 server.sendServerChat(connId, "Player must have no more " +
                         "units to join the unassigned team!");
@@ -75,9 +75,9 @@ public class JoinTeamCommand extends ServerCommand {
                             + SERVER_VOTE_PROMPT_MSG);
                 }
             }
-            
+
             server.requestTeamChange(teamId, player);
-            
+
             for (IPlayer p : server.getGame().getPlayersVector()){
                 p.setAllowTeamChange(false);
             }

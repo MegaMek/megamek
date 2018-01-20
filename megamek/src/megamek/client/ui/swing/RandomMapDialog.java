@@ -105,7 +105,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
                            MapSettings mapSettings) {
         this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
     }
-    
+
     /**
      * Constructor for this dialog.
      *
@@ -325,7 +325,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
                 return fileChooser.getSelectedFile();
             } else {
                 return new File(fileChooser.getSelectedFile() + extension);
-            }            
+            }
         }
         return null;
     }

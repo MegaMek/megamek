@@ -45,7 +45,7 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     // some index offset values required
     private static final int REAR_AREA_OFFSET = 7;
     private static final int INT_STRUCTURE_OFFSET = 11;
-    
+
     private UnitDisplay unitDisplay;
 
     // Array of polygonal areas - parts of mech body.

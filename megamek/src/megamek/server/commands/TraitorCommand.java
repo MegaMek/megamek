@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.server.commands;
 
@@ -22,7 +22,7 @@ public class TraitorCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -51,7 +51,7 @@ public class TraitorCommand extends ServerCommand {
                 server.sendServerChat(connId, ent.getDisplayName() + " will switch to " + player.getName() + "'s side at the end of this turn.");
                 ent.setTraitorId(pid);
             }
-            
+
         } catch (NumberFormatException nfe) {
         } catch (NullPointerException npe) {
         } catch (IndexOutOfBoundsException ioobe) {

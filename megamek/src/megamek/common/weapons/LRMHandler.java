@@ -170,7 +170,7 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-            
+
         } else if (((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -192,8 +192,8 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 1;
             }
-            
-            
+
+
         } else if (((mLinker != null)
                 && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
@@ -267,14 +267,14 @@ public class LRMHandler extends MissileWeaponHandler {
 
         int rackSize = wtype.getRackSize();
         boolean minRangeELRMAttack = false;
-        
+
         // ELRMs only hit with half their rack size rounded up at minimum range.
         if (wtype instanceof ExtendedLRMWeapon
                 && (nRange <= wtype.getMinimumRange())) {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;
         }
-        
+
         if (allShotsHit()) {
             missilesHit = rackSize;
         } else {

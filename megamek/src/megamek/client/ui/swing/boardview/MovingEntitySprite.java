@@ -70,7 +70,7 @@ class MovingEntitySprite extends Sprite {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(entity,
                     facing, -1));
             shadow = bv.getScaledImage(shadow, true);
-            
+
             g.drawImage(shadow, x, y
                     + (int) (elevation * BoardView1.HEX_ELEV * bv.scale),
                     observer);
@@ -93,7 +93,7 @@ class MovingEntitySprite extends Sprite {
         if (bv.useIsometric() && (elevation < 0)) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(entity,
                     facing, -1));
-            shadow = bv.getScaledImage(shadow, true);         
+            shadow = bv.getScaledImage(shadow, true);
 
             g.drawImage(shadow, x, y, observer);
         }

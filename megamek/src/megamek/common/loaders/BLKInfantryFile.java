@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,13 +14,13 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
  * This class loads Infantry BLK files.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $revision:$
  */
@@ -145,7 +145,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
-        
+
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName);
@@ -162,7 +162,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setSpecializations(Integer.valueOf(dataFile
                     .getDataAsString("specialization")[0]));
         }
-        
+
         if (dataFile.exists("encumberingarmor")) {
             t.setArmorEncumbering(true);
         }
@@ -205,7 +205,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             // If we just have the tag without values, take defaults
             if ((amSkill == null) || (amSkill.length < 1)) {
                 // TM lists AM skill defaults on pg 40
-                if ((t.getMovementMode() == EntityMovementMode.INF_MOTORIZED) 
+                if ((t.getMovementMode() == EntityMovementMode.INF_MOTORIZED)
                         || (t.getMovementMode() == EntityMovementMode.INF_JUMP)) {
                     t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_JUMP);
                 } else {
@@ -217,7 +217,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         } else {
             t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_UNTRAINED);
         }
-        
+
         /* Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official
          * unit description.
          */

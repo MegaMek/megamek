@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.client.ui.swing.boardview;
 
@@ -23,7 +23,7 @@ import megamek.common.VTOL;
  *
  */
 class VTOLAttackSprite extends Sprite {
-    
+
     private BoardView1 bv;
     private Entity entity;
     private List<Coords> targets;
@@ -31,7 +31,7 @@ class VTOLAttackSprite extends Sprite {
 
     VTOLAttackSprite(BoardView1 boardView, Entity en) {
         super(boardView);
-        
+
         this.bv = boardView;
         this.entity = en;
         spriteColor = PlayerColors.getColor(en.getOwner().getColorIndex());
@@ -65,7 +65,7 @@ class VTOLAttackSprite extends Sprite {
         bounds = new Rectangle(x1 - 1, y1 - 1, x2 + (int)hex.getBounds().getWidth() + 1,
                 y2 + (int)hex.getBounds().getHeight() + 1);
     }
-    
+
     @Override
     public boolean isReady() {
         return targets != null;
@@ -77,7 +77,7 @@ class VTOLAttackSprite extends Sprite {
             bv.drawHexBorder(g, bv.getHexLocation(c), spriteColor, 0, 3);
         }
     }
-    
+
     public Entity getEntity() {
         return entity;
     }

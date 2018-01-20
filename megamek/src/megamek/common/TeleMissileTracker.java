@@ -24,7 +24,7 @@ import java.util.Vector;
 public class TeleMissileTracker implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6913144265531983734L;
     /**
@@ -42,19 +42,19 @@ public class TeleMissileTracker implements Serializable {
     public void addMissile(int wId, int missileId) {
         missiles.put(wId, missileId);
     }
-    
+
     public void removeMissile(int wId) {
         missiles.remove(wId);
     }
-    
+
     public int getMissile(int wId) {
         return missiles.get(wId);
     }
-    
+
     public boolean containsLauncher(int wId) {
         return missiles.containsKey(wId);
     }
-    
+
     public Vector<Integer> getMissiles() {
         //I could probably do this more directly with a Collection
         //but I don't know how to work with collections

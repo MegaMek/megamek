@@ -19,7 +19,7 @@ import megamek.common.IPlayer;
 /**
  * Instances of descendant classes are sent as a result of Game changes related
  * to Players
- * 
+ *
  * @see GamePlayerChangeEvent
  * @see GamePlayerChatEvent
  * @see GameListener
@@ -27,7 +27,7 @@ import megamek.common.IPlayer;
 public abstract class GamePlayerEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3259778708415623296L;
     protected IPlayer player;

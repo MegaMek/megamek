@@ -212,7 +212,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getHeight()
      */
     public int getHeight() {
@@ -226,7 +226,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getWidth()
      */
     public int getWidth() {
@@ -235,7 +235,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#newData(int, int, megamek.common.IHex[])
      */
     public void newData(int width, int height, IHex[] data, StringBuffer errBuff) {
@@ -249,7 +249,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#newData(int, int)
      */
     public void newData(int width, int height) {
@@ -772,7 +772,7 @@ public class Board implements Serializable, IBoard {
             return Board.START_NONE;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1444,7 +1444,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#addBoardListener(megamek.common.BoardListener)
      */
     public void addBoardListener(BoardListener listener) {
@@ -1456,7 +1456,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.IBoard#removeBoardListener(megamek.common.BoardListener)
      */
@@ -1524,7 +1524,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getSpecialHexDisplay(megamek.common.Coords)
      */
     public Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords) {
@@ -1533,7 +1533,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#addSpecialHexDisplay(megamek.common.Coords,
      * megamek.common.SpecialHexDisplay)
      */
@@ -1563,7 +1563,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#getSpecialHexDisplayTable()
      */
     public Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
@@ -1572,7 +1572,7 @@ public class Board implements Serializable, IBoard {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.IBoard#setSpecialHexDisplayTable(java.util.Hashtable)
      */
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {

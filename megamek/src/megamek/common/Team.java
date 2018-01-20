@@ -42,7 +42,7 @@ public final class Team extends TurnOrdered {
     public Enumeration<IPlayer> getPlayers() {
         return players.elements();
     }
-    
+
     public Vector<IPlayer> getPlayersVector() {
         return players;
     }
@@ -230,12 +230,12 @@ public final class Team extends TurnOrdered {
         final Team other = (Team) object;
         return (id == other.id) && Objects.equals(players, other.players);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(id, players);
     }
-    
+
     @Override
     public String toString(){
         if (getId() == IPlayer.TEAM_NONE){

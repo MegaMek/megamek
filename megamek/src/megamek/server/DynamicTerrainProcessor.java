@@ -27,7 +27,7 @@ public abstract class DynamicTerrainProcessor {
 
     /**
      * Process terrain changes in the end phase
-     * 
+     *
      * @param vPhaseReport reports for the server to send out
      */
     abstract void doEndPhaseChanges(Vector<Report> vPhaseReport);

@@ -35,7 +35,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 class FovHighlightingAndDarkening {
 
     /**
-     * 
+     *
      */
     private final BoardView1 boardView1;
     private java.util.List<Color> ringsColors = new ArrayList<>();
@@ -78,7 +78,7 @@ class FovHighlightingAndDarkening {
      * respectively: If there is no LOS from curently selected hex/entity, then
      * darkens hex c. If there is a LOS from the hex c to the selected
      * hex/entity, then hex c is colored according to distance.
-     * 
+     *
      * @param boardGraph
      *            The board on which we paint.
      * @param c

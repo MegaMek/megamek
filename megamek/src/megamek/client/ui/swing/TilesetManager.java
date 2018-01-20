@@ -111,10 +111,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     private Image minefieldSign;
     private Image nightFog;
-    
+
     /** An opaque hex shape used to limit draw operations to the exact hex shape. */
     private Image hexMask;
-    
+
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
@@ -447,7 +447,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         started = true;
     }
-    
+
     public synchronized void reloadImage(Entity en) {
         if (en.getSecondaryPositions().isEmpty()) {
             loadImage(en, -1);

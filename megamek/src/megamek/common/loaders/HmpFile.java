@@ -2033,7 +2033,7 @@ abstract class HMPType {
         final HMPType other = (HMPType) obj;
         return Objects.equals(name, other.name) && Objects.equals(id, other.id);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(name, id);

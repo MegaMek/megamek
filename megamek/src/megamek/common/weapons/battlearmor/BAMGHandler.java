@@ -54,7 +54,7 @@ public class BAMGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -88,7 +88,7 @@ public class BAMGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -104,7 +104,7 @@ public class BAMGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     @Override
@@ -120,6 +120,6 @@ public class BAMGHandler extends WeaponHandler {
             r.subject = subjectId;
             r.add(nDamPerHit * 3);
             vPhaseReport.add(r);
-        }       
+        }
     }
 }

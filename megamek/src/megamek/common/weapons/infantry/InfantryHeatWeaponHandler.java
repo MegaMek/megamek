@@ -33,9 +33,9 @@ import megamek.server.Server;
  */
 public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
-  
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8430370552107061610L;
 
@@ -49,7 +49,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         super(t, w, g, s);
         bSalvo = true;
     }
-    
+
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -63,8 +63,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
-                // Weapon strikes Partial Cover.            
+                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                         nCluster, bldgAbsorbs);
                 return;
@@ -72,8 +72,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            if (entityTarget.getArmor(hit) > 0 && 
-                    (entityTarget.getArmorType(hit.getLocation()) == 
+            if (entityTarget.getArmor(hit) > 0 &&
+                    (entityTarget.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
                 entityTarget.heatFromExternal += nDamPerHit/2;
                 r.add(nDamPerHit/2);

@@ -47,7 +47,7 @@ public class QuadMapSet implements DisplayMapSet {
     private static final int INT_STRUCTURE_OFFSET = 11;
 
     private UnitDisplay unitDisplay;
-    
+
     // Array of polygonal areas - parts of mech body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[19];
     // Array of fixed labels - short names of body parts

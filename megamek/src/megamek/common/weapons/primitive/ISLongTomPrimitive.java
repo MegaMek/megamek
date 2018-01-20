@@ -63,4 +63,3 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
 }
 
 //TODO - These Long Toms jam on the roll of a two
-

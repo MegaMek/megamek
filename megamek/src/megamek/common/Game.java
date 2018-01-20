@@ -618,7 +618,7 @@ public class Game implements Serializable, IGame {
                     if (entity.getPassedThrough().contains(
                             otherEntity.getPosition())) {
                         ents.add(otherEntity);
-                    }                
+                    }
                 } else {
                     ents.add(otherEntity);
                 }
@@ -1130,7 +1130,7 @@ public class Game implements Serializable, IGame {
                 wrecks.addElement(entity);
             }
         }
-        
+
         return wrecks.elements();
     }
 
@@ -1166,20 +1166,20 @@ public class Game implements Serializable, IGame {
 
         return smithereens.elements();
     }
-    
+
     /**
      * Returns an enumeration of "carcass" entities, i.e., vehicles with dead
      * crews that are still on the map.
      */
     public Enumeration<Entity> getCarcassEntities() {
         Vector<Entity> carcasses = new Vector<Entity>();
-        
+
         for (Entity entity : entities) {
             if (entity.isCarcass()) {
                 carcasses.addElement(entity);
             }
         }
-        
+
         return carcasses.elements();
     }
 
@@ -1252,7 +1252,7 @@ public class Game implements Serializable, IGame {
         }
         return en;
     }
-    
+
     public void addEntities(List<Entity> entities) {
         for (int i = 0; i < entities.size(); i++) {
             addEntity(entities.get(i), false);
@@ -1587,14 +1587,14 @@ public class Game implements Serializable, IGame {
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
-                
+
                 // if the entity with the given ID doesn't exist, we will update the lookup table
                 // and move on
                 if(e == null) {
                     posEntities.remove(eId);
                     continue;
                 }
-                
+
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
 
@@ -1630,7 +1630,7 @@ public class Game implements Serializable, IGame {
 
         return vector;
     }
-    
+
     /**
      * Determine if the given set of coordinates has a gun emplacement on the roof of a building.
      * @param c The coordinates to check
@@ -1640,15 +1640,15 @@ public class Game implements Serializable, IGame {
         if(building == null) {
             return false;
         }
-        
+
         IHex hex = getBoard().getHex(c);
-        
+
         for (Entity entity : getEntitiesVector(c, true)) {
             if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) && entity.getElevation() == hex.ceiling()) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -1667,7 +1667,7 @@ public class Game implements Serializable, IGame {
             IHex hex = board.getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
-                    && ((entity.getElevation() == 0) // Standing on hex surface 
+                    && ((entity.getElevation() == 0) // Standing on hex surface
                             || (entity.getElevation() == -hex.depth())) // Standing on hex floor
                     && (entity.getAltitude() == 0)
                     && !(entity instanceof Infantry) && (entity != ignore)) {
@@ -1710,7 +1710,7 @@ public class Game implements Serializable, IGame {
             }
         });
     }
-    
+
     /**
      * Returns an <code>Enumeration</code> of all active enemy entities.
      *
@@ -1722,7 +1722,7 @@ public class Game implements Serializable, IGame {
     public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
     	return getSelectedEntities(new EntitySelector() {
     		private Entity friendly = currentEntity;
-    		
+
     		public boolean accept(Entity entity) {
     			return entity.isTargetable() && entity.isEnemyOf(friendly);
     		}
@@ -2243,10 +2243,10 @@ public class Game implements Serializable, IGame {
             }
         }
     }
-    
+
     public int removeSpecificEntityTurnsFor(Entity entity) {
         List<GameTurn> turnsToRemove = new ArrayList<GameTurn>();
-        
+
         for (GameTurn turn : turnVector) {
             if (turn instanceof SpecificEntityTurn) {
                 int turnOwner = ((SpecificEntityTurn) turn).getEntityNum();
@@ -3190,7 +3190,7 @@ public class Game implements Serializable, IGame {
 
     /**
      * Get a set of Coords illuminated by searchlights.
-     * 
+     *
      * Note: coords could be illuminated by other sources as well, it's likely
      * that IGame.isPositionIlluminated is desired unless the searchlighted hex
      * set is being sent to the client or server.
@@ -3489,7 +3489,7 @@ public class Game implements Serializable, IGame {
     public List<SmokeCloud> getSmokeCloudList() {
         return smokeCloudList;
     }
-    
+
     public void removeSmokeClouds(List<SmokeCloud> cloudsToRemove) {
         for (SmokeCloud cloud : cloudsToRemove) {
             smokeCloudList.remove(cloud);
@@ -3558,9 +3558,9 @@ public class Game implements Serializable, IGame {
         }
         return count;
     }
-    
+
     /**
-     * A check to ensure that the position cache is properly updated.  This 
+     * A check to ensure that the position cache is properly updated.  This
      * is only used for debugging purposes, and will cause a number of things
      * to slow down.
      */

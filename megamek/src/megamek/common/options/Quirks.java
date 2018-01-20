@@ -82,7 +82,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); 	
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
@@ -90,11 +90,11 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false); 
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
-        
+
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
@@ -111,7 +111,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN, false);
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EM_INTERFERENCE_WHOLE, false);        
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EM_INTERFERENCE_WHOLE, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_EXP_ACTUATOR, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FLAWED_COOLING, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FRAGILE_FUEL, false);
@@ -147,7 +147,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE,false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_OVERSIZED, false);
-        
+
         //quirks not implemented yet
         //Exposed Weapon Linkage (weapon-specific, sort of)
         //Gas Hog
@@ -170,7 +170,7 @@ public class Quirks extends AbstractOptions {
 
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
-        
+
         if (en.hasEngine() &&
                 ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) ||
                 (en.getEngine().getEngineType() == Engine.FUEL_CELL)) &&
@@ -185,7 +185,7 @@ public class Quirks extends AbstractOptions {
 					return true;
 				} else {
 					return false;
-				}		
+				}
 			}
 	         if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
 	                // Mechs with a hand actuator can have battlefists
@@ -193,7 +193,7 @@ public class Quirks extends AbstractOptions {
 	                    return true;
 	                } else {
 	                    return false;
-	                }       
+	                }
 	            }
             if (qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)) {
                 if (en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)
@@ -211,7 +211,7 @@ public class Quirks extends AbstractOptions {
                     return false;
                 }
             }
-            
+
             if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
@@ -226,18 +226,18 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNSTREAMLINED)) {
                 return false;
             }
-            
+
         	if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
         		return false;
         	}
-        	
+
         	if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
         		return false;
         	}
-            
+
             return true;
         }
-		        
+
 		// Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
 		// made sense to him. Uncertain at this time if CGL would adopt them but
 		// including them since Quirks is already an option. Hammer
@@ -357,7 +357,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)                  
+                    || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
@@ -380,20 +380,20 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
-            
+
             if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 return false;
             }
-            
+
             if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
-                        
+
             return true;
         }
-              
+
         if(en instanceof BattleArmor) {
             if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
@@ -450,7 +450,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)   
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)

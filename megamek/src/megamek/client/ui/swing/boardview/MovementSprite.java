@@ -20,8 +20,8 @@ import megamek.common.Entity;
  * long diagonal lines.
  *
  * Appears as an arrow pointing to the hex this entity will move to based on
- * current movement vectors. 
- * 
+ * current movement vectors.
+ *
  * TODO: Different color depending upon whether
  * entity has already moved this turn
  *

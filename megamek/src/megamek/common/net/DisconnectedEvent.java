@@ -20,13 +20,13 @@ package megamek.common.net;
 public class DisconnectedEvent extends ConnectionEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1427252999207396447L;
 
     /**
      * Constructs connection event
-     * 
+     *
      * @param source The object on which the Event initially occurred.
      */
     public DisconnectedEvent(Object source) {

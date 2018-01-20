@@ -22,7 +22,7 @@ import megamek.common.UnitLocation;
 
 /**
  * Instances of this class are sent game entity is changed
- * 
+ *
  * @see GameListener
  */
 public class GameEntityChangeEvent extends GameEntityEvent {
@@ -32,7 +32,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
 
     /**
      * Constructs new GameEntityChangeEvent
-     * 
+     *
      * @param source
      * @param entity
      */
@@ -42,7 +42,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
 
     /**
      * Constructs new GameEntityChangeEvent
-     * 
+     *
      * @param source
      * @param entity
      * @param movePath
@@ -53,12 +53,12 @@ public class GameEntityChangeEvent extends GameEntityEvent {
         oldEntity = null;
         this.movePath = movePath;
     }
-    
+
     /**
      * Constructs new GameEntityChangeEvent, storing the entity prior to changes.
      * This old entity may be needed in certain cases, like when a Dropship is
      * taking off, since some of the old state is important.
-     * 
+     *
      * @param source
      * @param entity
      * @param movePath
@@ -79,13 +79,13 @@ public class GameEntityChangeEvent extends GameEntityEvent {
 
     public Entity getOldEntity() {
         return oldEntity;
-    }  
-    
+    }
+
     @Override
     public String toString() {
         if (movePath == null)
             return "There is nothing to move!";
-        
+
         try {
             return getEntity().toString() + " moved to "
                     + movePath.lastElement().getCoords().toFriendlyString();

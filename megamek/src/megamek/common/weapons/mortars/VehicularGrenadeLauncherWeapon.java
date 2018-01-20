@@ -38,7 +38,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
      */
     public VehicularGrenadeLauncherWeapon() {
         super();
-      
+
         heat = 1;
         damage = 0;
         ammoType = AmmoType.T_VGL;
@@ -69,7 +69,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)

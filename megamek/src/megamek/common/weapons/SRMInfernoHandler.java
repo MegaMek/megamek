@@ -54,7 +54,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -196,7 +196,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
      */

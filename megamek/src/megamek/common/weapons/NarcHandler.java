@@ -52,7 +52,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -87,7 +87,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -97,7 +97,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -107,7 +107,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -131,7 +131,7 @@ public class NarcHandler extends MissileWeaponHandler {
             }
         }
         hit.setAttackerId(getAttackerId());
-        
+
         // Catch Protomech near-misses here.
         // So what do we do for a near miss on a glider? Assume attach to wings.
         if (entityTarget instanceof Protomech
@@ -142,7 +142,7 @@ public class NarcHandler extends MissileWeaponHandler {
             vPhaseReport.add(r);
             return;
         }
-        
+
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {
@@ -160,7 +160,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }
-        
+
         // Now the same check for ProtoMechs. We've already covered near-misses
         // above, so here we only have to worry about the actual hits left over.
         if (entityTarget instanceof Protomech) {
@@ -169,7 +169,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }
-       
+
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getAmmoType() == AmmoType.T_NARC) {
             // narced
@@ -220,7 +220,7 @@ public class NarcHandler extends MissileWeaponHandler {
             entityTarget.attachINarcPod(pod);
         }
     }
-    
+
     private boolean narcCanAttachTo(Entity entity, int location) {
         return (entity.getInternal(location) > 0)
             && !entity.isLocationBlownOff(location)

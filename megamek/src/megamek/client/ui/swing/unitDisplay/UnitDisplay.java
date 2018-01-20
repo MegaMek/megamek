@@ -64,7 +64,7 @@ public class UnitDisplay extends JPanel {
 
     /**
      * Creates and lays out a new mech display.
-     * 
+     *
      * @param clientgui
      *            The ClientGUI for the GUI that is creating this UnitDisplay.
      *            This could be null, if there is no ClientGUI, such as with
@@ -73,7 +73,7 @@ public class UnitDisplay extends JPanel {
     public UnitDisplay(@Nullable ClientGUI clientgui) {
         this(clientgui, null);
     }
-        
+
     public UnitDisplay(@Nullable ClientGUI clientgui,
             @Nullable MegaMekController controller) {
         super(new GridBagLayout());
@@ -110,7 +110,7 @@ public class UnitDisplay extends JPanel {
         addBag(displayP, c);
 
         ((CardLayout) displayP.getLayout()).show(displayP, "movement"); //$NON-NLS-1$
-        
+
         if (controller != null) {
             registerKeyboardCommands(this, controller);
         }
@@ -344,7 +344,7 @@ public class UnitDisplay extends JPanel {
             tabStrip.setTab(5);
         }
     }
-    
+
     /**
      * Used to force the display to the Systems tab, on a specific location
      * @param loc

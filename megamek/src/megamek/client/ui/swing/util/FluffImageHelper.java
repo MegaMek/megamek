@@ -29,7 +29,7 @@ import megamek.common.Tank;
 import megamek.common.util.MegaMekFile;
 
 /**
- * 
+ *
  * @author Jay Lawson Looks for a fluff image for an entity based on model and
  *         chassis. Heavily based on code from {@link MegaMekLab#ImageHelper}.
  */
@@ -38,12 +38,12 @@ public class FluffImageHelper {
     public static final String DIR_NAME_AERO = "aero";
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_VEHICLE = "vehicle";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = 
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS =
         { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
 
     /**
      * Get the fluff image for the specified unit, if available.
-     * 
+     *
      * @param unit
      *            The unit.
      * @return An image file, if one is available, else {@code null}.
@@ -62,7 +62,7 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load the fluff image specified in the Entity data.
-     * 
+     *
      * @param unit
      *            The unit.
      * @return An image or {@code null}.
@@ -78,7 +78,7 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load a fluff image by combining elements of type and name.
-     * 
+     *
      * @param unit
      *            The unit.
      * @return An image or {@code null}.
@@ -106,7 +106,7 @@ public class FluffImageHelper {
 
     /**
      * Find a fluff image file for the unit.
-     * 
+     *
      * @param directory
      *            Directory to search.
      * @param unit
@@ -148,7 +148,7 @@ public class FluffImageHelper {
         }
         final String model = unit.getModel().replace("\"", "");
         final String chassisModel = unit.getChassis() + " " + model;
-         
+
         // If the previous checks failed, we're going to try to discount the
         //  CSO author name, which will make the file look like:
         //   Chassis + model + [ <author> ] + extension
@@ -166,7 +166,7 @@ public class FluffImageHelper {
                 fluff_file = files[0];
             }
         }
-        
+
         // If we still haven't found a file, see if ignoring the model helps
         if (fluff_file == null) {
             File[] files = directory.listFiles(new FilenameFilter() {
@@ -175,7 +175,7 @@ public class FluffImageHelper {
                     for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
                         extMatch |= name.endsWith(ext);
                     }
-                    String chassis =  name.split("\\[")[0].trim(); 
+                    String chassis =  name.split("\\[")[0].trim();
                     return chassis.equalsIgnoreCase(unit.getChassis())
                             && extMatch;
                 }
@@ -184,7 +184,7 @@ public class FluffImageHelper {
                 fluff_file = files[0];
             }
         }
-        
+
         return fluff_file;
     }
 }

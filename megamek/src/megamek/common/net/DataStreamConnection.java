@@ -41,7 +41,7 @@ class DataStreamConnection extends AbstractConnection {
 
     /**
      * Creates new server connection
-     * 
+     *
      * @param socket
      * @param id
      */
@@ -51,7 +51,7 @@ class DataStreamConnection extends AbstractConnection {
 
     /**
      * Creates new Client connection
-     * 
+     *
      * @param host
      * @param port
      * @param id
@@ -70,7 +70,7 @@ class DataStreamConnection extends AbstractConnection {
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-        
+
             NetworkPacket packet = null;
             if (in == null) {
                 in = new DataInputStream(new BufferedInputStream(
@@ -102,7 +102,7 @@ class DataStreamConnection extends AbstractConnection {
     @Override
     protected void sendNetworkPacket(byte[] data, boolean iszipped)
             throws Exception {
-        
+
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(),getSendBufferSize()));
@@ -166,7 +166,7 @@ class DataStreamConnection extends AbstractConnection {
 
         /**
          * Creates new packet
-         * 
+         *
          * @param compressed
          * @param marshallingType
          * @param data

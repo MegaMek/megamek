@@ -17,12 +17,12 @@ import megamek.common.VTOL;
  * Sprite for displaying information about movement modifier that can be
  * achieved by provided MovePath. Multiple MovementModifierEnvelopeSprite can be
  * drawn on a single hex, one for each final facing.
- * 
+ *
  * @author Saginatio
- * 
+ *
  */
 public class MovementModifierEnvelopeSprite extends HexSprite {
-    
+
     private final static Color fontColor = Color.BLACK;
     private final static float fontSize = 9;
     private final static double borderW = 15;
@@ -40,7 +40,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         super(boardView1, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());
-        
+
         int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
                 mp.isJumping(),
                 mp.getEntity() instanceof VTOL,
@@ -58,14 +58,14 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.client.ui.swing.boardview.Sprite#prepare()
      */
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
         updateBounds();
-        
+
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D)image.getGraphics();

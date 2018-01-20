@@ -19,13 +19,13 @@ import java.util.Comparator;
 /**
  * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by weapon
  * number.
- * 
+ *
  * @author arlith
  */
 public class WeaponComparatorNum implements Comparator<Mounted> {
-    
+
     private Entity entity;
-    
+
     public WeaponComparatorNum(Entity e) {
         entity = e;
     }

@@ -21,7 +21,7 @@ package megamek.client.event;
  * Classes that wish to deal with <code>MechDisplayEvent</code>s can extend
  * this class and override only the methods which they are interested in.
  * </p>
- * 
+ *
  * @see MechDisplayListener
  * @see MechDisplayEvent
  */
@@ -29,7 +29,7 @@ public class MechDisplayListenerAdapter implements MechDisplayListener {
 
     /**
      * Sent when user selects a weapon in the weapon panel.
-     * 
+     *
      * @param b an event
      */
     public void weaponSelected(MechDisplayEvent b) {

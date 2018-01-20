@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.common;
 
@@ -11,12 +11,12 @@ import megamek.common.options.OptionsConstants;
 /**
  * Common interface for all entities capable of carrying bombs and making bomb attacks, includig Aero,
  * LandAirMech, and VTOL.
- * 
+ *
  * @author Neoancient
  *
  */
 public interface IBomber {
-    
+
     public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
     public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
     public static final String ALT_BOMB_ATTACK = "AltBombAttack";
@@ -25,34 +25,34 @@ public interface IBomber {
      * @return The total number of bomb points that the bomber can carry.
      */
     int getMaxBombPoints();
-    
+
     /**
      * Fighters and VTOLs can carry any size bomb up to the maximum number of points, but LAMs are limited
      * to the number of bays in a single location.
-     * 
+     *
      * @return The largest single bomb that can be carried
      */
     default int getMaxBombSize() {
         return getMaxBombPoints();
     }
-    
+
     /**
      * @return The number of each bomb type that was selected prior to deployment
      */
     int[] getBombChoices();
-    
+
     /**
      * Sets the bomb type selections prior to deployment.
-     * 
+     *
      * @param bc An array with the count of each bomb type as the value of the bomb type's index
      */
     void setBombChoices(int[] bc);
-    
+
     /**
      * Sets the count of each bomb to zero
      */
     void clearBombChoices();
-    
+
     /**
      * @param cost The cost of the bomb to be mounted
      * @return A location with sufficient space to mount the bomb, or Entity.LOC_NONE if the unit does not have the space.
@@ -63,7 +63,7 @@ public interface IBomber {
      * Used by VTOLs and LAMs in airmech mode to declare the target hex for a bomb attack during the movement
      * phase.
      */
-    
+
     default void setVTOLBombTarget(Targetable target) {}
     default Targetable getVTOLBombTarget() {
         return null;
@@ -131,7 +131,7 @@ public interface IBomber {
                             ammo.setShotsLeft(1);
                             m.setLinked(ammo);
                             ((Entity)this).addEquipment(ammo, loc, false);
-                                                        
+
                         }
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());

@@ -125,7 +125,7 @@ public class Terrains implements ITerrainFactory {
 
     /**
      * Checks to see if the given terrain type can have exits.
-     * 
+     *
      * @param terrType
      *            The terrain type to test
      * @return True if the input terrain type can have exits, else false.
@@ -464,7 +464,7 @@ public class Terrains implements ITerrainFactory {
     /**
      * Returns the number of elevations or altitudes above the hex level a given
      * terrainType rises.
-     * 
+     *
      * @param terrainType
      * @param inAtmosphere
      *            Flag that determines whether elevations or altitudes should be

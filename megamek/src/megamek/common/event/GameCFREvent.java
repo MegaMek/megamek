@@ -22,25 +22,25 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.net.Packet;
 
 /**
- * A Client Feedback Request Event.  This event is created when the server 
+ * A Client Feedback Request Event.  This event is created when the server
  * requires feedback of some form from the Client.
- * 
+ *
  * @see GameListener
  * @author arlith
  */
 public class GameCFREvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 230173422932412803L;
-    
+
     private int cfrType;
-    
+
     private int eId;
 
     private int targetId;
-    
+
     /**
      * The equipment number for the AMS used in AMS_ASSIGN CFRs.
      */
@@ -49,7 +49,7 @@ public class GameCFREvent extends GameEvent {
     private List<Integer> apdsDists;
 
     /**
-     * List of WeaponAttackActions that can have an AMS assigned to them for 
+     * List of WeaponAttackActions that can have an AMS assigned to them for
      * AMS_ASSIGN CFRs.
      */
     private List<WeaponAttackAction> waas;
@@ -58,12 +58,12 @@ public class GameCFREvent extends GameEvent {
      * List of descriptions for targets of a teleguided missile.
      */
     private List<String> telemissileTargets;
-    
+
     /**
      * Original target coords for a bearings-only teleguided missile.
      */
     private Coords telemissileTargetCoords;
-    
+
     /**
      * Construct game event
      */
@@ -71,16 +71,16 @@ public class GameCFREvent extends GameEvent {
         super(source);
         cfrType = t;
     }
-    
+
     /**
-     * Sub-classed events implement this method to call their specific method on 
+     * Sub-classed events implement this method to call their specific method on
      * a GameListener instance that their event has been fired.
      * @param gl GameListener recipient.
      */
     public void fireEvent(GameListener gl) {
         gl.gameClientFeedbackRquest(this);
     }
-    
+
     public String getEventName() {
         String evtName = "Client Feedback Request, ";
         switch (cfrType) {
@@ -114,7 +114,7 @@ public class GameCFREvent extends GameEvent {
     public int getCFRType() {
         return cfrType;
     }
-    
+
     public int getEntityId() {
         return eId;
     }
@@ -158,15 +158,15 @@ public class GameCFREvent extends GameEvent {
     public List<String> getTelemissileTargetDescriptions() {
         return telemissileTargets;
     }
-    
+
     public void setTeleguidedMissileTargets(List<String> newTargetDescriptions) {
         telemissileTargets = newTargetDescriptions;
     }
-    
+
     public Coords getTelemissileTargetCoords() {
         return telemissileTargetCoords;
     }
-    
+
     public void setTeleguidedMissileCoords(Coords tc) {
         telemissileTargetCoords = tc;
     }

@@ -38,12 +38,12 @@ import megamek.common.VTOL;
 
 /**
  * This program is a tool to help gather information about quirks.  It goes
- * through each canon quirk entry and will print out 1) if it belongs to 
- * multiple types of units (which is an error), 2) if it belongs to no unit 
+ * through each canon quirk entry and will print out 1) if it belongs to
+ * multiple types of units (which is an error), 2) if it belongs to no unit
  * (which likely means there's an error).  Also, since some errors don't appear
  * until a unit is loaded, it will force any problematic quirks to throw up
  * warnings.
- * 
+ *
  * @author arlith
  * @date January 2016
  */
@@ -51,9 +51,9 @@ public class QuirkTool implements MechSummaryCache.Listener {
 
     private static MechSummaryCache mechSummaryCache = null;
 
-    public static void main(String[] args) {     
+    public static void main(String[] args) {
         EquipmentType.initializeTypes();
-        
+
         QuirkTool qc = new QuirkTool();
         mechSummaryCache = MechSummaryCache.getInstance(true);
         mechSummaryCache.addListener(qc);
@@ -70,12 +70,12 @@ public class QuirkTool implements MechSummaryCache.Listener {
             e.printStackTrace();
             return;
         }
-        
+
         Set<String> quirkIds = QuirksHandler.getCanonQuirkIds();
         Map<String, List<Entity>> idEntitiesMap = new HashMap<>();
-        
+
         for (String quirkId : quirkIds) {
-            for (MechSummary summary : ms) {              
+            for (MechSummary summary : ms) {
                 String allId = QuirksHandler.getUnitId(summary.getChassis(),
                         "all", MechSummary.determineETypeName(summary));
                 String specificId = QuirksHandler.getUnitId(
@@ -97,7 +97,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
                         + " doesn't have any matches!");
             }
         }
-        
+
         for (String quirkId : idEntitiesMap.keySet()) {
             List<Entity> entities = idEntitiesMap.get(quirkId);
             Set<Integer> types = new HashSet<>();
@@ -137,7 +137,7 @@ public class QuirkTool implements MechSummaryCache.Listener {
             }
         }
     }
-    
+
     public Entity loadEntity(File f, String entityName) {
         Entity entity = null;
         try {
@@ -148,5 +148,5 @@ public class QuirkTool implements MechSummaryCache.Listener {
         return entity;
     }
 
-    
+
 }

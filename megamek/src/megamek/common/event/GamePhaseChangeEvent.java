@@ -22,7 +22,7 @@ import megamek.common.IGame;
 public class GamePhaseChangeEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5589252062756476819L;
 
@@ -38,7 +38,7 @@ public class GamePhaseChangeEvent extends GameEvent {
 
     /**
      * Constructs new <code>GamePhaseChangeEvent</code>
-     * 
+     *
      * @param source Event source
      * @param oldPhase
      * @param newPhase
@@ -51,7 +51,7 @@ public class GamePhaseChangeEvent extends GameEvent {
 
     /**
      * Returns the newPhase.
-     * 
+     *
      * @return the newPhase.
      */
     public IGame.Phase getNewPhase() {
@@ -60,7 +60,7 @@ public class GamePhaseChangeEvent extends GameEvent {
 
     /**
      * Returns the oldPhase.
-     * 
+     *
      * @return the oldPhase.
      */
     public IGame.Phase getOldPhase() {
@@ -69,7 +69,7 @@ public class GamePhaseChangeEvent extends GameEvent {
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gamePhaseChange(this);    
+        gl.gamePhaseChange(this);
     }
 
     @Override

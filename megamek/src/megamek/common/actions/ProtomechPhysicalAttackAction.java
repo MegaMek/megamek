@@ -67,7 +67,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             // enhanced
         }
         // underwater damage is half, round up (see bug 1110692)
-        if (entity.getLocationStatus(Protomech.LOC_TORSO) 
+        if (entity.getLocationStatus(Protomech.LOC_TORSO)
                 == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
@@ -118,9 +118,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         final int targetHeight = target.relHeight() + targHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();
-        
+
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
-        
+
         ToHitData toHit;
 
         // can't target yourself
@@ -195,7 +195,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if (te != null) {
             toHit.append(Compute.getTargetTerrainModifier(game, te, 0,
                     inSameBuilding));
-        }        
+        }
 
         // target prone
         if ((te != null) && te.isProne()) {

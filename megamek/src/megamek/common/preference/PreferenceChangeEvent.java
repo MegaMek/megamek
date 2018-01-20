@@ -19,7 +19,7 @@ import java.util.EventObject;
 public class PreferenceChangeEvent extends EventObject {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8514064293889126724L;
     protected String name;

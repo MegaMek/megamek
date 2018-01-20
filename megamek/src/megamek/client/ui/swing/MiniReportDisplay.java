@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -38,7 +38,7 @@ import megamek.client.ui.Messages;
  */
 public class MiniReportDisplay extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -703103629596703945L;
     private JButton butOkay;
@@ -48,13 +48,13 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         butOkay.addActionListener(this);
-        
+
         getContentPane().setLayout(new BorderLayout());
 
         getContentPane().add(BorderLayout.SOUTH, butOkay);
-        
+
         setupReportTabs(client);
-                
+
         setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
                 GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
@@ -83,10 +83,10 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
             setVisible(false);
         }
     }
-    
+
     private void setupReportTabs(Client c) {
         JTabbedPane tabs = new JTabbedPane();
-        
+
         int numRounds = c.getGame().getRoundCount();
         for (int round = 1; round < numRounds; round++) {
             String text =  c.receiveReport(c.getGame().getReports(round));
@@ -108,15 +108,15 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         JScrollPane sp = new JScrollPane(ta);
         tabs.add("Phase", sp);
         tabs.setSelectedComponent(sp);
-        
+
         getContentPane().add(BorderLayout.CENTER, tabs);
     }
-    
+
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
         Font font = UIManager.getFont("Label.font");
         ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
                 "pre { font-family: " + font.getFamily()
                         + "; font-size: 12pt; font-style:normal;}");
-    }    
+    }
 }

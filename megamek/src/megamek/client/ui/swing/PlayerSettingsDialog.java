@@ -42,13 +42,13 @@ import megamek.common.IGame.Phase;
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
  * minefields, and maybe other things in the future like force abilities.
- * 
+ *
  * @author Jay Lawson
  */
 public class PlayerSettingsDialog extends ClientDialog implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4597870528499580517L;
 
@@ -133,7 +133,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         panMain.setLayout(gridbag);
 
         refreshValues();
-        
+
         labPlayer.setText(client.getLocalPlayer().getName());
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
@@ -146,7 +146,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(labPlayer, c);
         panMain.add(labPlayer);
-        
+
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
@@ -273,7 +273,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(fldInferno, c);
         panMain.add(fldInferno);
-        
+
         // Disable changing minefields mid-game
         if (client.getGame().getPhase() != Phase.PHASE_LOUNGE) {
             fldConventional.setEnabled(false);
@@ -303,7 +303,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
                     initB = Integer.parseInt(init);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(clientgui.frame, 
+                JOptionPane.showMessageDialog(clientgui.frame,
                         Messages.getString("PlayerSettingsDialog.ConstantInitAlert.message"), //$NON-NLS-1$
                         Messages.getString("PlayerSettingsDialog.ConstantInitAlert.title"), //$NON-NLS-1$
                         JOptionPane.ERROR_MESSAGE);
@@ -335,7 +335,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
                     nbrInferno = Integer.parseInt(inferno);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(clientgui.frame, 
+                JOptionPane.showMessageDialog(clientgui.frame,
                         Messages.getString("PlayerSettingsDialog.MinefieldAlert.message"), //$NON-NLS-1$
                         Messages.getString("PlayerSettingsDialog.MinefieldAlert.title"), //$NON-NLS-1$
                         JOptionPane.ERROR_MESSAGE);
@@ -343,7 +343,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
             }
 
             if ((nbrConv < 0) || (nbrVibra < 0) || (nbrActive < 0) || (nbrInferno < 0)) {
-                JOptionPane.showMessageDialog(clientgui.frame, 
+                JOptionPane.showMessageDialog(clientgui.frame,
                         Messages.getString("PlayerSettingsDialog.MinefieldAlert.message"), //$NON-NLS-1$
                         Messages.getString("PlayerSettingsDialog.MinefieldAlert.title"), //$NON-NLS-1$
                         JOptionPane.ERROR_MESSAGE);

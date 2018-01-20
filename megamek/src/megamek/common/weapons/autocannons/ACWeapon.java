@@ -62,7 +62,7 @@ public abstract class ACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
@@ -104,7 +104,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         if (atype.getMunitionType() == AmmoType.M_FLAK) {
             return new ACFlakHandler(toHit, waa, game, server);
         }
-        
+
         if (atype.getMunitionType() == AmmoType.M_CASELESS) {
             return new ACCaselessHandler (toHit, waa, game, server);
         }

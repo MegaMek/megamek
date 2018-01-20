@@ -207,17 +207,17 @@ public class Tank extends Entity {
     public void setMotivePenalty(int p) {
         motivePenalty = p;
     }
-    
+
     private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
             .setTechRating(RATING_E).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_COMBAT_VEHICLE;
     }
-    
+
     //Advanced turrets
     public static TechAdvancement getDualTurretTA() {
         return new TechAdvancement(TECH_BASE_ALL)
@@ -232,7 +232,7 @@ public class Tank extends Entity {
             ctl.addComponent(getDualTurretTA());
         }
     }
-    
+
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
@@ -273,7 +273,7 @@ public class Tank extends Entity {
         return j;
 
     }
-    
+
     @Override
     public boolean isEligibleForPavementBonus() {
         return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED;
@@ -396,11 +396,11 @@ public class Tank extends Entity {
     public void setCommanderHit(boolean hit) {
         commanderHit = hit;
     }
-    
+
     public boolean isUsingConsoleCommander() {
         return usingConsoleCommander;
     }
-    
+
     public void setUsingConsoleCommander(boolean b) {
         usingConsoleCommander = b;
     }
@@ -458,7 +458,7 @@ public class Tank extends Entity {
         }
         return super.isImmobile() || m_bImmobile;
     }
-    
+
     @Override
     public boolean hasCommandConsoleBonus() {
         if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {
@@ -2057,7 +2057,7 @@ public class Tank extends Entity {
 
         return prd;
     }
-    
+
     @Override
     public boolean usesTurnMode() {
         return game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
@@ -2302,7 +2302,7 @@ public class Tank extends Entity {
     public int getSuspensionFactor() {
         return getSuspensionFactor(getMovementMode(), weight);
     }
-    
+
     /**
      * Static method to calculate suspension factor without needing a vehicle
      */
@@ -3627,7 +3627,7 @@ public class Tank extends Entity {
         // Return the result.
         return result;
     } // End public TargetRoll getStealthModifier( char )
-    
+
     @Override
     public double getBaseBattleForceMovement() {
         double move = getOriginalWalkMP();
@@ -3640,7 +3640,7 @@ public class Tank extends Entity {
 
         return move;
     }
-    
+
     @Override
     /**
      * returns the battle force structure points for a vehicle.
@@ -3653,7 +3653,7 @@ public class Tank extends Entity {
         }
         return (int) Math.ceil(struct / 10.0);
     }
-    
+
     /**
      * Separate turret weapons from body-mounted
      */
@@ -3667,7 +3667,7 @@ public class Tank extends Entity {
             return 4;
         }
     }
-    
+
     @Override
     public String getBattleForceLocationName(int index) {
         if (index == 1) {
@@ -3712,7 +3712,7 @@ public class Tank extends Entity {
             }
             break;
         }
-        return 0; 
+        return 0;
     }
 
     /**
@@ -3725,7 +3725,7 @@ public class Tank extends Entity {
     	}
     	return getBattleForceLocationMultiplier(index, location, rearMounted);
     }
-    
+
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         if (!isSupportVehicle()) {
@@ -3746,12 +3746,12 @@ public class Tank extends Entity {
                         && getEngine().getEngineType() != Engine.STEAM) {
                     specialAbilities.put(BattleForceSPA.SOA, null);
                 }
-            } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) { 
+            } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
                 specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
                 specialAbilities.put(BattleForceSPA.MSW, null);
             } else if (m.getType().hasFlag(MiscType.F_MASH)
-                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)) { 
+                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)) {
                 specialAbilities.merge(BattleForceSPA.MASH, 1, Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 specialAbilities.put(BattleForceSPA.MFB, null);
@@ -3768,7 +3768,7 @@ public class Tank extends Entity {
             //TODO: Fire-resistant chassis mod
         }
     }
-    
+
     @Override
     public boolean isBattleForceTurretLocation(int index) {
         return index > 1;
@@ -3973,7 +3973,7 @@ public class Tank extends Entity {
 
     /**
      * Returns a Support units fuel allotment.
-     * 
+     *
      * @return fuel tonnage
      */
     public double getFuelTonnage() {

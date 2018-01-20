@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -27,7 +27,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
     // Private helper classes, methods, and attributes.
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5256053831078922473L;
 
@@ -36,7 +36,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
      */
     /* package */static class Inferno implements Serializable {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1799687411697517801L;
         private int heatPerRound;
@@ -102,7 +102,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Add the number of hits with the given inferno round to the tracker.
-     * 
+     *
      * @param round - the <code>Inferno</code> round that hits. If this value
      *            is not <code>STANDARD_ROUND</code> or
      *            <code>INFERNO_IV_ROUND</code>, then an
@@ -144,7 +144,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine if the unit or hex still has inferno rounds that are burning.
-     * 
+     *
      * @return <code>true</code> if there are inferno rounds that are still
      *         still burning. <code>false</code> if no inferno rounds have hit
      *         yet, or if they have burned out.
@@ -174,7 +174,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine the total number of turns left for the Infernos to burn.
-     * 
+     *
      * @return The <code>int</code> number of turns that this unit or hex will
      *         suffer the effects of an Inferno round (either standard <b>or</b>
      *         Inferno IV). This number will be positive when the
@@ -192,7 +192,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine just the number of turns left for Arrow IV Infernos to burn.
-     * 
+     *
      * @return The <code>int</code> number of turns that this unit or hex will
      *         suffer the effects of an Inferno IV round (ignore any standard
      *         inferno rounds). This number will be positive when the
@@ -210,7 +210,7 @@ public class InfernoTracker implements Serializable, RoundUpdated {
 
     /**
      * Determine the number of heat points generated in the current turn.
-     * 
+     *
      * @return the <code>int</code> number of heat points added this turn.
      *         This value will be positive when <code>isStillBurning()</code>
      *         returns <code>true</code>. It will not be negative.

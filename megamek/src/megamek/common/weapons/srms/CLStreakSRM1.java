@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons.srms;
@@ -19,12 +19,12 @@ package megamek.common.weapons.srms;
 public class CLStreakSRM1 extends StreakSRMWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -865353203521350759L;
 
     /**
-     * 
+     *
      */
     public CLStreakSRM1() {
         this.name = "Streak SRM 1";
@@ -38,7 +38,7 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
         this.tonnage = 0.5f;
         this.criticals = 0;
         this.bv = 20;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
         //But SRM Tech Base and Avail Ratings.
         rulesRefs = "230,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

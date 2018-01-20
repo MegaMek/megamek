@@ -264,7 +264,7 @@ public class FireControl {
     }
 
     /**
-     * Returns the {@link Coords} computed by 
+     * Returns the {@link Coords} computed by
      * {@link Compute#getClosestFlightPath(int, Coords, Entity)}.
      *
      * @param shooterPosition The shooter's position.
@@ -1378,7 +1378,7 @@ public class FireControl {
 
         //Do not shoot at units we already expect to deal more than their total HP of damage to!
         if (1.0 <= previousDamageFraction) {
-            return 100; 
+            return 100;
 
             // In cases that are not generally overkill(less than 50% of the
             // target's total HP in damage), target as normal(don't want to
@@ -1429,7 +1429,7 @@ public class FireControl {
         final double preservation_scaling_factor = max_self_preservation / self_preservation; // Because the variance in log value for large numbers is smaller, we need to make a big self-preservation value become a small multiplicative factor, and vice versa.
         return Math.log10(TARGET_POTENTIAL_DAMAGE_UTILITY * preservation_scaling_factor * target_damage + 10); // Add 10 to make the multiplier scale from 1 upwards(1 being a target that does 0 damage)).
     }
-        
+
     /**
      * calculates the 'utility' of a physical action.
      *
@@ -1513,7 +1513,7 @@ public class FireControl {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
                 weapon, game, assumeUnderFlightPath, guessToHit, owner, new int[0]);
     }
-    
+
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
@@ -1635,16 +1635,16 @@ public class FireControl {
 
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooterState.isAero());
-        
+
         if(shooter.isAero()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
-            
+
             if(bombingPlan.getUtility() > myPlan.getUtility()) {
                 return bombingPlan;
             }
         }
-        
+
         return myPlan;
     }
 
@@ -1691,7 +1691,7 @@ public class FireControl {
             owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
             return myPlan;
         }
-        
+
         // if we have no bombs on board, we can't attack from down here
         if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude() &&
             0 == shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
@@ -1727,21 +1727,21 @@ public class FireControl {
                 myPlan.add(shoot);
             }
         }
-        
+
         // if we are here, we have already confirmed the target is under the flight path and are guessing
         final FiringPlan bombPlan = getDiveBombPlan(shooter, flightPath, target, game, true, true);
         calculateUtility(bombPlan, DOES_NOT_TRACK_HEAT, shooter.isAero()); // bombs don't generate heat so don't bother with this calculation
-        
+
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
-        
+
         if(myPlan.getUtility() >= bombPlan.getUtility()) {
             return myPlan;
         } else {
             return bombPlan;
         }
     }
-   
+
     /**
      * Creates a firing plan that fires dive bombs, dropping all bombs on the given target
      *
@@ -1750,7 +1750,7 @@ public class FireControl {
      * @param game                  The game being played.
      * @param passedOverTarget      Set TRUE to automatically assume the target will be under the flight path rather
      *                              than going through the full calculation.
-     * @param guess                 Whether we're just thinking about this firing plan or about to                              
+     * @param guess                 Whether we're just thinking about this firing plan or about to
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter is capable of dropping bombs.
      */
     private FiringPlan getDiveBombPlan(final Entity shooter,
@@ -1760,7 +1760,7 @@ public class FireControl {
                                       final boolean passedOverTarget,
                                       final boolean guess) {
         final FiringPlan diveBombPlan = new FiringPlan(target);
-        final HexTarget hexToBomb = new HexTarget(target.getPosition(), game.getBoard(), 
+        final HexTarget hexToBomb = new HexTarget(target.getPosition(), game.getBoard(),
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);
 
         final Iterator<Mounted> weaponIter = shooter.getWeapons();
@@ -1791,7 +1791,7 @@ public class FireControl {
                 diveBombPlan.add(diveBomb);
             }
         }
-        
+
         return diveBombPlan;
     }
 
@@ -1839,16 +1839,16 @@ public class FireControl {
 
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
-        
+
         if(shooter.isAero()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
-            
+
             if(bombingPlan.getUtility() > myPlan.getUtility()) {
                 return bombingPlan;
             }
         }
-        
+
         return myPlan;
     }
 
@@ -1948,10 +1948,10 @@ public class FireControl {
             }
         }
         calculateUtility(bestPlans[0], heatTolerance, isAero);
-        
+
         if (shooter instanceof Infantry) {
             calculateUtility(swarmAttack, heatTolerance, isAero);
-            calculateUtility(legAttack, heatTolerance, isAero);         
+            calculateUtility(legAttack, heatTolerance, isAero);
             calculateUtility(fieldGuns, heatTolerance, isAero);
             //Add these plans to the end of the list.
             bestPlans[maxHeat + 1] = swarmAttack;
@@ -1987,7 +1987,7 @@ public class FireControl {
                 }
             }
         }
-        
+
         // if we are an aero blasting away at ground targets, another good option for a heatless plan is to bomb the crap out of the enemy
         //bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
         //currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
@@ -1995,26 +1995,26 @@ public class FireControl {
         if (shooter.isAirborne() && 0 < shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
                                                                  shooter.getGame(), shooter.passedOver(target), false);
-            
+
             calculateUtility(diveBombPlan, DOES_NOT_TRACK_HEAT, true);
             if(diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
                 bestPlans[0] = diveBombPlan;
             }
         }
-        
+
         return bestPlans;
     }
 
     /*
      * Gets the 'best' firing plan, using heat as a disutility. No twisting is
      * done
-     * 
+     *
      * @param shooter The unit doing the shooting.
-     * 
+     *
      * @param target The unit being shot at.
-     * 
+     *
      * @param game The game currently being played.
-     * 
+     *
      * @return the 'best' firing plan, using heat as a disutility.
      */
     FiringPlan getBestFiringPlan(final Entity shooter,
@@ -2025,12 +2025,12 @@ public class FireControl {
         // Start with an alpha strike.
         final FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
                                                          ammoConservation, game);
-        
+
         // Although they don't track heat, infantry/BA do need to make tradeoffs
         // between firing different weapons, because swarm/leg attacks are
         // mutually exclusive with normal firing, so we treat them similarly to
         // heat-tracking units.
-        
+
         // conventional fighters can drop bombs
         if (DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
             && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
@@ -2087,7 +2087,7 @@ public class FireControl {
         // Now emulates the logic from getBestFiringPlanUnderHeat, rather than sorting the firing plans low to high then picking the lowest one
         final FiringPlan[] heatPlans = calcFiringPlansUnderHeat(shooter, alphaStrike);
         FiringPlan bestPlan = new FiringPlan(target);
-        
+
         for (final FiringPlan firingPlan : heatPlans) {
             if ((bestPlan.getUtility() < firingPlan.getUtility())) {
                 bestPlan = firingPlan;
@@ -2131,7 +2131,7 @@ public class FireControl {
 
         // Get the best plan without any twists.
         FiringPlan noTwistPlan = null;
-        
+
         switch(params.getCalculationType()) {
             case GET:
                 noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
@@ -2145,7 +2145,7 @@ public class FireControl {
                                                            owner.getGame());
                 break;
         }
-        
+
         // If we can't change facing, we're done.
         if (!params.getShooter().canChangeSecondaryFacing()) {
             return noTwistPlan;
@@ -2155,8 +2155,8 @@ public class FireControl {
         final int originalFacing = shooter.getSecondaryFacing();
 
         final List<Integer> validFacingChanges = getValidFacingChanges(shooter);
-        
-        // Now, we loop through all possible facings. If one facing produces a better plan 
+
+        // Now, we loop through all possible facings. If one facing produces a better plan
         // than what we currently have as the best plan then use that. Start with "no twist" as default.
         FiringPlan bestFiringPlan = noTwistPlan;
         for (final int currentTwist : validFacingChanges) {
@@ -2290,7 +2290,7 @@ public class FireControl {
                                                                              enemy,
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
-            
+
             owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
@@ -3012,7 +3012,7 @@ public class FireControl {
             validFacingChanges.add(-2);
             validFacingChanges.add(3);
         }
-        
+
         return validFacingChanges;
     }
 }

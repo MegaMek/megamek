@@ -59,7 +59,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -90,8 +90,8 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.newlines = 0;
-            if (entityTarget.getArmor(hit) > 0 &&                        
-                    (entityTarget.getArmorType(hit.getLocation()) == 
+            if (entityTarget.getArmor(hit) > 0 &&
+                    (entityTarget.getArmorType(hit.getLocation()) ==
                        EquipmentType.T_ARMOR_REFLECTIVE)){
                entityTarget.heatFromExternal += Math.max(1, heatDamage/2);
                r.add(Math.max(1, heatDamage/2));
@@ -100,8 +100,8 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
                r.add(heatDamage);
                r.add(EquipmentType.armorNames
                        [entityTarget.getArmorType(hit.getLocation())]);
-            } else if (entityTarget.getArmor(hit) > 0 &&  
-                   (entityTarget.getArmorType(hit.getLocation()) == 
+            } else if (entityTarget.getArmor(hit) > 0 &&
+                   (entityTarget.getArmorType(hit.getLocation()) ==
                        EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
                entityTarget.heatFromExternal += heatDamage/2;
                r.add(heatDamage/2);
@@ -125,7 +125,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

@@ -41,7 +41,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -85,7 +85,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
-            if ((target instanceof Infantry) 
+            if ((target instanceof Infantry)
                     && !(target instanceof BattleArmor) ) {
                 toReturn -= 1;
             } else { // Else, treat as pulse weapon
@@ -95,7 +95,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
          // Against conventional infantry, treat as direct fire energy
-            if ((target instanceof Infantry) 
+            if ((target instanceof Infantry)
                     && !(target instanceof BattleArmor) ) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             } else { // Else, treat as pulse weapon

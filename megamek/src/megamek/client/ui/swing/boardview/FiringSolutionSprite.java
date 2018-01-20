@@ -19,7 +19,7 @@ import megamek.common.util.FiringSolution;
  * a big red X if the target cannot be hit.
  */
 class FiringSolutionSprite extends HexSprite {
-    
+
     // control values
     // for modifier and range
     private static final int fontSizeSmall = 25;
@@ -39,7 +39,7 @@ class FiringSolutionSprite extends HexSprite {
             BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 0.0f);
     private static final BasicStroke indirectStroke2 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 10.0f);
-    
+
     // calculated statics
     // text positions
     private static Point centerHex = new Point(BoardView1.HEX_W / 2,
@@ -59,16 +59,16 @@ class FiringSolutionSprite extends HexSprite {
     public FiringSolutionSprite(BoardView1 boardView1, final FiringSolution fsoln) {
         super(boardView1, fsoln.getToHitData().getLocation());
         updateBounds();
-        
+
         this.fsoln = fsoln;
         // modifier
         int thm = fsoln.getToHitData().getValue();
         toHitMod = Integer.toString(thm);
         if (thm >= 0) toHitMod = "+" + toHitMod;
         if ((thm == TargetRoll.IMPOSSIBLE)
-                || (thm == TargetRoll.AUTOMATIC_FAIL)) 
+                || (thm == TargetRoll.AUTOMATIC_FAIL))
             noHitPossible = true;
-        
+
         // range
         int r = fsoln.getToHitData().getRange();
         range = Integer.toString(r);
@@ -84,41 +84,41 @@ class FiringSolutionSprite extends HexSprite {
     public void prepare() {
         // adjust bounds (image size) to board zoom
         updateBounds();
-        
+
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D)image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
-        
+
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);
-        
+
         // get the right font
         String fontName = GUIPreferences.getInstance().getString(
                 GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
         int fontStyle = GUIPreferences.getInstance().getInt(
                 GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
-        
-        if (noHitPossible) {  
+
+        if (noHitPossible) {
             // write big red X
             graph.setFont(new Font(fontName, fontStyle, (int)(fontSizeLarge)));
             if (bv.scale > 0.7) {
                 // better translucent, the X is so big
-                bv.drawOutlineText(graph, "X", centerHex, 
+                bv.drawOutlineText(graph, "X", centerHex,
                         fontSizeLarge, xColor, true, Color.BLACK);
             } else {
                 // better readable at small scale
                 bv.drawCenteredText(graph, "X", centerHex, xColor, false);
             }
-        } else {    
+        } else {
             // hittable: write modifier and range
             Font textFont = new Font(fontName, fontStyle, fontSizeSmall);
             Font rangeFont = new Font(fontName, fontStyle, fontSizeRange);
-            
+
             // shadows
             bv.drawTextShadow(graph, toHitMod, firstLine, textFont);
             bv.drawTextShadow(graph, range, secondLine, rangeFont);
-            
+
             // text
             bv.drawCenteredText(graph, toHitMod, firstLine, fontColor, false, textFont);
             bv.drawCenteredText(graph, range, secondLine, fontColor, false, rangeFont);
@@ -132,7 +132,7 @@ class FiringSolutionSprite extends HexSprite {
             graph.setColor(fontColor);
             graph.draw(finalHex);
         }
-        
+
         if (fsoln.isTargetSpotted()) {
             graph.setColor(indirectDashColor1);
             graph.setStroke(indirectStroke1);

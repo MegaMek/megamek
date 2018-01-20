@@ -6,10 +6,10 @@ import java.util.EnumMap;
  * Enumeration of all 6 possible facings. It provides methods for translation
  * from old integer constants. Utility methods for turning left, right and
  * getting opposite direction are also provided.
- * 
- * 
+ *
+ *
  * @author Saginatio
- * 
+ *
  */
 public enum Facing {
     N(0), NE(1), SE(2), S(3), SW(4), NW(5), NONE(6);
@@ -39,7 +39,7 @@ public enum Facing {
 
     /**
      * Method provided for backward compatibility with old integer constants.
-     * 
+     *
      * @param i Integer constant. must be non negative
      */
     public static Facing valueOfInt(final int i) {

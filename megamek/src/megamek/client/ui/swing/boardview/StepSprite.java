@@ -32,7 +32,7 @@ class StepSprite extends Sprite {
     private MoveStep step;
     boolean isLastStep = false;
     private Image baseScaleImage;
-    
+
     public StepSprite(BoardView1 boardView1, final MoveStep step,
             boolean isLastStep) {
         super(boardView1);
@@ -64,7 +64,7 @@ class StepSprite extends Sprite {
         Image tempImage = new BufferedImage(BoardView1.HEX_W, BoardView1.HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
-        
+
         if (GUIPreferences.getInstance().getAntiAliasing()) {
             ((Graphics2D) graph).setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
@@ -78,19 +78,19 @@ class StepSprite extends Sprite {
         // setup some variables
         final Point stepPos = bv.getHexLocation(step.getPosition());
         stepPos.translate(-bounds.x, -bounds.y);
-        
+
         Shape FacingArrow = bv.facingPolys[step.getFacing()];
         Shape moveArrow = bv.movementPolys[step.getFacing()];
-        
+
         AffineTransform StepOffset = new AffineTransform();
         StepOffset.translate(stepPos.x + 1, stepPos.y + 1);   //when is stepPos ever <> 0?
-        
+
         AffineTransform ShadowOffset = new AffineTransform();
         ShadowOffset.translate(-1,-1);
-        
+
         AffineTransform UpDownOffset = new AffineTransform();
         UpDownOffset.translate(-30,0);
-        
+
         Color col;
         Shape CurrentArrow;
         // set color
@@ -159,11 +159,11 @@ class StepSprite extends Sprite {
                 graph.setColor(Color.darkGray);
                 CurrentArrow = StepOffset.createTransformedShape(moveArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 graph.setColor(col);
                 CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 // draw movement cost
                 drawMovementCost(step, isLastStep, stepPos, graph, col, true);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -180,11 +180,11 @@ class StepSprite extends Sprite {
                 CurrentArrow = UpDownOffset.createTransformedShape(bv.downArrow);
                 CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 graph.setColor(col);
                 CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -198,11 +198,11 @@ class StepSprite extends Sprite {
                 CurrentArrow = UpDownOffset.createTransformedShape(bv.upArrow);
                 CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 graph.setColor(col);
                 CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -259,11 +259,11 @@ class StepSprite extends Sprite {
                 graph.setColor(Color.darkGray);
                 CurrentArrow = StepOffset.createTransformedShape(FacingArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 graph.setColor(col);
                 CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 if (bv.game.useVectorMove()) {
                     drawMovementCost(step, isLastStep, stepPos, graph, col, false);
                 }
@@ -273,7 +273,7 @@ class StepSprite extends Sprite {
                 graph.setColor(Color.darkGray);
                 CurrentArrow = StepOffset.createTransformedShape(moveArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
-                
+
                 graph.setColor(col);
                 CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
@@ -442,7 +442,7 @@ class StepSprite extends Sprite {
             default:
                 break;
         }
-        
+
         if (step.isVTOLBombingStep() || step.isStrafingStep()) {
             graph.setColor(col);
             ((Graphics2D)graph).fill(
@@ -453,7 +453,7 @@ class StepSprite extends Sprite {
         baseScaleImage = bv.createImage(tempImage.getSource());
         // create final image
         image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
-        
+
         graph.dispose();
         tempImage.flush();
     }
@@ -620,13 +620,13 @@ class StepSprite extends Sprite {
         costStringBuf.append(step.getMpUsed());
 
         Entity e = step.getEntity();
-        
+
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement()
                 && e.isEligibleForPavementBonus()) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
-        
+
         // Show WiGE descent bonus
         for (int i = 0; i < step.getWiGEBonus(); i++) {
             costStringBuf.append("+");
@@ -678,7 +678,7 @@ class StepSprite extends Sprite {
         graph.drawString(costString, costX, stepPos.y + 39);
         graph.setColor(col);
         graph.drawString(costString, costX - 1, stepPos.y + 38);
-        
+
     }
 
 }

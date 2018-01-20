@@ -45,11 +45,11 @@ public interface ITerrain {
      * set terrain factor
      */
     public abstract void setTerrainFactor(int tf);
-    
+
     /**
      * Returns the number of altitudes/elevations this Terrain is above the
      * surface of a hex.
-     * 
+     *
      * @param inAtmosphere
      *            Determines whether altitudes or elevations are returned.
      * @return
@@ -99,7 +99,7 @@ public interface ITerrain {
     public abstract boolean exitsTo(ITerrain other);
 
     /**
-     * @param roll 
+     * @param roll
      * @return the modifier to PSRs made in this terrain
      */
     public abstract void pilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble);
@@ -116,7 +116,7 @@ public interface ITerrain {
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
 
     public abstract void getUnstuckModifier(int elev, PilotingRollData rollTarget);
-    
+
     public boolean isValid(StringBuffer errBuff);
 
 }

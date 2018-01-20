@@ -14,8 +14,8 @@
 
 /**
  * The <code>IPreferenceStore</code> interface represents a mapping
- * of named preferences to values. In case of absence of the value for 
- * a given name the default value is returned. If there is no default 
+ * of named preferences to values. In case of absence of the value for
+ * a given name the default value is returned. If there is no default
  * value for that preference, then predefined default value for the
  * preference type is returned.
  * Predefined default values for the primitive types follows:
@@ -239,7 +239,7 @@ public interface IPreferenceStore {
 
     /**
      * Adds a preference change listener to this store.
-     * 
+     *
      * @param listener a preference change listener
      */
     public abstract void addPreferenceChangeListener(

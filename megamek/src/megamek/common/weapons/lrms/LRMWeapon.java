@@ -98,12 +98,12 @@ public abstract class LRMWeapon extends MissileWeapon {
         }
         return new LRMHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_LRM;
     }
-    
+
     @Override
     public boolean hasIndirectFire() {
         return true;

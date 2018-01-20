@@ -75,7 +75,7 @@ public class BehaviorSettingsFactory {
         }
         return logger;
     }
-    
+
     /**
      * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache.  If the cache is empty, it will load from
      * mmconf/princessBehaviors.xml.  Also, if the "DEFAULT behavior is missing, it will be added.
@@ -133,7 +133,7 @@ public class BehaviorSettingsFactory {
 
     private Document buildPrincessBehaviorDoc() {
         final String METHOD_NAME = "buildPrincessBehaviorDoc()";
-        
+
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {

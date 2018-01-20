@@ -30,7 +30,7 @@ import megamek.common.Report;
  */
 public class BVRatioVictory extends AbstractBVVictory {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6622529899835634696L;
     protected int ratio;

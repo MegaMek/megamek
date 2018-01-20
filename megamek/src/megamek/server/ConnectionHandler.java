@@ -17,40 +17,40 @@ package megamek.server;
 import megamek.common.net.IConnection;
 
 /**
- * Thread that runs and checks to see if there's any incoming packets from a 
+ * Thread that runs and checks to see if there's any incoming packets from a
  * connection.
- * 
+ *
  * @author arlith
  *
  */
 public class ConnectionHandler implements Runnable {
 
     IConnection connection;
-    
+
     boolean shouldStop = false;
-    
+
     ConnectionHandler(IConnection c){
         connection = c;
     }
-    
+
     /**
      * Called when the IConnection disconnects and signals the thread to stop.
      */
     public void signalStop(){
         shouldStop = true;
     }
-    
+
     @Override
     public void run() {
         while (!shouldStop){
             // Write out any queued packets
             connection.flush();
             // Wait for input
-            connection.update();            
+            connection.update();
             if (connection.isClosed()){
                 shouldStop = true;
             }
-        }        
+        }
     }
 
 }

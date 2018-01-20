@@ -58,7 +58,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * Largely the same as the method in <code>WeaponHandler</code>, however we
      * need to adjust the <code>target</code> state variable so damage is
      * applied properly.
-     * 
+     *
      * @param entityTarget
      *            The target Entity
      * @param vPhaseReport
@@ -67,7 +67,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param hits
      * @param nCluster
      * @param bldgAbsorbs
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handlePartialCoverHit(Entity
      *      entityTarget, Vector<Report> vPhaseReport, HitData hit, Building
      *      bldg, int hits, int nCluster, int bldgAbsorbs)
@@ -205,7 +205,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -241,8 +241,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             int extraHeat = Compute.d6(2);
-            if (entityTarget.getArmor(hit) > 0 &&                        
-                    (entityTarget.getArmorType(hit.getLocation()) == 
+            if (entityTarget.getArmor(hit) > 0 &&
+                    (entityTarget.getArmorType(hit.getLocation()) ==
                        EquipmentType.T_ARMOR_REFLECTIVE)){
                entityTarget.heatFromExternal += Math.max(1, extraHeat/2);
                r.add(Math.max(1, extraHeat/2));
@@ -251,8 +251,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                r.add(extraHeat);
                r.add(EquipmentType.armorNames
                        [entityTarget.getArmorType(hit.getLocation())]);
-            } else if (entityTarget.getArmor(hit) > 0 &&  
-                   (entityTarget.getArmorType(hit.getLocation()) == 
+            } else if (entityTarget.getArmor(hit) > 0 &&
+                   (entityTarget.getArmorType(hit.getLocation()) ==
                        EquipmentType.T_ARMOR_HEAT_DISSIPATING)){
                entityTarget.heatFromExternal += extraHeat/2;
                r.add(extraHeat/2);
@@ -266,7 +266,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                r.add(extraHeat);
                r.choose(true);
             }
-            vPhaseReport.addElement(r);            
+            vPhaseReport.addElement(r);
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
@@ -275,7 +275,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -305,7 +305,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -320,7 +320,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override

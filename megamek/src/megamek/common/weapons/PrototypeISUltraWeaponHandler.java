@@ -48,7 +48,7 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override

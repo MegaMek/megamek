@@ -44,7 +44,7 @@ public class CLStreakLRM9OS extends StreakLRMWeapon {
         criticals = 1;
         bv = 155;
         cost = 135000;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "327,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)

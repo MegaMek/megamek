@@ -41,10 +41,10 @@ import megamek.common.SmallCraft;
 import megamek.common.Tank;
 
 /**
- * Performs verification of the validity of different types of 
+ * Performs verification of the validity of different types of
  * <code>Entity</code> subclasses.  Most of the actual validation is performed
- * by <code>TestEntity</code> and its subclasses. 
- * 
+ * by <code>TestEntity</code> and its subclasses.
+ *
  * @author Reinhard Vicinus
  */
 @XmlRootElement(name = "entityverifier")
@@ -64,7 +64,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     public TestXMLOption baOption = new TestXMLOption();
     @XmlElement(name = "infantry")
     public TestXMLOption infOption = new TestXMLOption();
-    
+
     private boolean loadingVerbosity = false;
     private boolean failsOnly = false;
 
@@ -73,28 +73,28 @@ public class EntityVerifier implements MechSummaryCache.Listener {
      */
     private EntityVerifier() {
     }
-    
+
     /**
      * Creates and return a new instance of EntityVerifier.
-     * 
+     *
      * @param config a File that contains an XML representation of the configuration settings
      * @return an EntityVerifier with the configuration loaded from XML
      */
     public static EntityVerifier getInstance(final File config) {
         EntityVerifier ev = null;
-        
+
         try {
             JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             ev = (EntityVerifier) um.unmarshal(config);
         } catch (JAXBException ex) {
             System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
-            
+
             ev = new EntityVerifier();
         }
-        
+
         return ev;
     }
 
@@ -106,7 +106,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             boolean verbose, int ammoTechLvl) {
         return checkEntity(entity, fileString, verbose, ammoTechLvl, false);
     }
-    
+
     public boolean checkEntity(Entity entity, String fileString,
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
         final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
@@ -114,7 +114,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         TestEntity testEntity = null;
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
-        } else if ((entity instanceof Tank) && 
+        } else if ((entity instanceof Tank) &&
                 !(entity instanceof GunEmplacement)) {
             if (entity.isSupportVehicle()) {
                 testEntity = new TestSupportVehicle((Tank) entity, tankOption,
@@ -149,7 +149,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 } else {
                     System.out.println("---Entity INVALID---");
                 }
-                System.out.print(testEntity.printEntity());                        
+                System.out.print(testEntity.printEntity());
                 System.out.println("BV: " + entity.calculateBattleValue()
                         + "    Cost: " + FMT.format(entity.getCost(false)));
             }
@@ -298,7 +298,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 "-file <FILENAME> \t Specify a file to validate,\n"+
                 "                 \t   else the data directory is checked\n" +
                 "-v               \t Verbose -- print detailed report\n" +
-                "-unofficial      \t Consider unofficial units in data dir\n"+ 
+                "-unofficial      \t Consider unofficial units in data dir\n"+
                 "-valid           \t Print verbose reports for valid units\n");
                 return;
             }

@@ -22,7 +22,7 @@ import megamek.common.annotations.Nullable;
 
 /**
  * A class that contains state information that specifies a skin.
- * 
+ *
  * @author arlith
  *
  */
@@ -62,7 +62,7 @@ public class SkinSpecification {
         public String toString() {
             return getName();
         }
-        
+
         public String getComp() {
             return comp;
         }
@@ -82,11 +82,11 @@ public class SkinSpecification {
         public String getDescription() {
             return Messages.getString("SkinSpec." + getComp() + ".Desc");
         }
-        
+
         /**
          * Given a component name, return it's UIComponents instance or null
          * if no match is found.
-         * 
+         *
          * @param val
          * @return
          */
@@ -100,7 +100,7 @@ public class SkinSpecification {
             return null;
         }
     };
-    
+
     /**
      * Indicates the maximum number of colors a skin specification can have.
      * No UI elements will use more than this many colors, so there is no reason
@@ -118,23 +118,23 @@ public class SkinSpecification {
      * Path to an image to be used in the top left corner.
      */
     public String tl_corner;
-    
+
     /**
      * Path to an image to be used in the top right corner.
      */
     public String tr_corner;
-    
+
     /**
      * Path to an image to be used in the bottom left corner.
      */
     public String bl_corner;
-    
+
     /**
      * Path to an image to be used in the bottom right corner.
      */
     public String br_corner;
-    
-    
+
+
     /**
      * Path to images to be used along the top edge.
      */
@@ -154,7 +154,7 @@ public class SkinSpecification {
      * that image should be tiled or just drawn once.
      */
     public ArrayList<Boolean> rightShouldTile;
-    
+
     /**
      * Path to images to be used along the bottom edge.
      */
@@ -164,7 +164,7 @@ public class SkinSpecification {
      * that image should be tiled or just drawn once.
      */
     public ArrayList<Boolean> bottomShouldTile;
-    
+
     /**
      * Path to images to be used along the left edge.
      */
@@ -174,33 +174,33 @@ public class SkinSpecification {
      * that image should be tiled or just drawn once.
      */
     public ArrayList<Boolean> leftShouldTile;
-    
+
     /**
      * Specifies the font color for the UI component
      */
     public ArrayList<Color> fontColors;
-    
+
     /**
      * A collection of background images.  Most UI components only need one,
      * but some have more.  For instance, buttons have a normal background and
      * a pressed background.
      */
     public ArrayList<String> backgrounds;
-    
+
     /**
      * It set, it indicates that no borders should be drawn.
      */
     public boolean noBorder = false;
-    
+
     /**
      * Flag that determines whether the background image should be tiled or
      * scaled.
      */
     public boolean tileBackground = true;
-    
+
     /**
      * Used to specify whether a component should display scrollbars,
-     * particularly for the board view. 
+     * particularly for the board view.
      */
     public boolean showScrollBars = false;
 
@@ -208,7 +208,7 @@ public class SkinSpecification {
      * Specify a non-standard font, or null to use default.
      */
     public String fontName = null;
-    
+
     /**
      * Specify a non-standard font size.  Only used when a non-standard font name is specified.
      */
@@ -234,53 +234,53 @@ public class SkinSpecification {
         fontColors = new ArrayList<>();
         fontColors.add(Color.black);
     }
-    
+
     public boolean hasBorder() {
         // Return false if any corner doesn't exsit
         if (tl_corner.equals("") || tr_corner.equals("")
                 || bl_corner.equals("") || br_corner.equals("")) {
             return false;
         }
-        
+
         // Return false if any edge doesn't exsit
         if (topEdge.size() == 0 || rightEdge.size() == 0
                 || bottomEdge.size() == 0 || leftEdge.size() == 0) {
             return false;
         }
-        
+
         // Make sure edges don't contain empty strings
         for (String edge : topEdge) {
             if (edge.equals("")) {
                 return false;
             }
         }
-        
+
         for (String edge : rightEdge) {
             if (edge.equals("")) {
                 return false;
             }
         }
-        
+
         for (String edge : bottomEdge) {
             if (edge.equals("")) {
                 return false;
             }
         }
-        
+
         for (String edge : leftEdge) {
             if (edge.equals("")) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public boolean hasBackgrounds() {
         if (backgrounds.size() == 0) {
             return false;
         }
-        
+
         for (String bg : backgrounds) {
             if (bg.equals("")) {
                 return false;

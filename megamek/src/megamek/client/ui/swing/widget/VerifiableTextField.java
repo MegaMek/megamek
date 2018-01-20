@@ -36,7 +36,7 @@ import java.util.Set;
 public class VerifiableTextField extends JTextField implements FocusListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4169356645839508584L;
     public static final Color BK_INVALID = Color.pink;

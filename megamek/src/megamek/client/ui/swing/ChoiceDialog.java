@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -41,13 +41,13 @@ import megamek.client.ui.Messages;
  * A (somewhat primitive) dialog that asks a question and lets the player select
  * from the available choices. The question string is tokenised on "\n". <p/>
  * Refactored from SingleChoiceDialog (which was based on Confirm)
- * 
+ *
  * @author suvarov454@sourceforge.net
  * @version $version: $
  */
 public class ChoiceDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3093043054221558221L;
 
@@ -68,10 +68,10 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
     //the maximum number of choices that can be made; -1 if no maximum
     private int maxChoices;
-    
+
     /**
      * Create and initialize the dialog.
-     * 
+     *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param question - <code>String</code> displayed above the choices. The
      *            question string is tokenised on "\n".
@@ -84,7 +84,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
         super.setResizable(false);
 
         this.maxChoices = max;
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         getContentPane().setLayout(gridbag);
 
@@ -158,7 +158,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                     });
                     choiceArea.add(checkboxes[loop]);
                 }
-                
+
                 // If this is not a single-choice dialog, place the
                 // "select all" and "clear all" buttons in a row
                 // under the scrollable area.
@@ -176,7 +176,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             }
 
         } // End have-choices
-        
+
         // Allow the player to confirm or abort the choice.
         setupButtons();
         c.gridy++;
@@ -243,21 +243,21 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             for (int loop = 0; loop < checkboxes.length; loop++) {
                 if(!checkboxes[loop].isSelected()) {
                     checkboxes[loop].setEnabled(false);
-                }              
+                }
             }
         }
         else {
             for (int loop = 0; loop < checkboxes.length; loop++) {
-                checkboxes[loop].setEnabled(true);           
+                checkboxes[loop].setEnabled(true);
             }
         }
     }
-    
+
     /**
      * Create a choice dialog. The player can choose any or all of the choices.
      * If no choices are passed in, this will be a very boring dialog, but it
      * will not suffer an exception.
-     * 
+     *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param title - the title <code>String</code> for this dialog.
      * @param question - <code>String</code> displayed above the choices. The
@@ -271,12 +271,12 @@ public class ChoiceDialog extends JDialog implements ActionListener {
         super(parent, title, true);
         initialize(parent, question, choices, isSingle, max);
     }
-    
+
     /**
      * Create a choice dialog. The player can choose any or all of the choices.
      * If no choices are passed in, this will be a very boring dialog, but it
      * will not suffer an exception.
-     * 
+     *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param title - the title <code>String</code> for this dialog.
      * @param question - <code>String</code> displayed above the choices. The
@@ -294,7 +294,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
      * Create a choice dialog. The player can choose any or all of the choices.
      * If no choices are passed in, this will be a very boring dialog, but it
      * will not suffer an exception.
-     * 
+     *
      * @param parent - the <code>Frame</code> that is locked by this dialog.
      * @param title - the title <code>String</code> for this dialog.
      * @param question - <code>String</code> displayed above the choices. The
@@ -324,7 +324,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             confirm = true;
             setVisible(false);
         } else if (e.getSource().equals(checkboxes)) {
-            
+
         }
         else {
             confirm = false;
@@ -334,7 +334,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * See if the player confirmed a choice.
-     * 
+     *
      * @return <code>true</code> if the player has confirmed a choice.
      *         <code>false</code> if the player canceled, if the player did
      *         not select a choice, or if no choices were available.
@@ -345,7 +345,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
     /**
      * Which choices did the player select?
-     * 
+     *
      * @return If no choices were available, if the player canceled, if the
      *         player did not select a choice, or if the player canceled the
      *         choice, a <code>null</code> value is returned, otherwise an
@@ -384,7 +384,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
 
         return retval;
     }
-    
+
     public int countChoices() {
         int index = 0;
         if(checkboxes != null) {
@@ -392,7 +392,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 if (checkboxes[loop].isSelected()) {
                     index++;
                 }
-            }   
+            }
         }
         return index;
     }

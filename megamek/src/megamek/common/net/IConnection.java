@@ -21,7 +21,7 @@ package megamek.common.net;
 public interface IConnection {
     /**
      * Opens the connection
-     * 
+     *
      * @return <code>true</code> on success, <code>false</code> otherwise
      */
     public boolean open();
@@ -30,7 +30,7 @@ public interface IConnection {
      * Closes the socket and releases resources
      */
     public void close();
-    
+
     /**
      * Returns true if the socket for this connection has been closed.
      * @return
@@ -39,14 +39,14 @@ public interface IConnection {
 
     /**
      * Returns the connection ID
-     * 
+     *
      * @return the connection ID
      */
     public int getId();
 
     /**
      * Sets the connection ID
-     * 
+     *
      * @param id new connection ID Be careful with this... used by server only.
      *            cannot be moved to constructor,so should be moved to a
      *            separate interface
@@ -77,21 +77,21 @@ public interface IConnection {
 
     /**
      * Returns <code>true</code> if there are (send)pending packets
-     * 
+     *
      * @return <code>true</code> if there are pending packets
      */
     public boolean hasPending();
 
     /**
      * Returns a very approximate count of how many bytes were sent
-     * 
+     *
      * @return a very approximate count of how many bytes were sent
      */
     public long bytesSent();
 
     /**
      * Returns a very approximate count of how many bytes were received
-     * 
+     *
      * @return a very approximate count of how many bytes were received
      */
     public long bytesReceived();
@@ -99,14 +99,14 @@ public interface IConnection {
     /**
      * Adds the specified connection listener to receive connection events from
      * connection.
-     * 
+     *
      * @param listener the connection listener.
      */
     public void addConnectionListener(ConnectionListener listener);
 
     /**
      * Removes the specified connection listener.
-     * 
+     *
      * @param listener the connection listener.
      */
     public void removeConnectionListener(ConnectionListener listener);

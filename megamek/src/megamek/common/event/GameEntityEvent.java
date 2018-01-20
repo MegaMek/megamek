@@ -19,7 +19,7 @@ import megamek.common.Entity;
 /**
  * Instances of descendant classes are sent as a result of Game changes related
  * to entities such as addind/removing/changing
- * 
+ *
  * @see GameEntityChangeEvent
  * @see GameEntityNewEvent
  * @see GameListener
@@ -27,7 +27,7 @@ import megamek.common.Entity;
 public abstract class GameEntityEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2152420685366625391L;
     protected Entity entity;
@@ -36,10 +36,10 @@ public abstract class GameEntityEvent extends GameEvent {
         super(source);
         this.entity = null;
     }
-    
+
     /**
      * Constructs new GameEntityEvent
-     * 
+     *
      * @param source
      * @param entity
      * @param type

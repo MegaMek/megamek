@@ -40,14 +40,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class reads in an XML file that specifies different aspects of the 
+ * This class reads in an XML file that specifies different aspects of the
  * visual skin for Megamek.
- * 
+ *
  * @author arlith
  *
  */
 public class SkinXMLHandler {
-    
+
     public static String SKIN_FOOTER = "</skin>";
     public static String SKIN_HEADER;
 
@@ -72,12 +72,12 @@ public class SkinXMLHandler {
         sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsl\">\n");
         SKIN_HEADER = sb.toString();
     }
-    
+
     /**
      * The file name for the default Skin XML file, found in the config dir.
      */
     public static String defaultSkinXML = "defaultSkin.xml";
-    
+
     // General XML Tags
     public static String UI_ELEMENT = "UI_Element";
     public static String NAME = "name";
@@ -138,11 +138,11 @@ public class SkinXMLHandler {
     private static Map<String, SkinSpecification> skinSpecs;
 
     private static UnitDisplaySkinSpecification udSpec = null;
-    
+
     /**
      * Checks whether the given path points to a file that is a valid skin
      * specification.
-     * 
+     *
      * @param path
      * @return
      */
@@ -168,7 +168,7 @@ public class SkinXMLHandler {
             return false;
         }
     }
-    
+
     /**
      * Initializes using the default skin file.
      * @throws IOException
@@ -177,7 +177,7 @@ public class SkinXMLHandler {
         String skinFilePath = GUIPreferences.getInstance().getSkinFile();
         return initSkinXMLHandler(skinFilePath);
     }
-    
+
     /**
      * Initializes using the supplied skin file.
      * @throws IOException
@@ -191,7 +191,7 @@ public class SkinXMLHandler {
                     "null filename!");
             return false;
         }
-        
+
         File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
         if (!file.exists() || !file.isFile()) {
             System.out.println("ERROR: Bad skin specification file: " +
@@ -217,7 +217,7 @@ public class SkinXMLHandler {
 
                 String name = borderList.getElementsByTagName(NAME).
                         item(0).getTextContent();
-                
+
                 if (name.equals(SkinSpecification.UIComponents.UnitDisplay.getComp())) {
                     parseUnitDisplaySkinSpec(borderList);
                     continue;
@@ -232,30 +232,30 @@ public class SkinXMLHandler {
                     noBorder = Boolean
                             .parseBoolean(noBorderEle.getTextContent());
                 }
-                
+
                 // Get the first element of this node.
-                Element plainTag = (Element) 
+                Element plainTag = (Element)
                         borderList.getElementsByTagName(PLAIN).item(0);
                 // If there is no plain tag, load the icons
                 if (plainTag == null && !noBorder) {
                     // Get the border specs
-                    Element border = (Element) 
+                    Element border = (Element)
                             borderList.getElementsByTagName(BORDER).item(0);
                     if (border == null) {
-                        System.err.println("Missing <" + BORDER +  
+                        System.err.println("Missing <" + BORDER +
                                 "> tag in element #" + comp);
                         continue;
                     }
-                    
+
                     skinSpec = parseBorderTag(name, border);
                 } else { // Plain skin, no icons
                     skinSpec = new SkinSpecification(name);
                     skinSpec.noBorder = noBorder;
                 }
-                
+
                 // Get the background specs
                 if (plainTag == null) {
-                    NodeList backgrounds = 
+                    NodeList backgrounds =
                             borderList.getElementsByTagName(BACKGROUND_IMAGE);
                     if (backgrounds != null){
                         for (int bg = 0; bg < backgrounds.getLength(); bg++){
@@ -264,7 +264,7 @@ public class SkinXMLHandler {
                         }
                     }
                 }
-                
+
                 // Parse show scroll bars
                 Element showScrollEle = (Element) borderList
                         .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
@@ -324,10 +324,10 @@ public class SkinXMLHandler {
                 }
             }
 
-            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp()) 
+            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp())
                     || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
                 System.out.println("SKIN ERROR: Bad skin specification file: " +
-                        "file doesn't specify " + UIComponents.DefaultUIElement + 
+                        "file doesn't specify " + UIComponents.DefaultUIElement +
                         " or " + UIComponents.DefaultButton + "!");
                 return false;
             }
@@ -342,7 +342,7 @@ public class SkinXMLHandler {
         }
         return true;
     }
-    
+
     /**
      *  Create a new SkinSpecification and populate it from the supplied border
      *  tag
@@ -369,7 +369,7 @@ public class SkinXMLHandler {
             // An edge tag will have some number of icons
             ArrayList<String> icons = new ArrayList<String>();
             // And icon can be tiled or static
-            ArrayList<Boolean> shouldTile = new ArrayList<Boolean>(); 
+            ArrayList<Boolean> shouldTile = new ArrayList<Boolean>();
             NodeList edgeIcons = ((Element) edgeNodes.item(i))
                     .getElementsByTagName(EDGE_ICON);
             // Iterate through each icon/tiled pair
@@ -412,8 +412,8 @@ public class SkinXMLHandler {
                 skinSpec.rightEdge = icons;
                 skinSpec.rightShouldTile = shouldTile;
             }
-        }        
-        return skinSpec;        
+        }
+        return skinSpec;
     }
 
     /**
@@ -891,7 +891,7 @@ public class SkinXMLHandler {
 
     /**
      * Get a <code>SkinSpecification</code> for a given component.
-     * 
+     *
      * @param component
      *            The name of the component to get skin info for.
      * @param defaultToPlain
@@ -899,7 +899,7 @@ public class SkinXMLHandler {
      *            or a plain component
      * @return
      */
-    public synchronized static SkinSpecification getSkin(String component, 
+    public synchronized static SkinSpecification getSkin(String component,
             boolean defaultToPlain, boolean isBtn){
         if (skinSpecs == null ){
             boolean rv = initSkinXMLHandler();
@@ -909,7 +909,7 @@ public class SkinXMLHandler {
                 return new SkinSpecification("Plain");
             }
         }
-        
+
         SkinSpecification spec = skinSpecs.get(component);
         if (spec == null){
             if (defaultToPlain) {

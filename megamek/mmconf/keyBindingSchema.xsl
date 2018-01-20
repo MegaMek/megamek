@@ -5,14 +5,14 @@
 
     <!-- Defines the images that will be used in a border -->
     <xs:element name="KeyBind">
-      <xs:element name="command" type="xs:string"/>    
+      <xs:element name="command" type="xs:string"/>
       <!-- Boolean flag that determines whether this command should be repeated when the key is held down -->
       <!-- Defines what key is being bound, using defined values in awt.event.KeyEvent -->
       <xs:element name="keyCode" type="xs:integer"/>
       <!-- Defines any modifiers for they key (shift,ctrl, etc), using defined values in awt.event.KeyEvent -->
-      <xs:element name="modifier" type="xs:integer"/>  
-      <!-- The string command that will be executed when this key is pressed, for a list of commands see megamek.client.ui.swing.util.KeyBindCommand -->  
-      <xs:element name="isRepeatable" type="xs:byte"/>        
+      <xs:element name="modifier" type="xs:integer"/>
+      <!-- The string command that will be executed when this key is pressed, for a list of commands see megamek.client.ui.swing.util.KeyBindCommand -->
+      <xs:element name="isRepeatable" type="xs:byte"/>
     </xs:element>
 
 </xs:schema>

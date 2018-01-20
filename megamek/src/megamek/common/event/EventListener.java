@@ -26,7 +26,7 @@ class EventListener {
         this.eventType = Objects.requireNonNull(eventType);
         this.info = method.getAnnotation(Subscribe.class);
     }
-    
+
     public void trigger(MMEvent event) {
         if(!event.isCancellable() || !event.isCancelled()) {
             try {
@@ -40,7 +40,7 @@ class EventListener {
             }
         }
     }
-    
+
     public int getPriority() {
         return info.priority();
     }

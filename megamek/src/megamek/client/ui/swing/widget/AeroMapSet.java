@@ -46,7 +46,7 @@ public class AeroMapSet implements DisplayMapSet {
     private PMValueLabel[] vLabels = new PMValueLabel[13];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
-    
+
     private UnitDisplay unitDisplay;
 
     // private static final int INT_STR_OFFSET = 4;
@@ -133,7 +133,7 @@ public class AeroMapSet implements DisplayMapSet {
             vLabels[9].setValue("-");
             vLabels[10].setValue("-");
         }
-        
+
         if (t instanceof Dropship) {
         	// add kf boom and docking collar
         	Dropship ds = (Dropship)t;

@@ -190,8 +190,8 @@ public class FixedWingSupport extends ConvFighter {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
-    
-    
+
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

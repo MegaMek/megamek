@@ -14,7 +14,7 @@ public class PlayerIDandList<Data> extends Vector<Data> {
 
     /**
      * Returns the player ID
-     * 
+     *
      * @return the playerID
      */
     public int getPlayerID() {
@@ -23,7 +23,7 @@ public class PlayerIDandList<Data> extends Vector<Data> {
 
     /**
      * sets the playerID
-     * 
+     *
      * @param playerID the playerID
      */
     public void setPlayerID(int playerID) {

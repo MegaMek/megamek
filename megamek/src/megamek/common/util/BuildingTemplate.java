@@ -11,12 +11,12 @@ import megamek.common.Coords;
  * Building template, for placing on the map during map generation. Currently
  * used by mekwars to place objective buildings. Could also be used by an RMG
  * town builder
- * 
+ *
  * @author coelocanth
  */
 public class BuildingTemplate implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -911419490135815472L;
 

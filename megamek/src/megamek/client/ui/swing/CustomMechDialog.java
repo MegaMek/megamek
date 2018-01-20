@@ -137,7 +137,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labDeploymentZone"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JComboBox<String> choDeploymentRound = new JComboBox<String>();
-    
+
     private JComboBox<String> choDeploymentZone = new JComboBox<String>();
 
     private JLabel labDeployShutdown = new JLabel(
@@ -177,15 +177,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JTextField fldOffBoardDistance = new JTextField(4);
 
     private JButton butOffBoardDistance = new JButton("0");
-    
+
     private JLabel labStartingMode = new JLabel(
             Messages.getString("CustomMechDialog.labStartingMode"), SwingConstants.RIGHT); //$NON-NLS-1$
-    
+
     private JComboBox<String> choStartingMode = new JComboBox<>();
-       
+
     private JLabel labCurrentFuel = new JLabel(
             Messages.getString("CustomMechDialog.labCurrentFuel"), SwingConstants.RIGHT); //$NON-NLS-1$
-    
+
     private JTextField fldCurrentFuel = new JTextField(7);
 
     private JLabel labStartVelocity = new JLabel(
@@ -202,7 +202,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labStartHeight"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldStartHeight = new JTextField(3);
-    
+
     private JCheckBox chDeployAirborne = new JCheckBox();
 
     private JPanel panButtons = new JPanel();
@@ -247,7 +247,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private OffBoardDirection direction = OffBoardDirection.NONE;
 
     private int distance = 17;
-    
+
     private int fuel = 0;
 
     /**
@@ -283,7 +283,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isLAM = true;
         boolean isGlider = true;
         boolean eligibleForOffBoard = true;
-        
+
         for (Entity e : entities) {
             isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship));
             isMech &= (e instanceof Mech);
@@ -306,7 +306,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         // set up the panels
         JPanel mainPanel = new JPanel(new GridBagLayout());
         tabAll = new JTabbedPane();
-        
+
         JPanel panCrew = new JPanel(new GridBagLayout());
         panCrewMember = new CustomPilotView[entity.getCrew().getSlotCount()];
         for (int i = 0; i < panCrewMember.length; i++) {
@@ -317,7 +317,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panQuirks = new QuirksPanel(entity, quirks, editable, this, h_wpnQuirks);
         panPartReps = new JPanel(new GridBagLayout());
         setupEquip();
-        
+
         mainPanel.add(tabAll,
                 GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
@@ -363,7 +363,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
         this.editable = editable;
-        
+
         // **CREW TAB**//
         if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
             panCrew.add(new JLabel(Messages.getString("CustomMechDialog.labFatigue"), SwingConstants.RIGHT),
@@ -401,7 +401,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panCrew.add(panOptions, GBC.eop());
 
         // **DEPLOYMENT TAB**//
-        
+
         if (isQuadVee || isLAM) {
             panDeploy.add(labStartingMode, GBC.std());
             panDeploy.add(choStartingMode, GBC.eol());
@@ -429,7 +429,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             panDeploy.add(labStartAltitude, GBC.std());
             panDeploy.add(fldStartAltitude, GBC.eol());
-                        
+
             panDeploy.add(labCurrentFuel, GBC.std());
             panDeploy.add(fldCurrentFuel, GBC.eol());
         }
@@ -470,7 +470,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(chHidden, GBC.eol());
             chHidden.setSelected(entity.isHidden());
         }
-        
+
         if (eligibleForOffBoard) {
             panDeploy.add(labOffBoard, GBC.std());
             panDeploy.add(chOffBoard, GBC.eol());
@@ -510,7 +510,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
-            
+
             fuel = a.getFuel();
             fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
                     .toString());
@@ -570,7 +570,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             tabAll.setSelectedIndex(idx);
         }
     }
-    
+
     public void setSelectedTab(String tabName) {
         for (int i = 0; i < tabAll.getTabCount(); i++) {
             if (tabAll.getTitleAt(i).equals(tabName)) {
@@ -756,7 +756,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.setSelected(option.stringValue());
         }
 
-        if (OptionsConstants.GUNNERY_SPECIALIST               
+        if (OptionsConstants.GUNNERY_SPECIALIST
                 .equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Crew.SPECIAL_NONE);
             optionComp.addValue(Crew.SPECIAL_ENERGY);
@@ -810,7 +810,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private void refreshDeployment() {
         Entity entity = entities.get(0);
-        
+
         if (entity instanceof QuadVee) {
             choStartingMode.removeItemListener(this);
             choStartingMode.removeAllItems();
@@ -837,9 +837,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             updateStartingModeOptions();
             choStartingMode.addItemListener(this);
         }
-        
+
         choDeploymentRound.removeItemListener(this);
-        
+
         choDeploymentRound.removeAllItems();
         choDeploymentRound.addItem(Messages
                 .getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
@@ -859,7 +859,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (entity.getTransportId() != Entity.NONE) {
             choDeploymentRound.setEnabled(false);
         }
-        
+
         choDeploymentZone.removeAllItems();
         choDeploymentZone.addItem(Messages
                 .getString("CustomMechDialog.useOwners")); //$NON-NLS-1$
@@ -885,14 +885,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 .getString("CustomMechDialog.deployEdge")); //$NON-NLS-1$
         choDeploymentZone.addItem(Messages
                 .getString("CustomMechDialog.deployCenter")); //$NON-NLS-1$
-        
+
         if (entity.getDeployRound() == 0) {
             choDeploymentZone.setEnabled(false);
         } else {
             choDeploymentZone.setEnabled(true);
         }
         choDeploymentZone.setSelectedIndex(entity.getStartingPos(false) + 1);
-        
+
         choDeploymentRound.addItemListener(this);
 
         chHidden.removeActionListener(this);
@@ -942,16 +942,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             butOffBoardDistance.setText(Integer.toString(distance));
             return;
         }
-        
+
         if (actionEvent.getSource().equals(butCancel)) {
             setVisible(false);
             return;
         }
-        
+
         if (actionEvent.getSource().equals(chHidden)) {
             return;
         }
-        
+
         if (actionEvent.getActionCommand().equals("missing")) {
             //If we're down to a single crew member, do not allow any more to be removed.
             final long remaining = Arrays.stream(panCrewMember).filter(p -> !p.getMissing()).count();
@@ -1019,7 +1019,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (isAero || isShip) {
             if ((velocity > (2 * entities.get(0).getWalkMP()))
                     || (velocity < 0)) {
@@ -1040,7 +1040,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if ((currentfuel < 0) || (currentfuel > fuel)) {
             	msg = (Messages
             			 .getString("CustomMechDialog.EnterCorrectFuel") + fuel + "."); //$NON-NLS-1$
@@ -1102,14 +1102,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-        
+
                 // keep these reasonable, please
                 if ((gunnery < 0) || (gunnery > 8) || (piloting < 0) || (piloting > 8)
                         || (gunneryL < 0) || (gunneryL > 8) || (gunneryM < 0)
                         || (gunneryM > 8) || (gunneryB < 0) || (gunneryB > 8)
                         || (gunneryAero < 0) || (gunneryAero > 8) || (pilotingAero < 0) || (pilotingAero > 8)
                         || (gunneryAeroL < 0) || (gunneryAeroL > 8) || (gunneryAeroM < 0)
-                        || (gunneryAeroM > 8) || (gunneryAeroB < 0) || (gunneryAeroB > 8)                        
+                        || (gunneryAeroM > 8) || (gunneryAeroB < 0) || (gunneryAeroB > 8)
                         || (artillery < 0) || (artillery > 8)) {
                     msg = Messages.getString("CustomMechDialog.EnterSkillsBetween0_8"); //$NON-NLS-1$
                     title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
@@ -1263,11 +1263,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     a.liftOff(altitude);
                 }
             }
-            
+
             if (isVTOL || isWiGE || isAirMech || isGlider) {
                 entity.setElevation(height);
             }
-            
+
             //Set the entity's starting mode
             if (isQuadVee) {
                 entity.setConversionMode(choStartingMode.getSelectedIndex());
@@ -1301,7 +1301,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (!isLAM || (!isAero && entity.getElevation() == 0)) {
                 // Should the entity begin the game prone?
                 entity.setProne(chDeployProne.isSelected());
-    
+
                 // Should the entity begin the game prone?
                 entity.setHullDown(chDeployHullDown.isSelected());
             }
@@ -1445,5 +1445,5 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         m_equip = new EquipChoicePanel(entity, clientgui, client);
         panEquip.add(m_equip, GBC.std());
     }
-    
+
 }

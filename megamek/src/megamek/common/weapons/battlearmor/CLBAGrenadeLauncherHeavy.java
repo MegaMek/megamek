@@ -36,7 +36,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         name = "Grenade Launcher (Heavy)";
         setInternalName("CLBAHeavyGrenadeLauncher");
         addLookupName("CLBAHeavyGL");
-        addLookupName("Heavy BA Grenade Launcher");      
+        addLookupName("Heavy BA Grenade Launcher");
       	addLookupName("ISBAHeavyGrenadeLauncher");
         addLookupName("BA Heavy Grenade Launcher");
         addLookupName("ISBAAutoGL");
@@ -68,7 +68,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         .setClanAdvancement(2880, 2900, 3050, DATE_NONE, DATE_NONE)
         .setClanApproximate(true, false, false,false, false)
         .setPrototypeFactions(F_CSF)
-        .setProductionFactions(F_CSF);        
+        .setProductionFactions(F_CSF);
     }
 
 }

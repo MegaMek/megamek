@@ -38,7 +38,7 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
 		    .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)
 		    .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
     //TODO - Implement Game Rules.  See IO pg 94 for specifics.
 
     /*

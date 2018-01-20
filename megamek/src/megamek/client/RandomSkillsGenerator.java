@@ -266,7 +266,7 @@ public class RandomSkillsGenerator implements Serializable {
         if (ty == T_MD) {
             bonus++;
         }
-        
+
         // Demands of dual training
         if (e instanceof LandAirMech) {
             bonus -= 2;

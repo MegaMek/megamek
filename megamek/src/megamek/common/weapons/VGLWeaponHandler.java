@@ -37,7 +37,7 @@ import megamek.server.Server;
 /**
  * Weapon handler for vehicular grenade launchers.  Rather than have a separate
  * handler for each ammo type, all ammo types are handled here.
- * 
+ *
  * @author arlith
  */
 public class VGLWeaponHandler extends AmmoWeaponHandler {
@@ -57,7 +57,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
     }
-    
+
     /**
      * handle this weapons firing
      *
@@ -69,8 +69,8 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
         // VGLs automatically hit the three adjacent hex in their side
-        
-        
+
+
         // Determine what coords get hit
         AmmoType atype = (AmmoType) ammo.getType();
         int facing = weapon.getFacing();
@@ -78,7 +78,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         affectedCoords.add(ae.getPosition().translated(ae.getFacing() + facing));
         affectedCoords.add(ae.getPosition().translated((ae.getFacing() + facing + 1) % 6));
         affectedCoords.add(ae.getPosition().translated((ae.getFacing() + facing + 5) % 6));
-        
+
         Report r = new Report(3117);
         r.indent();
         r.subject = subjectId;
@@ -88,8 +88,8 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         r.add(affectedCoords.get(1).getBoardNum());
         r.add(affectedCoords.get(2).getBoardNum());
         vPhaseReport.add(r);
-        
-        
+
+
         for (Coords c : affectedCoords) {
             Building bldg = game.getBoard().getBuildingAt(c);
             if (atype.getMunitionType() == AmmoType.M_SMOKEGRENADE) {
@@ -132,7 +132,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                 for (Entity entTarget : game.getEntitiesVector(c)) {
                     // Infantry in a building take damage when the building is
                     //  targeted, so should be ignored here
-                    if (bldg != null && (entTarget instanceof Infantry) 
+                    if (bldg != null && (entTarget instanceof Infantry)
                             && Compute.isInBuilding(game, entTarget)){
                         continue;
                     }
@@ -151,25 +151,25 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
             } else { // Assume fragmentation grenade
                 // Damage each Entity in the target coord
                 for (Entity entTarget : game.getEntitiesVector(c)) {
-                    boolean inBuilding = (bldg != null) 
+                    boolean inBuilding = (bldg != null)
                             && Compute.isInBuilding(game, entTarget, c);
-                
+
                     hit = entTarget.rollHitLocation(toHit.getHitTable(),
                             toHit.getSideTable(), waa.getAimedLocation(),
                             waa.getAimingMode(), toHit.getCover());
                     hit.setAttackerId(getAttackerId());
-                    
+
                     Vector<Report> dmgReports = new Vector<Report>();
                     // Infantry take 2D6 burst damage
-                    if (!inBuilding && (entTarget instanceof Infantry) 
+                    if (!inBuilding && (entTarget instanceof Infantry)
                             && !(entTarget instanceof BattleArmor)) {
                         int infDmg = Compute.directBlowInfantryDamage(0, 0,
                                 WeaponType.WEAPON_BURST_2D6,
                                 ((Infantry) entTarget).isMechanized(),
                                 toHit.getThruBldg() != null);
-                        dmgReports = 
+                        dmgReports =
                                 server.damageEntity(entTarget, hit, infDmg);
-                    } else if (inBuilding && (entTarget instanceof Infantry) 
+                    } else if (inBuilding && (entTarget instanceof Infantry)
                             && !(entTarget instanceof BattleArmor)) {
                         r = new Report(3417);
                         r.addDesc(entTarget);
@@ -188,10 +188,9 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                     vPhaseReport.addAll(dmgReports);
                 }
             }
-        }        
-        
+        }
+
         return false;
     }
 
 }
-

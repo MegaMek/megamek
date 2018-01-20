@@ -136,7 +136,7 @@ public class TestTank extends TestEntity {
         }
         return retVal;
     }
-    
+
     @Override
     public Entity getEntity() {
         return tank;
@@ -161,7 +161,7 @@ public class TestTank extends TestEntity {
     public boolean isSmallCraft() {
         return false;
     }
-    
+
     @Override
     public boolean isJumpship() {
         return false;
@@ -430,7 +430,7 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         // only tanks with fusion engine can be vacuum protected
-        if(tank.hasEngine() && !(tank.getEngine().isFusion() 
+        if(tank.hasEngine() && !(tank.getEngine().isFusion()
                 || (tank.getEngine().getEngineType() == Engine.FUEL_CELL)
                 || (tank.getEngine().getEngineType() == Engine.SOLAR)
                 || (tank.getEngine().getEngineType() == Engine.BATTERY)
@@ -499,7 +499,7 @@ public class TestTank extends TestEntity {
         printFailedEquipment(buff);
         return buff;
     }
-    
+
     public StringBuffer printSlotCalculation() {
         StringBuffer buff = new StringBuffer();
         buff.append("Available slots: ").append(tank.getTotalSlots()).append("\n");
@@ -515,7 +515,7 @@ public class TestTank extends TestEntity {
             } else if (tank.getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
                 engineSlots--;
             }
-            
+
             if (tank.getEngine().getEngineType() == Engine.LARGE_ENGINE) {
                 engineSlots++;
             }
@@ -629,7 +629,7 @@ public class TestTank extends TestEntity {
                 buff.append(StringUtil.makeLength("Transport Bay", 30));
                 buff.append("1").append("\n");
             }
-        }        
+        }
         return buff;
     }
 
@@ -643,7 +643,7 @@ public class TestTank extends TestEntity {
         if (getEntity().isSupportVehicle() && (getEntity().getWeight() < 5)) {
             return 0;
         }
-    	
+
         if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
             double weight = 0;
             for (Mounted m : tank.getWeaponList()) {
@@ -661,7 +661,7 @@ public class TestTank extends TestEntity {
         }
         return 0;
     }
-    
+
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
@@ -673,18 +673,18 @@ public class TestTank extends TestEntity {
     @Override
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = super.hasIllegalEquipmentCombinations(buff);
-        
+
         boolean hasSponsonTurret = false;
-        
+
         for (Mounted m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
                 hasSponsonTurret = true;
             }
         }
-        
+
         for (Mounted m : getEntity().getMisc()) {
             final MiscType misc = (MiscType)m.getType();
-            
+
             if (misc.hasFlag(MiscType.F_JUMP_JET)) {
                 if (hasSponsonTurret) {
                     buff.append("can't combine vehicular jump jets and sponson turret\n");
@@ -710,7 +710,7 @@ public class TestTank extends TestEntity {
             if (misc.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
                     && m.getLocation() != Tank.LOC_BODY) {
                 illegal = true;
-                buff.append("Vehicle must not mount light fluid suction system in body\n");                
+                buff.append("Vehicle must not mount light fluid suction system in body\n");
             }
 
             if (misc.hasFlag(MiscType.F_BULLDOZER)) {
@@ -749,7 +749,7 @@ public class TestTank extends TestEntity {
                 }
             }
         }
-        
+
         if ((tank.getMovementMode() == EntityMovementMode.VTOL)
                 || (tank.getMovementMode() == EntityMovementMode.WIGE)
                 || (tank.getMovementMode() == EntityMovementMode.HOVER)) {
@@ -760,7 +760,7 @@ public class TestTank extends TestEntity {
                 }
             }
         }
-        
+
         // Ensure that omni tank turrets aren't overloaded
         if (tank.isOmni()) {
             // Check to see if the base chassis turret weight is set
@@ -809,7 +809,7 @@ public class TestTank extends TestEntity {
                 illegal = true;
             }
         }
-        
+
         return illegal;
     }
 }

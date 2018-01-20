@@ -45,7 +45,7 @@ public class GameLog {
 
     /**
      * Creates GameLog named
-     * 
+     *
      * @filename
      */
     public GameLog(String filename) {
@@ -74,7 +74,7 @@ public class GameLog {
         if (writer == null) {
             return;
         }
-        
+
         try {
             writer.write("<pre>"+toLog+"</pre>");
             writer.newLine();

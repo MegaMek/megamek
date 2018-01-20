@@ -60,7 +60,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
             .setISApproximate(true, false, false, true, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_CC);	
+            .setReintroductionFactions(F_CC);
     }
 
 }

@@ -28,13 +28,13 @@ import org.w3c.dom.Node;
  * key (e.g. DC.SL for Draconis Combine/Sword of Light).
  *
  * @author Neoancient
- * 
+ *
  */
 public class FactionRecord {
-	
+
 	/**
 	 * Proportions of omni/Clan/upgraded tech are given for each faction
-	 * by the field manual series.  
+	 * by the field manual series.
 	 */
 	public enum TechCategory {
 		OMNI, CLAN, IS_ADVANCED, // Used for Meks, and also used for ASFs or vees if no other value is present.
@@ -63,7 +63,7 @@ public class FactionRecord {
 			}
 		}
 	};
-	
+
 	private String key;
 	private boolean minor;
 	private boolean clan;
@@ -88,19 +88,19 @@ public class FactionRecord {
 	private HashMap<Integer, Integer> omniMargin;
 	private HashMap<Integer, Integer> techMargin;
 	private HashMap<Integer, Integer> upgradeMargin;
-	
+
 	//weightDistribution.get(era).get(unitType)
 	private HashMap<Integer, HashMap<Integer,ArrayList<Integer>>> weightDistribution;
 	private ArrayList<String> parentFactions;
-	
+
 	public FactionRecord() {
 		this("Periphery", "Periphery");
 	}
-	
+
 	public FactionRecord(String key) {
 		this(key, key);
 	}
-		
+
 	public FactionRecord(String key, String name) {
 		this.key = key;
 		this.name = name;
@@ -117,7 +117,7 @@ public class FactionRecord {
 		weightDistribution = new HashMap<>();
 		parentFactions = new ArrayList<>();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return key.hashCode();
@@ -128,52 +128,52 @@ public class FactionRecord {
 		return other != null && other instanceof FactionRecord
 				&& ((FactionRecord)other).getKey().equals(getKey());
 	}
-	
+
 	public String getKey() {
 		return key;
 	}
-	
+
 	public boolean isMinor() {
 		return minor;
 	}
-	
+
 	public void setMinor(boolean minor) {
 		this.minor = minor;
 	}
-	
+
 	public boolean isClan() {
 		return clan;
 	}
-	
+
 	public void setClan(boolean clan) {
 		this.clan = clan;
 	}
-	
+
 	public boolean isPeriphery() {
 		return periphery;
 	}
-	
+
 	public void setPeriphery(boolean periphery) {
 		this.periphery = periphery;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return value of ratingLevels
 	 */
 	public ArrayList<String> getRatingLevels() {
 		return ratingLevels;
 	}
-	
+
 	/**
 	 * Checks the faction parent hierarchy as necessary to find a set of ratings with at
 	 * least two values. If ratingLevels is empty, this faction inherits the parent's system.
 	 * If ratingLevels has one member, it indicates a set value for this faction within
 	 * the parent faction's system.
-	 * 
+	 *
 	 * @return The list of available equipment ratings for the faction.
 	 */
-	
+
 	public ArrayList<String> getRatingLevelSystem() {
 		if (ratingLevels.size() < 2) {
 			for (String parent : parentFactions) {
@@ -189,11 +189,11 @@ public class FactionRecord {
 		}
 		return ratingLevels;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getName(int year) {
 		String retVal = name;
 		for (Integer y : altNames.keySet()) {
@@ -205,15 +205,15 @@ public class FactionRecord {
 		}
 		return retVal;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public void setName(int era, String name) {
 		altNames.put(era, name);
 	}
-	
+
 	public void setNames(String names) {
 		String[] fields = names.split(",");
 		name = fields[0];
@@ -223,7 +223,7 @@ public class FactionRecord {
 			altNames.put(Integer.parseInt(entry[0]), entry[1]);
 		}
 	}
-	
+
 	public boolean isActiveInYear(int year) {
 		for (DateRange dr : yearsActive) {
 			if (dr.isInRange(year)) {
@@ -232,7 +232,7 @@ public class FactionRecord {
 		}
 		return false;
 	}
-	
+
 	public void setYears(String str) throws ParseException {
 		yearsActive.clear();
 		String[] ranges = str.split(",");
@@ -258,15 +258,15 @@ public class FactionRecord {
 			throw new ParseException("Could not parse year ranges for faction " + key, offset);
 		}
 	}
-	
+
 	public Integer getPctSalvage(int era) {
 		return pctSalvage.get(era);
 	}
-	
+
 	public void setPctSalvage(int era, Integer pct) {
 		pctSalvage.put(era, pct);
 	}
-	
+
 	public HashMap<String, Integer> getSalvage(int era) {
 		if (salvage.containsKey(era) && salvage.get(era).size() > 0) {
 			return salvage.get(era);
@@ -278,7 +278,7 @@ public class FactionRecord {
 				if (fRec != null) {
 					for (String fKey : fRec.getSalvage(era).keySet()) {
 						retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
-					}					
+					}
 				} else {
 					System.err.println("RATGenerator: could not locate salvage faction " + pKey
 							+ " for " + key);
@@ -288,15 +288,15 @@ public class FactionRecord {
 		salvage.put(era, retVal);
 		return retVal;
 	}
-	
+
 	public void setSalvage(int era, String faction, Integer wt) {
 		salvage.get(era).put(faction, wt);
 	}
-	
+
 	public void removeSalvage(int era, String faction) {
 		salvage.get(era).remove(faction);
 	}
-	
+
 	public Integer getPctTech(TechCategory category, int era, int rating) {
 		if (!pctTech.containsKey(category) || !pctTech.get(category).containsKey(era)
 				|| pctTech.get(category).get(era).isEmpty()
@@ -305,7 +305,7 @@ public class FactionRecord {
 		}
 		return pctTech.get(category).get(era).get(rating);
 	}
-	
+
 	public Integer findPctTech(TechCategory category, int era, int rating) {
 		Integer retVal = getPctTech(category, era, rating);
 		if (retVal != null) {
@@ -343,7 +343,7 @@ public class FactionRecord {
 			}
 		}
 	}
-	
+
 	public void setPctTech(TechCategory category, int era, String str) {
 		if (!pctTech.containsKey(category)) {
 			pctTech.put(category, new HashMap<Integer,ArrayList<Integer>>());
@@ -361,28 +361,28 @@ public class FactionRecord {
 		}
 		pctTech.get(category).put(era, list);
 	}
-	
+
 	public int getOmniMargin(int era) {
 		if (omniMargin.containsKey(era)) {
 			return omniMargin.get(era);
 		}
 		return 0;
 	}
-	
+
 	public int getTechMargin(int era) {
 		if (techMargin.containsKey(era)) {
 			return techMargin.get(era);
 		}
 		return 0;
 	}
-	
+
 	public int getUpgradeMargin(int era) {
 		if (upgradeMargin.containsKey(era)) {
 			return upgradeMargin.get(era);
 		}
 		return 0;
 	}
-	
+
 	public ArrayList<Integer> getWeightDistribution(int era, int unitType) {
 		if (weightDistribution.containsKey(era)
 				&& weightDistribution.get(era).containsKey(unitType)) {
@@ -409,7 +409,7 @@ public class FactionRecord {
 		}
 		return null;
 	}
-	
+
 	public void setWeightDistribution(int era, int unitType, String dist) {
 		if (dist == null && weightDistribution.containsKey(era)) {
 			weightDistribution.get(era).remove(unitType);
@@ -423,18 +423,18 @@ public class FactionRecord {
 		}
 		weightDistribution.get(era).put(unitType, list);
 	}
-	
+
 	public ArrayList<String> getParentFactions() {
 		return parentFactions;
 	}
-	
+
 	public void setParentFactions(String factions) {
 		parentFactions.clear();
 		for (String faction : factions.split(",")) {
 			parentFactions.add(faction);
 		}
 	}
-	
+
 	public static FactionRecord createFromXml(Node node) {
 		FactionRecord retVal = new FactionRecord();
 		retVal.key = node.getAttributes().getNamedItem("key").getTextContent();
@@ -529,7 +529,7 @@ public class FactionRecord {
 							salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
 						}
 					}
-				}				
+				}
 				break;
 			case "weightDistribution":
 				try {
@@ -543,25 +543,25 @@ public class FactionRecord {
 			}
 		}
 	}
-	
+
 	public String toString() {
 		return key;
 	}
-	
+
 	private static class DateRange {
 		public Integer start = null;
 		public Integer end = null;
-		
+
 		public DateRange(Integer start, Integer end) {
 			this.start = start;
 			this.end = end;
 		}
-		
+
 		public boolean isInRange(int year) {
 			return (start == null || start <= year)
 					&& (end == null || end >= year);
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();

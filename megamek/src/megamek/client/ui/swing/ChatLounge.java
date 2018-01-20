@@ -1451,7 +1451,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Adds a resource string to the entity tooltip
-     * 
+     *
      * @param ttSName
      *            The resource string name. "BoardView1.Tooltip." will be added
      *            in front, so "Pilot" will retrieve BoardView1.Tooltip.Pilot
@@ -1474,7 +1474,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Adds a resource string to the entity tooltip
-     * 
+     *
      * @param ttSName
      *            The resource string name. "BoardView1.Tooltip." will be added
      *            in front, so "Pilot" will retrieve BoardView1.Tooltip.Pilot
@@ -1509,16 +1509,16 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             if ((entity.getCrew().getName(i) != null) && !entity.getCrew().getName(i).equals(""))
                 pnameStr = entity.getCrew().getName(i);
-    
+
             if ((entity.getCrew().getNickname(i) != null) && !entity.getCrew().getNickname(i).equals(""))
                 pnameStr = "'" + entity.getCrew().getNickname(i) + "'";
-            
+
             if (entity.getCrew().getSlotCount() > 1) {
                 pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
             }
-    
+
             addToTT("Pilot", BR, pnameStr, entity.getCrew().getGunnery(i), entity.getCrew().getPiloting(i));
-    
+
             // Pilot Status
             if (!entity.getCrew().getStatusDesc(i).equals(""))
                 addToTT("PilotStatus", NOBR, entity.getCrew().getStatusDesc(i));
@@ -2099,7 +2099,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Load one unit into another in the chat lounge
-     * 
+     *
      * @param loadee
      *            - an Entity that should be loaded
      * @param loaderId
@@ -2142,7 +2142,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Unload a unit in the chat lounge
-     * 
+     *
      * @param unloadee
      *            - the Entity to be unloaded
      */
@@ -2163,7 +2163,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * swap pilots from one entity to another
-     * 
+     *
      * @param swapee
      *            - an Entity that should be swapped from
      * @param swapperId
@@ -2187,7 +2187,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Change the entities controller from one player to another
-     * 
+     *
      * @param e
      *            - an Entity that should that will have its owner changed
      * @param player_id
@@ -2212,7 +2212,7 @@ public class ChatLounge extends AbstractPhaseDisplay
 
     /**
      * Delete an entity from the lobby
-     * 
+     *
      * @param entity
      */
     private void delete(Entity entity) {
@@ -2374,7 +2374,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         c.sendUpdateEntity(loadee);
                     }
                  }
-                
+
                 // send changes
                 c.sendUpdateEntity(entity);
 
@@ -3808,7 +3808,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     boolean dirty = false;
                     for (Mounted m : e.getWeaponList()) {
                         WeaponType wtype = (WeaponType) m.getType();
-                        if (!wtype.hasFlag(WeaponType.F_MISSILE) 
+                        if (!wtype.hasFlag(WeaponType.F_MISSILE)
                                 || (wtype.getAmmoType() != AmmoType.T_LRM)) {
                             continue;
                         }

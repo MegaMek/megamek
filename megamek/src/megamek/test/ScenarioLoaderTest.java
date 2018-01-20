@@ -18,13 +18,13 @@ public class ScenarioLoaderTest {
     private PrintStream cachedPs;
     private PrintStream originalOut;
     private PrintStream originalErr;
-    
+
     public static void main(String[] args) {
         ScenarioLoaderTest tester = new ScenarioLoaderTest();
         tester.runTests();
         System.exit(0);
     }
-    
+
     public List<String> runTests() {
         List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {
@@ -37,7 +37,7 @@ public class ScenarioLoaderTest {
         System.setOut(nullPs);
         cachedPs = new PrintStream(new OutputStream() {
             private StringBuilder line = new StringBuilder();
-            
+
             @Override
             public void write(int b) throws IOException {
                 if(b == '\n') {
@@ -61,7 +61,7 @@ public class ScenarioLoaderTest {
                 Thread.sleep(1000);
             } catch(InterruptedException e) {}
         }
-        
+
         File baseDir = new File("data/scenarios"); //$NON-NLS-1$
         checkScenarioFile(baseDir, errorAccumulator);
         System.setOut(originalOut);
@@ -70,7 +70,7 @@ public class ScenarioLoaderTest {
         nullPs.close();
         return errorAccumulator;
     }
-    
+
     private void checkScenarioFile(File file, List<String> errorAccumulator) {
         int port = 7770;
         if(null == file) {
@@ -87,7 +87,7 @@ public class ScenarioLoaderTest {
             } catch(Exception e) {
                 e.printStackTrace();
             }
-            
+
             if(errCache.size() > 0) {
                 errorAccumulator.add("ERROR in " + file.getPath()); //$NON-NLS-1$
                 originalErr.println("ERROR in " + file.getPath()); //$NON-NLS-1$

@@ -167,7 +167,7 @@ public class PilotMapSet implements DisplayMapSet {
     public void setEntity(Entity en) {
         setEntity(en, 0);
     }
-    
+
     public void setEntity(Entity en, int slot) {
         if (en instanceof Infantry) {
             pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));

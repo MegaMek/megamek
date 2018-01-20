@@ -771,7 +771,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
         // Now manage the menu items.
         manageMenu();
-        
+
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
@@ -1139,7 +1139,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     public synchronized void setMoveSwimEnabled(boolean enabled) {
         moveSwim.setEnabled(enabled);
     }
-    
+
     public synchronized void setMoveModeConvertEnabled(boolean enabled) {
         moveModeConvert.setEnabled(enabled);
     }
@@ -1451,6 +1451,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     }
 
     public void die() {
-        GUIPreferences.getInstance().removePreferenceChangeListener(this);        
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
     }
 }

@@ -144,7 +144,7 @@ public class BoardDimensions implements Cloneable, Serializable,
     }
 
     /**
-     * Compares dimensions based width, falling back on height if the widths 
+     * Compares dimensions based width, falling back on height if the widths
      * equal
      */
     @Override

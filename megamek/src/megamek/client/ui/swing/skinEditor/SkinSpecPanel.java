@@ -46,7 +46,7 @@ import megamek.common.Configuration;
 
 /**
  * Panel with elements for viewing and adjusting a specific SkinSpecification.
- * 
+ *
  * @author arlith
  */
 public class SkinSpecPanel extends JPanel implements ListSelectionListener,
@@ -59,7 +59,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
      * path and whether the image is tiled or not). Also supports a flag to
      * determine if the image should be allowed to tile (ie, corners should
      * never be tiled)
-     * 
+     *
      * @author arlith
      *
      */
@@ -67,7 +67,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             DocumentListener {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -2004313765932049794L;
 
@@ -367,14 +367,14 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
     /**
      * Essentially the same thing as the BorderElement, but used for backgrounds
      * where each background image shares the same shouldTile state.
-     * 
+     *
      * @author arlith
      *
      */
     private class BackgroundElement extends BorderElement {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 3448867645483831732L;
 
@@ -416,7 +416,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
     }
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -37452332974426228L;
 
@@ -442,7 +442,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
     SkinSpecEditor skinEditor;
 
     /**
-     * 
+     *
      */
     public SkinSpecPanel(SkinSpecEditor skinEditor) {
         super(new GridBagLayout());

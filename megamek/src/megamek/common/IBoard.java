@@ -216,7 +216,7 @@ public interface IBoard {
      * @return Constant representing the opposite edge
      */
     public abstract int getOppositeEdge(int cardinalEdge);
-    
+
     /**
      * Record that the given coordinates have recieved a hit from an inferno.
      *
@@ -434,7 +434,7 @@ public interface IBoard {
     public abstract void load(InputStream is);
 
     /**
-     * 
+     *
      * @param is
      * @param errBuff
      * @param continueLoadOnError

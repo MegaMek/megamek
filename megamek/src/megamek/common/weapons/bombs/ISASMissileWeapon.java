@@ -63,5 +63,5 @@ public class ISASMissileWeapon extends ThunderBoltWeapon {
         .setPrototypeFactions(F_FS)
         .setProductionFactions(F_FS);
     }
-    
+
 }

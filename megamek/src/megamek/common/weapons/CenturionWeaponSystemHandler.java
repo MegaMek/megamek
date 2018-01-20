@@ -31,16 +31,16 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
- * Weaponhandler for the Centurion Weapon System weapon, 
+ * Weaponhandler for the Centurion Weapon System weapon,
  * which is found in Jihad Conspiracies Interstellar Players 2, pg 127.
- * 
+ *
  * @author arlith
  *
- */ 
+ */
 public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5226841653686213141L;
 
@@ -56,7 +56,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -67,7 +67,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
 
         // Report that this unit has been hit by CWS
@@ -78,7 +78,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
         vPhaseReport.add(r);
 
         // CWS has no effect against infantry
-        if ((entityTarget instanceof Infantry) 
+        if ((entityTarget instanceof Infantry)
                 && !(entityTarget instanceof BattleArmor)){
             // No Effect
             r = new Report(7515);
@@ -87,7 +87,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
             vPhaseReport.add(r);
             return;
         }
-        
+
         // If the Entity is shutdown, it will remain shutdown next turn
         if (entityTarget.isShutDown()){
             r = new Report(7511);
@@ -149,7 +149,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                     // TODO: fix for salvage purposes
                     entityTarget.destroyLocation(hit.getLocation());
                     // Check to see if the squad has been eliminated
-                    if (entityTarget.getTransferLocation(hit).getLocation() == 
+                    if (entityTarget.getTransferLocation(hit).getLocation() ==
                             Entity.LOC_DESTROYED) {
                         vPhaseReport.addAll(server.destroyEntity(entityTarget,
                                 "all troopers eliminated", false));
@@ -157,7 +157,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                 } else {
                     entityTarget.setShutDown(true);
                 }
-            }            
+            }
         }
     }
 }

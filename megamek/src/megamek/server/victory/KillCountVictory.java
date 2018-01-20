@@ -32,7 +32,7 @@ import megamek.common.Report;
  */
 public class KillCountVictory implements IVictoryConditions, Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6622529899835634696L;
     protected int killCondition;
@@ -48,10 +48,10 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         Hashtable<Integer,Integer> killsTeam = new Hashtable<Integer,Integer>();
         // Stores the number of kills for players no on a team
         Hashtable<Integer,Integer> killsPlayer = new Hashtable<Integer,Integer>();
-        
+
         updateKillTables(game, killsTeam, killsPlayer, game.getWreckedEntities());
         updateKillTables(game, killsTeam, killsPlayer, game.getCarcassEntities());
-        
+
         boolean teamHasHighestKills = true;
         int highestKillsId = -1;
         int killCount = 0;
@@ -61,7 +61,7 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
                 killCount = killsTeam.get(killer);
             }
         }
-        
+
         for (Integer killer : killsPlayer.keySet()){
             if (killsTeam.get(killer) > killCount){
                 highestKillsId = killer;
@@ -69,13 +69,13 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
                 teamHasHighestKills = false;
             }
         }
-        
+
         if (killCount >= killCondition){
             Report r = new Report(7106, Report.PUBLIC);
             victory = true;
             if (teamHasHighestKills) {
                 r.add("Team " + highestKillsId);
-                vr.addTeamScore(highestKillsId, 1.0);                
+                vr.addTeamScore(highestKillsId, 1.0);
             } else {
                 IPlayer winner = game.getPlayer(highestKillsId);
                 r.add(winner.getName());
@@ -84,12 +84,12 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
             r.add(killCount);
             vr.addReport(r);
         }
-        
+
         if (victory)
             return vr;
         return VictoryResult.noResult();
     }
-    
+
     private void updateKillTables(IGame game,
             Hashtable<Integer, Integer> teamKills,
             Hashtable<Integer, Integer> playerKills,
@@ -98,11 +98,11 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         {
             Entity wreck = victims.nextElement();
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
-            
+
             if (killer == null){
                 continue;
-            }            
-            
+            }
+
             int team = killer.getOwner().getTeam();
             // Friendly fire doesn't count
             if (team == wreck.getOwner().getTeam()){

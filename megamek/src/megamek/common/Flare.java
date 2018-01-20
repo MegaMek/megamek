@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 public class Flare implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 451911245389504483L;
     public Coords position;

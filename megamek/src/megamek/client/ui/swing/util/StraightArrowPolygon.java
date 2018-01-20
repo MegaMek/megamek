@@ -25,13 +25,13 @@ import java.awt.Polygon;
  * same points as an arrow itself except when arrow is changed to halved hotArea
  * stays if full arrow shape. It was done in order to get only one tooltip for
  * two arrows in case of mutual attack.
- * 
+ *
  * @author Slava Zipunov (zipp32)
  */
 public class StraightArrowPolygon extends Polygon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6865457471619747091L;
     private Polygon hotArea = new Polygon();

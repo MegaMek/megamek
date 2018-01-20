@@ -281,7 +281,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             }
         });
     }
-    
+
     public void clear() {
         // move along, move along, nothing to see here
     }

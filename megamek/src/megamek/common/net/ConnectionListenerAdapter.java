@@ -21,7 +21,7 @@ package megamek.common.net;
  * Classes that wish to deal with <code>ConnectionEvent</code>s can extend
  * this class and override only the methods which they are interested in.
  * </p>
- * 
+ *
  * @see ConnectionListener
  * @see ConnectionEvent
  */
@@ -30,7 +30,7 @@ public class ConnectionListenerAdapter implements ConnectionListener {
     /**
      * Called when connection is established. The default behavior is to do
      * nothing.
-     * 
+     *
      * @param e connection event
      */
     public void connected(ConnectedEvent e) {
@@ -38,7 +38,7 @@ public class ConnectionListenerAdapter implements ConnectionListener {
 
     /**
      * Called when connection is closed. The default behavior is to do nothing.
-     * 
+     *
      * @param e connection event
      */
     public void disconnected(DisconnectedEvent e) {
@@ -46,7 +46,7 @@ public class ConnectionListenerAdapter implements ConnectionListener {
 
     /**
      * Called when packed received The default behavior is to do nothing.
-     * 
+     *
      * @param e connection event
      */
     public void packetReceived(PacketReceivedEvent e) {

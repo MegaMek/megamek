@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.server.commands;
 
@@ -23,7 +23,7 @@ public class ListEntitiesCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override

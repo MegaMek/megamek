@@ -48,10 +48,10 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -94,10 +94,10 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             r = new Report(3470);
             r.subject = subjectId;
             r.addDesc(entityTarget);
-            vPhaseReport.add(r); 
+            vPhaseReport.add(r);
         }
-        //Large craft suffer a to-hit penalty for the location struck. 
-        if (entityTarget instanceof Dropship) { 
+        //Large craft suffer a to-hit penalty for the location struck.
+        if (entityTarget instanceof Dropship) {
             Dropship d = (Dropship) entityTarget;
             int loc = hit.getLocation();
             d.setASEWAffected(loc, 2);
@@ -105,13 +105,13 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             r = new Report(3472);
             r.subject = subjectId;
             r.add(entityTarget.getLocationAbbr(hit));
-            vPhaseReport.add(r);             
+            vPhaseReport.add(r);
         } else if (entityTarget instanceof Jumpship) {
             Jumpship j = (Jumpship) entityTarget;
             int loc = hit.getLocation();
             j.setASEWAffected(loc, 2);
             //If a Warship is hit in the fore or aft side, the broadside arc is also affected
-            if ((j instanceof Warship) 
+            if ((j instanceof Warship)
                     && (loc == Jumpship.LOC_FLS || loc == Jumpship.LOC_ALS)) {
                 j.setASEWAffected(Warship.LOC_LBS, 2);
                 //Report the arc hit by the attack and the associated broadside and the duration of the effects
@@ -120,7 +120,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
                 r.add(entityTarget.getLocationAbbr(hit));
                 r.add("LBS");
                 vPhaseReport.add(r);
-            } else if ((j instanceof Warship) 
+            } else if ((j instanceof Warship)
                     && (loc == Jumpship.LOC_FRS || loc == Jumpship.LOC_ARS)) {
                 j.setASEWAffected(Warship.LOC_RBS, 2);
                 //Report the arc hit by the attack and the associated broadside and the duration of the effects
@@ -145,7 +145,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
             vPhaseReport.add(r);
         }
     }
-    
+
     /**
      * Calculate the attack value based on range
      *

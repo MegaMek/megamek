@@ -27,7 +27,7 @@ import megamek.server.Server;
 
 /**
  * Lists all the players connected and some info about them.
- * 
+ *
  * @author Ben
  * @version
  */

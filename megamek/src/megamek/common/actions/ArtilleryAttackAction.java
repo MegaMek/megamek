@@ -31,7 +31,7 @@ import megamek.common.WeaponType;
 public class ArtilleryAttackAction extends WeaponAttackAction implements
         Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3893844894076028005L;
     public int turnsTilHit;
@@ -92,7 +92,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setSpotterIds(Vector<Integer> spotterIds) {
         this.spotterIds = spotterIds;
     }
@@ -104,7 +104,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
     public Coords getCoords() {
         return this.firingCoords;
     }
-    
+
     // For use with AMS and artillery to-hit tables
     public void setOldTargetCoords(Coords coords) {
         this.oldTargetCoords = coords;
@@ -113,7 +113,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
     public Coords getOldTargetCoords() {
         return this.oldTargetCoords;
     }
-    
+
     /*
      * Updates the turnsTilHit value of this aaa
      * Needed after aaa setup by bearings-only missiles, which have a variable velocity
@@ -124,6 +124,6 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                 getTarget(game));
         // adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
-        this.turnsTilHit = (int) (distance / launchVelocity); 
+        this.turnsTilHit = (int) (distance / launchVelocity);
     }
 }

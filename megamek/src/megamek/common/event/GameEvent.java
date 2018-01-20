@@ -16,13 +16,13 @@ package megamek.common.event;
 
 /**
  * Instances of descendant classes are sent as a result of Game change
- * 
+ *
  * @see GameListener
  */
 public abstract class GameEvent extends java.util.EventObject {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6199335692173395907L;
 
@@ -32,15 +32,15 @@ public abstract class GameEvent extends java.util.EventObject {
     public GameEvent(Object source) {
         super(source);
     }
-    
+
     /**
-     * Sub-classed events implement this method to call their specific method on 
+     * Sub-classed events implement this method to call their specific method on
      * a GameListener instance that their event has been fired.
      * @param gl GameListener recipient.
      */
     abstract public void fireEvent(GameListener gl);
-    
-    abstract public String getEventName(); 
+
+    abstract public String getEventName();
 
     @Override
     public String toString() {

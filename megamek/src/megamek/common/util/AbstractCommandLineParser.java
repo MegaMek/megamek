@@ -26,7 +26,7 @@ public abstract class AbstractCommandLineParser {
      */
     public static class ParseException extends Exception {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -3077985683676777509L;
 
@@ -87,7 +87,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Constructs new parser
-     * 
+     *
      * @param args <code>array</code> of arguments to parse
      */
     public AbstractCommandLineParser(String[] args) {
@@ -98,7 +98,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Main entry point of the parser
-     * 
+     *
      * @throws ParseException
      */
     public void parse() throws ParseException {
@@ -108,7 +108,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Returns current arg
-     * 
+     *
      * @return current arg
      */
     protected String getArgValue() {
@@ -117,7 +117,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Returns current token
-     * 
+     *
      * @return current token
      */
     protected int getToken() {
@@ -126,7 +126,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Sets the current token
-     * 
+     *
      * @param token
      */
     protected void setToken(int token) {
@@ -135,7 +135,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Returns <code>String</code> value of the current token
-     * 
+     *
      * @return
      */
     protected String getTokenValue() {
@@ -144,7 +144,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Sets the current token
-     * 
+     *
      * @param tokenValue
      */
     protected void setTokenValue(String tokenValue) {
@@ -153,7 +153,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Returns <code>String</code> value of the current token
-     * 
+     *
      * @return
      */
     protected int getPosition() {
@@ -162,7 +162,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Real entry point of parser
-     * 
+     *
      * @throws ParseException
      */
     protected abstract void start() throws ParseException;
@@ -199,7 +199,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Indicates the parse error
-     * 
+     *
      * @param message
      * @throws ParseException
      */

@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
  * This class provides a static method to read in the defaultKeybinds.xml and
  * set all of the <code>KeyCommandbind</code>'s based on the specifications in
  * the XML file.
- * 
+ *
  * @author arlith
  *
  */
@@ -48,14 +48,14 @@ public class KeyBindParser {
      * Default path to the key bindings XML file.
      */
     public static String DEFAULT_BINDINGS_FILE = "defaultKeyBinds.xml";
-    
+
     //XML tag defines
     public static String KEY_BIND = "KeyBind";
     public static String KEY_CODE = "keyCode";
     public static String KEY_MODIFIER = "modifier";
     public static String COMMAND = "command";
     public static String IS_REPEATABLE = "isRepeatable";
-    
+
     public static void parseKeyBindings(MegaMekController controller){
         // Get the path to the default bindings file.
         File file = new MegaMekFile(Configuration.configDir(), DEFAULT_BINDINGS_FILE).getFile();
@@ -77,7 +77,7 @@ public class KeyBindParser {
             int totalBinds = listOfUnits.getLength();
             System.out.println("Total number of key binds parsed: "
                     + totalBinds);
-           
+
             for (int bindCount = 0; bindCount < totalBinds; bindCount++) {
 
                 // Get the first element of this node.
@@ -102,8 +102,8 @@ public class KeyBindParser {
                     continue;
                 }
                 int modifiers = Integer.parseInt(elem.getTextContent());
-               
-                
+
+
                 // Get the command
                 elem = (Element) bindingList
                         .getElementsByTagName(COMMAND).item(0);
@@ -113,7 +113,7 @@ public class KeyBindParser {
                     continue;
                 }
                 String command = elem.getTextContent();
-                
+
                 // Get the isRepeatable
                 elem = (Element) bindingList
                         .getElementsByTagName(IS_REPEATABLE).item(0);
@@ -122,13 +122,13 @@ public class KeyBindParser {
                             + bindCount);
                     continue;
                 }
-                boolean isRepeatable = 
+                boolean isRepeatable =
                         Boolean.parseBoolean(elem.getTextContent());
-                
+
                 KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
-                
+
                 if (keyBind == null){
-                    System.err.println("Unknown command: " + command + 
+                    System.err.println("Unknown command: " + command +
                             ", element #" + bindCount);
                 } else {
                     keyBind.key = keyCode;
@@ -144,11 +144,11 @@ public class KeyBindParser {
             registerDefaultKeyBinds(controller);
         }
     }
-    
+
     /**
      * Each KeyCommand has a built-in default; if now key binding file can be
      * found, we should register those defaults.
-     * 
+     *
      * @param controller
      */
     public static void registerDefaultKeyBinds(MegaMekController controller) {
@@ -156,20 +156,20 @@ public class KeyBindParser {
             controller.registerKeyCommandBind(kcb);
         }
     }
-    
+
     /**
      * Write the current keybindings to the default XML file.
      */
     public static void writeKeyBindings(){
         try {
             Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new MegaMekFile(Configuration.configDir(), 
+                    new FileOutputStream(new MegaMekFile(Configuration.configDir(),
                             DEFAULT_BINDINGS_FILE).getFile())));
             output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             output.write("<KeyBindings " +
                     "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
                     " xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsl\">\n");
-            
+
             for (KeyCommandBind kcb : KeyCommandBind.values()){
                 output.write("    <KeyBind>\n");
                 output.write("         <command>"+kcb.cmd+"</command> ");
@@ -187,7 +187,7 @@ public class KeyBindParser {
                 output.write("    </KeyBind>\n");
                 output.write("\n");
             }
-            
+
             output.write("</KeyBindings>");
             output.close();
         } catch (IOException e) {
@@ -195,7 +195,7 @@ public class KeyBindParser {
             e.printStackTrace(System.err);
         }
 
-        
+
     }
-    
+
 }

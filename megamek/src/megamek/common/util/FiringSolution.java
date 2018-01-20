@@ -10,13 +10,13 @@ import megamek.common.ToHitData;
  *
  */
 public class FiringSolution {
-    
+
     private ToHitData toHit;
-    
+
     private boolean targetSpotted;
-    
+
     /**
-     * 
+     *
      * @param toHit
      * @param targetSpotted
      */
@@ -24,11 +24,11 @@ public class FiringSolution {
         this.toHit = toHit;
         this.targetSpotted = targetSpotted;
     }
-    
+
     public ToHitData getToHitData() {
         return toHit;
     }
-    
+
     public boolean isTargetSpotted() {
         return targetSpotted;
     }

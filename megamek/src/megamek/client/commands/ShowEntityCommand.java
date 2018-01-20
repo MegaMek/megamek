@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.client.commands;
 
@@ -8,7 +8,7 @@ import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
 
 /**
- * @author dirk 
+ * @author dirk
  * This command exists to print entity information to the chat
  * window, it's primarily intended for vissually impaired users.
  */
@@ -26,7 +26,7 @@ public class ShowEntityCommand extends ClientCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override

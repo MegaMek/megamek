@@ -19,12 +19,12 @@ import megamek.common.Mounted;
 
 /**
  * Instances of this class are sent as a result of changes in MechDisplay
- * 
+ *
  * @see MechDisplayListener
  */
 public class MechDisplayEvent extends java.util.EventObject {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -932419778029797238L;
 

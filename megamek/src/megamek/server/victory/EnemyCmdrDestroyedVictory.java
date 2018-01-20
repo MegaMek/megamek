@@ -27,7 +27,7 @@ import megamek.common.Report;
 public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2525190210964235691L;
 
@@ -45,7 +45,7 @@ public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializab
             int team = player.getTeam();
             if (team != IPlayer.TEAM_NONE) {
                 if (doneTeams.contains(team))
-                    continue; 
+                    continue;
                 // skip if already dealt with this team
                 doneTeams.add(team);
             }

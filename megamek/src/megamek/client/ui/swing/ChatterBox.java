@@ -137,7 +137,7 @@ public class ChatterBox implements KeyListener {
         playerChatSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 scrPlayers, new JScrollPane(chatArea));
         playerChatSplit.setResizeWeight(0.01);
-        
+
         JPanel subPanel = new JPanel(new BorderLayout());
         subPanel.setPreferredSize(new Dimension(284,100));
         subPanel.setMinimumSize(new Dimension(284,100));

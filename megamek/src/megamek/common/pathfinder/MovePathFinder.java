@@ -202,11 +202,11 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         }
     }
-    
+
     /**
      * This filter removes paths that have spent all of of the Aeros current
      * velocity.
-     * 
+     *
      * @author arlith
      *
      */
@@ -219,11 +219,11 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public boolean shouldStay(MovePath mp) {
             return mp.getFinalVelocity() >= 0;
         }
-    }    
+    }
 
     /**
      * A MovePath comparator that compares movement points spent.
-     * 
+     *
      * Order paths with fewer used MP first.
      */
     public static class MovePathMPCostComparator implements Comparator<MovePath> {
@@ -234,13 +234,13 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             return firstDist - secondDist;
         }
     }
-    
+
     /**
      * A MovePath comparator that compares number of steps. Generally used for
      * spheroids, which don't have the same velocity expenditure restrictions as
      * Aerodynes, however they can't compare based on MP like ground units.
      * Spheroids should be able to safely compare based upon path length.
-     * 
+     *
      * Order paths with fewer steps first.
      */
     public static class MovePathLengthComparator implements
@@ -252,14 +252,14 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             return firstSteps - secondSteps;
         }
     }
-    
+
     /**
      * A MovePath comparator that compares remaining velocity points.  Aerodynes
      * need to spend all of their remaining velocity, so should explore
      * paths that expend the velocity first.
-     * 
+     *
      * However, a path that flies over an enemy is superior to one that does not. Treat those as having nominally greater value.
-     * 
+     *
      * Order paths with lower remaining velocities higher.
      */
     public static class MovePathVelocityCostComparator implements
@@ -270,25 +270,25 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             if(AeroPathUtil.willStall(first) || AeroPathUtil.willStall(second)) {
                 int firstPathWillStall = AeroPathUtil.willStall(first) ? 1 : 0;
                 int secondPathWillStall = AeroPathUtil.willStall(second) ? 1 : 0;
-                
+
                 // if they both stall, then the rest of the comparisons still don't matter, just throw one out and move on
                 return firstPathWillStall - secondPathWillStall;
             }
-        	
+
         	boolean firstFlyoff = first.fliesOffBoard();
             int velFirst = first.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (firstFlyoff) {
                 velFirst = 0;
             }
-            boolean secondFlyoff = second.fliesOffBoard(); 
+            boolean secondFlyoff = second.fliesOffBoard();
             int velSecond = second.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (secondFlyoff) {
                 velSecond = 0;
             }
-            
-            // If both paths are flying off, compare on number of steps 
+
+            // If both paths are flying off, compare on number of steps
             // Shorter paths are better
             if (firstFlyoff && secondFlyoff) {
                 return first.length() - second.length();
@@ -358,23 +358,23 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 if (backwardsStep) {
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
-                } else { 
+                } else {
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT));
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT));
                 }
             }
-            
+
             if (backwardsStep) {
                 result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
             } else {
                 result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }
-            
+
             addUpAndDown(result, last, entity, mp);
-            
+
             return result;
         }
-        
+
         /**
          * Worker method that adds "UP" and "DOWN" steps to the given move path collection if
          * the entity is eligible to do so
@@ -389,14 +389,14 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Coords pos;
             int elevation;
             pos = last != null ? last.getPosition() : entity.getPosition();
-            elevation = last != null ? last.getElevation() : entity.getElevation();          
-             
+            elevation = last != null ? last.getElevation() : entity.getElevation();
+
             if (entity.canGoUp(elevation, pos)) {
                 result.add(mp.clone().addStep(MoveStepType.UP));
             }
             if (entity.canGoDown(elevation, pos)) {
                 result.add(mp.clone().addStep(MoveStepType.DOWN));
-            }            
+            }
         }
     }
 
@@ -424,11 +424,11 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                     || mp.contains(MoveStepType.OFF)) {
                 return new ArrayList<MovePath>();
             }
-        	
+
             Collection<MovePath> result = new ArrayList<MovePath>();
             MoveStep lastStep = mp.getLastStep();
-            
-            // if we haven't done anything else yet, and we are an aerodyne unit on a ground map with atmosphere, 
+
+            // if we haven't done anything else yet, and we are an aerodyne unit on a ground map with atmosphere,
             // we can attempt to accelerate or decelerate
             if(mp.isOnAtmosphericGroundMap() &&
             		!UnitType.isSpheroidDropship(mp.getEntity())) {
@@ -436,33 +436,33 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             		result.add(mp.clone().addStep(MoveStepType.ACC));
             	}
             	// we also don't want to bother decelerating to 0 on ground maps, as that'll just crash our aircraft
-            	else if(!mp.containsAnyOther(MoveStepType.DEC) && 
+            	else if(!mp.containsAnyOther(MoveStepType.DEC) &&
             			mp.getFinalVelocityLeft() > 1) {
             		result.add(mp.clone().addStep(MoveStepType.DEC));
             	}
             }
-            
+
             // we can move forward if we have some velocity left
             if(mp.getFinalVelocityLeft() > 0) {
             	result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            }            
-            
+            }
+
         	// we can turn if we can turn. very philosophical.
         	if(lastStep != null && lastStep.canAeroTurn(lastStep.getGame())) {
         		result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
         		result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
         	}
-        	
+
             // we can fly off of edge of board if we're at the edge of the board
             Coords c = mp.getFinalCoords();
             IGame game = mp.getEntity().getGame();
             if (((c.getX() == 0) || (c.getY() == 0)
-                    || (c.getX() == (game.getBoard().getWidth() - 1)) 
+                    || (c.getX() == (game.getBoard().getWidth() - 1))
                     || (c.getY() == (game.getBoard().getHeight() - 1)))
                 && (mp.getFinalVelocity() > 0)) {
                 result.add(mp.clone().addStep(MoveStepType.RETURN));
             }
-            
+
             return result;
         }
     }

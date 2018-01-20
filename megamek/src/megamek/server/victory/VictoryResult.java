@@ -37,7 +37,7 @@ public class VictoryResult implements IResult {
         this.victory = win;
         tr = new Throwable();
     }
-    
+
     protected VictoryResult(boolean win, int player, int team) {
     	this.victory = win;
     	tr = new Throwable();
@@ -48,11 +48,11 @@ public class VictoryResult implements IResult {
             addTeamScore(team, 1.0);
         }
     }
-    
+
     protected static VictoryResult noResult() {
     	return new VictoryResult(false, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }
-    
+
     protected static VictoryResult drawResult() {
         return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }

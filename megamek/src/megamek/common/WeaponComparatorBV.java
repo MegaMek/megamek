@@ -19,7 +19,7 @@ import java.util.Comparator;
 /**
  * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by BV, needed
  * for BV calculation Only pass Mounteds into this that are weapons
- * 
+ *
  * @author beerockxs
  */
 public class WeaponComparatorBV implements Comparator<Mounted> {

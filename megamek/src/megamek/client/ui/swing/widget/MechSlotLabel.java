@@ -10,7 +10,7 @@ import java.awt.Image;
 public class MechSlotLabel extends PicMap {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5601930871313914270L;
 

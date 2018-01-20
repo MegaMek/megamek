@@ -22,17 +22,17 @@ public class SimplexGenerator implements ElevationGenerator {
     private static final double DIST_H = 0.75;
     /** Vertical distance between hexagons */
     private static final double DIST_V = Math.sqrt(3) / 2.0;
-    
+
     private Random rnd;
-    
+
     public SimplexGenerator() {
         this(new Random());
     }
-    
+
     public SimplexGenerator(Random rnd) {
         this.rnd = rnd;
     }
-    
+
     @Override
     public String getName() {
         return "Generator.Simplex"; //$NON-NLS-1$
@@ -48,7 +48,7 @@ public class SimplexGenerator implements ElevationGenerator {
         double noiseStartY = rnd.nextDouble() * 1000000;
         double noiseScale = (200.0 + rnd.nextDouble() * 30.0) / (4.0 + hilliness / 5.0);
         hilliness = Math.max(hilliness, 1);
-        
+
         for(int w = 0; w < width; ++ w) {
             for(int h = 0; h < height; ++ h) {
                 double x = DIST_H * w;
@@ -63,7 +63,7 @@ public class SimplexGenerator implements ElevationGenerator {
                     val = 0;
                 } else {
                     // Hilliness - make the hilltops more extreme thus the lower values more common
-                    val = Math.pow(val / 7.0, 10.0 / hilliness + 1.0) * 7.0; 
+                    val = Math.pow(val / 7.0, 10.0 / hilliness + 1.0) * 7.0;
                 }
                 // Give the map scaler enough value range to work with
                 elevationMap[w][h] = (int) (val * 1000);

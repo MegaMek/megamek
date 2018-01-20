@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -26,7 +26,7 @@ import java.util.Vector;
 /**
  * A roll, or sequence of rolls, made by the player to determine initiative
  * order. Also contains some methods for ordering players by initiative.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -37,7 +37,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     private Vector<Integer> originalRolls = new Vector<Integer>();
     private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); // booleans
     private Vector<Integer> bonuses = new Vector<Integer>();
-    
+
     public InitiativeRoll() {
         //Creates new InitaitiveRoll
     }
@@ -114,7 +114,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
             Integer b = bonuses.elementAt(i);
             Integer t = r+b;
             Integer to = o+b;
-            
+
             if (wasRollReplaced.elementAt(i).booleanValue()) {
                 buff.append(to.toString()).append("[").append(o.toString()).append("+").append(b.toString()).append("]").append("(").append(t.toString()).append("[").append(r.toString()).append("+").append(b.toString()).append("]")
                         .append(")");

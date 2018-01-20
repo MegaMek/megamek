@@ -29,12 +29,12 @@ public final class FiringPlanCalculationParameters {
          */
         GET
 	}
-	
+
 	private final Entity shooter;
-	private final EntityState shooterState; 
+	private final EntityState shooterState;
 	private final Targetable target;
-	private final EntityState targetState; 
-	private final int maxHeat; 
+	private final EntityState targetState;
+	private final int maxHeat;
 	private final Map<Mounted, Double> ammoConservation;
 	private final FiringPlanCalculationType calculationType;
 

@@ -17,13 +17,13 @@ package megamek.common.net;
 /**
  * Instances of descendant classes are sent as a result of changes of the
  * Connection state or packet arrival.
- * 
+ *
  * @see ConnectionListener
  */
 public abstract class ConnectionEvent extends java.util.EventObject {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6124300183866317006L;
     public static final int CONNECTED = 0;
@@ -34,7 +34,7 @@ public abstract class ConnectionEvent extends java.util.EventObject {
 
     /**
      * Constructs connection event
-     * 
+     *
      * @param source The object on which the Event initially occurred.
      * @param type event type
      */
@@ -45,7 +45,7 @@ public abstract class ConnectionEvent extends java.util.EventObject {
 
     /**
      * Returns the type of the event
-     * 
+     *
      * @return the type of the event
      */
     public int getType() {
@@ -55,7 +55,7 @@ public abstract class ConnectionEvent extends java.util.EventObject {
     /**
      * Returns the connection on which the Event occured; Equivalent to the
      * getSource()
-     * 
+     *
      * @return
      */
     public IConnection getConnection() {

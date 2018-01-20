@@ -53,5 +53,3 @@ public class CLBALRM1 extends LRMWeapon {
 	    .setProductionFactions(F_CGS);
     }
 }
-
-

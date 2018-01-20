@@ -34,7 +34,7 @@ import java.awt.*;
 public class RandomMapPanelAdvanced extends JPanel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7904626306929132645L;
     // City Type constants.

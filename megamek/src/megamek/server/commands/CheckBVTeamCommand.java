@@ -35,7 +35,7 @@ public class CheckBVTeamCommand extends ServerCommand {
                 && server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         // Connection Ids match player Ids
         IPlayer requestingPlayer = server.getGame().getPlayer(connId);
-        
+
         server.sendServerChat(connId, "Remaining BV:");
         Enumeration<Team> teamEnum = server.getGame().getTeams();
         while (teamEnum.hasMoreElements()) {

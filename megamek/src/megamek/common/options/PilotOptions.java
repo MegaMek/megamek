@@ -98,7 +98,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.INFANTRY_FOOT_CAV, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false); //$NON-NLS-1$
 
-        // Unofficial      
+        // Unofficial
         addOption(adv, OptionsConstants.UNOFF_EI_IMPLANT, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.UNOFF_GUNNERY_LASER, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.UNOFF_GUNNERY_MISSILE, false); //$NON-NLS-1$
@@ -118,9 +118,9 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, "edge_when_ko", false); //$NON-NLS-1$
         addOption(edge, "edge_when_explosion", false); //$NON-NLS-1$
         addOption(edge, "edge_when_masc_fails", false); //$NON-NLS-1$
-        
+
         addOption(edge, OptionsConstants.EDGE, 0); //$NON-NLS-1$
-        //different edge triggers 
+        //different edge triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_TAC, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, false); //$NON-NLS-1$
@@ -133,7 +133,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_COMM_IMPLANT, false); // $NON-NLS-1$
         //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false); // $NON-NLS-1$
-        //TODO - -1 bonus when spotting for LRMs and moving through mines. 
+        //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false); //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_DERMAL_CAMO_ARMOR, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_TSM_IMPLANT, false); //$NON-NLS-1$
-        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false); //$NON-NLS-1$  
+        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_VDNI, false); // $NON-NLS-1$
         addOption(md, OptionsConstants.MD_BVDNI, false); // $NON-NLS-1$
         addOption(md, OptionsConstants.MD_PROTO_DNI, false); // $NON-NLS-1$
@@ -157,14 +157,14 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
         addOption(md, OptionsConstants.MD_PL_GLIDER, false); // NON-NLS-1$
         addOption(md, OptionsConstants.MD_PL_FLIGHT, false); // NON-NLS-1$
-        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);// NON-NLS-1$ 
-        
+        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);// NON-NLS-1$
+
         //TODO - Prototype DNI IO pg 83
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     @Override

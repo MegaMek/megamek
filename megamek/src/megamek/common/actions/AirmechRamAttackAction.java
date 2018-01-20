@@ -42,14 +42,14 @@ import megamek.common.options.OptionsConstants;
 /**
  * Ram attack by an airborne LAM in airmech mode. This is treated like a charge in the movement path,
  * but has significant difference in the way damage is calculated and in the final locations.
- * 
+ *
  * @author Neoancient
  *
  */
 public class AirmechRamAttackAction extends DisplacementAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5110608317218688433L;
 
@@ -88,7 +88,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         if (target == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
-        
+
         if (!(ae instanceof LandAirMech) || !ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not airborne airmech");
         }
@@ -101,7 +101,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
-        
+
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
@@ -147,7 +147,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Target is swarming a Mek.");
         }
-        
+
         // Cannot target infantry
         if (te instanceof Infantry) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,

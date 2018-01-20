@@ -59,7 +59,7 @@ class EntitySprite extends Sprite {
     private static final Color LABEL_GROUND_BACK = new Color(50,50,50,200);
     private static Color LABEL_BACK;
     enum Positioning { LEFT, RIGHT };
-    
+
     // Individuals
     final Entity entity;
 
@@ -74,7 +74,7 @@ class EntitySprite extends Sprite {
     private Positioning labelPos;
     /** Used to color the label when this unit is selected for movement etc. */
     private boolean isSelected;
-    
+
     // Keep track of ECM state, as it's too expensive to compute on the fly.
     private boolean isAffectedByECM = false;
 
@@ -91,7 +91,7 @@ class EntitySprite extends Sprite {
         }
         getBounds();
     }
-    
+
     private String getAdjShortName() {
         if (onlyDetectedBySensors()) {
             return Messages.getString("BoardView1.sensorReturn"); //$NON-NLS-1$
@@ -130,7 +130,7 @@ class EntitySprite extends Sprite {
             ePos = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
         }
         bounds.setLocation(hexOrigin.x + ePos.x, hexOrigin.y + ePos.y);
-        
+
         entityRect = new Rectangle(bounds.x + (int) (20 * bv.scale), bounds.y
                 + (int) (14 * bv.scale), (int) (44 * bv.scale),
                 (int) (44 * bv.scale));
@@ -139,41 +139,41 @@ class EntitySprite extends Sprite {
     }
 
     private void updateLabel() {
-        int face = (entity.isCommander() && !onlyDetectedBySensors()) ? 
+        int face = (entity.isCommander() && !onlyDetectedBySensors()) ?
                 Font.ITALIC : Font.PLAIN;
         labelFont = new Font("SansSerif", face, (int)(10*Math.max(bv.scale,0.9))); //$NON-NLS-1$
-        
+
         // Check the hexes in directions 2,5,1,4 if they are free of entities
         // and place the label in the direction of the first free hex
         // if none are free, the label will be centered in the current hex
         labelRect = new Rectangle(
-                bv.getFontMetrics(labelFont).stringWidth(getAdjShortName())+4, 
+                bv.getFontMetrics(labelFont).stringWidth(getAdjShortName())+4,
                 bv.getFontMetrics(labelFont).getAscent()+2);
-        
+
         Coords position = entity.getPosition();
         if (bv.game.getEntitiesVector(position.translated("SE"), true).isEmpty()) {
             labelRect.setLocation((int)(bv.hex_size.width*0.55), (int)(0.75*bv.hex_size.height));
             labelPos = Positioning.RIGHT;
         } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
-            labelRect.setLocation((int)(bv.hex_size.width*0.45)-labelRect.width, 
+            labelRect.setLocation((int)(bv.hex_size.width*0.45)-labelRect.width,
                     (int)(0.25*bv.hex_size.height)-labelRect.height);
             labelPos = Positioning.LEFT;
         } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
-            labelRect.setLocation((int)(bv.hex_size.width*0.55), 
+            labelRect.setLocation((int)(bv.hex_size.width*0.55),
                     (int)(0.25*bv.hex_size.height)-labelRect.height);
             labelPos = Positioning.RIGHT;
         } else if (bv.game.getEntitiesVector(position.translated("SW"), true).isEmpty()) {
-            labelRect.setLocation((int)(bv.hex_size.width*0.45)-labelRect.width, 
+            labelRect.setLocation((int)(bv.hex_size.width*0.45)-labelRect.width,
                     (int)(0.75*bv.hex_size.height));
             labelPos = Positioning.LEFT;
         } else {
-            labelRect.setLocation(bv.hex_size.width/2-labelRect.width/2, 
+            labelRect.setLocation(bv.hex_size.width/2-labelRect.width/2,
                     (int)(0.75*bv.hex_size.height));
             labelPos = Positioning.RIGHT;
-        } 
+        }
 
         // If multiple units are present in a hex, fan out the labels
-        labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
+        labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) *
                 bv.game.getEntitiesVector(position).indexOf(entity);
     }
 
@@ -209,7 +209,7 @@ class EntitySprite extends Sprite {
             status = s;
             small = true;
         }
-        
+
         Status(Color c, int b, int t) {
             color = c;
             status = null;
@@ -217,20 +217,20 @@ class EntitySprite extends Sprite {
         }
 
     }
-    
+
     private void drawStatusStrings(Graphics2D g, ArrayList<Status> statusStrings) {
         if (statusStrings.isEmpty()) return;
-        
+
         // The small info blobs
         g.setFont(labelFont);
-        
+
         Rectangle stR = new Rectangle(labelRect.x, labelRect.y, labelRect.height, labelRect.height);
         if (labelPos == Positioning.LEFT) {
             stR.translate(labelRect.width-labelRect.height, 0);
         }
-        
+
         for (Status curStatus: statusStrings) {
-            if (curStatus.small) { 
+            if (curStatus.small) {
                 if (labelPos == Positioning.RIGHT) {
                     stR.translate(-labelRect.height-2,0);
                 } else {
@@ -246,7 +246,7 @@ class EntitySprite extends Sprite {
                     }
 
                 } else {
-                    bv.drawCenteredText(g, curStatus.status, 
+                    bv.drawCenteredText(g, curStatus.status,
                             stR.x+stR.height*0.5f-0.5f, stR.y+stR.height*0.5f-2, curStatus.color, false);
                 }
             }
@@ -262,7 +262,7 @@ class EntitySprite extends Sprite {
             bv.drawCenteredText(g, "!", pos, Color.RED, false);
             return;
         }
-        
+
         // Critical status text
         Font boldFont = new Font("SansSerif",Font.BOLD,(int)(12*bv.scale));
         g.setFont(boldFont);
@@ -275,7 +275,7 @@ class EntitySprite extends Sprite {
             }
         }
     }
-    
+
     /**
      * Creates the sprite for this entity. Fortunately it is no longer
      * an extra pain to create transparent images in AWT.
@@ -286,7 +286,7 @@ class EntitySprite extends Sprite {
         final GUIPreferences guip = GUIPreferences.getInstance();
         // recalculate bounds & label
         getBounds();
-        
+
         // create image for buffer
         GraphicsConfiguration config = GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice()
@@ -295,7 +295,7 @@ class EntitySprite extends Sprite {
                 Transparency.TRANSLUCENT);
         Graphics2D graph = (Graphics2D)image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
-        
+
         // translate everything (=correction for label placement)
         graph.translate(-hexOrigin.x, -hexOrigin.y);
 
@@ -326,10 +326,10 @@ class EntitySprite extends Sprite {
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);
-        
+
         boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
-        
+
         if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace())
                 && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
@@ -337,11 +337,11 @@ class EntitySprite extends Sprite {
         }
 
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
-            
+
             // Gather unit conditions
             ArrayList<Status> stStr = new ArrayList<Status>();
             criticalStatus = false;
-            
+
             // Determine if the entity has a locked turret,
             // and if it is a gun emplacement
             boolean turretLocked = false;
@@ -353,7 +353,7 @@ class EntitySprite extends Sprite {
                 crewStunned = ((Tank) entity).getStunnedTurns();
                 ge = entity instanceof GunEmplacement;
             }
-            
+
             // draw elevation/altitude if non-zero
             if (entity.isAirborne()) {
                 if (!board.inSpace()) {
@@ -363,16 +363,16 @@ class EntitySprite extends Sprite {
             } else if (entity.getElevation() != 0) {
                 stStr.add(new Status(Color.CYAN, Integer.toString(entity.getElevation()), SMALL));
             }
-            
+
             // Shutdown
             if (entity.isManualShutdown()) {
                 stStr.add(new Status(Color.YELLOW, "SHUTDOWN"));
             } else if (entity.isShutDown()) {
                 stStr.add(new Status(Color.RED, "SHUTDOWN"));
             }
-            
+
             // Prone, Hulldown, Stuck, Immobile, Jammed
-            if (entity.isProne()) 
+            if (entity.isProne())
                 stStr.add(new Status(Color.RED, "PRONE"));
             if (entity.isHiddenActivating())
                 stStr.add(new Status(Color.RED, "ACTIVATING"));
@@ -388,10 +388,10 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(Color.RED, "IMMOBILE"));
             if (isAffectedByECM())
                 stStr.add(new Status(Color.YELLOW, "Jammed"));
-            
-            // Turret Lock 
+
+            // Turret Lock
             if (turretLocked) stStr.add(new Status(Color.YELLOW, "LOCKED"));
-            
+
             // Grappling & Swarming
             if (entity.getGrappled() != Entity.NONE) {
                 if (entity.isGrappleAttacker()) {
@@ -423,7 +423,7 @@ class EntitySprite extends Sprite {
             if (crewStunned > 0)  {
                 stStr.add(new Status(Color.YELLOW, "STUNNED", new Object[] { crewStunned }));
             }
-            
+
             // Infantry
             if (isInfantry) {
                 Infantry inf = ((Infantry) entity);
@@ -436,27 +436,27 @@ class EntitySprite extends Sprite {
                 } else if (inf.isTakingCover()) {
                     stStr.add(new Status(Color.YELLOW, "TakingCover"));
                 }
-                
+
                 if (inf.turnsLayingExplosives >= 0) {
                     stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "E", SMALL));
                 }
             }
-            
+
             // Aero
             if (isAero) {
                 IAero a = (IAero) entity;
                 if (a.isRolled()) stStr.add(new Status(Color.YELLOW, "ROLLED"));
                 if (a.getCurrentFuel() <= 0) stStr.add(new Status(Color.RED, "FUEL"));
                 if (entity.isEvading()) stStr.add(new Status(Color.GREEN, "EVADE"));
-                
+
                 if (a.isOutControlTotal() & a.isRandomMove()) {
                     stStr.add(new Status(Color.RED, "RANDOM"));
                 } else if (a.isOutControlTotal()) {
                     stStr.add(new Status(Color.RED, "CONTROL"));
                 }
             }
-            
+
             if (guip.getShowDamageLevel()) {
                 Color damageColor = getDamageColor();
                 if (damageColor != null) {
@@ -464,12 +464,12 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            
+
             // Unit Label
             // no scaling for the label, its size is changed by varying
             // the font size directly => better control
             graph.scale(1/bv.scale, 1/bv.scale);
-            
+
             // Label background
             if (guip.getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
                 if (criticalStatus) {
@@ -513,13 +513,13 @@ class EntitySprite extends Sprite {
                 graph.dispose();
                 return;
             }
-            
+
             // Draw all the status information now
             drawStatusStrings(graph, stStr);
-            
+
             // from here, scale the following draws according to board zoom
             graph.scale(bv.scale, bv.scale);
-            
+
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
@@ -631,11 +631,11 @@ class EntitySprite extends Sprite {
     public boolean isInside(Point point) {
         return entityRect.contains(point.x, point.y);
     }
-    
+
     public Coords getPosition() {
         return entity.getPosition();
     }
-    
+
     private StringBuffer tooltipString;
     private final boolean BR = true;
     private final boolean NOBR = false;
@@ -736,10 +736,10 @@ class EntitySprite extends Sprite {
 
     /**
      * Adds a resource string to the entity tooltip
-     * 
+     *
      * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
      * "Pilot" will retrieve BoardView1.Tooltip.Pilot
-     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here.
      * @param ttO a list of Objects to insert into the {x} places in the resource.
      */
     private void addToTT(String ttSName, boolean startBR, Object... ttO) {
@@ -758,21 +758,21 @@ class EntitySprite extends Sprite {
                     + ttSName));
         }
     }
-    
+
     /**
      * Adds a resource string to the entity tooltip
-     * 
+     *
      * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
      * "Pilot" will retrieve BoardView1.Tooltip.Pilot
-     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here.
      */
     private void addToTT(String ttSName, boolean startBR) {
         addToTT(ttSName, startBR, (Object[]) null);
     }
-    
+
     @Override
     public StringBuffer getTooltip() {
-        
+
         // Tooltip info for a sensor blip
         if (onlyDetectedBySensors())
             return new StringBuffer(Messages.getString("BoardView1.sensorReturn"));
@@ -784,60 +784,60 @@ class EntitySprite extends Sprite {
         if (entity instanceof GunEmplacement) thisGunEmp = (GunEmplacement) entity;
         IAero thisAero = null;
         if (entity.isAero()) thisAero = (IAero) entity;
-        
+
         tooltipString = new StringBuffer();
 
         // Unit Chassis and Player
         addToTT("Unit", NOBR,
                 Integer.toHexString(PlayerColors.getColorRGB(
-                        entity.getOwner().getColorIndex())), 
-                entity.getChassis(), 
+                        entity.getOwner().getColorIndex())),
+                entity.getChassis(),
                 entity.getOwner().getName());
-        
+
         // Pilot Info
         // Nickname > Name > "Pilot"
         for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
             String pnameStr = "Pilot";
-    
+
             if (entity.getCrew().isMissing(i)) {
                 continue;
             }
             if ((entity.getCrew().getName(i) != null)
-                    && !entity.getCrew().getName(i).equals("")) 
+                    && !entity.getCrew().getName(i).equals(""))
                 pnameStr = entity.getCrew().getName(i);
-            
+
             if ((entity.getCrew().getNickname(i) != null)
-                    && !entity.getCrew().getNickname(i).equals("")) 
+                    && !entity.getCrew().getNickname(i).equals(""))
                 pnameStr = "'" + entity.getCrew().getNickname(i) + "'";
-            
+
             if (entity.getCrew().getSlotCount() > 1) {
                 pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
             }
-    
+
             addToTT("Pilot", BR,
-                    pnameStr, 
-                    entity.getCrew().getGunnery(i), 
+                    pnameStr,
+                    entity.getCrew().getGunnery(i),
                     entity.getCrew().getPiloting(i));
-    
+
             // Pilot Status
             if (!entity.getCrew().getStatusDesc(i).equals(""))
-                addToTT("PilotStatus", NOBR, 
+                addToTT("PilotStatus", NOBR,
                         entity.getCrew().getStatusDesc(i));
         }
-        
+
         // Pilot Advantages
         int numAdv = entity.getCrew().countOptions(
                 PilotOptions.LVL3_ADVANTAGES);
         if (numAdv == 1)
             addToTT("Adv1", NOBR, numAdv);
-        else if (numAdv > 1) 
+        else if (numAdv > 1)
             addToTT("Advs", NOBR, numAdv);
-        
+
         // Pilot Manei Domini
         if ((entity.getCrew().countOptions(
-                PilotOptions.MD_ADVANTAGES) > 0)) 
+                PilotOptions.MD_ADVANTAGES) > 0))
             addToTT("MD", NOBR);
-        
+
         if (entity instanceof Infantry) {
             Infantry inf = (Infantry) entity;
             int spec = inf.getSpecializations();
@@ -851,7 +851,7 @@ class EntitySprite extends Sprite {
             addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
             if (entity.getJumpMP() > 0) tooltipString.append("/" + entity.getJumpMP());
         }
-        
+
         // Armor and Internals
         addToTT("ArmorInternals", BR, entity.getTotalArmor(),
                 entity.getTotalInternal());
@@ -880,9 +880,9 @@ class EntitySprite extends Sprite {
 
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
-            if (entity.heat == 0) 
+            if (entity.heat == 0)
                 addToTT("Heat0", BR);
-            else 
+            else
                 addToTT("Heat", BR, entity.heat);
         }
 
@@ -892,17 +892,17 @@ class EntitySprite extends Sprite {
             if (!entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) {
                 // "Has not yet moved" only during movement phase
                 addToTT("NotYetMoved", BR);
-                
+
             // In the Movement Phase, unit is done - or in the Firing Phase
             } else if (
-                    (entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) 
+                    (entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT)
                     || this.bv.game.getPhase() == Phase.PHASE_FIRING) {
                 int tmm = Compute.getTargetMovementModifier(bv.game,
                         entity.getId()).getValue();
                 // Unit didn't move
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
                     addToTT("NoMove", BR, tmm);
-                    
+
                 // Unit did move
                 } else {
                     // Colored arrow
@@ -910,12 +910,12 @@ class EntitySprite extends Sprite {
                     String guipName = "AdvancedMoveDefaultColor";
                     if ((entity.moved == EntityMovementType.MOVE_RUN)
                             || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                            || (entity.moved == EntityMovementType.MOVE_OVER_THRUST)) 
+                            || (entity.moved == EntityMovementType.MOVE_OVER_THRUST))
                         guipName = "AdvancedMoveRunColor";
                     else if (entity.moved == EntityMovementType.MOVE_SPRINT
-                            || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) 
+                            || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)
                         guipName = "AdvancedMoveSprintColor";
-                    else if (entity.moved == EntityMovementType.MOVE_JUMP) 
+                    else if (entity.moved == EntityMovementType.MOVE_JUMP)
                         guipName = "AdvancedMoveJumpColor";
 
                     // HTML color String from Preferences
@@ -933,31 +933,31 @@ class EntitySprite extends Sprite {
                             tmm);
                 }
                 // Special Moves
-                if (entity.isEvading()) 
+                if (entity.isEvading())
                     addToTT("Evade", NOBR);
-                
-                if ((thisInfantry != null) && (thisInfantry.isTakingCover())) 
+
+                if ((thisInfantry != null) && (thisInfantry.isTakingCover()))
                     addToTT("TakingCover", NOBR);
 
-                if (entity.isCharging()) 
+                if (entity.isCharging())
                     addToTT("Charging", NOBR);
-                
-                if (entity.isMakingDfa()) 
+
+                if (entity.isMakingDfa())
                     addToTT("DFA", NOBR);
             }
         }
-        
+
         // ASF Velocity
         if (thisAero != null) {
             addToTT("AeroVelocity", BR, thisAero.getCurrentVelocity());
         }
-            
+
         // Gun Emplacement Status
-        if (thisGunEmp != null) {  
-            if (thisGunEmp.isTurret() && thisGunEmp.isTurretLocked(thisGunEmp.getLocTurret())) 
+        if (thisGunEmp != null) {
+            if (thisGunEmp.isTurret() && thisGunEmp.isTurretLocked(thisGunEmp.getLocTurret()))
                 addToTT("TurretLocked", BR);
         }
-       
+
         // Unit Immobile
         if ((thisGunEmp == null) && (entity.isImmobile()))
             addToTT("Immobile", BR);
@@ -1001,7 +1001,7 @@ class EntitySprite extends Sprite {
             if (playerList.length() > 1) {
                 playerList.delete(playerList.length() - 2, playerList.length());
                 addToTT("SeenBy", BR, playerList.toString());
-            }            
+            }
         }
 
         // If sensors, display what sensors this unit is using
@@ -1029,7 +1029,7 @@ class EntitySprite extends Sprite {
                     ranges = wtype.getRanges(curWp);
                 }
                 String rangeString = "(";
-                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
+                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA)
                         && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
                     rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
                 } else {
@@ -1046,18 +1046,18 @@ class EntitySprite extends Sprite {
                         rangeString += "/";
                     }
                 }
-                
+
                 weapDesc += rangeString + ")";
                 if (wpNames.containsKey(weapDesc)) {
                     int number = wpNames.get(weapDesc);
-                    if (number > 0) 
+                    if (number > 0)
                         wpNames.put(weapDesc, number + 1);
-                    else 
+                    else
                         wpNames.put(weapDesc, number - 1);
                 } else {
                     WeaponType wpT = ((WeaponType)curWp.getType());
 
-                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
+                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear())))
                         wpNames.put(weapDesc, -1);
                     else
                         wpNames.put(weapDesc, 1);
@@ -1072,22 +1072,22 @@ class EntitySprite extends Sprite {
                 // Also remove "+", means currently selected for firing
                 boolean wpDest = false;
                 String nameStr = entry.getKey();
-                if (entry.getKey().startsWith("x ")) { 
+                if (entry.getKey().startsWith("x ")) {
                     nameStr = entry.getKey().substring(2, entry.getKey().length());
                     wpDest = true;
                 }
 
-                if (entry.getKey().startsWith("*")) { 
+                if (entry.getKey().startsWith("*")) {
                     nameStr = entry.getKey().substring(1, entry.getKey().length());
                     wpDest = true;
                 }
 
-                if (entry.getKey().startsWith("+")) { 
+                if (entry.getKey().startsWith("+")) {
                     nameStr = entry.getKey().substring(1, entry.getKey().length());
                     nameStr = nameStr.concat(" <I>(Firing)</I>");
                 }
 
-                // normal coloring 
+                // normal coloring
                 tooltipString.append("<FONT COLOR=#8080FF>");
                 // but: color gray and strikethrough when weapon destroyed
                 if (wpDest) tooltipString.append("<FONT COLOR=#a0a0a0><S>");
@@ -1107,13 +1107,13 @@ class EntitySprite extends Sprite {
                 }
                 // Weapon destroyed? End strikethrough
                 if (wpDest) tooltipString.append("</S>");
-                tooltipString.append("</FONT>"); 
+                tooltipString.append("</FONT>");
             }
             tooltipString.append("</FONT>");
         }
         return tooltipString;
     }
-    
+
     public String getPlayerColor() {
         if (onlyDetectedBySensors()) {
             return "C0C0C0";
@@ -1122,7 +1122,7 @@ class EntitySprite extends Sprite {
                     .getOwner().getColorIndex()));
         }
     }
-    
+
     public boolean isAffectedByECM() {
         return isAffectedByECM;
     }
@@ -1135,7 +1135,7 @@ class EntitySprite extends Sprite {
             prepare();
         }
     }
-    
+
     /** Marks the entity as selected for movement etc., recoloring the label */
     public void setSelected(boolean status) {
         if (isSelected != status) {
@@ -1143,7 +1143,7 @@ class EntitySprite extends Sprite {
             prepare();
         }
     }
-    
+
     /** Returns if the entity is marked as selected for movement etc., recoloring the label */
     public boolean getSelected() {
         return isSelected;
@@ -1153,4 +1153,3 @@ class EntitySprite extends Sprite {
         return entity.getSpriteDrawPriority();
     }
 }
-

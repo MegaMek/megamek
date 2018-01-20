@@ -88,7 +88,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new LBXHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;
@@ -100,7 +100,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
             }
         }
         return damage;
-    }    
+    }
 
     @Override
     public int getBattleForceClass() {

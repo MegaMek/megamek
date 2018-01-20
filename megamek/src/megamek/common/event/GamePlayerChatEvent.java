@@ -22,7 +22,7 @@ import megamek.common.IPlayer;
 public class GamePlayerChatEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 9077796386452985153L;
     protected String message;
@@ -48,7 +48,7 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
     public void fireEvent(GameListener gl) {
         gl.gamePlayerChat(this);
     }
-    
+
     @Override
     public String getEventName() {
         return "Chat";

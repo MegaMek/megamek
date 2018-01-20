@@ -63,7 +63,7 @@ public interface IClientPreferences extends IPreferenceStore {
     boolean defaultAutoejectDisabled();
 
     boolean useAverageSkills();
-    
+
     boolean generateNames();
 
     String getLastConnectAddr();
@@ -115,13 +115,13 @@ public interface IClientPreferences extends IPreferenceStore {
     boolean keepGameLog();
 
     boolean memoryDumpOn();
-    
+
     boolean debugOutputOn();
 
     void setDefaultAutoejectDisabled(boolean state);
 
     void setUseAverageSkills(boolean state);
-    
+
     void setGenerateNames(boolean state);
 
     void setKeepGameLog(boolean state);

@@ -391,7 +391,7 @@ public class RandomUnitGenerator implements Serializable {
 
 	/**
      * Generate a list of units from the RAT.
-	 *     
+	 *
 	 * @param numRolls - the number of units to roll from the RAT
 	 * @param ratName - name of the RAT to roll on
 	 * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.

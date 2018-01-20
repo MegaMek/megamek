@@ -100,7 +100,7 @@ public class PreferenceManager {
 
         try {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             Settings opts = (Settings) um.unmarshal(is);
 
@@ -125,20 +125,20 @@ public class PreferenceManager {
     public void save() {
         save(new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).getFile());
     }
-    
+
     public void save(final File file) {
         try {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
-            
+
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            
+
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            
+
             JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME), Settings.class, new Settings(clientPreferenceStore, stores));
-            
+
             marshaller.marshal(element, file);
         } catch (JAXBException ex) {
             System.err.println("Error writing XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
@@ -155,12 +155,12 @@ public class PreferenceManager {
 
         @XmlElement(name = "store")
         List<Store> stores = new ArrayList<>();
-        
+
         Settings(final PreferenceStore clientPreferenceStore, final Map<String, IPreferenceStore> stores) {
             if (clientPreferenceStore != null) {
                 this.stores.add(new Store(CLIENT_SETTINGS_STORE_NAME, clientPreferenceStore));
             }
-            
+
             if (stores != null) {
                 for (Entry<String, IPreferenceStore> ps : stores.entrySet()) {
                     this.stores.add(new Store(ps.getKey(), (PreferenceStore) ps.getValue()));
@@ -174,24 +174,24 @@ public class PreferenceManager {
         @SuppressWarnings("unused")
         private Settings() {
         }
-        
+
     }
-    
+
     /**
      * A wrapper class for each PreferenceStore.
      */
     @XmlType
     private static class Store {
-        
+
         @XmlAttribute
         String name;
-        
+
         @XmlElement(name = "preference")
         List<XmlProperty> preferences = new ArrayList<>();
 
         Store(final String name, final PreferenceStore preferenceStore) {
             this.name = name;
-            
+
             for (Entry<Object, Object> prop : preferenceStore.properties.entrySet()) {
                 preferences.add(new XmlProperty(prop.getKey().toString(), prop.getValue().toString()));
             }
@@ -203,18 +203,18 @@ public class PreferenceManager {
         @SuppressWarnings("unused")
         private Store() {
         }
-        
+
     }
-    
+
     /**
      * A wrapper class for entries in a Properties object.
      */
     @XmlType
     private static class XmlProperty {
-        
+
         @XmlAttribute(name = "name")
         String key;
-        
+
         @XmlAttribute
         String value;
 

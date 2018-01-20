@@ -94,7 +94,7 @@ public interface ITurnOrdered extends Serializable {
      * Clear the initiative of this object.
      */
     void clearInitiative(boolean bUseInitComp);
-    
+
     void setInitiative(InitiativeRoll newRoll);
 
 }

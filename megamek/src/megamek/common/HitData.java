@@ -57,13 +57,13 @@ public class HitData {
      * Keeps track of the Entity originating this hit, if any
      */
     private int attackerId = Entity.NONE;
-    
+
     /**
-     * Does this HitData represent the first hit in a series of hits (ie, 
+     * Does this HitData represent the first hit in a series of hits (ie,
      * cluster weapons).
      */
     private boolean firstHit = true;
-    
+
     private boolean ignoreInfantryDoubleDamage = false;
 
 

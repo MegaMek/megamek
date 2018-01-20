@@ -1,12 +1,12 @@
 /**
- * 
+ *
  */
 package megamek.common;
 
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
  * in ASC and Campaign Operations
- * 
+ *
  * @author Neoancient
  *
  */
@@ -79,32 +79,32 @@ public enum UnitRole {
 			return UNDETERMINED;
 		}
 	}
-	
+
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
      * qualifies for a particular role. As the canon unit roles do not themselves adhere
      * strictly to the guidelines, there is some allowance for fuzziness in applying the
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
-     * 
+     *
      * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
-     * 
+     *
      * @param entity      The unit to be checked for role qualification
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(Entity entity) {
         return qualifiesForRole(new AlphaStrikeElement(entity), 0);
     }
-    
+
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
      * qualifies for a particular role. As the canon unit roles do not themselves adhere
      * strictly to the guidelines, there is some allowance for fuzziness in applying the
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
-     * 
+     *
      * This method calculates AlphaStrike statistics for the Entity as the first step in the calculation.
-     * 
+     *
      * @param entity      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
      *                  more or less by the book, while values < 0 are more liberal and > 0 are
@@ -114,28 +114,28 @@ public enum UnitRole {
     public boolean qualifiesForRole(Entity entity, double tolerance) {
         return qualifiesForRole(new AlphaStrikeElement(entity), tolerance);
     }
-    
+
     /**
      * Applies the criteria from Alpha Strike Companion to determine whether a unit
      * qualifies for a particular role. As the canon unit roles do not themselves adhere
      * strictly to the guidelines, there is some allowance for fuzziness in applying the
      * criteria by computing a score. Stats outside the given ranges lower the score, and
      * special abilities that are useful for a role raise the score.
-     * 
+     *
      * @param unit      The unit to be checked for role qualification
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
 	public boolean qualifiesForRole(AlphaStrikeElement unit) {
 		return qualifiesForRole(unit, 0);
 	}
-	
+
 	/**
 	 * Applies the criteria from Alpha Strike Companion to determine whether a unit
 	 * qualifies for a particular role. As the canon unit roles do not themselves adhere
 	 * strictly to the guidelines, there is some allowance for fuzziness in applying the
 	 * criteria by computing a score. Stats outside the given ranges lower the score, and
 	 * special abilities that are useful for a role raise the score.
-	 * 
+	 *
 	 * @param unit		The unit to be checked for role qualification
 	 * @param tolerance	A measure of how strictly to apply the qualifications. A value of zero is
 	 * 					more or less by the book, while values < 0 are more liberal and > 0 are
@@ -153,17 +153,17 @@ public enum UnitRole {
 			if (unit.hasSPA(BattleForceSPA.ECM)
 					|| unit.hasSPA(BattleForceSPA.LECM)
 					|| unit.hasSPA(BattleForceSPA.WAT)) {
-				score++;				
+				score++;
 			}
 			if (unit.hasSPA(BattleForceSPA.STL)
 					|| unit.hasSPA(BattleForceSPA.MAS)
 					|| unit.hasSPA(BattleForceSPA.LMAS)) {
 				score++;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
 				score++;
-			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -171,11 +171,11 @@ public enum UnitRole {
 		case BRAWLER:
 			/* Not too slow, preference for medium range */
 			score += Math.min(0, speed - 8);
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >= 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
 				score += 0.5;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -190,10 +190,10 @@ public enum UnitRole {
 						unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM))* 2 >= unit.getArmor()) {
 				score++;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
 				score++;
-			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -209,7 +209,7 @@ public enum UnitRole {
 			if (unit.hasSPA(BattleForceSPA.AMS)
 //					|| unit.hasSPA(BattleForceSPA.LAMS)
 					|| unit.hasSPA(BattleForceSPA.RAMS)) {
-				score++;				
+				score++;
 			}
 			break;
 		case MISSILE_BOAT:
@@ -249,10 +249,10 @@ public enum UnitRole {
 			if (unit.hasSPA(BattleForceSPA.ECM)) {
 				score++;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
 				score++;
-			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -265,11 +265,11 @@ public enum UnitRole {
 				score += Math.min(0, speed - 9) * 0.5;
 			}
 			score += Math.min(0, unit.getFinalArmor() - 4) + Math.min(0, 8 - unit.getFinalArmor());
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >= 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
 				score += 0.5;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -282,10 +282,10 @@ public enum UnitRole {
 			/* Fast and light-medium armor, preference for short range */
 			score += Math.min(0, speed - 9) * 0.5;
 			score -= Math.max(0, unit.getFinalArmor() - 5);
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
 				score++;
-			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -293,10 +293,10 @@ public enum UnitRole {
 		case ATTACK_FIGHTER:
 			/* Slow, preference for short range */
 			score -= Math.max(0, speed - 5);
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
 				score++;
-			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) > 
+			} else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -304,11 +304,11 @@ public enum UnitRole {
 		case DOGFIGHTER:
 			/* Medium speed, preference for medium range */
 			score += Math.min(0, speed - 5) + Math.min(0, 7 - speed) * 0.5;
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >= 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
 				score += 0.5;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -316,11 +316,11 @@ public enum UnitRole {
 		case FAST_DOGFIGHTER:
 			/* Fast with preference for medium range */
 			score += Math.min(0, speed - 7) + Math.min(0, 9 - speed) * 0.5;
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >= 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
 				score += 0.5;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -335,11 +335,11 @@ public enum UnitRole {
 		case INTERCEPTOR:
 			/* Very fast, preference for damage at medium range */
 			score += Math.min(0, speed - 10);
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >= 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
 				score += 0.5;
 			}
-			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) > 
+			if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
 					unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
 				score += 0.5;
 			}
@@ -374,4 +374,3 @@ public enum UnitRole {
 		return sb.toString().trim();
 	}
 };
-

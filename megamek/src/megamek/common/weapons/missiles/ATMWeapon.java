@@ -40,7 +40,7 @@ public abstract class ATMWeapon extends MissileWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -51,7 +51,7 @@ public abstract class ATMWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new ATMHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         double damage = super.getBattleForceDamage(range);

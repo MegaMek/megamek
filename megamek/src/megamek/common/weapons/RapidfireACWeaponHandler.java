@@ -59,7 +59,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -83,7 +83,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                 int wloc = weapon.getLocation();
                 for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
                     CriticalSlot slot1 = ae.getCritical(wloc, i);
-                    if ((slot1 == null) || 
+                    if ((slot1 == null) ||
                             (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }

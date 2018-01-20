@@ -1,17 +1,17 @@
 /*
  * MegaMek -
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
@@ -29,7 +29,7 @@ import java.io.Serializable;
  */
 public class UnitLocation implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3989732522854387850L;
 
@@ -47,7 +47,7 @@ public class UnitLocation implements Serializable {
 
     /**
      * Create a new location object.
-     * 
+     *
      * @param id the unit's <code>int</code> ID number.
      * @param coords the <code>Coords</code> of this location.
      * @param facing the unit's <code>int</code> facing at this location.
@@ -62,7 +62,7 @@ public class UnitLocation implements Serializable {
 
     /**
      * Get the ID number of the entity at this location.
-     * 
+     *
      * @return the <code>int</code> ID of the entity.
      */
     public int getId() {
@@ -71,7 +71,7 @@ public class UnitLocation implements Serializable {
 
     /**
      * Get the coordinates of this location.
-     * 
+     *
      * @return the <code>Coords</code> coordinates of the location.
      */
     public Coords getCoords() {
@@ -80,7 +80,7 @@ public class UnitLocation implements Serializable {
 
     /**
      * Get the facing of the entity at this location.
-     * 
+     *
      * @return the <code>int</code> facing of the entity.
      */
     public int getFacing() {
@@ -89,7 +89,7 @@ public class UnitLocation implements Serializable {
 
     /**
      * Get the elevation of the entity at this location.
-     * 
+     *
      * @return the <code>int</code> elevation of the entity.
      */
     public int getElevation() {

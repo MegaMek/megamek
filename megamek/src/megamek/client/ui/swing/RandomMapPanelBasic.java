@@ -28,7 +28,7 @@ import java.awt.*;
 public class RandomMapPanelBasic extends JPanel {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6971330721623187856L;
     private static final String NONE = Messages.getString("RandomMapDialog.uiNONE");

@@ -30,51 +30,51 @@ import javax.imageio.ImageIO;
  * generates a board file with each hex image mapped to a fluff number for the
  * hex it belongs to.  The fluff numbers are also written to a file that can be
  * added to a tileset file.
- * 
+ *
  * This program really isn't complete, so many of the parameters are just hard
  * coded.  The basic premise works, although it needs more refinement.  I also
  * think that using terrain fluff to map an image to each hex is kind of an
  * abuse of the framework.
- * 
+ *
  * @author arlith
  * @date October 2014
  */
 public class ImageToBoard {
-    
+
     boolean loaded = false;
-    
+
     int hexCols = 41;
-    
+
     int hexRows = 51;
-    
+
     int colOffset = 6;
-    
+
     int rowOffset = 12;
-    
+
     /**
      * Width of a hex in MegaMek.
      */
     int hexWidth = 84;
-    
+
     /**
      * Height of a hex in Megamek.
      */
     int hexHeight = 72;
-    
-    BufferedImage src, hexTemplate;     
-    
+
+    BufferedImage src, hexTemplate;
+
     BufferedWriter tilesetOut, boardOut;
-    
+
     String outputDir;
-    
+
     public static void main(String[] args) {
         String fileName = "/home/walczak/Downloads/ChYWZZx.jpg";
         String outDir = "/home/walczak/Downloads/tmp";
-        
-        ImageToBoard mm = new ImageToBoard(fileName, outDir);        
+
+        ImageToBoard mm = new ImageToBoard(fileName, outDir);
         mm.process();
     }
-    
+
     ImageToBoard(String inPath, String outDir) {
         outputDir = outDir;
         try {
@@ -87,25 +87,25 @@ public class ImageToBoard {
         } catch (IOException e) {
             e.printStackTrace();
             return;
-        } 
+        }
         loaded = true;
     }
-    
+
     void process() {
         if (!loaded) {
             return;
         }
         BufferedImage hexImg = new BufferedImage(hexWidth, hexHeight,
                 BufferedImage.TYPE_INT_ARGB);
-        
+
         try {
             boardOut.write("size " + hexCols + " " + hexRows + "\n");
         } catch (IOException e1) {
             e1.printStackTrace();
             return;
         }
-        
-        int black = (255 << 8) & (255 << 16) & (255); 
+
+        int black = (255 << 8) & (255 << 16) & (255);
         int transparent = 0;
         Graphics hexGraphics = hexImg.getGraphics();
         int width = src.getWidth() - colOffset;
@@ -125,7 +125,7 @@ public class ImageToBoard {
                         y < 0) {
                     continue;
                 }
-                
+
                 BufferedImage hexROI = src.getSubimage(x, y, mapHexWidth,
                         mapHexHeight);
                 hexGraphics.drawImage(hexROI, 0, 0, hexWidth, hexHeight, null);
@@ -161,6 +161,6 @@ public class ImageToBoard {
             tilesetOut.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }        
+        }
     }
 }

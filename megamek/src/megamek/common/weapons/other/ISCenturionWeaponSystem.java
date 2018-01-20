@@ -70,7 +70,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         .setISApproximate(true, false, false, true, false)
         .setPrototypeFactions(F_TH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -83,6 +83,6 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new CenturionWeaponSystemHandler(toHit, waa, game, server);
-    }    
+    }
 
 }

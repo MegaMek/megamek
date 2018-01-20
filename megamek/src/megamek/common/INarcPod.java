@@ -80,7 +80,7 @@ public class INarcPod implements Serializable, Targetable {
         final INarcPod other = (INarcPod) obj;
         return (type == other.type) && (team == other.team);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(type, team);
@@ -142,13 +142,13 @@ public class INarcPod implements Serializable, Targetable {
         throw new IllegalStateException(
                 "Never ask for the coords of an INarcPod.");
     }
-    
+
     public Map<Integer, Coords> getSecondaryPositions() {
         // Hopefully, this will **never** get called.
         throw new IllegalStateException(
                 "Never ask for the coords of an INarcPod.");
     }
-    
+
 
     public int relHeight() {
         return 0;
@@ -174,7 +174,7 @@ public class INarcPod implements Serializable, Targetable {
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
-    
+
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -186,7 +186,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -194,7 +194,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
@@ -202,7 +202,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
-    
+
     public int getAltitude() {
         return 0;
     }

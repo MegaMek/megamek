@@ -72,14 +72,14 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
-        }        
+        }
 
         return (int) Math.ceil(toReturn);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      * megamek.common.Building, int, boolean)

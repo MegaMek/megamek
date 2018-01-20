@@ -1408,5 +1408,3 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
     }
 
 }
-
-

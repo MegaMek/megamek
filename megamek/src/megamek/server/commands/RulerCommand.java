@@ -24,7 +24,7 @@ public class RulerCommand extends ServerCommand {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override

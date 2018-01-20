@@ -28,7 +28,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
 
     private IGame game;
     Vector<Report> vPhaseReport;
-    
+
     public ScreenProcessor(Server server) {
         super(server);
     }
@@ -39,7 +39,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
         this.vPhaseReport = vPhaseReport;
         resolveScreen();
         this.vPhaseReport = null;
-        
+
     }
 
     /**

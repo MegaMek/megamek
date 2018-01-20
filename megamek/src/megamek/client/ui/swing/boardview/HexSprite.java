@@ -10,9 +10,9 @@ import megamek.common.Coords;
 
 /**
  * An ancestor class for all Sprites that can be enclosed within a single hex.
- * 
+ *
  * @author Saginatio
- * 
+ *
  */
 public abstract class HexSprite extends Sprite {
 
@@ -34,10 +34,10 @@ public abstract class HexSprite extends Sprite {
                 (int)(BoardView1.HEX_H*bv.scale));
         bounds.setLocation(bv.getHexLocation(loc));
     }
-    
+
     /**
      * Creates a new empty transparent image for this HexSprite. The
-     * size follows the current values of <code>bounds</code>. 
+     * size follows the current values of <code>bounds</code>.
      */
     protected Image createNewHexImage() {
         GraphicsConfiguration config = GraphicsEnvironment

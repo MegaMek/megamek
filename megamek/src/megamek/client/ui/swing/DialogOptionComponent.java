@@ -53,7 +53,7 @@ public class DialogOptionComponent extends JPanel implements
     private JTextField textField;
     private JLabel label;
     private DialogOptionListener dialogOptionListener;
-    
+
     /**
      * Value used to force a change
      */
@@ -96,9 +96,9 @@ public class DialogOptionComponent extends JPanel implements
                     public void mouseEntered(MouseEvent evt) {}
                     public void mouseExited(MouseEvent evt) {}
                     public void mousePressed(MouseEvent evt) {}
-                    public void mouseReleased(MouseEvent evt) {}                    
+                    public void mouseReleased(MouseEvent evt) {}
                 });
-                
+
                 gbc.gridx = gbc.gridy = 0;
                 gbc.anchor = GridBagConstraints.CENTER;
                 gbc.insets = new Insets(0,10,0,10);
@@ -147,13 +147,13 @@ public class DialogOptionComponent extends JPanel implements
                     public void mouseEntered(MouseEvent evt) {}
                     public void mouseExited(MouseEvent evt) {}
                     public void mousePressed(MouseEvent evt) {}
-                    public void mouseReleased(MouseEvent evt) {}                    
+                    public void mouseReleased(MouseEvent evt) {}
                 });
-                
+
                 if (!editable) {
                     textField.setEnabled(false);
                 }
-                
+
                 if (option.isLabelBeforeTextField()) {
                     gbc.gridx = gbc.gridy = 0;
                     add(label, gbc);
@@ -184,11 +184,11 @@ public class DialogOptionComponent extends JPanel implements
         sb.append("</html>");
         return sb.toString();
     }
-    
+
     public boolean hasChanged() {
         return !option.getValue().equals(getValue()) || hasOptionChanged;
     }
-    
+
     public void setOptionChanged(boolean v) {
         hasOptionChanged = v;
     }
@@ -294,9 +294,9 @@ public class DialogOptionComponent extends JPanel implements
                 return choice.getSelectedIndex() == 0;
             default:
                 return textField.getText().equals(String.valueOf(option.getDefault()));
-        }        
+        }
     }
-    
+
     public void resetToDefault() {
         switch (option.getType()) {
             case IOption.BOOLEAN:

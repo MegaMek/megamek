@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -23,20 +23,20 @@ import megamek.common.util.HashCodeUtil;
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
  * values are a half-hex down. Directions work clockwise around the hex,
- * starting with zero at the top. 
+ * starting with zero at the top.
  *      -y
  *       0
  *     _____
  *  5 /     \ 1
-  -x /       \ +x 
- *   \       / 
- *  4 \_____/ 2 
+  -x /       \ +x
+ *   \       /
+ *  4 \_____/ 2
  *       3
  *      +y
  */
 public class Coords implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4451256806040563030L;
 
@@ -90,7 +90,7 @@ public class Coords implements Serializable {
     /**
      * Returns a new coordinate that represents the coordinate 1 unit in the
      * specified direction.
-     * 
+     *
      * @return the new coordinate, if the direction is valid; otherwise, a new
      *         copy of this coordinate.
      * @param dir the direction.
@@ -211,7 +211,7 @@ public class Coords implements Serializable {
     /**
      * Returns the direction in which another coordinate lies; 0 if the
      * coordinates are equal.
-     * 
+     *
      * @param d the destination coordinate.
      */
     public int direction(Coords d) {
@@ -220,7 +220,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns the radian direction of another Coords.
-     * 
+     *
      * @param d the destination coordinate.
      */
     public final double radian(Coords d) {
@@ -247,7 +247,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns the degree direction of another Coords.
-     * 
+     *
      * @param d the destination coordinate.
      */
     public final int degree(Coords d) {
@@ -306,19 +306,19 @@ public class Coords implements Serializable {
         return other.getX() == this.getX() && other.getY() == this.getY();
     }
 
-    /* 
+    /*
      * Determines if this set of coordinates is on the edge of the board
      */
     public boolean isOnBoardEdge(IBoard board) {
-        return (getX() == 0) 
+        return (getX() == 0)
                 || (getY() == 0)
-                || (getX() == (board.getWidth() - 1)) 
+                || (getX() == (board.getWidth() - 1))
                 || (getY() == (board.getHeight() - 1));
     }
-    
+
     /**
      * Get the hash code for these coords.
-     * 
+     *
      * @return The <code>int</code> hash code for these coords.
      */
     @Override
@@ -340,7 +340,7 @@ public class Coords implements Serializable {
      * three hexes, sides first, add the first one that intersects and continue
      * from there. Based off of some of the formulas at Amit's game programming
      * site. (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
-     * 
+     *
      * Note: this function can return Coordinates that are not on the board.
      *
      * @param src Starting point.
@@ -464,14 +464,14 @@ public class Coords implements Serializable {
      */
     public final List<Coords> allAdjacent() {
         List<Coords> retVal = new ArrayList<>();
-        
+
         for(int dir = 0; dir < 6; dir++) {
             retVal.add(translated(dir));
         }
-        
+
         return retVal;
     }
-    
+
     /**
      * this makes the coordinates 1 based instead of 0 based to match the tiles
      * diaplayed on the grid.

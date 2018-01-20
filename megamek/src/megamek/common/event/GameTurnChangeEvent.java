@@ -23,10 +23,10 @@ import megamek.common.IPlayer;
 public class GameTurnChangeEvent extends GamePlayerEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6812056631576383917L;
-    
+
     /**
      * Track the ID of the player who took the turn that triggered this even.
      */
@@ -48,14 +48,14 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gameTurnChange(this);    
+        gl.gameTurnChange(this);
     }
 
     @Override
     public String getEventName() {
         return "Turn Change";
     }
-    
+
     public int getPreviousPlayerId() {
         return prevPlayerId;
     }

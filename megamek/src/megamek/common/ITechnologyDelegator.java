@@ -1,17 +1,17 @@
 /**
- * 
+ *
  */
 package megamek.common;
 
 /**
  * Convenience interface that allows classes to implement the ITechnology interface by delegating
  * to a member that implements ITechnology.
- * 
+ *
  * @author Neoancient
  *
  */
 public interface ITechnologyDelegator extends ITechnology {
-    
+
     ITechnology getTechSource();
 
     @Override

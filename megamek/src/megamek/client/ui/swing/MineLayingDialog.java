@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -42,7 +42,7 @@ import megamek.common.Mounted;
  */
 public class MineLayingDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1067865530113792340L;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -60,7 +60,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
     /**
      * Display a dialog that shows the mines on the entity, and allows the
      * player to choose one.
-     * 
+     *
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that carries the mines.
      */
@@ -78,8 +78,8 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
             // Is this a Mine that can be layed?
             EquipmentType type = mount.getType();
-            if ((type.hasFlag(MiscType.F_MINE) || 
-                    type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) && 
+            if ((type.hasFlag(MiscType.F_MINE) ||
+                    type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) &&
                  mount.canFire()) {
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
@@ -156,7 +156,7 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
     /**
      * Get the id of the mine the player wants to use.
-     * 
+     *
      * @return the <code>int</code> id of the mine to lay
      */
     public int getMine() {

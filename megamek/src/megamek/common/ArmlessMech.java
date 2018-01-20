@@ -18,7 +18,7 @@ package megamek.common;
 public class ArmlessMech extends BipedMech {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1333922747670982513L;
 
@@ -51,7 +51,7 @@ public class ArmlessMech extends BipedMech {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head head
      * @param ct center torso
      * @param t right/left torso
@@ -96,7 +96,7 @@ public class ArmlessMech extends BipedMech {
         }
         return super.getTransferLocation(hit);
     }
-    
+
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_ARMLESS_MECH;
     }

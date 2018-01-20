@@ -74,7 +74,7 @@ public class SupportVTOL extends VTOL {
         }
         return false;
     }
-    
+
     private static final TechAdvancement TA_VTOL = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
@@ -95,7 +95,7 @@ public class SupportVTOL extends VTOL {
             return TA_VTOL;
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
@@ -151,13 +151,13 @@ public class SupportVTOL extends VTOL {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
-    
+
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL | Entity.ETYPE_SUPPORT_VTOL;
     }
-    
+
     public boolean isSupportVehicle() {
         return true;
     }
-    
+
  }

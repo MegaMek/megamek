@@ -137,7 +137,7 @@ public class TripodMech extends Mech {
                     }
                 }
             }
-            wmp = (wmp * (3 - legsDestroyed)) / 3; 
+            wmp = (wmp * (3 - legsDestroyed)) / 3;
         } else {
             for (int i = 0; i < locations(); i++) {
                 if (locationIsLeg(i)) {
@@ -284,7 +284,7 @@ public class TripodMech extends Mech {
         } else {
             roll.addModifier(2, "pilot incapacitated");
         }
-        
+
         int[] locsToCheck = new int[3];
 
         locsToCheck[0] = Mech.LOC_RLEG;

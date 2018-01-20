@@ -95,7 +95,7 @@ public class UnitOverview implements IDisplayable {
         PMUtil.setImage(pageUp, clientgui);
         pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
-        
+
         visible = GUIPreferences.getInstance().getShowUnitOverview();
     }
 
@@ -163,7 +163,7 @@ public class UnitOverview implements IDisplayable {
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
                 graph.setColor(oldColor);
             }
-            
+
             Entity se = clientgui == null ? null : clientgui.getClient()
                     .getEntity(clientgui.getSelectedEntityNum());
             if ((e == se) && (game.getTurn() != null) &&
@@ -540,13 +540,13 @@ public class UnitOverview implements IDisplayable {
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
                 Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
                 iconName = "";
-                for (String tok : v) {                  
+                for (String tok : v) {
                     String newName = iconName + " " + tok;
                     if (metrics.stringWidth(newName) <= ICON_NAME_MAX_LENGTH) {
                         iconName = newName;
                     } else {
                         break;
-                    }                    
+                    }
                 }
             }
             return adjustString(iconName, metrics);

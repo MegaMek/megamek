@@ -28,7 +28,7 @@ public class DiveBombAttack extends Weapon {
      *
      */
     private static final long serialVersionUID = -179884141546884171L;
-    
+
     public static final int DIVE_BOMB_MIN_ALTITUDE = 3;
     public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
 
@@ -54,7 +54,7 @@ public class DiveBombAttack extends Weapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)

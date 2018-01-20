@@ -45,7 +45,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
@@ -55,12 +55,12 @@ public abstract class MissileWeapon extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         return getBattleForceDamage(range, null);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (range > getLongRange()) {

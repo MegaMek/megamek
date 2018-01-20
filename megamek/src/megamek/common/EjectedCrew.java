@@ -17,9 +17,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 public class EjectedCrew extends Infantry {
     protected int originalRideId;
     protected String originalRideExternalId;
-    
+
     private static final long serialVersionUID = 8136710237585797372L;
-    
+
     public static final String VEE_EJECT_NAME = "Vehicle Crew";
     public static final String MW_EJECT_NAME = "MechWarrior";
 
@@ -52,7 +52,7 @@ public class EjectedCrew extends Infantry {
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
         IGame tmpGame = originalRide.getGame();
         if (tmpGame != null
-            && (!(this instanceof MechWarrior) 
+            && (!(this instanceof MechWarrior)
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get("InfantryAssaultRifle"),
@@ -63,7 +63,7 @@ public class EjectedCrew extends Infantry {
             }
         }
     }
-    
+
     /**
      * This constructor is so MULParser can load these entities
      */
@@ -72,11 +72,11 @@ public class EjectedCrew extends Infantry {
         setCrew(new Crew(CrewType.CREW));
         setChassis(VEE_EJECT_NAME);
         //this constructor is just so that the MUL parser can read these units in so
-        //assign some arbitrarily large number here for the internal so that locations will get 
+        //assign some arbitrarily large number here for the internal so that locations will get
         //the actual current number of trooper correct.
         initializeInternal(Integer.MAX_VALUE, Infantry.LOC_INFANTRY);
     }
-    
+
     public EjectedCrew(Crew crew, IPlayer owner, IGame game) {
         super();
         setCrew(crew);
@@ -102,7 +102,7 @@ public class EjectedCrew extends Infantry {
         }
         IGame tmpGame = game;
         if (tmpGame != null
-            && (!(this instanceof MechWarrior) 
+            && (!(this instanceof MechWarrior)
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get("InfantryAssaultRifle"),
@@ -151,7 +151,7 @@ public class EjectedCrew extends Infantry {
     }
 
     /*@Override
-     * Taharqa: I don't think this should be here and I can't find a place where it is 
+     * Taharqa: I don't think this should be here and I can't find a place where it is
      * actually necessary. If you set this crew as unejected it will carry on to the original unit
      * and the after battle MULs and processing will be wrong
     public void newRound(int number) {
@@ -162,14 +162,14 @@ public class EjectedCrew extends Infantry {
     /**
      * Because they deploy in their vehicles rather than as infantry, crews
      * (including MechWarriors) never count as squads.
-     * 
+     *
      * @return <code>false</code>
      */
     @Override
     public boolean isSquad() {
         return false;
     }
-    
+
     @Override
     public boolean isCrippled() {
         // Ejected crew should always attempt to flee according to Forced Withdrawal.

@@ -86,4 +86,4 @@ public class ISRISCHyperLaser extends LaserWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new HyperLaserHandler(toHit, waa, game, server);
     }
-}   
+}

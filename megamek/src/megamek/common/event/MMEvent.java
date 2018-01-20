@@ -15,15 +15,15 @@ package megamek.common.event;
  */
 public abstract class MMEvent {
     protected boolean cancelled = false;
-    
+
     public MMEvent() {
     }
-    
+
     /** @return true if the event can be cancelled (aborted) */
     public boolean isCancellable() {
         return false;
     }
-    
+
     /** @return true if the event is cancelled */
     public boolean isCancelled() {
         return cancelled;

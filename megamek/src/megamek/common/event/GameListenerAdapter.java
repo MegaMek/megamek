@@ -21,7 +21,7 @@ package megamek.common.event;
  * Classes that wish to deal with <code>GamedEvent</code>s can extend this
  * class and override only the methods which they are interested in.
  * </p>
- * 
+ *
  * @see GameListener
  * @see GameEvent
  */
@@ -77,13 +77,13 @@ public class GameListenerAdapter implements GameListener {
 
     public void gameNewAction(GameNewActionEvent e) {
     }
-    
+
     @Override
     public void gameClientFeedbackRquest(GameCFREvent evt) {
     }
 
     @Override
-    public void gameVictory(GameVictoryEvent e) {        
-    }    
+    public void gameVictory(GameVictoryEvent e) {
+    }
 
 }

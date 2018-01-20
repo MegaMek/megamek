@@ -191,7 +191,7 @@ public class PathEnumerator {
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
-            
+
             // Aero movement on atmospheric ground maps
             // currently only applies to a) conventional aircraft, b) aerotech units, c) lams in air mode
             if(mover.isAirborne() &&
@@ -202,7 +202,7 @@ public class PathEnumerator {
                 MovePath startPath = new MovePath(getGame(), mover);
                 apf.run(startPath);
                 paths.addAll(apf.getAllComputedPathsUncategorized());
-                
+
                 // Remove illegal paths.
                 Filter<MovePath> filter = new Filter<MovePath>() {
                     @Override
@@ -210,21 +210,21 @@ public class PathEnumerator {
                         return isLegalAeroMove(movePath);
                     }
                 };
-                
+
                 this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Unfiltered paths: " + paths.size());
                 paths = new ArrayList<>(filter.doFilter(paths));
                 this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out illegal paths: " + paths.size());
                 AeroGroundOffBoardFilter offBoardFilter = new AeroGroundOffBoardFilter();
                 paths = new ArrayList<>(offBoardFilter.doFilter(paths));
-                
+
                 MovePath offBoardPath = offBoardFilter.getShortestPath();
                 if(offBoardPath != null) {
                     paths.add(offBoardFilter.getShortestPath());
                 }
-                
+
                 this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Filtered out offboard paths: " + paths.size());
-                
-                // This is code useful for debugging, but puts out a lot of log entries, which slows things down. 
+
+                // This is code useful for debugging, but puts out a lot of log entries, which slows things down.
                 HashMap<Integer, Integer> pathLengths = new HashMap<Integer, Integer>();
                 for(MovePath path : paths) {
                     if(!pathLengths.containsKey(path.length())) {
@@ -232,10 +232,10 @@ public class PathEnumerator {
                     }
                     Integer lengthCount = pathLengths.get(path.length());
                     pathLengths.put(path.length(), lengthCount + 1);
-                    
+
                     this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
                 }
-                
+
                 for(Integer length : pathLengths.keySet()) {
                     this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
                 }
@@ -243,7 +243,7 @@ public class PathEnumerator {
                 IAero aeroMover = (IAero)mover;
                 // Get the shortest paths possible.
                 ShortestPathFinder spf;
-                
+
                 if (aeroMover.isSpheroid()) {
                     spf = ShortestPathFinder.newInstanceOfOneToAllSpheroid(
                             MoveStepType.FORWARDS, getGame());
@@ -253,7 +253,7 @@ public class PathEnumerator {
                 }
                 spf.setAdjacencyMap(new MovePathFinder.NextStepsAeroAdjacencyMap(
                         MoveStepType.FORWARDS));
-                
+
                 // Make sure we accelerate to avoid stalling as needed.
                 MovePath startPath = new MovePath(getGame(), mover);
                 spf.run(startPath);
@@ -418,10 +418,10 @@ public class PathEnumerator {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
-    
+
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path) {
-    	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.DEBUG, 
-    			path.length() + ":" + 
+    	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.DEBUG,
+    			path.length() + ":" +
     			path.toString() + ":" + whyNot);
     }
 

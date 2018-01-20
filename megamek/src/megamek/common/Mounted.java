@@ -70,7 +70,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
-    
+
     private int location;
     private boolean rearMounted;
 
@@ -166,7 +166,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * weapon mount?
      */
     private boolean isAPMMounted = false;
-    
+
     /**
      * Does this Mounted represent equipmented that is pod mounted in an omni unit?
      */
@@ -753,7 +753,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             nShots = 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC) 
+        else if (((wtype.getAmmoType() == AmmoType.T_AC)
                 || (wtype.getAmmoType() == AmmoType.T_LAC)
                 || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_PAC))
@@ -792,11 +792,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setDumping(boolean b) {
         m_bDumping = b;
     }
-    
+
     /**
      * The capacity of an ammo bin may be different than the weight of the original shots
      * in the case of AR10s due to variable missile weight.
-     * 
+     *
      * @return The capacity of a mounted ammo bin in tons.
      */
     public double getAmmoCapacity() {
@@ -805,7 +805,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     /**
      * Sets the maximum tonnage of ammo for a mounted ammo bin.
-     * 
+     *
      * @param capacity The capacity of the bin in tons.
      */
     public void setAmmoCapacity(double capacity) {
@@ -819,8 +819,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setRapidfire(boolean rapidfire) {
         this.rapidfire = rapidfire;
     }
-    
-       
+
+
     /**
      * Checks to see if the current ammo for this weapon is hotloaded
      *
@@ -1423,13 +1423,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     /**
      * Convenience "property" to reduce typing, which returns true if the current
      * piece of equipment is a bomb capable of striking ground targets.
-     * @return True if 
+     * @return True if
      */
     public boolean isGroundBomb() {
         return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
                 getType().hasFlag(AmmoType.F_GROUND_BOMB);
     }
-    
+
     // is ammo in the same bay as the weapon
     public boolean ammoInBay(int mAmmoId) {
         for (int nextAmmoId : bayAmmo) {
@@ -1517,11 +1517,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setAPMMounted(boolean apmMounted) {
         isAPMMounted = apmMounted;
     }
-    
+
     public boolean isOmniPodMounted() {
     	return omniPodMounted;
     }
-    
+
     public void setOmniPodMounted(boolean omniPodMounted) {
     	this.omniPodMounted = omniPodMounted;
     }
@@ -1697,7 +1697,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
     }
-    
+
     /**
      * Method that checks to see if our capital missile bay is in bearings-only mode
      * @return
@@ -1711,7 +1711,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         return false;
     }
-    
+
     public int getBaMountLoc() {
         return baMountLoc;
     }

@@ -379,7 +379,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                 break;
             }
         }
-        
+
         if(rowIndex < 0 || rowIndex >= tableCamo.getRowCount()) {
             System.out.println("Attempting to set invalid camo index " + rowIndex + " for player " + p.getName() + ". Using default instead.");
         } else {

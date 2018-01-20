@@ -42,7 +42,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2753652169368638804L;
 
@@ -73,7 +73,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
                 .getType();
-        
+
         if ((atype == null)
                 || (atype.getMunitionType() != AmmoType.M_MINE_CLEARANCE)) {
             System.err.println("MissileMineClearance: "
@@ -132,13 +132,13 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        
+
         if (bMissed) {
             // misses
-            r = new Report(3196);                    
+            r = new Report(3196);
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
-            vPhaseReport.addElement(r);     
+            vPhaseReport.addElement(r);
             return false;
         }
 
@@ -191,7 +191,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         Vector<Report> newReports;
-        
+
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
@@ -223,7 +223,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                 continue;
             }
-            
+
             // Units in a building apply damage to building
             // The rules don't state this, but I'm going to treat mine clearance
             // munitions like airburst mortars for purposes of units in
@@ -265,14 +265,14 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Indents all reports in the collection, and adds a new line to the last
      * one.  This is used to make nested reports line-up and look nicer.
-     * 
+     *
      * @param reports
      */
     private void adjustReports(Vector<Report> reports) {

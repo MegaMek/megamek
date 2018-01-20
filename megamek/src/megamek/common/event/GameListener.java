@@ -23,7 +23,7 @@ package megamek.common.event;
  * removed using the <code>removeGameListener</code> method. When Game is
  * changed the appropriate method will be invoked.
  * </p>
- * 
+ *
  * @see GameListenerAdapter
  * @see GameEvent
  */
@@ -61,8 +61,8 @@ public interface GameListener extends java.util.EventListener {
     public void gameEntityChange(GameEntityChangeEvent e);
 
     public void gameNewAction(GameNewActionEvent e);
-    
+
     public void gameClientFeedbackRquest(GameCFREvent e);
-    
+
     public void gameVictory(GameVictoryEvent e);
 }

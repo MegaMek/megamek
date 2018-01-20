@@ -119,12 +119,12 @@ public class Building implements Serializable {
             this.playerId = playerId;
             this.pos = p;
         }
-        
+
         @Override
         public int hashCode() {
             return uuid.hashCode();
         }
-        
+
         @Override
         public boolean equals(Object o) {
             if (o instanceof DemolitionCharge) {
@@ -723,7 +723,7 @@ public class Building implements Serializable {
         final Building other = (Building) obj;
         return (id == other.id);
     }
-    
+
     @Override
     public int hashCode() {
         return id;
@@ -805,11 +805,11 @@ public class Building implements Serializable {
         DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
         demolitionCharges.add(charge);
     }
-    
+
     public void removeDemolitionCharge(DemolitionCharge charge) {
         demolitionCharges.remove(charge);
     }
-    
+
     public List<DemolitionCharge> getDemolitionCharges() {
         return demolitionCharges;
     }

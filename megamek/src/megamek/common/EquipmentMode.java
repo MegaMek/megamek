@@ -28,7 +28,7 @@ import java.util.Hashtable;
  * <p>
  * There is no way to create the instance of the <code>EquipmentMode</code>
  * directly, use </code>EquipmentMode#getMode</code> instead.
- * 
+ *
  * @see megamek.common.EquipmentType
  * @see megamek.common.Mounted
  */
@@ -51,7 +51,7 @@ public class EquipmentMode {
      * Modes available via <code>getMode</code>
      * <p>
      * Contructs the new mode denoted by the given name.
-     * 
+     *
      * @param name unique mode identifier
      */
     protected EquipmentMode(String name) {
@@ -72,7 +72,7 @@ public class EquipmentMode {
     public String getDisplayableName() {
         return getDisplayableName(false);
     }
-    
+
     /**
      * @return the localized displayable name presented by the GUI to the user.
      */
@@ -108,7 +108,7 @@ public class EquipmentMode {
     public boolean equals(String modeName) {
         return name.equals(modeName);
     }
-    
+
     public String toString() {
         return getName();
     }

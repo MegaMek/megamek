@@ -32,7 +32,7 @@ import megamek.common.TechConstants;
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
  * that data out into a CSV format.
- * 
+ *
  * @author arlith
  *
  */
@@ -48,7 +48,7 @@ public class MechCacheCSVTool {
             return;
         }
         MechSummary[] mechs = cache.getAllMechs();
-        
+
         try {
             StringBuffer csvLine = new StringBuffer();
             csvLine.append("Chassis,Model,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,BV,Rules,Engine Name,Internal Structure," +
@@ -60,35 +60,35 @@ public class MechCacheCSVTool {
 /*                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
                     continue;
                 }*/
-                
+
                 csvLine = new StringBuffer();
                 // Chasis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
-                
+
                 //Source Book
                 csvLine.append(mech.getSourceFile() + ",");
-                
+
                 //if (mech.getModel().equals("")){
                 //    csvLine.append("(Standard),");
-                //} else {                    
+                //} else {
                 //    csvLine.append(mech.getModel() + ",");
                 //}
 
                 //Weight
                 csvLine.append(mech.getTons() + ",");
-                
+
                 // IntroDate
                 csvLine.append(mech.getYear() + ",");
-                
+
                 //Experimental Tech Year
                 if(mech.getAdvancedTechYear() <= mech.getYear()) {
                     csvLine.append(",");
                 } else {
                     csvLine.append(mech.getYear() + ",");
                 }
-                         
+
 
                 //Advanced Tech Year
                 if(mech.getAdvancedTechYear()>0) {
@@ -106,14 +106,14 @@ public class MechCacheCSVTool {
 
                 //Unit Type
                 csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
-                
+
                 // BV
                 csvLine.append(mech.getBV()  + ",");
 
                 csvLine.append(mech.getLevel() + ",");
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");
-                
+
                 // Internals Type
                 if (mech.getInternalsType() >= 0){
                     String isString;
@@ -129,12 +129,12 @@ public class MechCacheCSVTool {
                     (mech.getInternalsType() < 0){
                     csvLine.append("Not Applicable,");
                 }
-                
+
                 // Myomer type
                 csvLine.append(mech.getMyomerName()+ ",");
-                
+
                 // Cockpit Type
-                if (mech.getCockpitType() >= 0 && 
+                if (mech.getCockpitType() >= 0 &&
                         mech.getCockpitType() < Mech.COCKPIT_STRING.length){
                     if (mech.getUnitType().equals("Mek")){
                         csvLine.append(Mech.COCKPIT_STRING[mech.getCockpitType()]+ ",");
@@ -143,15 +143,15 @@ public class MechCacheCSVTool {
                     } else {
                     csvLine.append("Not Applicable,");
                 }
-                
+
                 // Gyro Type
                 if (mech.getGyroType() >= 0){
                     csvLine.append(Mech.GYRO_STRING[mech.getGyroType()] + ",");
-                } else if 
-                    (mech.getGyroType() <0){   
-                    csvLine.append("Not Applicable,");    
+                } else if
+                    (mech.getGyroType() <0){
+                    csvLine.append("Not Applicable,");
                    }
-                
+
                 // Armor type - prints different armor types on the unit
                 Vector<Integer> armorType, armorTech;
                 armorType = new Vector<Integer>();
@@ -162,7 +162,7 @@ public class MechCacheCSVTool {
                 for (int i = 0; i < at.length; i++){
                     boolean contains = false;
                     for (int j = 0; j < armorType.size(); j++){
-                        if (armorType.get(j) == at[i] 
+                        if (armorType.get(j) == at[i]
                                 && armorTech.get(j) == att[i]){
                             contains = true;
                             break;
@@ -179,7 +179,7 @@ public class MechCacheCSVTool {
                             TechConstants.isClan(armorTech.get(i)))
                             + ",");
                 }
-                
+
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){
                     boolean ignore = false;
@@ -207,19 +207,19 @@ public class MechCacheCSVTool {
                     if (name.contains("Infantry Auto Rifle")){
                         ignore = true;
                     }
-                    
-                    
+
+
                     if (name.contains("SwarmMek")
                             || name.contains("SwarmWeaponMek")
                             || name.contains("StopSwarm")
                             || name.contains("LegAttack")){
                         ignore = true;
                     }
-                    
+
                     if (!ignore){
                         csvLine.append(name + ",");
                     }
-                }     
+                }
                 csvLine.append("\n");
                 fout.write(csvLine.toString());
             }
@@ -228,7 +228,7 @@ public class MechCacheCSVTool {
             System.out.println("IOException!");
             e.printStackTrace();
         }
-        
-        
+
+
     }
 }

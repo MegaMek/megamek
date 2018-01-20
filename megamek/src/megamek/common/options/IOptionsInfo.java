@@ -24,7 +24,7 @@ public interface IOptionsInfo {
 
     /**
      * Returns the <code>IOptionInfo</code> for the specified option
-     * 
+     *
      * @param name option name
      * @return the <code>IOptionInfo</code> for the specified option
      * @see IOptionInfo
@@ -34,7 +34,7 @@ public interface IOptionsInfo {
     /**
      * Returns the <code>Enumeration</code> of the
      * <code>IBasicOptionGroup</code>
-     * 
+     *
      * @return the <code>Enumeration</code> of the
      *         <code>IBasicOptionGroup</code>
      */

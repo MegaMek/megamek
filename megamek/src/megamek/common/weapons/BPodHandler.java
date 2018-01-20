@@ -50,7 +50,7 @@ public class BPodHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the clustering of the hits
-     * 
+     *
      * @return a <code>int</code> value saying how much hits are in each cluster
      *         of damage.
      */
@@ -61,7 +61,7 @@ public class BPodHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -74,7 +74,7 @@ public class BPodHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the damage per hit.
-     * 
+     *
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override

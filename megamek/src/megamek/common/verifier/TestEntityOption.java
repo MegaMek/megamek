@@ -39,7 +39,7 @@ public interface TestEntityOption {
     public TestEntity.Ceil getWeightCeilingGyro();
 
     public TestEntity.Ceil getWeightCeilingTurret();
-    
+
     public TestEntity.Ceil getWeightCeilingLifting();
 
     public TestEntity.Ceil getWeightCeilingPowerAmp();
@@ -55,9 +55,9 @@ public interface TestEntityOption {
     public boolean showCorrectCritical();
 
     public boolean showFailedEquip();
-    
+
     public boolean showIncorrectIntroYear();
-    
+
     public int getIntroYearMargin();
 
     public double getMinUnderweight();

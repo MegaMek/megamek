@@ -43,7 +43,7 @@ public class BombType extends AmmoType {
                                               "Arrow IV Homing Missile", "Inferno Bomb",
                                               "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
                                               "Alamo Missile"};
-    
+
     public static final String[] bombInternalNames = {"HEBomb","ClusterBomb","LGBomb",
                                                       "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
                                                       "ASMissile Ammo",
@@ -66,7 +66,7 @@ public class BombType extends AmmoType {
         }
         return bombNames[type];
     }
-    
+
     public static int getBombTypeFromName(String name) {
         for (int i = 0; i < B_NUM; i++) {
             if (bombNames[i].equals(name)) {
@@ -75,7 +75,7 @@ public class BombType extends AmmoType {
         }
         return B_NONE;
     }
-    
+
     public static int getBombTypeFromInternalName(String name) {
         for (int i = 0; i < B_NUM; i++) {
             if (bombInternalNames[i].equalsIgnoreCase(name)) {
@@ -91,7 +91,7 @@ public class BombType extends AmmoType {
         }
         return bombWeaponNames[type];
     }
-    
+
     public static int getBombTypeForWeapon(EquipmentType weapon) {
         for (int i = 0; i < B_NUM; i++) {
             if (bombWeaponNames[i] != null
@@ -172,7 +172,7 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createTorpedoBomb());
         EquipmentType.addType(BombType.createAlamoBomb());
     }
-    
+
     public static BombType createBombByType(int bType)    {
         switch (bType){
             case B_HE:
@@ -180,25 +180,25 @@ public class BombType extends AmmoType {
             case B_CLUSTER:
                 return createClusterBomb();
             case B_LG:
-       			return createLaserGuidedBomb();           		          	
+       			return createLaserGuidedBomb();
             case B_RL:
                 return createRocketBomb();
             case B_TAG:
-       			return createTAGBomb();           		          	
+       			return createTAGBomb();
             case B_AAA:
-           		return createAAAMissileBomb(); 
+           		return createAAAMissileBomb();
             case B_AS:
-           		return createASMissileBomb(); 
+           		return createASMissileBomb();
             case B_ASEW:
-       			return createISASEWMissileBomb();           		
+       			return createISASEWMissileBomb();
             case B_ARROW:
-           		return createArrowIVBomb(); 
+           		return createArrowIVBomb();
             case B_HOMING:
-           		return createArrowIVHomingBomb(); 
+           		return createArrowIVHomingBomb();
             case B_INFERNO:
                 return createInfernoBomb();
             case B_LAA:
-       			return createLAAMissileBomb();           		
+       			return createLAAMissileBomb();
             case B_THUNDER:
                 return createThunderBomb();
             case B_TORPEDO:
@@ -209,7 +209,7 @@ public class BombType extends AmmoType {
                 return null;
         }
     }
-    
+
 	// START OF BOMBS
 
 	private static BombType createAAAMissileBomb() {
@@ -237,7 +237,7 @@ public class BombType extends AmmoType {
 	    .setISApproximate(true, false, false,false, false)
 	    .setClanAdvancement(3069, DATE_NONE, 3072, DATE_NONE, DATE_NONE)
 	    .setClanApproximate(true, false, false, false, false)
-	    .setPrototypeFactions(F_LC,F_CWX)	
+	    .setPrototypeFactions(F_LC,F_CWX)
 	    .setProductionFactions(F_LC);
 
 		return bomb;
@@ -393,7 +393,7 @@ public class BombType extends AmmoType {
 	    .setISApproximate(true, false, false,true, false)
 	    .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
 	    .setClanApproximate(true, false, false, false, false)
-	    .setPrototypeFactions(F_TH)	
+	    .setPrototypeFactions(F_TH)
 	    .setProductionFactions(F_TH)
 	    .setReintroductionFactions(F_CC);
 
@@ -454,7 +454,7 @@ public class BombType extends AmmoType {
 	    .setISApproximate(true, false, false, true, false)
 	    .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
 	    .setClanApproximate(true, false, false, false, false)
-	    .setPrototypeFactions(F_TH)	
+	    .setPrototypeFactions(F_TH)
 	    .setProductionFactions(F_TH)
 	    .setReintroductionFactions(F_CC);
 

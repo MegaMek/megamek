@@ -254,7 +254,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                }                 
+                }
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -268,7 +268,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                         Mounted mount = t.addEquipment(etype, nLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {

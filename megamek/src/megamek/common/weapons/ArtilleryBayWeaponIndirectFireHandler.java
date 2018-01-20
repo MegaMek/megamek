@@ -66,7 +66,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     protected ArtilleryBayWeaponIndirectFireHandler() {
         super();
     }
-    
+
     /**
      * Write debug information to the logs.
      *
@@ -76,7 +76,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     private void logDebug(String methodName, String message) {
         getLogger().log(getClass(), methodName, LogLevel.DEBUG, message);
     }
-    
+
     private MMLogger getLogger() {
         if (null == logger) {
             logger = DefaultMmLogger.getInstance();
@@ -108,7 +108,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         return false;
     }
-        
+
     @Override
     protected void useAmmo() {
         final String METHOD_NAME = "useAmmo()";
@@ -350,7 +350,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (!handledAmmoAndReport) {
             addHeat();
         }
-        
+
         if (!bMissed) {
             if (!isFlak) {
                 r = new Report(3190);
@@ -363,7 +363,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear) {
                 vPhaseReport.addElement(r);
             }
-            artyMsg = "Artillery hit here on round " + game.getRoundCount() 
+            artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
             game.getBoard().addSpecialHexDisplay(
@@ -476,7 +476,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         // check to see if this is a mine clearing attack
         // According to the RAW you have to hit the right hex to hit even if the
         // scatter hex has minefields
-        
+
         if (mineClear && game.containsMinefield(targetPos) && !isFlak
                 && !bMissed) {
             r = new Report(3255);
@@ -503,7 +503,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             Mounted bayW = ae.getEquipment(wId);
             Mounted bayWAmmo = bayW.getLinked();
             AmmoType bayAmmoType = (AmmoType) bayWAmmo.getType();
-            
+
             server.artilleryDamageArea(targetPos, aaa.getCoords(), bayAmmoType,
                     subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
                     asfFlak, -1);

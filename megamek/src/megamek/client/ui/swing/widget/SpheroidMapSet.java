@@ -1,15 +1,15 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -34,13 +34,13 @@ import megamek.common.SmallCraft;
 import megamek.common.util.MegaMekFile;
 
 /**
- * Class which keeps set of all areas required to 
+ * Class which keeps set of all areas required to
  * represent ASF unit in MechDsiplay.ArmorPanel class.
  */
 public class SpheroidMapSet implements DisplayMapSet{
 
     private UnitDisplay unitDisplay;
-    
+
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[13];
@@ -57,7 +57,7 @@ public class SpheroidMapSet implements DisplayMapSet{
             new int[]{50,50,150,150},4);
     //Left armor
     private Polygon leftWingArmor = new Polygon(new int[]{0,40,40,0},
-            new int[]{50,50,150,150},4);  
+            new int[]{50,50,150,150},4);
 
 
     //Right armor
@@ -202,7 +202,7 @@ public class SpheroidMapSet implements DisplayMapSet{
 
         //Value labels for all parts of mek
         //front
-        fm =  comp.getFontMetrics(FONT_VALUE);   
+        fm =  comp.getFontMetrics(FONT_VALUE);
         vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm); //$NON-NLS-1$
         //   vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm); //$NON-NLS-1$
         vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(20, 105, "", fm); //$NON-NLS-1$

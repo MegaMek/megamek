@@ -88,7 +88,7 @@ import megamek.common.util.BoardUtilities;
 public class BoardEditor extends JComponent implements ItemListener,
                                                        ListSelectionListener, ActionListener, DocumentListener,
                                                        IMapSettingsObserver {
-    
+
     private static class TerrainHelper implements Comparable<TerrainHelper> {
 
         private int terrainType;
@@ -115,11 +115,11 @@ public class BoardEditor extends JComponent implements ItemListener,
         }
 
     }
-    
+
 
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 7428395938750335593L;
 
@@ -562,12 +562,12 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     private void addSetTerrain() {
         ITerrain toAdd = enteredTerrain();
-        if (((toAdd.getType() == Terrains.BLDG_ELEV) 
+        if (((toAdd.getType() == Terrains.BLDG_ELEV)
                 || (toAdd.getType() == Terrains.BRIDGE_ELEV))
                 && toAdd.getLevel() < 0) {
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("BoardEditor.BridgeBuildingElevError"), //$NON-NLS-1$
-                    Messages.getString("BoardEditor.invalidTerrainTitle"), //$NON-NLS-1$ 
+                    Messages.getString("BoardEditor.invalidTerrainTitle"), //$NON-NLS-1$
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -683,7 +683,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         }
         curfile = fc.getSelectedFile();
         // load!
-        try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
+        try (InputStream is = new FileInputStream(fc.getSelectedFile())) {
             // tell the board to load!
             StringBuffer errBuff = new StringBuffer();
             board.load(is, errBuff, true);

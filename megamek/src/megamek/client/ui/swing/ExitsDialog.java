@@ -33,7 +33,7 @@ import megamek.client.ui.Messages;
  */
 public class ExitsDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3126840102187553386L;
     private JCheckBox cheExit0 = new JCheckBox("0"); //$NON-NLS-1$

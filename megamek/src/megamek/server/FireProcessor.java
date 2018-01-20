@@ -134,8 +134,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 if(currentHex.containsTerrain(Terrains.FIRE)) {
                     //If the woods has been cleared, or the building
                     // has collapsed put non-inferno fires out.
-                    if ((currentHex.terrainLevel(Terrains.FIRE) 
-                            == Terrains.FIRE_LVL_NORMAL) 
+                    if ((currentHex.terrainLevel(Terrains.FIRE)
+                            == Terrains.FIRE_LVL_NORMAL)
                             && !currentHex.isIgnitable()) {
                         server.removeFire(currentCoords, "lack of fuel");
                         continue;
@@ -153,11 +153,11 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         }
                         //report and check for fire spread
                         r = new Report(5125, Report.PUBLIC);
-                        if ((currentHex.terrainLevel(Terrains.FIRE) 
+                        if ((currentHex.terrainLevel(Terrains.FIRE)
                                 == Terrains.FIRE_LVL_INFERNO)
-                                || (currentHex.terrainLevel(Terrains.FIRE) 
+                                || (currentHex.terrainLevel(Terrains.FIRE)
                                         == Terrains.FIRE_LVL_INFERNO_BOMB)
-                                || (currentHex.terrainLevel(Terrains.FIRE) 
+                                || (currentHex.terrainLevel(Terrains.FIRE)
                                         == Terrains.FIRE_LVL_INFERNO_IV)) {
                             r.messageId = 5130;
                         }
@@ -171,7 +171,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
                 }
             }
-        }        
+        }
 
         //Cycle through all hexes again, reporting new fires, spreading smoke, and incrementing the fire turn.
         //Can't do this in first loop because new fires may be spread
@@ -223,7 +223,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     server.getHexUpdateSet().add(currentCoords);
                 }
             }
-        }        
+        }
 
     } // End the ResolveFire() method
 
@@ -240,8 +240,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
         r.indent(1);
         r.add(burnDamage);
         burnReports.addElement(r);
-        
-        Vector<Report> newReports = 
+
+        Vector<Report> newReports =
                 server.tryClearHex(coords, burnDamage, Entity.NONE);
         for (Report nr : newReports) {
             nr.indent(2);

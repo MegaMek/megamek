@@ -74,7 +74,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -85,7 +85,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new PlasmaRifleHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public int getBattleForceHeatDamage(int range) {
         if (range <= BattleForceElement.MEDIUM_RANGE) {

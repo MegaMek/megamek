@@ -43,17 +43,17 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * A utility class for retrieving unit information in a formatted string.
- * 
+ *
  * The information is encoded in a series of classes that implement a common {@link ViewElement}
  * interface, which can format the element either in html or in plain text.
- * 
+ *
  */
 public class MechView {
-    
+
     /**
      * Provides common interface for various ways to present data that can be formatted
      * either as HTML or as plain text.
-     * 
+     *
      * @see MechView.SingleLine
      * @see MechView.LabeledElement
      * @see MechView.TableElement
@@ -84,24 +84,24 @@ public class MechView {
     private List<ViewElement> sBasic = new ArrayList<>();
     private List<ViewElement> sLoadout = new ArrayList<>();
     private List<ViewElement> sFluff = new ArrayList<>();
-    
+
     private boolean html;
 
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
      * Produced output formatted in html.
-     * 
+     *
      * @param entity           The entity to summarize
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      */
     public MechView(Entity entity, boolean showDetail) {
         this(entity, showDetail, false, true);
     }
-    
+
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
      * Produced output formatted in html.
-     * 
+     *
      * @param entity           The entity to summarize
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
@@ -110,10 +110,10 @@ public class MechView {
     public MechView(Entity entity, boolean showDetail, boolean useAlternateCost) {
         this(entity, showDetail, useAlternateCost, true);
     }
-    
+
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
-     * 
+     *
      * @param entity           The entity to summarize
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
@@ -166,7 +166,7 @@ public class MechView {
                 }
                 sLoadout.add(specList);
             }
-            
+
             if (inf.getCrew() != null) {
 	            ArrayList<String> augmentations = new ArrayList<>();
 	            for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
@@ -205,7 +205,7 @@ public class MechView {
         if (!entity.isDesignValid()) {
             sHead.add(new SingleLine(Messages.getString("MechView.DesignInvalid")));
         }
-        
+
         TableElement tpTable = new TableElement(2);
         tpTable.setColNames(Messages.getString("MechView.Level"), Messages.getString("MechView.Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER);
@@ -220,7 +220,7 @@ public class MechView {
             tpTable.addRow(Messages.getString("MechView.Extinct"), extinctRange);
         }
         sHead.add(tpTable);
-            
+
         sHead.add(new LabeledElement(Messages.getString("MechView.TechRating"), entity.getFullRatingName()));
         sHead.add(new SingleLine());
 
@@ -322,7 +322,7 @@ public class MechView {
             }
 
             entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
-            sBasic.add(new LabeledElement(Messages.getString("MovementType.Fighter"), //$NON-NLS-1$            
+            sBasic.add(new LabeledElement(Messages.getString("MovementType.Fighter"), //$NON-NLS-1$
                     entity.getWalkMP() + "/" + entity.getRunMP())); //$NON-NLS-1$
             entity.setConversionMode(originalMode);
         }
@@ -360,7 +360,7 @@ public class MechView {
                         .append(" damaged)").append(warningEnd());
             }
             sBasic.add(new LabeledElement(Messages.getString("MechView.HeatSinks"), hsString.toString())); //$NON-NLS-1$
-            
+
             if (a.getCockpitType() != Mech.COCKPIT_STANDARD) {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.Cockpit"), // $NON-NLS-1$
                         a.getCockpitTypeString()));
@@ -386,7 +386,7 @@ public class MechView {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.Cockpit"),
                         aMech.getCockpitTypeString()
                         + (aMech.hasArmoredCockpit()? " (armored)" : "")));
-                                
+
             }
             String gyroString = aMech.getGyroTypeString();
             if (aMech.getGyroHits() > 0) {
@@ -406,7 +406,7 @@ public class MechView {
                 sBasic.add(new LabeledElement(Messages.getString("MechView.SystemDamage"), //$NON-NLS-1$
                         warningStart() + a.getCritDamageString() + warningEnd()));
             }
-            
+
             String fuel = String.valueOf(a.getCurrentFuel());
             if (a.getCurrentFuel() < a.getFuel()) {
                 fuel += "/" + a.getFuel(); //$NON-NLS-1$
@@ -431,7 +431,7 @@ public class MechView {
             }
         }
         sBasic.add(new SingleLine());
-        
+
         StringJoiner quirksList = new StringJoiner("<br/>\n");
         Quirks quirks = entity.getQuirks();
         for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
@@ -450,28 +450,28 @@ public class MechView {
             list.addItem(quirksList.toString());
             sFluff.add(list);
         }
-        
+
         if (entity.getFluff().getOverview() != "") {
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
         }
-        
+
         if (entity.getFluff().getCapabilities() != "") {
             sFluff.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
         }
-        
+
         if (entity.getFluff().getDeployment() != "") {
             sFluff.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
         }
-        
+
         if (entity.getFluff().getHistory() != "") {
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }
         sFluff.add(new SingleLine());
     }
-    
+
     /**
      * Converts a list of {@link ViewElement}s to a String using the selected format.
-     * 
+     *
      * @param section The elements to format.
      * @return        The formatted data.
      */
@@ -480,7 +480,7 @@ public class MechView {
                 ViewElement::toHTML : ViewElement::toPlainText;
         return section.stream().map(mapper).collect(Collectors.joining());
     }
-    
+
     /**
      * The head section includes the title (unit name), tech level and availability, tonnage, bv, and cost.
      * @return The data from the head section.
@@ -514,9 +514,9 @@ public class MechView {
     public String getMechReadoutFluff() {
         return getReadout(sFluff);
     }
-    
+
     /**
-     * @return A summary including all four sections. 
+     * @return A summary including all four sections.
      */
     public String getMechReadout() {
         String docStart = html?
@@ -530,7 +530,7 @@ public class MechView {
 
     private List<ViewElement> getInternalAndArmor() {
         List<ViewElement> retVal = new ArrayList<>();
-        
+
         int maxArmor = (entity.getTotalInternal() * 2) + 3;
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
@@ -598,7 +598,7 @@ public class MechView {
                 String[] row = {entity.getLocationName(loc),
                         renderArmor(entity.getInternalForReal(loc), entity.getOInternal(loc), html),
                         "", "", "" };
-                
+
                 if (IArmorState.ARMOR_NA != entity.getArmorForReal(loc)) {
                     row[2] = renderArmor(entity.getArmorForReal(loc),
                             entity.getOArmor(loc), html);
@@ -745,7 +745,7 @@ public class MechView {
         if (entity.getWeaponList().size() < 1) {
             return retVal;
         }
-        
+
         TableElement wpnTable = new TableElement(4);
         wpnTable.setColNames("Weapons", "Loc", "Heat", entity.isOmni()? "Omni" : "");
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
@@ -792,7 +792,7 @@ public class MechView {
                 }
             }
             row[2] = String.valueOf(heat);
-            
+
             if (entity.isOmni()) {
                 row[3] = mounted.isOmniPodMounted()?
             		Messages.getString("MechView.Pod") : //$NON-NLS-1$
@@ -811,16 +811,16 @@ public class MechView {
                 wpnTable.addRow(row);
             }
 
-            // if this is a weapon bay, then cycle through weapons and ammo           
-            if((wtype instanceof BayWeapon) && showDetail) { 
-                for(int wId : mounted.getBayWeapons()) { 
+            // if this is a weapon bay, then cycle through weapons and ammo
+            if((wtype instanceof BayWeapon) && showDetail) {
+                for(int wId : mounted.getBayWeapons()) {
                     Mounted m = entity.getEquipment(wId);
-                    if(null == m) { 
-                        continue; 
+                    if(null == m) {
+                        continue;
                     }
-                    
+
                     row = new String[] { m.getDesc(), "", "", "" };
-                      
+
                     if (entity.isClan()
                             && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                         row[0] += Messages.getString("MechView.IS"); //$NON-NLS-1$
@@ -841,8 +841,8 @@ public class MechView {
                 }
                 for(int aId : mounted.getBayAmmo()) {
                     Mounted m = entity.getEquipment(aId);
-                    if(null == m) { 
-                        continue; 
+                    if(null == m) {
+                        continue;
                     }
                     // Ignore ammo for one-shot launchers
                     if ((m.getLinkedBy() != null)
@@ -882,11 +882,11 @@ public class MechView {
             if (mounted.getAmmoCapacity() == 0) {
                 continue;
             }
-            
+
             if (mounted.getLocation() == Entity.LOC_NONE) {
                 continue;
             }
-            
+
             String[] row = { mounted.getName(), entity.getLocationAbbr(mounted.getLocation()),
                     String.valueOf(mounted.getBaseShotsLeft()), "" };
             if (entity.isOmni()) {
@@ -905,8 +905,8 @@ public class MechView {
         }
         return ammoTable;
     }
-    
-    
+
+
 
     private List<ViewElement> getBombs() {
         List<ViewElement> retVal = new ArrayList<>();
@@ -923,7 +923,7 @@ public class MechView {
 
     private List<ViewElement> getMisc() {
         List<ViewElement> retVal = new ArrayList<>();
-        
+
         TableElement miscTable = new TableElement(3);
         miscTable.setColNames("Equipment", "Loc", entity.isOmni()? "Omni" : "");
         miscTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
@@ -936,7 +936,7 @@ public class MechView {
                     || (name.contains("CASE")
                         && !name.contains("II")
                         && entity.isClan())
-                    || (name.contains("Heat Sink") 
+                    || (name.contains("Heat Sink")
                         && !name.contains("Radical"))
                     || name.contains("Endo Steel")
                     || name.contains("Ferro-Fibrous")
@@ -952,7 +952,7 @@ public class MechView {
                 continue;
             }
             nEquip++;
-            
+
             String[] row = { mounted.getDesc(), entity.getLocationAbbr(mounted.getLocation()), "" };
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
@@ -962,7 +962,7 @@ public class MechView {
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                 row[0] += Messages.getString("MechView.Clan"); //$NON-NLS-1$
             }
-            
+
             if (entity.isOmni()) {
                 row[2] = mounted.isOmniPodMounted()?
                         Messages.getString("MechView.Pod") : //$NON-NLS-1$
@@ -988,10 +988,10 @@ public class MechView {
             retVal.add(list);
             retVal.add(new SingleLine());
         }
-        
+
         if (isSmallCraft || isJumpship) {
             Aero a = (Aero)entity;
-            
+
             TableElement crewTable = new TableElement(2);
             crewTable.setColNames(Messages.getString("MechView.Crew"), "");
             crewTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_RIGHT);
@@ -1064,9 +1064,9 @@ public class MechView {
         public String toHTML() {
             return "";
         }
-        
+
     }
-    
+
     /**
      * Basic one-line entry consisting of a label, a colon, and a value. In html the label is bold.
      *
@@ -1074,23 +1074,23 @@ public class MechView {
     private class LabeledElement implements ViewElement {
         private final String label;
         private final String value;
-        
+
         LabeledElement(String label, String value) {
             this.label = label;
             this.value = value;
         }
-        
+
         @Override
         public String toPlainText() {
             return label + ": " + value + "\n";
         }
-        
+
         @Override
         public String toHTML() {
             return "<b>" + label + "</b>: " + value + "<br/>\n";
         }
     }
-    
+
     /**
      * Data laid out in a table with named columns. The columns are left-justified by default,
      * but justification can be set for columns individually. Plain text output requires a monospace
@@ -1098,23 +1098,23 @@ public class MechView {
      *
      */
     private class TableElement implements ViewElement {
-        
+
         static final int JUSTIFIED_LEFT   = 0;
         static final int JUSTIFIED_CENTER = 1;
         static final int JUSTIFIED_RIGHT  = 2;
-        
+
         private final int[] justification;
         private final String[] colNames;
         private final List<String[]> data = new ArrayList<>();
         private final Map<Integer,Integer> colWidth = new HashMap<>();
         private final Map<Integer,String> bgColors = new HashMap<>();
-        
+
         TableElement(int colCount) {
             justification = new int[colCount];
             colNames = new String[colCount];
             Arrays.fill(colNames, "");
         }
-        
+
         void setColNames(String... colNames) {
             Arrays.fill(this.colNames, "");
             System.arraycopy(colNames, 0, this.colNames,
@@ -1125,26 +1125,26 @@ public class MechView {
                 colWidth.put(i, colNames[i].length());
             }
         }
-        
+
         void setJustification(int... justification) {
             Arrays.fill(this.justification, JUSTIFIED_LEFT);
             System.arraycopy(justification, 0, this.justification,
                     0, Math.min(justification.length,
                             this.justification.length));
         }
-        
+
         void addRow(String... row) {
             data.add(row);
             for (int i = 0; i < row.length; i++) {
                 colWidth.merge(i, row[i].length(), Math::max);
             }
         }
-        
+
         void addRowWithBgColor(String color, String... row) {
             addRow(row);
             bgColors.put(data.size() - 1, color);
         }
-        
+
         private String leftPad(String s, int fieldSize) {
             if (fieldSize > 0) {
                 return String.format("%" + fieldSize + "s", s);
@@ -1152,7 +1152,7 @@ public class MechView {
                 return "";
             }
         }
-        
+
         private String rightPad(String s, int fieldSize) {
             if (fieldSize > 0) {
                 return String.format("%-" + fieldSize + "s", s);
@@ -1160,12 +1160,12 @@ public class MechView {
                 return "";
             }
         }
-        
+
         private String center(String s, int fieldSize) {
             int rightPadding = Math.max(fieldSize - s.length(), 0) / 2;
             return rightPad(leftPad(s, fieldSize - rightPadding), fieldSize);
         }
-        
+
         private String justify(int justification, String s, int fieldSize) {
             if (justification == JUSTIFIED_CENTER) {
                 return center(s, fieldSize);
@@ -1175,7 +1175,7 @@ public class MechView {
                 return leftPad(s, fieldSize);
             }
         }
-        
+
         @Override
         public String toPlainText() {
             final String COL_PADDING = "  ";
@@ -1205,7 +1205,7 @@ public class MechView {
             }
             return sb.toString();
         }
-        
+
         @Override
         public String toHTML() {
             StringBuilder sb = new StringBuilder("<table cellspacing=\"0\" cellpadding=\"2\" border=\"0\">");
@@ -1246,7 +1246,7 @@ public class MechView {
             return sb.toString();
         }
     }
-    
+
     /**
      * Displays a label (bold for html output) followed by a column of items
      *
@@ -1254,15 +1254,15 @@ public class MechView {
     private class ItemList implements ViewElement {
         private final String heading;
         private final List<String> data = new ArrayList<>();
-        
+
         ItemList(String heading) {
             this.heading = heading;
         }
-        
+
         void addItem(String item) {
             data.add(item);
         }
-        
+
         @Override
         public String toPlainText() {
             StringBuilder sb = new StringBuilder();
@@ -1278,7 +1278,7 @@ public class MechView {
             }
             return sb.toString();
         }
-        
+
         @Override
         public String toHTML() {
             StringBuilder sb = new StringBuilder();
@@ -1291,55 +1291,55 @@ public class MechView {
             return sb.toString();
         }
     }
-    
+
     /**
      * Displays a single line of text. The default constructor is used to insert a new line.
      */
     private class SingleLine implements ViewElement {
-        
+
         private final String value;
-        
+
         SingleLine(String value) {
             this.value = value;
         }
-        
+
         SingleLine() {
             this("");
         }
-        
+
         @Override
         public String toPlainText() {
             return value + "\n";
         }
-        
+
         @Override
         public String toHTML() {
             return value + "<br/>\n";
         }
     }
-    
+
     /**
      * Displays a single line in bold in a larger font in html. In plain text simply displays a single line.
      */
     private class Title implements ViewElement {
-        
+
         private final String title;
-        
+
         Title(String title) {
             this.title = title;
         }
-        
+
         @Override
         public String toPlainText() {
             return title + "\n";
         }
-        
+
         @Override
         public String toHTML() {
             return "<font size=\"+1\"><b>" + title + "</b></font><br/>\n";
         }
     }
-    
+
     /**
      * Marks warning text; in html the text is displayed in red. In plain text it is preceded and followed
      * by an asterisk.
@@ -1352,7 +1352,7 @@ public class MechView {
             return "*";
         }
     }
-    
+
     /**
      * Returns the end element of the warning text.
      * @return A String that is used to mark the end of a warning.
@@ -1364,7 +1364,7 @@ public class MechView {
             return "*";
         }
     }
-    
+
     /**
      * Marks the beginning of a section of italicized text if using html output. For plain text
      * returns an empty String.
@@ -1377,7 +1377,7 @@ public class MechView {
             return "";
         }
     }
-    
+
     /**
      * Marks the end of a section of italicized text.
      * @return The ending element for italicized text.
@@ -1389,5 +1389,5 @@ public class MechView {
             return "";
         }
     }
-    
+
 }

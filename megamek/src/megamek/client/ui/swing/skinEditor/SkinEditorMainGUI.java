@@ -86,7 +86,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         BoardViewListener, ActionListener, ComponentListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5625499617779156289L;
 
@@ -261,7 +261,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$ 
+        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$
                 + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
@@ -406,7 +406,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public CommonMenuBar getMenuBar() {
         return menuBar;
     }
-    
+
 
 
     /**
@@ -415,7 +415,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public void actionPerformed(ActionEvent event) {
     }
 
- 
+
 
     /**
      * Saves the current settings to the cfg file.
@@ -465,7 +465,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
-        
+
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;
@@ -563,9 +563,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public void updateButtonPanel(IGame.Phase phase) {
         if ((currPhaseDisplay != null)) {
             currPhaseDisplay.setupButtonPanel();
-        }        
+        }
     }
-    
+
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -617,7 +617,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(null);                
+                component = new DeploymentDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
@@ -722,7 +722,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         }
         return component;
     }
-  
+
     /**
      * Sets the visibility of the entity display window
      */
@@ -823,7 +823,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     //
     public void windowActivated(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
-        // For some reason when I click on the window button, the main UI 
+        // For some reason when I click on the window button, the main UI
         // window doesn't deiconify.  This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
@@ -847,7 +847,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
 
     public void windowDeiconified(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
-        // For some reason when I click on the window button, the main UI 
+        // For some reason when I click on the window button, the main UI
         // window doesn't deiconify.  This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
@@ -868,7 +868,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public JFrame getFrame() {
         return frame;
     }
-   
+
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
         Image camo = null;
         if (entity.getCamoFileName() != null) {
@@ -881,10 +881,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
                 entity, camo, tint, bp)));
     }
 
-   
+
     public void hexMoused(BoardViewEvent b) {
         if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
-            
+
         }
     }
 
@@ -937,7 +937,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * Returns the panel for the current phase. The ClientGUI is split into the
      * main panel (view) at the top, which takes up the majority of the view and
      * the the "current panel" which has different controls based on the phase.
-     * 
+     *
      * @return
      */
     public JComponent getCurrentPanel() {

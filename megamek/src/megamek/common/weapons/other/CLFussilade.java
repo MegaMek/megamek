@@ -20,7 +20,7 @@ import megamek.common.weapons.missiles.ATMWeapon;
 
 /**
  * @author beerockxs
- * 
+ *
  */
 public class CLFussilade extends ATMWeapon {
 
@@ -71,7 +71,7 @@ public class CLFussilade extends ATMWeapon {
         }
         return damage / 10.0;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_IATM;

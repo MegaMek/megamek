@@ -302,7 +302,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
      * This takes a vector of TurnOrdered (Teams or Players), rolls initiative,
      * and resolves ties. The second argument is used when a specific teams
      * initiative should be re-rolled.
-     * 
+     *
      * @param v
      *            A vector of items that need to have turns.
      * @param rerollRequests

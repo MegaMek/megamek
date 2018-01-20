@@ -25,16 +25,16 @@ import megamek.common.Configuration;
 
 /**
  * This class provides a utility to read in all of the boards and check their validity.
- * 
+ *
  * @author arlith
  *
  */
 public class BoardsValidator {
-    
+
     int numBoardErrors = 0;
-    
+
     public BoardsValidator() {
-        
+
     }
 
     /**
@@ -63,7 +63,7 @@ public class BoardsValidator {
     /**
      * Check whether the supplied file is a valid board file or not.  Ignores files that don't end in .board.  Any
      * errors are logged to System.out.
-     * 
+     *
      * @param boardFile
      * @throws FileNotFoundException
      */
@@ -72,7 +72,7 @@ public class BoardsValidator {
         if (!boardFile.toString().endsWith(".board")) {
             return;
         }
-        
+
         java.io.InputStream is = new FileInputStream(boardFile);
         StringBuffer errBuff = new StringBuffer();
         Board b = new Board();
@@ -85,14 +85,14 @@ public class BoardsValidator {
     }
 
     /**
-     * 
+     *
      * @param args
      */
     public static void main(String[] args) {
         try {
             File boardDir = Configuration.boardsDir();
             BoardsValidator validator = new BoardsValidator();
-            
+
             validator.scanForBoards(boardDir);
             System.out.println("Found " + validator.numBoardErrors + " boards with errors!");
         }catch (IOException e){

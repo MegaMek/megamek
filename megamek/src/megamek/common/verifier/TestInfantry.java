@@ -27,13 +27,13 @@ import megamek.common.options.OptionsConstants;
 
 public class TestInfantry extends TestEntity {
     private Infantry infantry;
-    
+
     public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null, null);
         this.infantry = infantry;
         this.fileString = fileString;
     }
-    
+
     @Override
     public Entity getEntity() {
         return infantry;
@@ -48,17 +48,17 @@ public class TestInfantry extends TestEntity {
     public boolean isMech() {
         return false;
     }
-    
+
     @Override
     public boolean isAero() {
         return false;
     }
-    
+
     @Override
     public boolean isSmallCraft() {
         return false;
     }
-    
+
     @Override
     public boolean isJumpship() {
         return false;
@@ -83,17 +83,17 @@ public class TestInfantry extends TestEntity {
     public double getWeightEngine() {
         return 0;
     }
-    
+
     @Override
     public double getWeightStructure() {
         return 0;
     }
-    
+
     @Override
     public double getWeightArmor() {
         return 0;
     }
-    
+
     @Override
     public boolean hasDoubleHeatSinks() {
         return false;
@@ -126,13 +126,13 @@ public class TestInfantry extends TestEntity {
     	if (skip()) {
     		return true;
     	}
-    	
+
     	int max = maxSecondaryWeapons(inf);
     	if (inf.getSecondaryN() > max) {
             buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
             correct = false;
     	}
-    	
+
     	if (inf.getSecondaryWeapon() != null) {
         	int secondaryCrew = inf.getSecondaryWeapon().getCrew();
         	if (inf.getCrew() != null) {
@@ -149,23 +149,23 @@ public class TestInfantry extends TestEntity {
                 correct = false;
         	}
     	}
-    	
+
     	max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1));
     	if (inf.getSquadSize() > max) {
             buff.append("Maximum squad size is " + max + "\n\n");
-            correct = false;    		
+            correct = false;
     	}
 
     	max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
     	        inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS));
     	if (inf.getShootingStrength() > max) {
             buff.append("Maximum platoon size is " + max + "\n\n");
-            correct = false;    		
+            correct = false;
     	}
 
         return correct;
     }
-    
+
     public static int maxSecondaryWeapons(Infantry inf) {
     	int max = 2;
     	if (inf.getMovementMode() == EntityMovementMode.VTOL) {
@@ -189,10 +189,10 @@ public class TestInfantry extends TestEntity {
     	}
     	return max;
     }
-    
+
     /**
      * Maximum squad size based on motive type
-     * 
+     *
      * @param movementMode  The platoon's movement mode
      * @param alt           True indicates that VTOL is microlite and INF_UMU is motorized.
      * @return              The maximum size of a squad.
@@ -214,7 +214,7 @@ public class TestInfantry extends TestEntity {
         		return 10;
     	}
     }
-    
+
     public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain) {
     	int max;
     	switch(movementMode) {
@@ -255,17 +255,17 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public String getName() {
-        return "Infantry: " + infantry.getDisplayName();    
+        return "Infantry: " + infantry.getDisplayName();
     }
 
     @Override
     public double getWeightPowerAmp() {
         return 0;
     }
-    
+
     @Override
     public double calculateWeight() {
         return infantry.getWeight();
     }
-    
+
 }

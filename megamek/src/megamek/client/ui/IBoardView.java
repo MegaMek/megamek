@@ -69,7 +69,7 @@ public interface IBoardView extends MechDisplayListener {
     public void centerOnHex(Coords position);
     public void centerOnPointRel(double xrel, double yrel);
     public double[] getVisibleArea();
-    
+
     public void stopSoftCentering();
 
     // it's a hack that the popup is Object, but we use this interface
@@ -112,10 +112,10 @@ public interface IBoardView extends MechDisplayListener {
      * @param coords the Coords.
      */
     public abstract void highlight(Coords coords);
-    
+
     /**
      * Sets the color of the highlight cursor.
-     * 
+     *
      * @param c  The color of the highlight cursor.
      */
     public abstract void setHighlightColor(Color c);
@@ -168,7 +168,7 @@ public interface IBoardView extends MechDisplayListener {
     public abstract void selectEntity(Entity e);
 
     public void die();
-    
+
     /**
      * Returns true if the BoardView has an active chatter box else false.
      * @return

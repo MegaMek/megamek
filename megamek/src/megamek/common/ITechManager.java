@@ -17,24 +17,24 @@ package megamek.common;
  * Determines whether a piece of technology (a part, construction option, or entire unit) meets
  * certain constraints such as intro year, tech base, or tech level. Provides methods to define
  * the constraints and options.
- * 
+ *
  * @author Neoancient
  *
  */
 public interface ITechManager {
-    
+
     /**
      * @return The maximimum intro date for the tech; any tech that appears after this date
      *         will be excluded.
      */
     int getTechIntroYear();
-    
+
     /**
      * @return The date to use in determining the current tech level if {@link variableTechLevel()}
      *         is true.
      */
     int getGameYear();
-    
+
     /**
      * Indicates which faction should be used in determining intro and tech level dates. Not all
      * tech has faction-specific dates. Special consideration is given to F_COMSTAR, which ignores
@@ -42,43 +42,43 @@ public interface ITechManager {
      * Star-League Era tech that later goes extinct for the Clans as Clan tech up to the extinction
      * date, providing a transitional stage from the formation of the Clans until early in the Golden
      * Century.
-     * 
+     *
      * @return One of the F_* faction constants defined in {@link ITechnology}. If < 0, faction
      *         variations will be ignored.
      */
     int getTechFaction();
-    
+
     /**
      * @return True if the tech should have a Clan tech base, or false for Inner Sphere/Periphery
      */
     boolean useClanTechBase();
-    
+
     /**
      * @return True if both Inner Sphere and Clan tech bases are acceptable.
      */
     boolean useMixedTech();
-    
+
     /**
      * @return The maximum allowable tech level.
      */
     SimpleTechLevel getTechLevel();
-    
+
     /**
      * @return If true and {@link getTechLevel()} is <code>UNOFFICIAL</code>, intro dates are ignored.
      */
     boolean unofficialNoYear();
-    
+
     /**
      * @return If true, the rules level of a piece of tech will vary as it moves through production
      *         stages per the rules in IO, pp. 33-4.
      */
     boolean useVariableTechLevel();
-    
+
     /**
      * @return Whether tech that is no longer in production should be included.
      */
     boolean showExtinct();
-    
+
     default boolean isLegal(ITechnology tech) {
         // Unofficial tech has the option to ignore year availability
         if ((getTechLevel() == SimpleTechLevel.UNOFFICIAL)
@@ -89,7 +89,7 @@ public interface ITechManager {
 
         int faction = getTechFaction();
         boolean clanTech = useClanTechBase();
-        
+
         boolean introducedIS = tech.getIntroductionDate(false) <= getTechIntroYear();
         boolean introducedClan = tech.getIntroductionDate(true) <= getTechIntroYear();
         boolean extinctIS = tech.isExtinct(getTechIntroYear(), false);
@@ -113,7 +113,7 @@ public interface ITechManager {
             clanTech = false;
         }
         if (useMixedTech()) {
-            if ((!introducedIS && !introducedClan) 
+            if ((!introducedIS && !introducedClan)
                     || (!showExtinct()
                             && (tech.isExtinct(getTechIntroYear())))) {
                 return false;
@@ -138,4 +138,3 @@ public interface ITechManager {
         return tech.getStaticTechLevel().compareTo(getTechLevel()) <= 0;
     }
 }
-

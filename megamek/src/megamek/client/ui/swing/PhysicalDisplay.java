@@ -235,7 +235,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     .println("PhysicalDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
-        
+
         if ((ce() != null) &&ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
@@ -424,28 +424,28 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
-        
+
         final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, PunchAttackAction.LEFT);
         final ToHitData rightArm = PunchAttackAction.toHit(clientgui
                 .getClient().getGame(), cen, target, PunchAttackAction.RIGHT);
-        
+
         final double punchOddsRight = Compute.oddsAbove(rightArm.getValue(),
                 isAptPiloting);
         final int punchDmgRight = PunchAttackAction.getDamageFor(en,
                 PunchAttackAction.RIGHT, (target instanceof Infantry)
                         && !(target instanceof BattleArmor));
-        
+
         final double punchOddsLeft = Compute.oddsAbove(leftArm.getValue(),
                 isAptPiloting);
         final int punchDmgLeft = PunchAttackAction.getDamageFor(en,
                 PunchAttackAction.LEFT, (target instanceof Infantry)
                         && !(target instanceof BattleArmor));
-        
+
         String title = Messages.getString("PhysicalDisplay.PunchDialog.title", //$NON-NLS-1$
-                new Object[] { target.getDisplayName() }); 
+                new Object[] { target.getDisplayName() });
         String message = Messages
-                .getString("PhysicalDisplay.PunchDialog.message", //$NON-NLS-1$ 
+                .getString("PhysicalDisplay.PunchDialog.message", //$NON-NLS-1$
                         new Object[] {
                                 rightArm.getValueAsString(),
                                 punchOddsRight,
@@ -581,7 +581,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
-        
+
         ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, KickAttackAction.LEFT);
         ToHitData rightLeg = KickAttackAction.toHit(clientgui.getClient()
@@ -615,29 +615,29 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 attackLeg = leftRearLeg;
             }
         }
-        
+
         final double kickOdds = Compute.oddsAbove(attackLeg.getValue(),
                 isAptPiloting);
         final int kickDmg = KickAttackAction.getDamageFor(en, attackSide,
                 (target instanceof Infantry)
                         && !(target instanceof BattleArmor));
-        
-        String title = Messages.getString("PhysicalDisplay.KickDialog.title", //$NON-NLS-1$ 
+
+        String title = Messages.getString("PhysicalDisplay.KickDialog.title", //$NON-NLS-1$
                 new Object[]{target.getDisplayName()});
         String message = Messages
-                .getString("PhysicalDisplay.KickDialog.message", //$NON-NLS-1$ 
+                .getString("PhysicalDisplay.KickDialog.message", //$NON-NLS-1$
                         new Object[] {
                                 attackLeg.getValueAsString(),
                                 kickOdds,
                                 attackLeg.getDesc(),
                                 kickDmg,
                                 attackLeg.getTableDesc() });
-        
+
         if (isMeleeMaster) {
             message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n"
                     + message;
         }
-        
+
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
@@ -981,14 +981,14 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
         final Entity en = ce();
-        
+
         final boolean isAptPiloting = (en.getCrew() != null)
                 && en.getCrew()
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
-        
+
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable());
         boolean targetConvInf = (target instanceof Infantry)
@@ -1005,22 +1005,22 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 && targetConvInf) {
             dmgString = "1d6";
         }
-        String title = Messages.getString("PhysicalDisplay.ClubDialog.title", //$NON-NLS-1$ 
+        String title = Messages.getString("PhysicalDisplay.ClubDialog.title", //$NON-NLS-1$
                 new Object[] { target.getDisplayName() });
         String message = Messages
-                .getString("PhysicalDisplay.ClubDialog.message", //$NON-NLS-1$ 
-                        new Object[] { 
+                .getString("PhysicalDisplay.ClubDialog.message", //$NON-NLS-1$
+                        new Object[] {
                                 toHit.getValueAsString(),
                                 clubOdds,
                                 toHit.getDesc(),
                                 dmgString,
                                 toHit.getTableDesc() });
-        
+
         if (isMeleeMaster) {
             message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n"
                     + message;
         }
-        
+
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible

@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 public class ClientDialog extends JDialog {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6154951760485853883L;
     private static final double TASKBAR_SIZE = .05;
@@ -54,7 +54,7 @@ public class ClientDialog extends JDialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     * 
+     *
      * @param desiredX the desired width of this dialog (you might not get it)
      * @param desiredY the desired height of this dialog (you might not get it)
      */
@@ -67,7 +67,7 @@ public class ClientDialog extends JDialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     * 
+     *
      * @param desiredDimension the desired dimension of this dialog (you might
      *            not get it)
      */

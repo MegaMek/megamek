@@ -86,7 +86,7 @@ public abstract class Mech extends Entity {
     public static final int ACTUATOR_LOWER_LEG = 13;
 
     public static final int ACTUATOR_FOOT = 14;
-    
+
     public static final String systemNames[] = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
@@ -165,11 +165,11 @@ public abstract class Mech extends Entity {
     public static final int COCKPIT_TRIPOD = 10;
 
     public static final int COCKPIT_INTERFACE = 11;
-    
+
     public static final int COCKPIT_VRRP = 12;
-    
+
     public static final int COCKPIT_QUADVEE = 13;
-    
+
     public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL = 14;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
@@ -177,7 +177,7 @@ public abstract class Mech extends Entity {
             "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
             "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
-            "Virtual Reality Piloting Pod", "QuadVee Cockpit", 
+            "Virtual Reality Piloting Pod", "QuadVee Cockpit",
             "Superheavy Industrial Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
@@ -282,7 +282,7 @@ public abstract class Mech extends Entity {
 
     // Cooling System Flaws quirk
     private boolean coolingFlawActive = false;
-    
+
     // QuadVees, LAMs, and tracked 'Mechs can change movement mode.
     protected EntityMovementMode originalMovementMode = EntityMovementMode.BIPED;
 
@@ -333,7 +333,7 @@ public abstract class Mech extends Entity {
         // ejection systems are disabled by default or not.
         autoEject = !PreferenceManager.getClientPreferences()
                 .defaultAutoejectDisabled();
-        
+
         switch (inCockpitType) {
         case COCKPIT_TRIPOD:
             setCrew(new Crew(CrewType.TRIPOD));
@@ -1459,13 +1459,13 @@ public abstract class Mech extends Entity {
 
         return jump;
     }
-    
+
     @Override
     public boolean isEligibleForPavementBonus() {
         //eligible if using Mech tracks
         return movementMode == EntityMovementMode.TRACKED;
     }
-    
+
     @Override
     public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
         if (hasTracks() && afterMode != EntityMovementMode.TRACKED) {
@@ -1474,12 +1474,12 @@ public abstract class Mech extends Entity {
             return originalMovementMode;
         }
     }
-        
+
     /**
      * QuadVees and LAMs may not have to make PSRs to avoid falling depending on their mode,
      * and Mechs using tracks for movement do not have to make PSRs for damage to gyro or leg
      * actuators.
-     * 
+     *
      * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg actuators
      * @return              true if the Mech can fall due to failed PSR.
      */
@@ -1487,7 +1487,7 @@ public abstract class Mech extends Entity {
     public boolean canFall(boolean gyroLegDamage) {
         return !isProne() && !(gyroLegDamage && movementMode == EntityMovementMode.TRACKED);
     }
-    
+
     /**
      * Return the height of this mech above the terrain.
      */
@@ -1667,7 +1667,7 @@ public abstract class Mech extends Entity {
     public int getHeatCapacity() {
         return getHeatCapacity(true, true);
     }
-    
+
     @Override
     public int getHeatCapacity(boolean radicalHeatSink) {
         return getHeatCapacity(true, radicalHeatSink);
@@ -1730,7 +1730,7 @@ public abstract class Mech extends Entity {
                                             // once.
             }
         }
-        // AirMech mode for LAMs confers the same heat benefits as a partial wing. 
+        // AirMech mode for LAMs confers the same heat benefits as a partial wing.
         if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
             capacity += getPartialWingHeatBonus();
         }
@@ -2905,7 +2905,7 @@ public abstract class Mech extends Entity {
             }
         }
     }
-    
+
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
             int loc,  boolean omniPod) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
@@ -3022,7 +3022,7 @@ public abstract class Mech extends Entity {
             }
         }
     }
-  
+
     //From IO pg 50
     public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial, int weightClass) {
         if ((etype & ETYPE_TRIPOD_MECH) != 0) {
@@ -3078,12 +3078,12 @@ public abstract class Mech extends Entity {
                     .setStaticTechLevel(SimpleTechLevel.INTRO);
         }
     }
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return getTechAdvancement(getEntityType(), isPrimitive(), isIndustrial(), getWeightClass());
     }
-    
+
     private final static TechAdvancement[] GYRO_TA =  {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
                 .setApproximate(true, false, false).setPrototypeFactions(F_TA)
@@ -3115,7 +3115,7 @@ public abstract class Mech extends Entity {
                 .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
     };
-    
+
     private final static TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
                 .setApproximate(true, false, false).setTechRating(RATING_D)
@@ -3138,7 +3138,7 @@ public abstract class Mech extends Entity {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
                 .setClanAdvancement(3055, 3080, 3100)
                 .setPrototypeFactions(F_FS, F_LC, F_CSJ).setProductionFactions(F_LC)
-                .setApproximate(false, true, false).setTechRating(RATING_D) 
+                .setApproximate(false, true, false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), //Torso mounted
             //FIXME: Dual is unofficial; these are stats for standard
@@ -3196,7 +3196,7 @@ public abstract class Mech extends Entity {
                 .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial
     };
-    
+
     // Advanced fire control for industrial mechs is implemented with a standard cockpit,
     // but the tech progression is different.
     public static TechAdvancement getIndustrialAdvFireConTA() {
@@ -3213,14 +3213,14 @@ public abstract class Mech extends Entity {
         }
         return null;
     }
-    
+
     public TechAdvancement getCockpitTechAdvancement() {
         if (isIndustrial() && (getCockpitType() == COCKPIT_STANDARD)) {
             return getIndustrialAdvFireConTA();
         }
         return getCockpitTechAdvancement(getCockpitType());
     }
-    
+
     public static TechAdvancement getGyroTechAdvancement(int gyroType) {
         if ((gyroType >= 0) && (gyroType < GYRO_TA.length)) {
             return new TechAdvancement(GYRO_TA[gyroType]);
@@ -3231,7 +3231,7 @@ public abstract class Mech extends Entity {
     public TechAdvancement getGyroTechAdvancement() {
         return getGyroTechAdvancement(getGyroType());
     }
-    
+
     public static TechAdvancement getFullHeadEjectAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3020, 3023, 3100)
                 .setClanAdvancement(DATE_NONE, 3052, 3100).setPrototypeFactions(F_LC)
@@ -3261,7 +3261,7 @@ public abstract class Mech extends Entity {
         //    techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
         //}
     }
-    
+
     /**
      * This method will return the number of contiguous criticals in the given
      * location, starting at the given critical slot
@@ -3676,7 +3676,7 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))) {
                 toSubtract = 1;
             }
-            
+
             if (etype instanceof AmmoType
                     && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 toSubtract = 1;
@@ -5347,7 +5347,7 @@ public abstract class Mech extends Entity {
 
         double weaponCost = getWeaponsAndEquipmentCost(ignoreAmmo);
         costs[i++] = weaponCost;
-        
+
         if (this instanceof LandAirMech) {
             costs[i++] = (structureCost + weaponCost)
                     * (((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
@@ -5356,12 +5356,12 @@ public abstract class Mech extends Entity {
         } else {
             costs[i++] = 0;
         }
-        
+
         double cost = 0; // calculate the total
         for (int x = 0; x < i; x++) {
             cost += costs[x];
         }
-                        
+
         double quirkMultiplier = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
         	quirkMultiplier = 1.1f;
@@ -5371,7 +5371,7 @@ public abstract class Mech extends Entity {
         	cost *= quirkMultiplier;
         }
         costs[i++] = -quirkMultiplier; // negative just marks it as multiplier
- 
+
         double omniMultiplier = 0;
         if (isOmni()) {
             omniMultiplier = 1.25f;
@@ -5388,7 +5388,7 @@ public abstract class Mech extends Entity {
         addCostDetails(cost, costs);
         return cost;
     }
-    
+
     @Override
     protected int implicitClanCASE() {
         if (!isClan()) {
@@ -6551,7 +6551,7 @@ public abstract class Mech extends Entity {
             sb.append("Standard");
         }
         sb.append(newLine);
-        
+
         if (this instanceof LandAirMech) {
             sb.append("LAM:");
             sb.append(((LandAirMech)this).getLAMTypeString());
@@ -6712,7 +6712,7 @@ public abstract class Mech extends Entity {
             return MtfFile.EMPTY;
         }
         int type = cs.getType();
-        int index = cs.getIndex();        
+        int index = cs.getIndex();
         String armoredText = "";
 
         if (cs.isArmored()) {
@@ -7047,10 +7047,10 @@ public abstract class Mech extends Entity {
         }
         return success;
     }
-    
+
     /**
      * Determines which crew slot is associated with a particular cockpit critical.
-     * 
+     *
      * @param cs    A cockpit critical slot
      * @return      The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
      */
@@ -7071,7 +7071,7 @@ public abstract class Mech extends Entity {
         }
         return -1;
     }
-    
+
     @Override
     public boolean hasCommandConsoleBonus() {
         return getCockpitType() == COCKPIT_COMMAND_CONSOLE
@@ -7951,7 +7951,7 @@ public abstract class Mech extends Entity {
         if (hasMPReducingHardenedArmor()) {
             move--;
         }
-        
+
         if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_CLUB))
         		.map(m -> m.getType().getSubType())
         		.anyMatch(st -> st == MiscType.S_SHIELD_LARGE || st == MiscType.S_SHIELD_MEDIUM)) {
@@ -7959,7 +7959,7 @@ public abstract class Mech extends Entity {
         }
         return move;
     }
-    
+
     @Override
     /*
      * returns the battle force structure points for a mech
@@ -8060,12 +8060,12 @@ public abstract class Mech extends Entity {
         return battleForceStructure;
 
     }
-    
+
     @Override
     public int getNumBattleForceWeaponsLocations() {
         return 2;
     }
-    
+
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if ((index == 0 && !rearMounted
@@ -8082,12 +8082,12 @@ public abstract class Mech extends Entity {
         }
         return "";
     }
-    
+
     @Override
     public boolean isBattleForceRearLocation(int index) {
         return index == 1;
     }
-    
+
     @Override
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
         int totalHeat = 0;
@@ -8109,7 +8109,7 @@ public abstract class Mech extends Entity {
             if (weapon.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 totalHeat += weapon.getHeat() * 6;
             } else if (weapon.getAmmoType() == AmmoType.T_AC_ULTRA
-                    || weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {                
+                    || weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
                 totalHeat += weapon.getHeat() * 2;
             } else {
                 totalHeat += weapon.getHeat();
@@ -8120,7 +8120,7 @@ public abstract class Mech extends Entity {
             totalHeat += 10;
         }
 
-        return totalHeat;        
+        return totalHeat;
     }
 
     @Override
@@ -8173,7 +8173,7 @@ public abstract class Mech extends Entity {
             specialAbilities.put(BattleForceSPA.SOA, null);
         }
     }
-    
+
     public abstract boolean hasMPReducingHardenedArmor();
 
     /**
@@ -8196,7 +8196,7 @@ public abstract class Mech extends Entity {
         return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                 Mech.LOC_CT);
     }
-    
+
     @Override
     public boolean isGyroDestroyed() {
         if (getGyroType() == GYRO_HEAVY_DUTY) {

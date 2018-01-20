@@ -74,14 +74,14 @@ public class CreateImageAtlases {
     int improperImgDimsCount = 0;
 
     /**
-     * 
+     *
      */
     CreateImageAtlases() {
         this(10);
     }
 
     /**
-     * 
+     *
      * @param imagesPerRow
      */
     CreateImageAtlases(int imagesPerRow) {
@@ -89,7 +89,7 @@ public class CreateImageAtlases {
     }
 
     /**
-     * 
+     *
      * @param file
      */
     void scanDirectory(File file) {
@@ -199,14 +199,14 @@ public class CreateImageAtlases {
     }
 
     /**
-     * 
+     *
      */
     public static void printUsage() {
 
     }
 
     /**
-     * 
+     *
      * @param args
      * @return
      */

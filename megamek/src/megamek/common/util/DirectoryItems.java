@@ -24,7 +24,7 @@ import java.util.TreeMap;
  * hierarchy, categorized according to their directories. This collection will
  * include all files inside of JAR and ZIP files that are located in the
  * directory hierarchy. Created on January 17, 2004
- * 
+ *
  * @author James Damour
  * @version 1
  */
@@ -58,7 +58,7 @@ public class DirectoryItems implements Categorized {
     /**
      * Helper function to file away new categories. It adds one entry in the map
      * for each sub-category in the passed category.
-     * 
+     *
      * @param category - the <code>Categorized</code> files.
      */
     private void addCategory(Categorized category) {
@@ -72,7 +72,7 @@ public class DirectoryItems implements Categorized {
      * Create a categorized collection of all files beneth the given directory.
      * Please note, the name of any sub-directories will be added to the root
      * category name to create the name of the sub-directories' category name.
-     * 
+     *
      * @param rootDir - the <code>File</code> object for the root directory of
      *            the image files. All files in this root, or in any sub-
      *            directory of this root will be included in this collection.
@@ -181,7 +181,7 @@ public class DirectoryItems implements Categorized {
 
     /**
      * Get the names of all the categories.
-     * 
+     *
      * @return an <code>Enumeration</code> of <code>String</code> names.
      *         This value will not be <code>null</code>, but it may be empty.
      */
@@ -191,7 +191,7 @@ public class DirectoryItems implements Categorized {
 
     /**
      * Get the names of all the items in one of the categories.
-     * 
+     *
      * @param categoryName - the <code>String</code> name of the category
      *            whose item names are required.
      * @return an <code>Enumeration</code> of <code>String</code> names.
@@ -220,7 +220,7 @@ public class DirectoryItems implements Categorized {
 
     /**
      * Get the indicated item from the correct catagory.
-     * 
+     *
      * @param categoryName - the <code>String</code> name of the category
      *            whose item names are required. This value may be
      *            <code>null</code>.

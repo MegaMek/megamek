@@ -269,7 +269,7 @@ public class BattleArmor extends Infantry {
      * How many mount locations are possible?
      */
     public static final int MOUNT_NUM_LOCS = 4;
-    
+
     // Quad BA can add critical space by adding a turret mount.
     private int turretSize = 0;
     private boolean modularTurret = false;
@@ -352,7 +352,7 @@ public class BattleArmor extends Infantry {
         // Construction complete.
         isInitialized = true;
     }
-    
+
     protected static final TechAdvancement[] TA_BATTLEARMOR = {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                 .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)
@@ -384,11 +384,11 @@ public class BattleArmor extends Infantry {
                 .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
     };
-    
+
     public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
         return new TechAdvancement(TA_BATTLEARMOR[weightClass]);
     }
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         int index = getWeightClass();
@@ -1757,7 +1757,7 @@ public class BattleArmor extends Infantry {
         buff.append(newline);
         buff.append("</armor>");
         buff.append(newline);
-        
+
         if (getTurretCapacity() > 0) {
             buff.append("<turret>");
             buff.append(newline);
@@ -2040,7 +2040,7 @@ public class BattleArmor extends Infantry {
         int move = Math.max(getWalkMP(true, false, false, true, false),
                 getJumpMP(true, true, true));
         movement.put(getMovementModeAsBattleForceString(), move);
-    }    
+    }
 
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> moves) {
@@ -2052,7 +2052,7 @@ public class BattleArmor extends Infantry {
             moves.put(getMovementModeAsBattleForceString(), getOriginalWalkMP() * 2);
         }
     }
-    
+
     @Override
     public int getBattleForceArmorPoints() {
         double armor = 0;
@@ -2364,7 +2364,7 @@ public class BattleArmor extends Infantry {
         }
 
     }
-    
+
     public int getBodyCrits() {
         if(getChassisType() == CHASSIS_TYPE_QUAD) {
             int turret = 0;
@@ -2398,19 +2398,19 @@ public class BattleArmor extends Infantry {
             }
         }
     }
-    
+
     public int getTurretCapacity() {
         return turretSize;
     }
-    
+
     public void setTurretSize(int capacity) {
         turretSize = capacity;
     }
-    
+
     public boolean hasModularTurretMount() {
         return modularTurret;
     }
-    
+
     public void setModularTurret(boolean modular) {
         modularTurret = modular;
     }

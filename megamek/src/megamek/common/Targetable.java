@@ -24,7 +24,7 @@ public interface Targetable extends Serializable {
     public static final int TYPE_HEX_TAG = 19;
     public static final int TYPE_BUILDING = 3;
     public static final int TYPE_BLDG_IGNITE = 4;
-    public static final int TYPE_BLDG_TAG = 20;    
+    public static final int TYPE_BLDG_TAG = 20;
     public static final int TYPE_MINEFIELD_CLEAR = 5;
     public static final int TYPE_MINEFIELD_DELIVER = 6;
     public static final int TYPE_HEX_ARTILLERY = 7;
@@ -44,7 +44,7 @@ public interface Targetable extends Serializable {
 
     /** @return the coordinates of the hex containing the target */
     Coords getPosition();
-    
+
     Map<Integer, Coords> getSecondaryPositions();
 
     /**
@@ -56,7 +56,7 @@ public interface Targetable extends Serializable {
     /**
      * Returns the height of the target, that is, how many levels above its
      * elevation it is for LOS purposes.
-     * 
+     *
      * @return height of the target in elevation levels */
     int getHeight();
 
@@ -67,7 +67,7 @@ public interface Targetable extends Serializable {
      *         surface
      */
     int getElevation();
-    
+
     /**
      * @return altitude of target
      */
@@ -81,13 +81,13 @@ public interface Targetable extends Serializable {
 
     /** @return side hit from location */
     int sideTable(Coords src);
-    
+
     /** @return side hit from location */
     int sideTable(Coords src, boolean usePrior);
 
     /** @return if this is off the board */
     boolean isOffBoard();
-    
+
 
     /**
      * @return if this is an <code>Entity</code> capable of aerospace movement
@@ -95,7 +95,7 @@ public interface Targetable extends Serializable {
     default boolean isAero() {
         return false;
     }
-    
+
     /**
      * @return if this is an <code>Entity</code> capable of carrying and using bombs
      */
@@ -108,13 +108,13 @@ public interface Targetable extends Serializable {
      * Does not include VTOL movement (see {@link Targetable#isAirborneVTOLorWIGE()}
      */
     boolean isAirborne();
-    
+
     /**
      * @return is the entity airborne in the fashion of a VTOL
      * Not used for aerospace units, see {@link Targetable#isAirborne()}
      */
     boolean isAirborneVTOLorWIGE();
-    
+
     // Make sure Targetable implements both
     @Override
     boolean equals(Object obj);
@@ -128,9 +128,9 @@ public interface Targetable extends Serializable {
      * @return
      */
     boolean isEnemyOf(Entity other);
-    
+
     default boolean isHexBeingBombed() {
-        return getTargetType() == TYPE_HEX_AERO_BOMB || 
+        return getTargetType() == TYPE_HEX_AERO_BOMB ||
                 getTargetType() == TYPE_HEX_BOMB;
     }
 

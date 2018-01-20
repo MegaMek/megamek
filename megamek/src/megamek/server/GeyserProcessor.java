@@ -36,7 +36,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
 
     /**
      * Create a new GeyseProcessor for the given server.
-     * 
+     *
      * @param server the server for which this runs.
      */
     public GeyserProcessor(Server server) {

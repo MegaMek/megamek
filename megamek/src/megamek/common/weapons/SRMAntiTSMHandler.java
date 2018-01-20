@@ -50,7 +50,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -66,7 +66,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         }
         int missilesHit;
         int nMissilesModifier = getClusterModifiers(true);
-      
+
         // Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {

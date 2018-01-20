@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * Acknowledges another players victory command.
- * 
+ *
  * @author Ben
  * @version
  */

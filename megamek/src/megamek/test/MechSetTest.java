@@ -31,7 +31,7 @@ import megamek.common.Configuration;
 /**
  * This class provides a utility to read in the current MechSet and test to make
  * sure all images are accessible
- * 
+ *
  * @author arlith
  *
  */
@@ -44,12 +44,12 @@ public class MechSetTest {
             return arg0.compareToIgnoreCase(arg1);
         }
     }
-    
+
     /**
      * Reads the *set file in the given directory and filename.  It looks at the
      * given image file and prints a message if the file cannot be opened and
      * if the case does not match.
-     * 
+     *
      * @param dir
      * @param filename
      * @throws IOException
@@ -97,11 +97,11 @@ public class MechSetTest {
         }
         System.out.println("\n\n");
     }
-    
+
     private static void testImageName(File dir, String imageName,
             String entryName) throws IOException {
         File imgFile = new File(dir, imageName);
-        
+
         boolean exactmatch = imgFile.exists()
                 && imgFile.getCanonicalPath().endsWith(imgFile.getName());
         if (!exactmatch) {
@@ -121,8 +121,8 @@ public class MechSetTest {
             }
         }
     }
-    
-    
+
+
     public static void main(String[] args) {
         try {
             File mechDir = Configuration.unitImagesDir();
@@ -130,10 +130,10 @@ public class MechSetTest {
                     TilesetManager.DIR_NAME_WRECKS);
             String mechset = "mechset.txt";
             String wreckset = "wreckset.txt";
-            
+
             testFile(mechDir, mechset);
             testFile(wreckDir, wreckset);
-            
+
         }catch (IOException e){
             System.out.println("IOException!");
             e.printStackTrace();

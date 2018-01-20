@@ -53,7 +53,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     * 
+     *
      * @param entityTarget
      * @param vPhaseReport
      * @param bldg
@@ -184,7 +184,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

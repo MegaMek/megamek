@@ -18,7 +18,7 @@ public interface ITerrainFactory {
 
     /**
      * Create terrain of cpecified type and level
-     * 
+     *
      * @param type terrain type
      * @param level level
      * @return new terrain
@@ -27,7 +27,7 @@ public interface ITerrainFactory {
 
     /**
      * Create terrain of cpecified type, level , exitsSpecified flag and exits,
-     * 
+     *
      * @param type
      * @param level
      * @param exitsSpecified
@@ -40,7 +40,7 @@ public interface ITerrainFactory {
     /**
      * Create Terrain using string containing terrain info TODO I think this
      * shoul be removed. It's too much implementation specfic
-     * 
+     *
      * @param terrain
      * @return new terrain
      */
@@ -48,7 +48,7 @@ public interface ITerrainFactory {
 
     /**
      * Create terrain as copy of other
-     * 
+     *
      * @param other
      * @return new terrain
      */

@@ -19,7 +19,7 @@ import java.util.Comparator;
 /**
  * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by arcs with
  * ties arbitrated based on damage (high to low).
- * 
+ *
  * @author arlith
  */
 public class WeaponComparatorArc implements Comparator<Mounted> {

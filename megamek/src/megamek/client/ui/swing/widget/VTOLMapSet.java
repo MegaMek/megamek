@@ -39,7 +39,7 @@ import megamek.common.util.MegaMekFile;
  */
 
 public class VTOLMapSet implements DisplayMapSet {
-    
+
     public static final int LABEL_NONE          = 0;
     public static final int LABEL_CHIN_TU_ARMOR = 1;
     public static final int LABEL_FRONT_ARMOR   = 2;
@@ -63,7 +63,7 @@ public class VTOLMapSet implements DisplayMapSet {
     public static final int LABEL_BAR_RATING    = 18;
 
     UnitDisplay unitDisplay;
-    
+
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[LABEL_LOC_NUMBER];
     private PMSimpleLabel[] labels = new PMSimpleLabel[25];
@@ -150,14 +150,14 @@ public class VTOLMapSet implements DisplayMapSet {
         int armor = 1;
         int originalArmor = 1;
         int location = 0;
-        
+
         // Cycle through the labels
         for (int i = LABEL_NONE+1; i < LABEL_LOC_NUMBER; i++) {
             // Only draw Chin Turret if it is present
             if ((i == LABEL_CHIN_TU_ARMOR || i == LABEL_CHIN_TU_IS) && vtol.hasNoTurret()) {
                 continue;
             }
-            
+
             switch (i) {
                 case LABEL_CHIN_TU_ARMOR:
                 case LABEL_CHIN_TU_IS:
@@ -250,7 +250,7 @@ public class VTOLMapSet implements DisplayMapSet {
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
         int mod = 1;
-        
+
         // Labels for Front view
         labels[LABEL_CHIN_TU_ARMOR] = WidgetUtils.createLabel(Messages
                 .getString("VTOLMapSet.chinTurretArmor"), fm, Color.black, 68, -37); //$NON-NLS-1$

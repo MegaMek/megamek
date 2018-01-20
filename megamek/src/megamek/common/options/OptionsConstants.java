@@ -75,7 +75,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la"; //$NON-NLS-1$
     public static final String QUIRK_POS_VESTIGIAL_HANDS_RA = "vestigial_hands_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_VTOL_ROTOR= "vtol_rotor"; //$NON-NLS-1$
-    
+
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_IMP_COOLING = "imp_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_JETTISON_CAPABLE = "jettison_capable"; //$NON-NLS-1$
@@ -84,7 +84,7 @@ public class OptionsConstants {
     //These have been made specific to weapons.
     public static final String QUIRK_WEAP_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_FAST_RELOAD= "fast_reload"; //$NON-NLS-1$
- 
+
     public static final String QUIRK_NEG_ATMO_INSTABILITY= "atmo_instability"; //$NON-NLS-1$
     public static final String QUIRK_NEG_BAD_REP_IS= "bad_rep_is"; //$NON-NLS-1$
     public static final String QUIRK_NEG_BAD_REP_CLAN= "bad_rep_clan"; //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_WEAK_LEGS= "weak_legs"; //$NON-NLS-1$
     public static final String QUIRK_NEG_WEAK_UNDERCARRIAGE= "weak_undercarriage"; //$NON-NLS-1$
     public static final String QUIRK_NEG_NO_ARMS = "no_arms"; //$NON-NLS-1$
-    
+
     public static final String QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS = "ammo_feed_problems"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_EM_INTERFERENCE = "em_interference"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_EXPOSED_LINKAGE = "exposed_linkage"; //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class OptionsConstants {
     public static final String QUIRK_WEAP_NEG_NON_FUNCTIONAL = "non_functional"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_POOR_COOLING = "poor_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed"; //$NON-NLS-1$
-    //Technically, these are partial repairs, not quirks, but I don't think we need to iterate 
+    //Technically, these are partial repairs, not quirks, but I don't think we need to iterate
     //through all the weapons on both the quirk and partial repairs tabs just to add these.
     public static final String QUIRK_WEAP_NEG_MISREPAIRED = "misrepaired_weapon"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_MISREPLACED = "misreplaced_weapon"; //$NON-NLS-1$
@@ -224,16 +224,16 @@ public class OptionsConstants {
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter"; // $NON-NLS$
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek"; // $NON-NLS$
 
-    
-      //EDGE 
-    public static final String EDGE = "edge"; //$NON-NLS$ 
-    //different edge triggers 
-    public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit"; //$NON-NLS$ 
-    public static final String EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$ 
-    public static final String EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$ 
-    public static final String EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$ 
+
+      //EDGE
+    public static final String EDGE = "edge"; //$NON-NLS$
+    //different edge triggers
+    public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit"; //$NON-NLS$
+    public static final String EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$
+    public static final String EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$
+    public static final String EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$
     public static final String EDGE_WHEN_MASC_FAILS= "edge_when_masc_fails"; //$NON-NLS$
-     
+
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial_pain_shunt"; // $NON-NLS$
@@ -250,7 +250,7 @@ public class OptionsConstants {
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual"; // $NON-NLS$
     public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser"; // $NON-NLS$
     public static final String MD_MM_IMPLANTS = "mm_implants"; // $NON-NLS$
-    public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants"; // $NON-NLS$    
+    public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants"; // $NON-NLS$
     public static final String MD_COMM_IMPLANT = "comm_implant"; // $NON-NLS$
     public static final String MD_BOOST_COMM_IMPLANT = "boost_comm_implant"; // $NON-NLS$
     public static final String MD_DERMAL_ARMOR = "dermal_armor"; // $NON-NLS$
@@ -258,12 +258,12 @@ public class OptionsConstants {
     public static final String MD_FILTRATION = "filtration_implants"; // $NON-NLS$
     public static final String MD_GAS_EFFUSER_PHERO = "gas_effuser_pheromone"; // $NON-NLS$
     public static final String MD_GAS_EFFUSER_TOXIN = "gas_effuser_toxin"; // $NON-NLS$
-    public static final String MD_DERMAL_CAMO_ARMOR = "dermal_camo_armor"; // $NON-NLS$   
-    public static final String MD_TRIPLE_CORE_PROCESSOR = "triple_core_processor"; // $NON-NLS$    
-    public static final String MD_SUICIDE_IMPLANTS = "suicide_implants"; // $NON-NLS$  
-    public static final String MD_PROTO_DNI = "proto_dni"; // $NON-NLS$ 
-    
-    
+    public static final String MD_DERMAL_CAMO_ARMOR = "dermal_camo_armor"; // $NON-NLS$
+    public static final String MD_TRIPLE_CORE_PROCESSOR = "triple_core_processor"; // $NON-NLS$
+    public static final String MD_SUICIDE_IMPLANTS = "suicide_implants"; // $NON-NLS$
+    public static final String MD_PROTO_DNI = "proto_dni"; // $NON-NLS$
+
+
     //GAME OPTIONS TO BE MOVED.
     public static final String BASE_FRIENDLY_FIRE= "friendly_fire";  //$NON-NLS$
     public static final String BASE_SKIP_INELIGABLE_MOVEMENT= "skip_ineligable_movement";  //$NON-NLS$
@@ -513,5 +513,5 @@ public class OptionsConstants {
     public static final String RPG_CONDITIONAL_EJECTION= "conditional_ejection";  //$NON-NLS$
     public static final String RPG_MANUAL_SHUTDOWN= "manual_shutdown";  //$NON-NLS$
     public static final String RPG_BEGIN_SHUTDOWN= "begin_shutdown";  //$NON-NLS$
-  
+
 }

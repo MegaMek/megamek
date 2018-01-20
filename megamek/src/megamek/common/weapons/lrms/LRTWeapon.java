@@ -52,7 +52,7 @@ public abstract class LRTWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_TORP;

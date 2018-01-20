@@ -59,7 +59,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -93,14 +93,14 @@ public class BayWeaponHandler extends WeaponHandler {
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (int) Math.ceil(av);
     }
-    
+
 
     @Override
     protected void addHeat() {
         // Only add heat for first shot in strafe
         if (isStrafing && !isStrafingFirstShot()) {
             return;
-        }        
+        }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 for (int wId : weapon.getBayWeapons()) {
@@ -123,7 +123,7 @@ public class BayWeaponHandler extends WeaponHandler {
      * ground targets, they should make one to-hit roll, but the AV of each
      * weapon should be applied separately as damage - that needs a special
      * handler
-     * 
+     *
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
@@ -137,10 +137,10 @@ public class BayWeaponHandler extends WeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
 
-        if ((((null == entityTarget) || entityTarget.isAirborne()) 
-                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
+        if ((((null == entityTarget) || entityTarget.isAirborne())
+                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
                 &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
+                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
         		|| game.getBoard().inSpace()
         		// Capital missile launchers should return the root handler...
         		|| (wtype.getAtClass() == (19))
@@ -330,7 +330,7 @@ public class BayWeaponHandler extends WeaponHandler {
                     && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
-            
+
             // Attacking infantry in buildings from same building
             if (targetInBuilding && (bldg != null)
                     && (toHit.getThruBldg() != null)
@@ -463,7 +463,7 @@ public class BayWeaponHandler extends WeaponHandler {
         }
 
        //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported

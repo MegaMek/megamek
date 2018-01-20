@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -32,7 +32,7 @@ import megamek.common.options.OptionsConstants;
 public class ThrashAttackAction extends AbstractAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1527653560370040648L;
 
@@ -53,7 +53,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * prone Mek in a clear or pavement terrain hex that contains infantry. This
      * attack will force a PSR check for the prone Mek; if the PSR is missed,
      * the Mek takes normal falling damage.
-     * 
+     *
      * @param game - the <code>IGame</code> object containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
@@ -69,7 +69,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
-        
+
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
@@ -162,7 +162,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
 
     /**
      * Damage caused by a successfull thrashing attack.
-     * 
+     *
      * @param entity - the <code>Entity</code> conducting the thrash attack.
      * @return The <code>int</code> amount of damage caused by this attack.
      */

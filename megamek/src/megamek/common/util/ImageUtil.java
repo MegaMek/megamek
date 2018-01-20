@@ -136,14 +136,14 @@ public final class ImageUtil {
         IMAGE_LOADERS.add(new TileMapImageLoader());
         IMAGE_LOADERS.add(new AWTImageLoader());
     }
-    
+
     /** Add a new image loader to the first position of the list, if it isn't there already */
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
             IMAGE_LOADERS.add(0, loader);
         }
     }
-    
+
     public static Image loadImageFromFile(String fileName) {
         if(null == fileName) {
             return null;
@@ -156,17 +156,17 @@ public final class ImageUtil {
         }
         return null;
     }
-    
+
     private ImageUtil() {}
-    
+
     /**
      * Interface that defines methods for an ImageLoader.
      *
      */
     public interface ImageLoader {
-        
+
         /**
-         * Given a string representation of a file, 
+         * Given a string representation of a file,
          * @param fileName
          * @param toolkit
          * @return
@@ -225,7 +225,7 @@ public final class ImageUtil {
                 return null;
             }
         }
-        
+
         /**
          * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
          * subimage within the original image and return that subimage.
@@ -371,7 +371,7 @@ public final class ImageUtil {
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
             = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
-        
+
         private final Thread mainThread;
         private volatile boolean loaded = false;
         private volatile boolean animated = false;
@@ -379,7 +379,7 @@ public final class ImageUtil {
         public FinishedLoadingObserver(Thread mainThread) {
             this.mainThread = mainThread;
         }
-        
+
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
             if((infoflags & DONE) > 0) {
@@ -390,11 +390,11 @@ public final class ImageUtil {
             }
             return true;
         }
-        
+
         public boolean isLoaded() {
             return loaded;
         }
-        
+
         public boolean isAnimated() {
             return animated;
         }

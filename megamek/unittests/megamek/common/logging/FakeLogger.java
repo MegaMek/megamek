@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Fake logger implementation for unit testing.
- * 
+ *
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
  * @version %Id%
  * @since 7/31/2017 2:35 PM

@@ -23,28 +23,28 @@ package megamek.common.net;
  * method and removed using the <code>removeConnectionListener</code> method.
  * When the Connection is changed the appropriate method will be invoked.
  * </p>
- * 
+ *
  * @see ConnectionListenerAdapter
  * @see ConnectionEvent
  */
 public interface ConnectionListener extends java.util.EventListener {
     /**
      * Called when connection is established
-     * 
+     *
      * @param e connection event
      */
     public void connected(ConnectedEvent e);
 
     /**
      * Called when connection is closed
-     * 
+     *
      * @param e connection event
      */
     public void disconnected(DisconnectedEvent e);
 
     /**
      * Called when packed received
-     * 
+     *
      * @param e connection event
      */
     public void packetReceived(PacketReceivedEvent e);

@@ -44,7 +44,7 @@ public class ConvFighter extends Aero {
     public int getHeatCapacity() {
         return 999;
     }
-    
+
     @Override
     public double getFuelPointsPerTon() {
         return 160;
@@ -71,12 +71,12 @@ public class ConvFighter extends Aero {
                 .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
                 .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_CONV_FIGHTER;
     }
-    
+
     @Override
     public double getBVTypeModifier() {
         if (hasStealth()) {
@@ -110,7 +110,7 @@ public class ConvFighter extends Aero {
         if(hasEngine()) {
             cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
         }
-        
+
         // fuel tanks
         cost += (200 * getFuel()) / 160.0;
 
@@ -163,13 +163,13 @@ public class ConvFighter extends Aero {
         }
         return (getEngine().getRating() / (int) weight);
     }
-    
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         specialAbilities.put(BattleForceSPA.ATMO, null);
     }
-    
+
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }

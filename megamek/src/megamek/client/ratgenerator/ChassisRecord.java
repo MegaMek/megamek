@@ -19,30 +19,30 @@ import java.util.HashSet;
 /**
  * The ChassisRecord tracks all available variants and determines how much total weight
  * is to be distributed among the various models.
- * 
+ *
  * @author Neoancient
- * 
+ *
  */
 public class ChassisRecord extends AbstractUnitRecord {
 
 	protected HashSet<ModelRecord> models;
-	
+
 	public ChassisRecord(String chassis) {
 		super(chassis);
 		models = new HashSet<ModelRecord>();
 	}
-	
+
 	public void addModel(ModelRecord model) {
 		models.add(model);
 		if (introYear == 0 || model.getIntroYear() < getIntroYear()) {
 			introYear = model.getIntroYear();
 		}
 	}
-	
+
 	public HashSet<ModelRecord> getModels() {
 		return models;
 	}
-	
+
 	public int totalModelWeight(int era, String fKey) {
 		FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
 		if (fRec == null) {
@@ -51,11 +51,11 @@ public class ChassisRecord extends AbstractUnitRecord {
 		}
 		return totalModelWeight(era, fRec);
 	}
-	
+
 	public int totalModelWeight(int era, FactionRecord fRec) {
 		int retVal = 0;
 		RATGenerator rg = RATGenerator.getInstance();
-		
+
 		for (ModelRecord mr : models) {
 			AvailabilityRating ar = rg.findModelAvailabilityRecord(era,
 					mr.getKey(), fRec);
@@ -63,7 +63,7 @@ public class ChassisRecord extends AbstractUnitRecord {
 				retVal += AvailabilityRating.calcWeight(ar.getAvailability());
 			}
 		}
-		
+
 		return retVal;
 	}
 }

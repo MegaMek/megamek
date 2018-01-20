@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -32,7 +32,7 @@ import megamek.common.options.OptionsConstants;
  * The attacker grapples the target.
  */
 public class GrappleAttackAction extends PhysicalAttackAction {
-    
+
     /**
      *
      */
@@ -59,7 +59,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * Calculates ToHitData for a grapple attack.
-     * 
+     *
      * @param game
      * @param attackerId
      * @param target
@@ -74,15 +74,15 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int grappleSide, boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
-        
+
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
-        
+
         if ((toHit != null) && !isChainWhip) {
             return toHit;
         }
-        
+
         Entity te = (Entity) target;
-        
+
         // Set the base BTH
         int base = ae.getCrew().getPiloting();
 
@@ -154,7 +154,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
             Mech attacker = (Mech) ae;
             Mech teMech = (te instanceof Mech) ? (Mech)te : null;
             if (attacker.hasTSM() && (attacker.heat >= 9)
-                    && ((teMech == null) || !teMech.hasTSM() 
+                    && ((teMech == null) || !teMech.hasTSM()
                             || (teMech.hasTSM() && (te.heat < 9)))) {
                 toHit.addModifier(-2, "TSM Active Bonus");
             }
@@ -177,10 +177,10 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // done!
         return toHit;
     }
-    
+
     /**
      * Various modifiers to check to see if the grapple attack is illegal.
-     * 
+     *
      * @param game
      * @param ae
      * @param target

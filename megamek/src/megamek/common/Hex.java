@@ -327,7 +327,7 @@ public class Hex implements IHex, Serializable {
 
     /**
      * Returns true if this hex has a terrain with a non-zero terrain factor
-     * 
+     *
      * @return
      */
     public boolean hasTerrainfactor() {

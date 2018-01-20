@@ -61,5 +61,3 @@ public class CLBASRM6OS extends SRMWeapon {
 	    .setProductionFactions(F_CWF);
     }
 }
-
-

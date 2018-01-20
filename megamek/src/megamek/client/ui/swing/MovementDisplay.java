@@ -287,11 +287,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (cmd == MOVE_FORWARD_INI && !forwardIni) {
                     continue;
                 }
-                
+
                 if (cmd == MOVE_BOOTLEGGER && !advVehicle) {
                     continue;
                 }
-                
+
                 if (cmd == MOVE_STRAFE && !vtolStrafe) {
                     continue;
                 }
@@ -383,7 +383,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         gear = MovementDisplay.GEAR_LAND;
         shiftheld = false;
-        
+
         registerKeyCommands();
     }
 
@@ -582,7 +582,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         computeMovementEnvelope(ce());
                     }
                 });
-        
+
         // Command to toggle between jumping and walk/run
         controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE.cmd,
                 new CommandAction() {
@@ -608,8 +608,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 && !(ce.isStuck() && !ce.canUnstickByJumping())) {
                             if (gear != MovementDisplay.GEAR_JUMP) {
                                 if (!((cmd.getLastStep() != null)
-                                        && cmd.getLastStep().isFirstStep() 
-                                        && (cmd.getLastStep().getType() 
+                                        && cmd.getLastStep().isFirstStep()
+                                        && (cmd.getLastStep().getType()
                                                 == MoveStepType.LAY_MINE))) {
                                     clear();
                                 }
@@ -634,7 +634,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             gear = MovementDisplay.GEAR_LAND;
                             clear();
                         }
-                        computeMovementEnvelope(ce); 
+                        computeMovementEnvelope(ce);
                     }
         });
 
@@ -801,7 +801,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
         clientgui.getBoardView().setHighlightColor(walkColor);
         clear();
-        
+
         updateButtons();
         // Update the menu bar.
         clientgui.getMenuBar().setEntity(ce);
@@ -957,7 +957,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
-            // Vehicle don't have ejection systems so crews abandon, and must 
+            // Vehicle don't have ejection systems so crews abandon, and must
             // enter a valid hex, if they cannot they can't abandon TO pg 197
             Coords pos = ce().getPosition();
             Infantry inf = new Infantry();
@@ -997,7 +997,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setupButtonPanel();
     }
-    
+
     private void updateAeroButtons() {
         if (ce() != null && ce().isAero()) {
             getBtn(MoveCommand.MOVE_THRUST).setEnabled(true);
@@ -1160,7 +1160,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM) {
             ce.setMovementMode(EntityMovementMode.QUAD);
         }
-        
+
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.bv.setWeaponFieldofFire(ce, cmd);
@@ -1236,14 +1236,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-        
+
     }
 
     private void removeLastStep() {
         cmd.removeLastStep();
         if (cmd.length() == 0) {
             clear();
-            if ((gear == MovementDisplay.GEAR_JUMP) && 
+            if ((gear == MovementDisplay.GEAR_JUMP) &&
                     (!cmd.isJumping())) {
                 cmd.addStep(MoveStepType.START_JUMP);
             } else if (ce().isConvertingNow()) {
@@ -1263,7 +1263,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 + "</b></html>"); //$NON-NLS-1$
             }
         }
-        
+
         updateButtons();
     }
 
@@ -1447,7 +1447,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 return;
             }
         }
-        
+
         if (ce().isAirborne() && ce().isAero()) {
             if (!clientgui.getClient().getGame().useVectorMove()
                 && !((IAero) ce()).isOutControlTotal()) {
@@ -1520,7 +1520,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 return;
             }
         }
-        
+
         if ((ce() instanceof Infantry) && ((Infantry)ce()).hasMicrolite()
         		&& (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
         		&& !cmd.contains(MoveStepType.FORWARDS)
@@ -1534,9 +1534,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String body = Messages
                     .getString("MovementDisplay.MicroliteMove.message"); //$NON-NLS-1$
             clientgui.doAlertDialog(title, body);
-            return;            	
+            return;
         }
-        
+
         if (cmd.automaticWiGELanding()
                 && GUIPreferences.getInstance().getNagForWiGELanding()  ) {
             ConfirmDialog nag = new ConfirmDialog(
@@ -1578,7 +1578,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return null;
         }
     }
-    
+
     /**
      * Returns new MovePath for the currently selected movement type
      */
@@ -2041,12 +2041,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             checkAtmosphere();
         }
     }
-    
+
     private void updateTakeCoverButton() {
         final IGame game = clientgui.getClient().getGame();
         final GameOptions gOpts = game.getOptions();
         boolean isInfantry = (ce() instanceof Infantry);
-        
+
         // Infantry - Taking Cover
         if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TAKE_COVER)) {
             // Determine the current position of the infantry
@@ -2127,13 +2127,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
-                        || (gear == MovementDisplay.GEAR_TURN) 
+                        || (gear == MovementDisplay.GEAR_TURN)
                         || (gear == MovementDisplay.GEAR_BACKUP))
-                && ((cmd.getMpUsed() <= ce.getWalkMP()) 
-                        || (cmd.getLastStep().isOnlyPavement() 
+                && ((cmd.getMpUsed() <= ce.getWalkMP())
+                        || (cmd.getLastStep().isOnlyPavement()
                                 && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                 && !(opts.booleanOption("tacops_tank_crews")
-                        && (cmd.getMpUsed() > 0) && (ce instanceof Tank) 
+                        && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
                         && (ce.getCrew().getSize() < 2)));
     }
 
@@ -2270,7 +2270,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (null == ce) {
             return;
         }
-        
+
         if (ce.isAero()) {
             if (!((IAero)ce).isVSTOL()) {
                 return;
@@ -2541,11 +2541,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                       .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             return;
         }
-        
+
         if (!(ce instanceof Tank || ce instanceof QuadVee)) {
             return;
         }
-                
+
         if (ce.getMovementMode() != EntityMovementMode.WHEELED
                 && ce.getMovementMode() != EntityMovementMode.HOVER
                 && ce.getMovementMode() != EntityMovementMode.VTOL) {
@@ -2626,21 +2626,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setTraitorEnabled(true);
     }
-    
+
     private void updateConvertModeButton() {
 
         if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
             setModeConvertEnabled(false);
             return;
         }
-        
+
         final Entity ce = ce();
-        
+
         if (null == ce) {
             setModeConvertEnabled(false);
             return;
         }
-        
+
         if (ce instanceof LandAirMech) {
             boolean canConvert = false;
             for (int i = 0; i < 3; i++) {
@@ -2658,24 +2658,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setModeConvertEnabled(false);
             return;
         }
-        
+
         IHex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
         if (currHex.containsTerrain(Terrains.WATER)
                 && ce.getElevation() < 0) {
             setModeConvertEnabled(false);
             return;
         }
-        
+
         if (ce instanceof LandAirMech && ce.isGyroDestroyed()) {
             setModeConvertEnabled(false);
             return;
         }
-        
+
         if (ce instanceof QuadVee && ((QuadVee)ce).conversionCost() > ce.getRunMP()) {
             setModeConvertEnabled(false);
             return;
         }
-        
+
         setModeConvertEnabled(true);
     }
 
@@ -2686,7 +2686,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (null == ce) {
             return;
         }
-        
+
         if (ce.isAirborne()) {
             setRecklessEnabled(false);
         }
@@ -2734,16 +2734,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setManeuverEnabled(true);
         }
     }
-    
+
     private void updateStrafeButton() {
         if (!clientgui.getClient().getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING)) {
             return;
         }
-        
+
         setStrafeEnabled(ce() instanceof VTOL);
     }
-    
+
     private void updateBombButton() {
         MoveStep lastStep = cmd.getLastStep();
         if ((lastStep == null)
@@ -2751,13 +2751,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setBombEnabled(false);
             return;
         }
-        
+
         if (lastStep != null
                 && lastStep.getClearance() <= 0) {
             setBombEnabled(false);
             return;
         }
-        
+
         if (ce().isBomber()
                 && ((ce() instanceof LandAirMech)
                         || clientgui.getClient().getGame().getOptions()
@@ -2766,7 +2766,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setBombEnabled(true);
         }
     }
-    
+
     private synchronized void updateLoadButtons() {
         final IGame game = clientgui.getClient().getGame();
         final Entity ce = ce();
@@ -2812,7 +2812,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             // Zip lines, TO pg 219
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
-                    && (ce() instanceof VTOL) && (en instanceof Infantry) 
+                    && (ce() instanceof VTOL) && (en instanceof Infantry)
                     && !((Infantry)en).isMechanized()) {
                 canUnloadHere = true;
                 break;
@@ -4023,11 +4023,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() 
+        if (clientgui.getClient().getGame().getPhase()
                 == IGame.Phase.PHASE_LOUNGE) {
             endMyTurn();
         }
-        
+
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -4041,19 +4041,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                      .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Computes all of the possible moves for an Entity in a particular gear.
-     * The Entity can either be a suggested Entity or the currently selected 
-     * one.  If there is a selected entity (which implies it's the current 
+     * The Entity can either be a suggested Entity or the currently selected
+     * one.  If there is a selected entity (which implies it's the current
      * players turn), then the current gear is used (which is set by the user).
      * If there is no selected entity, then the current gear is invalid, and it
      * defaults to GEAR_LAND (standard "walk forward").
-     * 
+     *
      * @param suggestion  The suggested Entity to use to compute the movement
-     *                      envelope.  If used, the gear will be set to 
+     *                      envelope.  If used, the gear will be set to
      *                      GEAR_LAND.  This takes precendence over the
-     *                      currently selected unit. 
+     *                      currently selected unit.
      * @param suggestion
      */
     public void computeMovementEnvelope(Entity suggestion) {
@@ -4063,7 +4063,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.clearMovementEnvelope();
             return;
         }
-        
+
         Entity en = ce();
         int mvMode = gear;
         if ((en == null) && (suggestion == null)) {
@@ -4077,7 +4077,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (en.isDone()) {
             return;
         }
-        
+
         Map<Coords, MovePath> mvEnvData = new HashMap<Coords, MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
@@ -4193,11 +4193,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_CHARGE)
                     || (gear == MovementDisplay.GEAR_DFA)
-                    || ((cmd.getMpUsed() > ce.getWalkMP()) 
-                            && !(cmd.getLastStep().isOnlyPavement() 
+                    || ((cmd.getMpUsed() > ce.getWalkMP())
+                            && !(cmd.getLastStep().isOnlyPavement()
                                     && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                     || (opts.booleanOption("tacops_tank_crews")
-                            && (cmd.getMpUsed() > 0) && (ce instanceof Tank) 
+                            && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
                             && (ce.getCrew().getSize() < 2))
                     || (gear == MovementDisplay.GEAR_SWIM)
                     || (gear == MovementDisplay.GEAR_RAM)) {
@@ -4233,8 +4233,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_JUMP.getCmd())) {
             if ((gear != MovementDisplay.GEAR_JUMP)
                     && !((cmd.getLastStep() != null)
-                            && cmd.getLastStep().isFirstStep() 
-                            && (cmd.getLastStep().getType() 
+                            && cmd.getLastStep().isFirstStep()
+                            && (cmd.getLastStep().getType()
                                     == MoveStepType.LAY_MINE))) {
                 clear();
             }
@@ -4269,7 +4269,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_LEG.getCmd())) {
             if ((ce.getEntityType() & Entity.ETYPE_QUAD_MECH) == Entity.ETYPE_QUAD_MECH) {
-                adjustConvertSteps(EntityMovementMode.QUAD);                
+                adjustConvertSteps(EntityMovementMode.QUAD);
             } else if ((ce.getEntityType() & Entity.ETYPE_TRIPOD_MECH) == Entity.ETYPE_TRIPOD_MECH) {
                 adjustConvertSteps(EntityMovementMode.TRIPOD);
             } else if ((ce.getEntityType() & Entity.ETYPE_BIPED_MECH) == Entity.ETYPE_BIPED_MECH) {
@@ -4931,17 +4931,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
     }
-    
+
     /**
      * Add enough <code>MoveStepType.CONVERT_MODE</code> steps to get to the requested mode, or
      * clear the path if the unit is in the requested mode at the beginning of the turn.
-     * 
+     *
      * @param endMode The mode to convert to
      */
     private void adjustConvertSteps(EntityMovementMode endMode) {
         //Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
         if (ce().getMovementMode() == endMode
-                // Account for grounded LAMs in fighter mode with movement type wheeled 
+                // Account for grounded LAMs in fighter mode with movement type wheeled
                 || (ce().isAero() && endMode == EntityMovementMode.AERODYNE)) {
             cmd.clear();
             return;
@@ -5124,7 +5124,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         buttons.get(MoveCommand.MOVE_JUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
     }
-    
+
     private void setModeConvertEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_MODE_CONVERT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveModeConvertEnabled(enabled);
@@ -5243,7 +5243,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         getBtn(MoveCommand.MOVE_EVADE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
     }
-    
+
     private void setBootleggerEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_BOOTLEGGER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveBootleggerEnabled(enabled);
@@ -5400,22 +5400,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                        && !(cmd.isJumping() && (ce instanceof Mech) && (ce
                                                                                 .getJumpType() == Mech.JUMP_BOOSTER)));
     }
-    
+
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc) {
         // do nothing here outside the movement phase
         if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_MOVEMENT)) return;
-        
+
         clientgui.bv.fieldofFireUnit = unit;
         clientgui.bv.fieldofFireRanges = ranges;
         clientgui.bv.fieldofFireWpArc = arc;
         clientgui.bv.fieldofFireWpLoc = loc;
-        
+
         // If the unit is the current unit, then work with
         // the current considered movement
-        if (unit.equals(ce())) 
+        if (unit.equals(ce()))
             clientgui.bv.setWeaponFieldofFire(ce(), cmd);
         else
             clientgui.bv.setWeaponFieldofFire(unit.getFacing(), unit.getPosition());
     }
-    
+
 }

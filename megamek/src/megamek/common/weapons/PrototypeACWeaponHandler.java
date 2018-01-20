@@ -44,7 +44,7 @@ public class PrototypeACWeaponHandler extends ACWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

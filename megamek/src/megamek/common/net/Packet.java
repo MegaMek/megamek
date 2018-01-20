@@ -112,15 +112,15 @@ public class Packet {
     public static final int COMMAND_SENDING_AVAILABLE_MAP_SIZES = 570;
 
     public static final int COMMAND_ENTITY_LOAD = 580;
-    
+
     public static final int COMMAND_ENTITY_NOVA_NETWORK_CHANGE = 590;
-    
+
     public static final int COMMAND_RESET_ROUND_DEPLOYMENT = 600;
-    
+
     public static final int COMMAND_SENDING_TAGINFO = 610;
-    
+
     public static final int COMMAND_RESET_TAGINFO = 620;
-    
+
     public static final int COMMAND_CLIENT_FEEDBACK_REQUEST = 700;
     public static final int COMMAND_CFR_DOMINO_EFFECT = 705;
     public static final int COMMAND_CFR_EDGE_PROMPT = 710;
@@ -128,7 +128,7 @@ public class Packet {
     public static final int COMMAND_CFR_APDS_ASSIGN = 716;
     public static final int COMMAND_CFR_HIDDEN_PBS = 717;
     public static final int COMMAND_CFR_TELEGUIDED_TARGET = 718;
-    
+
     public static final int COMMAND_GAME_VICTORY_EVENT = 800;
 
     private int command;

@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 
 /**
  * Determines tech level dates based on tech progression of components.
- * 
+ *
  * @author Neoancient
  *
  */
 public class CompositeTechLevel implements ITechnology, Serializable {
-    private static final long serialVersionUID = -2591881133085092725L;    
+    private static final long serialVersionUID = -2591881133085092725L;
 
     private final boolean clan;
     private final boolean mixed;
@@ -35,10 +35,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     private int techRating;
     private int[] availability;
     private int earliest;
-    
+
     // Provides a set tech level for non-era-based use.
     private SimpleTechLevel staticTechLevel = SimpleTechLevel.INTRO;
-    
+
     /**
      * @param initialTA - the base tech advancement for the composite equipment
      * @param clan - whether the equipment tech base is Clan
@@ -83,14 +83,14 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         staticTechLevel = initialTA.getStaticTechLevel();
     }
-    
+
     /**
-     * @param en 
+     * @param en
      */
     public CompositeTechLevel(Entity en, int techFaction) {
         this(en.getConstructionTechAdvancement(), en.isClan(), en.isMixedTech(), en.getYear(), techFaction);
     }
-    
+
     /**
      * @return - the experimental tech date range, formatted as a string
      */
@@ -106,7 +106,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         return new DateRange(experimental, end).toString();
     }
-    
+
     /**
      * @return - the advanced tech date range, formatted as a string
      */
@@ -120,7 +120,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         return new DateRange(advanced, end).toString();
     }
-    
+
     /**
      * @return - the standard tech date range, formatted as a string
      */
@@ -130,7 +130,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         return new DateRange(standard).toString();
     }
-    
+
     /**
      * @return - the range(s) of dates when the tech is extinct
      */
@@ -141,7 +141,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         return extinct.stream().map(DateRange::toString).collect(Collectors.joining(", "));
     }
-    
+
     /**
      * Adjust the dates for various tech levels to account for the tech advancement of a new component.
      * @param tech - the advancement for the new component
@@ -151,7 +151,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         int prodDate = mixed?tech.getProductionDate() : tech.getProductionDate(clan, techFaction);
         int commonDate = mixed?tech.getCommonDate() : tech.getCommonDate(clan);
         earliest = Math.max(earliest, tech.getIntroductionDate(clan, techFaction));
-        
+
         staticTechLevel = SimpleTechLevel.max(staticTechLevel, tech.getStaticTechLevel());
         //If this record is blank we ignore it
         if (protoDate == DATE_NONE
@@ -181,7 +181,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
                 }
             }
         }
-        
+
         if (protoDate != DATE_NONE) {
             /* If there was no previous prototype stage, part of either the advanced or standard
              * tech ranges may need to be converted to experimental
@@ -197,13 +197,13 @@ public class CompositeTechLevel implements ITechnology, Serializable {
                 experimental = Math.max(experimental, protoDate);
             }
         }
-        
+
         if (prodDate != DATE_NONE) {
             /*If all previous tech had no advanced date but had a common date (either started common or
              * went straight from prototype to common), a chunk of the previous standard range can
              * become advanced.
              */
-            
+
             if (advanced == null) {
                 if (standard != null && commonDate > standard) {
                     advanced = standard;
@@ -217,10 +217,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         if (standard != null) {
             standard = Math.max(standard, commonDate);
         }
-        
+
         addExtinctionRange(mixed?tech.getExtinctionDate() : tech.getExtinctionDate(clan, techFaction),
                 mixed?tech.getReintroductionDate() : tech.getReintroductionDate(clan, techFaction));
-        
+
         techRating = Math.max(techRating, tech.getTechRating());
         for (int era = 0; era < ERA_NUM; era++) {
             int av = tech.getBaseAvailability(era);
@@ -230,7 +230,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
                     && (techFaction < F_CLAN)
                     && (techFaction != F_CS)
                     && ITechnology.getTechEra(tech.getIntroductionDate()) == ERA_SW) {
-                av = RATING_X; 
+                av = RATING_X;
             }
             // IS base cannot include Clan tech before 3050; after 3050 av is +1.
             if (!clan && tech.isClan()) {
@@ -243,7 +243,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             availability[era] = Math.max(availability[era], av);
         }
     }
-    
+
     /**
      * @param year
      * @return - the TechConstants tech level for a particular year
@@ -267,11 +267,11 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         return TechConstants.T_TECH_UNKNOWN;
     }
-    
+
     /**
      * Adds new range to collection of extinction ranges then checks for overlapping ranges
      * and merges them.
-     * 
+     *
      * @param start - first year of new extinction range
      * @param end - reintroduction date of new extinction range, or DATE_NONE if never reintroduced
      */
@@ -302,25 +302,25 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         extinct = merged;
     }
-    
+
     private static class DateRange implements Serializable, Comparable<DateRange> {
         private static final long serialVersionUID = 3144194494591950878L;
-        
+
         Integer start = null;
         Integer end = null;
         boolean startApproximate = false;
         boolean endApproximate = false;
-        
+
         DateRange(int start, int end) {
             this.start = start;
             this.end = end == DATE_NONE? null : end;
         }
-        
+
         DateRange(int start) {
             this.start = start;
             this.end = null;
         }
-        
+
         String formatYear(int year, boolean approximate) {
             if (year == DATE_PS) {
                 return "PS";
@@ -333,7 +333,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
                 return Integer.toString(year);
             }
         }
-        
+
         @Override
         public String toString() {
             if (start == null) {
@@ -355,13 +355,13 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             }
             return sb.toString();
         }
-        
+
         @Override
         public int compareTo(DateRange other) {
             return start.compareTo(other.start);
         }
     }
-    
+
     @Override
     public int getTechBase() {
         return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
@@ -381,7 +381,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     public int getIntroductionDate() {
         return introYear;
     }
-    
+
     public int getEarliestTechDate() {
         return earliest;
     }
@@ -431,7 +431,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         }
         return availability[era];
     }
-    
+
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         return staticTechLevel;

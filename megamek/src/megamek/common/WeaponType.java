@@ -551,7 +551,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_AERO_WEAPON = BigInteger.valueOf(1).shiftLeft(45);
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
-    
+
 
     public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
     public static final BigInteger F_INF_BURST = BigInteger.valueOf(1).shiftLeft(49);
@@ -565,34 +565,34 @@ public class WeaponType extends EquipmentType {
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
-    
+
     //Used for TSEMP Weapons.
     public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
     public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(61);
-    
+
     //Naval Mass Drivers
     public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
 
     public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
-    
+
     public static final BigInteger F_MEK_MORTAR = BigInteger.valueOf(1).shiftLeft(60);
-    
+
     // Weapon required to make a bomb type function
     public static final BigInteger F_BOMB_WEAPON = BigInteger.valueOf(1).shiftLeft(61);
-    
+
     public static final BigInteger F_BA_INDIVIDUAL = BigInteger.valueOf(1).shiftLeft(62);
     //Next one's out of order. See F_INF_CLIMBINGCLAWS
-    
+
     //AMS and Point Defense Bays - Have to work differently from code using the F_AMS flag
     public static final BigInteger F_PDBAY = BigInteger.valueOf(1).shiftLeft(64);
     public static final BigInteger F_AMSBAY = BigInteger.valueOf(1).shiftLeft(65);
-    
+
     //Thunderbolt and similar large missiles, for use with AMS resolution
     public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(66);
-    
+
     //Hyper-Laser
     public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
-    
+
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;
@@ -647,7 +647,7 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_BURST_7D6 = 14;
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
-    
+
     public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS",
             "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
             "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
@@ -665,7 +665,7 @@ public class WeaponType extends EquipmentType {
     public static final int BFCLASS_SUBCAPITAL = 10;
     public static final int BFCLASS_CAPITAL_MISSILE = 11;
     public static final int BFCLASS_NUM = 12;
-    
+
     public static final String[] BF_CLASS_NAMES = {
         "", "LRM", "SRM", "MML", "TORP", "AC", "FLAK", "iATM",
         "REL", "CAP", "SCAP", "CMISS"
@@ -697,7 +697,7 @@ public class WeaponType extends EquipmentType {
     /**
      *  Used for the BA vs BA damage rules on TO pg 109.  Determines how much
      *  damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
-     *  indicates normal weapon damage. 
+     *  indicates normal weapon damage.
      */
     protected int baDamageClass = WEAPON_DIRECT_FIRE;
 
@@ -883,7 +883,7 @@ public class WeaponType extends EquipmentType {
     public int getExtremeRange() {
         return extremeRange;
     }
-    
+
     public int[] getWRanges() {
         return new int[]
             { minimumRange, waterShortRange, waterMediumRange, waterLongRange, waterExtremeRange };
@@ -930,7 +930,7 @@ public class WeaponType extends EquipmentType {
     public int getInfantryDamageClass() {
         return infDamageClass;
     }
-    
+
     public int getBADamageClass() {
         return baDamageClass;
     }
@@ -1057,7 +1057,7 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Misc Bay");
         }
     }
-    
+
     /**
      * Damage calculation for BattleForce and AlphaStrike
      * @param range - the range in hexes
@@ -1078,12 +1078,12 @@ public class WeaponType extends EquipmentType {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
             if (getToHitModifier() != 0) {
-                damage -= damage * getToHitModifier() * 0.05; 
+                damage -= damage * getToHitModifier() * 0.05;
             }
         }
         return damage / 10.0;
     }
-    
+
     /**
      * Damage calculation for BattleForce and AlphaStrike for missile weapons that may have advanced fire control
      * @param range - the range in hexes
@@ -1093,7 +1093,7 @@ public class WeaponType extends EquipmentType {
     public double getBattleForceDamage (int range, Mounted fcs) {
         return getBattleForceDamage(range);
     }
-    
+
     public double adjustBattleForceDamageForMinRange(double damage) {
         return damage * (12 - getMinimumRange()) / 12.0;
     }
@@ -1108,7 +1108,7 @@ public class WeaponType extends EquipmentType {
     public double getBattleForceDamage(int range, int baSquadSize) {
         return Compute.calculateClusterHitTableAmount(7, baSquadSize) * getBattleForceDamage(range);
     }
-    
+
     /**
      * Reports the class of weapons for those that are tracked separately from standard damage
      * @return
@@ -1116,15 +1116,15 @@ public class WeaponType extends EquipmentType {
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
     }
-    
+
     /**
-     * 
+     *
      * @return - BattleForce scale damage for weapons that have the HEAT special ability
      */
     public int getBattleForceHeatDamage(int range) {
         return 0;
     }
-    
+
     public boolean hasIndirectFire() {
         return false;
     }
@@ -1285,8 +1285,8 @@ public class WeaponType extends EquipmentType {
         // LRMs
 /*        These were BA versions and there are currently BA
 		 versions of these weapons. So they've been commented out.
-		 EquipmentType.addType(new ISLRM1()); 
-		 EquipmentType.addType(new ISLRM1OS()); 
+		 EquipmentType.addType(new ISLRM1());
+		 EquipmentType.addType(new ISLRM1OS());
 		 EquipmentType.addType(new ISLRM2());
 		 EquipmentType.addType(new ISLRM2OS());
 		 EquipmentType.addType(new ISLRM3());
@@ -1329,7 +1329,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLRM10OS());
         EquipmentType.addType(new CLLRM15OS());
         EquipmentType.addType(new CLLRM20OS());
-        
+
         EquipmentType.addType(new CLStreakLRM1());
         EquipmentType.addType(new CLStreakLRM2());
         EquipmentType.addType(new CLStreakLRM3());
@@ -1617,7 +1617,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLImprovedLaserLarge());
         EquipmentType.addType(new CLImprovedPulseLaserLarge());
         EquipmentType.addType(new CLImprovedPPC());
-      
+
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());
@@ -1631,7 +1631,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportSRMLightInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
-        
+
         // Infantry Archaic Weapons
         EquipmentType.addType(new InfantryArchaicAxeWeapon());
         EquipmentType.addType(new InfantryArchaicBasicCrossbowWeapon());
@@ -1677,10 +1677,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicBladeJoustingLanceWeapon());
         EquipmentType.addType(new InfantryArchaicWhipWeapon());
         EquipmentType.addType(new InfantryArchaicShockStaffWeapon());
-        
+
         //Clan Archaic - Commented out can be considered Obsolete
         EquipmentType.addType(new InfantryArchaicClanVibroSwordWeapon());
-             
+
         // Infantry Pistols
         EquipmentType.addType(new InfantryPistolAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolAutoPistolNissanWeapon());
@@ -1729,7 +1729,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanGaussPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanPulseLaserPistolWeapon());
-        
+
         // Infantry Rifles
         EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
         EquipmentType.addType(new InfantryRifleBlazerRifleWeapon());
@@ -1773,9 +1773,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleThunderstrokeWeapon());
         EquipmentType.addType(new InfantryRifleTKAssaultWeapon());
         EquipmentType.addType(new InfantryRifleZeusHeavyWeapon());
-        EquipmentType.addType(new InfantryRifleVintageWeapon());        
+        EquipmentType.addType(new InfantryRifleVintageWeapon());
         EquipmentType.addType(new InfantryRifleVSPLaserWeapon());
-        
+
         // Infantry Shotguns
         EquipmentType.addType(new InfantryShotgunAutomaticWeapon());
         EquipmentType.addType(new InfantryShotgunAvengerCCWWeapon());
@@ -1786,8 +1786,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunPumpActionWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffDoubleBarrelWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
-        EquipmentType.addType(new InfantryShotgunWakazashiWeapon());      
-      
+        EquipmentType.addType(new InfantryShotgunWakazashiWeapon());
+
          // Infantry Support Weapons
         EquipmentType.addType(new InfantrySupportMGPortableWeapon());
         EquipmentType.addType(new InfantrySupportMGSemiPortableWeapon());
@@ -1857,14 +1857,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportGungnirHeavyGaussWeapon());
         EquipmentType.addType(new InfantrySupportMagPulseHarpoonWeapon());
         EquipmentType.addType(new InfantrySupportSnubNoseSupportPPCWeapon());
-        
+
         // Infantry Grenade Weapons
         EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeMicroWeapon());
         EquipmentType.addType(new InfantryGrenadeMiniInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeRAGWeapon());
         EquipmentType.addType(new InfantryGrenadeStandardWeapon());
-        
+
         // Infantry SMG Weapons
         EquipmentType.addType(new InfantrySMGClanGaussWeapon());
         EquipmentType.addType(new InfantrySMGGuntherMP20Weapon());
@@ -1873,7 +1873,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGRorynexRM3XXIWeapon());
         EquipmentType.addType(new InfantrySMGRuganWeapon());
         EquipmentType.addType(new InfantrySMGWeapon());
-        
+
         //Infantry TAG
         EquipmentType.addType(new InfantrySupportTAGWeapon());
 
@@ -1889,7 +1889,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticNeedleWeapon());
         EquipmentType.addType(new InfantryProstheticShockerWeapon());
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
-        EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());    
+        EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());
 
         EquipmentType.addType(new ISFireExtinguisher());
         EquipmentType.addType(new CLFireExtinguisher());
@@ -2105,7 +2105,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new MassDriverHeavy());
         EquipmentType.addType(new MassDriverMedium());
         EquipmentType.addType(new MassDriverLight());
-        
+
         // bomb-related weapons
         EquipmentType.addType(new ISAAAMissileWeapon());
         EquipmentType.addType(new CLAAAMissileWeapon());

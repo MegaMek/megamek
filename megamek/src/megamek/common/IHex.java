@@ -24,7 +24,7 @@ public interface IHex extends Cloneable {
     /**
      * The level of a hex, as defined in TW. This refers to the height of the
      * ground terrain.
-     * 
+     *
      * @return Hex level
      */
     public abstract int getLevel();
@@ -114,7 +114,7 @@ public interface IHex extends Cloneable {
     /**
      * Determines if this <code>Hex</code> contains any exists in the specified
      * direction.
-     * 
+     *
      * @param direction
      *            the <code>int</code> direction of the exit. This value should
      *            be between 0 and 5 (inclusive).
@@ -128,7 +128,7 @@ public interface IHex extends Cloneable {
     /**
      * Returns true if this hex contains a terrain type that can have exits,
      * else false.
-     * 
+     *
      */
     public abstract boolean hasExitableTerrain();
 
@@ -139,13 +139,13 @@ public interface IHex extends Cloneable {
     public abstract int ceiling();
 
     /**
-     * 
+     *
      * @param inAtmosphere
      *            Determines if the ceiling should be determined for an
      *            atmospheric map (eg, altitudes) or ground map (eg, levels)
      * @return the highest level or altitude (depending on flag) that features
      *         in this hex extend to. Above this level is assumed to be air.
-     * 
+     *
      */
     public abstract int ceiling(boolean inAtmosphere);
 
@@ -153,7 +153,7 @@ public interface IHex extends Cloneable {
      * Returns the elevation or altitude of the terrain feature that rises the
      * highest above the surface of the hex. For example, if the hex is on the
      * ground map and contains woods, this would return 2.
-     * 
+     *
      * @param inAtmo
      *            Determines if altitudes or elevations are returned
      * @return
@@ -169,7 +169,7 @@ public interface IHex extends Cloneable {
      * Returns the lowest reachable point of this hex, used for terrain types
      * that can extend below the surface of the hex, such as water and
      * basements. Unrevealed basements will not effect this value.
-     * 
+     *
      * @return the lowest level that revealed features in this hex extend to.
      *         Below this level is assumed to be bedrock and/or basement.
      *         Unrevealed basements will not effect this value.
@@ -191,7 +191,7 @@ public interface IHex extends Cloneable {
 
     /**
      * Returns true if this hex has a terrain with a non-zero terrain factor
-     * 
+     *
      * @return
      */
     public boolean hasTerrainfactor();
@@ -231,7 +231,7 @@ public interface IHex extends Cloneable {
 
     /**
      * Returns a collection of terrain ids for all terrains present in this hex.
-     * 
+     *
      * @return A set that contains an id for each terrain present in this hex.
      */
     public abstract int[] getTerrainTypes();
@@ -312,7 +312,7 @@ public interface IHex extends Cloneable {
     /**
      * Used to determine if this hex is "clear", based on the absense of most
      * other terrain types.
-     * 
+     *
      * @return
      */
     public abstract boolean isClearHex();
@@ -325,7 +325,7 @@ public interface IHex extends Cloneable {
      * Determines if the Hex is valid or not. <code>errBuff</code> can be used to return a report of why the hex is
      * valid.  If errBuff is null, isValid shortcircuits on the first failure, otherwise it checks for all failures
      * and logs them.
-     * 
+     *
      * @param errBuff  Buffer to contain error messages.  If null, method returns on first failure.
      * @return
      */

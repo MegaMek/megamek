@@ -49,7 +49,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
@@ -61,7 +61,7 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
         Mounted ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
         AmmoType atype = (AmmoType) ammo.getType();
-        if ((atype.getMunitionType() == AmmoType.M_HOMING) 
+        if ((atype.getMunitionType() == AmmoType.M_HOMING)
                 && ammo.curMode().equals("Homing")) {
             if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,

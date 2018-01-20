@@ -694,7 +694,7 @@ public class Client implements IClientCommandHandler {
      * air units flight path. In the case of several equidistant hexes, the
      * attacker gets to choose. This method updates the server with the users
      * choice.
-     * 
+     *
      * @param targetId
      * @param attackerId
      * @param pos

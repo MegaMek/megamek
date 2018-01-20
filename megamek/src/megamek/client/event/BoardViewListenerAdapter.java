@@ -23,7 +23,7 @@ import megamek.common.Coords;
  * Classes that wish to deal with <code>BoardViewEvent</code>s can extend
  * this class and override only the methods which they are interested in.
  * </p>
- * 
+ *
  * @see BoardViewListener
  * @see BoardViewEvent
  */
@@ -32,7 +32,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
     /**
      * Sent when user clicks, double clicks or drags hex. The default behavior
      * is to do nothing.
-     * 
+     *
      * @param b an event
      */
     public void hexMoused(BoardViewEvent b) {
@@ -41,7 +41,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
     /**
      * Sent when BoardView 'cursor' is set to Hex. The default behavior is to do
      * nothing.
-     * 
+     *
      * @param b an event
      */
     public void hexCursor(BoardViewEvent b) {
@@ -50,7 +50,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
     /**
      * Sent when BoardView 'cursor' is set to Hex. The default behavior is to do
      * nothing.
-     * 
+     *
      * @param b an event
      */
     public void boardHexHighlighted(BoardViewEvent b) {
@@ -58,7 +58,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
 
     /**
      * Sent when Hex is selected. The default behavior is to do nothing.
-     * 
+     *
      * @param b an event
      */
     public void hexSelected(BoardViewEvent b) {
@@ -66,7 +66,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
 
     /**
      * Sent when firstLOS is set. The default behavior is to do nothing.
-     * 
+     *
      * @param b an event
      */
     public void firstLOSHex(BoardViewEvent b) {
@@ -74,7 +74,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
 
     /**
      * Sent when secondLOS is set. The default behavior is to do nothing.
-     * 
+     *
      * @param b an event
      */
     public void secondLOSHex(BoardViewEvent b, Coords c) {
@@ -83,7 +83,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
     /**
      * Sent when moving units is finished. The default behavior is to do
      * nothing.
-     * 
+     *
      * @param b an event
      */
     public void finishedMovingUnits(BoardViewEvent b) {
@@ -91,7 +91,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
 
     /**
      * Sent when Unit is selected. The default behavior is to do nothing.
-     * 
+     *
      * @param b an event
      */
     public void unitSelected(BoardViewEvent b) {

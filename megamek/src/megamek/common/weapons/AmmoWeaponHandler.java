@@ -49,7 +49,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#UseAmmo()
      */
     @Override
@@ -75,11 +75,11 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
     }
-    
+
     /**
      * For ammo weapons, this number can be less than the full number if the
      * amount of ammo is not high enough
-     * 
+     *
      * @return the number of weapons of this type firing (for squadron weapon
      *         groups)
      */
@@ -95,10 +95,10 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 (int) Math.floor((double) totalShots
                         / (double) weapon.getCurrentShots()));
     }
-    
+
     //Check for Thunderbolt. We'll use this for single AMS resolution
     protected boolean isTbolt() {
         return false;
     }
-    
+
 }

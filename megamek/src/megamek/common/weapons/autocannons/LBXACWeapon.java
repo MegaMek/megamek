@@ -42,7 +42,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
@@ -66,7 +66,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         ammoType = AmmoType.T_AC_LBX;
         atClass = CLASS_LBX_AC;
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;
@@ -79,7 +79,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         }
         return damage;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_FLAK;

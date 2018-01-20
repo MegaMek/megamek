@@ -77,7 +77,7 @@ import megamek.common.util.MegaMekFile;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
-    
+
     private static final String SEPARATOR_PROPERTY = "="; //$NON-NLS-1$
     private static final String SEPARATOR_COMMA = ","; //$NON-NLS-1$
     private static final String SEPARATOR_SPACE = " "; //$NON-NLS-1$
@@ -134,7 +134,7 @@ public class ScenarioLoader {
             camos = null;
         }
     }
-    
+
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
@@ -172,7 +172,7 @@ public class ScenarioLoader {
                 || (muniType == AmmoType.M_VIBRABOMB_IV)
                 || (muniType == AmmoType.M_LISTEN_KILL)
                 || (muniType == AmmoType.M_ANTI_TSM)
-                || (muniType == AmmoType.M_DEAD_FIRE) 
+                || (muniType == AmmoType.M_DEAD_FIRE)
                 || (muniType == AmmoType.M_MINE_CLEARANCE)) {
                 System.out.println(String.format("Ammo type %s not allowed by Clan rules", //$NON-NLS-1$
                     newAmmoType.getName()));
@@ -434,7 +434,7 @@ public class ScenarioLoader {
             String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction)); //$NON-NLS-1$
 
         Map<String, Entity> entities = new HashMap<>();
-        
+
         // Gather all defined units
         for(String key : p.keySet()) {
             if(unitPattern.matcher(key).matches() && (p.getNumValues(key) > 0)) {
@@ -446,7 +446,7 @@ public class ScenarioLoader {
                 entities.put(key, parseEntityLine(p.getString(key)));
             }
         }
-        
+
         // Add other information
         for(String key: p.keySet()) {
             Matcher dataMatcher = unitDataPattern.matcher(key);
@@ -539,7 +539,7 @@ public class ScenarioLoader {
                 }
             }
         }
-        
+
         return entities.values();
     }
 
@@ -637,7 +637,7 @@ public class ScenarioLoader {
                 camoGroup += "/"; //$NON-NLS-1$
             }
         }
-        
+
         boolean validGroup = false;
 
         if(camoGroup.equals(IPlayer.NO_CAMO) || camoGroup.equals(IPlayer.ROOT_CAMO)) {
@@ -654,7 +654,7 @@ public class ScenarioLoader {
 
         return validGroup ? camoGroup : null;
     }
-    
+
     private String getValidCamoName(String camoGroup, String camoName) {
         boolean validName = false;
 
@@ -679,10 +679,10 @@ public class ScenarioLoader {
                 }
             }
         }
-        
+
         return validName ? camoName : null;
     }
-    
+
     /*
      * Camo Parser/Validator for Individual Entity Camo
      */
@@ -735,7 +735,7 @@ public class ScenarioLoader {
     private String getFactionParam(String faction, String param) {
         return param + SEPARATOR_UNDERSCORE + faction;
     }
-    
+
     private Collection<Player> createPlayers(StringMultiMap p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
         if((null == sFactions) || sFactions.isEmpty()) {
@@ -743,29 +743,29 @@ public class ScenarioLoader {
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
         List<Player> result = new ArrayList<>(factions.length);
-        
+
         int playerId = 0;
         int teamId = 0;
         for(String faction : factions) {
             Player player = new Player(playerId, faction);
             result.add(player);
             ++ playerId;
-            
+
             // scenario players start out as ghosts to be logged into
             player.setGhost(true);
-            
+
             String loc = p.getString(getFactionParam(faction, PARAM_LOCATION));
             if(null == loc) {
                 loc = "Any"; //$NON-NLS-1$
             }
             int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
             player.setStartingPos(dir);
-            
+
             String camo = p.getString(getFactionParam(faction, PARAM_CAMO));
             if((null != camo) && !camo.isEmpty()) {
                 parseCamo(player, camo);
             }
-            
+
             String team = p.getString(getFactionParam(faction, PARAM_TEAM));
             if((null != team) && !team.isEmpty()) {
                 try {
@@ -777,7 +777,7 @@ public class ScenarioLoader {
                 ++ teamId;
             }
             player.setTeam(Math.min(teamId, IPlayer.MAX_TEAMS - 1));
-            
+
             String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
             if((null != minefields) && !minefields.isEmpty()) {
                 String[] mines = minefields.split(SEPARATOR_COMMA, -1);
@@ -796,7 +796,7 @@ public class ScenarioLoader {
                 }
             }
         }
-        
+
         return result;
     }
 
@@ -977,7 +977,7 @@ public class ScenarioLoader {
             int ewSpot = s.indexOf(':');
             int loc = Integer.parseInt(s.substring(0, ewSpot));
             int slot = Integer.parseInt(s.substring(ewSpot + 1));
-            
+
             critHits.add(new CritHit(loc, slot - 1));
         }
     }
@@ -996,12 +996,12 @@ public class ScenarioLoader {
             this.setAmmoTo = setAmmoTo;
         }
     }
-    
+
     private class SetAmmoType {
         public final int loc;
         public final int slot;
         public final String type;
-        
+
         public SetAmmoType(int loc, int slot, String type) {
             this.loc = loc;
             this.slot = slot;
@@ -1038,7 +1038,7 @@ public class ScenarioLoader {
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
         }
-        
+
         public void addSetAmmoType(String s) {
             int ewSpot = s.indexOf(':');
             int atSpot = s.indexOf('-');
@@ -1047,7 +1047,7 @@ public class ScenarioLoader {
             }
             int loc = Integer.parseInt(s.substring(0, ewSpot));
             int slot = Integer.parseInt(s.substring(ewSpot + 1, atSpot));
-            
+
             ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(atSpot + 1)));
         }
     }
@@ -1101,26 +1101,26 @@ public class ScenarioLoader {
             int setTo = Integer.parseInt(s.substring(ewSpot + 1));
             boolean rear = (s.charAt(0) == 'R');
             boolean internal = (s.charAt(0) == 'I');
-            
+
             specificDammage.add(new SpecDam(loc, setTo, rear, internal));
         }
     }
-    
+
     private static class ScenarioLoaderException extends Exception {
         private static final long serialVersionUID = 8622648319531348199L;
-        
+
         private final Object[] params;
 
         public ScenarioLoaderException(String errorKey) {
             super(errorKey);
             this.params = null;
         }
-        
+
         public ScenarioLoaderException(String errorKey, Object ... params) {
             super(errorKey);
             this.params = params;
         }
-        
+
         @Override
         public String getMessage() {
             String result = Messages.getString("ScenarioLoaderException." + super.getMessage()); //$NON-NLS-1$
@@ -1134,7 +1134,7 @@ public class ScenarioLoader {
             return result;
         }
     }
-    
+
     private static class StringMultiMap extends HashMap<String, Collection<String>> {
         private static final long serialVersionUID = 2171662843329151622L;
 
@@ -1156,7 +1156,7 @@ public class ScenarioLoader {
             if(null == values || values.size() == 0) {
                 return null;
             }
-            
+
             boolean firstElement = true;
             StringBuilder sb = new StringBuilder();
             for(String val : values) {
@@ -1169,7 +1169,7 @@ public class ScenarioLoader {
             }
             return sb.toString();
         }
-        
+
         /** @return the number of values for this key in the file */
         public int getNumValues(String key) {
             Collection<String> values = get(key);

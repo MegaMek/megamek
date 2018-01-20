@@ -34,7 +34,7 @@ import megamek.common.actions.WeaponAttackAction;
  */
 class AttackSprite extends Sprite {
     /**
-     * 
+     *
      */
     private final BoardView1 boardView1;
 

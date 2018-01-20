@@ -87,7 +87,7 @@ public final class ASFBay extends Bay {
         if (getRecoverySlots() < 1) {
             result = false;
         }
-        
+
         // Return our result.
         return result;
     }
@@ -203,7 +203,7 @@ public final class ASFBay extends Bay {
             }
         }
     }
-    
+
     // destroy a door for next turn
     @Override
     public void destroyDoorNext() {
@@ -261,7 +261,7 @@ public final class ASFBay extends Bay {
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     public TechAdvancement getTechAdvancement() {
         return ASFBay.techAdvancement();
     }

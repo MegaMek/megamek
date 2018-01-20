@@ -21,19 +21,19 @@ package megamek.client.ratgenerator;
  * The availability rating is actually twice the exponent, which allows more precision
  * while still storing values as integers (so it's really a base-(sqrt(2)) scale, but using
  * 2 as the base should theoretically be faster).
- * 
+ *
  * These values are stored separately for chassis and models; for example, there is
  * one value to indicate the likelihood that a medium Mek is a Phoenix Hawk and another
  * set of values to indicate the likelihood that a give Phoenix Hawk is a 1D or 1K, etc.
  *
  * @author Neoancient
- * 
+ *
  */
 
 public class AvailabilityRating {
 	//Used to calculate av rating from weight.
 	public static final double LOG_BASE = Math.log(2);
-	
+
 	String faction = "General";
 	int availability = 0;
 	String ratings = null;
@@ -41,9 +41,9 @@ public class AvailabilityRating {
 	int era;
 	int startYear;
 	String unitName = null;
-	
+
 	/**
-	 * 
+	 *
 	 * @param unit The chassis or model key
 	 * @param year The year that this availability code applies to.
 	 * @param code A string with the format FKEY[!RATING]:AV[+/-][:YEAR]
@@ -71,7 +71,7 @@ public class AvailabilityRating {
 			fields[0] = subfields[0];
 		}
 		faction = fields[0];
-		
+
 		if (fields.length < 2) {
 			System.err.println("No availability code given for " + unit +
 					" (" + era + "): " + faction);
@@ -106,7 +106,7 @@ public class AvailabilityRating {
 	public int getAvailability() {
 		return availability;
 	}
-	
+
 	public int adjustForRating(int rating, int numLevels) {
 		if (rating < 0 || ratingAdjustment == 0) {
 			return availability;
@@ -144,11 +144,11 @@ public class AvailabilityRating {
 	public void setEra(int era) {
 		this.era = era;
 	}
-	
+
 	public int getStartYear() {
 		return startYear;
 	}
-	
+
 	public void setStartYear(int year) {
 		startYear = year;
 	}
@@ -160,7 +160,7 @@ public class AvailabilityRating {
 	public void setUnitName(String unitName) {
 		this.unitName = unitName;
 	}
-	
+
 	public String getFactionCode() {
 		String retVal = faction;
 		if (ratings != null && ratings.length() > 0) {
@@ -168,7 +168,7 @@ public class AvailabilityRating {
 		}
 		return retVal;
 	}
-	
+
 	public String getAvailabilityCode() {
 		if (ratingAdjustment == 0) {
 			return Integer.toString(availability);
@@ -178,7 +178,7 @@ public class AvailabilityRating {
 			return availability + "+";
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		if (era != startYear) {
@@ -187,7 +187,7 @@ public class AvailabilityRating {
 		}
 		return getFactionCode() + ":" + getAvailabilityCode();
 	}
-	
+
 	public AvailabilityRating makeCopy(String newFaction) {
 		return new AvailabilityRating(unitName, era, newFaction + ":" + getAvailabilityCode());
 	}
@@ -195,11 +195,11 @@ public class AvailabilityRating {
 	public double getWeight() {
 		return calcWeight(availability);
 	}
-	
+
 	static double calcWeight(double avRating) {
 		return Math.pow(2, avRating / 2.0);
 	}
-	
+
 	static double calcAvRating(double weight) {
 		return 2.0 * Math.log(weight) / LOG_BASE;
 	}

@@ -54,5 +54,3 @@ public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
             .setProductionFactions(F_CHH);
     }
 }
-
-

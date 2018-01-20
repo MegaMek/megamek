@@ -100,8 +100,8 @@ public final class LiquidCargoBay extends Bay {
     public String toString() {
         return "liquidcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
-    
-    
+
+
     @Override
     public boolean isCargo() {
         return true;

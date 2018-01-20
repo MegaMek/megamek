@@ -16,13 +16,13 @@ package megamek.common.util.generator;
 public interface ElevationGenerator {
     /** @return translatable string for the generator name */
     String getName();
-    
+
     /** @return translatable string for the tooltip / description */
     String getTooltip();
-    
+
     /**
      * Generate a map of given width and height and put it into the supplied elevation map
-     * 
+     *
      * @param hilliness 1-100
      * @param width width of the map, in hexes
      * @param height height of the map, in hexes

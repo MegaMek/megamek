@@ -29,8 +29,8 @@ public class SupportTank extends Tank {
     private static final long serialVersionUID = -9028127010133768714L;
     private int[] barRating;
     private double fuelTonnage = 0;
-    
-    public final static double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66}; 
+
+    public final static double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66};
 
     public SupportTank() {
         super();
@@ -82,7 +82,7 @@ public class SupportTank extends Tank {
         }
         return false;
     }
-    
+
     private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
             .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
@@ -196,7 +196,7 @@ public class SupportTank extends Tank {
             case TRACKED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
+                                && !hex.containsTerrain(Terrains.ICE)
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.MAGMA) > 1)
@@ -206,7 +206,7 @@ public class SupportTank extends Tank {
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.ROUGH)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
+                                && !hex.containsTerrain(Terrains.ICE)
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.RUBBLE)
                         || hex.containsTerrain(Terrains.MAGMA)
@@ -247,7 +247,7 @@ public class SupportTank extends Tank {
     }
 
 
-    
+
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information
     public double getBaseChassisValue() {
@@ -393,8 +393,8 @@ public class SupportTank extends Tank {
     //ADD HEAT SINKS TM 133
     //ADD ARMOR
     //ADD WEAPONS AMMO and EQUIPMENT
-      
-        
+
+
     @Override
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
@@ -403,8 +403,8 @@ public class SupportTank extends Tank {
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
     }
-    
-    
+
+
     //START OF BATTLEFORCE STUFF.
     @Override
     public int getBattleForceSize() {
@@ -486,7 +486,7 @@ public class SupportTank extends Tank {
             return super.getBattleForceStructurePoints();
         }
     }
-    
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
@@ -502,7 +502,7 @@ public class SupportTank extends Tank {
             break;
         }
     }
-    
+
     public boolean isSupportVehicle() {
         return true;
     }

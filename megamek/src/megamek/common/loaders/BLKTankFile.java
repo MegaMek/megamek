@@ -183,7 +183,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
             }
         }
-        
+
         t.autoSetInternal();
         t.recalculateTechAdvancement();
 

@@ -55,7 +55,7 @@ public abstract class FlamerWeapon extends EnergyWeapon {
         }
         return new FlamerHandler(toHit, waa, game, server);
     }
-    
+
     @Override
     public int getBattleForceHeatDamage(int range) {
         //Clan ER Flamer does damage at medium

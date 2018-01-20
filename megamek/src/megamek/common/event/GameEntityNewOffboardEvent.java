@@ -20,7 +20,7 @@ package megamek.common.event;
 public class GameEntityNewOffboardEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8497680533582651572L;
 
@@ -33,7 +33,7 @@ public class GameEntityNewOffboardEvent extends GameEvent {
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gameEntityNewOffboard(this);    
+        gl.gameEntityNewOffboard(this);
     }
 
     @Override

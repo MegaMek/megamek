@@ -12,7 +12,7 @@ Provide the rulebook, page number, and text if you feel like this is a rules iss
 And provide the steps you have taken to reproduce the issue in the saved game if applicable.
 
 ### Files
-Provide a saved game of when the issue was found.  If possible try to save the game during the phase before the issue occurs so the 
+Provide a saved game of when the issue was found.  If possible try to save the game during the phase before the issue occurs so the
 developers can step through the code and find exactly what it is that is breaking in the code.
 Provide the megameklog.txt file for any NPE's or errors that MegaMek might be reporting.
 Do not paste the entire logfile text into this ticket. Just attach the actual megameklog.txt file

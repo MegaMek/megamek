@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.common;
 
@@ -28,7 +28,7 @@ public enum BattleForceSPA {
     //AlphaStrike only
     CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN,
     ;
-    
+
     static EnumMap<BattleForceSPA,BattleForceSPA> transportBayDoors;
     static {
         transportBayDoors = new EnumMap<>(BattleForceSPA.class);
@@ -41,19 +41,19 @@ public enum BattleForceSPA {
         transportBayDoors.put(VTH, VTHxD);
         transportBayDoors.put(VTS, VTSxD);
     }
-    
+
     public boolean usedByBattleForce() {
         return ordinal() < CRW.ordinal();
     }
-    
+
     public boolean usedByAlphaStrike() {
         return ordinal() < ATAC.ordinal() || ordinal() >= CRW.ordinal();
     }
-    
+
     public boolean isDoor() {
         return name().endsWith("xD");
     }
-    
+
     public BattleForceSPA getDoor() {
         return transportBayDoors.get(this);
     }

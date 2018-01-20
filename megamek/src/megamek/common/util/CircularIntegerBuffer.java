@@ -27,7 +27,7 @@ public class CircularIntegerBuffer {
 
     /**
      * Creates the new buffer
-     * 
+     *
      * @param size required size
      */
     public CircularIntegerBuffer(int size) {
@@ -37,7 +37,7 @@ public class CircularIntegerBuffer {
 
     /**
      * Returns the length of this buffer
-     * 
+     *
      * @return length of this buffer
      */
     public int length() {
@@ -54,7 +54,7 @@ public class CircularIntegerBuffer {
 
     /**
      * Adds new value
-     * 
+     *
      * @param value value to add
      */
     public void push(int value) {

@@ -87,7 +87,7 @@ public class PlayerListDialog extends JDialog implements ActionListener {
         setVisible(false);
     }
 
-    public static void refreshPlayerList(JList<String> playerList, 
+    public static void refreshPlayerList(JList<String> playerList,
             Client client) {
         refreshPlayerList(playerList, client, false);
     }

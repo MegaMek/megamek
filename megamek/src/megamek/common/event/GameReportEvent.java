@@ -21,14 +21,14 @@ package megamek.common.event;
 public class GameReportEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -986977282796844524L;
     private String report;
 
     /**
      * Create a new Report event.
-     * 
+     *
      * @param source the Object that generated this report
      * @param s a String of the report
      */
@@ -39,7 +39,7 @@ public class GameReportEvent extends GameEvent {
 
     /**
      * Get the text of the report associated with this event.
-     * 
+     *
      * @return a String of the report
      */
     public String getReport() {

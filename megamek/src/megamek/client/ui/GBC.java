@@ -194,4 +194,3 @@ public class GBC extends GridBagConstraints {
         return this;
     }
 }
-

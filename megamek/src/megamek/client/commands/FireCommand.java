@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -55,7 +55,7 @@ public class FireCommand extends ClientCommand {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.client.commands.ClientCommand#run(java.lang.String[])
      */
     @Override
@@ -233,7 +233,7 @@ public class FireCommand extends ClientCommand {
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                    && (ammoType.getAmmoType() == AmmoType.T_LRM 
+                    && (ammoType.getAmmoType() == AmmoType.T_LRM
                     || ammoType.getAmmoType() == AmmoType.T_MML
                     || ammoType.getAmmoType() == AmmoType.T_LRM_IMP))
                     || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
@@ -295,7 +295,7 @@ public class FireCommand extends ClientCommand {
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING 
+            } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING
                         && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");

@@ -1,8 +1,8 @@
 /**
  * Tests for the class {@link BoardDimensions}
- * 
+ *
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License,
  * version 2, as published by the Free Software Foundation.
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, it is available online at:
- *   http://www.gnu.org/licenses/gpl-2.0.html 
+ *   http://www.gnu.org/licenses/gpl-2.0.html
  */
 package megamek.common;
 

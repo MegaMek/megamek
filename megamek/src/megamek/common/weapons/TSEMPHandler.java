@@ -39,12 +39,12 @@ import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.Server;
 
 /**
- * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, 
+ * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon,
  * which is found in FM:3145 pg 255.
- * 
+ *
  * @author arlith
  *
- */ 
+ */
 public class TSEMPHandler extends EnergyWeaponHandler {
     /**
      *
@@ -63,14 +63,14 @@ public class TSEMPHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         return 0;
     }
-    
+
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
@@ -87,9 +87,9 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        
+
         // Increment the TSEMP hit counter
         entityTarget.addTsempHitThisTurn();
 
@@ -102,7 +102,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         vPhaseReport.add(r);
 
         // TSEMP has no effect against infantry
-        if ((entityTarget instanceof Infantry) 
+        if ((entityTarget instanceof Infantry)
                 && !(entityTarget instanceof BattleArmor)){
             // No Effect
             r = new Report(7415);
@@ -111,7 +111,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             vPhaseReport.add(r);
             return;
         }
-        
+
         // Determine roll modifiers
         int tsempModifiers = 0;
         if (entityTarget.getWeight() >= 200){
@@ -124,22 +124,22 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         } else if (entityTarget.getWeight() >= 100){
             tsempModifiers -= 2;
         }
-        
+
         if (entityTarget.getEngine() != null &&
-                entityTarget.getEngine().getEngineType() == 
+                entityTarget.getEngine().getEngineType() ==
                     Engine.COMBUSTION_ENGINE){
             tsempModifiers -= 1;
         } else if (entityTarget.getEngine() != null &&
-                entityTarget.getEngine().getEngineType() == 
+                entityTarget.getEngine().getEngineType() ==
                 Engine.STEAM){
             tsempModifiers -= 2;
         }
-        
+
         tsempModifiers += Math.min(4, entityTarget.getTsempHitsThisTurn() - 1);
-        // Multiple hits add a +1 for each hit after the first, 
-        //  up to a max of 4                   
+        // Multiple hits add a +1 for each hit after the first,
+        //  up to a max of 4
         int tsempRoll = Math.max(2, Compute.d6(2) + tsempModifiers);
-        
+
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
         int interferenceTarget = 13;
@@ -150,7 +150,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             } else {
                 interferenceTarget = 7;
                 shutdownTarget = 9;
-            }            
+            }
         } else if (entityTarget instanceof SupportTank){
             interferenceTarget = 5;
             shutdownTarget = 7;
@@ -191,7 +191,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         Report baShutdownReport = null;
         if (tsempRoll >= shutdownTarget){
             entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
-            tsempEffect = 
+            tsempEffect =
                     "<font color='C00000'><b>Shutdown!</b></font>";
             if (entityTarget instanceof BattleArmor){
                 baShutdownReport = new Report(3706);
@@ -201,7 +201,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
                 // TODO: fix for salvage purposes
                 entityTarget.destroyLocation(hit.getLocation());
                 // Check to see if the squad has been eliminated
-                if (entityTarget.getTransferLocation(hit).getLocation() == 
+                if (entityTarget.getTransferLocation(hit).getLocation() ==
                         Entity.LOC_DESTROYED) {
                     vPhaseReport.addAll(server.destroyEntity(entityTarget,
                             "all troopers eliminated", false));
@@ -221,7 +221,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             tsempEffect = "No Effect!";
         }
         r.add(tsempEffect);
-        vPhaseReport.add(r); 
+        vPhaseReport.add(r);
         if (baShutdownReport != null){
             vPhaseReport.add(baShutdownReport);
         }

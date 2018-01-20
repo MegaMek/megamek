@@ -72,7 +72,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
-        
+
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class GameOptions extends AbstractOptions {
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); //$NON-NLS-1$
-           
+
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, false); //$NON-NLS-1$
@@ -144,7 +144,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false); //$NON-NLS-1$\
         addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); //$NON-NLS-1$
-        
+
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false); // $NON-NLS-1$
@@ -208,7 +208,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false); // $NON-NLS-1$
-    
+
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL, false); //$NON-NLS-1$
@@ -290,7 +290,7 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false); //$NON-NLS-1$
         addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false); //$NON-NLS-1$
         addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); //$NON-NLS-1$
-        
+
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
         addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.EDGE, false); //$NON-NLS-1$
@@ -318,10 +318,10 @@ public class GameOptions extends AbstractOptions {
         if (!file.exists()) {
             return changedOptions;
         }
-        
+
         try {
             JAXBContext jc = JAXBContext.newInstance(GameOptionsXML.class, Option.class, BasicOption.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             GameOptionsXML opts = (GameOptionsXML) um.unmarshal(file);
 
@@ -404,16 +404,16 @@ public class GameOptions extends AbstractOptions {
     public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
             JAXBContext jc = JAXBContext.newInstance(GameOptionsXML.class, Option.class, BasicOption.class);
-            
+
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            
+
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            
+
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
-            
+
             marshaller.marshal(element, new File(file));
         } catch (JAXBException ex) {
             System.err.println("Error writing XML for game options: " + ex.getMessage()); //$NON-NLS-1$
@@ -443,7 +443,7 @@ public class GameOptions extends AbstractOptions {
             return instance;
         }
     }
-    
+
     /**
      * A helper class for the XML binding.
      */
@@ -453,11 +453,11 @@ public class GameOptions extends AbstractOptions {
 
         @XmlElement(name = "gameoption", type = BasicOption.class)
         private Vector<IBasicOption> options;
-        
+
         GameOptionsXML(final Vector<IBasicOption> options) {
             this.options = options;
         }
-        
+
         /**
          * Required for JAXB.
          */

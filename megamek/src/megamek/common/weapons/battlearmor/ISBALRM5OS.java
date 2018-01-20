@@ -57,6 +57,3 @@ public class ISBALRM5OS extends LRMWeapon {
         .setProductionFactions(F_FS);
     }
 }
-
-
-

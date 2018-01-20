@@ -31,7 +31,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
      */
     public CLImprovedSRM2() {
         super();
- 
+
         name = "Improved SRM 2";
         setInternalName(name);
         addLookupName("CLImprovedSRM2");

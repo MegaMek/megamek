@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 /**
  * This enum is a collection of commands that can be bound to a particular key.
- * 
+ *
  * @author arlith
  *
  */
@@ -86,20 +86,20 @@ public enum KeyCommandBind {
      * The command associated with this binding.
      */
     public String cmd;
-    
+
     /**
      * Defines the keycode for the command. This should correspond to defines in
      * <code>KeyEvent</code>.
      */
     public int key;
-    
+
     /**
-     * Defines any modifiers to the key code, such as whether control or alt 
-     * are pressed.  This should correspond to the modifiers defined in 
+     * Defines any modifiers to the key code, such as whether control or alt
+     * are pressed.  This should correspond to the modifiers defined in
      * <code>KeyEvent</code>.
      */
     public int modifiers;
-    
+
     /**
      * Defines if an action is exclusive, which means that only one
      * CommandAction will be performed for each key press.  The CommandAction
@@ -109,18 +109,18 @@ public enum KeyCommandBind {
 
     /**
      * A flag that determines whether this binding is repeatable.  If a bind is
-     * repeatable then when the key is pressed the action will be added to a 
+     * repeatable then when the key is pressed the action will be added to a
      * timer and will be repeated until the key is released.
      */
     public boolean isRepeatable;
-    
+
     private KeyCommandBind(String c, boolean r, int k, int m){
         cmd = c;
         key = k;
         modifiers = m;
         isRepeatable = r;
     }
-    
+
     private KeyCommandBind(String c, boolean r, int k, int m, boolean e){
         cmd = c;
         key = k;
@@ -138,7 +138,7 @@ public enum KeyCommandBind {
         }
         return binds;
     }
-    
+
     public static KeyCommandBind getBindByCmd(String cmd){
         for (KeyCommandBind bind : values()){
             if (bind.cmd.equals(cmd)){
@@ -147,5 +147,5 @@ public enum KeyCommandBind {
         }
         return null;
     }
-    
+
 }

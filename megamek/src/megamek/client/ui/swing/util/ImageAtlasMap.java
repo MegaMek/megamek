@@ -32,7 +32,7 @@ import megamek.common.Configuration;
 /**
  * Class to encapsulate a map that maps old image paths to the subsequent location in an image atlas.  This allows us
  * to keep the old mechsets while still packaging the images into an atlas.
- * 
+ *
  * There's a potential cross-platform path issue as the Java <code>File</code> class uses the current system's file
  * system to do file comparisons.  If we write windows-style path strings to a file and read that in with UNIX, it can
  * cause comparisons to fail.  Because of this, the internal map is stored with filepaths represented as strings, but
@@ -91,7 +91,7 @@ public class ImageAtlasMap {
     }
 
     /**
-     * 
+     *
      * @param key
      * @return
      */
@@ -100,7 +100,7 @@ public class ImageAtlasMap {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public boolean writeToFile() {
@@ -116,7 +116,7 @@ public class ImageAtlasMap {
     }
 
     /**
-     * 
+     *
      * @return
      */
     @SuppressWarnings("unchecked")

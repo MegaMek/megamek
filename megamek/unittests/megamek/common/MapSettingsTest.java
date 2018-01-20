@@ -35,19 +35,19 @@ public class MapSettingsTest {
 
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
-    
+
     @Test
     public void testSaveAndLoad() throws UnsupportedEncodingException, IOException {
         File f = tmpFolder.newFile("test-map-settings.xml");
         OutputStream os = new FileOutputStream(f);
-        
+
         MapSettings testMe = MapSettings.getInstance();
         testMe.setBoardSize(32, 34);
         testMe.save(os);
-        
+
         assertTrue(f.exists());
         assertTrue(f.length() > 0);
-        
+
         InputStream is = new FileInputStream(f);
         testMe = MapSettings.getInstance(is);
 

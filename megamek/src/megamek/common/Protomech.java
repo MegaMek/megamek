@@ -112,7 +112,7 @@ public class Protomech extends Entity {
     private int grappled_id = Entity.NONE;
 
     private boolean isGrappleAttacker = false;
-    
+
     private boolean grappledThisRound = false;
 
     private boolean edpCharged = true;
@@ -335,7 +335,7 @@ public class Protomech extends Entity {
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         return roll;
     }
-    
+
     /**
      * Returns the number of total critical slots in a location
      */
@@ -354,7 +354,7 @@ public class Protomech extends Entity {
         }
         return 0;
     }
-    
+
     private static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
             .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
@@ -413,9 +413,9 @@ public class Protomech extends Entity {
             }
         }
         setSecondaryFacing(getFacing());
-        
+
         grappledThisRound = false;
-        
+
         super.newRound(roundNumber);
 
     } // End public void newRound()
@@ -1171,7 +1171,7 @@ public class Protomech extends Entity {
         if (useManualBV) {
             return manualBV;
         }
-        
+
         bvText = new StringBuffer(
                 "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
@@ -1184,13 +1184,13 @@ public class Protomech extends Entity {
         bvText.append("<b>Defensive Battle Rating Calculation:</b>");
         bvText.append(nl);
         bvText.append(startTable);
-        
+
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
         // total armor points
         dbv += getTotalArmor() * 2.5;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total Armor (" + getTotalArmor() +") x 2.5");
@@ -1202,7 +1202,7 @@ public class Protomech extends Entity {
 
         // total internal structure
         dbv += getTotalInternal() * 1.5;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total I.S. Points (" + getTotalInternal() +") x 1.5");
@@ -1251,7 +1251,7 @@ public class Protomech extends Entity {
             dEquipmentBV += Math.min(amsBV, amsAmmoBV);
         }
         dbv += dEquipmentBV;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total Equipment BV");
@@ -1260,7 +1260,7 @@ public class Protomech extends Entity {
         bvText.append(dEquipmentBV);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1287,7 +1287,7 @@ public class Protomech extends Entity {
         if (isGlider) {
             tmmRan++;
         }
-        
+
         final int jumpMP = getJumpMP(false);
         final int tmmJumped = (jumpMP > 0) ? Compute.
                 getTargetMovementModifier(jumpMP, true, false, game).getValue()
@@ -1303,7 +1303,7 @@ public class Protomech extends Entity {
         // Round to 4 decimal places, just to cut off some numeric error
         tmmFactor = Math.round(tmmFactor * 1000) / 1000.0;
         dbv *= tmmFactor;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Target Movement Modifer For Run");
@@ -1314,7 +1314,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Target Movement Modifer For Jumping");
@@ -1325,7 +1325,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Target Movement Modifer For UMUs");
@@ -1336,7 +1336,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Multiply by Defensive Movement Factor of ");
@@ -1375,7 +1375,7 @@ public class Protomech extends Entity {
 
         bvText.append(startRow);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("<b>Offensive Battle Rating Calculation:</b>");
@@ -1385,7 +1385,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         double weaponBV = 0;
 
         // figure out base weapon bv
@@ -1395,7 +1395,7 @@ public class Protomech extends Entity {
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
-            
+
             String name = wtype.getName();
 
             // don't count destroyed equipment
@@ -1443,7 +1443,7 @@ public class Protomech extends Entity {
                 name = name.concat(" with Targeting Computer");
             }
             weaponBV += dBV;
-            
+
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append(name);
@@ -1454,7 +1454,7 @@ public class Protomech extends Entity {
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append(endRow);
-            
+
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
             if (!(wtype.hasFlag(WeaponType.F_ENERGY)
@@ -1470,7 +1470,7 @@ public class Protomech extends Entity {
                 }
             }
         }
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1480,7 +1480,7 @@ public class Protomech extends Entity {
         bvText.append("-------------");
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total Weapons BV");
@@ -1565,7 +1565,7 @@ public class Protomech extends Entity {
             }
         }
         weaponBV += ammoBV;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total Ammo BV");
@@ -1599,7 +1599,7 @@ public class Protomech extends Entity {
                 continue;
             }
             oEquipmentBV += mtype.getBV(this);
-            
+
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append(mtype.getName());
@@ -1614,7 +1614,7 @@ public class Protomech extends Entity {
         }
 
         weaponBV += oEquipmentBV;
-        
+
         if (hasMiscEq) {
             bvText.append(startRow);
             bvText.append(startColumn);
@@ -1626,7 +1626,7 @@ public class Protomech extends Entity {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total Equipment BV");
@@ -1645,7 +1645,7 @@ public class Protomech extends Entity {
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1655,7 +1655,7 @@ public class Protomech extends Entity {
         bvText.append("-------------");
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1665,7 +1665,7 @@ public class Protomech extends Entity {
         bvText.append(weaponBV);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Multiply by Speed Factor of ");
@@ -1688,7 +1688,7 @@ public class Protomech extends Entity {
         bvText.append("-------------");
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append("Offensive Battle Value");
         bvText.append(endColumn);
         bvText.append(startColumn);
@@ -1701,7 +1701,7 @@ public class Protomech extends Entity {
 
         bvText.append(startRow);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("<b>Extra Battle Rating Calculation:</b>");
@@ -1711,12 +1711,12 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Tag BV");
@@ -1727,7 +1727,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1737,7 +1737,7 @@ public class Protomech extends Entity {
         bvText.append("-------------");
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append("Extra Battle Value");
         bvText.append(endColumn);
         bvText.append(startColumn);
@@ -1750,7 +1750,7 @@ public class Protomech extends Entity {
 
         bvText.append(startRow);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("<b>Final BV Calculation:</b>");
@@ -1760,7 +1760,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Deffensive BV");
@@ -1771,7 +1771,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Offensive BV");
@@ -1782,7 +1782,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Extra BV");
@@ -1793,7 +1793,7 @@ public class Protomech extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1803,14 +1803,14 @@ public class Protomech extends Entity {
         bvText.append("-------------");
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         int finalBV;
         if (useGeometricMeanBV()) {
             finalBV = (int)Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
             if (finalBV == 0) {
                 finalBV = (int)Math.round(dbv + obv);
             }
-            
+
             bvText.append("Geometric Mean (2Sqrt(O*D) + X");
             bvText.append(endColumn);
             bvText.append(startColumn);
@@ -1828,7 +1828,7 @@ public class Protomech extends Entity {
             bvText.append("= ");
             bvText.append(finalBV);
         }
-        
+
         bvText.append(endColumn);
         bvText.append(endRow);
 
@@ -1837,7 +1837,7 @@ public class Protomech extends Entity {
         if (!ignorePilot) {
             pilotFactor = getCrew().getBVSkillMultiplier(game);
         }
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Multiply by Pilot Factor of ");
@@ -1850,7 +1850,7 @@ public class Protomech extends Entity {
         bvText.append(pilotFactor);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1862,7 +1862,7 @@ public class Protomech extends Entity {
         bvText.append(endRow);
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
-        
+
         bvText.append("<b>Final Battle Value</b>");
         bvText.append(endColumn);
         bvText.append(startColumn);
@@ -1872,7 +1872,7 @@ public class Protomech extends Entity {
         bvText.append(retVal);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(endTable);
         return retVal;
     }
@@ -2166,11 +2166,11 @@ public class Protomech extends Entity {
     public int getGrappled() {
         return grappled_id;
     }
-    
+
     public boolean isGrappledThisRound() {
         return grappledThisRound;
     }
-    
+
     public void setGrappledThisRound(boolean grappled) {
         grappledThisRound = grappled;
     }
@@ -2256,7 +2256,7 @@ public class Protomech extends Entity {
             moves.put(getMovementModeAsBattleForceString(), baseWalk);
         }
     }
-    
+
     @Override
     /*
      * Each ProtoMech has 1 Structure point
@@ -2276,7 +2276,7 @@ public class Protomech extends Entity {
                 if (getWeight() < 10) {
                     specialAbilities.put(BattleForceSPA.MCS, null);
                 } else {
-                    specialAbilities.put(BattleForceSPA.UCS, null);                    
+                    specialAbilities.put(BattleForceSPA.UCS, null);
                 }
             }
         }
@@ -2285,7 +2285,7 @@ public class Protomech extends Entity {
             specialAbilities.put(BattleForceSPA.GLD, null);
         }
     }
-    
+
     @Override
     public int getEngineHits() {
         if(this.isEngineHit()) {
@@ -2293,11 +2293,11 @@ public class Protomech extends Entity {
         }
         return 0;
     }
-    
+
     public int getWingHits() {
         return wingHits;
     }
-    
+
     public void setWingHits(int hits) {
         wingHits = hits;
     }
@@ -2328,11 +2328,11 @@ public class Protomech extends Entity {
     public void setIsQuad(boolean isQuad) {
         this.isQuad = isQuad;
     }
-    
+
     public boolean isGlider() {
         return isGlider;
     }
-    
+
     public void setIsGlider(boolean isGlider) {
         this.isGlider = isGlider;
     }
@@ -2360,7 +2360,7 @@ public class Protomech extends Entity {
         }
         return true;
     }
-    
+
     @Override
     public boolean isCrippled(boolean checkCrew) {
         return isCrippled();
@@ -2451,12 +2451,12 @@ public class Protomech extends Entity {
     public long getEntityType(){
         return Entity.ETYPE_PROTOMECH;
     }
-    
+
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, IHex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE,
                          "Protomechs cannot fall");
         return roll;
-    }   
+    }
 }

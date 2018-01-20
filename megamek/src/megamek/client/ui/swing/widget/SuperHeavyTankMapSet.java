@@ -39,7 +39,7 @@ import megamek.common.util.MegaMekFile;
 public class SuperHeavyTankMapSet implements DisplayMapSet {
 
     private UnitDisplay unitDisplay;
-    
+
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
     private PMSimpleLabel[] labels = new PMSimpleLabel[16];

@@ -21,7 +21,7 @@ import java.awt.image.ColorModel;
  * Extension of java.awt.image.AreaAveragingScaleFilter. Uses the same algorithm
  * but makes sure all images are scaled using area averaging. Ensures there is
  * no fallback to ReplicateScaleFilter.
- * 
+ *
  * @author Ben Smith
  */
 public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {

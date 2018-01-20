@@ -38,7 +38,7 @@ public class CLSRM1OS extends SRMWeapon {
         extremeRange = 12;
         bv = 3;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "231,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

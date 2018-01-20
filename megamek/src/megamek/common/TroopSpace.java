@@ -38,7 +38,7 @@ public final class TroopSpace implements Transporter {
      * The troops being carried.
      */
     Map<Integer, Double> troops = new HashMap<>();
-    
+
     /**
      * The total amount of space available for troops.
      */
@@ -249,10 +249,10 @@ public final class TroopSpace implements Transporter {
     public void setGame(IGame game) {
         this.game = game;
     }
-    
+
     public void resetTransporter() {
         troops = new HashMap<>();
         currentSpace = totalSpace;
     }
-    
+
 } // End package class TroopSpace implements Transporter

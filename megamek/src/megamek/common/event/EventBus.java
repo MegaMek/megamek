@@ -21,17 +21,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class EventBus {
     private static final Object INSTANCE_LOCK = new Object[0];
-    
+
     private static EventBus instance;
     private static final EventSorter EVENT_SORTER = new EventSorter();
-    
+
     private final Object REGISTER_LOCK = new Object[0];
-    
+
     private ConcurrentHashMap<Object, List<EventListener>> handlerMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Class<? extends MMEvent>, List<EventListener>> eventMap = new ConcurrentHashMap<>();
     // There is no Java-supplied IdentityHashSet ...
     private Map<Object, Object> unregisterQueue = new IdentityHashMap<>();
-    
+
     public static EventBus getInstance() {
         synchronized(INSTANCE_LOCK) {
             if(null == instance) {
@@ -40,21 +40,21 @@ public final class EventBus {
         }
         return instance;
     }
-    
+
     public static void registerHandler(Object handler) {
         getInstance().register(handler);
     }
-    
+
     public static void unregisterHandler(Object handler) {
         getInstance().unregister(handler);
     }
-    
+
     public static boolean triggerEvent(MMEvent event) {
         return getInstance().trigger(event);
     }
-    
+
     public EventBus() {}
-    
+
     private List<Class<?>> getClasses(Class<?> leaf) {
         List<Class<?>> result = new ArrayList<>();
         while(null != leaf) {
@@ -63,13 +63,13 @@ public final class EventBus {
         }
         return result;
     }
-    
+
     @SuppressWarnings("unchecked")
     public void register(Object handler) {
         if(handlerMap.containsKey(handler)) {
             return;
         }
-        
+
         for(Method method : handler.getClass().getMethods()) {
             for(Class<?> cls : getClasses(handler.getClass())) {
                 try {
@@ -113,13 +113,13 @@ public final class EventBus {
             eventListeners.add(listener);
         }
     }
-    
+
     public void unregister(Object handler) {
         synchronized(REGISTER_LOCK) {
             unregisterQueue.put(handler, handler);
         }
     }
-    
+
     private void internalUnregister() {
         synchronized(REGISTER_LOCK) {
             for(Object handler : unregisterQueue.keySet()) {
@@ -136,7 +136,7 @@ public final class EventBus {
             unregisterQueue.clear();
         }
     }
-    
+
     /** @return true if the event was cancelled along the way */
     @SuppressWarnings("unchecked")
     public boolean trigger(MMEvent event) {
@@ -149,7 +149,7 @@ public final class EventBus {
         }
         return event.isCancellable() ? event.isCancelled() : false;
     }
-    
+
     private void internalTrigger(Class<? extends MMEvent> eventClass, MMEvent event) {
         List<EventListener> eventListeners = eventMap.get(eventClass);
         if(null != eventListeners) {
@@ -159,7 +159,7 @@ public final class EventBus {
             }
         }
     }
-    
+
     private static class EventSorter implements Comparator<EventListener> {
         @Override
         public int compare(EventListener el1, EventListener el2) {

@@ -70,11 +70,11 @@ public class HexTileset {
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> ortho = new ArrayList<HexEntry>();
     private Set<String> themes = new TreeSet<String>();
-    private ImageCache<IHex, Image> hexToImageCache = 
+    private ImageCache<IHex, Image> hexToImageCache =
         new ImageCache<IHex, Image>();
-    private ImageCache<IHex, List<Image>> hexToImageListCache = 
+    private ImageCache<IHex, List<Image>> hexToImageListCache =
         new ImageCache<IHex, List<Image>>();
-    private ImageCache<IHex, List<Image>> orthoListCache = 
+    private ImageCache<IHex, List<Image>> orthoListCache =
         new ImageCache<IHex, List<Image>>();
 
     /**
@@ -244,7 +244,7 @@ public class HexTileset {
     // all but theme
     // all but elevation
     // all but elevation & theme
-    
+
     /** Recursion depth counter to prevent freezing from circular includes*/
     public int incDepth = 0;
 
@@ -267,7 +267,7 @@ public class HexTileset {
             String theme = null;
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && (st.sval.equals("base") || st.sval.equals("super") || 
+                    && (st.sval.equals("base") || st.sval.equals("super") ||
                         st.sval.equals("ortho"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 boolean bas = st.sval.equals("base"); //$NON-NLS-1$
                 boolean sup = st.sval.equals("super"); //$NON-NLS-1$
@@ -300,7 +300,7 @@ public class HexTileset {
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD) &&
                     st.sval.equals("include")) {
-                st.nextToken(); 
+                st.nextToken();
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
@@ -316,13 +316,13 @@ public class HexTileset {
         long endTime = System.currentTimeMillis();
 
         System.out
-                .println("hexTileset: loaded " + bases.size() + 
+                .println("hexTileset: loaded " + bases.size() +
                         " base images"); //$NON-NLS-1$ //$NON-NLS-2$
         System.out
-                .println("hexTileset: loaded " + supers.size() + 
+                .println("hexTileset: loaded " + supers.size() +
                         " super images"); //$NON-NLS-1$ //$NON-NLS-2$
         System.out
-                .println("hexTileset: loaded " + ortho.size() + 
+                .println("hexTileset: loaded " + ortho.size() +
                         " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
         if (incDepth == 0) {
             System.out.println("hexTileset loaded in " + (endTime - startTime) + "ms.");
@@ -356,7 +356,7 @@ public class HexTileset {
             tracker.addImage(entry.getImage(), 1);
         }
     }
-    
+
     public Set<String> getThemes() {
         return new TreeSet<String>(themes);
     }
@@ -405,17 +405,17 @@ public class HexTileset {
                 && (org.getLevel() != com.getLevel())) {
             return 0;
         }
-        
+
         // A themed original matches any unthemed comparison.
         if ((com.getTheme() != null)
                 && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
             return 0.0;
         }
-        
+
         // org terrains must match com terrains
         if (org.terrainsPresent() < com.terrainsPresent())
             return 0.0;
-        
+
         // check terrain
         int cTerrainTypes[] = com.getTerrainTypes();
         for (int i = 0; i < cTerrainTypes.length; i++) {
@@ -449,17 +449,17 @@ public class HexTileset {
                 && (org.getLevel() != com.getLevel())) {
             return 0;
         }
-        
+
         // A themed original matches any unthemed comparison.
         if ((com.getTheme() != null)
                 && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
             return 0.0;
         }
-        
+
         // org terrains must match com terrains
         if (org.terrainsPresent() < com.terrainsPresent())
             return 0.0;
-       
+
         // check terrain
         int cTerrainTypes[] = com.getTerrainTypes();
         for (int i = 0; i < cTerrainTypes.length; i++) {
@@ -505,9 +505,9 @@ public class HexTileset {
         double maxTerrains = Math.max(org.terrainsPresent(),
                 com.terrainsPresent());
         double matches = 0.0;
-        
+
         int[] orgTerrains = org.getTerrainTypes();
-        
+
         for (int i = 0; i < orgTerrains.length; i++){
             int terrType = orgTerrains[i];
             ITerrain cTerr = com.getTerrain(terrType);

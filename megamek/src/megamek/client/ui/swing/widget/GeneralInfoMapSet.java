@@ -108,11 +108,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         pilotL = createLabel(
                 Messages.getString("GeneralInfoMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(pilotL);
-        
+
         pilotR = createLabel(
                 Messages.getString("GeneralInfoMapSet.playerR"), fm, pilotL.getSize().width + 10, getYCoord()); //$NON-NLS-1$
         content.addArea(pilotR);
-        
+
         playerL = createLabel(
                 Messages.getString("GeneralInfoMapSet.playerL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(playerL);
@@ -248,7 +248,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         content.addArea(visualRangeR);
 
         getNewYCoord(); // skip a line for readability
-        
+
         quirksAndPartReps = new PMMultiLineLabel(fm, Color.white);
         quirksAndPartReps.moveTo(0, getNewYCoord());
         content.addArea(quirksAndPartReps);
@@ -298,7 +298,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 teamR.setVisible(true);
             }
         }
-        
+
         if (en.getCrew() != null) {
             Crew c = en.getCrew();
             String pilotString = c.getDesc(c.getCurrentPilotIndex()) + " (";
@@ -345,12 +345,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             addOptionsToList(en.getQuirks(), quirksAndPartReps);
         }
-        
+
         if ((null != en.getGame())
                 && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) {
             // skip a line for readability
             quirksAndPartReps.addString("");
-                        
+
             addOptionsToList(en.getPartialRepairs(), quirksAndPartReps);
         }
 
@@ -570,7 +570,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {
                 quirksAndPartReps.addString(group.getDisplayableName());
-                
+
                 for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
                     IOption option = options.nextElement();
                     if (option != null && option.booleanValue()) {
@@ -580,7 +580,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             }
         }
     }
-    
+
     public PMAreasGroup getContentGroup() {
         return content;
     }

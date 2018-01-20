@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -57,13 +57,13 @@ import megamek.common.ToHitData;
  * <p>
  * Description:
  * </p>
- * 
+ *
  * @author Ken Nguyen (kenn)
  * @version 1.0
  */
 public class Ruler extends JDialog implements BoardViewListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4820402626782115601L;
     public static Color color1 = Color.cyan;
@@ -96,10 +96,10 @@ public class Ruler extends JDialog implements BoardViewListener {
     private JTextField height1 = new JTextField();
     private JLabel heightLabel2;
     private JTextField height2 = new JTextField();
-    
-    private JCheckBox cboIsMech1 = 
+
+    private JCheckBox cboIsMech1 =
         new JCheckBox(Messages.getString("Ruler.isMech"));
-    private JCheckBox cboIsMech2 = 
+    private JCheckBox cboIsMech2 =
         new JCheckBox(Messages.getString("Ruler.isMech"));
 
     public Ruler(JFrame f, Client c, IBoardView b) {
@@ -172,9 +172,9 @@ public class Ruler extends JDialog implements BoardViewListener {
             public void itemStateChanged(ItemEvent e) {
                 checkBoxSelectionChanged();
             }
-            
+
         });
-        
+
         heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT); //$NON-NLS-1$
         heightLabel2.setForeground(endColor);
         height2.setText("1"); //$NON-NLS-1$
@@ -190,9 +190,9 @@ public class Ruler extends JDialog implements BoardViewListener {
             public void itemStateChanged(ItemEvent e) {
                 checkBoxSelectionChanged();
             }
-            
+
         });
-        
+
         //need to set all the minimum sizes to prevent jtextfield going to zero size
         //on dialog resize.setColumns(16);
         tf_start.setMinimumSize(tf_start.getPreferredSize());
@@ -204,13 +204,13 @@ public class Ruler extends JDialog implements BoardViewListener {
         tf_los2.setMinimumSize(tf_los2.getPreferredSize());
 
         GridBagConstraints c = new GridBagConstraints();
-        
+
         c.anchor = GridBagConstraints.EAST;
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
         c.gridy = 0;
         gridBagLayout1.setConstraints(heightLabel1, c);
-        getContentPane().add(heightLabel1);  
+        getContentPane().add(heightLabel1);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         gridBagLayout1.setConstraints(height1, c);
@@ -223,20 +223,20 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridy = 1;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(heightLabel2, c);
-        getContentPane().add(heightLabel2);    
-        c.anchor = GridBagConstraints.WEST;   
+        getContentPane().add(heightLabel2);
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         gridBagLayout1.setConstraints(height2, c);
         getContentPane().add(height2);
         c.gridx = 2;
         gridBagLayout1.setConstraints(cboIsMech2, c);
         getContentPane().add(cboIsMech2);
-        
+
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel1, c);
-        getContentPane().add(jLabel1); 
+        getContentPane().add(jLabel1);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         c.gridwidth = 2;
@@ -248,10 +248,10 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridy = 3;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel2, c);
-        getContentPane().add(jLabel2); 
+        getContentPane().add(jLabel2);
         c.anchor = GridBagConstraints.WEST;
         c.gridwidth = 2;
-        c.gridx = 1;        
+        c.gridx = 1;
         gridBagLayout1.setConstraints(tf_end, c);
         c.gridwidth = 1;
         getContentPane().add(tf_end);
@@ -260,7 +260,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridy = 4;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel3, c);
-        getContentPane().add(jLabel3); 
+        getContentPane().add(jLabel3);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         gridBagLayout1.setConstraints(tf_distance, c);
@@ -271,7 +271,7 @@ public class Ruler extends JDialog implements BoardViewListener {
       //  c.weightx = 0.0;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel4, c);
-        getContentPane().add(jLabel4); 
+        getContentPane().add(jLabel4);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
        // c.weightx = 1.0;
@@ -286,7 +286,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel5, c);
-        getContentPane().add(jLabel5); 
+        getContentPane().add(jLabel5);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -416,7 +416,7 @@ public class Ruler extends JDialog implements BoardViewListener {
 
     /**
      * Ignores determining if the attack is on land or under water.
-     * 
+     *
      * @param c1
      * @param c2
      * @param h1
@@ -503,7 +503,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         setText();
         setVisible(true);
     }
-    
+
     void checkBoxSelectionChanged(){
         setText();
         setVisible(true);

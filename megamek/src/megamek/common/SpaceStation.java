@@ -27,13 +27,13 @@ public class SpaceStation extends Jumpship {
      *
      */
     private static final long serialVersionUID = -3160156173650960985L;
-    
-    
+
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
-    
-    
+
+
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -46,7 +46,7 @@ public class SpaceStation extends Jumpship {
     public void setASEWAffected(int arc, int turns) {
         asewAffectedTurns[arc] = turns;
     }
-    
+
     /*
      * Returns the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
@@ -56,12 +56,12 @@ public class SpaceStation extends Jumpship {
     public int getASEWAffected(int arc) {
         return asewAffectedTurns[arc];
     }
-    
+
     public SpaceStation() {
         super();
         setDriveCoreType(DRIVE_CORE_NONE);
     }
-    
+
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES)
             .setTechRating(RATING_D)

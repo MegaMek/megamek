@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.43.7-git
+v0.43.7 (2018-01-21 2200 UTC)
 + Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)
 + Issue #637: Infantry in swamp/mud terrain should not have a psr check (Bog Down)
 + Data: Fixing Validation Errors

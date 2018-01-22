@@ -817,6 +817,9 @@ public class BLKFile {
             if (ws.getDriveCoreType() == Warship.DRIVE_CORE_PRIMITIVE) {
                 blk.writeBlockData("jump_range", ws.getJumpRange());
             }
+        } else if ((t instanceof SpaceStation)
+                && ((SpaceStation) t).isModular()) {
+            blk.writeBlockData("modular", 1);
         }
         
         if (t instanceof Jumpship) {

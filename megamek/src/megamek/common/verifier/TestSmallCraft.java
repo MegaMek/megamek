@@ -222,7 +222,14 @@ public class TestSmallCraft extends TestAero {
      */
     public static double calculateEngineTonnage(boolean clan, double tonnage, 
             int desiredSafeThrust, boolean dropship, int year) {
-        double multiplier = clan? 0.061 : 0.065;
+        double multiplier;
+        if (clan) {
+            multiplier = 0.061;
+        } else if (dropship) {
+            multiplier = dropshipEngineMultiplier(year);
+        } else {
+            multiplier = smallCraftEngineMultiplier(year);
+        }
         return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALFTON);
     }
     
@@ -250,7 +257,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double SmallCraftEngineMultiplier(int year) {
+    public static double smallCraftEngineMultiplier(int year) {
         if (year >= 2500) {
             return 0.065;
         } else if (year >= 2400) {
@@ -268,7 +275,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double SmallCraftControlMultiplier(int year) {
+    public static double smallCraftControlMultiplier(int year) {
         if (year >= 2500) {
             return 0.0075;
         } else if (year >= 2400) {
@@ -286,7 +293,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double DropshipEngineMultiplier(int year) {
+    public static double dropshipEngineMultiplier(int year) {
         if (year >= 2500) {
             return 0.065;
         } else if (year >= 2400) {
@@ -304,7 +311,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double DropshipControlMultiplier(int year) {
+    public static double dropshipControlMultiplier(int year) {
         if (year >= 2500) {
             return 0.0075;
         } else if (year >= 2400) {
@@ -399,10 +406,10 @@ public class TestSmallCraft extends TestAero {
         // Small craft round up to the half ton and dropships to the full ton
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             return ceil(smallCraft.getWeight()
-                    * DropshipControlMultiplier(year), Ceil.TON);
+                    * dropshipControlMultiplier(year), Ceil.TON);
         } else {
             return ceil(smallCraft.getWeight()
-                    * SmallCraftControlMultiplier(year), Ceil.HALFTON);
+                    * smallCraftControlMultiplier(year), Ceil.HALFTON);
         }
     }
 

@@ -108,6 +108,14 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         }
         a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
+        if (dataFile.exists("officers")) {
+            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+        }
+
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+        }
+
         // Other Passengers
         if (!dataFile.exists("other_crew")) {
             //throw new EntityLoadingException("Could not find other_crew block.");

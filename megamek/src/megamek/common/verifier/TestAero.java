@@ -44,6 +44,7 @@ import megamek.common.ITechManager;
 import megamek.common.ITechnology;
 import megamek.common.InfantryBay;
 import megamek.common.InsulatedCargoBay;
+import megamek.common.Jumpship;
 import megamek.common.LightVehicleBay;
 import megamek.common.LiquidCargoBay;
 import megamek.common.LivestockCargoBay;
@@ -62,6 +63,7 @@ import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -563,7 +565,9 @@ public class TestAero extends TestEntity {
 
     public static int weightFreeHeatSinks(Aero aero) {
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return TestSmallCraft.weightFreeHeatSinks((SmallCraft)aero);
+            return TestSmallCraft.weightFreeHeatSinks((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.weightFreeHeatSinks((Jumpship) aero);
         } else if (aero.hasEngine()) {
             return aero.getEngine().getWeightFreeEngineHeatSinks();
         } else {
@@ -1406,6 +1410,9 @@ public class TestAero extends TestEntity {
         if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return 2500000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            if (((Jumpship) aero).getDriveCoreType() == Jumpship.DRIVE_CORE_SUBCOMPACT) {
+                return 25000;
+            }
             return 250000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (aero.isPrimitive()) {
@@ -1505,4 +1512,43 @@ public class TestAero extends TestEntity {
             return dropship.isSpheroid()? 50000 : 20000; 
         }
     }
+
+    /**
+     * @return Minimum crew requirements based on unit type and equipment crew requirements.
+     */
+    public static int minimumBaseCrew(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return TestSmallCraft.minimumBaseCrew((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.minimumBaseCrew((Jumpship) aero);
+        } else {
+            return 1;
+        }
+    }
+    
+    /**
+     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
+     * @return The vessel's minimum gunner requirements.
+     */
+    public static int requiredGunners(Aero aero) {
+        if (!aero.isLargeCraft() && !aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return 0;
+        }
+        int capitalWeapons = 0;
+        int stdWeapons = 0;
+        for (Mounted m : aero.getTotalWeaponList()) {
+            if ((m.getType() instanceof BayWeapon)
+                    || (((WeaponType)m.getType()).getLongRange() <= 1)) {
+                continue;
+            }
+            if (((WeaponType)m.getType()).isCapital()
+                    || (m.getType() instanceof ScreenLauncherWeapon)) {
+                capitalWeapons++;
+            } else {
+                stdWeapons++;
+            }
+        }
+        return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
+    }
+    
 }

@@ -188,11 +188,11 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static double[] extraSlotCost(Jumpship vessel) {
         int slotsPerArc = 12;
-        int arcs = 8;
+        int arcs = 6;
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            arcs = 8;
             slotsPerArc = 20;
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
-            arcs = 6;
             slotsPerArc = 20;
         }
         int weaponsPerArc[] = new int[arcs];
@@ -220,6 +220,36 @@ public class TestAdvancedAerospace extends TestAero {
             }
         }
         return retVal;
+    }
+    
+    public static int getMinTonnage(Jumpship vessel) {
+        switch (vessel.getDriveCoreType()) {
+            case Jumpship.DRIVE_CORE_COMPACT:
+                return 100000;
+            case Jumpship.DRIVE_CORE_SUBCOMPACT:
+                return 5000;
+            case Jumpship.DRIVE_CORE_NONE:
+                return 2000;
+            case Jumpship.DRIVE_CORE_STANDARD:
+            case Jumpship.DRIVE_CORE_PRIMITIVE:
+            default:
+                return 50000;
+        }
+    }
+    
+    public static int getWeightIncrement(Jumpship vessel) {
+        switch (vessel.getDriveCoreType()) {
+            case Jumpship.DRIVE_CORE_COMPACT:
+                return 10000;
+            case Jumpship.DRIVE_CORE_SUBCOMPACT:
+                return 100;
+            case Jumpship.DRIVE_CORE_NONE:
+                return 500;
+            case Jumpship.DRIVE_CORE_STANDARD:
+            case Jumpship.DRIVE_CORE_PRIMITIVE:
+            default:
+                return 1000;
+        }
     }
     
     /**

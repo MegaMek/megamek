@@ -150,6 +150,7 @@ public class SmallCraft extends Aero {
         escapePods = n;
     }
 
+    @Override
     public int getEscapePods() {
         return escapePods;
     }
@@ -158,6 +159,7 @@ public class SmallCraft extends Aero {
         lifeBoats = n;
     }
 
+    @Override
     public int getLifeBoats() {
         return lifeBoats;
     }

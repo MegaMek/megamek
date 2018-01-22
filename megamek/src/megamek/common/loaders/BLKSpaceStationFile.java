@@ -87,6 +87,14 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         }
         a.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
+        if (dataFile.exists("officers")) {
+            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+        }
+
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+        }
+
         // Marines
         if (!dataFile.exists("marines")) {
             //throw new EntityLoadingException("Could not find marines block.");

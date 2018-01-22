@@ -165,7 +165,7 @@ public class TestAdvancedAerospace extends TestAero {
      *   
      */
     public static double maxArmorWeight(Jumpship vessel){
-        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP) && !vessel.isPrimitive()) {
             // SI weight / 50
             return floor(vessel.get0SI() * vessel.getWeight() / 50000.0, Ceil.HALFTON);
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
@@ -229,10 +229,31 @@ public class TestAdvancedAerospace extends TestAero {
      * @return        The weight of the engine in tons
      */
     public static double calculateEngineTonnage(Jumpship vessel) {
-        if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+        if (vessel.isPrimitive()) {
+            return round(vessel.getWeight() * vessel.getOriginalWalkMP()
+                    * primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
+        } else if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
         } else {
             return round(vessel.getWeight() * 0.12, Ceil.HALFTON);
+        }
+    }
+    
+    /**
+     * @param year The original construction year of the jumpship chassis
+     * @return     The engine weight multiplier for the primitive jumpship.
+     */
+    public static double primitiveEngineMultiplier(int year) {
+        if (year >= 2300) {
+            return 0.06;
+        } else if (year >= 2251) {
+            return 0.066;
+        } else if (year >= 2201) {
+            return 0.084;
+        } else if (year >= 2151) {
+            return 0.102;
+        } else {
+            return 0.12;
         }
     }
     
@@ -241,7 +262,8 @@ public class TestAdvancedAerospace extends TestAero {
      * @return       The number of heat sinks that are accounted for in the engine weight.
      */
     public static int weightFreeHeatSinks(Jumpship vessel) {
-        return (int) Math.floor(45 + Math.sqrt(calculateEngineTonnage(vessel) * 2));
+        return (int) Math.floor(45 + Math.sqrt(calculateEngineTonnage(vessel)
+                * (vessel.isPrimitive()?  1 : 2)));
     }
     
     /**
@@ -329,13 +351,34 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public double getWeightControls() {
-        if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+        if (vessel.isPrimitive()) {
+            return ceil(vessel.getWeight()
+                    * primitiveControlMultiplier(vessel.getOriginalBuildYear()), Ceil.TON);
+        } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return ceil(vessel.getWeight() * 0.001, Ceil.TON);
         } else {
             return ceil(vessel.getWeight() * 0.0025, Ceil.TON);
         }
     }
 
+    /**
+     * @param year The original construction year of the jumpship chassis
+     * @return     The control weight multiplier for the primitive jumpship.
+     */
+    public static double primitiveControlMultiplier(int year) {
+        if (year >= 2300) {
+            return 0.0025;
+        } else if (year >= 2251) {
+            return 0.00275;
+        } else if (year >= 2201) {
+            return 0.0035;
+        } else if (year >= 2151) {
+            return 0.005;
+        } else {
+            return 0.00625;
+        }
+    }
+    
     @Override
     public double getWeightEngine() {
         return calculateEngineTonnage(vessel);
@@ -357,11 +400,23 @@ public class TestAdvancedAerospace extends TestAero {
     }
     
     public double getWeightSail() {
-        if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+        if (!vessel.hasSail()) {
             return 0;
+        }
+        if (vessel.isPrimitive()) {
+            if (vessel.getOriginalBuildYear() < 2230) {
+                return Math.ceil(vessel.getWeight() / 2000) + 300;
+            } else if (vessel.getOriginalBuildYear() < 2260) {
+                return Math.ceil(vessel.getWeight() / 4000) + 150;
+            } else if (vessel.getOriginalBuildYear() < 2300) {
+                return Math.ceil(vessel.getWeight() / 8000) + 75;
+            } else {
+                return Math.ceil(vessel.getWeight() / 20000) + 30;
+            }
         } else if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             return Math.ceil(vessel.getWeight() / 20000) + 30;
         } else {
+            // Space stations with energy collection sail use jumpship formula.
             return Math.ceil(vessel.getWeight() / 7500) + 30;
         }
     }

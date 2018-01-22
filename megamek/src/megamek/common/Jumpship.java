@@ -59,6 +59,7 @@ public class Jumpship extends Aero {
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
+    private boolean sail = true;
     private int driveCoreType = DRIVE_CORE_STANDARD;
     private int jumpRange = 30; // Primitive jumpships can have a reduced range
 
@@ -413,6 +414,20 @@ public class Jumpship extends Aero {
 
     public int getSailIntegrity() {
         return sail_integrity;
+    }
+    
+    /**
+     * @return Whether this ship has a jump sail (optional on space stations and primitive jumpships)
+     */
+    public boolean hasSail() {
+        return sail;
+    }
+    
+    /**
+     * @param sail Whether this ship has an energy collection sail
+     */
+    public void setSail(boolean sail) {
+        this.sail = sail;
     }
 
     public void initializeSailIntegrity() {
@@ -1524,6 +1539,11 @@ public class Jumpship extends Aero {
     @Override
     public boolean isFighter() {
         return false;
+    }
+    
+    @Override
+    public boolean isPrimitive() {
+        return getDriveCoreType() == DRIVE_CORE_PRIMITIVE;
     }
 
     @Override

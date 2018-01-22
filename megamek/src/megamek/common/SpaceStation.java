@@ -60,6 +60,7 @@ public class SpaceStation extends Jumpship {
     public SpaceStation() {
         super();
         setDriveCoreType(DRIVE_CORE_NONE);
+        setSail(false);
     }
     
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)

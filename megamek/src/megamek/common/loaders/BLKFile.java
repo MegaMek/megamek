@@ -17,6 +17,7 @@ package megamek.common.loaders;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import megamek.common.ASFBay;
 import megamek.common.Aero;
@@ -810,6 +811,34 @@ public class BLKFile {
             blk.writeBlockData("escape_pod", sc.getEscapePods());
         }
 
+        if (t instanceof Warship) {
+            Warship ws = (Warship) t;
+            blk.writeBlockData("kf_core", ws.getDriveCoreType());
+            if (ws.getDriveCoreType() == Warship.DRIVE_CORE_PRIMITIVE) {
+                blk.writeBlockData("jump_range", ws.getJumpRange());
+            }
+        }
+        
+        if (t instanceof Jumpship) {
+            Jumpship js = (Jumpship) t;
+            if (js.hasHPG()) {
+                blk.writeBlockData("hpg", 1);
+            }
+            if (js.hasLF()) {
+                blk.writeBlockData("lithium-fusion", 1);
+            }
+            blk.writeBlockData("sail", js.hasSail()? 1 : 0);
+            blk.writeBlockData("grav_decks", js.getGravDecks().stream().map(String::valueOf)
+                    .collect(Collectors.toCollection(Vector::new)));
+            blk.writeBlockData("crew", js.getNCrew());
+            blk.writeBlockData("officers", js.getNOfficers());
+            blk.writeBlockData("gunners", js.getNGunners());
+            blk.writeBlockData("passengers", js.getNPassenger());
+            blk.writeBlockData("marines", js.getNMarines());
+            blk.writeBlockData("battlearmor", js.getNBattleArmor());
+            blk.writeBlockData("life_boat", js.getLifeBoats());
+            blk.writeBlockData("escape_pod", js.getEscapePods());
+        }
         return blk;
     }
 

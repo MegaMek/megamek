@@ -163,12 +163,24 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
 
         a.setEngine(new Engine(400, 0, 0));
 
+        if (dataFile.exists("kf_core")) {
+            a.setDriveCoreType(dataFile.getDataAsInt("kf_core")[0]);
+        }
+
+        if (dataFile.exists("jump_range")) {
+            a.setDriveCoreType(dataFile.getDataAsInt("jump_range")[0]);
+        }
+
         if (dataFile.exists("lithium-fusion")) {
             a.setLF(true);
         }
 
         if (dataFile.exists("hpg")) {
             a.setHPG(true);
+        }
+
+        if (dataFile.exists("sail")) {
+            a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
 		if (dataFile.exists("overview")) {

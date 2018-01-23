@@ -524,6 +524,8 @@ public class TestAero extends TestEntity {
                 && aero.hasEngine()
                 && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
+        } else if (aero.getWalkMP() == 0) {
+            fuelPerTurn = 0.2f;
         } else {
             fuelPerTurn = aero.getWalkMP();
         }

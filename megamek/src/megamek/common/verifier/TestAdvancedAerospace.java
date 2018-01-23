@@ -259,13 +259,13 @@ public class TestAdvancedAerospace extends TestAero {
      * @return        The weight of the engine in tons
      */
     public static double calculateEngineTonnage(Jumpship vessel) {
-        if (vessel.isPrimitive()) {
+        if (vessel.hasStationKeepingDrive()) {
+            return round(vessel.getWeight() * 0.012, Ceil.HALFTON);
+        } else if (vessel.isPrimitive()) {
             return round(vessel.getWeight() * vessel.getOriginalWalkMP()
                     * primitiveEngineMultiplier(vessel.getOriginalBuildYear()), Ceil.HALFTON);
-        } else if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
         } else {
-            return round(vessel.getWeight() * 0.12, Ceil.HALFTON);
+            return round(vessel.getWeight() * vessel.getOriginalWalkMP() * 0.06, Ceil.HALFTON);
         }
     }
     

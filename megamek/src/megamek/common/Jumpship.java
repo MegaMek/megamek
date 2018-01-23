@@ -393,6 +393,9 @@ public class Jumpship extends Aero {
     	if (isPrimitive()) {
     	    return fuelUse * primitiveFuelFactor();
     	}
+    	if (hasStationKeepingDrive()) {
+    	    return fuelUse / 10;
+    	}
     	return fuelUse;
     }
 
@@ -1415,10 +1418,17 @@ public class Jumpship extends Aero {
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (this instanceof Warship) {
+        if (!hasStationKeepingDrive()) {
             return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return (int) Math.floor(getAccumulatedThrust());
+    }
+    
+    /**
+     * @return Whether this ship has station-keeping drive instead of transit drive.
+     */
+    public boolean hasStationKeepingDrive() {
+        return walkMP == 0;
     }
 
     /**
@@ -1573,11 +1583,12 @@ public class Jumpship extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
     }
 
-    /**
+    /*
      * Do not recalculate walkMP when adding engine.
      */
     @Override
     protected int calculateWalk() {
     	return walkMP;
     }
+    
 }

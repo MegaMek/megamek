@@ -558,6 +558,8 @@ public class TestAero extends TestEntity {
                     fuelPerTurn += (aero.getRunMP()-aero.getWalkMP());
                 }
             }
+        } else if (aero.getWalkMP() == 0) {
+            fuelPerTurn = 0.2f;
         } else {
             fuelPerTurn = aero.getWalkMP() + 
                     (aero.getRunMP()-aero.getWalkMP()) * 2;
@@ -601,7 +603,12 @@ public class TestAero extends TestEntity {
     public static double calculateDaysAtMax(Aero aero) {
         double stratUse = aero.getStrategicFuelUse();
         if (stratUse > 0) {
-            return aero.getFuelTonnage() / (aero.getStrategicFuelUse() * aero.getRunMP() / 2.0);
+            double maxMP = aero.getRunMP();
+            // check for station-keeping drive
+            if (maxMP == 0) {
+                maxMP = 0.2;
+            }
+            return aero.getFuelTonnage() / (aero.getStrategicFuelUse() * maxMP / 2.0);
         } else {
             return 0.0;
         }

@@ -1792,12 +1792,15 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLithiumFusionBattery());
         EquipmentType.addType(MiscType.createLightSail());
         EquipmentType.addType(MiscType.createEnergyStorageBattery());
-        EquipmentType.addType(MiscType.createImpFerroAluminumArmor());
+        EquipmentType.addType(MiscType.createISImpFerroAluminumArmor());
+        EquipmentType.addType(MiscType.createCLImpFerroAluminumArmor());
         EquipmentType.addType(MiscType.createPrimitiveLCAerospaceArmor());
         EquipmentType.addType(MiscType.createISAeroSpaceArmor());
         EquipmentType.addType(MiscType.createClanAeroSpaceArmor());
-        EquipmentType.addType(MiscType.createLCFerroCarbideArmor());
-        EquipmentType.addType(MiscType.createLCLamellorFerroCarbideArmor());
+        EquipmentType.addType(MiscType.createISFerroCarbideArmor());
+        EquipmentType.addType(MiscType.createCLFerroCarbideArmor());
+        EquipmentType.addType(MiscType.createISLamellorFerroCarbideArmor());
+        EquipmentType.addType(MiscType.createCLLamellorFerroCarbideArmor());
 
         // Infantry Equipment Packs
         EquipmentType.addType(MiscType.createISAblativeStandardInfArmor());
@@ -3062,13 +3065,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
     
-    public static MiscType createImpFerroAluminumArmor() {
+    public static MiscType createISImpFerroAluminumArmor() {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP);
-        misc.setInternalName(misc.name);
-        misc.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP, false));
-        misc.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP, true));
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP, false));
         misc.addLookupName("ImprovedFerroAluminum");
         misc.tonnage = 0;
         misc.criticals = 0;
@@ -3077,17 +3078,34 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_IMP_FERRO).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(2500, 2520, DATE_NONE, 2950, 3052).setISApproximate(true, true, false, false, false)
-                .setClanAdvancement(2500, 2520, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
     
-    public static MiscType createLCFerroCarbideArmor() {
+    public static MiscType createCLImpFerroAluminumArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP, true));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+        misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_IMP_FERRO).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.rulesRefs = "152,SO";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
+                .setClanAdvancement(2500, 2520).setClanApproximate(false, true)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return misc;
+    }
+    
+    public static MiscType createISFerroCarbideArmor() {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE);
@@ -3100,17 +3118,59 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(2550, 2570, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2550, 2570, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_DC, F_LC)
+                .setISAdvancement(2550, 2570, DATE_NONE, 2950, 3055)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setReintroductionFactions(F_DC, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
     
-    public static MiscType createLCLamellorFerroCarbideArmor() {
+    public static MiscType createCLFerroCarbideArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, true));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+        misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.rulesRefs = "152,SO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_X, RATING_E, RATING_D)
+                .setClanAdvancement(2550, 2570)
+                .setClanApproximate(true, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return misc;
+    }
+    
+    public static MiscType createISLamellorFerroCarbideArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE, false));
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.bv = 0;
+        misc.flags = misc.flags.or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.rulesRefs = "152,SO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_FW, F_LC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        return misc;
+    }
+    
+    public static MiscType createCLLamellorFerroCarbideArmor() {
         MiscType misc = new MiscType();
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE);
@@ -3123,16 +3183,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
-                .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH).setReintroductionFactions(F_FS, F_FW, F_LC)
+                .setClanAdvancement(2600, 2615).setClanApproximate(true, false)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
-    
     
     
 

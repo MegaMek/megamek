@@ -303,6 +303,8 @@ public abstract class TestEntity implements TestEntityOption {
             return TestBattleArmor.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_SMALL_CRAFT) != 0) {
             return TestSmallCraft.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_JUMPSHIP) != 0) {
+            return TestAdvancedAerospace.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_AERO) != 0) {
             return TestAero.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_TANK) != 0) {

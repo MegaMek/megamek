@@ -120,7 +120,8 @@ public class TestAdvancedAerospace extends TestAero {
             } else if (isClan) {
                 ppt += 0.2;
             }
-            return ppt;
+            // Deal with potential rounding errors
+            return Math.round(ppt * 10.0) / 10.0;
         }
         
         /**
@@ -154,7 +155,7 @@ public class TestAdvancedAerospace extends TestAero {
                 TechConstants.isClan(vessel.getArmorTechLevel(0)));
         if (null != a) {
             return (int)(Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel))
-                    + Math.floor(vessel.get0SI() / 10.0) * 6);
+                    + Math.round(vessel.get0SI() / 10.0) * 6);
         } else {
             return 0;
         }
@@ -174,6 +175,15 @@ public class TestAdvancedAerospace extends TestAero {
         } else {
             // SI weight / 12
             return floor(vessel.get0SI() * vessel.getWeight() / 1800.0, Ceil.HALFTON);
+        }
+    }
+    
+    public static double armorPointsPerTon(Jumpship vessel, int at, boolean clan) {
+        CapitalArmor arm = CapitalArmor.getArmor(at, clan);
+        if (null != arm) {
+            return arm.pointsPerTon(vessel);
+        } else {
+            return 0;
         }
     }
     
@@ -500,7 +510,6 @@ public class TestAdvancedAerospace extends TestAero {
         // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
         // 2-ton launch mechanism
         weight += (vessel.getLifeBoats() + vessel.getEscapePods()) * 7;
-        weight += vessel.getDockingCollars().size() * 1000;
         return weight;
     }
 
@@ -512,6 +521,11 @@ public class TestAdvancedAerospace extends TestAero {
                     "Misc: ", getPrintSize() - 5) + weight + "\n";
         }
         return "";
+    }
+    
+    @Override
+    public double getWeightCarryingSpace() {
+        return super.getWeightCarryingSpace() + 1000 * vessel.getDockingCollars().size();
     }
     
     @Override

@@ -1456,7 +1456,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (null != cmd.getLastStep()) {
                     unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
                 } else {
-                    unusedVelocity = ((IAero) ce()).getCurrentVelocity() > 0 &&
+                    unusedVelocity = (((IAero) ce()).getCurrentVelocity() > 0) &&
                             (ce().delta_distance == 0);
                 }
                 boolean flyoff = false;

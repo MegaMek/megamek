@@ -145,7 +145,7 @@ public class MechView {
             sLoadout.add(getAmmo());
             sLoadout.add(new SingleLine());
         }
-        if (entity.isBomber()) {
+        if (entity instanceof IBomber) {
             sLoadout.addAll(getBombs());
             sLoadout.add(new SingleLine());
         }
@@ -915,7 +915,7 @@ public class MechView {
         for (int type = 0; type < BombType.B_NUM; type++) {
             if (choices[type] > 0) {
                 retVal.add(new SingleLine(BombType.getBombName(type) + " ("
-                        + choices[type]));
+                        + choices[type] + ")"));
             }
         }
         return retVal;

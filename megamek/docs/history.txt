@@ -2,6 +2,7 @@
 ----------------
 0.43.8-RC2
 + PR#877 - Add the missing new skin files.
++ PR#881 - Fixed transparency around buttons in the new skins.
 
 v0.43.7-RC1 (2018-01-21 2200 UTC)
 + Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)

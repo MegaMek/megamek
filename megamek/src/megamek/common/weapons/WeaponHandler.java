@@ -134,8 +134,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int getLargeCraftHeat(Entity e) {
         int totalheat = 0;
-        if ((e.getEntityType() & Entity.ETYPE_DROPSHIP) == Entity.ETYPE_DROPSHIP 
-                || (e.getEntityType() & Entity.ETYPE_JUMPSHIP) != 0) {
+        if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                || e.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (e.usesWeaponBays()) {
                 for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
                     AttackHandler ah = i.nextElement();
@@ -150,8 +150,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
             } else {
                 for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
-                    Object o = i.nextElement();
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                    AttackHandler ah = i.nextElement();
+                    WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted prevWeapon = e.getEquipment(prevAttack.getWeaponId());
                         totalheat += prevWeapon.getCurrentHeat();

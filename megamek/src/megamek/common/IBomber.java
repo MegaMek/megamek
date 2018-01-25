@@ -149,4 +149,5 @@ public interface IBomber {
         clearBombChoices();
     }
 
+    void clearBombs();
 }

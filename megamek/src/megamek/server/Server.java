@@ -9218,10 +9218,6 @@ public class Server implements Runnable {
         }
         entity.setAltitude(curAltitude);
         entity.setClimbMode(curClimbMode);
-        
-        if(entity.isAirborne() && entity.isAero()) {
-            ((IAero) entity).setCurrentVelocity(md.getFinalVelocityLeft());
-        }
 
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);

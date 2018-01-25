@@ -457,6 +457,7 @@ Torrent Heavy Bomber (Standard)|
 Zanadu Air Bus (Standard)|
 Drake Medium Strike Fighter (Standard)|
 Planetlifter Support Aircraft (Standard)|
+SeaBuster Early Strike Fighter (Standard)|
 Hurricane Conventional Fighter (Standard)|
 Mustang Fighter (Standard)|
 Colt Medium Fighter (LRM)|
@@ -526,6 +527,7 @@ Confederate (2602)|
 Confederate (2602) (Mech)|
 Danais (2720)|
 Excalibur (2786)|
+Excalibur (3056)|
 Fortress (2613)|
 Fortress (3058)|
 Fury (2638)|
@@ -2067,18 +2069,18 @@ Mechanized Wheeled Platoon (Rifle AA)|
 Motorized Platoon (Rifle AA)|
 Foot Platoon (Flechette)|
 Motorized Platoon (Flechette)|
-Clan Foot Point (Anti-’Mech) (Flamer)|
-Clan Foot Point (Anti-’Mech) (Laser)|
-Clan Foot Point (Anti-’Mech) (LRM)|
-Clan Foot Point (Anti-’Mech) (MG)|
-Clan Foot Point (Anti-’Mech) (Rifle)|
-Clan Foot Point (Anti-’Mech) (SRM)|
-Foot Platoon (Anti-’Mech) (Flamer)|
-Foot Platoon (Anti-’Mech) (Laser)|
-Foot Platoon (Anti-’Mech) (LRM)|
-Foot Platoon (Anti-’Mech) (MG)|
-Foot Platoon (Anti-’Mech) (Rifle)|
-Foot Platoon (Anti-’Mech) (SRM)|
+Clan Foot Point (Anti-'Mech) (Flamer)|
+Clan Foot Point (Anti-'Mech) (Laser)|
+Clan Foot Point (Anti-'Mech) (LRM)|
+Clan Foot Point (Anti-'Mech) (MG)|
+Clan Foot Point (Anti-'Mech) (Rifle)|
+Clan Foot Point (Anti-'Mech) (SRM)|
+Foot Platoon (Anti-'Mech) (Flamer)|
+Foot Platoon (Anti-'Mech) (Laser)|
+Foot Platoon (Anti-'Mech) (LRM)|
+Foot Platoon (Anti-'Mech) (MG)|
+Foot Platoon (Anti-'Mech) (Rifle)|
+Foot Platoon (Anti-'Mech) (SRM)|
 Foot Squad (Flamer)|
 Foot Squad (Laser)|
 Foot Squad (LRM)|
@@ -5074,6 +5076,18 @@ Wasp LAM WSP-105|
 Wasp LAM WSP-105M|
 Wasp LAM WSP-110|
 Yurei S-YR-1LAM|
+Roughneck RGH-1A|
+Roughneck RGH-1B|
+Roughneck RGH-1C|
+Roughneck RGH-2A|
+Roughneck RGH-3A|
+Roughneck RGH-R Reaver|
+Sun Spider A|
+Sun Spider B|
+Sun Spider C|
+Sun Spider D|
+Sun Spider Manul|
+Sun Spider Prime|
 Annihilator ANH-1G|
 Annihilator ANH-1X|
 Annihilator C 'Gausszilla'|

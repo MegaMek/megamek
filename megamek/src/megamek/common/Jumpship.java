@@ -1113,7 +1113,7 @@ public class Jumpship extends Aero {
     public double getArmorWeight(int locCount) {
         double armorPoints = getTotalOArmor();
 
-        armorPoints -= Math.round((get0SI() / 10.0) * locCount);
+        armorPoints -= Math.round(get0SI() / 10.0) * locCount;
 
         // now I need to determine base armor points by type and weight
         double baseArmor = 0.8;

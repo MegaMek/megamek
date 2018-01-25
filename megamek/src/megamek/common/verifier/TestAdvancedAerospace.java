@@ -315,6 +315,28 @@ public class TestAdvancedAerospace extends TestAero {
     }
     
     /**
+     * @param vessel The ship
+     * @return       The maximum number of gravity decks that can be mounted on the ship.
+     */
+    public static int getMaxGravDecks(Jumpship vessel) {
+        return 3 + (int) Math.ceil(vessel.getWeight() / 100000);
+    }
+    
+    /**
+     * @param vessel The ship
+     * @return       The maximum diameter (in meters) for a grav deck mounted on the unit.
+     */
+    public static int getMaxGravDeckDiameter(Jumpship vessel) {
+        // TacOps, p. 314 says that space stations can mount grav decks up to 1500 m, but the
+        // weight breakdown gives the largest category as 250-1000 m. I went with the larger
+        // size here.
+        if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            return 1500;
+        }
+        return 250;
+    }
+    
+    /**
      * @return Minimum crew requirements based on unit type and equipment crew requirements.
      */
     public static int minimumBaseCrew(Jumpship vessel) {
@@ -510,6 +532,9 @@ public class TestAdvancedAerospace extends TestAero {
         // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
         // 2-ton launch mechanism
         weight += (vessel.getLifeBoats() + vessel.getEscapePods()) * 7;
+        weight += vessel.getGravDeck() * 50;
+        weight += vessel.getGravDeckLarge() * 100;
+        weight += vessel.getGravDeckHuge() * 500;
         return weight;
     }
 
@@ -671,6 +696,7 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
+        correct &= correctGravDecks(buff);
         
         return correct;
     }
@@ -879,6 +905,31 @@ public class TestAdvancedAerospace extends TestAero {
         return !illegal;
     }
 
+    /**
+     * Checks that the unit does not exceed the maximum number or size of gravity decks.
+     * @param buffer Where to write messages explaining failures.
+     * @return  true if the crew data is valid.
+     */
+    public boolean correctGravDecks(StringBuffer buffer) {
+        boolean illegal = false;
+        if (vessel.getGravDecks().size() > getMaxGravDecks(vessel)) {
+            buffer.append("Exceeds maximum " + getMaxGravDecks(vessel) + " gravity decks.\n");
+            illegal = true;
+        }
+        int maxSize = Jumpship.GRAV_DECK_LARGE_MAX;
+        if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            maxSize = 1500;
+        }
+        for (Integer dia : vessel.getGravDecks()) {
+            if (dia > maxSize) {
+                buffer.append("Maximum grav deck diameter is " + maxSize + "\n");
+                illegal = true;
+                break;
+            }
+        }
+        return !illegal;
+    }
+    
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();

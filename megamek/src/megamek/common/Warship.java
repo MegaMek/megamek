@@ -129,7 +129,7 @@ public class Warship extends Jumpship {
 
     @Override
     public void initializeKFIntegrity() {
-        int integrity = (int) Math.ceil(2 + 0.4525 * weight / 25000.0);
+        int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
         setKFIntegrity(integrity);
     }
 

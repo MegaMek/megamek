@@ -831,8 +831,11 @@ public class BLKFile {
                 blk.writeBlockData("lithium-fusion", 1);
             }
             blk.writeBlockData("sail", js.hasSail()? 1 : 0);
-            blk.writeBlockData("grav_decks", js.getGravDecks().stream().map(String::valueOf)
-                    .collect(Collectors.toCollection(Vector::new)));
+            if (js.getTotalGravDeck() > 0) {
+                blk.writeBlockData("grav_decks", js.getGravDecks().stream().map(String::valueOf)
+                        .collect(Collectors.toCollection(Vector::new)));
+            }
+            blk.writeBlockData("docking_collar", js.getDockingCollars().size());
             blk.writeBlockData("crew", js.getNCrew());
             blk.writeBlockData("officers", js.getNOfficers());
             blk.writeBlockData("gunners", js.getNGunners());

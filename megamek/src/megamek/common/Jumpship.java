@@ -461,7 +461,7 @@ public class Jumpship extends Aero {
     }
 
     public void initializeKFIntegrity() {
-        int integrity = (int) Math.ceil(1.2 + (((0.95) * weight) / 60000.0));
+        int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
         setKFIntegrity(integrity);
     }
 
@@ -1103,9 +1103,9 @@ public class Jumpship extends Aero {
 
         return points;
     }
-
+    
     @Override
-    public double getArmorWeight(int loc) {
+    public double getArmorWeight() {
         double armorPoints = getTotalOArmor();
 
         // now I need to determine base armor points by type and weight
@@ -1209,7 +1209,7 @@ public class Jumpship extends Aero {
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());

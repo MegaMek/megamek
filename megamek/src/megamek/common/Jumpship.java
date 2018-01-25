@@ -225,7 +225,7 @@ public class Jumpship extends Aero {
     public int getGravDeckLarge() {
         int count = 0;
         for (int size : gravDecks) {
-            if (size >= GRAV_DECK_STANDARD_MAX && size < GRAV_DECK_LARGE_MAX) {
+            if (size >= GRAV_DECK_STANDARD_MAX && size <= GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -252,7 +252,7 @@ public class Jumpship extends Aero {
     public int getGravDeckHuge() {
         int count = 0;
         for (int size : gravDecks) {
-            if (size >= GRAV_DECK_LARGE_MAX) {
+            if (size > GRAV_DECK_LARGE_MAX) {
                 count++;
             }
         }
@@ -1106,7 +1106,14 @@ public class Jumpship extends Aero {
     
     @Override
     public double getArmorWeight() {
+        return getArmorWeight(locations());
+    }
+    
+    @Override
+    public double getArmorWeight(int locCount) {
         double armorPoints = getTotalOArmor();
+
+        armorPoints -= Math.round((get0SI() / 10.0) * locCount);
 
         // now I need to determine base armor points by type and weight
         double baseArmor = 0.8;

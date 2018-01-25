@@ -237,12 +237,13 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         a.initializeSailIntegrity();
         a.recalculateTechAdvancement();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
+
+        // legacy
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
         loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
-        loadEquipment(a, "Aft Left Side", Jumpship.LOC_ALS);
-        loadEquipment(a, "Aft Right Side", Jumpship.LOC_ARS);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
 
         addTransports(a);
 

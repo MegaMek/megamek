@@ -535,6 +535,9 @@ public class TestAdvancedAerospace extends TestAero {
         weight += vessel.getGravDeck() * 50;
         weight += vessel.getGravDeckLarge() * 100;
         weight += vessel.getGravDeckHuge() * 500;
+        if (vessel.hasLF()) {
+            weight += vessel.getWeight() * 0.01;
+        }
         return weight;
     }
 

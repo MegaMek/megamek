@@ -278,9 +278,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             loadEquipment(a, a.getLocationName(loc), loc);
         }
 
-        // legacy
-        loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
-        loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
+        // legacy support for older files that have different location names than
+        // what is returned by getLocationName(int)
+        loadEquipment(a, "Front Right Side", Warship.LOC_FRS);
+        loadEquipment(a, "Front Left Side", Warship.LOC_FLS);
+        loadEquipment(a, "Right Broadside", Warship.LOC_RBS);
+        loadEquipment(a, "Left Broadside", Warship.LOC_LBS);
 
         addTransports(a);
 

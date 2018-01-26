@@ -187,24 +187,6 @@ public class Warship extends Jumpship {
     }
     
     @Override
-    //Jumpships and Space Stations use 10% of the fuel Warships do...
-    public double getStrategicFuelUse() {
-        double fuelUse;
-        if (weight >= 200000) {
-            fuelUse = 39.52;
-        } else if (weight >= 100000) {
-            fuelUse = 19.75;
-        } else {
-            //Per Stratops, this is impossible for Warships, but Primitive Jumpships in IO can be this small
-            fuelUse = 9.77;
-        } 
-        if (isPrimitive()) {
-            return fuelUse * primitiveFuelFactor();
-        }
-        return fuelUse;
-    }
-
-    @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[23];
         int costIdx = 0;

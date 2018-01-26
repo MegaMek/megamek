@@ -381,22 +381,23 @@ public class Jumpship extends Aero {
     @Override
     public double getStrategicFuelUse() {
         double fuelUse;
-    	if (weight >= 200000) {
-    		fuelUse = 3.95;
-    	} else if (weight >= 100000) {
-    	    fuelUse = 1.98;
-    	} else if (weight >= 50000) {
-    	    fuelUse = 0.98;
-    	} else {
-    	    fuelUse = 0.28;
-    	}
-    	if (isPrimitive()) {
-    	    return fuelUse * primitiveFuelFactor();
-    	}
-    	if (hasStationKeepingDrive()) {
-    	    return fuelUse / 10;
-    	}
-    	return fuelUse;
+        if (weight >= 200000) {
+            fuelUse = 39.52;
+        } else if (weight >= 100000) {
+            fuelUse = 19.75;
+        } else if (weight >= 50000) {
+            fuelUse = 9.77;
+        } else {
+            fuelUse = 2.82;
+        }
+        if (isPrimitive()) {
+            return fuelUse * primitiveFuelFactor();
+        }
+        // JS and SS (and WS without transit drives) use fuel at 10% the rate.
+        if (hasStationKeepingDrive()) {
+            fuelUse *= 0.1;
+        }
+        return fuelUse;
     }
 
     @Override

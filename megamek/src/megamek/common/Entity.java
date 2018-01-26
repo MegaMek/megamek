@@ -1064,8 +1064,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     public CompositeTechLevel factionTechLevel(int techFaction) {
+        if (techFaction == F_NONE) {
+            return compositeTechLevel;
+        }
         CompositeTechLevel retVal = new CompositeTechLevel(this, techFaction);
         addSystemTechAdvancement(retVal);
+        for (Mounted m : getEquipment()) {
+            retVal.addComponent(m.getType());
+            if (m.isArmored()) {
+                retVal.addComponent(TA_ARMORED_COMPONENT);
+            }
+        }
         return retVal;
     }
     

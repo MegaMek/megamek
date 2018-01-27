@@ -20809,7 +20809,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // Must roll 8+ to survive...
+        // Must roll 8+ to survive...        
         r = new Report(5100);
         r.subject = entity.getId();
         r.newlines = 0;
@@ -20819,6 +20819,7 @@ public class Server implements Runnable {
             // phew!
             r.choose(true);
             addReport(r);
+            Report.addNewline(vPhaseReport);
         } else {
             // eek
             r.choose(false);

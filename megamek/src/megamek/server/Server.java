@@ -20810,6 +20810,12 @@ public class Server implements Runnable {
         }
 
         // Must roll 8+ to survive...
+        if(entity.getId() == 3) {
+            boomroll = 7;
+        } else {
+            boomroll = 9;
+        }
+        
         r = new Report(5100);
         r.subject = entity.getId();
         r.newlines = 0;
@@ -20819,6 +20825,7 @@ public class Server implements Runnable {
             // phew!
             r.choose(true);
             addReport(r);
+            Report.addNewline(vPhaseReport);
         } else {
             // eek
             r.choose(false);

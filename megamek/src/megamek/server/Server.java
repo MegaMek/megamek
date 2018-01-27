@@ -20809,13 +20809,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // Must roll 8+ to survive...
-        if(entity.getId() == 3) {
-            boomroll = 7;
-        } else {
-            boomroll = 9;
-        }
-        
+        // Must roll 8+ to survive...        
         r = new Report(5100);
         r.subject = entity.getId();
         r.newlines = 0;

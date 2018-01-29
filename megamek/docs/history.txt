@@ -1,7 +1,11 @@
 ﻿VERSION HISTORY:
 ----------------
 0.43.8-RC2
-+ PR#877 - Add the missing new skin files.
++ PR#877: Add the missing new skin files.
++ PR#881: Fixed transparency around buttons in the new skins.
++ Issue #620: Unused bombs are not recovered for VTOLs after battle
++ VTOL cruise MP reduced by 1 per bomb carried per errata.
++ Reports about units being on fire and escaping unscathed are better formatted.
 
 v0.43.7-RC1 (2018-01-21 2200 UTC)
 + Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)
@@ -22,7 +26,7 @@ v0.43.7-RC1 (2018-01-21 2200 UTC)
 + Issue #838: NPE Princess.calculatePhysicalTurn
 + Issue #463: Megamek sometimes fails to show the * symbol to warn that movement will require a PSR
 + Fixes for multiple hangs during turn change when deploying minefields and unloading stranded passengers from transports.
-+ PR#842 - Inner Sphere & Periphery skins update
++ PR#842: Inner Sphere & Periphery skins update
 + Issue #839: Bots on "no team" no longer refuse to fire on other players with "no team".
 + Bug: Some BA were not writing all crit slots to MUL.
 + Issue #382: Added remaining structure CF to damage reports when structures (buildings, bridges, etc) are damaged.

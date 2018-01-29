@@ -9218,10 +9218,6 @@ public class Server implements Runnable {
         }
         entity.setAltitude(curAltitude);
         entity.setClimbMode(curClimbMode);
-        
-        if(entity.isAirborne() && entity.isAero()) {
-            ((IAero) entity).setCurrentVelocity(md.getFinalVelocityLeft());
-        }
 
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);
@@ -20813,7 +20809,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // Must roll 8+ to survive...
+        // Must roll 8+ to survive...        
         r = new Report(5100);
         r.subject = entity.getId();
         r.newlines = 0;
@@ -20823,6 +20819,7 @@ public class Server implements Runnable {
             // phew!
             r.choose(true);
             addReport(r);
+            Report.addNewline(vPhaseReport);
         } else {
             // eek
             r.choose(false);

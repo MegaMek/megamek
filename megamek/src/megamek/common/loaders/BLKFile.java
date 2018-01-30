@@ -832,7 +832,8 @@ public class BLKFile {
             }
             blk.writeBlockData("sail", js.hasSail()? 1 : 0);
             if (js.getTotalGravDeck() > 0) {
-                blk.writeBlockData("grav_decks", js.getGravDecks().stream().map(String::valueOf)
+                blk.writeBlockData("grav_decks", (Vector<String>)js.getGravDecks().stream()
+                        .map(String::valueOf)
                         .collect(Collectors.toCollection(Vector::new)));
             }
             blk.writeBlockData("docking_collar", js.getDockingCollars().size());

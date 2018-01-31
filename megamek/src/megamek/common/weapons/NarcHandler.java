@@ -124,8 +124,10 @@ public class NarcHandler extends MissileWeaponHandler {
     }
     
     @Override
-    //Narcs apply "damage" all in one block for AMS purposes
-    //This was referenced incorrectly for Aero damage.
+    /**
+     * Narcs apply "damage" all in one block for AMS purposes
+     * This was referenced incorrectly for Aero damage.
+     */
     protected boolean usesClusterTable() {
         return false;
     }

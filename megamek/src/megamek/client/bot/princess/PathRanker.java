@@ -49,7 +49,7 @@ public abstract class PathRanker {
         owner = princess;
     }
 
-    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<MovePath.Key, Double>();
+    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
     
     /**
      * Gives the "utility" of a path; a number representing how good it is.
@@ -102,9 +102,8 @@ public abstract class PathRanker {
                                          allyCenter));
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
-                if ((percent.compareTo(interval) >= 0)
-                    && (LogLevel.INFO.toInt() <= getOwner().getVerbosity().toInt())) {
-                    getOwner().sendChat("... " + percent.intValue() + "% complete.");
+                if (percent.compareTo(interval) >= 0) {
+                    getOwner().sendChat("... " + percent.intValue() + "% complete.", LogLevel.INFO);
                     interval = percent.add(new BigDecimal(5));
                 }
             }

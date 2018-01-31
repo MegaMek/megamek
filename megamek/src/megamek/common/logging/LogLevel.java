@@ -49,6 +49,10 @@ public enum LogLevel {
         return level.toInt();
     }
 
+    public boolean willLog(final LogLevel logLevel) {
+        return logLevel.getLevel().isGreaterOrEqual(getLevel());
+    }
+
     public static String[] getLogLevelNames() {
         List<String> out = new ArrayList<>();
         for (LogLevel l : values()) {

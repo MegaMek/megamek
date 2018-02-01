@@ -111,6 +111,16 @@ public class FighterSquadron extends Aero {
                 .mapToInt(fid -> ((IAero) game.getEntity(fid)).getCap0Armor())
                 .sum();
     }
+    
+    /*
+     * Per SO, fighter squadrons can't actually be crippled
+     * Individual crippled fighters should be detached and sent home, but it isn't required by the rules
+     * @see megamek.common.Aero#isCrippled()
+     */
+    @Override
+    public boolean isCrippled() {
+        return false;
+    }
 
     /**
      * Returns the percent of the armor remaining

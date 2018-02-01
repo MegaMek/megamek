@@ -3893,10 +3893,6 @@ public class Aero extends Entity implements IAero, IBomber {
         double internalPercent = getInternalRemainingPercent();
         String msg = getDisplayName() + " CRIPPLED: ";
         if (internalPercent < 0.5) {
-            //Fighter squadrons can't take SI damage, so they always display as crippled without this check.
-            if (this.hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
-                return false;
-            }
             System.out.println(msg + "only " + NumberFormat.getPercentInstance().format(internalPercent)
                     + " internals remaining.");
             return true;

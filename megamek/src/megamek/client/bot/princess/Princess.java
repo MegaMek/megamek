@@ -19,7 +19,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -403,14 +402,9 @@ public class Princess extends BotClient {
                 }
             }
         }
-        
-        turretDeploymentLocations.sort(new Comparator<Coords>() {
-            @Override
-            public int compare(final Coords arg0,
-                               final Coords arg1) {
-                return calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(arg0);
-            }
-        });        
+
+        turretDeploymentLocations.sort((arg0, arg1) -> calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(
+                arg0));        
         return turretDeploymentLocations;
     }
     
@@ -1117,8 +1111,7 @@ public class Princess extends BotClient {
 
             final double thisTimeEstimate =
                     (paths.size() * moveEvaluationTimeEstimate) / 1e3;
-            if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() >
-                LogLevel.WARNING.toInt()) {
+            if (getVerbosity().willLog(LogLevel.INFO)) {
                 String timeestimate = "unknown.";
                 if (0 != thisTimeEstimate) {
                     timeestimate = Integer.toString((int) thisTimeEstimate)
@@ -1656,9 +1649,8 @@ public class Princess extends BotClient {
 
     public void sendChat(final String message,
                          final LogLevel logLevel) {
-        if (logLevel.getLevel().isGreaterOrEqual(getVerbosity().getLevel())) {
-            return;
+        if (getVerbosity().willLog(logLevel)) {
+            super.sendChat(message);
         }
-        super.sendChat(message);
     }
 }

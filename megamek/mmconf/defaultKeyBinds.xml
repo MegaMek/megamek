@@ -185,7 +185,7 @@
     </KeyBind>
 
     <KeyBind>
-         <command>movementEnvelope</command> <!-- Ctrl-R -->
+         <command>movementEnvelope</command> <!-- Shift-R -->
         <keyCode>82</keyCode>
         <modifier>2</modifier>
         <isRepeatable>false</isRepeatable>

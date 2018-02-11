@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-0.43.8-RC2 (2018-02-11 22:40 UTC)
+v0.43.9-git
+
+v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.
 + PR#881: Fixed transparency around buttons in the new skins.
 + Issue #620: Unused bombs are not recovered for VTOLs after battle

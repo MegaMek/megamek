@@ -534,8 +534,9 @@ public class BLKFile {
             }
             int armor_array[];
             if (t instanceof Aero){
-                if (t instanceof FixedWingSupport) {
-                    //exclude body and wings
+                if ((t instanceof FixedWingSupport)
+                        || (t instanceof Warship)) {
+                    //exclude body and wings on FWS and broadsides on warships
                     armor_array = new int[numLocs - 2];
                 } else {
                     armor_array = new int[numLocs];

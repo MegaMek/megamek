@@ -1422,7 +1422,7 @@ public class TestAero extends TestEntity {
             if (((Jumpship) aero).getDriveCoreType() == Jumpship.DRIVE_CORE_SUBCOMPACT) {
                 return 25000;
             }
-            return 250000;
+            return 2500000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (aero.isPrimitive()) {
                 return getPrimitiveJumpshipMaxTonnage(aero, faction);

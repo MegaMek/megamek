@@ -334,7 +334,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int av = 0;
         int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
-        if (range == WeaponType.RANGE_SHORT) {
+        // if we have a ground firing unit, then AV should not be determined by
+        // aero range brackets. This really is only an issue with IS SRMs
+        // I can't think of any missiles that don't have the same AV at all ranges, so the short AV should be fine.
+        if (!ae.isAirborne() || (range == WeaponType.RANGE_SHORT)) {
             av = wtype.getRoundShortAV();
         } else if (range == WeaponType.RANGE_MED) {
             av = wtype.getRoundMedAV();

@@ -16,7 +16,6 @@ package megamek.common.loaders;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -27,10 +26,10 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
-import megamek.common.BayType;
 import megamek.common.CargoBay;
 import megamek.common.ConvFighter;
 import megamek.common.CrewQuartersCargoBay;
+import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -453,7 +452,9 @@ public class BLKFile {
 
         String[] transporter_array = new String[t.getTransports().size()];
         for (int i = 0; i < t.getTransports().size(); i++) {
-            transporter_array[i] = t.getTransports().get(i).toString();
+            if (!(t.getTransports().get(i) instanceof DockingCollar)) {
+                transporter_array[i] = t.getTransports().get(i).toString();
+            }
         }
         blk.writeBlockData("transporters", transporter_array);
 

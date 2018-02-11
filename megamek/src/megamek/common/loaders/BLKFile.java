@@ -452,9 +452,7 @@ public class BLKFile {
 
         String[] transporter_array = new String[t.getTransports().size()];
         for (int i = 0; i < t.getTransports().size(); i++) {
-            if (!(t.getTransports().get(i) instanceof DockingCollar)) {
-                transporter_array[i] = t.getTransports().get(i).toString();
-            }
+            transporter_array[i] = t.getTransports().get(i).toString();
         }
         blk.writeBlockData("transporters", transporter_array);
 
@@ -844,7 +842,6 @@ public class BLKFile {
                         .map(String::valueOf)
                         .collect(Collectors.toCollection(Vector::new)));
             }
-            blk.writeBlockData("docking_collar", js.getDockingCollars().size());
             blk.writeBlockData("crew", js.getNCrew());
             blk.writeBlockData("officers", js.getNOfficers());
             blk.writeBlockData("gunners", js.getNGunners());
@@ -966,6 +963,8 @@ public class BLKFile {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                     e.addTransporter(new StandardSeatCargoBay(pbi.getSize(), pbi.getDoors()));
+                } else if (transporter.startsWith("dockingcollar", 0)) {
+                    e.addTransporter(new DockingCollar(1));
                 }
 
             } // Handle the next transportation component.

@@ -301,4 +301,9 @@ public class DockingCollar implements Transporter {
         currentSpace = totalSpace;
     }
     
+    @Override
+    public String toString() {
+        return "dockingcollar";
+    }
+    
 } // End package class TroopSpace implements Transporter

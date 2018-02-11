@@ -248,9 +248,6 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         addTransports(a);
 
         // get docking collars
-        if (!dataFile.exists("docking_collar")) {
-            throw new EntityLoadingException("Could not find docking collar block.");
-        }
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
             a.addTransporter(new DockingCollar(1));

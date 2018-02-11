@@ -1,6 +1,6 @@
-﻿VERSION HISTORY:
+VERSION HISTORY:
 ----------------
-0.43.8-RC2
+0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.
 + PR#881: Fixed transparency around buttons in the new skins.
 + Issue #620: Unused bombs are not recovered for VTOLs after battle
@@ -8,7 +8,7 @@
 + Reports about units being on fire and escaping unscathed are better formatted.
 + Issue 875: Over Verbose Princess.
 
-v0.43.7-RC1 (2018-01-21 2200 UTC)
+v0.43.7-RC1 (2018-01-21 22:00 UTC)
 + Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)
 + Issue #637: Infantry in swamp/mud terrain should not have a psr check (Bog Down)
 + Data: Fixing Validation Errors

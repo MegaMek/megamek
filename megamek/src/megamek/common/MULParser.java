@@ -1910,7 +1910,7 @@ public class MULParser {
     		if (bay < 0) {
     			warning.append("Found invalid index value for bay: ").append(index).append(".\n");
     			return;
-    		} else if (bay > entity.getTransportBays().size()) {
+    		} else if (entity.getBayById(bay) == null) {
     			warning.append("The entity, ")
     			.append(entity.getShortName())
     			.append(" does not have a bay at index: ")

@@ -149,6 +149,8 @@ public class MULParser {
     private static final String BAYDOORS = "doors";
     private static final String BAY = "transportBay";
     private static final String BAYDAMAGE = "damage";
+    private static final String WEAPONSBAY = "weaponsBay";
+    private static final String WEAPONSBAYAMMO = "weaponsBayAmmo";
     private static final String MDAMAGE = "damage";
     private static final String MPENALTY = "penalty";
     private static final String C3MASTERIS = "c3MasterIs";
@@ -1230,6 +1232,8 @@ public class MULParser {
                     blowOffLocation(entity, loc);
                 } else if (nodeName.equalsIgnoreCase(SLOT)){
                     locAmmoCount = parseSlot(currEle, entity, loc, locAmmoCount);
+                } else if (nodeName.equalsIgnoreCase(WEAPONSBAY)) {
+                    parseWeaponsBay(currEle, entity, loc);
                 } else if (nodeName.equalsIgnoreCase(STABILIZER)){
                     String hit = currEle.getAttribute(IS_HIT);
                     if (!hit.equals("")) {
@@ -1551,72 +1555,8 @@ public class MULParser {
 
                 // Is the mounted a type of ammo?
                 if (mounted.getType() instanceof AmmoType) {
-
-                    // Get the saved ammo load.
-                    EquipmentType newLoad = EquipmentType.get(type);
-                    if (newLoad instanceof AmmoType) {
-
-                        // Try to get a good shots value.
-                        int shotsVal = -1;
-                        try {
-                            shotsVal = Integer.parseInt(shots);
-                        } catch (NumberFormatException excep) {
-                            // Handled by the next if test.
-                        }
-                        if (shots.equals(NA)) {
-                            shotsVal = IArmorState.ARMOR_NA;
-                            warning.append(
-                                    "Expected to find number of shots for ")
-                                    .append(type)
-                                    .append(", but found ")
-                                    .append(shots)
-                                    .append(" instead.\n");
-                        } else if ((shotsVal < 0) || (shotsVal > 200)) {
-                            warning.append(
-                                    "Found invalid shots value for slot: ")
-                                    .append(shots).append(".\n");
-                        } else {
-
-                            // Change to the saved ammo type and shots.
-                            mounted.changeAmmoType((AmmoType) newLoad);
-                            mounted.setShotsLeft(shotsVal);
-
-                        } // End have-good-shots-value
-                        try {
-                            double capVal = Double.parseDouble(capacity);
-                            mounted.setAmmoCapacity(capVal);
-                        } catch (NumberFormatException excep) {
-                            // Handled by the next if test.
-                        }
-                        if (capacity.equals(NA)) {
-                            if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                                    || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                                mounted.setAmmoCapacity(mounted.getOriginalShots()
-                                         * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
-                            } else {
-                                mounted.setAmmoCapacity(mounted.getOriginalShots()
-                                        * mounted.getType().getTonnage(entity)
-                                        / ((AmmoType) mounted.getType()).getShots());
-                            }
-                        }
-                        
-
-                    } else {
-                        // Bad XML equipment.
-                        warning.append("XML file expects ")
-                                .append(type)
-                                .append(" equipment at index ")
-                                .append(indexVal)
-                                .append(" of location ")
-                                .append(loc)
-                                .append(", but Entity has ")
-                                .append(mounted.getType()
-                                        .getInternalName())
-                                .append("there .\n");
-                    }
-
-                } // End slot-for-ammo
-
+                    parseAmmo(shots, type, capacity, mounted, entity, indexVal, locAmmoCount);
+                } 
                 // Not an ammo slot... does file agree with template?
                 else if (!mounted.getType().getInternalName()
                         .equals(type)) {
@@ -1659,6 +1599,82 @@ public class MULParser {
 
         } // End have-required-fields
         return locAmmoCount;
+    }
+    
+    /**
+     * Helper function that parses the passed-in strings containing ammo-related information and contains
+     * logic to add the parsed results to the given entity.
+     * @param shots Number of shots, drawn from XML
+     * @param type Type of ammo, drawn from XML
+     * @param capacity Capacity, drawn from XML
+     * @param mounted The mounted equipment object
+     * @param entity The entity on which to mount the equipment
+     * @param indexVal The index at which we expected to mount the equipment 
+     * @param loc The location in which we expected to mount the equipment
+     */
+    private void parseAmmo(String shots, String type, String capacity, Mounted mounted, Entity entity, int indexVal, int loc) {
+     // Get the saved ammo load.
+        EquipmentType newLoad = EquipmentType.get(type);
+        if (newLoad instanceof AmmoType) {
+
+            // Try to get a good shots value.
+            int shotsVal = -1;
+            try {
+                shotsVal = Integer.parseInt(shots);
+            } catch (NumberFormatException excep) {
+                // Handled by the next if test.
+            }
+            if (shots.equals(NA)) {
+                shotsVal = IArmorState.ARMOR_NA; // this indicates "no ammo", apparently 
+                warning.append(
+                        "Expected to find number of shots for ")
+                        .append(type)
+                        .append(", but found ")
+                        .append(shots)
+                        .append(" instead.\n");
+            } else if ((shotsVal < 0) || (shotsVal > 200)) {
+                warning.append(
+                        "Found invalid shots value for slot: ")
+                        .append(shots).append(".\n");
+            } else {
+
+                // Change to the saved ammo type and shots.
+                mounted.changeAmmoType((AmmoType) newLoad);
+                mounted.setShotsLeft(shotsVal);
+
+            } // End have-good-shots-value
+            try {
+                double capVal = Double.parseDouble(capacity);
+                mounted.setAmmoCapacity(capVal);
+            } catch (NumberFormatException excep) {
+                // Handled by the next if test.
+            }
+            if (capacity.equals(NA)) {
+                if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                        || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    mounted.setAmmoCapacity(mounted.getOriginalShots()
+                             * ((AmmoType) mounted.getType()).getKgPerShot() * 1000);
+                } else {
+                    mounted.setAmmoCapacity(mounted.getOriginalShots()
+                            * mounted.getType().getTonnage(entity)
+                            / ((AmmoType) mounted.getType()).getShots());
+                }
+            }
+            
+
+        } else {
+            // Bad XML equipment.
+            warning.append("XML file expects ")
+                    .append(type)
+                    .append(" equipment at index ")
+                    .append(indexVal)
+                    .append(" of location ")
+                    .append(loc)
+                    .append(", but Entity has ")
+                    .append(mounted.getType()
+                            .getInternalName())
+                    .append("there .\n");
+        }
     }
     
     /**
@@ -2233,6 +2249,60 @@ public class MULParser {
             ex.printStackTrace();
         }
         
+    }
+    
+    private void parseWeaponsBay(Element weaponBayTag, Entity entity, int loc) {
+        if(!entity.usesWeaponBays()) {
+            warning.append("Found a weapons bay record, but entity doesn't use weapon bays.");
+            return;
+        }
+        
+        int bayIndex = Integer.parseInt(weaponBayTag.getAttribute(INDEX));
+        Mounted bayMount = entity.getEquipment(bayIndex);
+        if(bayMount == null) {
+            warning.append(String.format("Invalid bay index %d", bayIndex));
+            return;
+        }
+        
+        // Handle children
+        NodeList nl = weaponBayTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+
+            if (currNode.getParentNode() != weaponBayTag) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if ((nodeType == Node.ELEMENT_NODE) &&
+                    (currNode.getNodeName().equalsIgnoreCase(WEAPONSBAYAMMO))) {
+                Element currEle = (Element)currNode;
+                
+                int ammoIndex = Integer.parseInt(currEle.getAttribute(INDEX));
+                String ammoType = currEle.getAttribute(TYPE);
+                String shotsLeft = currEle.getAttribute(SHOTS);
+                
+                Mounted ammoMount = entity.getEquipment(ammoIndex);
+                
+                if(ammoMount == null) {
+                    ammoMount = new Mounted(entity, EquipmentType.get(ammoType));
+                    try {
+                        entity.addEquipment(ammoMount, loc, bayMount.isRearMounted(), 1);
+                    } catch(Exception e) {
+                        warning.append(String.format("Error adding ammo at index %d: %s", ammoIndex, e));
+                    }
+                    
+                    bayMount.addAmmoToBay(entity.getEquipmentNum(ammoMount));
+                } else {
+                    // "restore transient state". Not sure what it means, but it's called when parsing regular ammo bins.
+                    ammoMount.restore();
+                }
+                
+                parseAmmo(shotsLeft, ammoType, "", ammoMount, entity, ammoIndex, loc);
+                
+            } else {
+                continue;
+            }
+        }
     }
     
     /**

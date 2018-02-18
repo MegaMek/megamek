@@ -312,13 +312,10 @@ public class EntityListFile {
                         haveSlot = true;
                     }
 
-                    
                     // Record ammunition slots in undestroyed locations.
                     // N.B. the slot CAN\"T be damaged at this point.
-                    // If the ammo is mounted in a bay, it will be handled differently
                     else if (!isDestroyed && (mount != null)
-                            && (mount.getType() instanceof AmmoType) 
-                            && (mount.getEntity().getBayByAmmo(mount) == null)) {
+                            && (mount.getType() instanceof AmmoType)) {
                         thisLoc.append(indentStr(indentLvl+1) + "<slot index=\"");
                         thisLoc.append(String.valueOf(loop + 1));
                         thisLoc.append("\" type=\"");
@@ -329,36 +326,7 @@ public class EntityListFile {
                         thisLoc.append(CommonConstants.NL);
                         haveSlot = true;
                     }
-                    
-                    // If the piece of equipment is a bay that contains ammo
-                    // Record the ammo
-                    else if(!isDestroyed && (mount != null)
-                            && mount.getBayAmmo().size() > 0) {
-                        
-                        thisLoc.append(indentStr(indentLvl+1) + "<weaponsBay index=\"");
-                        thisLoc.append(String.valueOf(loop + 1));
-                        thisLoc.append("\" type=\"");
-                        thisLoc.append(mount.getType().getInternalName());
-                        thisLoc.append("\">");
-                        thisLoc.append(CommonConstants.NL);
-                        
-                        for(int ammoSlotID : mount.getBayAmmo()) {
-                            Mounted bayAmmo = entity.getEquipment(ammoSlotID);
-                            
-                            thisLoc.append(indentStr(indentLvl+2) + "<weaponsBayAmmo index=\"");
-                            thisLoc.append(String.valueOf(ammoSlotID));
-                            thisLoc.append("\" type=\"");
-                            thisLoc.append(bayAmmo.getType().getInternalName());
-                            thisLoc.append("\" shots=\"");
-                            thisLoc.append(String.valueOf(bayAmmo.getBaseShotsLeft()));
-                            thisLoc.append("\"/>");
-                            thisLoc.append(CommonConstants.NL);
-                        }
-                        
-                        thisLoc.append(indentStr(indentLvl+1) + "</weaponsBay>");
-                        thisLoc.append(CommonConstants.NL);
-                    }
-                        
+
                     // Record the munition type of oneshot launchers
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof WeaponType)

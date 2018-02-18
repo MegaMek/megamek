@@ -5026,19 +5026,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
     public synchronized void boardChangedHex(BoardEvent b) {
-        hexImageCache.remove(b.getCoords());
-        IHex hex = game.getBoard().getHex(b.getCoords());
-        tileManager.clearHex(hex);
-        tileManager.waitForHex(hex);
-        clearShadowMap();
-        // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
-        if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
-            if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
-                hex.setTheme("");
-                game.getBoard().setHex(b.getCoords(), hex);
-            } else if (!selectedTheme.equals(hex.getTheme())) {
-                hex.setTheme(selectedTheme);
-                game.getBoard().setHex(b.getCoords(), hex);
+        ArrayList<Coords> cArray = new ArrayList<>();
+        if (game.getBoard().contains(b.getCoords()))
+            cArray.add(b.getCoords());
+        // Also repaint the surrounding hexes because of shadows, border etc.
+        for (int dir: allDirections) 
+            if (game.getBoard().contains(b.getCoords().translated(dir)))
+                cArray.add(b.getCoords().translated(dir));
+
+        for (Coords c: cArray) {
+            hexImageCache.remove(c);
+            IHex hex = game.getBoard().getHex(c);
+            tileManager.clearHex(hex);
+            // Don't wait in the board editor because many hex changes 
+            // makes this very slow 
+            if (clientgui != null) tileManager.waitForHex(hex);
+            clearShadowMap();
+            // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
+            if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
+                if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
+                    hex.setTheme("");
+                    game.getBoard().setHex(b.getCoords(), hex);
+                } else if (!selectedTheme.equals(hex.getTheme())) {
+                    hex.setTheme(selectedTheme);
+                    game.getBoard().setHex(b.getCoords(), hex);
+                }
             }
         }
         repaint();

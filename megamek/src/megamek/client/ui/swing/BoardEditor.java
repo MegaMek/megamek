@@ -34,6 +34,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
@@ -46,7 +48,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -217,6 +221,12 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JButton butExpandMap;
     private Coords lastClicked;
     MegaMekController controller;
+    // Undo / Redo
+    JButton buttonUndo, buttonRedo;
+    private Stack<HashSet<IHex>> undoStack = new Stack<>();
+    private Stack<HashSet<IHex>> redoStack = new Stack<>();
+    private HashSet<IHex> currentUndoSet;
+    private HashSet<Coords> currentUndoCoords;
 
     /**
      * Flag that indicates whether hotkeys should be ignored or not.  This is
@@ -242,13 +252,34 @@ public class BoardEditor extends JComponent implements ItemListener,
             //$NON-NLS-2$
             frame.dispose();
         }
+        // Add a mouse listener for mouse button release 
+        // to handle Undo
+        bv.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.getButton() != MouseEvent.BUTTON1) return;
+                // Act only if the user actually drew something
+                if ((currentUndoSet != null) &&
+                        !currentUndoSet.isEmpty()) {
+                    // Since this draw action is finished, push the
+                    // drawn hexes onto the Undo Stack and get ready
+                    // for a new draw action
+                    undoStack.push(currentUndoSet);
+                    currentUndoSet = null;
+                    buttonUndo.setEnabled(true);
+                    // Drawing something disables any redo actions
+                    redoStack.clear();
+                    buttonRedo.setEnabled(false);
+                }
+            }
+        });
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
             @Override
             public void hexMoused(BoardViewEvent b) {
                 Coords c = b.getCoords();
                 // return if there are no or no valid coords or if we click the same hex again
                 // unless Raise/Lower Terrain is active which should let us click the same hex 
-                if ((c == null) || (c.equals(lastClicked) & !buttonUpDn.isSelected())
+                if ((c == null) || (c.equals(lastClicked) && !buttonUpDn.isSelected())
                         || !board.contains(c)) {
                     return;
                 }
@@ -285,6 +316,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                             if (!buttonOOC.isSelected() ||
                                     (buttonOOC.isSelected() && board.getHex(h).isClearHex()))
                             {
+                                saveToUndo(h);
                                 relevelHex(h);
                             }   
                         }
@@ -295,12 +327,13 @@ public class BoardEditor extends JComponent implements ItemListener,
                     if (isALT) { // ALT-Click
                         setCurrentHex(board.getHex(b.getCoords()));
                     } else {
-                        LinkedList<Coords> allBrushHexes = getBrushCoords(c) ;
+                        LinkedList<Coords> allBrushHexes = getBrushCoords(c);
                         for (Coords h: allBrushHexes) {
                             // test if texture overwriting is active
                             if (!buttonOOC.isSelected() ||
                                     (buttonOOC.isSelected() && board.getHex(h).isClearHex() )  )
                             {
+                                saveToUndo(h);
                                 if (isCTRL) { // CTRL-Click
                                     paintHex(h);
                                 } else if (isSHIFT) { // SHIFT-Click
@@ -458,6 +491,12 @@ public class BoardEditor extends JComponent implements ItemListener,
         buttonOOC = addTerrainTButton("ButtonOOC", "OOC", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         
+        ArrayList<JButton> undoButtons = new ArrayList<JButton>();
+        buttonUndo = addTerrainButton("ButtonUndo", "Undo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonRedo = addTerrainButton("ButtonRedo", "Redo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonUndo.setEnabled(false);
+        buttonRedo.setEnabled(false);
+        
         // Mouse wheel behaviour for the WATER button to change the water depth
         buttonWa.addMouseWheelListener(new MouseWheelListener() {
             @Override
@@ -513,6 +552,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         brushButtonPanel = new JPanel(new GridLayout(0, 3, 2, 2));
         addManyTButtons(brushButtonPanel, brushButtons);
         buttonBrush1.setSelected(true);
+        
+        JPanel undoButtonPanel = new JPanel(new GridLayout(1, 2, 2, 2));
+        addManyButtons(undoButtonPanel, buttonUndo, buttonRedo);
         
         // Elevation Control
         JPanel panElevation = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
@@ -649,6 +691,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         add(terrainButtonPanel, cfullLine);
         add(brushButtonPanel, cfullLine);
         add(new JLabel(""), cYFiller); //$NON-NLS-1$
+        add(undoButtonPanel, cfullLine);
+        add(new JLabel(""), cYFiller); //$NON-NLS-1$
         
         // Elevation Control
         add(panElevation, cfullLine);
@@ -742,6 +786,34 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
     
     /**
+     * Save the hex at c into the current undo Set
+     */
+    private void saveToUndo(Coords c) {
+        // Create a new set of hexes to save for undoing
+        // This will be filled as long as the mouse is dragged
+        if (currentUndoSet == null) {
+            currentUndoSet = new HashSet<IHex>();
+            currentUndoCoords = new HashSet<Coords>();
+        }
+        if (!currentUndoCoords.contains(c)) {
+            IHex hex = board.getHex(c).duplicate();
+            // Newly drawn board hexes do not know their Coords
+            hex.setCoords(c);
+            currentUndoSet.add(hex);
+            currentUndoCoords.add(c);
+        }
+    }
+    
+    private void resetUndo() {
+        currentUndoSet = null;
+        currentUndoCoords = null;
+        undoStack.clear();
+        redoStack.clear();
+        buttonUndo.setEnabled(false);
+        buttonRedo.setEnabled(false);
+    }
+    
+    /**
      * Changes the hex level at Coords c. Expects c 
      * to be on the board.
      */
@@ -750,6 +822,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         newHex.setLevel(hexLeveltoDraw);
         board.resetStoredElevation();
         board.setHex(c, newHex);
+        
     }
 
     /**
@@ -758,7 +831,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     void paintHex(Coords c) {
         board.resetStoredElevation();
         board.setHex(c, curHex.duplicate());
-    }
+    } 
     
     /**
      * Apply the current Hex to the Board at the specified location.
@@ -1237,14 +1310,17 @@ public class BoardEditor extends JComponent implements ItemListener,
             ignoreHotKeys = true;
             boardNew();
             ignoreHotKeys = false;
+            resetUndo();
         } else if ("fileBoardExpand".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
             boardResize();
             ignoreHotKeys = false;
+            resetUndo();
         } else if ("fileBoardOpen".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
             boardLoad();
             ignoreHotKeys = false;
+            resetUndo();
         } else if ("fileBoardSave".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
             boardSave();
@@ -1355,16 +1431,19 @@ public class BoardEditor extends JComponent implements ItemListener,
             buttonBrush1.setSelected(true);
             buttonBrush2.setSelected(false);
             buttonBrush3.setSelected(false);
+            lastClicked = null;
         } else if (ae.getSource().equals(buttonBrush2)) {
             brushSize = 2;
             buttonBrush1.setSelected(false);
             buttonBrush2.setSelected(true);
             buttonBrush3.setSelected(false);
+            lastClicked = null;
         } else if (ae.getSource().equals(buttonBrush3)) {
             brushSize = 3;
             buttonBrush1.setSelected(false);
             buttonBrush2.setSelected(false);
             buttonBrush3.setSelected(true);
+            lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) { 
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
@@ -1378,6 +1457,46 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if (ae.getSource().equals(buttonUpDn)) {
             // Not so useful to only do on clear terrain
             buttonOOC.setSelected(false);
+        } else if (ae.getSource().equals(buttonUndo)) {
+            // The button should not be active when the stack is empty, but
+            // let's check nevertheless
+            if (undoStack.isEmpty()) { 
+                buttonUndo.setEnabled(false); 
+            } else {
+                HashSet<IHex> recentHexes = undoStack.pop();
+                HashSet<IHex> redoHexes = new HashSet<>(); 
+                for (IHex hex: recentHexes) {
+                    // Retrieve the board hex for Redo
+                    IHex rHex = board.getHex(hex.getCoords()).duplicate();
+                    rHex.setCoords(hex.getCoords());
+                    redoHexes.add(rHex);
+                    // and undo the board hex
+                    board.setHex(hex.getCoords(), hex);
+                }
+                redoStack.push(redoHexes);
+                if (undoStack.isEmpty()) buttonUndo.setEnabled(false);
+                buttonRedo.setEnabled(true);
+                currentUndoSet = null; // should be anyway
+            }
+        } else if (ae.getSource().equals(buttonRedo)) {
+            // The button should not be active when the stack is empty, but
+            // let's check nevertheless
+            if (redoStack.isEmpty()) { 
+                buttonRedo.setEnabled(false); 
+            } else {
+                HashSet<IHex> recentHexes = redoStack.pop();
+                HashSet<IHex> undoHexes = new HashSet<>(); 
+                for (IHex hex: recentHexes) {
+                    IHex rHex = board.getHex(hex.getCoords()).duplicate();
+                    rHex.setCoords(hex.getCoords());
+                    undoHexes.add(rHex);
+                    board.setHex(hex.getCoords(), hex);
+                }
+                undoStack.push(undoHexes);
+                if (redoStack.isEmpty()) buttonRedo.setEnabled(false);
+                buttonUndo.setEnabled(true);
+                currentUndoSet = null; // should be anyway
+            }
         }
     }
 

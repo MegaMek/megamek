@@ -24,8 +24,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.MegaMek;
@@ -240,6 +243,9 @@ public class EntityListFile {
                 }
             }
 
+            // 
+            Map<Mounted, Integer> baySlotMap = new HashMap<>();
+            
             // Walk through the slots in this location.
             for (int loop = 0; loop < entity.getNumberOfCriticals(loc); loop++) {
 
@@ -267,6 +273,13 @@ public class EntityListFile {
                     Mounted mount = null;
                     if (CriticalSlot.TYPE_EQUIPMENT == slot.getType()) {
                         mount = slot.getMount();
+                    }
+                    
+                    // if the "equipment" is a weapons bay, 
+                    // then let's make a note of it
+                    if(entity.usesWeaponBays() && 
+                            slot.getMount().getBayAmmo() != null) {
+                        baySlotMap.put(slot.getMount(), loop + 1);
                     }
 
                     if (mount != null && mount.getType() instanceof BombType) {
@@ -316,12 +329,27 @@ public class EntityListFile {
                     // N.B. the slot CAN\"T be damaged at this point.
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof AmmoType)) {
+                        
+                        String bayIndex = "";
+                        
+                        for(Mounted bay : baySlotMap.keySet()) {
+                            if(bay.ammoInBay(entity.getEquipmentNum(mount))) {
+                                bayIndex = String.valueOf(baySlotMap.get(bay));
+                            }
+                        }
+                        
                         thisLoc.append(indentStr(indentLvl+1) + "<slot index=\"");
                         thisLoc.append(String.valueOf(loop + 1));
                         thisLoc.append("\" type=\"");
                         thisLoc.append(mount.getType().getInternalName());
                         thisLoc.append("\" shots=\"");
                         thisLoc.append(String.valueOf(mount.getBaseShotsLeft()));
+                        
+                        if(!bayIndex.isEmpty()) {
+                            thisLoc.append("\" weaponsBayIndex=\"");
+                            thisLoc.append(bayIndex);
+                        }
+                        
                         thisLoc.append("\"/>");
                         thisLoc.append(CommonConstants.NL);
                         haveSlot = true;

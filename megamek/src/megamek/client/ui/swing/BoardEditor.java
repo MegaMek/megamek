@@ -574,13 +574,17 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Terrain List
         labTerrain = new JLabel(
                 Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
-        lisTerrain = new JList<String>(new DefaultListModel<String>());
+        lisTerrain = new JList<String>(new DefaultListModel<String>()) ;
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setVisibleRowCount(6);
         refreshTerrainList();
         
         // Terrain Preview
         canHex = new HexCanvas();
+        
+        JPanel panlisHex = new JPanel(new FlowLayout());
+        panlisHex.add(new JScrollPane(lisTerrain));
+        panlisHex.add(canHex);
         
         // Terrain Chooser 
         panTerrainType = new JPanel(new BorderLayout());
@@ -668,11 +672,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Arrange everything
         //
         GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints cfullLine = new GridBagConstraints();
         GridBagConstraints cYFiller = new GridBagConstraints();
         setLayout(gridbag);
-        c.insets = new Insets(4, 4, 1, 1);
         
         cfullLine.fill = GridBagConstraints.HORIZONTAL;
         cfullLine.gridwidth = GridBagConstraints.REMAINDER;
@@ -697,13 +699,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Elevation Control
         add(panElevation, cfullLine);
         
-        // Terrain List and Hex
+        // Terrain List and Preview Hex
         add(labTerrain, cfullLine);
-        c.gridwidth = 3;
-        add(new JScrollPane(lisTerrain), c);
-        c.gridx = GridBagConstraints.RELATIVE;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        add(canHex, c);
+        add(panlisHex, cfullLine);
         
         // Diverse Buttons
         add(butDelTerrain, cfullLine);
@@ -1562,6 +1560,19 @@ public class BoardEditor extends JComponent implements ItemListener,
                 g.clearRect(0, 0, 72, 72);
             }
         }
+
+        // Make the hex stubborn when resizing the frame
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(80,80);
+        }
+        
+        @Override
+        public Dimension getMinimumSize() {
+            return new Dimension(80,80);
+        }
+        
+        
     }
 
     /**

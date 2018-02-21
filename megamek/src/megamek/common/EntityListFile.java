@@ -27,7 +27,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -278,7 +277,7 @@ public class EntityListFile {
                     // if the "equipment" is a weapons bay, 
                     // then let's make a note of it
                     if(entity.usesWeaponBays() && 
-                            slot.getMount().getBayAmmo() != null) {
+                            slot.getMount().getBayAmmo().size() > 0) {
                         baySlotMap.put(slot.getMount(), loop + 1);
                     }
 

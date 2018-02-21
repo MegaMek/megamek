@@ -42,7 +42,6 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.OptionsConstants;
-import megamek.common.ITechnology;
 
 /**
  * @author Neoancient

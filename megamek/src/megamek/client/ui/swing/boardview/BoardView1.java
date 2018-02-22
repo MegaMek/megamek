@@ -112,6 +112,7 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.ArtilleryTracker;
 import megamek.common.Building;
+import megamek.common.Building.BasementType;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Configuration;
@@ -5633,21 +5634,43 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             
             // Fuel Tank
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
-                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
-                        mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
-                        bldg.toString(),
-                        bldg.getCurrentCF(mcoords),
-                }));
+                // In the BoardEditor, buildings have no entry in the
+                // buildings list of the board, so get the info from the hex
+                if (clientgui == null) {
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
+                    txt.append(Messages.getString("BoardView1.Tooltip.FuelTank", new Object[] { //$NON-NLS-1$
+                            mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
+                            Terrains.getEditorName(Terrains.FUEL_TANK),
+                            mhex.terrainLevel(Terrains.FUEL_TANK_CF),
+                            mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)
+                    }));
+                } else {
+                    Building bldg = game.getBoard().getBuildingAt(mcoords);
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
+                    txt.append(Messages.getString("BoardView1.Tooltip.FuelTank", new Object[] { //$NON-NLS-1$
+                            mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
+                            bldg.toString(),
+                            bldg.getCurrentCF(mcoords)
+                    }));
+                }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
             
             // Building
             if (mhex.containsTerrain(Terrains.BUILDING)) {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
-                // in the map editor, the building might not exist
-                if (bldg != null) {
+                // In the BoardEditor, buildings have no entry in the
+                // buildings list of the board, so get the info from the hex
+                if (clientgui == null) {
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
+                    txt.append(Messages.getString("BoardView1.Tooltip.Building", new Object[] { //$NON-NLS-1$
+                            mhex.terrainLevel(Terrains.BLDG_ELEV),
+                            Terrains.getEditorName(Terrains.BUILDING),
+                            mhex.terrainLevel(Terrains.BLDG_CF),
+                            Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR),0),
+                            BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString()
+                    }));
+                } else {
+                    Building bldg = game.getBoard().getBuildingAt(mcoords);
                     txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.Building", new Object[] { //$NON-NLS-1$
                             mhex.terrainLevel(Terrains.BLDG_ELEV),
@@ -5656,24 +5679,35 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             bldg.getArmor(mcoords),
                             bldg.getBasement(mcoords).getDesc()       
                     }));
-                    
+
                     if (bldg.getBasementCollapsed(mcoords)) {
                         txt.append(Messages
                                 .getString("BoardView1.Tooltip.BldgBasementCollapsed")); //$NON-NLS-1$
                     }
-                    txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
                 }
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
-            
+
             // Bridge
             if (mhex.containsTerrain(Terrains.BRIDGE)) {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
-                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
-                        mhex.terrainLevel(Terrains.BRIDGE_ELEV),
-                        bldg.toString(),
-                        bldg.getCurrentCF(mcoords),
-                }));
+                // In the BoardEditor, buildings have no entry in the
+                // buildings list of the board, so get the info from the hex
+                if (clientgui == null) {
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
+                    txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
+                            mhex.terrainLevel(Terrains.BRIDGE),
+                            Terrains.getEditorName(Terrains.BRIDGE),
+                            mhex.terrainLevel(Terrains.BRIDGE_CF),
+                    }));
+                } else {
+                    Building bldg = game.getBoard().getBuildingAt(mcoords);
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
+                    txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
+                            mhex.terrainLevel(Terrains.BRIDGE_ELEV),
+                            bldg.toString(),
+                            bldg.getCurrentCF(mcoords),
+                    }));
+                }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
 

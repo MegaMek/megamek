@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.43.9-git
++ Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
 
 v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.

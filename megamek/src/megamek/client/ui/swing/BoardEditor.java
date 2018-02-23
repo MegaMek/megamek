@@ -178,10 +178,12 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JPanel brushButtonPanel;
     private ArrayList<JButton> terrainButtons;
     private ArrayList<JToggleButton> brushButtons;
-    private JButton buttonLW, buttonHW, buttonUW;
-    private JButton buttonLJ, buttonHJ, buttonUJ;
+    private JButton buttonLW, buttonLJ;
     private JButton buttonWa, buttonSw, buttonRo;
     private JButton buttonRd, buttonCl, buttonBu;
+    private JButton buttonMd, buttonPv, buttonSn;
+    private JButton buttonIc, buttonTu, buttonMg;
+    private JButton buttonBr, buttonFT;
     private JToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
     private JToggleButton buttonUpDn, buttonOOC;
     // the brush size: 1 = 1 hex, 2 = 1+6 surrounding hexes  
@@ -472,16 +474,20 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Buttons to ease setting common terrain types
         terrainButtons = new ArrayList<JButton>();
         buttonLW = addTerrainButton("ButtonLW", "Light Woods", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonHW = addTerrainButton("ButtonHW", "Heavy Woods", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonUW = addTerrainButton("ButtonUW", "Ultra Woods", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonLJ = addTerrainButton("ButtonLJ", "Light Jungle", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonHJ = addTerrainButton("ButtonHJ", "Heavy Jungle", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonUJ = addTerrainButton("ButtonUJ", "Ultra Jungle", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonWa = addTerrainButton("ButtonWa", "Water", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonSw = addTerrainButton("ButtonSw", "Swamp", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonRo = addTerrainButton("ButtonRo", "Rough", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonMd = addTerrainButton("ButtonMd", "Mud", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonPv = addTerrainButton("ButtonPv", "Pavement", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonBu = addTerrainButton("ButtonBu", "Buildings", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonRd = addTerrainButton("ButtonRd", "Roads", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonBr = addTerrainButton("ButtonBr", "Bridges", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonFT = addTerrainButton("ButtonFT", "Fuel Tanks", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonSn = addTerrainButton("ButtonSn", "Snow", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonIc = addTerrainButton("ButtonIc", "Ice", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonTu = addTerrainButton("ButtonTu", "Tundra", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonMg = addTerrainButton("ButtonMg", "Magma", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonCl = addTerrainButton("ButtonCl", "Clear", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         
         brushButtons = new ArrayList<JToggleButton>();
@@ -496,21 +502,58 @@ public class BoardEditor extends JComponent implements ItemListener,
         buttonRedo = addTerrainButton("ButtonRedo", "Redo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonUndo.setEnabled(false);
         buttonRedo.setEnabled(false);
-        
-        // Mouse wheel behaviour for the WATER button to change the water depth
-        buttonWa.addMouseWheelListener(new MouseWheelListener() {
+
+        MouseWheelListener wheelListener = new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                int dir = (e.getWheelRotation() < 0) ? 1 : -1;
-                ITerrain curWater = curHex.getTerrain(Terrains.WATER);
-                if (curWater == null) { // <- No water yet
-                    if ((e.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
-                    addSetTerrainEasy(Terrains.WATER, 1);
-                } else {
-                    addSetTerrainEasy(Terrains.WATER, Math.max(curWater.getLevel()+dir, 0));
+                int terrain = Integer.MIN_VALUE;
+                if (e.getSource() == buttonRo) terrain = Terrains.ROUGH; 
+                else if (e.getSource() == buttonSw) terrain = Terrains.SWAMP;
+                else if (e.getSource() == buttonWa) terrain = Terrains.WATER;
+                else if (e.getSource() == buttonLW) terrain = Terrains.WOODS;
+                else if (e.getSource() == buttonLJ) terrain = Terrains.JUNGLE;
+                else if (e.getSource() == buttonMd) terrain = Terrains.MUD;
+                else if (e.getSource() == buttonPv) terrain = Terrains.PAVEMENT;
+                else if (e.getSource() == buttonIc) terrain = Terrains.ICE;
+                else if (e.getSource() == buttonSn) terrain = Terrains.SNOW;
+                else if (e.getSource() == buttonTu) terrain = Terrains.TUNDRA;
+                else if (e.getSource() == buttonMg) terrain = Terrains.MAGMA;
+                
+                if (terrain >= 0) {
+                    IHex saveHex = curHex.duplicate();
+                    // change the terrain level by wheel direction if present,
+                    // or set to 1 if not present
+                    if (curHex.containsTerrain(terrain)) {
+                        addSetTerrainEasy(terrain, 
+                                curHex.getTerrain(terrain).getLevel() +
+                                ((e.getWheelRotation() < 0) ? 1 : -1));
+                    } else {
+                        if ((e.getModifiers() & InputEvent.SHIFT_MASK) == 0) 
+                            curHex.removeAllTerrains();
+                        addSetTerrainEasy(terrain, 1);
+                    }
+                    // Reset the terrain to the former state
+                    // if the new would be invalid. 
+                    if (!curHex.isValid(null)) {
+                        curHex = saveHex;
+                        refreshTerrainList();
+                        repaintWorkingHex();
+                    }
                 }
             }
-        });
+        };
+
+        buttonSw.addMouseWheelListener(wheelListener);
+        buttonWa.addMouseWheelListener(wheelListener);
+        buttonRo.addMouseWheelListener(wheelListener);
+        buttonLJ.addMouseWheelListener(wheelListener);
+        buttonLW.addMouseWheelListener(wheelListener);
+        buttonMd.addMouseWheelListener(wheelListener);
+        buttonPv.addMouseWheelListener(wheelListener);
+        buttonSn.addMouseWheelListener(wheelListener);
+        buttonIc.addMouseWheelListener(wheelListener);
+        buttonTu.addMouseWheelListener(wheelListener);
+        buttonMg.addMouseWheelListener(wheelListener);
 
         // Mouse wheel behaviour for the BUILDINGS button
         // This always ADDS the building because clearing all terrin except
@@ -542,6 +585,81 @@ public class BoardEditor extends JComponent implements ItemListener,
                 } else {
                     // Just Wheel: Change Building elevation
                     addSetTerrainEasy(Terrains.BLDG_ELEV, Math.max(curElev.getLevel()+wheelDir, 1));
+                }
+            }
+        });
+        
+        // Mouse wheel behaviour for the BUILDINGS button
+        // This always ADDS the building because clearing all terrin except
+        // buildings is too complicated. User can click the X button to clear terrain.
+        buttonBr.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                ITerrain curBldg = curHex.getTerrain(Terrains.BRIDGE);
+                ITerrain curCF = curHex.getTerrain(Terrains.BRIDGE_CF);
+                ITerrain curElev = curHex.getTerrain(Terrains.BRIDGE_ELEV);
+                int wheelDir = (e.getWheelRotation() < 0) ? 1 : -1; 
+
+                // Set valid base building values when they're missing
+                if (curBldg == null) addSetTerrainEasy(Terrains.BRIDGE, 1);
+                if (curCF == null) addSetTerrainEasy(Terrains.BRIDGE_CF, 40);
+                if (curElev == null) addSetTerrainEasy(Terrains.BRIDGE_ELEV, 1);
+
+                if ((e.getModifiers() & InputEvent.CTRL_MASK) != 0) { 
+                    // CTRL: Change Building type
+                    int newLevel = curBldg.getLevel()+wheelDir;
+                    if (newLevel > 5) newLevel = 5;
+                    if (newLevel < 1) newLevel = 1;
+                    addSetTerrainEasy(Terrains.BRIDGE, newLevel);
+                } else if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+                    // SHIFT: Change Building CF
+                    int newLevel = curCF.getLevel()+wheelDir*10;
+                    if (newLevel < 10) newLevel = 10;
+                    addSetTerrainEasy(Terrains.BRIDGE_CF, newLevel);
+                } else {
+                    // Just Wheel: Change Building elevation
+                    addSetTerrainEasy(Terrains.BRIDGE_ELEV, Math.max(curElev.getLevel()+wheelDir, 1));
+                }
+            }
+        }); 
+        
+        // Mouse wheel behaviour for the BUILDINGS button
+        // This always ADDS the building because clearing all terrin except
+        // buildings is too complicated. User can click the X button to clear terrain.
+        buttonFT.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                ITerrain curBldg = curHex.getTerrain(Terrains.FUEL_TANK);
+                ITerrain curCF = curHex.getTerrain(Terrains.FUEL_TANK_CF);
+                ITerrain curElev = curHex.getTerrain(Terrains.FUEL_TANK_ELEV);
+                ITerrain curMagn = curHex.getTerrain(Terrains.FUEL_TANK_MAGN);
+                int wheelDir = (e.getWheelRotation() < 0) ? 1 : -1; 
+
+                // Set valid bas building values when they're missing
+                if (curBldg == null) addSetTerrainEasy(Terrains.FUEL_TANK, 1);
+                if (curCF == null) addSetTerrainEasy(Terrains.FUEL_TANK_CF, 40);
+                if (curElev == null) addSetTerrainEasy(Terrains.FUEL_TANK_ELEV, 1);
+                if (curMagn == null) addSetTerrainEasy(Terrains.FUEL_TANK_MAGN, 100);
+
+                if ((e.getModifiers() & InputEvent.CTRL_MASK) != 0) { 
+                    // CTRL: Change Building type
+                    int newLevel = curBldg.getLevel()+wheelDir;
+                    if (newLevel > 5) newLevel = 5;
+                    if (newLevel < 1) newLevel = 1;
+                    addSetTerrainEasy(Terrains.FUEL_TANK, newLevel);
+                } else if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+                    // SHIFT: Change Building CF
+                    int newLevel = curCF.getLevel()+wheelDir*10;
+                    if (newLevel < 10) newLevel = 10;
+                    addSetTerrainEasy(Terrains.FUEL_TANK_CF, newLevel);
+                } else if ((e.getModifiers() & InputEvent.ALT_MASK) != 0) {
+                    // ALT: Change Fuel Tank Magnitude
+                    int newLevel = curMagn.getLevel()+wheelDir*10;
+                    if (newLevel < 10) newLevel = 10;
+                    addSetTerrainEasy(Terrains.FUEL_TANK_MAGN, newLevel);
+                } else {
+                    // Just Wheel: Change Building elevation
+                    addSetTerrainEasy(Terrains.FUEL_TANK_ELEV, Math.max(curElev.getLevel()+wheelDir, 1));
                 }
             }
         }); 
@@ -587,7 +705,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         panlisHex.add(canHex);
         
         // Terrain Chooser 
-        panTerrainType = new JPanel(new BorderLayout());
+        panTerrainType = new JPanel(new BorderLayout(4, 4));
         TerrainHelper[] terrains = new TerrainHelper[Terrains.SIZE - 1];
         for (int i = 1; i < Terrains.SIZE; i++) {
             terrains[i - 1] = new TerrainHelper(i);
@@ -599,12 +717,13 @@ public class BoardEditor extends JComponent implements ItemListener,
         ComboboxToolTipRenderer renderer = new ComboboxToolTipRenderer();
         renderer.setTerrains(terrains);
         choTerrainType.setRenderer(renderer);
+        butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
         panTerrainType.add(choTerrainType, BorderLayout.WEST);
         panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
+        panTerrainType.add(butAddTerrain, BorderLayout.EAST);
         
-        // Add and Delete Terrain
+        // Delete Terrain
         butDelTerrain = new JButton(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
-        butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
 
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
@@ -709,7 +828,6 @@ public class BoardEditor extends JComponent implements ItemListener,
         add(panTerrExits, cfullLine);
         add(panRoads, cfullLine);
         add(panTheme, cfullLine);
-        add(butAddTerrain, cfullLine);
         add(butMiniMap, cfullLine);
         add(new JLabel(""), cYFiller); //$NON-NLS-1$ 
          
@@ -945,6 +1063,19 @@ public class BoardEditor extends JComponent implements ItemListener,
         int exits = Integer.parseInt(texTerrExits.getText());
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
+        refreshTerrainList();
+        repaintWorkingHex();
+    }
+    
+    private void setBasicFuelTank() {
+        ITerrain basicFT = Terrains.getTerrainFactory().createTerrain(Terrains.FUEL_TANK, 1, true, 0);
+        ITerrain basicFT_CF = Terrains.getTerrainFactory().createTerrain(Terrains.FUEL_TANK_CF, 40, false, 0);
+        ITerrain basicFT_Elev = Terrains.getTerrainFactory().createTerrain(Terrains.FUEL_TANK_ELEV, 1, false, 0);
+        ITerrain basicFT_Magn = Terrains.getTerrainFactory().createTerrain(Terrains.FUEL_TANK_MAGN, 100, false, 0);
+        curHex.addTerrain(basicFT);
+        curHex.addTerrain(basicFT_CF);
+        curHex.addTerrain(basicFT_Elev);
+        curHex.addTerrain(basicFT_Magn);
         refreshTerrainList();
         repaintWorkingHex();
     }
@@ -1387,30 +1518,27 @@ public class BoardEditor extends JComponent implements ItemListener,
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();  
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.WOODS, 1);
-        } else if (ae.getSource().equals(buttonHW)) {
+        } else if (ae.getSource().equals(buttonMg)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
-            addSetTerrainEasy(Terrains.WOODS, 2);
-        } else if (ae.getSource().equals(buttonUW)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
-            buttonUpDn.setSelected(false);
-            addSetTerrainEasy(Terrains.WOODS, 3);
+            addSetTerrainEasy(Terrains.MAGMA, 1);
         } else if (ae.getSource().equals(buttonLJ)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.JUNGLE, 1);
-        } else if (ae.getSource().equals(buttonHJ)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
-            buttonUpDn.setSelected(false);
-            addSetTerrainEasy(Terrains.JUNGLE, 2);
-        } else if (ae.getSource().equals(buttonUJ)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
-            buttonUpDn.setSelected(false);
-            addSetTerrainEasy(Terrains.JUNGLE, 3);
         } else if (ae.getSource().equals(buttonWa)) {
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
-            addSetTerrainEasy(Terrains.WATER, 1);
+            if ((ae.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                if (curHex.containsTerrain(Terrains.RAPIDS, 1))
+                    addSetTerrainEasy(Terrains.RAPIDS, 2);
+                else
+                    addSetTerrainEasy(Terrains.RAPIDS, 1);
+                if (!curHex.containsTerrain(Terrains.WATER))
+                    addSetTerrainEasy(Terrains.WATER, 1);
+            } else {
+                if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+                addSetTerrainEasy(Terrains.WATER, 1);
+            }
         } else if (ae.getSource().equals(buttonSw)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
@@ -1419,6 +1547,26 @@ public class BoardEditor extends JComponent implements ItemListener,
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
             addSetTerrainEasy(Terrains.ROUGH, 1);
+        } else if (ae.getSource().equals(buttonPv)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.PAVEMENT, 1);
+        } else if (ae.getSource().equals(buttonMd)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.MUD, 1);
+        } else if (ae.getSource().equals(buttonTu)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.TUNDRA, 1);
+        } else if (ae.getSource().equals(buttonIc)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.ICE, 1);
+        } else if (ae.getSource().equals(buttonSn)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.SNOW, 1);
         } else if (ae.getSource().equals(buttonCl)) {
             curHex.removeAllTerrains();
             refreshTerrainList();
@@ -1448,6 +1596,21 @@ public class BoardEditor extends JComponent implements ItemListener,
             addSetTerrainEasy(Terrains.BUILDING, 1);
             addSetTerrainEasy(Terrains.BLDG_ELEV, 1);
             addSetTerrainEasy(Terrains.BLDG_CF, 40);
+        } else if (ae.getSource().equals(buttonBr)) {
+            // TODO: Bridges dont seem to get added correctly, no tooltip
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            addSetTerrainEasy(Terrains.BRIDGE, 1);
+            addSetTerrainEasy(Terrains.BRIDGE_ELEV, 1);
+            addSetTerrainEasy(Terrains.BRIDGE_CF, 40);
+        } else if (ae.getSource().equals(buttonFT)) {
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            buttonUpDn.setSelected(false);
+            setBasicFuelTank();
+//            addSetTerrainEasy(Terrains.FUEL_TANK, 1);
+//            addSetTerrainEasy(Terrains.FUEL_TANK_ELEV, 1);
+//            addSetTerrainEasy(Terrains.FUEL_TANK_CF, 40);
+//            addSetTerrainEasy(Terrains.FUEL_TANK_MAGN, 100);
         } else if (ae.getSource().equals(buttonRd)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
@@ -1571,8 +1734,6 @@ public class BoardEditor extends JComponent implements ItemListener,
         public Dimension getMinimumSize() {
             return new Dimension(80,80);
         }
-        
-        
     }
 
     /**

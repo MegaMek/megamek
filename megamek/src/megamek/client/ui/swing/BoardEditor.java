@@ -1551,7 +1551,8 @@ public class BoardEditor extends JComponent implements ItemListener,
                     addSetTerrainEasy(Terrains.RAPIDS, 2);
                 else
                     addSetTerrainEasy(Terrains.RAPIDS, 1);
-                if (!curHex.containsTerrain(Terrains.WATER))
+                if (!curHex.containsTerrain(Terrains.WATER) ||
+                        curHex.getTerrain(Terrains.WATER).getLevel() == 0)
                     addSetTerrainEasy(Terrains.WATER, 1);
             } else {
                 if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();

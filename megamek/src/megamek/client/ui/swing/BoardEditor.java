@@ -249,19 +249,20 @@ public class BoardEditor extends JComponent implements ItemListener,
         bv.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (e.getButton() != MouseEvent.BUTTON1) return;
-                // Act only if the user actually drew something
-                if ((currentUndoSet != null) &&
-                        !currentUndoSet.isEmpty()) {
-                    // Since this draw action is finished, push the
-                    // drawn hexes onto the Undo Stack and get ready
-                    // for a new draw action
-                    undoStack.push(currentUndoSet);
-                    currentUndoSet = null;
-                    buttonUndo.setEnabled(true);
-                    // Drawing something disables any redo actions
-                    redoStack.clear();
-                    buttonRedo.setEnabled(false);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    // Act only if the user actually drew something
+                    if ((currentUndoSet != null) &&
+                            !currentUndoSet.isEmpty()) {
+                        // Since this draw action is finished, push the
+                        // drawn hexes onto the Undo Stack and get ready
+                        // for a new draw action
+                        undoStack.push(currentUndoSet);
+                        currentUndoSet = null;
+                        buttonUndo.setEnabled(true);
+                        // Drawing something disables any redo actions
+                        redoStack.clear();
+                        buttonRedo.setEnabled(false);
+                    }
                 }
             }
         });
@@ -397,7 +398,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     /**
      * Adds and sets up the easy access terrain JButtons
      */
-    JButton addTerrainButton(String iconName, String buttonName, ArrayList<JButton> bList) {
+    JButton prepareButton(String iconName, String buttonName, ArrayList<JButton> bList) {
         JButton button = new JButton(buttonName);
         button.addActionListener(this);
         // Get the normal icon
@@ -414,8 +415,14 @@ public class BoardEditor extends JComponent implements ItemListener,
         if (imageButton != null)
             button.setRolloverIcon(new ImageIcon(imageButton));
         
+        // Get the disabled icon, if any
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        if (imageButton != null)
+            button.setDisabledIcon(new ImageIcon(imageButton));
+        
         button.setToolTipText(Messages.getString("BoardEditor."+iconName+"TT")); //$NON-NLS-1$ //$NON-NLS-2$
-        bList.add(button);
+        if (bList != null) bList.add(button);
         return button;
     }
     
@@ -448,7 +455,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             button.setSelectedIcon(new ImageIcon(imageButton));
         
         button.setToolTipText(Messages.getString("BoardEditor."+iconName+"TT")); //$NON-NLS-1$ //$NON-NLS-2$
-        bList.add(button);
+        if (bList != null) bList.add(button);
         return button;
     }
 
@@ -463,22 +470,22 @@ public class BoardEditor extends JComponent implements ItemListener,
 
         // Buttons to ease setting common terrain types
         ArrayList<JButton> terrainButtons = new ArrayList<>();
-        buttonLW = addTerrainButton("ButtonLW", "Light Woods", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonLJ = addTerrainButton("ButtonLJ", "Light Jungle", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonWa = addTerrainButton("ButtonWa", "Water", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonSw = addTerrainButton("ButtonSw", "Swamp", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonRo = addTerrainButton("ButtonRo", "Rough", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonMd = addTerrainButton("ButtonMd", "Mud", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonPv = addTerrainButton("ButtonPv", "Pavement", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonBu = addTerrainButton("ButtonBu", "Buildings", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonRd = addTerrainButton("ButtonRd", "Roads", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonBr = addTerrainButton("ButtonBr", "Bridges", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonFT = addTerrainButton("ButtonFT", "Fuel Tanks", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonSn = addTerrainButton("ButtonSn", "Snow", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonIc = addTerrainButton("ButtonIc", "Ice", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonTu = addTerrainButton("ButtonTu", "Tundra", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonMg = addTerrainButton("ButtonMg", "Magma", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonCl = addTerrainButton("ButtonCl", "Clear", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonLW = prepareButton("ButtonLW", "Woods", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonLJ = prepareButton("ButtonLJ", "Jungle", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonWa = prepareButton("ButtonWa", "Water", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonSw = prepareButton("ButtonSw", "Swamp", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonRo = prepareButton("ButtonRo", "Rough", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonMd = prepareButton("ButtonMd", "Mud", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonPv = prepareButton("ButtonPv", "Pavement", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonBu = prepareButton("ButtonBu", "Buildings", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonRd = prepareButton("ButtonRd", "Roads", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonBr = prepareButton("ButtonBr", "Bridges", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonFT = prepareButton("ButtonFT", "Fuel Tanks", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonIc = prepareButton("ButtonIc", "Ice", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons); //$NON-NLS-1$ //$NON-NLS-2$
         
         ArrayList<JToggleButton> brushButtons = new ArrayList<>();
         buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
@@ -488,8 +495,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         
         ArrayList<JButton> undoButtons = new ArrayList<JButton>();
-        buttonUndo = addTerrainButton("ButtonUndo", "Undo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
-        buttonRedo = addTerrainButton("ButtonRedo", "Redo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonUndo = prepareButton("ButtonUndo", "Undo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonUndo.setEnabled(false);
         buttonRedo.setEnabled(false);
 
@@ -652,16 +659,25 @@ public class BoardEditor extends JComponent implements ItemListener,
         addManyButtons(undoButtonPanel, buttonUndo, buttonRedo);
         
         // Elevation Control
-        JPanel panElevation = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
-        JLabel labElev = new JLabel(
-                Messages.getString("BoardEditor.labElev"), SwingConstants.RIGHT); //$NON-NLS-1$
+        JPanel panElevation = new JPanel(new GridLayout(1, 0, 4, 4));
         texElev = new JTextField("0", 6); //$NON-NLS-1$
         texElev.addActionListener(this);
+        // Automatically select the elevation when clicking the text field
+        texElev.addMouseListener(new MouseAdapter() {
+            @Override public void mouseReleased(MouseEvent e) {
+                texElev.selectAll();
+            }
+        });
         texElev.getDocument().addDocumentListener(this);
-        butElevUp = new JButton(Messages.getString("BoardEditor.butElevUp")); //$NON-NLS-1$
-        butElevDown = new JButton(Messages.getString("BoardEditor.butElevDown")); //$NON-NLS-1$
+        texElev.setMargin(new Insets(4,4,4,4));
+        texElev.setHorizontalAlignment(JTextField.CENTER);
+        Font fontElev = new Font("SansSerif", Font.BOLD, 24); //$NON-NLS-1$
+        texElev.setFont(fontElev);
         
-        panElevation.add(labElev);
+        butElevUp = prepareButton("ButtonUP", "Raise Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butElevDown = prepareButton("ButtonDN", "Raise Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
+        
+//        panElevation.add(labElev);
         panElevation.add(butElevUp);
         panElevation.add(butElevDown);
         panElevation.add(texElev);
@@ -753,7 +769,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
         addManyActionListeners(butBoardLoad, butExpandMap, butBoardNew, butTerrExits, butMiniMap); 
-        addManyActionListeners(butDelTerrain, butAddTerrain, butElevUp, butElevDown);
+        addManyActionListeners(butDelTerrain, butAddTerrain);
 
         JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
         panButtons.add(labBoard);

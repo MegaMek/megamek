@@ -558,7 +558,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         buttonBu.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                setBasicBuilding();
+                setBasicBuilding(false);
                 int wheelDir = (e.getWheelRotation() < 0) ? 1 : -1;
                 int terrainType;
                 int newLevel;
@@ -579,8 +579,12 @@ public class BoardEditor extends JComponent implements ItemListener,
                     int oldLevel = curHex.getTerrain(terrainType).getLevel();
                     newLevel = Math.max(1, oldLevel + wheelDir);
                 }
-                
-                curHex.addTerrain(TF.createTerrain(terrainType, newLevel));
+
+                if (e.isAltDown()) {
+                    curHex.addTerrain(TF.createTerrain(terrainType, newLevel, true, 0));
+                } else {
+                    curHex.addTerrain(TF.createTerrain(terrainType, newLevel));
+                }
                 refreshTerrainList();
                 repaintWorkingHex();
             }
@@ -608,7 +612,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                 else {
                     terrainType = Terrains.BRIDGE_ELEV;
                     int oldLevel = curHex.getTerrain(terrainType).getLevel();
-                    newLevel = Math.max(1, oldLevel + wheelDir);
+                    newLevel = Math.max(0, oldLevel + wheelDir);
                 }
                 
                 curHex.addTerrain(TF.createTerrain(terrainType, newLevel));
@@ -1100,16 +1104,22 @@ public class BoardEditor extends JComponent implements ItemListener,
     /**
      * Sets valid basic bridge values as far as they are missing
      */
-    private void setBasicBuilding() {
+    private void setBasicBuilding(boolean singleHex) {
         if (!curHex.containsTerrain(Terrains.BLDG_CF)) 
-         curHex.addTerrain(TF.createTerrain(Terrains.BLDG_CF, 40, false, 0));
-        
+            curHex.addTerrain(TF.createTerrain(Terrains.BLDG_CF, 40, false, 0));
+
         if (!curHex.containsTerrain(Terrains.BLDG_ELEV)) 
             curHex.addTerrain(TF.createTerrain(Terrains.BLDG_ELEV, 1, false, 0));
-        
-        if (!curHex.containsTerrain(Terrains.BUILDING)) 
-            curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 1, false, 0));
-        
+
+        if (!curHex.containsTerrain(Terrains.BUILDING))
+        {
+            if (singleHex) {
+                curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 1, true, 0));
+            } else {
+                curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 1, false, 0));
+            }
+        }
+
         refreshTerrainList();
         repaintWorkingHex();
     }
@@ -1626,9 +1636,13 @@ public class BoardEditor extends JComponent implements ItemListener,
             buttonBrush3.setSelected(true);
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) { 
-            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
-            setBasicBuilding();
+            if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
+            if ((ae.getModifiers() & InputEvent.ALT_MASK) != 0) {
+                setBasicBuilding(true);
+            } else {
+                setBasicBuilding(false);
+            }
         } else if (ae.getSource().equals(buttonBr)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);

@@ -16,17 +16,23 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JToggleButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.client.ui.Messages;
+import megamek.common.Configuration;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.MegaMekFile;
 
 /**
  * A dialog of which exits are connected for terrain.
@@ -36,13 +42,13 @@ public class ExitsDialog extends JDialog implements ActionListener {
      * 
      */
     private static final long serialVersionUID = -3126840102187553386L;
-    private JCheckBox cheExit0 = new JCheckBox("0"); //$NON-NLS-1$
-    private JCheckBox cheExit1 = new JCheckBox("1"); //$NON-NLS-1$
-    private JCheckBox cheExit2 = new JCheckBox("2"); //$NON-NLS-1$
-    private JCheckBox cheExit3 = new JCheckBox("3"); //$NON-NLS-1$
-    private JCheckBox cheExit4 = new JCheckBox("4"); //$NON-NLS-1$
-    private JCheckBox cheExit5 = new JCheckBox("5"); //$NON-NLS-1$
-    private JLabel labBlank = new JLabel(""); //$NON-NLS-1$
+    JToggleButton cheExit0;
+    JToggleButton cheExit1;
+    JToggleButton cheExit2;
+    JToggleButton cheExit3;
+    JToggleButton cheExit4;
+    JToggleButton cheExit5;
+    private JLabel labBlank = new JLabel("                            "); //$NON-NLS-1$
     private JPanel panNorth = new JPanel(new GridBagLayout());
     private JPanel panSouth = new JPanel(new GridBagLayout());
     private JPanel panWest = new JPanel(new BorderLayout());
@@ -55,6 +61,12 @@ public class ExitsDialog extends JDialog implements ActionListener {
         super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
         setResizable(false);
         butDone.addActionListener(this);
+        cheExit0 = setupTButton("ToggleEx", "0");
+        cheExit1 = setupTButton("ToggleEx", "1");
+        cheExit2 = setupTButton("ToggleEx", "2");
+        cheExit3 = setupTButton("ToggleEx", "3");
+        cheExit4 = setupTButton("ToggleEx", "4");
+        cheExit5 = setupTButton("ToggleEx", "5");
         panNorth.add(cheExit0);
         panSouth.add(cheExit3);
         panWest.add(cheExit5, BorderLayout.NORTH);
@@ -97,5 +109,35 @@ public class ExitsDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(ActionEvent actionEvent) {
         setVisible(false);
+    }
+
+    /**
+     * Sets up JToggleButtons
+     */
+    JToggleButton setupTButton(String iconName, String buttonName) {
+        JToggleButton button = new JToggleButton(buttonName);
+
+        // Get the normal icon
+        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        if (imageButton != null) {
+            button.setIcon(new ImageIcon(imageButton));
+            // When there is an icon, then the text can be removed
+            button.setText("");
+        }
+
+        // Get the hover icon
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        if (imageButton != null)
+            button.setRolloverIcon(new ImageIcon(imageButton));
+
+        // Get the selected icon
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+        imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        if (imageButton != null)
+            button.setSelectedIcon(new ImageIcon(imageButton));
+
+        return button;
     }
 }

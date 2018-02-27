@@ -99,10 +99,6 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 
-/**
- * @author Simon
- *
- */
 public class BoardEditor extends JComponent implements ItemListener,
                                                        ListSelectionListener, ActionListener, DocumentListener,
                                                        IMapSettingsObserver {
@@ -160,7 +156,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             this.terrains = terrains;
         }
     }
-
+ 
     private static final long serialVersionUID = 4689863639249616192L;
     JFrame frame = new JFrame();
     private Game game = new Game();
@@ -194,6 +190,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     // the brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2  
     int brushSize = 1;
     int hexLeveltoDraw = -1000;
+    private Font fontElev = new Font("SansSerif", Font.BOLD, 24); //$NON-NLS-1$
     private JTextField texElev;
     private JButton butElevUp;
     private JButton butElevDown;
@@ -484,7 +481,6 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Help Texts
         JLabel genHelpText1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT); //$NON-NLS-1$
         JLabel terrainButtonHelp = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT); //$NON-NLS-1$
-        
         genHelpText1.addMouseListener(clickToHide);
         terrainButtonHelp.addMouseListener(clickToHide);
 
@@ -684,24 +680,13 @@ public class BoardEditor extends JComponent implements ItemListener,
         
         // Elevation Control
         JPanel panElevation = new JPanel(new GridLayout(1, 0, 4, 4));
-        texElev = new JTextField("0", 6); //$NON-NLS-1$
+        texElev = new EditorTextField("0", 6); //$NON-NLS-1$
         texElev.addActionListener(this);
-        // Automatically select the elevation when clicking the text field
-        texElev.addMouseListener(new MouseAdapter() {
-            @Override public void mouseReleased(MouseEvent e) {
-                texElev.selectAll();
-            }
-        });
         texElev.getDocument().addDocumentListener(this);
-        texElev.setMargin(new Insets(4,4,4,4));
-        texElev.setHorizontalAlignment(JTextField.CENTER);
-        Font fontElev = new Font("SansSerif", Font.BOLD, 24); //$NON-NLS-1$
-        texElev.setFont(fontElev);
         
         butElevUp = prepareButton("ButtonUP", "Raise Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
         butElevDown = prepareButton("ButtonDN", "Raise Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
         
-//        panElevation.add(labElev);
         panElevation.add(butElevUp);
         panElevation.add(butElevDown);
         panElevation.add(texElev);
@@ -749,15 +734,18 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Exits
         JPanel panTerrExits = new JPanel(new FlowLayout());
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
-        butTerrExits = new JButton(Messages.getString("BoardEditor.butTerrExits")); //$NON-NLS-1$
-        texTerrExits = new JTextField("0", 4); //$NON-NLS-1$
+        butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null); //$NON-NLS-1$ //$NON-NLS-2$
+        texTerrExits = new EditorTextField("0", 6); //$NON-NLS-1$
+        texTerrExits.addActionListener(this);
+        texTerrExits.getDocument().addDocumentListener(this);
+        
         butExitUp = prepareButton("ButtonExitUP", "Increment Exits / Hex Graphics", null); //$NON-NLS-1$ //$NON-NLS-2$
         butExitDown = prepareButton("ButtonExitDN", "Decrement Exits / Hex Graphics", null); //$NON-NLS-1$ //$NON-NLS-2$
         panTerrExits.add(cheTerrExitSpecified);
         panTerrExits.add(butTerrExits);
-        panTerrExits.add(texTerrExits);
         panTerrExits.add(butExitUp);
         panTerrExits.add(butExitDown);
+        panTerrExits.add(texTerrExits);
         
         JPanel panRoads = new JPanel(new FlowLayout());
         cheRoadsAutoExit = new JCheckBox(Messages.getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
@@ -796,7 +784,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         butBoardValidate.setActionCommand("fileBoardValidate"); //$NON-NLS-1$
         
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
-        addManyActionListeners(butBoardLoad, butExpandMap, butBoardNew, butTerrExits, butMiniMap); 
+        addManyActionListeners(butBoardLoad, butExpandMap, butBoardNew, butMiniMap); 
         addManyActionListeners(butDelTerrain, butAddTerrain);
 
         JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
@@ -1843,4 +1831,35 @@ public class BoardEditor extends JComponent implements ItemListener,
                 || texTerrainLevel.hasFocus() || texTerrExits.hasFocus()
                 || texTheme.hasFocus();
     }
+    
+    
+    /**
+     * Small Text Field Template with a standard format
+     * <P>
+     * @author Simon
+     */
+    private class EditorTextField extends JTextField {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 4706926692515844105L;
+
+        /**
+         * @see javax.swing.JTextField#JTextField(String, int)
+         */
+        public EditorTextField(String text, int columns) {
+            super(text, columns);
+            // Automatically select all text when clicking the text field
+            addMouseListener(new MouseAdapter() {
+                @Override public void mouseReleased(MouseEvent e) {
+                    selectAll();
+                }
+            });
+            setMargin(new Insets(4,4,4,4));
+            setHorizontalAlignment(JTextField.CENTER);
+            setFont(fontElev);
+        }
+    }
+
 }

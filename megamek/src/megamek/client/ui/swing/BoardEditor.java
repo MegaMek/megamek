@@ -99,6 +99,10 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 
+/**
+ * @author Simon
+ *
+ */
 public class BoardEditor extends JComponent implements ItemListener,
                                                        ListSelectionListener, ActionListener, DocumentListener,
                                                        IMapSettingsObserver {
@@ -201,6 +205,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JTextField texTerrExits;
     private JButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
+    private JButton butExitUp, butExitDown;
     private JTextField texTheme;
     private JButton butAddTerrain;
     private JButton butBoardNew;
@@ -219,6 +224,18 @@ public class BoardEditor extends JComponent implements ItemListener,
     private Stack<HashSet<IHex>> redoStack = new Stack<>();
     private HashSet<IHex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
+    
+    
+    /**
+     * A MouseAdapter that closes a JLabel when clicked 
+     */
+    private MouseAdapter clickToHide = new MouseAdapter() {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.getSource() instanceof JLabel)
+                ((JLabel) e.getSource()).setVisible(false);
+        }
+    };
 
     /**
      * Flag that indicates whether hotkeys should be ignored or not.  This is
@@ -396,7 +413,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
     
     /**
-     * Adds and sets up the easy access terrain JButtons
+     * Sets up JButtons
      */
     JButton prepareButton(String iconName, String buttonName, ArrayList<JButton> bList) {
         JButton button = new JButton(buttonName);
@@ -427,7 +444,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
     
     /**
-     * Adds and sets up the easy access terrain JToggleButtons
+     * Sets up JToggleButtons
      */
     JToggleButton addTerrainTButton(String iconName, String buttonName, ArrayList<JToggleButton> bList) {
         JToggleButton button = new JToggleButton(buttonName);
@@ -467,6 +484,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         // Help Texts
         JLabel genHelpText1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT); //$NON-NLS-1$
         JLabel terrainButtonHelp = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT); //$NON-NLS-1$
+        
+        genHelpText1.addMouseListener(clickToHide);
+        terrainButtonHelp.addMouseListener(clickToHide);
 
         // Buttons to ease setting common terrain types
         ArrayList<JButton> terrainButtons = new ArrayList<>();
@@ -730,10 +750,14 @@ public class BoardEditor extends JComponent implements ItemListener,
         JPanel panTerrExits = new JPanel(new FlowLayout());
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
         butTerrExits = new JButton(Messages.getString("BoardEditor.butTerrExits")); //$NON-NLS-1$
-        texTerrExits = new JTextField("0", 1); //$NON-NLS-1$
+        texTerrExits = new JTextField("0", 4); //$NON-NLS-1$
+        butExitUp = prepareButton("ButtonExitUP", "Increment Exits / Hex Graphics", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butExitDown = prepareButton("ButtonExitDN", "Decrement Exits / Hex Graphics", null); //$NON-NLS-1$ //$NON-NLS-2$
         panTerrExits.add(cheTerrExitSpecified);
         panTerrExits.add(butTerrExits);
         panTerrExits.add(texTerrExits);
+        panTerrExits.add(butExitUp);
+        panTerrExits.add(butExitDown);
         
         JPanel panRoads = new JPanel(new FlowLayout());
         cheRoadsAutoExit = new JCheckBox(Messages.getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
@@ -1541,6 +1565,17 @@ public class BoardEditor extends JComponent implements ItemListener,
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
             ed.setVisible(true);
             texTerrExits.setText(Integer.toString(ed.getExits()));
+            addSetTerrain();
+        } else if (ae.getSource().equals(butExitUp)) {
+            cheTerrExitSpecified.setSelected(true);
+            int exits = Integer.parseInt(texTerrExits.getText()) + 1;
+            texTerrExits.setText(Integer.toString(exits));
+            addSetTerrain();
+        } else if (ae.getSource().equals(butExitDown)) {
+            cheTerrExitSpecified.setSelected(true);
+            int exits = Integer.parseInt(texTerrExits.getText()) - 1;
+            if (exits < 0) exits = 0;
+            texTerrExits.setText(Integer.toString(exits));
             addSetTerrain();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();

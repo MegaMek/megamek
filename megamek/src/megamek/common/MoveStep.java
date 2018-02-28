@@ -657,7 +657,8 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (entity.getMovementMode() != EntityMovementMode.VTOL)
-                && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
             setRunProhibited(true);
         }
         if (entity.getMovedBackwards()
@@ -2846,6 +2847,8 @@ public class MoveStep implements Serializable {
                 && ((Infantry) getEntity()).isMechanized();
         final boolean isProto = getEntity() instanceof Protomech;
         final boolean isMech = getEntity() instanceof Mech;
+        final boolean isAmphibious = getEntity().hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) || 
+                getEntity().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
         int nSrcEl = srcHex.getLevel() + prevEl;
         int nDestEl = destHex.getLevel() + elevation;
 
@@ -2915,6 +2918,11 @@ public class MoveStep implements Serializable {
                 mp += destHex.movementCost(getEntity());
             }
 
+            // if this is an amphibious unit crossing water, i
+            if(isAmphibious && !destHex.containsTerrain(Terrains.ICE) && (destHex.terrainLevel(Terrains.WATER) > 0)) {
+                mp++;
+            }
+            
             // non-hovers, non-navals and non-VTOLs check for water depth and
             // are affected by swamp
             if ((moveMode != EntityMovementMode.HOVER)
@@ -2929,9 +2937,9 @@ public class MoveStep implements Serializable {
                 // no additional cost when moving on surface of ice.
                 if (!destHex.containsTerrain(Terrains.ICE)
                         || (nDestEl < destHex.surface())) {
-                    if (destHex.terrainLevel(Terrains.WATER) == 1) {
+                    if ((destHex.terrainLevel(Terrains.WATER) == 1) && !isAmphibious) {
                         mp++;
-                    } else if (destHex.terrainLevel(Terrains.WATER) > 1) {
+                    } else if ((destHex.terrainLevel(Terrains.WATER) > 1) && !isAmphibious) {
                         if (getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
                                 && ((entity instanceof Mech) || (entity instanceof Protomech))) {
                             mp += 2;
@@ -3297,6 +3305,7 @@ public class MoveStep implements Serializable {
                 && (nMove != EntityMovementMode.INF_UMU)
                 && (nMove != EntityMovementMode.VTOL)
                 && (nMove != EntityMovementMode.WIGE)
+                && !entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
                 && !dest.equals(entity.getPosition())

@@ -1849,10 +1849,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             retVal += current.surface();
             retVal -= next.surface();
         } else {
+            // if we're a hovercraft, surface ship, WIGE or a "fully amphibious" vehicle, we go on the water surface
+            // without adjusting elevation
             if ((getMovementMode() != EntityMovementMode.HOVER)
                 && (getMovementMode() != EntityMovementMode.NAVAL)
                 && (getMovementMode() != EntityMovementMode.HYDROFOIL)
-                && (getMovementMode() != EntityMovementMode.WIGE)) {
+                && (getMovementMode() != EntityMovementMode.WIGE)
+                && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
@@ -2186,9 +2189,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE)
-                || ((getMovementMode() == EntityMovementMode.HOVER) && hex
-                    .containsTerrain(Terrains.WATER))) {
-                // surface of ice is OK, surface of water is OK for hovers
+                || (((getMovementMode() == EntityMovementMode.HOVER) || hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) && 
+                        hex.containsTerrain(Terrains.WATER))) {
+                // surface of ice is OK, surface of water is OK for hovers and "fully amphibious" units
                 if (assumedAlt == hex.surface()) {
                     return true;
                 }

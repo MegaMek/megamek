@@ -56,6 +56,7 @@ import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -297,8 +298,8 @@ public class BoardEditor extends JComponent
     private HashSet<Coords> currentUndoCoords;
     
     /**
-     * Indicates if selecting a terrain in the Combobox should
-     * deselect all entries in the terrain listbox
+     * Special purpose indicator, keeps terrain list 
+     * from de-selecting when clicking it
      */
     private boolean terrListBlocker = false;
     
@@ -587,6 +588,10 @@ public class BoardEditor extends JComponent
         buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonBrush2 = addTerrainTButton("ButtonHex7", "Brush2", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonBrush3 = addTerrainTButton("ButtonHex19", "Brush3", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
+        ButtonGroup brushGroup = new ButtonGroup();
+        brushGroup.add(buttonBrush1);
+        brushGroup.add(buttonBrush2);
+        brushGroup.add(buttonBrush3);
         buttonOOC = addTerrainTButton("ButtonOOC", "OOC", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons); //$NON-NLS-1$ //$NON-NLS-2$
         
@@ -1760,21 +1765,12 @@ public class BoardEditor extends JComponent
             buttonUpDn.setSelected(false);
         } else if (ae.getSource().equals(buttonBrush1)) {
             brushSize = 1;
-            buttonBrush1.setSelected(true);
-            buttonBrush2.setSelected(false);
-            buttonBrush3.setSelected(false);
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBrush2)) {
             brushSize = 2;
-            buttonBrush1.setSelected(false);
-            buttonBrush2.setSelected(true);
-            buttonBrush3.setSelected(false);
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBrush3)) {
             brushSize = 3;
-            buttonBrush1.setSelected(false);
-            buttonBrush2.setSelected(false);
-            buttonBrush3.setSelected(true);
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) { 
             buttonUpDn.setSelected(false);

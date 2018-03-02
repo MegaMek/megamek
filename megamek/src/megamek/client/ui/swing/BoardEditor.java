@@ -48,8 +48,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
@@ -101,10 +103,15 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 
-public class BoardEditor extends JComponent implements ItemListener,
-                                                       ListSelectionListener, ActionListener, DocumentListener,
-                                                       IMapSettingsObserver {
+public class BoardEditor extends JComponent
+        implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
     
+    /**
+     * Class to make terrains in JComboBoxes easier.  This enables keeping the terrain type int separate from the name
+     * that gets displayed and also provides a way to get tooltips.
+     * 
+     * @author arlith
+     */
     private static class TerrainHelper implements Comparable<TerrainHelper> {
 
         private int terrainType;
@@ -129,9 +136,64 @@ public class BoardEditor extends JComponent implements ItemListener,
         public int compareTo(TerrainHelper o) {
             return toString().compareTo(o.toString());
         }
+        
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof Integer) {
+                return getTerrainType() == ((Integer)other).intValue();
+            }
+            if (!(other instanceof TerrainHelper)) {
+                return false;
+            }
+            return getTerrainType() == ((TerrainHelper)other).getTerrainType();
+        }
+    }
 
+    /**
+     * Class to make it easier to display a <code>Terrain</code> in a JList or JComboBox.
+     *
+     * @author arlith
+     */
+    private static class TerrainTypeHelper implements Comparable<TerrainTypeHelper> {
+
+        ITerrain terrain;
+
+        TerrainTypeHelper(ITerrain terrain) {
+            this.terrain = terrain;
+        }
+
+        public ITerrain getTerrain() {
+            return terrain;
+        }
+
+        @Override
+        public String toString() {
+            String baseString = Terrains.getDisplayName(terrain.getType(), terrain.getLevel());
+            if (baseString == null) {
+                baseString = Terrains.getEditorName(terrain.getType());
+                baseString += " " + terrain.getLevel();
+            }
+            if (terrain.hasExitsSpecified()) {
+                baseString += " (Exits: " + terrain.getExits() + ")";
+            }
+            return baseString; 
+        }
+
+        public String getTooltip() {
+            return terrain.toString();
+        }
+
+        @Override
+        public int compareTo(TerrainTypeHelper o) {
+            return toString().compareTo(o.toString());
+        }
+        
     }
     
+    /**
+     *  ListCellRenderer for rendering tooltips for each item in a list or combobox.  Code from SourceForge:
+     *  https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items 
+     */
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
         /**
          * 
@@ -139,10 +201,11 @@ public class BoardEditor extends JComponent implements ItemListener,
         private static final long serialVersionUID = 7428395938750335593L;
 
         TerrainHelper[] terrains;
+        
+        List<TerrainTypeHelper> terrainTypes;
 
-        @SuppressWarnings("rawtypes")
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
 
             JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index, isSelected,
@@ -151,11 +214,18 @@ public class BoardEditor extends JComponent implements ItemListener,
             if (-1 < index && null != value && null != terrains) {
                 list.setToolTipText(terrains[index].getTerrainTooltip());
             }
+            if (-1 < index && null != value && null != terrainTypes) {
+                list.setToolTipText(terrainTypes.get(index).getTooltip());
+            }
             return comp;
         }
 
         public void setTerrains(TerrainHelper[] terrains) {
             this.terrains = terrains;
+        }
+        
+        public void setTerrainTypess(List<TerrainTypeHelper> terrainTypes) {
+            this.terrainTypes = terrainTypes;
         }
     }
  
@@ -196,12 +266,13 @@ public class BoardEditor extends JComponent implements ItemListener,
     private EditorTextField texElev;
     private JButton butElevUp;
     private JButton butElevDown;
-    private JList<String> lisTerrain;
+    private JList<TerrainTypeHelper> lisTerrain;
+    private ComboboxToolTipRenderer lisTerrainRenderer;
     private JButton butDelTerrain;
     private JComboBox<TerrainHelper> choTerrainType;
     private EditorTextField texTerrainLevel;
     private JCheckBox cheTerrExitSpecified;
-    private JTextField texTerrExits;
+    private EditorTextField texTerrExits;
     private JButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
     private JButton butExitUp, butExitDown;
@@ -224,6 +295,12 @@ public class BoardEditor extends JComponent implements ItemListener,
     private Stack<HashSet<IHex>> redoStack = new Stack<>();
     private HashSet<IHex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
+    
+    /**
+     * Indicates if selecting a terrain in the Combobox should
+     * deselect all entries in the terrain listbox
+     */
+    private boolean terrListBlocker = false;
     
     
     /**
@@ -681,59 +758,36 @@ public class BoardEditor extends JComponent implements ItemListener,
         JPanel undoButtonPanel = new JPanel(new GridLayout(1, 2, 2, 2));
         addManyButtons(undoButtonPanel, buttonUndo, buttonRedo);
         
-        // Elevation Control
-//        JPanel panElevation = new JPanel(new GridLayout(0, 1, 4, 4));
-        texElev = new EditorTextField("0", 1); //$NON-NLS-1$
+        // Hex Elevation Control
+        texElev = new EditorTextField("0", 3); //$NON-NLS-1$
         texElev.addActionListener(this);
         texElev.getDocument().addDocumentListener(this);
-        
         butElevUp = prepareButton("ButtonExitUP", "Raise Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
         butElevDown = prepareButton("ButtonExitDN", "Lower Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
         
-//        JLabel headElev = prepareHeading("Hex Elevation");
-//        panElevation.add(headElev);
-//        panElevation.add(Box.createVerticalStrut(5));
-//        panElevation.add(butElevUp);
-//        panElevation.add(texElev);
-//        panElevation.add(butElevDown);
-//        panElevation.add(Box.createVerticalStrut(5));
-        
         // Terrain List
-        JLabel labTerrain = new JLabel(
-                Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
-        lisTerrain = new JList<String>(new DefaultListModel<String>()) ;
+        lisTerrainRenderer = new ComboboxToolTipRenderer();
+        lisTerrain = new JList<>(new DefaultListModel<>());
         lisTerrain.addListSelectionListener(this);
+        lisTerrain.setCellRenderer(lisTerrainRenderer);
         lisTerrain.setVisibleRowCount(6);
         refreshTerrainList();
-        
-        // Terrain Preview
+
+        // Terrain List, Preview, Delete
+        JPanel panlisHex = new JPanel(new FlowLayout(FlowLayout.LEFT,4,4));
+        butDelTerrain = prepareButton("buttonRemT", "Delete Terrain", null);
+        butDelTerrain.setEnabled(false);
         canHex = new HexCanvas();
-        
-        JPanel panlisHex = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 4));
+        panlisHex.add(butDelTerrain);
         panlisHex.add(new JScrollPane(lisTerrain));
         panlisHex.add(canHex);
         
-        // Terrain Chooser 
-        JPanel panTerrainType = new JPanel(new GridLayout(0, 1, 4, 4));
+        // Terrain Type Chooser, Level 
         TerrainHelper[] terrains = new TerrainHelper[Terrains.SIZE - 1];
         for (int i = 1; i < Terrains.SIZE; i++) {
             terrains[i - 1] = new TerrainHelper(i);
         }
         Arrays.sort(terrains);
-        
-//        texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
-//        texTerrainLevel = new EditorTextField("0", 6); //$NON-NLS-1$
-//        choTerrainType = new JComboBox<>(terrains);
-//        ComboboxToolTipRenderer renderer = new ComboboxToolTipRenderer();
-//        renderer.setTerrains(terrains);
-//        choTerrainType.setRenderer(renderer);
-//        butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
-//        panTerrainType.add(butAddTerrain);
-//        panTerrainType.add(choTerrainType);
-//        panTerrainType.add(texTerrainLevel);
-        
-        
-        
         texTerrainLevel = new EditorTextField("0", 2); //$NON-NLS-1$
         texTerrainLevel.addActionListener(this);
         texTerrainLevel.getDocument().addDocumentListener(this);
@@ -741,97 +795,76 @@ public class BoardEditor extends JComponent implements ItemListener,
         ComboboxToolTipRenderer renderer = new ComboboxToolTipRenderer();
         renderer.setTerrains(terrains);
         choTerrainType.setRenderer(renderer);
+        // Selecting a terrain type in the Dropdown should deselect
+        // all in the terrain overview list except when selected from there
+        choTerrainType.addActionListener(e -> { if (!terrListBlocker) lisTerrain.clearSelection(); });
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
-        panTerrainType.add(butAddTerrain);
-        panTerrainType.add(choTerrainType);
-        panTerrainType.add(texTerrainLevel);
-        
         butTerrUp = prepareButton("arrowsmallup", "Increase Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
         butTerrDown = prepareButton("arrowsmalldn", "Decrease Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
         
-       
-        
-   
-        
-        // Delete Terrain
-        butDelTerrain = new JButton(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
-
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
         butMiniMap.setActionCommand("viewMiniMap"); //$NON-NLS-1$
 
         // Exits
-//        JPanel panTerrExits = new JPanel(new FlowLayout());
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
         butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null); //$NON-NLS-1$ //$NON-NLS-2$
-//        texTerrExits = new EditorTextField("0", 6); //$NON-NLS-1$
-//        texTerrExits.addActionListener(this);
-//        texTerrExits.getDocument().addDocumentListener(this);
-        
-//        butExitUp = prepareButton("ButtonExitUP", "Increment Exits / Hex Graphics", null); //$NON-NLS-1$ //$NON-NLS-2$
-//        butExitDown = prepareButton("ButtonExitDN", "Decrement Exits / Hex Graphics", null); //$NON-NLS-1$ //$NON-NLS-2$
-//        panTerrExits.add(cheTerrExitSpecified);
-//        panTerrExits.add(butTerrExits);
-//        panTerrExits.add(butExitUp);
-//        panTerrExits.add(butExitDown);
-//        panTerrExits.add(texTerrExits);
-        
-        JPanel panTerrExits = new JPanel(new GridLayout(0, 1, 4, 4));
         texTerrExits = new EditorTextField("0", 2); //$NON-NLS-1$
         texTerrExits.addActionListener(this);
         texTerrExits.getDocument().addDocumentListener(this);
-        
         butExitUp = prepareButton("arrowsmallup", "Increase Exit / Gfx", null); //$NON-NLS-1$ //$NON-NLS-2$
         butExitDown = prepareButton("arrowsmalldn", "Decrease Exit / Gfx", null); //$NON-NLS-1$ //$NON-NLS-2$
-        
-//        JLabel headExits = prepareHeading("Exits / Gfx");
-//        panTerrExits.add(butTerrExits);
-//        panTerrExits.add(butExitUp);
-//        panTerrExits.add(texTerrExits);
-//        panTerrExits.add(butExitDown);
-//        panTerrExits.add(cheTerrExitSpecified);
-//        
-//        JLabel headTerr = prepareHeading("Terrain Type");
-////        panTerrainType.add(choTerrainType);
-//        panTerrainType.add(Box.createVerticalStrut(5));
-//        panTerrainType.add(butTerrUp);
-//        panTerrainType.add(texTerrainLevel);
-//        panTerrainType.add(butTerrDown);
-//        panTerrainType.add(butAddTerrain);
-        
-//        panElevation.add(Box.createVerticalStrut(5));
-//        panElevation.add(butElevUp);
-////        panElevation.add(texElev);
-//        panElevation.add(choTerrainType);
-//        panElevation.add(butElevDown);
-//        panElevation.add(Box.createVerticalStrut(5));
-        
+
+        // Arrows and text fields for type and exits
         JPanel panUP = new JPanel(new GridLayout(1,0,4,4));
         panUP.add(butTerrUp);
         panUP.add(butExitUp);
-        
         JPanel panTex = new JPanel(new GridLayout(1,0,4,4));
         panTex.add(texTerrainLevel);
         panTex.add(texTerrExits);
-        
         JPanel panDN = new JPanel(new GridLayout(1,0,4,4));
         panDN.add(butTerrDown);
         panDN.add(butExitDown);
         
-        
-        
-        
-        
-        
+        // Auto Exits to Pavement
+        cheRoadsAutoExit = new JCheckBox(Messages
+                .getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
         
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
-        texTheme = new JTextField("", 20); //$NON-NLS-1$
+        texTheme = new JTextField("", 10); //$NON-NLS-1$
         texTheme.getDocument().addDocumentListener(this);
         panTheme.add(labTheme);
         panTheme.add(texTheme);
+
+        // The hex settings panel (elevation, theme)
+        JPanel panelHexSettings = new JPanel();
+        panelHexSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Hex Settings")); //$NON-NLS-1$
+        panelHexSettings.add(butElevUp);
+        panelHexSettings.add(texElev);
+        panelHexSettings.add(butElevDown);
+        panelHexSettings.add(panTheme);
+        
+        // The terrain settings panel (type, level, exits)
+        JPanel panelTerrSettings = new JPanel(new GridLayout(0, 3, 4, 4));
+        panelTerrSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Terrain Settings")); //$NON-NLS-1$
+        panelTerrSettings.add(Box.createVerticalStrut(5));
+        panelTerrSettings.add(panUP);
+        panelTerrSettings.add(cheTerrExitSpecified);
+        
+        panelTerrSettings.add(choTerrainType);
+        panelTerrSettings.add(panTex);
+        panelTerrSettings.add(butTerrExits);
+        
+        panelTerrSettings.add(butAddTerrain);
+        panelTerrSettings.add(panDN);
+
+        // The board settings panel (Auto exit roads to pavement)
+        JPanel panelBoardSettings = new JPanel();
+        panelBoardSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Board Settings")); //$NON-NLS-1$
+        panelBoardSettings.add(cheRoadsAutoExit);
         
         // Board Buttons (Save, Load...)
         JLabel labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
@@ -869,32 +902,6 @@ public class BoardEditor extends JComponent implements ItemListener,
         panButtons.add(Box.createHorizontalStrut(5));
         panButtons.add(butBoardValidate);
         
-
-        // The hex settings panel (elevation, theme)
-        JPanel panelHexSettings = new JPanel();
-        panelHexSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Hex Settings")); //$NON-NLS-1$
-        panelHexSettings.add(butElevUp);
-        panelHexSettings.add(texElev);
-        panelHexSettings.add(butElevDown);
-        panelHexSettings.add(panTheme);
-        
-        // The terrain settings panel (type, level, exits)
-        JPanel panelTerrSettings = new JPanel(new GridLayout(0, 2, 4, 4));
-        panelTerrSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Terrain Settings")); //$NON-NLS-1$
-        panelTerrSettings.add(Box.createVerticalStrut(5));
-        panelTerrSettings.add(panUP);
-        
-        panelTerrSettings.add(choTerrainType);
-        panelTerrSettings.add(panTex);
-        
-        panelTerrSettings.add(Box.createVerticalStrut(5));
-        panelTerrSettings.add(panDN);
-
-        // The board settings panel (Auto exit roads to pavement)
-        JPanel panelBoardSettings = new JPanel();
-        panelBoardSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Board Settings")); //$NON-NLS-1$
-        panelBoardSettings.add(cheRoadsAutoExit);
-        
         // ------------------
         // Arrange everything
         //
@@ -923,21 +930,15 @@ public class BoardEditor extends JComponent implements ItemListener,
         add(undoButtonPanel, cfullLine);
         add(new JLabel(""), cYFiller); //$NON-NLS-1$
         
-        // Elevation Control
+        // Terrain and Hex Control
+        add(panelBoardSettings, cfullLine);
         add(panelHexSettings, cfullLine);
         add(panelTerrSettings, cfullLine);
-        add(panelBoardSettings, cfullLine);
         
         // Terrain List and Preview Hex
-//        add(labTerrain, cfullLine);
         add(panlisHex, cfullLine);
-        
-        // Diverse Buttons
-        add(butDelTerrain, cfullLine);
-//        add(panTerrainType, cfullLine);
-//        add(panTerrExits, cfullLine);
-//        add(panRoads, cfullLine);
-        
+
+        // Minimap Toggle
         add(new JLabel(""), cYFiller); //$NON-NLS-1$ 
         add(butMiniMap, cfullLine);
          
@@ -1123,15 +1124,23 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Refreshes the terrain list to match the current hex
      */
     private void refreshTerrainList() {
-        ((DefaultListModel<String>) lisTerrain.getModel()).removeAllElements();
+        
+        ((DefaultListModel<TerrainTypeHelper>)lisTerrain.getModel()).removeAllElements();
+        lisTerrainRenderer.setTerrainTypess(null);
         int terrainTypes[] = curHex.getTerrainTypes();
+        List<TerrainTypeHelper> types = new ArrayList<>();
         for (int i = 0; i < terrainTypes.length; i++) {
             ITerrain terrain = curHex.getTerrain(terrainTypes[i]);
             if (terrain != null) {
-                ((DefaultListModel<String>) lisTerrain.getModel()).addElement(terrain
-                                                                                      .toString());
+                TerrainTypeHelper tth = new TerrainTypeHelper(terrain);
+                types.add(tth);
             }
         }
+        Collections.sort(types);
+        for (TerrainTypeHelper tth : types) {
+            ((DefaultListModel<TerrainTypeHelper>) lisTerrain.getModel()).addElement(tth);
+        }
+        lisTerrainRenderer.setTerrainTypess(types);
     }
 
     /**
@@ -1243,15 +1252,20 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     private void refreshTerrainFromList() {
         if (lisTerrain.getSelectedIndex() == -1) {
-            return;
+            butDelTerrain.setEnabled(false);
+        } else {
+            butDelTerrain.setEnabled(true);
+            ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
+                    lisTerrain.getSelectedValue().getTerrain());
+            terrain = curHex.getTerrain(terrain.getType());
+            TerrainHelper terrainHelper = new TerrainHelper(terrain.getType());
+            terrListBlocker = true;
+            choTerrainType.setSelectedItem(terrainHelper);
+            terrListBlocker = false;
+            texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
+            cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
+            texTerrExits.setText(Integer.toString(terrain.getExits()));
         }
-        ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
-                lisTerrain.getSelectedValue());
-        terrain = curHex.getTerrain(terrain.getType());
-        choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
-        texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
-        cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
-        texTerrExits.setText(Integer.toString(terrain.getExits()));
     }
 
     public void boardNew() {
@@ -1631,8 +1645,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             }
         } else if (ae.getSource().equals(butDelTerrain)
                    && (lisTerrain.getSelectedValue() != null)) {
-            ITerrain toRemove = TF.createTerrain(
-                    lisTerrain.getSelectedValue());
+            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
+                    lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
@@ -1663,14 +1677,11 @@ public class BoardEditor extends JComponent implements ItemListener,
             addSetTerrain();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
-            int exits = Integer.parseInt(texTerrExits.getText()) + 1;
-            texTerrExits.setText(Integer.toString(exits));
+            texTerrExits.incValue();
             addSetTerrain();
         } else if (ae.getSource().equals(butExitDown)) {
             cheTerrExitSpecified.setSelected(true);
-            int exits = Integer.parseInt(texTerrExits.getText()) - 1;
-            if (exits < 0) exits = 0;
-            texTerrExits.setText(Integer.toString(exits));
+            texTerrExits.decValue(0);
             addSetTerrain();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();
@@ -1939,14 +1950,6 @@ public class BoardEditor extends JComponent implements ItemListener,
                 || texTheme.hasFocus();
     }
     
-    private JLabel prepareHeading(String text) {
-        JLabel label = new JLabel(text);
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setFont(new Font("SansSerif", Font.BOLD, 16));
-        return label;
-    }
-    
-    
     /**
      * Small Text Field Template with a standard format
      * <P>
@@ -1975,11 +1978,11 @@ public class BoardEditor extends JComponent implements ItemListener,
             setFont(fontElev);
         }
         
-        public void incValue(int maximum) {
-            int newValue = Integer.parseInt(getText());
-            newValue = newValue + 1 > maximum ? newValue : newValue + 1;   
-            setText(Integer.toString(newValue));
-        }
+//        public void incValue(int maximum) {
+//            int newValue = Integer.parseInt(getText());
+//            newValue = newValue + 1 > maximum ? newValue : newValue + 1;   
+//            setText(Integer.toString(newValue));
+//        }
         
         public void incValue() {
             int newValue = Integer.parseInt(getText()) + 1;

@@ -17,10 +17,12 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToggleButton;
@@ -138,6 +140,9 @@ public class ExitsDialog extends JDialog implements ActionListener {
         if (imageButton != null)
             button.setSelectedIcon(new ImageIcon(imageButton));
 
+        button.setMargin(new Insets(0,0,0,0));
+        button.setBorder(BorderFactory.createEmptyBorder());
+        
         return button;
     }
 }

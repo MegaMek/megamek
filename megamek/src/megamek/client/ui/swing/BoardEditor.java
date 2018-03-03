@@ -785,6 +785,7 @@ public class BoardEditor extends JComponent
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setCellRenderer(lisTerrainRenderer);
         lisTerrain.setVisibleRowCount(6);
+        lisTerrain.setFixedCellWidth(240);
         refreshTerrainList();
 
         // Terrain List, Preview, Delete
@@ -822,6 +823,7 @@ public class BoardEditor extends JComponent
 
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
+        cheTerrExitSpecified.addActionListener(e -> updateWhenSelected());
         butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null); //$NON-NLS-1$ //$NON-NLS-2$
         texTerrExits = new EditorTextField("0", 2); //$NON-NLS-1$
         texTerrExits.addActionListener(this);
@@ -833,12 +835,15 @@ public class BoardEditor extends JComponent
         JPanel panUP = new JPanel(new GridLayout(1,0,4,4));
         panUP.add(butTerrUp);
         panUP.add(butExitUp);
+        panUP.add(butTerrExits);
         JPanel panTex = new JPanel(new GridLayout(1,0,4,4));
         panTex.add(texTerrainLevel);
         panTex.add(texTerrExits);
+        panTex.add(cheTerrExitSpecified);
         JPanel panDN = new JPanel(new GridLayout(1,0,4,4));
         panDN.add(butTerrDown);
         panDN.add(butExitDown);
+        panDN.add(Box.createVerticalStrut(5));
         
         // Auto Exits to Pavement
         cheRoadsAutoExit = new JCheckBox(Messages
@@ -862,15 +867,13 @@ public class BoardEditor extends JComponent
         panelHexSettings.add(panTheme);
         
         // The terrain settings panel (type, level, exits)
-        JPanel panelTerrSettings = new JPanel(new GridLayout(0, 3, 4, 4));
+        JPanel panelTerrSettings = new JPanel(new GridLayout(0, 2, 4, 4));
         panelTerrSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Terrain Settings")); //$NON-NLS-1$
         panelTerrSettings.add(Box.createVerticalStrut(5));
         panelTerrSettings.add(panUP);
-        panelTerrSettings.add(cheTerrExitSpecified);
         
         panelTerrSettings.add(choTerrainType);
         panelTerrSettings.add(panTex);
-        panelTerrSettings.add(butTerrExits);
         
         panelTerrSettings.add(butAddTerrain);
         panelTerrSettings.add(panDN);
@@ -1284,6 +1287,15 @@ public class BoardEditor extends JComponent
             texTerrExits.setText(Integer.toString(terrain.getExits()));
         }
     }
+    
+    /**
+     * Updates the selected terrain in the terrain list when 
+     * a terrain is actually selected 
+     */
+    private void updateWhenSelected() {
+        if (!lisTerrain.isSelectionEmpty()) 
+            addSetTerrain(); 
+    }
 
     public void boardNew() {
         RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
@@ -1681,30 +1693,25 @@ public class BoardEditor extends JComponent
             repaintWorkingHex();
         } else if (ae.getSource().equals(butTerrUp)) {
             texTerrainLevel.incValue();
-            if (! lisTerrain.isSelectionEmpty()) {
-                addSetTerrain(); }
+            updateWhenSelected();
         } else if (ae.getSource().equals(butTerrDown)) {
             texTerrainLevel.decValue();
-            if (! lisTerrain.isSelectionEmpty()) {
-                addSetTerrain(); }
+            updateWhenSelected();
         } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setSelected(true);
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
             ed.setVisible(true);
             texTerrExits.setText(Integer.toString(ed.getExits()));
-            if (!lisTerrain.isSelectionEmpty()) {
-                addSetTerrain(); }
+            updateWhenSelected();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
             texTerrExits.incValue();
-            if (!lisTerrain.isSelectionEmpty()) {
-                addSetTerrain(); }
+            updateWhenSelected();
         } else if (ae.getSource().equals(butExitDown)) {
             cheTerrExitSpecified.setSelected(true);
             texTerrExits.decValue(0);
-            if (!lisTerrain.isSelectionEmpty()) {
-                addSetTerrain(); }
+            updateWhenSelected();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();
         } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$

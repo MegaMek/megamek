@@ -177,7 +177,7 @@ public class Terrains implements ITerrainFactory {
             if (level == 3) {
                 return "Heavy building";
             }
-            if (level == 3) {
+            if (level == 4) {
                 return "Hardened Building";
             }
             if (level == 5) {

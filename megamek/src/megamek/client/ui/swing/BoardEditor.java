@@ -104,6 +104,15 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 
+
+// TODO: theme list
+// TODO: no exits for helper terrain like building CF
+// TODO: no drawing of invalid terrain
+// TODO: center map
+// TODO: background on the whole screen
+// TODO: vertical size of editor pane :(
+// TODO: restrict terrains to those with images
+
 public class BoardEditor extends JComponent
         implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
     
@@ -1175,7 +1184,10 @@ public class BoardEditor extends JComponent
             return;
         }
         curHex.addTerrain(toAdd);
+        int formerSelection = lisTerrain.getSelectedIndex();
         refreshTerrainList();
+        lisTerrain.setSelectedIndex(formerSelection);
+        lisTerrain.ensureIndexIsVisible(formerSelection);
         repaintWorkingHex();
     }
     
@@ -1669,25 +1681,30 @@ public class BoardEditor extends JComponent
             repaintWorkingHex();
         } else if (ae.getSource().equals(butTerrUp)) {
             texTerrainLevel.incValue();
-            addSetTerrain();
+            if (! lisTerrain.isSelectionEmpty()) {
+                addSetTerrain(); }
         } else if (ae.getSource().equals(butTerrDown)) {
             texTerrainLevel.decValue();
-            addSetTerrain();
+            if (! lisTerrain.isSelectionEmpty()) {
+                addSetTerrain(); }
         } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setSelected(true);
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
             ed.setVisible(true);
             texTerrExits.setText(Integer.toString(ed.getExits()));
-            addSetTerrain();
+            if (!lisTerrain.isSelectionEmpty()) {
+                addSetTerrain(); }
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
             texTerrExits.incValue();
-            addSetTerrain();
+            if (!lisTerrain.isSelectionEmpty()) {
+                addSetTerrain(); }
         } else if (ae.getSource().equals(butExitDown)) {
             cheTerrExitSpecified.setSelected(true);
             texTerrExits.decValue(0);
-            addSetTerrain();
+            if (!lisTerrain.isSelectionEmpty()) {
+                addSetTerrain(); }
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();
         } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$

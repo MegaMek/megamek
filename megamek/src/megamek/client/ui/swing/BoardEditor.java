@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
@@ -105,12 +106,11 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 
 
-// TODO: theme list
-// TODO: no drawing of invalid terrain
 // TODO: center map
 // TODO: background on the whole screen
 // TODO: vertical size of editor pane :(
 // TODO: restrict terrains to those with images
+// TODO: Allow drawing of invalid terrain?
 
 public class BoardEditor extends JComponent
         implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
@@ -285,7 +285,7 @@ public class BoardEditor extends JComponent
     private JButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
     private JButton butExitUp, butExitDown;
-    private JTextField texTheme;
+    private JComboBox<String> choTheme;
     private JButton butTerrDown, butTerrUp;
     private JButton butAddTerrain;
     private JButton butBoardNew;
@@ -426,8 +426,9 @@ public class BoardEditor extends JComponent
                         LinkedList<Coords> allBrushHexes = getBrushCoords(c);
                         for (Coords h: allBrushHexes) {
                             // test if texture overwriting is active
-                            if (!buttonOOC.isSelected() ||
+                            if ((!buttonOOC.isSelected() ||
                                     (buttonOOC.isSelected() && board.getHex(h).isClearHex() )  )
+                                    && curHex.isValid(null))
                             {
                                 saveToUndo(h);
                                 if (isCTRL) { // CTRL-Click
@@ -525,6 +526,7 @@ public class BoardEditor extends JComponent
             button.setDisabledIcon(new ImageIcon(imageButton));
         
         button.setToolTipText(Messages.getString("BoardEditor."+iconName+"TT")); //$NON-NLS-1$ //$NON-NLS-2$
+        button.setMargin(new Insets(0,0,0,0));
         if (bList != null) bList.add(button);
         return button;
     }
@@ -784,7 +786,7 @@ public class BoardEditor extends JComponent
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setCellRenderer(lisTerrainRenderer);
         lisTerrain.setVisibleRowCount(6);
-        lisTerrain.setFixedCellWidth(240);
+        lisTerrain.setFixedCellWidth(180);
         refreshTerrainList();
 
         // Terrain List, Preview, Delete
@@ -842,7 +844,7 @@ public class BoardEditor extends JComponent
         JPanel panDN = new JPanel(new GridLayout(1,0,4,4));
         panDN.add(butTerrDown);
         panDN.add(butExitDown);
-        panDN.add(Box.createVerticalStrut(5));
+        panDN.add(Box.createHorizontalStrut(5));
         
         // Auto Exits to Pavement
         cheRoadsAutoExit = new JCheckBox(Messages
@@ -852,10 +854,13 @@ public class BoardEditor extends JComponent
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
-        texTheme = new JTextField("", 10); //$NON-NLS-1$
-        texTheme.getDocument().addDocumentListener(this);
+        choTheme = new JComboBox<String>();
+        TilesetManager tileMan = bv.getTilesetManager();
+        Set<String> themes = tileMan.getThemes();
+        for (String s: themes) choTheme.addItem(s);
+        choTheme.addActionListener(this);
         panTheme.add(labTheme);
-        panTheme.add(texTheme);
+        panTheme.add(choTheme);
 
         // The hex settings panel (elevation, theme)
         JPanel panelHexSettings = new JPanel();
@@ -953,7 +958,7 @@ public class BoardEditor extends JComponent
         
         // Terrain List and Preview Hex
         add(panlisHex, cfullLine);
-
+        
         // Minimap Toggle
         add(new JLabel(""), cYFiller); //$NON-NLS-1$ 
         add(butMiniMap, cfullLine);
@@ -980,7 +985,7 @@ public class BoardEditor extends JComponent
         minimapW.add(minimap);
         setMapVisible(true);
     }
-
+    
     /**
      * Returns coords that the active brush will paint on;
      * returns only coords that are valid, i.e. on the board
@@ -1123,7 +1128,7 @@ public class BoardEditor extends JComponent
             lisTerrain.setSelectedIndex(0);
             refreshTerrainFromList();
         }
-        texTheme.setText(curHex.getTheme());
+        choTheme.setSelectedItem(curHex.getTheme());
         repaint();
         repaintWorkingHex();
     }
@@ -1192,6 +1197,7 @@ public class BoardEditor extends JComponent
         if (((toAdd.getType() == Terrains.BLDG_ELEV) 
                 || (toAdd.getType() == Terrains.BRIDGE_ELEV))
                 && toAdd.getLevel() < 0) {
+            texTerrainLevel.setValue(0);
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("BoardEditor.BridgeBuildingElevError"), //$NON-NLS-1$
                     Messages.getString("BoardEditor.invalidTerrainTitle"), //$NON-NLS-1$ 
@@ -1214,7 +1220,9 @@ public class BoardEditor extends JComponent
         int exits = Integer.parseInt(texTerrExits.getText());
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
+        TerrainTypeHelper toSelect = new TerrainTypeHelper(toAdd);
         refreshTerrainList();
+        lisTerrain.setSelectedValue(toSelect, true);
         repaintWorkingHex();
     }
     
@@ -1296,7 +1304,7 @@ public class BoardEditor extends JComponent
             terrListBlocker = false;
             texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
             cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
-            texTerrExits.setText(Integer.toString(terrain.getExits()));
+            texTerrExits.setValue(terrain.getExits());
         }
     }
     
@@ -1585,9 +1593,6 @@ public class BoardEditor extends JComponent
                 curHex.setLevel(value);
                 repaintWorkingHex();
             }
-        } else if (te.getDocument().equals(texTheme.getDocument())) {
-            curHex.setTheme(texTheme.getText());
-            repaintWorkingHex();
         }
     }
 
@@ -1685,7 +1690,7 @@ public class BoardEditor extends JComponent
                 JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
             }
         } else if (ae.getSource().equals(butDelTerrain)
-                   && (lisTerrain.getSelectedValue() != null)) {
+                   && (!lisTerrain.isSelectionEmpty())) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
                     lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());
@@ -1714,7 +1719,7 @@ public class BoardEditor extends JComponent
             cheTerrExitSpecified.setSelected(true);
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
             ed.setVisible(true);
-            texTerrExits.setText(Integer.toString(ed.getExits()));
+            texTerrExits.setValue(ed.getExits());
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
@@ -1736,6 +1741,9 @@ public class BoardEditor extends JComponent
             bv.toggleIsometric();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CHANGE_THEME)) {
             bv.changeTheme();
+        } else if (ae.getSource().equals(choTheme) ) { 
+            curHex.setTheme((String)choTheme.getSelectedItem());
+            repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
             if ((ae.getModifiers() & InputEvent.SHIFT_MASK) == 0) curHex.removeAllTerrains();  
             buttonUpDn.setSelected(false);
@@ -1974,8 +1982,7 @@ public class BoardEditor extends JComponent
         return ignoreHotKeys || (about != null && about.isVisible())
                 || (help != null && help.isVisible())
                 || (setdlg != null && setdlg.isVisible()) || texElev.hasFocus()
-                || texTerrainLevel.hasFocus() || texTerrExits.hasFocus()
-                || texTheme.hasFocus();
+                || texTerrainLevel.hasFocus() || texTerrExits.hasFocus();
     }
     
     /**
@@ -2009,22 +2016,26 @@ public class BoardEditor extends JComponent
 //        public void incValue(int maximum) {
 //            int newValue = Integer.parseInt(getText());
 //            newValue = newValue + 1 > maximum ? newValue : newValue + 1;   
-//            setText(Integer.toString(newValue));
+//            setValue(newValue);
 //        }
         
         public void incValue() {
             int newValue = Integer.parseInt(getText()) + 1;
-            setText(Integer.toString(newValue));
+            setValue(newValue);
         }
         
         public void decValue(int minimum) {
             int newValue = Integer.parseInt(getText());
             newValue = newValue - 1 < minimum ? newValue : newValue - 1;   
-            setText(Integer.toString(newValue));
+            setValue(newValue);
         }
         
         public void decValue() {
             int newValue = Integer.parseInt(getText()) - 1;
+            setValue(newValue);
+        }
+        
+        public void setValue(int newValue) {
             setText(Integer.toString(newValue));
         }
     }

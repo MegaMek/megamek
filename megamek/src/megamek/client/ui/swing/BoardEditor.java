@@ -106,7 +106,6 @@ import megamek.common.util.MegaMekFile;
 
 
 // TODO: theme list
-// TODO: no exits for helper terrain like building CF
 // TODO: no drawing of invalid terrain
 // TODO: center map
 // TODO: background on the whole screen
@@ -1111,7 +1110,8 @@ public class BoardEditor extends JComponent
     }
 
     /**
-     * Sets the current hex
+     * Sets the working hex to <code>hex</code>;
+     * used for mouse ALT-click (eyedropper function).
      *
      * @param hex hex to set.
      */
@@ -1167,9 +1167,21 @@ public class BoardEditor extends JComponent
     private ITerrain enteredTerrain() {
         int type = ((TerrainHelper)choTerrainType.getSelectedItem()).getTerrainType();
         int level = Integer.parseInt(texTerrainLevel.getText());
-        boolean exitsSpecified = cheTerrExitSpecified.isSelected();
-        int exits = Integer.parseInt(texTerrExits.getText());
-        return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
+        // For the terrain subtypes that only add to a main terrain type exits make no
+        // sense at all. Therefore simply do not add them
+        if ((type == Terrains.BLDG_ARMOR) || (type == Terrains.BLDG_CF) 
+                || (type == Terrains.BLDG_ELEV) || (type == Terrains.BLDG_CLASS)  
+                || (type == Terrains.BLDG_BASE_COLLAPSED) || (type == Terrains.BLDG_BASEMENT_TYPE)
+                || (type == Terrains.BRIDGE_CF) || (type == Terrains.BRIDGE_ELEV)
+                || (type == Terrains.FUEL_TANK_CF) || (type == Terrains.FUEL_TANK_ELEV)
+                || (type == Terrains.FUEL_TANK_MAGN)) 
+        {
+            return Terrains.getTerrainFactory().createTerrain(type, level, false, 0);
+        } else {
+            boolean exitsSpecified = cheTerrExitSpecified.isSelected();
+            int exits = Integer.parseInt(texTerrExits.getText());
+            return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
+        }
     }
 
     /**

@@ -1690,10 +1690,6 @@ public class BoardEditor extends JComponent
             addSetTerrain();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             toggleMap();
-        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_IN)) {
-            bv.zoomIn();
-        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_ZOOM_OUT)) {
-            bv.zoomOut();
         } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showAbout();
         } else if ("helpContents".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$

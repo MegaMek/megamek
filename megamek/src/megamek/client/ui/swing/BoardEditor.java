@@ -111,6 +111,9 @@ import megamek.common.util.MegaMekFile;
 // TODO: vertical size of editor pane :(
 // TODO: restrict terrains to those with images
 // TODO: Allow drawing of invalid terrain?
+// TODO: board load time???
+// TODO: sluggish hex drawing?
+// TODO: board background images not loaded correctly
 
 public class BoardEditor extends JComponent
         implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
@@ -1328,7 +1331,7 @@ public class BoardEditor extends JComponent
         menuBar.setBoard(true);
         bvc.doLayout();
     }
-
+    
     public void boardResize() {
         ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
         emd.setVisible(true);

@@ -850,6 +850,7 @@ public class BoardEditor extends JComponent
         cheRoadsAutoExit = new JCheckBox(Messages
                 .getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
+        cheRoadsAutoExit.setSelected(true);
         
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));

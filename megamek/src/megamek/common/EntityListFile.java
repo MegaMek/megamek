@@ -385,18 +385,32 @@ public class EntityListFile {
             }
 
             // Protomechs only have system slots,
-            //  so we have to handle the ammo specially.
+            // so we have to handle the ammo specially.
             if (entity instanceof Protomech) {
                 for (Mounted mount : entity.getAmmo()) {
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
                         thisLoc.append(EntityListFile.formatSlot("N/A", mount,
-                                false, false, false, false, indentLvl+1));
+                        		mount.isHit(), mount.isDestroyed(), mount.isRepairable(), mount.isMissing(), indentLvl+1));
                         haveSlot = true;
                     }
                 } // Check the next ammo.
                 // TODO: handle slotless equipment.
             } // End is-proto
+
+            // GunEmplacements don't have system slots,
+            // so we have to handle the ammo specially.
+            if (entity instanceof GunEmplacement) {
+                for (Mounted mount : entity.getEquipment()) {
+                    // Is this ammo in the current location?
+                    if (mount.getLocation() == loc) {
+                        thisLoc.append(EntityListFile.formatSlot("N/A", mount,
+                                mount.isHit(), mount.isDestroyed(), mount.isRepairable(), mount.isMissing(), indentLvl+1));
+                        haveSlot = true;
+                    }
+                } // Check the next ammo.
+                // TODO: handle slotless equipment.
+            } // End is-ge
 
             // Did we record information for this location?
             if (thisLoc.length() > 0) {

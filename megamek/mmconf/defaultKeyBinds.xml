@@ -38,9 +38,9 @@
     </KeyBind>
 
     <KeyBind>
-         <command>toggleIso</command> <!-- Ctrl-T -->
+         <command>toggleIso</command> <!-- T -->
         <keyCode>84</keyCode>
-        <modifier>2</modifier>
+        <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -108,9 +108,9 @@
     </KeyBind>
 
     <KeyBind>
-         <command>nextUnit</command> <!-- Shift-E -->
-        <keyCode>69</keyCode>
-        <modifier>1</modifier>
+         <command>nextUnit</command> <!-- Ctrl-N -->
+        <keyCode>78</keyCode>
+        <modifier>2</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -185,8 +185,8 @@
     </KeyBind>
 
     <KeyBind>
-         <command>movementEnvelope</command> <!-- Shift-R -->
-        <keyCode>82</keyCode>
+         <command>movementEnvelope</command> <!-- Ctrl-Q -->
+        <keyCode>81</keyCode>
         <modifier>2</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -206,9 +206,9 @@
     </KeyBind>
 
     <KeyBind>
-         <command>fieldOfFire</command> <!-- Ctrl-R -->
+         <command>fieldOfFire</command> <!-- R -->
         <keyCode>82</keyCode>
-        <modifier>2</modifier>
+        <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 

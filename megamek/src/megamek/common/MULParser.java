@@ -149,6 +149,7 @@ public class MULParser {
     private static final String BAYDOORS = "doors";
     private static final String BAY = "transportBay";
     private static final String BAYDAMAGE = "damage";
+    private static final String WEAPONS_BAY_INDEX = "weaponsBayIndex";
     private static final String MDAMAGE = "damage";
     private static final String MPENALTY = "penalty";
     private static final String C3MASTERIS = "c3MasterIs";
@@ -1343,6 +1344,7 @@ public class MULParser {
         String quirks = slotTag.getAttribute(QUIRKS);
         String trooperMiss = slotTag.getAttribute(TROOPER_MISS);
         String rfmg = slotTag.getAttribute(RFMG);
+        String bayIndex = slotTag.getAttribute(WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
         if ((index == null) || (index.length() == 0)) {
@@ -1366,7 +1368,7 @@ public class MULParser {
 
                 // Protomechs only have system slots, 
                 // so we have to handle the ammo specially.
-                if (entity instanceof Protomech) {
+                if (entity instanceof Protomech || entity instanceof GunEmplacement) {
                     // Get the saved ammo load.
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {
@@ -1477,7 +1479,17 @@ public class MULParser {
             // Try to get the critical slot.
             CriticalSlot slot = entity.getCritical(loc, indexVal);
 
-            // Did we get it?
+            // If we couldn't find a critical slot, 
+            // it's possible that this is "extra" ammo in a weapons bay, so we may attempt
+            // to shove it in there
+            if (slot == null) {
+                if(entity.usesWeaponBays() &&
+                        !bayIndex.isEmpty()) {
+                    addExtraAmmoToBay(entity, loc, type, bayIndex);
+                    slot = entity.getCritical(loc, indexVal);
+                }
+            }
+            
             if (slot == null) {
                 if (!type.equals(EMPTY)) {
                     warning.append("Could not find the ")
@@ -1910,7 +1922,7 @@ public class MULParser {
     		if (bay < 0) {
     			warning.append("Found invalid index value for bay: ").append(index).append(".\n");
     			return;
-    		} else if (bay > entity.getTransportBays().size()) {
+    		} else if (entity.getBayById(bay) == null) {
     			warning.append("The entity, ")
     			.append(entity.getShortName())
     			.append(" does not have a bay at index: ")
@@ -2233,6 +2245,35 @@ public class MULParser {
             ex.printStackTrace();
         }
         
+    }
+    
+    /**
+     * Worker function that takes an entity, a location, an ammo type string and the critical index
+     * of a weapons bay in the given location and attempts to add the ammo type there.
+     * @param entity The entity we're working on loading
+     * @param loc The location index on the entity
+     * @param type The ammo type string
+     * @param bayIndex The crit index of the bay where we want to load the ammo on the location where the bay is
+     * @return A generated critical slot entry
+     */
+    private void addExtraAmmoToBay(Entity entity, int loc, String type, String bayIndex) {
+        // here, we need to do the following:
+        // 1: get the bay to which this ammo belongs, and add it to said bay
+        // 2: add the ammo to the entity as a "new" piece of equipment
+        // 3: add the ammo to a crit slot on the bay's location
+        
+        int bayCritIndex = Integer.parseInt(bayIndex);
+        Mounted bay = entity.getCritical(loc, bayCritIndex - 1).getMount();
+        
+        Mounted ammo = new Mounted(entity, AmmoType.get(type));
+
+        try {
+            entity.addEquipment(ammo, loc, bay.isRearMounted());
+        } catch(LocationFullException lfe) {
+            // silently swallow it, since dropship locations have about a hundred crit slots
+        }
+        
+        bay.addAmmoToBay(entity.getEquipmentNum(ammo));
     }
     
     /**

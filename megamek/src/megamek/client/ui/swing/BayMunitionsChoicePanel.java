@@ -76,13 +76,12 @@ public class BayMunitionsChoicePanel extends JPanel {
                     List<Integer> key = new ArrayList<>(2);
                     key.add(atype.getAmmoType());
                     key.add(atype.getRackSize());
-                    key.add(atype.getTechBase());
                     ammoByType.putIfAbsent(key, new ArrayList<>());
                     ammoByType.get(key).add(ammo);
                 }
             }
             for (List<Integer> key : ammoByType.keySet()) {
-                AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), key.get(2), ammoByType.get(key));
+                AmmoRowPanel row = new AmmoRowPanel(bay, key.get(0), key.get(1), ammoByType.get(key));
                 gbc.gridy++;
                 add(row, gbc);
                 rows.add(row);
@@ -163,14 +162,21 @@ public class BayMunitionsChoicePanel extends JPanel {
         
         private double tonnage = 0;
         
-        AmmoRowPanel(Mounted bay, int at, int rackSize, int techBase, List<Mounted> ammoMounts) {
+        AmmoRowPanel(Mounted bay, int at, int rackSize, List<Mounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
             this.rackSize = rackSize;
-            this.techBase = techBase;
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
             Dimension spinnerSize =new Dimension(55, 25);
+            
+            final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
+                    .map(wNum -> entity.getEquipment(wNum))
+                    .map(m -> (WeaponType) m.getType()).findAny();
+            
+            // set the bay's tech base to that of any weapon in the bay
+            // an assumption is made here that bays don't mix clan-only and IS-only tech base
+            this.techBase = wtype.isPresent() ? wtype.get().getTechBase() : WeaponType.TECH_BASE_ALL;
             
             munitions = AmmoType.getMunitionsFor(at).stream()
                     .filter(this::includeMunition).collect(Collectors.toList());
@@ -200,9 +206,6 @@ public class BayMunitionsChoicePanel extends JPanel {
             gbc.anchor = GridBagConstraints.WEST;
             gbc.insets = new Insets(0, 5, 0, 5);
             gbc.gridwidth = 5;
-            final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
-                    .map(wNum -> entity.getEquipment(wNum))
-                    .map(m -> (WeaponType) m.getType()).findAny();
             add(new JLabel("(" + entity.getLocationAbbr(bay.getLocation()) + ") "
                     + (wtype.isPresent()? wtype.get().getName() : "?")), gbc);
             gbc.gridx = 5;

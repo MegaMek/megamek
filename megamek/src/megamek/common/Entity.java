@@ -8012,6 +8012,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public Bay getBayById(int bayNumber) {
+        //TODO: Change transports to a map or other indexed data structure to avoid
+        // linear-time algorithm.
         for (Transporter next : transports) {
             if (next instanceof Bay) {
                 if (((Bay) next).getBayNumber() == bayNumber) {

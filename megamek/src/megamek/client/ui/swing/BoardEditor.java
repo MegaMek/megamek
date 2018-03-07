@@ -108,12 +108,12 @@ import megamek.common.util.MegaMekFile;
 
 // TODO: center map
 // TODO: background on the whole screen
-// TODO: vertical size of editor pane :(
-// TODO: restrict terrains to those with images
-// TODO: Allow drawing of invalid terrain?
+// TODO: vertical size of editor pane?
+// TODO: restrict terrains to those with images?
+// TODO: Allow drawing of invalid terrain as an override?
+// TODO: Allow adding/changing board background images
 // TODO: board load time???
 // TODO: sluggish hex drawing?
-// TODO: board background images not loaded correctly
 
 public class BoardEditor extends JComponent
         implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
@@ -275,6 +275,7 @@ public class BoardEditor extends JComponent
     int brushSize = 1;
     int hexLeveltoDraw = -1000;
     private Font fontElev = new Font("SansSerif", Font.BOLD, 20); //$NON-NLS-1$
+    private Font fontComboTerr = new Font("SansSerif", Font.BOLD, 12); //$NON-NLS-1$
     private EditorTextField texElev;
     private JButton butElevUp;
     private JButton butElevDown;
@@ -314,6 +315,11 @@ public class BoardEditor extends JComponent
      */
     private boolean terrListBlocker = false;
     
+    /**
+     * Special purpose indicator, prevents an update
+     * loop when the terrain level or exits field is changed
+     */
+    private boolean noTextFieldUpdate = false;
     
     /**
      * A MouseAdapter that closes a JLabel when clicked 
@@ -493,7 +499,7 @@ public class BoardEditor extends JComponent
             @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
-                setMapVisible(false);
+                minimapW.setVisible(false);
                 if (controller != null) {
                     controller.removeAllActions();
                     controller.boardEditor = null;
@@ -505,7 +511,7 @@ public class BoardEditor extends JComponent
     /**
      * Sets up JButtons
      */
-    JButton prepareButton(String iconName, String buttonName, ArrayList<JButton> bList) {
+    private JButton prepareButton(String iconName, String buttonName, ArrayList<JButton> bList) {
         JButton button = new JButton(buttonName);
         button.addActionListener(this);
         // Get the normal icon
@@ -528,7 +534,9 @@ public class BoardEditor extends JComponent
         if (imageButton != null)
             button.setDisabledIcon(new ImageIcon(imageButton));
         
-        button.setToolTipText(Messages.getString("BoardEditor."+iconName+"TT")); //$NON-NLS-1$ //$NON-NLS-2$
+        String tt = Messages.getString("BoardEditor."+iconName+"TT");
+        if (tt.length() != 0)
+            button.setToolTipText(tt); //$NON-NLS-1$ //$NON-NLS-2$
         button.setMargin(new Insets(0,0,0,0));
         if (bList != null) bList.add(button);
         return button;
@@ -537,7 +545,7 @@ public class BoardEditor extends JComponent
     /**
      * Sets up JToggleButtons
      */
-    JToggleButton addTerrainTButton(String iconName, String buttonName, ArrayList<JToggleButton> bList) {
+    private JToggleButton addTerrainTButton(String iconName, String buttonName, ArrayList<JToggleButton> bList) {
         JToggleButton button = new JToggleButton(buttonName);
         button.addActionListener(this);
         
@@ -780,8 +788,8 @@ public class BoardEditor extends JComponent
         texElev = new EditorTextField("0", 3); //$NON-NLS-1$
         texElev.addActionListener(this);
         texElev.getDocument().addDocumentListener(this);
-        butElevUp = prepareButton("ButtonExitUP", "Raise Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
-        butElevDown = prepareButton("ButtonExitDN", "Lower Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butElevUp = prepareButton("ButtonHexUP", "Raise Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butElevDown = prepareButton("ButtonHexDN", "Lower Hex Elevation", null); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Terrain List
         lisTerrainRenderer = new ComboboxToolTipRenderer();
@@ -807,7 +815,7 @@ public class BoardEditor extends JComponent
             terrains[i - 1] = new TerrainHelper(i);
         }
         Arrays.sort(terrains);
-        texTerrainLevel = new EditorTextField("0", 2); //$NON-NLS-1$
+        texTerrainLevel = new EditorTextField("0", 2, 0); //$NON-NLS-1$
         texTerrainLevel.addActionListener(this);
         texTerrainLevel.getDocument().addDocumentListener(this);
         choTerrainType = new JComboBox<>(terrains);
@@ -817,9 +825,10 @@ public class BoardEditor extends JComponent
         // Selecting a terrain type in the Dropdown should deselect
         // all in the terrain overview list except when selected from there
         choTerrainType.addActionListener(e -> { if (!terrListBlocker) lisTerrain.clearSelection(); });
+        choTerrainType.setFont(fontComboTerr);
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
-        butTerrUp = prepareButton("arrowsmallup", "Increase Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
-        butTerrDown = prepareButton("arrowsmalldn", "Decrease Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
@@ -827,13 +836,20 @@ public class BoardEditor extends JComponent
 
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
-        cheTerrExitSpecified.addActionListener(e -> updateWhenSelected());
+        cheTerrExitSpecified.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                noTextFieldUpdate = true;
+                updateWhenSelected();
+                noTextFieldUpdate = false;
+            }
+        });
         butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null); //$NON-NLS-1$ //$NON-NLS-2$
-        texTerrExits = new EditorTextField("0", 2); //$NON-NLS-1$
+        texTerrExits = new EditorTextField("0", 2, 0); //$NON-NLS-1$
         texTerrExits.addActionListener(this);
         texTerrExits.getDocument().addDocumentListener(this);
-        butExitUp = prepareButton("arrowsmallup", "Increase Exit / Gfx", null); //$NON-NLS-1$ //$NON-NLS-2$
-        butExitDown = prepareButton("arrowsmalldn", "Decrease Exit / Gfx", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butExitUp = prepareButton("ButtonEXUP", "Increase Exit / Gfx", null); //$NON-NLS-1$ //$NON-NLS-2$
+        butExitDown = prepareButton("ButtonEXDN", "Decrease Exit / Gfx", null); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Arrows and text fields for type and exits
         JPanel panUP = new JPanel(new GridLayout(1,0,4,4));
@@ -987,7 +1003,7 @@ public class BoardEditor extends JComponent
             frame.dispose();
         }
         minimapW.add(minimap);
-        setMapVisible(true);
+        minimapW.setVisible(true);
     }
     
     /**
@@ -1175,7 +1191,7 @@ public class BoardEditor extends JComponent
      */
     private ITerrain enteredTerrain() {
         int type = ((TerrainHelper)choTerrainType.getSelectedItem()).getTerrainType();
-        int level = Integer.parseInt(texTerrainLevel.getText());
+        int level = texTerrainLevel.getNumber();  
         // For the terrain subtypes that only add to a main terrain type exits make no
         // sense at all. Therefore simply do not add them
         if ((type == Terrains.BLDG_ARMOR) || (type == Terrains.BLDG_CF) 
@@ -1188,7 +1204,7 @@ public class BoardEditor extends JComponent
             return Terrains.getTerrainFactory().createTerrain(type, level, false, 0);
         } else {
             boolean exitsSpecified = cheTerrExitSpecified.isSelected();
-            int exits = Integer.parseInt(texTerrExits.getText());
+            int exits = texTerrExits.getNumber();
             return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         }
     }
@@ -1201,7 +1217,7 @@ public class BoardEditor extends JComponent
         if (((toAdd.getType() == Terrains.BLDG_ELEV) 
                 || (toAdd.getType() == Terrains.BRIDGE_ELEV))
                 && toAdd.getLevel() < 0) {
-            texTerrainLevel.setValue(0);
+            texTerrainLevel.setNumber(0);
             JOptionPane.showMessageDialog(frame,
                     Messages.getString("BoardEditor.BridgeBuildingElevError"), //$NON-NLS-1$
                     Messages.getString("BoardEditor.invalidTerrainTitle"), //$NON-NLS-1$ 
@@ -1210,10 +1226,12 @@ public class BoardEditor extends JComponent
         }
         curHex.addTerrain(toAdd);
         int formerSelection = lisTerrain.getSelectedIndex();
+        noTextFieldUpdate = true;
         refreshTerrainList();
         lisTerrain.setSelectedIndex(formerSelection);
         lisTerrain.ensureIndexIsVisible(formerSelection);
         repaintWorkingHex();
+        noTextFieldUpdate = false;
     }
     
     /**
@@ -1221,7 +1239,7 @@ public class BoardEditor extends JComponent
      */
     private void addSetTerrainEasy(int type, int level) {
         boolean exitsSpecified = cheTerrExitSpecified.isSelected();
-        int exits = Integer.parseInt(texTerrExits.getText());
+        int exits = texTerrExits.getNumber();
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
         TerrainTypeHelper toSelect = new TerrainTypeHelper(toAdd);
@@ -1308,12 +1326,12 @@ public class BoardEditor extends JComponent
             terrListBlocker = false;
             texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
             cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
-            texTerrExits.setValue(terrain.getExits());
+            texTerrExits.setNumber(terrain.getExits());
         }
     }
     
     /**
-     * Updates the selected terrain in the terrain list when 
+     * Updates the selected terrain in the terrain list if 
      * a terrain is actually selected 
      */
     private void updateWhenSelected() {
@@ -1597,7 +1615,28 @@ public class BoardEditor extends JComponent
                 curHex.setLevel(value);
                 repaintWorkingHex();
             }
-        }
+        } else if (te.getDocument().equals(texTerrainLevel.getDocument())) {
+            // prevent updating the terrain from looping back to
+            // update the text fields that have just been edited
+            noTextFieldUpdate = true;
+            updateWhenSelected();
+            noTextFieldUpdate = false;
+        } else if (te.getDocument().equals(texTerrExits.getDocument())) {
+            // prevent updating the terrain from looping back to
+            // update the text fields that have just been edited
+            noTextFieldUpdate = true;
+            cheTerrExitSpecified.setSelected(true);
+            updateWhenSelected();
+            noTextFieldUpdate = false;
+        }  
+    }
+    
+    public void insertUpdate(DocumentEvent event) {
+        changedUpdate(event);
+    }
+
+    public void removeUpdate(DocumentEvent event) {
+        changedUpdate(event);
     }
 
     /**
@@ -1718,12 +1757,16 @@ public class BoardEditor extends JComponent
         } else if (ae.getSource().equals(butTerrDown)) {
             texTerrainLevel.decValue();
             updateWhenSelected();
+        } else if (ae.getSource().equals(texTerrainLevel)) {
+            updateWhenSelected();
+        } else if (ae.getSource().equals(texTerrExits)) {
+            updateWhenSelected();
         } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setSelected(true);
-            ed.setExits(Integer.parseInt(texTerrExits.getText()));
+            ed.setExits(texTerrExits.getNumber());
             ed.setVisible(true);
-            texTerrExits.setValue(ed.getExits());
+            texTerrExits.setNumber(ed.getExits());
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
@@ -1731,10 +1774,10 @@ public class BoardEditor extends JComponent
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitDown)) {
             cheTerrExitSpecified.setSelected(true);
-            texTerrExits.decValue(0);
+            texTerrExits.decValue();
             updateWhenSelected();
         } else if ("viewMiniMap".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
-            toggleMap();
+            minimapW.setVisible(!minimapW.isVisible());
         } else if ("helpAbout".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             showAbout();
         } else if ("helpContents".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
@@ -1882,20 +1925,13 @@ public class BoardEditor extends JComponent
         }
     }
 
-    public void insertUpdate(DocumentEvent event) {
-        changedUpdate(event);
-    }
-
-    public void removeUpdate(DocumentEvent event) {
-        changedUpdate(event);
-    }
-
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
         }
         if (event.getSource().equals(lisTerrain)) {
-            refreshTerrainFromList();
+            if (!noTextFieldUpdate)
+                refreshTerrainFromList();
         }
     }
 
@@ -1965,17 +2001,6 @@ public class BoardEditor extends JComponent
     }
 
     /**
-     * Toggles the minimap window Also, toggles the minimap enabled setting
-     */
-    private void toggleMap() {
-        setMapVisible(!minimapW.isVisible());
-    }
-
-    void setMapVisible(boolean visible) {
-        minimapW.setVisible(visible);
-    }
-
-    /**
      * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
      * For example, the <code>MegaMekController</code> should ignore hotkeys
      * if there is a dialog, like the <code>CommonSettingsDialog</code>, open.
@@ -1990,8 +2015,9 @@ public class BoardEditor extends JComponent
     }
     
     /**
-     * Small Text Field Template with a standard format
-     * <P>
+     * Specialized field for the BoardEditor that supports 
+     * MouseWheel changes.
+     * 
      * @author Simon
      */
     private class EditorTextField extends JTextField {
@@ -2001,7 +2027,16 @@ public class BoardEditor extends JComponent
          */
         private static final long serialVersionUID = 4706926692515844105L;
 
+        private int minValue = Integer.MIN_VALUE;
+        
         /**
+         * Creates an EditorTextField based on JTextField. This is a 
+         * specialized field for the BoardEditor that supports 
+         * MouseWheel changes.
+         * 
+         * @param text the inital text
+         * @param columns as in JTextField
+         * 
          * @see javax.swing.JTextField#JTextField(String, int)
          */
         public EditorTextField(String text, int columns) {
@@ -2012,39 +2047,84 @@ public class BoardEditor extends JComponent
                     selectAll();
                 }
             });
+
+            addMouseWheelListener(new MouseWheelListener() {
+                @Override
+                public void mouseWheelMoved(MouseWheelEvent e) {
+                    if (e.getWheelRotation() < 0)
+                        incValue();
+                    else 
+                        decValue();
+                }
+            });
             setMargin(new Insets(1,1,1,1));
             setHorizontalAlignment(JTextField.CENTER);
             setFont(fontElev);
+            setCursor(Cursor.getDefaultCursor());
         }
         
-//        public void incValue(int maximum) {
-//            int newValue = Integer.parseInt(getText());
-//            newValue = newValue + 1 > maximum ? newValue : newValue + 1;   
-//            setValue(newValue);
-//        }
+        /**
+         * Creates an EditorTextField based on JTextField. This is a 
+         * specialized field for the BoardEditor that supports 
+         * MouseWheel changes.
+         * 
+         * @param text the inital text
+         * @param columns as in JTextField
+         * @param minimum a minimum value that the EditorTextField
+         * will generally adhere to when its own methods are used
+         * to change its value.
+         * 
+         * @see javax.swing.JTextField#JTextField(String, int)
+         * 
+         * @author Simon/Juliez
+         */
+        public EditorTextField(String text, int columns, int minimum) {
+            this(text, columns);
+            minValue = minimum;
+        }
         
+        /**
+         * Increases the EditorTextField's number by one, if a number
+         * is present.
+         */
         public void incValue() {
-            int newValue = Integer.parseInt(getText()) + 1;
-            setValue(newValue);
+            int newValue = getNumber() + 1;
+            setNumber(newValue);
         }
-        
-        public void decValue(int minimum) {
-            int newValue = Integer.parseInt(getText());
-            newValue = newValue - 1 < minimum ? newValue : newValue - 1;   
-            setValue(newValue);
-        }
-        
+
+        /**
+         * Lowers the EditorTextField's number by one, if a number
+         * is present and if that number is higher than the minimum
+         * value.
+         */
         public void decValue() {
-            int newValue = Integer.parseInt(getText()) - 1;
-            setValue(newValue);
+            setNumber(getNumber() - 1);
+        }
+
+        /**
+         * Sets the text to <code>newValue</code>. If <code>newValue</code> is lower
+         * than the EditorTextField's minimum value, the minimum value will
+         * be set instead.
+         * 
+         * @param newValue the value to be set
+         */
+        public void setNumber(int newValue) {
+            int value = newValue < minValue ? minValue : newValue;
+            setText(Integer.toString(value));
         }
         
-        public void setValue(int newValue) {
-            setText(Integer.toString(newValue));
+        /**
+         * Returns the text in the EditorTextField's as an int. 
+         * Returns 0 when no parsable number (only letters) are present. 
+         */
+        public int getNumber() {
+            try {
+                return Integer.parseInt(getText());
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
         }
+        
     }
-    
-    
-   
 
 }

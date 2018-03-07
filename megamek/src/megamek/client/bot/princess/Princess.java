@@ -1667,9 +1667,21 @@ public class Princess extends BotClient {
      * @param path The path to modify
      */
     private void unloadTransportedInfantry(final RankedPath path) {
+        // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
+        // behind. They're not that good at screening against high speed pursuit anyway.
+        if(getBehaviorSettings().shouldGoHome()) {
+            return;
+        }
+        
         Entity movingEntity = path.getPath().getEntity();
         Coords pathEndpoint = path.getPath().getFinalCoords();
         Entity closestEnemy = getPathRanker().findClosestEnemy(movingEntity, pathEndpoint, getGame());
+
+        // if there are no enemies on the board, then we're not unloading anything.
+        if(null == closestEnemy) {
+            return;
+        }
+        
         int distanceToClosestEnemy = pathEndpoint.distance(closestEnemy.getPosition());
         
         // loop through all entities carried by the current entity

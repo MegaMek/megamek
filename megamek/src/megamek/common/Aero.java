@@ -3942,10 +3942,6 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (getInternalRemainingPercent() < 0.67) {
-            //Fighter squadrons can't take SI damage, so they always display as damaged without this check.
-            if (this.hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
-                return false;
-            }
             return true;
         }
         if ((getCrew() != null) && (getCrew().getHits() == 3)) {
@@ -3975,10 +3971,6 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (getInternalRemainingPercent() < 0.75) {
-            //Fighter squadrons can't take SI damage, so they always display as damaged without this check.
-            if (this.hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
-                return false;
-            }
             return true;
         }
 
@@ -4008,10 +4000,6 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (getInternalRemainingPercent() < 0.9) {
-            //Fighter squadrons can't take SI damage, so they always display as damaged without this check.
-            if (this.hasETypeFlag(ETYPE_FIGHTER_SQUADRON)) {
-                return false;
-            }
             return true;
         }
 

@@ -5547,7 +5547,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 prevTipX = -1; prevTipY = -1;
                 // This is used to fool the tooltip manager into resetting the tip
                 ToolTipManager.sharedInstance().mousePressed(null);
-                return null;
+                return new String("");
             }
         }
         prevTipX = point.x; prevTipY = point.y;

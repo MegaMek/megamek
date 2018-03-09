@@ -236,7 +236,7 @@ public class BoardEditor extends JComponent
             this.terrains = terrains;
         }
         
-        public void setTerrainTypess(List<TerrainTypeHelper> terrainTypes) {
+        public void setTerrainTypes(List<TerrainTypeHelper> terrainTypes) {
             this.terrainTypes = terrainTypes;
         }
     }
@@ -1168,7 +1168,7 @@ public class BoardEditor extends JComponent
     private void refreshTerrainList() {
         
         ((DefaultListModel<TerrainTypeHelper>)lisTerrain.getModel()).removeAllElements();
-        lisTerrainRenderer.setTerrainTypess(null);
+        lisTerrainRenderer.setTerrainTypes(null);
         int terrainTypes[] = curHex.getTerrainTypes();
         List<TerrainTypeHelper> types = new ArrayList<>();
         for (int i = 0; i < terrainTypes.length; i++) {
@@ -1182,7 +1182,7 @@ public class BoardEditor extends JComponent
         for (TerrainTypeHelper tth : types) {
             ((DefaultListModel<TerrainTypeHelper>) lisTerrain.getModel()).addElement(tth);
         }
-        lisTerrainRenderer.setTerrainTypess(types);
+        lisTerrainRenderer.setTerrainTypes(types);
     }
 
     /**
@@ -1313,7 +1313,7 @@ public class BoardEditor extends JComponent
      * terrain in the list.
      */
     private void refreshTerrainFromList() {
-        if (lisTerrain.getSelectedIndex() == -1) {
+        if (lisTerrain.isSelectionEmpty()) {
             butDelTerrain.setEnabled(false);
         } else {
             butDelTerrain.setEnabled(true);
@@ -1323,10 +1323,10 @@ public class BoardEditor extends JComponent
             TerrainHelper terrainHelper = new TerrainHelper(terrain.getType());
             terrListBlocker = true;
             choTerrainType.setSelectedItem(terrainHelper);
-            terrListBlocker = false;
             texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
             cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
             texTerrExits.setNumber(terrain.getExits());
+            terrListBlocker = false;
         }
     }
     
@@ -1618,16 +1618,20 @@ public class BoardEditor extends JComponent
         } else if (te.getDocument().equals(texTerrainLevel.getDocument())) {
             // prevent updating the terrain from looping back to
             // update the text fields that have just been edited
-            noTextFieldUpdate = true;
-            updateWhenSelected();
-            noTextFieldUpdate = false;
+            if (!terrListBlocker) {
+                noTextFieldUpdate = true;
+                updateWhenSelected();
+                noTextFieldUpdate = false;
+            }
         } else if (te.getDocument().equals(texTerrExits.getDocument())) {
             // prevent updating the terrain from looping back to
             // update the text fields that have just been edited
-            noTextFieldUpdate = true;
-            cheTerrExitSpecified.setSelected(true);
-            updateWhenSelected();
-            noTextFieldUpdate = false;
+            if (!terrListBlocker) {
+                noTextFieldUpdate = true;
+                cheTerrExitSpecified.setSelected(true);
+                updateWhenSelected();
+                noTextFieldUpdate = false;
+            }
         }  
     }
     

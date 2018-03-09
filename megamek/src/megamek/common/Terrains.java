@@ -167,6 +167,22 @@ public class Terrains implements ITerrainFactory {
 
     public static String getDisplayName(int type, int level) {
         switch (type) {
+        case (BUILDING):
+            if (level == 1) {
+                return "Light building";
+            }
+            if (level == 2) {
+                return "Medium building";
+            }
+            if (level == 3) {
+                return "Heavy building";
+            }
+            if (level == 3) {
+                return "Hardened Building";
+            }
+            if (level == 5) {
+                return "Wall";
+            }
         case (WOODS):
             if (level == 1) {
                 return "Light woods";

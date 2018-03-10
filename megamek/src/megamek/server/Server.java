@@ -13279,7 +13279,9 @@ public class Server implements Runnable {
             roll.append(new PilotingRollData(entity.getId(), bgMod,
                     "avoid bogging down"));
             int stuckroll = Compute.d6(2);
-            if (stuckroll < roll.getValue()) {
+            // A DFA-ing mech is "displaced" into the target hex. Since it
+            // must be jumping, it will automatically be bogged down
+            if (stuckroll < roll.getValue() || entity.isMakingDfa()) {
                 entity.setStuck(true);
                 r = new Report(2081);
                 r.subject = entity.getId();
@@ -19189,9 +19191,6 @@ public class Server implements Runnable {
 
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
-
-            // entity isn't DFAing any more
-            ae.setDisplacementAttack(null);
         } else { // Target isn't building.
 
             if (glancing) {
@@ -19296,8 +19295,6 @@ public class Server implements Runnable {
                         te instanceof Mech, te instanceof Mech));
             }
 
-            // entity isn't DFAing any more
-            ae.setDisplacementAttack(null);
         }
 
         if (glancing) {
@@ -19350,6 +19347,9 @@ public class Server implements Runnable {
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(
                 ae.getId(), 4, "executed death from above")));
+        
+        // entity isn't DFAing any more
+        ae.setDisplacementAttack(null);
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn

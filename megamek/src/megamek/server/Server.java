@@ -29067,15 +29067,18 @@ public class Server implements Runnable {
         }
 
         // if falling into a bog-down hex, the entity automatically gets stuck
-        if (fallHex.getBogDownModifier(entity.getMovementMode(),
-                entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
-            entity.setStuck(true);
-            r = new Report(2081);
-            r.subject = entity.getId();
-            r.add(entity.getDisplayName(), true);
-            vPhaseReport.add(r);
-            // check for quicksand
-            vPhaseReport.addAll(checkQuickSand(fallPos));
+        // but avoid reporting this twice in the case of DFAs
+        if (!entity.isStuck()) {
+            if (fallHex.getBogDownModifier(entity.getMovementMode(),
+                    entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
+                entity.setStuck(true);
+                r = new Report(2081);
+                r.subject = entity.getId();
+                r.add(entity.getDisplayName(), true);
+                vPhaseReport.add(r);
+                // check for quicksand
+                vPhaseReport.addAll(checkQuickSand(fallPos));
+            }
         }
 
         // standard damage loop

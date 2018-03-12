@@ -15581,13 +15581,13 @@ public class Server implements Runnable {
             r.newlines = 0;
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
@@ -15867,13 +15867,13 @@ public class Server implements Runnable {
             r.newlines = 0;
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
@@ -16135,13 +16135,13 @@ public class Server implements Runnable {
             r.newlines = 0;
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
@@ -16341,13 +16341,13 @@ public class Server implements Runnable {
             r.newlines = 0;
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
@@ -16751,13 +16751,13 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
         if (glancing) {
-            r = new Report(4030);
+            r = new Report(3186);
             r.subject = ae.getId();
             r.newlines = 0;
             addReport(r);
         }
         if (directBlow) {
-            r = new Report(4032);
+            r = new Report(3189);
             r.subject = ae.getId();
             r.newlines = 0;
             addReport(r);
@@ -16898,13 +16898,13 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
         if (glancing) {
-            r = new Report(4030);
+            r = new Report(3186);
             r.subject = ae.getId();
             r.newlines = 0;
             addReport(r);
         }
         if (directBlow) {
-            r = new Report(4032);
+            r = new Report(3189);
             r.subject = ae.getId();
             r.newlines = 0;
             addReport(r);
@@ -17101,13 +17101,13 @@ public class Server implements Runnable {
             r.newlines = 0;
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
@@ -18066,12 +18066,12 @@ public class Server implements Runnable {
             r.add(roll);
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 addReport(r);
             }
@@ -18246,12 +18246,12 @@ public class Server implements Runnable {
             r.add(roll);
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 addReport(r);
             }
@@ -19104,13 +19104,13 @@ public class Server implements Runnable {
             r.newlines = 0;
             addReport(r);
             if (glancing) {
-                r = new Report(4030);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
-                r = new Report(4032);
+                r = new Report(3189);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 addReport(r);

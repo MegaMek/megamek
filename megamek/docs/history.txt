@@ -17,6 +17,7 @@ v0.43.9-git
 	Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
 + PR #923: Bogdown after DFA
 	Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
++ Remove duplicate Glancing Blow and Direct Blow report messages
 
 v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.

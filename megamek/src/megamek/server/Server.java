@@ -2008,6 +2008,10 @@ public class Server implements Runnable {
         Enumeration<IPlayer> players = game.getPlayers();
         while (players.hasMoreElements()) {
             IPlayer player = players.nextElement();
+            // Players who started the game as observers get ignored
+            if (player.getInitialBV() == 0) {
+                continue;
+            }
             r = new Report();
             r.type = Report.PUBLIC;
             r.messageId = 7016;
@@ -4213,33 +4217,29 @@ public class Server implements Runnable {
         } else {
             for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements(); ) {
                 final Team team = i.nextElement();
+                
+                // Teams with no active players can be ignored
+                if (team.isObserverTeam()) {
+                    continue;
+                }
 
-                // If there is only one player, list them as the 'team', and
-                // use the team iniative
-                if (team.getSize() == 1) {
-                    final IPlayer player = team.getPlayers().nextElement();
-                    if (player.isObserver()) {
-                        continue;
-                    }
+                // If there is only one non-observer player, list
+                // them as the 'team', and use the team initiative
+                if (team.getNonObserverSize() == 1) {
+                    final IPlayer player = team.getNonObserverPlayers().nextElement();
                     r = new Report(1015, Report.PUBLIC);
                     r.add(Server.getColorForPlayer(player));
                     r.add(team.getInitiative().toString());
                     addReport(r);
                 } else {
                     // Multiple players. List the team, then break it down.
-                    if (team.isObserverTeam()) {
-                        continue;
-                    }
                     r = new Report(1015, Report.PUBLIC);
                     r.add(IPlayer.teamNames[team.getId()]);
                     r.add(team.getInitiative().toString());
                     addReport(r);
-                    for (Enumeration<IPlayer> j = team.getPlayers(); j
+                    for (Enumeration<IPlayer> j = team.getNonObserverPlayers(); j
                             .hasMoreElements(); ) {
                         final IPlayer player = j.nextElement();
-                        if (player.isObserver()) {
-                            continue;
-                        }
                         r = new Report(1015, Report.PUBLIC);
                         r.indent();
                         r.add(player.getName());

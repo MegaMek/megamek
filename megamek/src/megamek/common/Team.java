@@ -40,8 +40,28 @@ public final class Team extends TurnOrdered {
         return players.size();
     }
 
+    public int getNonObserverSize() {
+        int nonObservers = 0;
+        for (int i = 0; i < players.size(); i++) {
+            if (!players.get(i).isObserver()) {
+                nonObservers++;
+            }
+        }
+        return nonObservers;
+    }
+
     public Enumeration<IPlayer> getPlayers() {
         return players.elements();
+    }
+
+    public Enumeration<IPlayer> getNonObserverPlayers() {
+        Vector<IPlayer> nonObservers = new Vector<IPlayer>();
+        for (int i = 0; i < players.size(); i++) {
+            if (!players.get(i).isObserver()) {
+                nonObservers.add(players.get(i));
+            }
+        }
+        return nonObservers.elements();
     }
     
     public Vector<IPlayer> getPlayersVector() {

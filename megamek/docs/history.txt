@@ -2,21 +2,6 @@ VERSION HISTORY:
 ----------------
 v0.43.9-git
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
-+ PR #916: Make MUL files work for tracking ammo on GunEmplacements
-+ PR #928: Corrections to scenarios, new keyword for handling random maps
-	Fixes Issue #927: Scenario random maps don't work with the new board directory structure
-+ PR #924: Fix for #215: Entity Sprites displacement in Deployment
-	Fixes Issue #215: Entity Sprites displacement in Deployment
-+ PR #921: Fixes boardview tooltip NPEs
-+ PR #919: Pavement hexes not turned to mud in rainy conditions
-	Fixes Issue #546: Can get bogged down on pavement
-+ PR #915: Board Background / BoardEditor fixes
-+ PR #839: Add check to ignore SI damage for squadron status display
-+ PR #917: Implemented break in PD heat checks instead of continue
-+ PR #909: Add MiscType entry for Clan Endo-Composite structure
-	Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
-+ PR #923: Bogdown after DFA
-	Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
 
 v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.

@@ -20,6 +20,9 @@ Description=This is an example scenario to show different scenario features
 BoardWidth=2
 BoardHeight=1
 
+# Directories to choose random boards from
+RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
+
 # Maps can be specified by name.  The order is left-to-right, top-to-bottom
 # Any unspecified boards will be set to RANDOM
 Maps=RANDOM,RANDOM

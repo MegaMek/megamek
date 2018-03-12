@@ -2688,6 +2688,10 @@ public class Server implements Runnable {
                 Enumeration<IPlayer> players2 = game.getPlayers();
                 while (players2.hasMoreElements()) {
                     IPlayer player = players2.nextElement();
+                    // Players who started the game as observers get ignored
+                    if (player.getInitialBV() == 0) {
+                        continue;
+                    }
                     Report r = new Report();
                     r.type = Report.PUBLIC;
                     if (doBlind() && suppressBlindBV()) {

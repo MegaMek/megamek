@@ -273,6 +273,56 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         rollInitAndResolveTies(v, null, bUseInitiativeCompensation);
     }
+    
+    /**
+     * This takes a vector of TurnOrdered (Teams or Players), and does post
+     * initiative phase cleanup of the initiative streak bonus.
+     * 
+     * @param v
+     *            A vector of items that need to have turns.
+     * @param rerollRequests
+     * @param bInitCompBonus
+     *            A flag that determines whether initiative compensation bonus
+     *            should be used: used to prevent one side getting long init win
+     *            streaks
+     */
+    public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v,
+            List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
+        // initiative compensation
+        if (bInitCompBonus && (v.size() > 0) && (v.get(0) instanceof Team)) {
+            final ITurnOrdered comparisonElement = v.get(0);
+            int difference = 0;
+            ITurnOrdered winningElement = comparisonElement;
+
+            // figure out who won initiative this round
+            for (ITurnOrdered item : v) {
+                // Observers don't have initiative, and they don't get initiative compensation
+                if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                    continue;
+                }
+                if (item.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
+                    difference = item.getInitiative().compareTo(comparisonElement.getInitiative());
+                    winningElement = item;
+                }
+            }
+
+            // set/reset the initiative compensation counters
+            if (lastRoundInitWinner != null) {
+                for (ITurnOrdered item : v) {
+                    if (!(item.equals(winningElement) || item.equals(lastRoundInitWinner))) {
+                        Team team = (Team) item;
+                        int newBonus = team.getInitCompensationBonus(bInitCompBonus) + 1;
+                        // Observers don't have initiative, and they don't get initiative compensation
+                        if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                            newBonus = 0;
+                        }
+                        team.setInitCompensationBonus(newBonus);
+                    }
+                }
+            }
+            lastRoundInitWinner = winningElement;
+        }
+    }
 
     /**
      * This takes a vector of TurnOrdered (Teams or Players), rolls initiative,
@@ -336,42 +386,6 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 // get dealt with once we're done resolving ties
                 rollInitAndResolveTies(ties, null, false);
             }
-        }
-
-        // initiative compensation
-        if (bInitCompBonus && (v.size() > 0) && (v.get(0) instanceof Team)) {
-            final ITurnOrdered comparisonElement = v.get(0);
-            int difference = 0;
-            ITurnOrdered winningElement = comparisonElement;
-
-            // figure out who won initiative this round
-            for (ITurnOrdered item : v) {
-                // Observers don't have initiative, and they don't get initiative compensation
-                if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
-                    continue;
-                }
-                if (item.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
-                    difference = item.getInitiative().compareTo(comparisonElement.getInitiative());
-                    winningElement = item;
-                }
-            }
-
-            // set/reset the initiative compensation counters
-            ((Team) winningElement).setInitCompensationBonus(0);
-            if (lastRoundInitWinner != null) {
-                for (ITurnOrdered item : v) {
-                    if (!(item.equals(winningElement) || item.equals(lastRoundInitWinner))) {
-                        Team team = (Team) item;
-                        int newBonus = team.getInitCompensationBonus(bInitCompBonus) + 1;
-                        // Observers don't have initiative, and they don't get initiative compensation
-                        if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
-                            newBonus = 0;
-                        }
-                        team.setInitCompensationBonus(newBonus);
-                    }
-                }
-            }
-            lastRoundInitWinner = winningElement;
         }
     }
 

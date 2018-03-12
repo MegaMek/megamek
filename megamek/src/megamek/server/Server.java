@@ -2250,8 +2250,9 @@ public class Server implements Runnable {
 
         // need at least one entity in the game for the lounge phase to end
         if (!game.phaseHasTurns(game.getPhase())
-            && ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) || (game
-                                                                          .getNoOfEntities() > 0))) {
+            && ((game.getPhase() != IGame.Phase.PHASE_LOUNGE)
+                    || (game.getNoOfEntities() > 0))) {
+            game.handleInitiativeCompensation();
             endCurrentPhase();
         }
     }

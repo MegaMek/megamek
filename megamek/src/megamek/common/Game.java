@@ -2428,11 +2428,17 @@ public class Game implements Serializable, IGame {
             TurnOrdered.rollInitAndResolveTies(getEntitiesVector(), vRerolls, false);
         } else {
             TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests,
-                                               getOptions()
-                                                       .booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+                    getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
         initiativeRerollRequests.removeAllElements();
 
+    }
+    
+    public void handleInitiativeCompensation() {
+        if (getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)) {
+            TurnOrdered.resetInitiativeCompensation(teams, initiativeRerollRequests,
+                    getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+        }
     }
 
     public int getNoOfInitiativeRerollRequests() {

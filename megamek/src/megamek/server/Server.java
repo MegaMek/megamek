@@ -4218,12 +4218,18 @@ public class Server implements Runnable {
                 // use the team iniative
                 if (team.getSize() == 1) {
                     final IPlayer player = team.getPlayers().nextElement();
+                    if (player.isObserver()) {
+                        continue;
+                    }
                     r = new Report(1015, Report.PUBLIC);
                     r.add(Server.getColorForPlayer(player));
                     r.add(team.getInitiative().toString());
                     addReport(r);
                 } else {
                     // Multiple players. List the team, then break it down.
+                    if (team.isObserverTeam()) {
+                        continue;
+                    }
                     r = new Report(1015, Report.PUBLIC);
                     r.add(IPlayer.teamNames[team.getId()]);
                     r.add(team.getInitiative().toString());
@@ -4231,6 +4237,9 @@ public class Server implements Runnable {
                     for (Enumeration<IPlayer> j = team.getPlayers(); j
                             .hasMoreElements(); ) {
                         final IPlayer player = j.nextElement();
+                        if (player.isObserver()) {
+                            continue;
+                        }
                         r = new Report(1015, Report.PUBLIC);
                         r.indent();
                         r.add(player.getName());

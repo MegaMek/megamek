@@ -272,30 +272,6 @@ public abstract class TurnOrdered implements ITurnOrdered {
         }
 
         rollInitAndResolveTies(v, null, bUseInitiativeCompensation);
-
-        // This is the *auto-reroll* code for the Tactical Genius (lvl 3)
-        // pilot ability. It is NOT CURRENTLY IMPLEMENTED. This code may
-        // be incomplete/buggy/just plain wrong.
-        // TODO : fix me
-        /**
-         * if (v.firstElement() instanceof Team) { //find highest init roll int
-         * highestInit = 2; for (Enumeration i = v.elements();
-         * i.hasMoreElements();) { final TurnOrdered item =
-         * (TurnOrdered)i.nextElement(); highestInit =
-         * Math.max(item.getInitiative().getRoll(item.getInitiative().size() -
-         * 1), highestInit); } System.out.println("\n\n--->HIGH INIT ROLL: " +
-         * highestInit); //loop through teams for (Enumeration i = v.elements();
-         * i.hasMoreElements();) { final TurnOrdered item =
-         * (TurnOrdered)i.nextElement(); //loop through players for (Enumeration
-         * j = ((Team)item).getPlayers(); j.hasMoreElements();) { final Player
-         * player = (Player)j.nextElement(); if
-         * (player.getGame().hasTacticalGenius(player) &&
-         * item.getInitiative().getRoll(item.getInitiative().size() - 1) <
-         * highestInit && v.size() < 3) { System.out.println("-->AUTO REROLL: "
-         * + player.getName()); Vector rv = new Vector(); rv.addElement(item);
-         * rollInitAndResolveTies(v, rv); } } } }
-         */
-
     }
 
     /**
@@ -314,17 +290,22 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> v,
             List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
         for (ITurnOrdered item : v) {
+            // Observers don't have initiative, set it to -1
+            if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                item.getInitiative().observerRoll();
+            }
+            
             int bonus = 0;
             if (item instanceof Team) {
                 bonus = ((Team) item).getTotalInitBonus(bInitCompBonus);
             }
             if (item instanceof Entity) {
                 Entity e = (Entity) item;
-                bonus = e.game.getTeamForPlayer(e.owner).getTotalInitBonus(false) + e.getCrew().getInitBonus();
+                bonus = e.getGame().getTeamForPlayer(e.getOwner()).getTotalInitBonus(false) + e.getCrew().getInitBonus();
             }
             if (rerollRequests == null) { // normal init roll
-                item.getInitiative().addRoll(bonus); // add a roll for all
-                // teams
+                // add a roll for all teams
+                item.getInitiative().addRoll(bonus);
             } else {
                 // Resolve Tactical Genius (lvl 3) pilot ability
                 for (ITurnOrdered rerollItem : rerollRequests) {
@@ -339,6 +320,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
         // check for ties
         Vector<ITurnOrdered> ties = new Vector<ITurnOrdered>();
         for (ITurnOrdered item : v) {
+            // Observers don't have initiative, and were already set to -1
+            if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                continue;
+            }
             ties.removeAllElements();
             ties.addElement(item);
             for (ITurnOrdered other : v) {
@@ -347,7 +332,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 }
             }
             if (ties.size() > 1) {
-                // We want to ignore init compensation here, because it will
+                // We want to ignore initiative compensation here, because it will
                 // get dealt with once we're done resolving ties
                 rollInitAndResolveTies(ties, null, false);
             }
@@ -359,21 +344,29 @@ public abstract class TurnOrdered implements ITurnOrdered {
             int difference = 0;
             ITurnOrdered winningElement = comparisonElement;
 
-            // figure out who won init this round
-            for (ITurnOrdered currentElement : v) {
-                if (currentElement.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
-                    difference = currentElement.getInitiative().compareTo(comparisonElement.getInitiative());
-                    winningElement = currentElement;
+            // figure out who won initiative this round
+            for (ITurnOrdered item : v) {
+                // Observers don't have initiative, and they don't get initiative compensation
+                if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                    continue;
+                }
+                if (item.getInitiative().compareTo(comparisonElement.getInitiative()) > difference) {
+                    difference = item.getInitiative().compareTo(comparisonElement.getInitiative());
+                    winningElement = item;
                 }
             }
 
-            // set/reset the init comp counters
+            // set/reset the initiative compensation counters
             ((Team) winningElement).setInitCompensationBonus(0);
             if (lastRoundInitWinner != null) {
                 for (ITurnOrdered item : v) {
                     if (!(item.equals(winningElement) || item.equals(lastRoundInitWinner))) {
                         Team team = (Team) item;
                         int newBonus = team.getInitCompensationBonus(bInitCompBonus) + 1;
+                        // Observers don't have initiative, and they don't get initiative compensation
+                        if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
+                            newBonus = 0;
+                        }
                         team.setInitCompensationBonus(newBonus);
                     }
                 }

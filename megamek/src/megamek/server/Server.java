@@ -2634,9 +2634,9 @@ public class Server implements Runnable {
                 resetEntityPhase(phase);
                 checkForObservers();
                 transmitAllPlayerUpdates();
+                resetActivePlayersDone();
                 setIneligible(phase);
                 determineTurnOrder(phase);
-                resetActivePlayersDone();
                 // send(createEntitiesPacket());
                 entityAllUpdate();
                 clearReports();
@@ -3731,46 +3731,29 @@ public class Server implements Runnable {
         // Now, generate the global order of all teams' turns.
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
-        // See if there are any loaded units stranded on immobile transports.
-        Iterator<Entity> strandedUnits = game
-                .getSelectedEntities(new EntitySelector() {
-                    public boolean accept(Entity entity) {
-                        if (game.isEntityStranded(entity)) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns;
+        Vector<GameTurn> turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                + team_order.getEvenTurns());;
 
-        if (strandedUnits.hasNext()
-                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-            // Add a game turn to unload stranded units, if this
-            // is the movement phase.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                    + team_order.getEvenTurns() + 1);
-            turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
-        } else {
-            // No stranded units.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                    + team_order.getEvenTurns());
-        }
-
-        // add the turns (this is easy)
-        while (team_order.hasMoreElements()) {
-            Entity e = (Entity) team_order.nextElement();
-            if (e.isSelectableThisTurn()) {
-                if (!protosMoveMulti && (e instanceof Protomech)
-                        && (e.getUnitNumber() != Entity.NONE)) {
-                    turns.addElement(new GameTurn.UnitNumberTurn(
-                            e.getOwnerId(), e.getUnitNumber()));
-                } else {
-                    turns.addElement(new GameTurn.SpecificEntityTurn(e
-                            .getOwnerId(), e.getId()));
-                }
-
+        // Stranded units only during movement phases, rebuild the turns vector
+        if ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+            // See if there are any loaded units stranded on immobile transports.
+            Iterator<Entity> strandedUnits = game
+                    .getSelectedEntities(new EntitySelector() {
+                        public boolean accept(Entity entity) {
+                            if (game.isEntityStranded(entity)) {
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+            if (strandedUnits.hasNext()) {
+                // Add a game turn to unload stranded units, if this
+                // is the movement phase.
+                turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                                             + team_order.getEvenTurns() + 1);
+                turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
             }
         }
 
@@ -3783,7 +3766,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Determines the turn oder for a given phase
+     * Determines the turn order for a given phase
      *
      * @param phase the <code>int</code> id of the phase
      */
@@ -3973,32 +3956,30 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(
                 game.getTeamsVector(), game);
 
-        // See if there are any loaded units stranded on immobile transports.
-        Iterator<Entity> strandedUnits = game
-                .getSelectedEntities(new EntitySelector() {
-                    public boolean accept(Entity entity) {
-                        if (game.isEntityStranded(entity)) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns;
+        Vector<GameTurn> turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                + team_order.getEvenTurns());;
 
-        if (strandedUnits.hasNext()
-            && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
-            // Add a game turn to unload stranded units, if this
-            // is the movement phase.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                                         + team_order.getEvenTurns() + 1);
-            turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
-        } else {
-            // No stranded units.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                                         + team_order.getEvenTurns());
+        // Stranded units only during movement phases, rebuild the turns vector
+        if ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+            // See if there are any loaded units stranded on immobile transports.
+            Iterator<Entity> strandedUnits = game
+                    .getSelectedEntities(new EntitySelector() {
+                        public boolean accept(Entity entity) {
+                            if (game.isEntityStranded(entity)) {
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+            if (strandedUnits.hasNext()) {
+                // Add a game turn to unload stranded units, if this
+                // is the movement phase.
+                turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                                             + team_order.getEvenTurns() + 1);
+                turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
+            }
         }
 
         // Walk through the global order, assigning turns

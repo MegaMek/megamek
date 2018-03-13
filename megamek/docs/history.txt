@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.43.10-git
+
 v0.43.9-RC3
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
 + PR #916: Make MUL files work for tracking ammo on GunEmplacements

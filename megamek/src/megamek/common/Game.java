@@ -2436,8 +2436,7 @@ public class Game implements Serializable, IGame {
     
     public void handleInitiativeCompensation() {
         if (getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)) {
-            TurnOrdered.resetInitiativeCompensation(teams, initiativeRerollRequests,
-                    getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+            TurnOrdered.resetInitiativeCompensation(teams, getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
     }
 

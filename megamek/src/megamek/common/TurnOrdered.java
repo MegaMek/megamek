@@ -280,14 +280,13 @@ public abstract class TurnOrdered implements ITurnOrdered {
      * 
      * @param v
      *            A vector of items that need to have turns.
-     * @param rerollRequests
      * @param bInitCompBonus
      *            A flag that determines whether initiative compensation bonus
      *            should be used: used to prevent one side getting long init win
      *            streaks
      */
     public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v,
-            List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus) {
+            boolean bInitCompBonus) {
         // initiative compensation
         if (bInitCompBonus && (v.size() > 0) && (v.get(0) instanceof Team)) {
             final ITurnOrdered comparisonElement = v.get(0);

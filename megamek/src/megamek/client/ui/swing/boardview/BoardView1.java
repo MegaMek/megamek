@@ -5547,7 +5547,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 prevTipX = -1; prevTipY = -1;
                 // This is used to fool the tooltip manager into resetting the tip
                 ToolTipManager.sharedInstance().mousePressed(null);
-                return null;
+                return new String("");
             }
         }
         prevTipX = point.x; prevTipY = point.y;
@@ -6580,9 +6580,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int boardX = (int)((c.getX() + 0.0) / board.getSubBoardWidth());
         int boardY = (int)((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
-        if (linIdx < 0 || linIdx > boardBackgrounds.size()) {
-            System.out.println("Error computing linear index "
-                    + "in BoardView1.getTransparentImage!");
+        if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
+            System.out.println("Error computing linear index or "
+                    + "missing background images "
+                    + "in BoardView1.getBoardBackgroundHexImage!");
             return null;
         }
         Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);

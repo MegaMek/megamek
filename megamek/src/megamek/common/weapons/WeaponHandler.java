@@ -266,11 +266,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     
                     // build up some heat
                     //First Check to see if we have enough heat capacity to fire
-                    if (pdOverheated) {
-                        continue;
-                    } else if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                    if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
                         pdOverheated = true;
-                        continue;
+                        break;
                     }
                     if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
                         int heatDice = Compute.d6(bayW

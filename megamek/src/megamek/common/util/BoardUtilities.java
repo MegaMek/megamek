@@ -1003,7 +1003,9 @@ public class BoardUtilities {
                     if(hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
                         hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 1));
                     }
-                    else if(!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.ROAD)) {
+                    else if(!hex.containsTerrain(Terrains.BUILDING)
+                            && !hex.containsTerrain(Terrains.PAVEMENT)
+                            && !hex.containsTerrain(Terrains.ROAD)) {
                         hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
                         if(hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
@@ -1021,7 +1023,9 @@ public class BoardUtilities {
                         hex.addTerrain(tf.createTerrain(Terrains.SWAMP, 1));
                         hex.removeTerrain(Terrains.WATER);
                     }
-                    else if(!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.ROAD)) {
+                    else if(!hex.containsTerrain(Terrains.BUILDING) 
+                            && !hex.containsTerrain(Terrains.PAVEMENT)
+                            && !hex.containsTerrain(Terrains.ROAD)) {
                         hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
                     }
                 }

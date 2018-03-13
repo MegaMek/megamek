@@ -381,11 +381,17 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         int width = board.getWidth();
         int height = board.getHeight();
         // We want to cache as many of the images as we can, but if we have
-        //  more images than cache size, lets not waste time
+        // more images than cache size, lets not waste time
         if ((width*height) > ImageCache.MAX_SIZE){
             // Find the largest size by size square we can fit in the cache
             int max_dim = (int)Math.sqrt(ImageCache.MAX_SIZE);
-            width = height = max_dim;
+            if (width < max_dim) {
+        	        height = (int)(ImageCache.MAX_SIZE / width);
+            } else if (height < max_dim) {
+        	        width = (int)(ImageCache.MAX_SIZE / height);
+            } else {
+                width = height = max_dim;
+            }
         }
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

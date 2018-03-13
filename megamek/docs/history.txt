@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.43.9-git
+v0.43.9-RC3
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
 + PR #916: Make MUL files work for tracking ammo on GunEmplacements
 + PR #928: Corrections to scenarios, new keyword for handling random maps
@@ -18,6 +18,18 @@ v0.43.9-git
 + PR #923: Bogdown after DFA
 	Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
 + Remove duplicate Glancing Blow and Direct Blow report messages
++ PR #930: Fix the image cache
++ PR #931: Observer Initiative & TacGen ICB Reset
+	Fixes Issue #339: Init streak compensation
+	Fixes Issue #345: Using Tactical Genius should not reset Initiative Streak Compensation
+	Fixes Issue #804: Initiative Streak Compensation Counts Observers
+	Fixes round reports showing initiative for observers
+	Fixes round reports showing BV information for players who never had any (original observers)
++ PR #932: Add Handle override to CapitalMissileBayHandler
+	Fixes Glancing/Direct Blow with capital missiles
+	Fixes handling of AMS vs. capital missiles
++ PR #933: Fully amphibious water travel fix
+	Fixes Issue #913: [.43.8 RC2] Bridge has a basement for some reason
 
 v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.

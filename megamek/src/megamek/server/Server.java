@@ -2008,6 +2008,10 @@ public class Server implements Runnable {
         Enumeration<IPlayer> players = game.getPlayers();
         while (players.hasMoreElements()) {
             IPlayer player = players.nextElement();
+            // Players who started the game as observers get ignored
+            if (player.getInitialBV() == 0) {
+                continue;
+            }
             r = new Report();
             r.type = Report.PUBLIC;
             r.messageId = 7016;
@@ -2246,8 +2250,9 @@ public class Server implements Runnable {
 
         // need at least one entity in the game for the lounge phase to end
         if (!game.phaseHasTurns(game.getPhase())
-            && ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) || (game
-                                                                          .getNoOfEntities() > 0))) {
+            && ((game.getPhase() != IGame.Phase.PHASE_LOUNGE)
+                    || (game.getNoOfEntities() > 0))) {
+            game.handleInitiativeCompensation();
             endCurrentPhase();
         }
     }
@@ -2629,9 +2634,9 @@ public class Server implements Runnable {
                 resetEntityPhase(phase);
                 checkForObservers();
                 transmitAllPlayerUpdates();
+                resetActivePlayersDone();
                 setIneligible(phase);
                 determineTurnOrder(phase);
-                resetActivePlayersDone();
                 // send(createEntitiesPacket());
                 entityAllUpdate();
                 clearReports();
@@ -2684,6 +2689,10 @@ public class Server implements Runnable {
                 Enumeration<IPlayer> players2 = game.getPlayers();
                 while (players2.hasMoreElements()) {
                     IPlayer player = players2.nextElement();
+                    // Players who started the game as observers get ignored
+                    if (player.getInitialBV() == 0) {
+                        continue;
+                    }
                     Report r = new Report();
                     r.type = Report.PUBLIC;
                     if (doBlind() && suppressBlindBV()) {
@@ -3676,6 +3685,33 @@ public class Server implements Runnable {
 
         transmitAllPlayerUpdates();
     }
+    
+    private Vector<GameTurn> checkTurnOrderStranded(TurnVectors team_order) {
+        Vector<GameTurn> turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                + team_order.getEvenTurns());
+        // Stranded units only during movement phases, rebuild the turns vector
+        if ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+            // See if there are any loaded units stranded on immobile transports.
+            Iterator<Entity> strandedUnits = game
+                    .getSelectedEntities(new EntitySelector() {
+                        public boolean accept(Entity entity) {
+                            if (game.isEntityStranded(entity)) {
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+            if (strandedUnits.hasNext()) {
+                // Add a game turn to unload stranded units, if this
+                // is the movement phase.
+                turns = new Vector<GameTurn>(team_order.getTotalTurns()
+                                             + team_order.getEvenTurns() + 1);
+                turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
+            }
+        }
+        return turns;
+    }
 
     /**
      * Determines the turn oder for a given phase (with individual init)
@@ -3722,33 +3758,11 @@ public class Server implements Runnable {
         // Now, generate the global order of all teams' turns.
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
-        // See if there are any loaded units stranded on immobile transports.
-        Iterator<Entity> strandedUnits = game
-                .getSelectedEntities(new EntitySelector() {
-                    public boolean accept(Entity entity) {
-                        if (game.isEntityStranded(entity)) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns;
+        Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
 
-        if (strandedUnits.hasNext()
-                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-            // Add a game turn to unload stranded units, if this
-            // is the movement phase.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                    + team_order.getEvenTurns() + 1);
-            turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
-        } else {
-            // No stranded units.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                    + team_order.getEvenTurns());
-        }
-
+        
+        
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
             Entity e = (Entity) team_order.nextElement();
@@ -3761,7 +3775,6 @@ public class Server implements Runnable {
                     turns.addElement(new GameTurn.SpecificEntityTurn(e
                             .getOwnerId(), e.getId()));
                 }
-
             }
         }
 
@@ -3774,7 +3787,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Determines the turn oder for a given phase
+     * Determines the turn order for a given phase
      *
      * @param phase the <code>int</code> id of the phase
      */
@@ -3964,33 +3977,8 @@ public class Server implements Runnable {
         TurnVectors team_order = TurnOrdered.generateTurnOrder(
                 game.getTeamsVector(), game);
 
-        // See if there are any loaded units stranded on immobile transports.
-        Iterator<Entity> strandedUnits = game
-                .getSelectedEntities(new EntitySelector() {
-                    public boolean accept(Entity entity) {
-                        if (game.isEntityStranded(entity)) {
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
         // Now, we collect everything into a single vector.
-        Vector<GameTurn> turns;
-
-        if (strandedUnits.hasNext()
-            && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
-            // Add a game turn to unload stranded units, if this
-            // is the movement phase.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                                         + team_order.getEvenTurns() + 1);
-            turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
-        } else {
-            // No stranded units.
-            turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                                         + team_order.getEvenTurns());
-        }
+        Vector<GameTurn> turns = checkTurnOrderStranded(team_order);
 
         // Walk through the global order, assigning turns
         // for individual players to the single vector.
@@ -4213,11 +4201,16 @@ public class Server implements Runnable {
         } else {
             for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements(); ) {
                 final Team team = i.nextElement();
+                
+                // Teams with no active players can be ignored
+                if (team.isObserverTeam()) {
+                    continue;
+                }
 
-                // If there is only one player, list them as the 'team', and
-                // use the team iniative
-                if (team.getSize() == 1) {
-                    final IPlayer player = team.getPlayers().nextElement();
+                // If there is only one non-observer player, list
+                // them as the 'team', and use the team initiative
+                if (team.getNonObserverSize() == 1) {
+                    final IPlayer player = team.getNonObserverPlayers().nextElement();
                     r = new Report(1015, Report.PUBLIC);
                     r.add(Server.getColorForPlayer(player));
                     r.add(team.getInitiative().toString());
@@ -4228,7 +4221,7 @@ public class Server implements Runnable {
                     r.add(IPlayer.teamNames[team.getId()]);
                     r.add(team.getInitiative().toString());
                     addReport(r);
-                    for (Enumeration<IPlayer> j = team.getPlayers(); j
+                    for (Enumeration<IPlayer> j = team.getNonObserverPlayers(); j
                             .hasMoreElements(); ) {
                         final IPlayer player = j.nextElement();
                         r = new Report(1015, Report.PUBLIC);

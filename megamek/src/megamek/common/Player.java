@@ -282,6 +282,9 @@ public final class Player extends TurnOrdered implements IPlayer {
         if (!observer) {
             setSeeAll(false);
         }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObversverStatus();
+        }
     }
 
     @Override

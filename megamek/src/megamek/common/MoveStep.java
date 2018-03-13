@@ -2918,7 +2918,7 @@ public class MoveStep implements Serializable {
                 mp += destHex.movementCost(getEntity());
             }
 
-            // if this is an amphibious unit crossing water, i
+            // if this is an amphibious unit crossing water, increment movement cost by 1
             if(isAmphibious && !destHex.containsTerrain(Terrains.ICE) && (destHex.terrainLevel(Terrains.WATER) > 0)) {
                 mp++;
             }

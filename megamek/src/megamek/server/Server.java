@@ -32687,7 +32687,8 @@ public class Server implements Runnable {
                     if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
                             || (entity.getMovementMode() == EntityMovementMode.NAVAL)
                             || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
-                            || (entity.getMovementMode() == EntityMovementMode.INF_UMU)) {
+                            || (entity.getMovementMode() == EntityMovementMode.INF_UMU)
+                            || entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
                         continue; // under the bridge even at same level
                     }
 

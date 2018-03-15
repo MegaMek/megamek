@@ -13998,7 +13998,7 @@ public class Server implements Runnable {
             // For Bearings-only Capital Missiles
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-                if (aaa.turnsTilHit > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
+                if (aaa.getTurnsTilHit() > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
                     continue;
                 }
             }

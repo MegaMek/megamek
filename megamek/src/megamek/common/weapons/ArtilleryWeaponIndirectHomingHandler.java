@@ -84,7 +84,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.newlines = 0;
                 r.subject = subjectId;
                 r.add(wtype.getName());
-                r.add(aaa.turnsTilHit);
+                r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
@@ -92,13 +92,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
             // off-board attack phase that follows.
-            if (aaa.turnsTilHit == 0) {
+            if (aaa.getTurnsTilHit() == 0) {
                 setAnnouncedEntityFiring(false);
             }
             return true;
         }
-        if (aaa.turnsTilHit > 0) {
-            aaa.turnsTilHit--;
+        if (aaa.getTurnsTilHit() > 0) {
+            aaa.decrementTurnsTilHit();
             return true;
         }
         Entity entityTarget;

@@ -5853,12 +5853,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             
             txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
-            if (aaa.turnsTilHit == 1)
+            if (aaa.getTurnsTilHit() == 1)
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
                         new Object[] { wpName, ammoName }));
             else
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
-                        new Object[] { wpName, ammoName, aaa.turnsTilHit }));
+                        new Object[] { wpName, ammoName, aaa.getTurnsTilHit() }));
             txt.append("</FONT></TD></TR></TABLE>");
         }
 

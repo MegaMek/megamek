@@ -13995,35 +13995,30 @@ public class Server implements Runnable {
                 continue;
             }
             
-            if (waa instanceof ArtilleryAttackAction) {
-                Entity target;
+            // For Bearings-only Capital Missiles
+            if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-                if (wh instanceof CapitalMissileBearingsOnlyHandler) {
-                    if (aaa.turnsTilHit > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
-                        continue;
-                    }
-                    //For Bearings-only Capital Missiles
-                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                            .getTarget(game) : null;
-                    if (target == null) {
-                        continue;
-                    } 
-                } else {
-                    //For all other types of homing artillery
-                    target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                        .getTarget(game) : null;
-                    if (target == null) {
-                        //this will pick our TAG target back up and assign it to the waa                    
-                        ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
-                        hh.convertHomingShotToEntityTarget();
-                        target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                                .getTarget(game) : null;
-                        if (target == null) {
-                            //in case our target really is null. 
-                            continue;
-                        }
-                    }            
+                if (aaa.getTurnsTilHit() > 0 || game.getPhase() != IGame.Phase.PHASE_FIRING) {
+                    continue;
                 }
+            }
+
+            // For all other types of homing artillery
+            if (waa instanceof ArtilleryAttackAction) {
+                // This will pick our TAG target back up and assign it to the waa
+                if (waa.isHomingShot() && wh instanceof ArtilleryWeaponIndirectHomingHandler) {
+                    ArtilleryWeaponIndirectHomingHandler hh = (ArtilleryWeaponIndirectHomingHandler) wh;
+                    hh.convertHomingShotToEntityTarget();
+                }
+
+                Entity target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
+                        .getTarget(game) : null;
+
+                // In case our target really is null.
+                if (target == null) {
+                    continue;
+                }
+
                 Vector<WeaponHandler> v = htAttacks.get(target);
                 if (v == null) {
                     v = new Vector<WeaponHandler>();

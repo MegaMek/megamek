@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2290-Inner Sphere2310-Inner Sphere2295-Inner Sphere,2290-IS_Experimental2310-IS_Box_Set2295-IS_Advanced,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,2285-Inner Sphere,2285-IS_Experimental,Primitive Prototype Medium Laser,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -3204,7 +3204,8 @@ M,2295-Inner Sphere2490-Inner Sphere2350-Inner Sphere,2295-IS_Experimental2490-I
 M,2295-Inner Sphere2490-Inner Sphere2350-Inner Sphere,2295-IS_Experimental2490-IS_TW_Non_Box2350-IS_Advanced,Extended Fuel Tank (3.5 tons),
 M,2295-Inner Sphere2490-Inner Sphere2350-Inner Sphere,2295-IS_Experimental2490-IS_TW_Non_Box2350-IS_Advanced,Extended Fuel Tank (4 tons),
 M,3053-Inner Sphere,3053-IS_Experimental,Blue Shield Particle Field Damper,
-M,3073-Inner Sphere3080-Inner Sphere3067-Inner Sphere,3073-IS_Experimental3080-IS_Advanced3067-IS_Experimental,Endo-Composite,IS Endo-Composite,Clan Endo-Composite,
+M,3080-Inner Sphere3067-Inner Sphere,3080-IS_Advanced3067-IS_Experimental,IS Endo-Composite,IS Endo-Composite,
+M,3073-Clan,3073-Clan_Experimental,Clan Endo-Composite,Clan Endo-Composite,
 M,2575-Inner Sphere,2575-IS_Experimental,ISLaserInsulator,CLLaserInsulator,
 M,3025-Inner Sphere3015-Inner Sphere,3025-IS_Advanced3015-IS_Experimental,ISElectronicWarfareEquipment,
 M,2710-Inner Sphere2695-Inner Sphere,2710-IS_Advanced2695-IS_Experimental,ISCollapsibleCommandModule,ISCCM,CollapsibleCommandModule,

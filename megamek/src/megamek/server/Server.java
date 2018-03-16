@@ -2661,12 +2661,6 @@ public class Server implements Runnable {
                 game.getPlanetaryConditions().determineWind();
                 send(createPlanetaryConditionsPacket());
 
-                hexUpdateSet.clear();
-                for (DynamicTerrainProcessor tp : terrainProcessors) {
-                    tp.doEndPhaseChanges(vPhaseReport);
-                }
-                sendChangedHexes(hexUpdateSet);
-
                 applyBuildingDamage();
                 addReport(game.ageFlares());
                 send(createFlarePacket());
@@ -2679,6 +2673,17 @@ public class Server implements Runnable {
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
                 resolveFortify();
+
+                // Moved this to the very end because it makes it difficult to see
+                // more important updates when you have 300+ messages of smoke filling
+                // whatever hex. Please don't move it above the other things again.
+                // Thanks! Ralgith - 2018/03/15
+                hexUpdateSet.clear();
+                for (DynamicTerrainProcessor tp : terrainProcessors) {
+                    tp.doEndPhaseChanges(vPhaseReport);
+                }
+                sendChangedHexes(hexUpdateSet);
+                
                 checkForObservers();
                 transmitAllPlayerUpdates();
                 entityAllUpdate();

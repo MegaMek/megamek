@@ -159,6 +159,8 @@ public class InfantryPathFinder {
             IHex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(), direction);
             
             // if we're going off board, we may as well not bother continuing
+            // TODO: additionally, if we're definitely going to collapse the building or bridge we're stepping on
+            // then let's just stop right here
             if(destinationHex == null) {
                 continue;
             }

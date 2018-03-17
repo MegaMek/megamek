@@ -196,6 +196,7 @@ public class BasicPathRanker extends PathRanker {
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
+                int alpha = 1;
                 returnResponse.addToMyEstimatedDamage(
                         getMaxDamageAtRange(fireControl,
                                             path.getEntity(),

@@ -9602,7 +9602,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, true));
         misc.addLookupName("Clan Endo-Composite");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
+        misc.criticals = 4;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);

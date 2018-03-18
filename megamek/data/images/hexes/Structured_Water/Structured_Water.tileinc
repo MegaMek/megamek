@@ -12,7 +12,7 @@ super * "water:*:04" "" "Structured_water/HexAtlas_Water_Atmospheric.png(345,1-8
 super * "water:*:05" "" "Structured_water/HexAtlas_Water_Atmospheric.png(431,1-84,72)"
 super * "water:*:06" "" "Structured_water/HexAtlas_Water_Atmospheric.png(517,1-84,72)"
 super * "water:*:07" "" "Structured_water/HexAtlas_Water_Atmospheric.png(603,1-84,72)"
-super * "water:*:08" "" "Structured_water/HexAtlas_Water_Atmospheric.png(1,1-84,72)"
+super * "water:*:08" "" "Structured_water/HexAtlas_Water_Atmospheric.png(1,75-84,72)"
 super * "water:*:09" "" "Structured_water/HexAtlas_Water_Atmospheric.png(87,75-84,72)"
 super * "water:*:10" "" "Structured_water/HexAtlas_Water_Atmospheric.png(173,75-84,72)"
 super * "water:*:11" "" "Structured_water/HexAtlas_Water_Atmospheric.png(259,75-84,72)"

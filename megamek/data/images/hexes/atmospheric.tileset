@@ -39,11 +39,14 @@
 # smoke
 # elevator
 
+include "Structured_Pavement/Structured_Pavement.tileinc"
+
 include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardSpace.tileinc"
 
-super * "water:0" "" "transparent/blue_water_1.png"
+# ortho * "water:0" "" "transparent/blue_water_1.png"
+include "Structured_Water/Structured_Water.tileinc"
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
 #levels 2 and 3 of swamp are for quicksand
@@ -65,38 +68,39 @@ super * "rubble:6" "" "boring/rubble_ultra.gif"
 
 include "StandardIncludes/StandardLimbs.tileinc"
 
-super * "water:1" "" "transparent/blue_water_1.png"
+# ortho * "water:1" "" "transparent/blue_water_1.png"
 
-super * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
+ortho * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+ortho * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+ortho * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
 
-super * "woods:1" "snow" "snow/snow_lf.png"
-super * "woods:2" "snow" "snow/snow_hf.png"
+ortho * "woods:1" "snow" "snow/snow_lf.png"
+ortho * "woods:2" "snow" "snow/snow_hf.png"
 
-super * "woods:1" "volcano" "snow/snow_lf.png"
-super * "woods:2" "volcano" "snow/snow_hf.png"
+ortho * "woods:1" "volcano" "snow/snow_lf.png"
+ortho * "woods:2" "volcano" "snow/snow_hf.png"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
-super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
+ortho * "woods:1;fluff:12" "" "boring/orchard.png"
+ortho * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
 #hf2.gif has been taken out because it looks too much like ultra heavy
-super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf3.gif"
-super * "woods:3" "" "boring/uhf.gif"
+ortho * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf3.gif"
+ortho * "woods:3" "" "boring/uhf.gif"
 
-super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
+ortho * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+ortho * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+ortho * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
 
-super * "water:2" "" "transparent/blue_water_2.png"
-super * "water:3" "" "transparent/blue_water_3.png"
-super * "water:4" "" "transparent/blue_water_4.png"
-super * "water:*" "" "transparent/blue_water_4.png"
+# ortho * "water:2" "" "transparent/blue_water_2.png"
+# ortho * "water:3" "" "transparent/blue_water_3.png"
+# ortho * "water:4" "" "transparent/blue_water_4.png"
+# ortho * "water:*" "" "transparent/blue_water_4.png"
 
 super * "rapids:1" "" "transparent/rapids.png"
 super * "rapids:2" "" "transparent/rapids.png"
 
 super * "ice:1" "" "transparent/ice.png"
 
+include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoads.tileinc"
 include "StandardIncludes/StandardRailMaglev.tileinc"
@@ -108,7 +112,7 @@ include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
 include "StandardIncludes/BuildingsSClassArmor.tileinc"
 include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
 
-include "StandardIncludes/StandardFluff.tileinc"
+
 include "StandardIncludes/StandardFuelTanks.tileinc"
 
 super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"

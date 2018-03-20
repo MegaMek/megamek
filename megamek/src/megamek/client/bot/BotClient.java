@@ -266,12 +266,18 @@ public abstract class BotClient extends Client {
         
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
-        // For future development, consider not unloading a particular entity if doing so would kill it.
+        // unless doing so would kill it or be illegal due to stacking violation
         for(Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
-            Entity transport = currentEntity.getTransportId() != Entity.NONE ? game.getEntity(currentEntity.getTransportId()) : null;
+            Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
             
             if(transport != null && transport.isPermanentlyImmobilized(true)) {
-                entitiesToUnload.add(currentEntity.getId());
+                boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(), transport.getPosition());
+                boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                        currentEntity.isLocationProhibited(transport.getPosition());
+                        
+                if(!stackingViolation && !unloadFatal) {
+                    entitiesToUnload.add(currentEntity.getId());
+                }
             }
         }
         

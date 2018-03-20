@@ -3979,8 +3979,7 @@ public class Server implements Runnable {
         Vector<GameTurn> turns;
 
         if (strandedUnits.hasNext()
-            && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
+            && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
             turns = new Vector<GameTurn>(team_order.getTotalTurns()

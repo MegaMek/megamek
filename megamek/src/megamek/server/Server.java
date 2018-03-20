@@ -2252,7 +2252,6 @@ public class Server implements Runnable {
         if (!game.phaseHasTurns(game.getPhase())
             && ((game.getPhase() != IGame.Phase.PHASE_LOUNGE)
                     || (game.getNoOfEntities() > 0))) {
-            game.handleInitiativeCompensation();
             endCurrentPhase();
         }
     }
@@ -2509,6 +2508,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_INITIATIVE:
                 // remove the last traces of last round
+                game.handleInitiativeCompensation();
                 game.resetActions();
                 game.resetTagInfo();
                 sendTagInfoReset();

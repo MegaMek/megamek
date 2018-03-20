@@ -315,14 +315,19 @@ public final class Team extends TurnOrdered {
         return constantb + turnb + commandb
                 + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
+    
+    @Override
+    public int getInitCompensationBonus() {
+        return getInitCompensationBonus(true);
+    }
 
     public int getInitCompensationBonus(boolean bUseInitCompensation) {
         int nInitCompBonus = 0;
 
         if (bUseInitCompensation) {
             for (IPlayer player : getPlayersVector()) {
-                if (player.getCompensationInitBonus() > nInitCompBonus) {
-                    nInitCompBonus = player.getCompensationInitBonus();
+                if (player.getInitCompensationBonus() > nInitCompBonus) {
+                    nInitCompBonus = player.getInitCompensationBonus();
                 }
             }
         }
@@ -330,10 +335,11 @@ public final class Team extends TurnOrdered {
         return nInitCompBonus;
     }
 
+    @Override
     public void setInitCompensationBonus(int nNewValue) {
         for (Enumeration<IPlayer> p = getPlayers(); p.hasMoreElements(); ) {
             IPlayer player = p.nextElement();
-            player.setCompensationInitBonus(nNewValue);
+            player.setInitCompensationBonus(nNewValue);
         }
     }
 

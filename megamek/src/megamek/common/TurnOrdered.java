@@ -288,7 +288,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public static void resetInitiativeCompensation(List<? extends ITurnOrdered> v,
             boolean bInitCompBonus) {
         // initiative compensation
-        if (bInitCompBonus && (v.size() > 0) && (v.get(0) instanceof Team)) {
+        if (bInitCompBonus && (v.size() > 0)) {
             final ITurnOrdered comparisonElement = v.get(0);
             int difference = 0;
             ITurnOrdered winningElement = comparisonElement;
@@ -308,14 +308,21 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // set/reset the initiative compensation counters
             if (lastRoundInitWinner != null) {
                 for (ITurnOrdered item : v) {
-                    if (!(item.equals(winningElement) || item.equals(lastRoundInitWinner))) {
-                        Team team = (Team) item;
-                        int newBonus = team.getInitCompensationBonus(bInitCompBonus) + 1;
+                    if (!item.equals(winningElement)) {
+                        int newBonus = 0;
+                        boolean observer = false;
                         // Observers don't have initiative, and they don't get initiative compensation
                         if ((item instanceof IPlayer && ((Player)item).isObserver()) || (item instanceof Team && ((Team)item).isObserverTeam())) {
-                            newBonus = 0;
+                            observer = true;
                         }
-                        team.setInitCompensationBonus(newBonus);
+                        
+                        if (!item.equals(lastRoundInitWinner) && !observer) {
+                            newBonus = item.getInitCompensationBonus() + 1;
+                        }
+                        item.setInitCompensationBonus(newBonus);
+                    }  else {
+                        // Reset our bonus to 0 if we won
+                        item.setInitCompensationBonus(0);
                     }
                 }
             }
@@ -728,5 +735,12 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         } // Handle the next 'aero' turn.
         return turns;
+    }
+
+    public int getInitCompensationBonus() {
+        return 0;
+    }
+
+    public void setInitCompensationBonus(int newBonus) {
     }
 }

@@ -460,12 +460,12 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public void setCompensationInitBonus(int newBonus) {
+    public void setInitCompensationBonus(int newBonus) {
         streakCompensationBonus = newBonus;
     }
 
     @Override
-    public int getCompensationInitBonus() {
+    public int getInitCompensationBonus() {
         return streakCompensationBonus;
     }
 

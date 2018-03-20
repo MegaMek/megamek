@@ -16,7 +16,7 @@ Description=LG&M second mission
 BoardWidth=2
 BoardHeight=1
 
-Maps=buildings/militarybase2,buildings/militarybase1
+Maps=MapSet7/16x17 Military Base 2,MapSet7/16x17 Military Base 1
 
 
 Factions=RedfieldsRenegades,LoneStar

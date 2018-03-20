@@ -34,7 +34,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
      * 
      */
     private static final long serialVersionUID = -3893844894076028005L;
-    public int turnsTilHit;
+    private int turnsTilHit;
     private Vector<Integer> spotterIds; // IDs of possible spotters, won't know
                                         // until it lands.
     protected int playerId;
@@ -125,5 +125,21 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         // adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         this.turnsTilHit = (int) (distance / launchVelocity); 
+    }
+    
+    public int getTurnsTilHit() {
+        return this.turnsTilHit;
+    }
+    
+    public void setTurnsTilHit(int turnsTilHit) {
+        this.turnsTilHit = turnsTilHit;
+    }
+    
+    public void decrementTurnsTilHit() {
+        decrementTurnsTilHit(1);
+    }
+    
+    public void decrementTurnsTilHit(int numTurns) {
+        this.turnsTilHit-=numTurns;
     }
 }

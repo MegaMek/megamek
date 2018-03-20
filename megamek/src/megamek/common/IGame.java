@@ -1084,6 +1084,8 @@ public interface IGame {
     abstract void addInitiativeRerollRequest(Team t);
 
     abstract void rollInitAndResolveTies();
+    
+    abstract void handleInitiativeCompensation();
 
     abstract int getNoOfInitiativeRerollRequests();
 

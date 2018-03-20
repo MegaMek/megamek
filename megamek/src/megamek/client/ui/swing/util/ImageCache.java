@@ -27,7 +27,7 @@ public class ImageCache<K, V> {
     /**
      * Default maximum size
      */
-    public static int MAX_SIZE = 20000;
+    public static int MAX_SIZE = 30000;
     
 
     /**

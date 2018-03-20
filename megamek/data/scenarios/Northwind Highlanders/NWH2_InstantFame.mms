@@ -11,7 +11,7 @@ Description=The campaign on Bellatrix against Ajax's Avengers brought McCormack'
 BoardWidth=2
 BoardHeight=1
 
-Maps=openterrain1,openterrain2
+Maps=MapSet5/16x17 Open Terrain 1,MapSet5/16x17 Open Terrain 2
 
 Factions=Highlanders,Avengers
 

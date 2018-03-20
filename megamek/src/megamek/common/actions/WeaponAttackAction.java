@@ -157,6 +157,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * not be modified for terrain or movement. See TW pg 260
      */
     protected boolean isPointblankShot = false;
+    
+    /**
+     * Boolean flag that determines if this shot was fired using homing ammunition.
+     * Can be checked to allow casting of attack handlers to the proper homing handler.
+     */
+    protected boolean isHomingShot = false;
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -4415,6 +4421,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     public void setPointblankShot(boolean isPointblankShot) {
         this.isPointblankShot = isPointblankShot;
+    }
+
+    public boolean isHomingShot() {
+        return isHomingShot;
+    }
+
+    public void setHomingShot(boolean isHomingShot) {
+        this.isHomingShot = isHomingShot;
     }
     
     /*

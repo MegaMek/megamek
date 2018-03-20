@@ -727,6 +727,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                         clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
+                waa.setHomingShot(ammoType.getMunitionType() == AmmoType.M_HOMING && ammoMount.curMode().equals("Homing"));
             }
         }
 

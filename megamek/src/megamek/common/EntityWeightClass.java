@@ -65,6 +65,30 @@ public class EntityWeightClass {
     private static double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
     private static double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
     private static double[] protoWeightLimits = { 0, 3, 5, 7, 9, 10 }; // One padding 0
+    
+    public static double[] getWeightLimitByType(String type) {
+        if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
+            return mechWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.AERO))) {
+            return ASFWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))) {
+            return BAWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.DROPSHIP))) {
+            return dropshipWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.GUN_EMPLACEMENT))) {
+            return GEWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.JUMPSHIP)) || type.equals(UnitType.getTypeName(UnitType.WARSHIP)) || type.equals(UnitType.getTypeName(UnitType.SPACE_STATION))) {
+            return jumpshipWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.PROTOMEK))) {
+            return protoWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.TANK)) || type.equals(UnitType.getTypeName(UnitType.NAVAL)) || type.equals(UnitType.getTypeName(UnitType.VTOL))) {
+            return vehicleWeightLimits;
+        } else {
+            // Sad... and means we've not implemented yet!
+            // Default to Mechs. Blech.
+            return mechWeightLimits;
+        }
+    }
 
     public static int getWeightClass(double tonnage, String type) {
         int i;
@@ -389,7 +413,7 @@ public class EntityWeightClass {
     }
 
     /**
-     * Get the weight class name g iven a weight class define and a unitType.
+     * Get the weight class name given a weight class define and a unitType.
      * The unitType is a string that matches the unit type returned from a
      * MechSummary.
      *

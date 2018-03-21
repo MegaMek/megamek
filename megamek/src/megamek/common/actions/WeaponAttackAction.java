@@ -1263,7 +1263,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(+1, "Urban Guerrilla");
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
-                    && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
+                    && !ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
                 toHit.addModifier(+1, OptionsConstants.PILOT_SHAKY_STICK);
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)

@@ -504,6 +504,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     boolean displayInvalidHexInfo = false;
 
+    /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
+    private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay(); 
 
 
     /**
@@ -4758,9 +4760,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void mouseExited(MouseEvent me) {
         // Reset the tooltip dismissal delay to the preference
         // value so that elements outside the boardview can
-        // use tooltips
-        ToolTipManager.sharedInstance().setDismissDelay(
-                GUIPreferences.getInstance().getTooltipDismissDelay());
+    	// use tooltips
+    	if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+    		ToolTipManager.sharedInstance().setDismissDelay(
+    				GUIPreferences.getInstance().getTooltipDismissDelay());
+    	} else {
+    		ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+    	}
     }
 
     public void mouseClicked(MouseEvent me) {
@@ -5552,7 +5558,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 prevTipX = -1; prevTipY = -1;
                 // Set the dismissal delay to 0 so that the tooltip 
                 // goes away and does not reappear until the mouse 
-                // has moved more than the suppression distance 
+                // has moved more than the suppression distance
                 ToolTipManager.sharedInstance().setDismissDelay(0);
                 return new String(""); //$NON-NLS-1$
             }
@@ -5937,9 +5943,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Now that a valid tooltip text seems to be present,
         // (re)set the tooltip dismissal delay time to the preference 
         // value so that the tooltip actually appears
-        ToolTipManager.sharedInstance().setDismissDelay(
-                GUIPreferences.getInstance().getTooltipDismissDelay());
-        
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+        	ToolTipManager.sharedInstance().setDismissDelay(
+        			GUIPreferences.getInstance().getTooltipDismissDelay());
+        } else {
+        	ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        }
+
         return txt.toString();
     }
 

@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.43.10-git
 + Issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
 + Issue #943: Setting tooltip dismiss delay to -1 no longer freezes client
++ Issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.
 
 v0.43.9-RC3
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays

@@ -598,6 +598,12 @@ public class MenuScroller {
     }
   }
   
+  /**
+   * Take any given memu object and turn on scrollbars if it contains more than 20 items.
+   * Then, cycle through all submenus recursively.
+   * 
+   * @param menu
+   */
   public static void createScrollBarsOnMenus(JMenu menu) {
       if (menu.getMenuComponentCount() > 20) {
           MenuScroller.setScrollerFor(menu, 20);

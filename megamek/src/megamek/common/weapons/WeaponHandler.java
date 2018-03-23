@@ -919,7 +919,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
-            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if ((target.isAirborne() && !waa.isGroundToAir(game)) || game.getBoard().inSpace() || ae.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {

@@ -781,8 +781,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         attackValue = calcAttackValue();
         CounterAV = getCounterAV();
         
-        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship
-        if (entityTarget != null && entityTarget.usesWeaponBays()) {
+        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
+        if (entityTarget != null && entityTarget.usesWeaponBays() && !waa.isGroundToAir(game)) {
             nDamPerHit = attackValue;
         } else {
             //This is for all other targets in atmosphere
@@ -810,10 +810,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (target.isAirborne() || 
-            game.getBoard().inSpace() || 
-            (entityTarget != null && entityTarget.usesWeaponBays() &&
-                    !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER))) {
+        if (game.getBoard().inSpace() ||
+            (target.isAirborne() && !waa.isGroundToAir(game))) {
             // Ensures AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);

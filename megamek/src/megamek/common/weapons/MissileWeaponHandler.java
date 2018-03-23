@@ -488,6 +488,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // for (int x = 0; x < lCounters.size(); x++) {
             for (Mounted counter : lCounters) {
                 boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
                 if (isAMS && counter.isAPDS() && !apdsEngaged) {
                     Mounted mAmmo = counter.getLinked();
                     Entity apdsEnt = counter.getEntity();
@@ -603,6 +604,57 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     r.newlines = 0;
                     vPhaseReport.add(r);
                     amsMod = -4;
+                    
+                } else if (isAMSBay && !amsEngaged) {
+                    if (!(counter.getType() instanceof WeaponType)
+                            || !counter.isReady() || counter.isMissing()
+                            // shutdown means no AMS
+                            || entityTarget.isShutDown()
+                            // AMS only fires vs attacks in arc covered by ams
+                            || !Compute.isInArc(game, entityTarget.getId(),
+                                    entityTarget.getEquipmentNum(counter), ae)) {
+                        continue;
+                    }
+                
+                    for (int wId : counter.getBayWeapons()) {
+                        Mounted bayW = entityTarget.getEquipment(wId);
+                        Mounted bayWAmmo = bayW.getLinked();
+                        //For AMS bays, stop the loop if an AMS in the bay has engaged this attack
+                        if (amsEngaged) {
+                            break;
+                        }
+                        //For AMS bays, continue until we find an individual AMS that hasn't shot yet
+                        if (bayW.isUsedThisRound()) {
+                            continue;
+                        }
+
+                    // build up some heat (assume target is ams owner)
+                    if (bayW.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        entityTarget.heatBuildup += Compute.d6(bayW
+                                .getCurrentHeat());
+                    } else {
+                        entityTarget.heatBuildup += bayW.getCurrentHeat();
+                    }
+
+                    // decrement the ammo
+                    if (bayWAmmo != null) {
+                        bayWAmmo.setShotsLeft(Math.max(0,
+                                bayWAmmo.getBaseShotsLeft() - 1));
+                    }
+
+                    
+                    //Optional rule to allow multiple AMS shots per round
+                    if (!multiAMS) {
+                        // set the ams as having fired
+                        bayW.setUsedThisRound(true);                        
+                    }
+                    amsEngaged = true;
+                    Report r = new Report(3350);
+                    r.subject = entityTarget.getId();
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                    amsMod = -4;
+                    }
                 }
             }
         }

@@ -1676,8 +1676,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
+            adaptFireModeEnabled(ce().getEquipment(weaponId));
         }
         updateTarget();
     }
@@ -1698,8 +1697,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
+            adaptFireModeEnabled(ce().getEquipment(weaponId));
         }
         updateTarget();
     }
@@ -1984,8 +1982,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         if ((weaponId != -1) && (ce() != null) && !isStrafing) {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
+            adaptFireModeEnabled(ce().getEquipment(weaponId));
         }
 
         updateSearchlight();
@@ -2391,6 +2388,19 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void setFireModeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
+    }
+    
+    /**
+     * Enables the mode button when mode switching is allowed
+     * (always true except for LAMs with certain weapons) and
+     * the weapon has modes. Disables otherwise.
+     *  
+     * @param m The active weapon
+     */
+    protected void adaptFireModeEnabled(Mounted m) {
+        if (m.isModeSwitchable()) {
+            setFireModeEnabled(m.getType().hasModes());
+        } 
     }
 
     protected void setFireCalledEnabled(boolean enabled) {

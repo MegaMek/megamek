@@ -485,7 +485,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         ArrayList<Mounted> lCounters = waa.getCounterEquipment();
         if (null != lCounters) {
             // resolve AMS counter-fire
-            // for (int x = 0; x < lCounters.size(); x++) {
             for (Mounted counter : lCounters) {
                 boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
                 boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
@@ -597,8 +596,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     if (!multiAMS) {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
-                        amsEngaged = true;
                     }
+                    amsEngaged = true;
                     Report r = new Report(3350);
                     r.subject = entityTarget.getId();
                     r.newlines = 0;

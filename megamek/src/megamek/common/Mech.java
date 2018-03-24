@@ -7478,11 +7478,6 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public void setGameOptions() {
-        super.setGameOptions();
-    }
-
-    @Override
     public void setGrappleSide(int side) {
         grappledSide = side;
     }

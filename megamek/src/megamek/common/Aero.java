@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
@@ -3328,36 +3327,6 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean didAccDecNow() {
         return accDecNow;
-    }
-
-    @Override
-    public void setGameOptions() {
-        super.setGameOptions();
-
-        for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon)
-                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
-
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                int damage = ((WeaponType) mounted.getType()).getDamage();
-
-                if (damage == WeaponType.DAMAGE_VARIABLE) {
-                    damage = ((WeaponType) mounted.getType()).damageShort;
-                }
-
-                for (; damage >= 0; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                if (((WeaponType) mounted.getType()).hasFlag(WeaponType.F_FLAMER)) {
-                    modes.add("Heat");
-                }
-                ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
-            }
-
-        }
-
     }
 
     /*

@@ -65,8 +65,8 @@ public abstract class Weapon extends WeaponType implements Serializable {
     /**
      * Adapt the weapon to the Game Options such as
      * PPC Field Inhbitiors or Dial Down Damage, usually
-     * adding or removing modes. When overriding this in a
-     * weapon subclass, super() should be called.
+     * adding or removing modes. <B><I>When overriding this in a
+     * weapon subclass, call super() first!</I></B>
      * 
      * @param gOp The GameOptions (game.getOptions())
      * @author Simon (Juliez)
@@ -77,7 +77,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
         // in the different sub-classes. 
         clearModes();
 
-        // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon
+        // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon.
         // Therefore modes are added here.
         if (gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT) 
                 && hasFlag(WeaponType.F_FLAMER)) {

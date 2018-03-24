@@ -11646,29 +11646,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (mounted.getType() instanceof Weapon)
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
             
-            if ((mounted.getType() instanceof GaussWeapon)
-                && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
-                String[] modes = {"Powered Up", "Powered Down"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            } else if ((mounted.getType() instanceof ACWeapon)
+            if ((mounted.getType() instanceof ACWeapon)
                        && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
                 String[] modes = {"", "Rapid"};
                 ((WeaponType) mounted.getType()).setModes(modes);
+                // -----> is in mounted. should be in ACWeapon
                 if (gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
                     mounted.setKindRapidFire(true);
                 }
-            } else if (mounted.getType() instanceof ISBombastLaser) {
-                int damage = 12;
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-
-                for (; damage >= 7; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                ((WeaponType) mounted.getType()).setModes(modes
-                                                                  .toArray(stringArray));
-            } else if (((WeaponType) mounted.getType()).isCapital()
+            } else 
+//                if (mounted.getType() instanceof ISBombastLaser) {
+//                int damage = 12;
+//                ArrayList<String> modes = new ArrayList<String>();
+//                String[] stringArray = {};
+//
+//                for (; damage >= 7; damage--) {
+//                    modes.add("Damage " + damage);
+//                }
+//                ((WeaponType) mounted.getType()).setModes(modes
+//                                                                  .toArray(stringArray));
+//            } else 
+                if (((WeaponType) mounted.getType()).isCapital()
                        && (((WeaponType) mounted.getType()).getAtClass()
                            != WeaponType.CLASS_CAPITAL_MISSILE)
                        && (((WeaponType) mounted.getType()).getAtClass()

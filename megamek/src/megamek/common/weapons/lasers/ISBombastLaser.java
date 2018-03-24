@@ -21,6 +21,7 @@ import megamek.common.IGame;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BombastLaserWeaponHandler;
 import megamek.server.Server;
@@ -78,6 +79,16 @@ public class ISBombastLaser extends LaserWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new BombastLaserWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Modes for the damage values of the Bombast Laser
+        for (int damage = 12; damage >= 7; damage--) {
+            addMode("Damage " + damage);
+        }
     }
 
 }

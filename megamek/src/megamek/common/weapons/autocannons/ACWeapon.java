@@ -144,4 +144,19 @@ public abstract class ACWeapon extends AmmoWeapon {
     public int getBattleForceClass() {
         return BFCLASS_AC;
     }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Add modes for allowing standard and light AC rapid fire
+        if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
+            addMode("");
+            addMode("Rapid");
+//            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
+//                mounted.setKindRapidFire(true);
+//            }
+        }
+    }
+    
 }

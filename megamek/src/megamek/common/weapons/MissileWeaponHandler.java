@@ -475,7 +475,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)
+                || (waa.isAirToAir(game) && CounterAV > 0)) {
             return 0;
         }
         int apdsMod = 0;

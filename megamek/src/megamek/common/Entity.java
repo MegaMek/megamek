@@ -62,6 +62,7 @@ import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
@@ -11641,6 +11642,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         for (Mounted mounted : getWeaponList()) {
+                  
+            if (mounted.getType() instanceof Weapon)
+                ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
+            
             if ((mounted.getType() instanceof GaussWeapon)
                 && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
                 String[] modes = {"Powered Up", "Powered Down"};

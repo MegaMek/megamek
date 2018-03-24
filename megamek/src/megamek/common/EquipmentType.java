@@ -468,7 +468,7 @@ public class EquipmentType implements ITechnology {
      *         it can be in.
      */
     public boolean hasModes() {
-        return modes != null;
+        return (modes != null) && (!modes.isEmpty());
     }
 
     /**
@@ -529,6 +529,24 @@ public class EquipmentType implements ITechnology {
     public boolean removeMode(String mode) {
         if (modes != null) {
             return modes.remove(EquipmentMode.getMode(mode));
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Add a mode to the Equipment
+     *
+     * @param mode The mode to be added
+     * @return true if the mode was added; false if modes was null or the mode was already present
+     * @author Simon (Juliez)
+     */
+    public boolean addMode(String mode) {
+        if (modes == null) {
+            modes = new Vector<EquipmentMode>();
+        }
+        if (!modes.contains(EquipmentMode.getMode(mode))) {
+            return modes.add(EquipmentMode.getMode(mode));
         } else {
             return false;
         }

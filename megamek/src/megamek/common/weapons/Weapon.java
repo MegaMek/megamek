@@ -25,6 +25,8 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -58,5 +60,29 @@ public abstract class Weapon extends WeaponType implements Serializable {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new WeaponHandler(toHit, waa, game, server);
+    }
+    
+    /**
+     * Adapt the weapon to the Game Options such as
+     * PPC Field Inhbitiors or Dial Down Damage, usually
+     * adding or removing modes. When overriding this in a
+     * weapon subclass, super() should be called.
+     * 
+     * @param gOp The GameOptions (game.getOptions())
+     * @author Simon (Juliez)
+     */
+    public void adaptToGameOptions(GameOptions gOp) {
+        // First remove all present modes;
+        // Modes have to be re-added here or by overriding this method
+        // in the different sub-classes. 
+        clearModes();
+
+        // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon
+        // Therefore modes are added here.
+        if (gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT) 
+                && hasFlag(WeaponType.F_FLAMER)) {
+            addMode("Damage");
+            addMode("Heat");
+        }
     }
 }

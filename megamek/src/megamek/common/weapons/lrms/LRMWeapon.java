@@ -17,6 +17,8 @@ import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMAntiTSMHandler;
 import megamek.common.weapons.LRMDeadFireHandler;
@@ -44,7 +46,6 @@ public abstract class LRMWeapon extends MissileWeapon {
     public LRMWeapon() {
         super();
         ammoType = AmmoType.T_LRM;
-        setModes(new String[] { "", "Indirect" });
         shortRange = 7;
         mediumRange = 14;
         longRange = 21;
@@ -107,5 +108,19 @@ public abstract class LRMWeapon extends MissileWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

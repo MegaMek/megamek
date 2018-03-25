@@ -19,6 +19,8 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MekMortarAirburstHandler;
@@ -42,7 +44,6 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         super();
         ammoType = AmmoType.T_MEK_MORTAR;
         damage = DAMAGE_BY_CLUSTERTABLE;
-        setModes(new String[] { "", "Indirect" });
         atClass = CLASS_NONE;
         flags = flags.or(F_MEK_MORTAR).or(F_MECH_WEAPON).or(F_MISSILE)
                 .or(F_TANK_WEAPON);
@@ -94,5 +95,19 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

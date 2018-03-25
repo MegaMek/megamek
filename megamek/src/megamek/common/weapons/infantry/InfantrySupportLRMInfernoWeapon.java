@@ -18,6 +18,8 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Sebastian Brocks
@@ -42,7 +44,6 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
 		bv = 1.36;
 		tonnage = .03;
 		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-		setModes(new String[] { "", "Indirect" });
 		infantryDamage = 0.19;
 		infantryRange = 3;
 		rulesRefs = "273,TM";
@@ -53,4 +54,18 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
 		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
 
 	}
+	
+	@Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
+    }
 }

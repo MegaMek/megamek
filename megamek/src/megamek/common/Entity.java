@@ -11634,19 +11634,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         for (Mounted mounted : getWeaponList()) {
-                  
+
             if (mounted.getType() instanceof Weapon)
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
-            
-            // TODO: Gauss behavior (Chat: "Switch to normal")
             // TODO: Gauss remove mode text when weapon stays unchanged
-            // Bombast Laser: OK
-            // Gauss: Semi-OK
-            // Energy Weapon: OK
-            // PPC Inhibitor: OK
-            // AC rapid fire & kind rapid fire: OK
-            
-
         }
 
         for (Mounted misc : getMisc()) {

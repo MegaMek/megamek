@@ -78,11 +78,11 @@ public abstract class ACWeapon extends AmmoWeapon {
 
         if (weapon.curMode().equals("Rapid")) {
             RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
-            if (weapon.isKindRapidFire()) {
-                ah.setKindRapidFire(true);
-            } else {
-                ah.setKindRapidFire(false);
-            }
+//            if (weapon.isKindRapidFire()) {
+//                ah.setKindRapidFire(true);
+//            } else {
+//                ah.setKindRapidFire(false);
+//            }
             return ah;
         }
         if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
@@ -149,13 +149,13 @@ public abstract class ACWeapon extends AmmoWeapon {
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
-        // Add modes for allowing standard and light AC rapid fire
+        // Modes for allowing standard and light AC rapid fire
         if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
             addMode("");
             addMode("Rapid");
-//            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
-//                mounted.setKindRapidFire(true);
-//            }
+        } else {
+            removeMode("");
+            removeMode("Rapid");
         }
     }
     

@@ -47,7 +47,10 @@ public abstract class GaussWeapon extends AmmoWeapon {
             addMode("Powered Up");
             addMode("Powered Down");
             setInstantModeSwitch(false);
-        } 
+        } else {
+            removeMode("Powered Up");
+            removeMode("Powered Down");
+        }
     }
 
 }

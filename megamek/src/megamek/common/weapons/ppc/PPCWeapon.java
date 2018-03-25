@@ -89,12 +89,16 @@ public abstract class PPCWeapon extends EnergyWeapon {
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
-        // Add modes for disengaging PPC field inhibitors according to TacOps, p.103
-        if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
-            if (getMinimumRange() > 0) {
+        // Modes for disengaging PPC field inhibitors according to TacOps, p.103.
+        // The benefit is removing the minimum range, so only PPCs with a minimum range get the modes.
+        if (minimumRange > 0) {
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) { 
                 addMode("Field Inhibitor ON");
                 addMode("Field Inhibitor OFF");
+            } else {
+                removeMode("Field Inhibitor ON");
+                removeMode("Field Inhibitor OFF");
             }
-        } 
+        }
     }
 }

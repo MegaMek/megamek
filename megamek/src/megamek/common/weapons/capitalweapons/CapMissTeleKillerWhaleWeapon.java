@@ -42,6 +42,9 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
         this.name = "Tele-operated Missile (Killer Whale-T)";
         this.setInternalName(this.name);
         this.addLookupName("KillerWhaleT");
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 20;
         this.damage = 4;
         this.ammoType = AmmoType.T_KILLER_WHALE_T;

@@ -26,6 +26,7 @@ import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -37,7 +38,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      */
     private static final long serialVersionUID = -1770392652874842106L;
 
-    private boolean kindRapidFire = false;
+//    private boolean kindRapidFire = false;
 
     /**
      * @param t
@@ -49,13 +50,13 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         super(t, w, g, s);
     }
 
-    public boolean getKindRapidFire() {
-        return kindRapidFire;
-    }
-
-    public void setKindRapidFire(boolean kindRapidFire) {
-        this.kindRapidFire = kindRapidFire;
-    }
+//    public boolean getKindRapidFire() {
+//        return kindRapidFire;
+//    }
+//
+//    public void setKindRapidFire(boolean kindRapidFire) {
+//        this.kindRapidFire = kindRapidFire;
+//    }
 
     /*
      * (non-Javadoc)
@@ -65,6 +66,8 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         int jamLevel = 4;
+        boolean kindRapidFire = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC);
+//        if (kindRapidFire) {
         if (kindRapidFire) {
             jamLevel = 2;
         }

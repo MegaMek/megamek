@@ -47,7 +47,6 @@ public class ISPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         tonnage = 7.0f;
         criticals = 3;
         bv = 176;

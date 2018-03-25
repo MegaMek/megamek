@@ -42,6 +42,9 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.name = "Tele-operated Missile (White Shark-T)";
         this.setInternalName(this.name);
         this.addLookupName("WhiteSharkT");
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 15;
         this.damage = 3;
         this.ammoType = AmmoType.T_WHITE_SHARK_T;

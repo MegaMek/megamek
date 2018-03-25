@@ -65,16 +65,19 @@ public abstract class EnergyWeapon extends Weapon {
         // Add modes for dialed-down damage according to TacOps, p.102
         // Adds a mode for each damage value down to zero; zero is included
         // as it is specifically mentioned in TacOps.
-        if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-                && !(this instanceof ISBombastLaser)) {
-            int damage = getDamage();
-
-            if (damage == WeaponType.DAMAGE_VARIABLE) {
-                damage = damageShort;
-            }
-
-            for (; damage >= 0; damage--) {
-                addMode("Damage " + damage);
+        // The bombast laser has its own rules with to-hit modifiers and does not
+        // get additional dial-down
+        if (!(this instanceof ISBombastLaser)) {
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+                int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
+                for (; dmg >= 0; dmg--) {
+                    addMode("Damage " + dmg);
+                }
+            } else {
+                int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
+                for (; dmg >= 0; dmg--) {
+                    removeMode("Damage " + dmg);
+                } 
             }
         }
     }

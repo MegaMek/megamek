@@ -363,7 +363,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 mode = newMode;
                 pendingMode = -1;
             } else if (pendingMode != newMode) {
-                pendingMode = newMode;
+                if (mode == newMode) {
+                    pendingMode = -1;
+                } else {
+                    pendingMode = newMode;
+                }
             }
         }
         // all communications equipment mounteds need to have the same mode at

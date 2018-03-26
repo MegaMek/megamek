@@ -78,11 +78,6 @@ public abstract class ACWeapon extends AmmoWeapon {
 
         if (weapon.curMode().equals("Rapid")) {
             RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
-//            if (weapon.isKindRapidFire()) {
-//                ah.setKindRapidFire(true);
-//            } else {
-//                ah.setKindRapidFire(false);
-//            }
             return ah;
         }
         if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {

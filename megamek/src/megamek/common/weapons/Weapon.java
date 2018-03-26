@@ -92,16 +92,6 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     && (getAtClass() != WeaponType.CLASS_TELE_MISSILE)
                     && (getAtClass() != WeaponType.CLASS_AR10)) {
 
-                if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
-                    addMode("");
-                    addMode("Bracket 80%");
-                    addMode("Bracket 60%");
-                    addMode("Bracket 40%");
-                } else {
-                    removeMode("Bracket 80%");
-                    removeMode("Bracket 60%");
-                    removeMode("Bracket 40%");
-                }
                 if ((this instanceof CapitalLaserBayWeapon)
                         || (this instanceof SubCapLaserBayWeapon)) {
                     if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
@@ -111,6 +101,16 @@ public abstract class Weapon extends WeaponType implements Serializable {
                     } else {
                         removeMode("AAA");
                     }
+                }
+                if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
+                    addMode("");
+                    addMode("Bracket 80%");
+                    addMode("Bracket 60%");
+                    addMode("Bracket 40%");
+                } else {
+                    removeMode("Bracket 80%");
+                    removeMode("Bracket 60%");
+                    removeMode("Bracket 40%");
                 }
                 // If only the standard mode "" is left, remove that as well
                 if (getModesCount() == 1) {

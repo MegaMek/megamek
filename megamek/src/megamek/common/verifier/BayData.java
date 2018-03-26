@@ -30,7 +30,7 @@ import megamek.common.annotations.Nullable;
  * @author Neoancient
  *
  */
-public enum TransportBayConstructionData {
+public enum BayData {
     MECH ("Mech", 150.0, 2, MechBay.techAdvancement(),
             (size, num) -> new MechBay(size, 1, num)),
     PROTOMECH ("Protomech", 10.0, 6, ProtomechBay.techAdvancement(),
@@ -76,7 +76,7 @@ public enum TransportBayConstructionData {
     private TechAdvancement techAdvancement;
     private BiFunction<Double,Integer,Bay> init;
     
-    TransportBayConstructionData(String name, double weight, int personnel,
+    BayData(String name, double weight, int personnel,
             TechAdvancement techAdvancement, BiFunction<Double,Integer,Bay> init) {
         this.name = name;
         this.weight = weight;
@@ -105,7 +105,7 @@ public enum TransportBayConstructionData {
         return techAdvancement;
     }
 
-    public static @Nullable TransportBayConstructionData getBayType(Bay bay) {
+    public static @Nullable BayData getBayType(Bay bay) {
         if (bay instanceof MechBay) {
             return MECH;
         } else if (bay instanceof ProtomechBay) {

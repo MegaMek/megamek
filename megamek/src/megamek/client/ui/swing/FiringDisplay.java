@@ -1667,17 +1667,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
+        clientgui.mechD.wPan.selectNextWeapon();
 
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
             clientgui.mechD.wPan.displayMech(ce());
         }
 
-        if (weaponId == -1) {
-            setFireModeEnabled(false);
-        } else {
-            adaptFireModeEnabled(ce().getEquipment(weaponId));
-        }
         updateTarget();
     }
 
@@ -1688,17 +1683,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
+
+        clientgui.mechD.wPan.selectPrevWeapon();
 
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
             clientgui.mechD.wPan.displayMech(ce());
         }
 
-        if (weaponId == -1) {
-            setFireModeEnabled(false);
-        } else {
-            adaptFireModeEnabled(ce().getEquipment(weaponId));
-        }
         updateTarget();
     }
 
@@ -1983,7 +1974,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         if ((weaponId != -1) && (ce() != null) && !isStrafing) {
             adaptFireModeEnabled(ce().getEquipment(weaponId));
-        }
+        } else {
+            setFireModeEnabled(false);
+        } 
 
         updateSearchlight();
 
@@ -2398,9 +2391,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * @param m The active weapon
      */
     protected void adaptFireModeEnabled(Mounted m) {
-        if (m.isModeSwitchable()) {
-            setFireModeEnabled(m.getType().hasModes());
-        } 
+        setFireModeEnabled(m.isModeSwitchable() & m.getType().hasModes());
     }
 
     protected void setFireCalledEnabled(boolean enabled) {

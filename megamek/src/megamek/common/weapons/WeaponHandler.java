@@ -170,7 +170,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
-                || !advancedPD) {
+                || !advancedPD
+                //Don't defend against ground fire with bay fire unless attacked by bay fire
+                //Prevents ammo and heat being used twice for dropships defending here and with getAMSHitsMod()
+                || (waa.isGroundToAir(game) && !ae.usesWeaponBays())) {
             return false;
         }
         return true;

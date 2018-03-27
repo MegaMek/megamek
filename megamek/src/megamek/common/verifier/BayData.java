@@ -85,26 +85,54 @@ public enum BayData {
         this.init = init;
     }
     
+    /**
+     * @return A String identifying the type of bay suitable for display.
+     */
     public String getDisplayName() {
         return name;
     }
 
+    /**
+     * The weight of a single unit of capacity. For unit transport bays this is the weight of a single
+     * cubicle. For cargo this is the weight of one ton of cargo capacity. 
+     * 
+     * @return The weight of a single unit.
+     */
     public double getWeight() {
         return weight;
     }
     
+    /**
+     * @return The number of bay personnel normally quartered per unit capacity.
+     */
     public int getPersonnel() {
         return personnel;
     }
 
+    /**
+     * Creates a new bay of the type.
+     * 
+     * @param size    The size of bay in cubicles (units) or tons (cargo; this is bay tonnage, not capacity).
+     * @param bayNum  The bay number; this should be unique for the unit.
+     * @return        The new bay.
+     */
     public Bay newBay(double size, int bayNum) {
         return init.apply(size, bayNum);
     }
     
+    /**
+     * @return The tech progression for the bay type.
+     */
     public TechAdvancement getTechAdvancement() {
         return techAdvancement;
     }
 
+    /**
+     * Identifies the type of bay.
+     * 
+     * @param bay A <code>Bay</code> that is (or can be) mounted on a unit. 
+     * @return    The enum value for the bay.
+     */
     public static @Nullable BayData getBayType(Bay bay) {
         if (bay instanceof MechBay) {
             return MECH;
@@ -156,12 +184,22 @@ public enum BayData {
         }
     }
     
+    /**
+     * @return true if the bay is a type of cargo bay rather than a unit transport bay.
+     */
     public boolean isCargoBay() {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by
         // industrial but not battlemechs.
         return ordinal() >= CARGO.ordinal();
     }
     
+    /**
+     * Determines whether the bay is legal to mount on a given <code>Entity</code>. Whether it is
+     * technically possible or practical is another matter.
+     * 
+     * @param en
+     * @return
+     */
     public boolean isLegalFor(Entity en) {
         if (en.hasETypeFlag(Entity.ETYPE_MECH)) {
             return isCargoBay() && (this != LIVESTOCK_CARGO);

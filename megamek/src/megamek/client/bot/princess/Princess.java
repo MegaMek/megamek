@@ -713,6 +713,12 @@ public class Princess extends BotClient {
         final StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (final Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
+            
+            if(entity.isDone()) {
+                msg.append("has already moved this phase");
+                continue;
+            }
+            
             if ((entity.isOffBoard() 
                     || (null == entity.getPosition())
                     || entity.isUnloadedThisTurn()

@@ -1,7 +1,40 @@
 VERSION HISTORY:
 ----------------
-v0.43.9-git
+v0.43.10-git
++ Issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
++ Issue #943: Setting tooltip dismiss delay to -1 no longer freezes client
++ Issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.
+
+v0.43.9-RC3
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
++ PR #916: Make MUL files work for tracking ammo on GunEmplacements
++ PR #928: Corrections to scenarios, new keyword for handling random maps
+	Fixes Issue #927: Scenario random maps don't work with the new board directory structure
++ PR #924: Fix for #215: Entity Sprites displacement in Deployment
+	Fixes Issue #215: Entity Sprites displacement in Deployment
++ PR #921: Fixes boardview tooltip NPEs
++ PR #919: Pavement hexes not turned to mud in rainy conditions
+	Fixes Issue #546: Can get bogged down on pavement
++ PR #915: Board Background / BoardEditor fixes
++ PR #839: Add check to ignore SI damage for squadron status display
++ PR #917: Implemented break in PD heat checks instead of continue
++ PR #909: Add MiscType entry for Clan Endo-Composite structure
+	Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
++ PR #923: Bogdown after DFA
+	Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
++ Remove duplicate Glancing Blow and Direct Blow report messages
++ PR #930: Fix the image cache
++ PR #931: Observer Initiative & TacGen ICB Reset
+	Fixes Issue #339: Init streak compensation
+	Fixes Issue #345: Using Tactical Genius should not reset Initiative Streak Compensation
+	Fixes Issue #804: Initiative Streak Compensation Counts Observers
+	Fixes round reports showing initiative for observers
+	Fixes round reports showing BV information for players who never had any (original observers)
++ PR #932: Add Handle override to CapitalMissileBayHandler
+	Fixes Glancing/Direct Blow with capital missiles
+	Fixes handling of AMS vs. capital missiles
++ PR #933: Fully amphibious water travel fix
+	Fixes Issue #913: [.43.8 RC2] Bridge has a basement for some reason
 
 v0.43.8-RC2 (2018-02-11 22:40 UTC)
 + PR#877: Add the missing new skin files.

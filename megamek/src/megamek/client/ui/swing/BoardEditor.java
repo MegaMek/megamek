@@ -692,6 +692,13 @@ public class BoardEditor extends JComponent implements ItemListener,
                 String title =  Messages.getString("BoardEditor.invalidBoard.title");
                 JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
             }
+            // Board generation in a game always calls BoardUtilities.combine
+            // This serves no purpose here, but is necessary to create 
+            // flipBGVert/flipBGHoriz lists for the board, which is necessary 
+            // for the background image to work in the BoardEditor
+            board = BoardUtilities.combine(board.getWidth(), board.getHeight(), 1, 1, 
+                    new IBoard[]{board}, Arrays.asList(false), MapSettings.MEDIUM_GROUND);
+            game.setBoard(board);
             menuBar.setBoard(true);
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$

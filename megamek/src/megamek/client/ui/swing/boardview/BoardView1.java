@@ -504,6 +504,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     boolean displayInvalidHexInfo = false;
 
+    /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
+    private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay(); 
 
 
     /**
@@ -4756,6 +4758,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void mouseExited(MouseEvent me) {
+        // Reset the tooltip dismissal delay to the preference
+        // value so that elements outside the boardview can
+    	// use tooltips
+    	if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+    		ToolTipManager.sharedInstance().setDismissDelay(
+    				GUIPreferences.getInstance().getTooltipDismissDelay());
+    	} else {
+    		ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+    	}
     }
 
     public void mouseClicked(MouseEvent me) {
@@ -5535,7 +5546,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public String getToolTipText(MouseEvent e) {
         // If new instance of mouse event, redraw obscured hexes and elevations.
         repaint();
-
+        
         StringBuffer txt = new StringBuffer();
         IHex mhex = null;
         final Point point = e.getPoint();
@@ -5545,9 +5556,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
                 prevTipX = -1; prevTipY = -1;
-                // This is used to fool the tooltip manager into resetting the tip
-                ToolTipManager.sharedInstance().mousePressed(null);
-                return null;
+                // Set the dismissal delay to 0 so that the tooltip 
+                // goes away and does not reappear until the mouse 
+                // has moved more than the suppression distance
+                ToolTipManager.sharedInstance().setDismissDelay(0);
+                return new String(""); //$NON-NLS-1$
             }
         }
         prevTipX = point.x; prevTipY = point.y;
@@ -5853,12 +5866,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             
             txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
-            if (aaa.turnsTilHit == 1)
+            if (aaa.getTurnsTilHit() == 1)
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
                         new Object[] { wpName, ammoName }));
             else
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
-                        new Object[] { wpName, ammoName, aaa.turnsTilHit }));
+                        new Object[] { wpName, ammoName, aaa.getTurnsTilHit() }));
             txt.append("</FONT></TD></TR></TABLE>");
         }
 
@@ -5921,13 +5934,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         txt.append("</html>"); //$NON-NLS-1$
+
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals("<html></html>")) {
-            // Returning null prevents the tooltip from being displayed
-            // This prevents a small blue tooltip rectangle being drawn at the
-            // edge of the board
-            return null;
+        if (txt.toString().equals("<html></html>")) { //$NON-NLS-1$
+            return new String(""); //$NON-NLS-1$
         }
+        
+        // Now that a valid tooltip text seems to be present,
+        // (re)set the tooltip dismissal delay time to the preference 
+        // value so that the tooltip actually appears
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+        	ToolTipManager.sharedInstance().setDismissDelay(
+        			GUIPreferences.getInstance().getTooltipDismissDelay());
+        } else {
+        	ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        }
+
         return txt.toString();
     }
 
@@ -6580,9 +6602,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int boardX = (int)((c.getX() + 0.0) / board.getSubBoardWidth());
         int boardY = (int)((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
-        if (linIdx < 0 || linIdx > boardBackgrounds.size()) {
-            System.out.println("Error computing linear index "
-                    + "in BoardView1.getTransparentImage!");
+        if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
+            System.out.println("Error computing linear index or "
+                    + "missing background images "
+                    + "in BoardView1.getBoardBackgroundHexImage!");
             return null;
         }
         Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);

@@ -807,7 +807,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         CounterAV = getCounterAV();
         
         //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
-        if (entityTarget != null && entityTarget.usesWeaponBays() && !waa.isGroundToAir(game)) {
+        if (entityTarget != null 
+                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                //Capital fighters and grounded dropships using weapons bays still use AV
+                && (ae.isCapitalFighter() || (ae.hasETypeFlag(Entity.ETYPE_DROPSHIP) && ae.usesWeaponBays()))
+                && !waa.isGroundToAir(game)) {
             nDamPerHit = attackValue;
         } else {
             //This is for all other targets in atmosphere

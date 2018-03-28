@@ -27,6 +27,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
@@ -174,6 +175,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 //Don't defend against ground fire with bay fire unless attacked by bay fire
                 //Prevents ammo and heat being used twice for dropships defending here and with getAMSHitsMod()
                 || (waa.isGroundToAir(game) && !ae.usesWeaponBays())) {
+            return false;
+        }
+        if (target instanceof Dropship 
+                && waa.isAirToGround(game)
+                && !ae.usesWeaponBays()
+                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER)) {
+            //Prevents a grounded dropship using individual weapons from engaging with AMSBays unless attacked by a dropship or capital fighter
+            //You can get some blank missile weapons fire reports due to the attackvalue / ndamageperhit conversion if this isn't done
             return false;
         }
         return true;

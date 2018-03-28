@@ -8439,7 +8439,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 result.append(next.getUnusedString());
             }
-            if (next instanceof TroopSpace && isOmni()) {
+            if (isOmni() && ((next instanceof TroopSpace)
+                    || (next instanceof Bay))) {
             	if (omniPodTransports.contains(next)) {
             		result.append(" (Pod)");
             	} else {

@@ -3695,8 +3695,7 @@ public class Server implements Runnable {
         Vector<GameTurn> turns = new Vector<GameTurn>(team_order.getTotalTurns()
                 + team_order.getEvenTurns());
         // Stranded units only during movement phases, rebuild the turns vector
-        if ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+        if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> strandedUnits = game
                     .getSelectedEntities(new EntitySelector() {

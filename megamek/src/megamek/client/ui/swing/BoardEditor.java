@@ -160,6 +160,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     IHex curHex = new Hex();
     private File curfileImage;
     private File curfile;
+    private String lastDirectory = "data" + File.separator + "boards"; 
     // buttons and labels and such:
     private HexCanvas canHex;
     private JLabel labElev;
@@ -658,7 +659,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
 
     public void boardLoad() {
-        JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        JFileChooser fc = new JFileChooser(lastDirectory);
         fc
                 .setLocation(frame.getLocation().x + 150,
                              frame.getLocation().y + 100);
@@ -682,6 +683,11 @@ public class BoardEditor extends JComponent implements ItemListener,
             return;
         }
         curfile = fc.getSelectedFile();
+        if ((curfile.getParentFile() == null) || (!curfile.getParentFile().isDirectory())) {
+            lastDirectory = "data" + File.separator + "boards";
+        } else {
+            lastDirectory = curfile.getParentFile().toString();
+        }
         // load!
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
             // tell the board to load!

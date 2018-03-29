@@ -85,7 +85,7 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE))
+        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace())
             return new BarracudaTHandler(toHit, waa, game, server);
         return new BarracudaHandler(toHit, waa, game, server);
     }

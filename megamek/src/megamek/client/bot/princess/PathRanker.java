@@ -41,7 +41,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
-public abstract class PathRanker {
+public abstract class PathRanker implements IPathRanker {
 
     private Princess owner;
 
@@ -70,7 +70,7 @@ public abstract class PathRanker {
     abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords);
 
-    ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                     double fallTolerance, int startingHomeDistance,
                                     List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
@@ -135,12 +135,7 @@ public abstract class PathRanker {
         boolean inRange = (maxRange >= startingTargetDistance);
         HomeEdge homeEdge = getOwner().getHomeEdge();
         boolean fleeing = getOwner().isFallingBack(mover);
-        //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
-        boolean isZeroMoveInfantry = mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
-        if (isZeroMoveInfantry) {
-            startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
-        }
-
+        
         boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
         
         for (MovePath path : startingPathList) {
@@ -274,9 +269,9 @@ public abstract class PathRanker {
     }
 
     /**
-     * Returns the probability of success of a movepath
+     * Returns the probability of success of a move path
      */
-    public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+    protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         // introduced a caching mechanism, as the success probability was being calculated at least twice
         if(pathSuccessProbabilities.containsKey(movePath.getKey())) {
             return pathSuccessProbabilities.get(movePath.getKey());
@@ -296,7 +291,7 @@ public abstract class PathRanker {
                 continue;
             }
             boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions()
-                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
             if (naturalAptPilot) {
                 msg.append("\n\t\tPilot has Natural Aptitude Piloting");
             }
@@ -328,7 +323,7 @@ public abstract class PathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    protected int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 

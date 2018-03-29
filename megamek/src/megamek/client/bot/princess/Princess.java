@@ -1140,6 +1140,17 @@ public class Princess extends BotClient {
                     entity.getPosition(),
                     getBehaviorSettings().getHomeEdge(),
                     getGame());
+            
+            if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+                pathRanker = new InfantryPathRanker(this);
+                pathRanker.initUnitTurn(entity, game);
+            } else {
+                pathRanker = new BasicPathRanker(this);
+                pathRanker.setFireControl(getFireControl());
+                pathRanker.setPathEnumerator(getPrecognition().getPathEnumerator());
+                pathRanker.initUnitTurn(entity, game);
+            }
+            
             final List<RankedPath> rankedpaths = rankPaths(paths,
                                                            entity.getMaxWeaponRange(),
                                                            fallTolerance,

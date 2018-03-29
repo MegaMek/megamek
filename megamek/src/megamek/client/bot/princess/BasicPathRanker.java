@@ -57,12 +57,12 @@ import megamek.common.options.OptionsConstants;
 /**
  * A very basic pathranker
  */
-public class BasicPathRanker extends PathRanker {
+public class BasicPathRanker extends PathRanker implements IPathRanker {
 
-    private final DecimalFormat LOG_DECIMAL =
+    protected final DecimalFormat LOG_DECIMAL =
             new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
-    private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
+    protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
     private FireControl fireControl;
     private PathEnumerator pathEnumerator;
@@ -196,7 +196,6 @@ public class BasicPathRanker extends PathRanker {
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
-                int alpha = 1;
                 returnResponse.addToMyEstimatedDamage(
                         getMaxDamageAtRange(fireControl,
                                             path.getEntity(),
@@ -407,7 +406,7 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from a target, the lower this path ranks (weighted by 
     // Hyper Aggression.
-    private double calculateAggreesionMod(Entity movingUnit, MovePath path,
+    protected double calculateAggressionMod(Entity movingUnit, MovePath path,
                                           IGame game, StringBuilder formula) {
         double distToEnemy = distanceToClosestEnemy(movingUnit,
                                                     path.getFinalCoords(),
@@ -427,7 +426,7 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from my teammates, the lower this path ranks (weighted 
     // by Herd Mentality).
-    private double calculateHerdingMod(Coords friendsCoords, MovePath path,
+    protected double calculateHerdingMod(Coords friendsCoords, MovePath path,
                                        StringBuilder formula) {
         if (friendsCoords == null) {
             formula.append(" - herdingMod [0 no friends]");
@@ -481,7 +480,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     // If I need to flee the board, I want to get closer to my home edge.
-    private double calculateSelfPreservationMod(Entity movingUnit,
+    protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
                                                 IGame game,
                                                 StringBuilder formula) {
@@ -506,7 +505,7 @@ public class BasicPathRanker extends PathRanker {
      * A path ranking
      */
     @Override
-    public RankedPath rankPath(MovePath path, IGame game, int maxRange,
+    protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
                                double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords) {
         final String METHOD_NAME = "rankPath(MovePath, IGame, Targetable, int, " +
@@ -652,7 +651,7 @@ public class BasicPathRanker extends PathRanker {
 
                 // The further I am from a target, the lower this path ranks 
                 // (weighted by Hyper Aggression.
-                utility -= calculateAggreesionMod(movingUnit, pathCopy, game,
+                utility -= calculateAggressionMod(movingUnit, pathCopy, game,
                                                   formula);
 
                 // The further I am from my teammates, the lower this path 

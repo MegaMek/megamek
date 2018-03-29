@@ -422,6 +422,12 @@ public class EntityWeightClass {
      * @return
      */
     public static String getClassName(int wClass, String unitType, boolean isSupport) {
+        if (unitType.equals("Space Station")) {
+            return Messages.getString("EntityWeightClass.SS." + wClass);
+        }
+        if (unitType.equals("Warship")) {
+            return Messages.getString("EntityWeightClass.WS." + wClass);
+        }
         if (unitType.equals("Jumpship")) {
             return Messages.getString("EntityWeightClass.JS." + wClass);
         }
@@ -437,26 +443,11 @@ public class EntityWeightClass {
         if ((wClass >= 0) && (wClass < SIZE)) {
             return Messages.getString("EntityWeightClass." + wClass);
         }
-        throw new IllegalArgumentException("Unknown Weight Class in getClassName(int, en)");
+        throw new IllegalArgumentException("Unknown Weight Class in getClassName(int, string, boolean)");
     }
 
     public static String getClassName(int wClass, Entity en) {
-        if (en instanceof Jumpship) {
-            return Messages.getString("EntityWeightClass.JS." + wClass);
-        }
-        if (en instanceof Dropship) {
-            return Messages.getString("EntityWeightClass.DS." + wClass);
-        }
-        if (en instanceof SmallCraft) {
-            return Messages.getString("EntityWeightClass.SC");
-        }
-        if (en instanceof SupportTank || en instanceof SupportVTOL) {
-            return Messages.getString("EntityWeightClass.SV." + wClass);
-        }
-        if ((wClass >= 0) && (wClass < SIZE)) {
-            return Messages.getString("EntityWeightClass." + wClass);
-        }
-        throw new IllegalArgumentException("Unknown Weight Class in getClassName(int, en)");
+        return getClassName(wClass, UnitType.determineUnitType(en), en.isSupportVehicle());
     }
 
     public static String getClassName(int nameVal) {

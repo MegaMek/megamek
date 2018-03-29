@@ -44,7 +44,6 @@ import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
-import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
@@ -7476,45 +7475,6 @@ public abstract class Mech extends Entity {
         }
 
         return false;
-    }
-
-    @Override
-    public void setGameOptions() {
-        super.setGameOptions();
-
-        for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon)
-                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA)
-                    && (game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
-
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-
-                if ((mounted.getType() instanceof PPCWeapon) && (((WeaponType) mounted.getType()).getMinimumRange() > 0)
-                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
-                    modes.add("Field Inhibitor ON");
-                    modes.add("Field Inhibitor OFF");
-                }
-                int damage = ((WeaponType) mounted.getType()).getDamage();
-
-                if (damage == WeaponType.DAMAGE_VARIABLE) {
-                    damage = ((WeaponType) mounted.getType()).damageShort;
-                }
-
-                for (; damage >= 0; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                if (((WeaponType) mounted.getType())
-                        .hasFlag(WeaponType.F_FLAMER)) {
-                    modes.add("Heat");
-                }
-                ((WeaponType) mounted.getType()).setModes(modes
-                        .toArray(stringArray));
-            }
-
-        }
-
     }
 
     @Override

@@ -58,7 +58,6 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.medAV = 12;
         this.longAV = 12;
         this.maxRange = RANGE_LONG;
-        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         rulesRefs = "95,IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)

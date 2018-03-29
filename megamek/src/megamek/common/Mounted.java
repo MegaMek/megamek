@@ -53,8 +53,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean tsempDowntime = false; // Needed for "every other turn"
                                            // TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
-    private boolean kindRapidFire = false; // Reduced jam chance for rapid fired
-                                           // ACs.
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
@@ -363,7 +361,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 mode = newMode;
                 pendingMode = -1;
             } else if (pendingMode != newMode) {
-                pendingMode = newMode;
+                if (mode == newMode) {
+                    pendingMode = -1;
+                } else {
+                    pendingMode = newMode;
+                }
             }
         }
         // all communications equipment mounteds need to have the same mode at
@@ -1672,14 +1674,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public int getFacing() {
         return facing;
-    }
-
-    public boolean isKindRapidFire() {
-        return kindRapidFire;
-    }
-
-    public void setKindRapidFire(boolean kindRapidFire) {
-        this.kindRapidFire = kindRapidFire;
     }
 
     public int getOriginalShots() {

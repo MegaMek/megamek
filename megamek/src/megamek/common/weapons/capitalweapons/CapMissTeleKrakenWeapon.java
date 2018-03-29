@@ -42,6 +42,9 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("KrakenT");
         this.addLookupName("Kraken T");
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 50;
         this.damage = 10;
         this.ammoType = AmmoType.T_KRAKEN_T;

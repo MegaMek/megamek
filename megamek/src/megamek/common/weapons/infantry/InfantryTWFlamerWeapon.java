@@ -38,8 +38,6 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
 		cost = 100;
 		bv = 0.36;
 		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-		String[] modeStrings = { "Damage", "Heat" };
-		setModes(modeStrings);
 		infantryDamage = 0.35;
 		infantryRange = 1;
 		crew = 1;

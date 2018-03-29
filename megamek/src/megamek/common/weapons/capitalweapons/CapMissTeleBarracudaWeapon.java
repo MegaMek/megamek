@@ -42,6 +42,9 @@ public class CapMissTeleBarracudaWeapon extends CapitalMissileWeapon {
         this.name = "Tele-operated Missile (Barracuda-T)";
         this.setInternalName(this.name);
         this.addLookupName("BarracudaT");
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 10;
         this.damage = 2;
         this.ammoType = AmmoType.T_BARRACUDA_T;

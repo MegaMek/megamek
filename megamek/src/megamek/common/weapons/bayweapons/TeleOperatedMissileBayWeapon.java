@@ -43,6 +43,9 @@ public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
         super();
         // tech levels are a little tricky
         this.name = "Tele-Operated Capital Missile Bay";
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;

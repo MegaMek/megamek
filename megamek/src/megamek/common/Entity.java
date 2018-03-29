@@ -62,14 +62,12 @@ import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
@@ -83,8 +81,6 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -11629,10 +11625,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
             && !hasActiveECM() && isMilitary()) {
             try {
-                String prefix = "IS";
-                if (isClan()) {
-                    prefix = "CL";
-                }
+                String prefix = isClan() ? "CL" : "IS";
                 this.addEquipment(
                         EquipmentType.get(prefix + BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
@@ -11642,105 +11635,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof GaussWeapon)
-                && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
-                String[] modes = {"Powered Up", "Powered Down"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            } else if ((mounted.getType() instanceof ACWeapon)
-                       && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
-                String[] modes = {"", "Rapid"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                if (gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
-                    mounted.setKindRapidFire(true);
-                }
-            } else if (mounted.getType() instanceof ISBombastLaser) {
-                int damage = 12;
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-
-                for (; damage >= 7; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                ((WeaponType) mounted.getType()).setModes(modes
-                                                                  .toArray(stringArray));
-            } else if (((WeaponType) mounted.getType()).isCapital()
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                           != WeaponType.CLASS_CAPITAL_MISSILE)
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                               != WeaponType.CLASS_TELE_MISSILE)
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                           != WeaponType.CLASS_AR10)) {
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                modes.add("");
-                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
-                    modes.add("Bracket 80%");
-                    modes.add("Bracket 60%");
-                    modes.add("Bracket 40%");
-                }
-                if (((mounted.getType() instanceof CapitalLaserBayWeapon)
-                     || (mounted.getType() instanceof SubCapLaserBayWeapon))
-                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
-                    modes.add("AAA");
-                    ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
-                }
-                if (modes.size() > 1) {
-                    ((WeaponType) mounted.getType()).setModes(modes
-                                                                      .toArray(stringArray));
-                }
-            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
-                        || (((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_AR10)) {
-                 ArrayList<String> modes = new ArrayList<String>();
-                 String[] stringArray = {};
-                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-                 modes.add("Normal");
-                 if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
-                     modes.add("Bearings-Only Extreme Detection Range");
-                     modes.add("Bearings-Only Long Detection Range");
-                     modes.add("Bearings-Only Medium Detection Range");
-                     modes.add("Bearings-Only Short Detection Range");
-                 }
-
-                 if (modes.size() > 1) {
-                     ((WeaponType) mounted.getType()).setModes(modes
-                                                                       .toArray(stringArray));
-                 }
-                 
-            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_TELE_MISSILE)) {
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-                modes.add("Normal");
-                modes.add("Tele-Operated");                
-                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
-                    modes.add("Bearings-Only Extreme Detection Range");
-                    modes.add("Bearings-Only Long Detection Range");
-                    modes.add("Bearings-Only Medium Detection Range");
-                    modes.add("Bearings-Only Short Detection Range");
-                }
-
-                if (modes.size() > 1) {
-                    ((WeaponType) mounted.getType()).setModes(modes
-                                                                      .toArray(stringArray));
-                }
-                
-            } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
-                       && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
-                Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
-                ArrayList<String> newModes = new ArrayList<>();
-                while (modeEnum.hasMoreElements()) {
-                    newModes.add(modeEnum.nextElement().getName());
-                }
-                if (!newModes.contains("Automatic")) {
-                    newModes.add("Automatic");
-                }
-                String modes[] = new String[newModes.size()];
-                newModes.toArray(modes);
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            }
-
+            if (mounted.getType() instanceof Weapon)
+                ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
         }
 
         for (Mounted misc : getMisc()) {

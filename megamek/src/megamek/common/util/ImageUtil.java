@@ -349,7 +349,7 @@ public final class ImageUtil {
     private static boolean waitUntilLoaded(ToolkitImage result) {
         FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
         // Check to see if the image is loaded
-        int infoFlags = result.check(observer);
+        int infoFlags = Toolkit.getDefaultToolkit().checkImage(result, -1, -1, observer);
         if ((infoFlags & ImageObserver.ALLBITS) == 0) {
             // Image not loaded, wait for it to load
             long startTime = System.currentTimeMillis();

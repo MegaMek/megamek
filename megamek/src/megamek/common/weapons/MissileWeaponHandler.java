@@ -593,8 +593,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         apdsEngaged = true;
                     }
                 }
-                
-                // Determine modifier and report
+                //Determine APDS mod
                 if (apdsEngaged) {
                     int dist = target.getPosition().distance(
                             pdEnt.getPosition());
@@ -615,20 +614,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         }
                     }
                     apdsMod = Math.min(minApdsMod + dist, 0);
-                    Report r = new Report(3351);
-                    r.subject = entityTarget.getId();
-                    r.add(apdsMod);
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
                 }
-                
-                if (amsEngaged) {
-                    Report r = new Report(3350);
-                    r.subject = entityTarget.getId();
-                    r.newlines = 0;
-                    vPhaseReport.add(r);
-                    amsMod = -4;
-                }
+            }
+            // Determine AMS modifier and report
+            if (amsEngaged) {
+                Report r = new Report(3350);
+                r.subject = entityTarget.getId();
+                r.newlines = 0;
+                vPhaseReport.add(r);
+                amsMod = -4;
+            }
+            
+            //Report APDS fire. Effect relies on internal variables and must be separated above
+            if (apdsEngaged) {
+                Report r = new Report(3351);
+                r.subject = entityTarget.getId();
+                r.add(apdsMod);
+                r.newlines = 0;
+                vPhaseReport.add(r);
             }
         }
         return apdsMod + amsMod;
@@ -807,11 +810,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         CounterAV = getCounterAV();
         
         //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
+        //It's also rare but possible for two hostile grounded dropships to shoot at each other with individual weapons
+        //with this handler. They'll use the cluster table too.
         if (entityTarget != null 
                 && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
-                //Capital fighters and grounded dropships using weapons bays still use AV
-                && (ae.isCapitalFighter() || (ae.hasETypeFlag(Entity.ETYPE_DROPSHIP) && ae.usesWeaponBays()))
-                && !waa.isGroundToAir(game)) {
+                && waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays())) {
             nDamPerHit = attackValue;
         } else {
             //This is for all other targets in atmosphere
@@ -839,8 +842,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (game.getBoard().inSpace() ||
-            (target.isAirborne() && !waa.isGroundToAir(game))) {
+        if (game.getBoard().inSpace() 
+                || waa.isAirToAir(game)
+                || waa.isAirToGround(game)) {
             // Ensures AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);

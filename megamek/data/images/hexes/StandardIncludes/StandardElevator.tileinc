@@ -1,5 +1,13 @@
 # Standard elevator signs
 
+# moved here from fluff
+super * "elevator:*:01" "" "boring/elevator1.gif"
+super * "elevator:*:02" "" "boring/elevator2.gif"
+super * "elevator:*:04" "" "boring/elevator3.gif"
+super * "elevator:*:08" "" "boring/elevator4.gif"
+super * "elevator:*:16" "" "boring/elevator5.gif"
+super * "elevator:*:32" "" "boring/elevator6.gif"
+
 super * "elevator:0" "" "boring/elevator1.gif"
 super * "elevator:1" "" "boring/elevator1.gif"
 super * "elevator:2" "" "boring/elevator2.gif"

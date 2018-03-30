@@ -99,11 +99,12 @@ super * "ice:1" "" "transparent/ice.png"
 
 include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoads.tileinc"
-include "StandardIncludes/StandardRailMaglev.tileinc"
+include "StandardIncludes/StandardRail.tileinc"
 
 include "lunar/LunarBuildings.tileinc"
 include "mars/MarsBuildings.tileinc"
 include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
+include "StandardIncludes/BuildingsSClassArmor.tileinc"
 
 include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/StandardFuelTanks.tileinc"

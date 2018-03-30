@@ -1,4 +1,4 @@
-# Standard Rail and Maglev fluff
+# Standard Rail tracks (fluff)
 
 super * "fluff:10:00" "" "StandardIncludes/TracksA_2.png(1,1-84,72)"
 super * "fluff:10:01" "" "StandardIncludes/TracksA_2.png(87,1-84,72)"
@@ -65,15 +65,3 @@ super * "fluff:10:61" "" "StandardIncludes/TracksA_2.png(431,519-84,72)"
 super * "fluff:10:62" "" "StandardIncludes/TracksA_2.png(517,519-84,72)"
 super * "fluff:10:63" "" "StandardIncludes/TracksA_2.png(603,519-84,72)"
 
-super * "fluff:9:00" "" "fluff/maglevtrack1.gif"
-super * "fluff:9:01" "" "fluff/maglevtrack2.gif"
-super * "fluff:9:02" "" "fluff/maglevtrack3.gif"
-super * "fluff:9:03" "" "fluff/maglevstation1.gif"
-super * "fluff:9:04" "" "fluff/maglevstation2.gif"
-super * "fluff:9:05" "" "fluff/maglevstation3.gif"
-super * "fluff:9:06" "" "fluff/maglevtrain1.gif"
-super * "fluff:9:07" "" "fluff/maglevtrain2.gif"
-super * "fluff:9:08" "" "fluff/maglevtrain3.gif"
-super * "fluff:9:09" "" "fluff/maglevtrain4.gif"
-super * "fluff:9:10" "" "fluff/maglevtrain5.gif"
-super * "fluff:9:11" "" "fluff/maglevtrain6.gif"

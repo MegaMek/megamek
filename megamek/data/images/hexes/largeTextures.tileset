@@ -86,15 +86,15 @@ super * "ice:1" "" "bloodwolf/hq_boring/ice_0.png;bloodwolf/hq_boring/ice_0.png(
 
 include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoadsSMV.tileinc"
-include "StandardIncludes/StandardRailMaglev.tileinc"
+include "StandardIncludes/StandardRail.tileinc"
 
 include "lunar/LunarBuildings.tileinc"
 include "mars/MarsBuildings.tileinc"
-#include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
-#include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
-#include "StandardIncludes/BuildingsSClassArmor.tileinc"
-include "StandardIncludes/BuildingsSClassNoArmorSMV.tileinc"
-include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
+include "Buildings/BuildingsNonSClassArmor.tileinc"
+include "Buildings/BuildingsNonSClassNoArmor.tileinc"
+include "Buildings/BuildingsSClassArmor.tileinc"
+include "Buildings/BuildingsSClassNoArmorSMV.tileinc"
+include "Buildings/BuildingsSClassNoArmor.tileinc"
 
 include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/StandardFuelTanks.tileinc"

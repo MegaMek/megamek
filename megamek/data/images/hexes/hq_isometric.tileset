@@ -97,8 +97,8 @@ include "StandardIncludes/StandardRail.tileinc"
 
 include "lunar/LunarBuildings.tileinc"
 include "mars/MarsBuildings.tileinc"
-#include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
-#include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
+include "Buildings/BuildingsNonSClassArmor.tileinc"
+include "Buildings/BuildingsNonSClassNoArmor.tileinc"
 include "Buildings/BuildingsSClassArmor.tileinc"
 include "Buildings/BuildingsSClassNoArmor.tileinc"
 

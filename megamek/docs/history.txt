@@ -4,6 +4,7 @@ v0.43.10-git
 + Issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
 + Issue #943: Setting tooltip dismiss delay to -1 no longer freezes client
 + Issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.
++ Issue #949: Kraken (Bane) 3 costs over 5 billion c-bills
 
 v0.43.9-RC3
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays

@@ -4013,14 +4013,14 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
+                
+        int distance = ae.getPosition().distance(target.getPosition());
         
-        Coords aePos = ae.getPosition();
         //Aeros have to check visibility to ground targets for the closest point of approach along their flight path
+        //Because the rules state "within X hexes of the flight path" we're using ground distance so altitude doesn't screw us up
         if (ae.isAirborne() && !target.isAirborne()) {
-            aePos = Compute.getClosestFlightPath(attackerId, aPos, te)
+            distance = Compute.effectiveDistance(game, ae, target, true);
         }
-        
-        int distance = aePos.distance(target.getPosition());
         distance += 2 * target.getAltitude();
         return (distance > minSensorRange) && (distance <= maxSensorRange);
     }

@@ -10343,7 +10343,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = implicitClanCASE();
         if (count > 0) {
             long itemCost = 50000;
-            cost += 50000 * itemCost;
+            cost += count * itemCost;
             if (null != bvText) {
                 for (int i = 0; i < count; i++) {
                     bvText.append(startColumn);

@@ -2335,6 +2335,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL, false));
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL, true));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2404,6 +2405,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL, false));
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL, true));
         misc.addLookupName("Clan Industrial Armor");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -2456,6 +2458,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL, false));
+        misc.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL, true));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;

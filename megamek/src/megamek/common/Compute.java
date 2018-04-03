@@ -4013,8 +4013,14 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
-
-        int distance = ae.getPosition().distance(target.getPosition());
+        
+        Coords aePos = ae.getPosition();
+        //Aeros have to check visibility to ground targets for the closest point of approach along their flight path
+        if (ae.isAirborne() && !target.isAirborne()) {
+            aePos = Compute.getClosestFlightPath(attackerId, aPos, te)
+        }
+        
+        int distance = aePos.distance(target.getPosition());
         distance += 2 * target.getAltitude();
         return (distance > minSensorRange) && (distance <= maxSensorRange);
     }
@@ -4162,6 +4168,21 @@ public class Compute {
 
         // adjust the range based on LOS and planetary conditions
         range = sensor.adjustRange(range, game, los);
+        
+        //If we're an airborne aero, sensor range is limited to within a few hexes of the flightline against ground targets
+        //TO Dec 2017 Errata p17
+        if (ae.isAirborne() && !te.isAirborne()) {
+            //Can't see anything if above Alt 8.
+            if (ae.getAltitude() > 8) {
+                return 0;
+            }
+            //Add 1 to range for active probe of any type
+            if (sensor.isBAP()) {
+                return 2;
+            }
+            //Basic sensor range listed in errata
+            return 1;
+        }
 
         // now adjust for anything about the target entity (size, heat, etc)
         if (null != te) {

@@ -97,6 +97,9 @@ public class Compute {
     public static final int ARC_HEXSIDE_3 = 35;
     public static final int ARC_HEXSIDE_4 = 36;
     public static final int ARC_HEXSIDE_5 = 37;
+    
+    //Needed to make sure fighters can display to players that they have two active sensor ranges
+    private static int atgSensorRange = 0;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -196,6 +199,7 @@ public class Compute {
     public static double oddsAbove(int n) {
         return oddsAbove(n, false);
     }
+    
 
     /**
      * Returns the odds that a certain number or above will be rolled on 2d6,
@@ -223,7 +227,14 @@ public class Compute {
             return odds[n];
         }
     }
-
+    
+    /**
+     * Returns the range of an aero's sensors against ground targets
+     */
+    public static int getAtgSensorRange() {
+        return atgSensorRange;
+    }
+    
     /**
      * Returns an entity if the specified entity would cause a stacking
      * violation entering a hex, or returns null if it would not. The returned
@@ -4030,7 +4041,7 @@ public class Compute {
         
         //Aeros have to check visibility to ground targets for the closest point of approach along their flight path
         //Because the rules state "within X hexes of the flight path" we're using ground distance so altitude doesn't screw us up
-        if (ae.isAirborne() && !target.isAirborne() && (target instanceof Entity)) {
+        if (isAirToGround(ae, target) && (target instanceof Entity)) {
             Entity te = (Entity) target;
             distance = te.getPosition().distance(
                     getClosestFlightPath(te.getId(),
@@ -4039,6 +4050,14 @@ public class Compute {
         }
         //This didn't work right for Aeros. Should account for the difference in altitude, not just add the target's altitude to distance
         distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
+        
+        // if this is an air-to-air scan on the ground map, then divide distance by 16 to match weapon ranges
+        // I purposely left this calculation out of visual spotting, so we should do some testing with this and 
+        // see if it's errata-worthy. The idea is that you'll boost sensor range to help find an enemy aero on the map
+        // but still won't be able to see it and shoot at it beyond normal visual conditions. 
+        if (isAirToAir(ae, target) && game.getBoard().onGround()) {
+            distance = (int) Math.ceil(distance / 16.0);
+        }
         return (distance > minSensorRange) && (distance <= maxSensorRange);
     }
 
@@ -4191,14 +4210,16 @@ public class Compute {
         if (te != null && ae.isAirborne() && !te.isAirborne()) {
             //Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
-                return 0;
-            }
-            //Add 1 to range for active probe of any type
-            if (sensor.isBAP()) {
-                return 2;
-            }
+                range = 0;
+            } else if (sensor.isBAP()) {
+            //Add 1 to range for active probe of any type            
+                range = 2;
+            } else {
             //Basic sensor range listed in errata
-            return 1;
+                range = 1;
+            }
+            atgSensorRange = range;
+            return range;
         }
 
         // now adjust for anything about the target entity (size, heat, etc)

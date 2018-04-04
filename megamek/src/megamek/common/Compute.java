@@ -3958,13 +3958,25 @@ public class Compute {
                 targetPos = Compute.getClosestFlightPath(ae.getId(),
                         ae.getPosition(), te);
             }
+            //Airborne aeros can only see ground targets they overfly, and only at Alt <=8
+            if (isAirToGround(ae, target)) {
+                if (ae.getAltitude() > 8) {
+                    return false;
+                }
+                if (ae.passedOver(target)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
 
         visualRange = Math.max(visualRange, 1);
         int distance;
         // Ground distance
         distance = ae.getPosition().distance(targetPos);
-        distance += 2 * target.getAltitude();
+        //Need to track difference in altitude, not just add altitude to the range
+        distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
         return distance <= visualRange;
 
     }

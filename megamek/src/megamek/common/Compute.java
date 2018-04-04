@@ -4018,10 +4018,15 @@ public class Compute {
         
         //Aeros have to check visibility to ground targets for the closest point of approach along their flight path
         //Because the rules state "within X hexes of the flight path" we're using ground distance so altitude doesn't screw us up
-        if (ae.isAirborne() && !target.isAirborne()) {
-            distance = Compute.effectiveDistance(game, ae, target, true);
+        if (ae.isAirborne() && !target.isAirborne() && (target instanceof Entity)) {
+            Entity te = (Entity) target;
+            distance = te.getPosition().distance(
+                    getClosestFlightPath(te.getId(),
+                            te.getPosition(), (Entity) ae));
+            return (distance > minSensorRange) && (distance <= maxSensorRange);
         }
-        distance += 2 * target.getAltitude();
+        //This didn't work right for Aeros. Should account for the difference in altitude, not just add the target's altitude to distance
+        distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
         return (distance > minSensorRange) && (distance <= maxSensorRange);
     }
 
@@ -4171,7 +4176,7 @@ public class Compute {
         
         //If we're an airborne aero, sensor range is limited to within a few hexes of the flightline against ground targets
         //TO Dec 2017 Errata p17
-        if (ae.isAirborne() && !te.isAirborne()) {
+        if (te != null && ae.isAirborne() && !te.isAirborne()) {
             //Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 return 0;

@@ -2342,12 +2342,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private void drawHexes(Graphics g, Rectangle view, boolean saveBoardImage) {
         // only update visible hexes
-        int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
-        int drawY = (int) (view.y / (HEX_H * scale)) - 1;
+        double xs = (int) (HEX_WC*scale);
+        double ys = (int) (HEX_H*scale);
+        
+        int drawX = (int) (view.x / xs) - 1;
+        int drawY = (int) (view.y / ys) - 1;
 
-        int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
-        int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
-
+        int drawWidth = (int) (view.width / xs) + 3;
+        int drawHeight = (int) (view.height / ys) + 3;
+        
         // draw some hexes.
         if (useIsometric()) {
             IBoard board = game.getBoard();
@@ -2355,7 +2358,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // Half of each row is one-half hex
                 // farther back (above) the other; draw those first
                 for (int s = 0; s <= 1; s++) {
-                    for (int x = s; x < drawWidth; x=x+2) {
+                    for (int x = s; x < drawWidth+s+1; x=x+2) {
                         // For s == 0 the x coordinate MUST be an even number
                         // to get correct occlusion; drawX may be any int though
                         Coords c = new Coords(x + drawX/2*2, y + drawY);

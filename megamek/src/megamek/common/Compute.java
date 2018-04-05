@@ -97,9 +97,6 @@ public class Compute {
     public static final int ARC_HEXSIDE_3 = 35;
     public static final int ARC_HEXSIDE_4 = 36;
     public static final int ARC_HEXSIDE_5 = 37;
-    
-    //Needed to make sure fighters can display to players that they have two active sensor ranges
-    private static int atgSensorRange = 0;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -226,13 +223,6 @@ public class Compute {
                                    58.3, 41.6, 27.7, 16.6, 8.3, 2.78, 0};
             return odds[n];
         }
-    }
-    
-    /**
-     * Returns the range of an aero's sensors against ground targets
-     */
-    public static int getAtgSensorRange() {
-        return atgSensorRange;
     }
     
     /**
@@ -4218,7 +4208,6 @@ public class Compute {
             //Basic sensor range listed in errata
                 range = 1;
             }
-            atgSensorRange = range;
             return range;
         }
 

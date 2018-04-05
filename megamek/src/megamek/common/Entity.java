@@ -12700,12 +12700,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
         int range = getActiveSensor().getRangeByBracket();
+        int groundRange = 0;
+        if (getActiveSensor().isBAP()) {
+            groundRange = 2;
+        } else {
+            groundRange = 1;
+        }
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
-        int maxGroundSensorRange = bracket * Compute.getAtgSensorRange();
-        int minGroundSensorRange = Math.max((bracket - 1) * Compute.getAtgSensorRange(), 0);
+        int maxGroundSensorRange = bracket * groundRange;
+        int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
+            minGroundSensorRange = 0;
         }
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"

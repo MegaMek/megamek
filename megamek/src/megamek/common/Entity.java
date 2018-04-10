@@ -189,6 +189,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected String camoCategory = IPlayer.NO_CAMO;
     protected String camoFileName = null;
+    
+    protected String aeroGroundSensorText = "Ground Range";
 
     /**
      * ID settable by external sources (such as mm.net)
@@ -12716,7 +12718,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-                    + maxSensorRange + ")" + " {Ground Range" + " (" + minGroundSensorRange + "-"
+                    + maxSensorRange + ")" + " {" + aeroGroundSensorText + " (" + minGroundSensorRange + "-"
                     + maxGroundSensorRange + ")}";
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"

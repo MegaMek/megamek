@@ -165,6 +165,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final int DMG_CRIPPLED = 4;
     
     public static final int USE_STRUCTURAL_RATING = -1;
+    
+    public static final String ENTITY_AIR_TO_GROUND_SENSOR_RANGE= Messages.getString("Entity.sensor_range_vs_ground_target");
 
     // Weapon sort order defines
     public static enum WeaponSortOrder {
@@ -190,8 +192,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String camoCategory = IPlayer.NO_CAMO;
     protected String camoFileName = null;
     
-    protected String aeroGroundSensorText = "Ground Range";
-
     /**
      * ID settable by external sources (such as mm.net)
      */
@@ -12718,7 +12718,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-                    + maxSensorRange + ")" + " {" + aeroGroundSensorText + " (" + minGroundSensorRange + "-"
+                    + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"
                     + maxGroundSensorRange + ")}";
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"

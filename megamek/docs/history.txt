@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.43.10-git
++ Issue #864: SRMs properly deal damage to airborne targets in the event that they hit
++ Issue #387: Fixed aero targeting in limited-visibility scenarios
 + Issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
 + Issue #943: Setting tooltip dismiss delay to -1 no longer freezes client
 + Issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.

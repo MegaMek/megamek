@@ -3626,6 +3626,16 @@ public class Compute {
             tPos = getClosestFlightPath(ae.getId(), ae.getPosition(),
                     (Entity) t);
         }
+        
+        // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
+        // Technically it's an AirToGround attack since the AMS is on the aircraft
+        if (isAirToGround(ae, t) && (t instanceof Entity) 
+                && (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
+                        || ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
+            Entity te = (Entity) t;
+            aPos = getClosestFlightPath(te.getId(), te.getPosition(),
+                    ae);
+        }
 
         tPosV.add(tPos);
         // check for secondary positions

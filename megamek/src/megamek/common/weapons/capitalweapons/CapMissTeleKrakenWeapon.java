@@ -21,6 +21,7 @@ import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileHandler;
 import megamek.common.weapons.KrakenTHandler;
 import megamek.server.Server;
 
@@ -86,6 +87,9 @@ public class CapMissTeleKrakenWeapon extends CapitalMissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new KrakenTHandler(toHit, waa, game, server);
+        if (game.getBoard().inSpace()) {
+            return new KrakenTHandler(toHit, waa, game, server);
+        }
+        return new CapitalMissileHandler(toHit, waa, game, server);
     }
 }

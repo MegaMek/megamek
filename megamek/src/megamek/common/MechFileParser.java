@@ -241,9 +241,25 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
-        } else if (ent.hasETypeFlag(Entity.ETYPE_AERO) || ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            //ASFs and Conventional Fighters get a combined sensor suite
+        } else if (ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            //Conventional Fighters get a combined sensor suite
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
+            ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.hasETypeFlag(Entity.ETYPE_AERO) || ent.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            //ASFs and small craft get a combined sensor suite
+            //And thermal/optical sensors, which only work in space
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
+            ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                    || ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                    || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                    || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            //Large craft get active radar
+            //And both a passive sensor suite and thermal/optical sensors, which only work in space
+            ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_PASSIVE));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof BattleArmor) {
             if (ent.hasWorkingMisc(MiscType.F_HEAT_SENSOR)) {

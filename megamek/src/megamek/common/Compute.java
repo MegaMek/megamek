@@ -4082,6 +4082,13 @@ public class Compute {
         if (target.isOffBoard()) {
             return false;
         }
+        //If we're in space and our sensors are destroyed, we can't see anything.
+        if (game.getBoard().inSpace() && ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+            Aero e = (Aero) ae;
+            if (e.getSensorHits() >= 3) {
+                return false;
+            }
+        }
         
         if (los == null) {
             los = LosEffects.calculateLos(game, ae.getId(), target);

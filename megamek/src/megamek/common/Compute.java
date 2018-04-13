@@ -4146,6 +4146,12 @@ public class Compute {
         }
         // ECM bubbles
         check += sensor.getModForECM(ae, allECMInfo);
+        
+        //Something of a hack here, but it does the job until someone has a better idea
+        //In space, sensors don't have brackets, so we should always return the range for bracket 1.
+        if (ae.getGame().getBoard().inSpace()) {
+            check = 7;
+        }
 
         return Compute.getSensorBracket(check);
     }

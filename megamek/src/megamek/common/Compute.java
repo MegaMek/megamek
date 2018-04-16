@@ -4132,6 +4132,12 @@ public class Compute {
         if (sensor.isBAP() && !ae.hasBAP(false)) {
             return 0;
         }
+        
+        //Something of a hack here, but it does the job until someone has a better idea
+        //In space, sensors don't have brackets, so we should always return the range for bracket 1.
+        if (ae.getGame().getBoard().inSpace()) {
+            return Compute.getSensorBracket(7);
+        }
 
         int check = ae.getSensorCheck();
         if ((null != ae.getCrew()) && ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
@@ -4146,12 +4152,6 @@ public class Compute {
         }
         // ECM bubbles
         check += sensor.getModForECM(ae, allECMInfo);
-        
-        //Something of a hack here, but it does the job until someone has a better idea
-        //In space, sensors don't have brackets, so we should always return the range for bracket 1.
-        if (ae.getGame().getBoard().inSpace()) {
-            check = 7;
-        }
 
         return Compute.getSensorBracket(check);
     }

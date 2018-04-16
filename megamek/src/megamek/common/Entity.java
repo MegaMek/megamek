@@ -12601,6 +12601,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "none";
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
+        if (game.getBoard().inSpace()) {
+            bracket = Compute.getSensorBracket(7);
+        }
         int range = getActiveSensor().getRangeByBracket();
         int groundRange = 0;
         if (getActiveSensor().isBAP()) {

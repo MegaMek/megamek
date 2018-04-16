@@ -34,6 +34,7 @@
 
     <path id="classpath">
         <fileset dir="${libdir}" includes="*.jar"/>
+        <pathelement location="${propdir}"/>
     </path>
 
     <path id="classpath.compile-unittest">
@@ -84,28 +85,41 @@
         <mkdir dir="${builddir}"/>
     </target>
 
+    <target name="equipment" depends="compile" description="Generate current equipment.txt">
+        <java classname="megamek.MegaMek" fork="true">
+            <arg line="-eqdb docs/equipment.txt"/>
+            <classpath>
+                <pathelement path="${builddir}"/>
+                <pathelement location="${propdir}"/>
+                <fileset dir="${libdir}" includes="*.jar"/>
+            </classpath>
+        </java>
+    </target>
+
     <target name="compile" depends="init" description="Compile java sources into class files">
         <!-- compile -->
-        <javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
+        <javac debug="true"
+               debuglevel="lines,source"
+               target="1.8"
+               source="1.8"
+               destdir="${builddir}"
+               srcdir="${srcdir}"
+               memoryInitialSize="512m"
+               memoryMaximumSize="512m"
+               fork="true"
+               encoding="UTF-8"
+               failonerror="true">
             <classpath>
                 <pathelement location="${basedir}" />
                 <fileset dir="${libdir}" includes="*.jar" />
             </classpath>
         </javac>
-        <!-- generate current equipment.txt -->
-        <java classname="megamek.MegaMek" fork="true">
-            <arg line="-eqdb docs/equipment.txt" />
-            <classpath>
-                <pathelement path="${builddir}" />
-                <fileset dir="${libdir}" includes="*.jar" />
-            </classpath>
-        </java>
         <!-- Ensure that the log directory exists. -->
         <mkdir dir="${logdir}" />
         <touch file="${timestampfile}" />
     </target>
 
-    <target name="jar" description="Generates JAR File from compiled sources">
+    <target name="jar" depends="compile, equipment" description="Generates JAR File from compiled sources">
         <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
             <fileset dir="${propdir}" includes="**/*.properties"/>
@@ -121,7 +135,7 @@
         </jar>
     </target>
 
-    <target name="run" depends="compile" description="Runs Megamek">
+    <target name="run" depends="compile, equipment" description="Runs Megamek">
         <echo message="Running MegaMek from build directory: ${builddir}"/>
         <java classname="megamek.MegaMek" fork="true">
             <classpath>
@@ -159,7 +173,8 @@
         </delete>
     </target>
 
-    <target depends="clean, compile, unit.test, jar" name="all" description="Clean, compile and build a jar"/>
+    <target depends="clean, compile, equipment, unit.test, jar" name="all"
+            description="Clean, compile and build a jar"/>
 
     <target name="compileTests" depends="compile" unless="${skip.tests}" description="Compile unit tests">
         <delete dir="${dir.build.test}"/>

@@ -40,11 +40,6 @@ public class SmallCraft extends Aero {
     private int nBattleArmor = 0;
     private int nMarines = 0;
     private int nOtherPassenger = 0;
-
-    // Is it Civilian or Military
-    public static final int CIVILIAN = 0;
-    public static final int MILITARY = 1;
-    private int designType = 0;
     
     // escape pods and lifeboats
     private int escapePods = 0;
@@ -74,14 +69,6 @@ public class SmallCraft extends Aero {
     @Override
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
-    }
-
-    public void setDesignType(int design) {
-        designType = design;
-    }
-
-    public int getDesignType() {
-        return designType;
     }
     
     public void setNCrew(int crew) {

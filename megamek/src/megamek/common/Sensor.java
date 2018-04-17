@@ -49,7 +49,7 @@ public class Sensor implements Serializable {
     public static final int TYPE_BAPP = 17;
     public static final int TYPE_AERO_SENSOR = 18;
     public static final int TYPE_SPACECRAFT_RADAR = 19;
-    public static final int TYPE_SPACECRAFT_PASSIVE = 20;
+    public static final int TYPE_SPACECRAFT_ESM = 20;
     public static final int TYPE_SPACECRAFT_THERMAL = 21;
     public static final int TYPE_AERO_THERMAL = 22;
 
@@ -71,7 +71,7 @@ public class Sensor implements Serializable {
             "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan",
             "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
             "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype", 
-            "Aero Active Sensor Suite", "Spacecraft Radar", "Spacecraft Passive Sensor Suite (Space Only)",
+            "Aero Active Sensor Suite", "Spacecraft Radar", "Spacecraft Electronic Support Measures (Space Only)",
             "Spacecraft Thermal/Optical Sensors (Space Only)", "Aero Thermal/Optical Sensors (Space Only)"};
     public static final int SIZE = sensorNames.length;
 
@@ -141,7 +141,7 @@ public class Sensor implements Serializable {
             //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
             //them into just the types that have different detection mechanics. 
             case TYPE_SPACECRAFT_RADAR:
-            case TYPE_SPACECRAFT_PASSIVE:
+            case TYPE_SPACECRAFT_ESM:
                 return 5555;
             case TYPE_SPACECRAFT_THERMAL:
                 return 1388;
@@ -191,7 +191,7 @@ public class Sensor implements Serializable {
         
         //Most spacecraft sensors only work in space...
         if (!game.getBoard().inSpace() && 
-                (type == TYPE_SPACECRAFT_PASSIVE 
+                (type == TYPE_SPACECRAFT_ESM 
                 || type == TYPE_SPACECRAFT_THERMAL 
                 || type == TYPE_AERO_THERMAL)) {
             range = 0;            

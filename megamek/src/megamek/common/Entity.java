@@ -11765,6 +11765,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getSensorCheck() {
         return sensorCheck;
     }
+    
+    /**
+     * A method to determine if an aero has suffered 3 sensor hits. 
+     * When double-blind is on, this affects both standard visibility and sensor rolls
+     */
+    public boolean isAeroSensorDestroyed() {
+        return false;
+    }
 
     public boolean hasModularArmor() {
         return hasModularArmor(-1);

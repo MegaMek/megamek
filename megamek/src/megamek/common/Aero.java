@@ -278,6 +278,17 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     /**
+     * A method to determine if an aero has suffered 3 sensor hits. 
+     * When double-blind is on, this affects both standard visibility and sensor rolls
+     */
+    public boolean isAeroSensorDestroyed() {
+        if (getSensorHits() >= 3) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, partial repairs and bomb load.
      */

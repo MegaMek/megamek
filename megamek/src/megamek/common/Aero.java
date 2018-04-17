@@ -277,6 +277,25 @@ public class Aero extends Entity implements IAero, IBomber {
         }        
     }
     
+    // Is it Civilian or Military
+    public static final int CIVILIAN = 0;
+    public static final int MILITARY = 1;
+    protected int designType = 0;
+    
+    /**
+     * Sets the unit as either a civilian or military design 
+     */
+    public void setDesignType(int design) {
+        designType = design;
+    }
+    
+    /**
+     * Returns the unit's design type 
+     */
+    public int getDesignType() {
+        return designType;
+    }
+    
     /**
      * A method to determine if an aero has suffered 3 sensor hits. 
      * When double-blind is on, this affects both standard visibility and sensor rolls

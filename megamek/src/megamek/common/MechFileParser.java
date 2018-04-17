@@ -253,7 +253,15 @@ public class MechFileParser {
         //And both a passive sensor suite and thermal/optical sensors, which only work in space
         ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
         ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
-        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_PASSIVE));
+            //Only military craft get ESM, which detects active radar
+            //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
+            Aero lc = (Aero) ent;
+            if (lc.getDesignType() == Aero.MILITARY 
+                    || lc.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                    || lc.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+            }
+        
         ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent.hasETypeFlag(Entity.ETYPE_AERO) 
                     || ent.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)

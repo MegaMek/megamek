@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.43.10-git
+v0.43.10-RC4
 + PR #952: Ground to air fix
 	Fixes issue #864: SRMs properly deal damage to airborne targets in the event that they hit
 + PR #964: Aero Sensor Suites and Visibility in Atmosphere/Low Vis Conditions

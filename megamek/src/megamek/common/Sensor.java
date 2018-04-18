@@ -71,8 +71,8 @@ public class Sensor implements Serializable {
             "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan",
             "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
             "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype", 
-            "Aero Active Sensor Suite", "Spacecraft Radar", "Spacecraft Electronic Support Measures (Space Only)",
-            "Spacecraft Thermal/Optical Sensors (Space Only)", "Aero Thermal/Optical Sensors (Space Only)"};
+            "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)", "Spacecraft Electronic Support Measures (Passive)",
+            "Spacecraft Thermal/Optical Sensors (Passive)", "Aero Thermal/Optical Sensors (Passive)"};
     public static final int SIZE = sensorNames.length;
 
     /**
@@ -195,6 +195,11 @@ public class Sensor implements Serializable {
                 || type == TYPE_SPACECRAFT_THERMAL 
                 || type == TYPE_AERO_THERMAL)) {
             range = 0;            
+        }
+        
+        //Aero/Small Craft Active Sensors have longer range in space
+        if (game.getBoard().inSpace() && type == TYPE_AERO_SENSOR) {
+            range = 555;
         }
 
         return range;

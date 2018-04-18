@@ -3932,6 +3932,7 @@ public class Compute {
                 return false;
             }
         }
+        
         // Target may be in an illuminated hex
         if (!teIlluminated) {
             int lightLvl = game.isPositionIlluminated(target.getPosition());
@@ -3948,12 +3949,23 @@ public class Compute {
             los = LosEffects.calculateLos(game, ae.getId(), target);
         }
         int visualRange = getVisualRange(game, ae, los, teIlluminated);
+        
+        //If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
+        //Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
+        //sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
+        //These rules will make their own return and ignore all the atmospheric rules that follow, though LOS will still
+        //apply for sensor shadows, asteroids and that sort of thing.
+        if (game.getBoard().inSpace() && game.getOptions().booleanOption("tacops_sensors")) {
+            Coords targetPos = target.getPosition();
+            int distance = ae.getPosition().distance(targetPos);
+        }
 
-        // check for camo and null sig on the target
+        //Check for factors that only apply to an entity target
         Coords targetPos = target.getPosition();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
-
+            
+            // check for camo and null sig on the target
             if (te.isVoidSigActive()) {
                 visualRange = visualRange / 4;
             } else if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
@@ -3964,6 +3976,7 @@ public class Compute {
                        && ((Infantry) te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
+            
             // Ground targets pick the closest path to Aeros (TW pg 107)
             if ((te.isAero()) && isGroundToAir(ae, target)) {
                 targetPos = Compute.getClosestFlightPath(ae.getId(),

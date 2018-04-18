@@ -6076,6 +6076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        
         // change the active sensor, if requested
         if (null != nextSensor) {
             activeSensor = nextSensor;
@@ -12619,6 +12620,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             groundRange = 1;
         }
+        
+        //ASF sensors change range when in space, so we do that here
+        if (game.getBoard().inSpace()) {
+            if (getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                range = 555;
+            }
+        
+            //If Aero/Spacecraft sensors are destroyed while in space, the range is 0.
+            if (isAeroSensorDestroyed()) {
+                range = 0;
+            }
+        }
+        
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;
@@ -12627,6 +12641,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             minSensorRange = 0;
             minGroundSensorRange = 0;
         }
+        
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                     + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"

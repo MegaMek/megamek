@@ -927,6 +927,32 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // update velocity
         setCurrentVelocity(getNextVelocity());
+        
+        //If we're an aero on an atmospheric map, remove space-only sensors from the list of options
+        //Right now this is 'permanent' but I think it should be here under newRound for when we
+        //integrate moving between space/atmospheric maps
+        if (!game.getBoard().inSpace()) {
+            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM
+                            || sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                        sensorsToRemove.add(sensor);
+                    } 
+                }
+            } else if (hasETypeFlag(Entity.ETYPE_AERO)) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                        sensorsToRemove.add(sensor);
+                    }
+                }
+            }
+            getSensors().removeAll(sensorsToRemove);
+            if (sensorsToRemove.size() >= 1) {
+                setNextSensor(getSensors().firstElement());
+            }
+            sensorsToRemove.removeAllElements();
+        }
 
         // if using variable damage thresholds then autoset them
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {

@@ -4003,6 +4003,25 @@ public class Compute {
                 }
             }
             
+            // Apply large craft sensor shadows
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
+                    && game.getBoard().inSpace() && target.getTargetType() == Targetable.TYPE_ENTITY) {
+                Entity te = (Entity) target;
+                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                        tn ++;
+                        break;
+                    }
+                }
+                for (Entity en : game.getEntitiesVector(target.getPosition())) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae)
+                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                        tn ++;
+                        break;
+                    }
+                }
+            }
+            
         }
 
         //Check for factors that only apply to an entity target

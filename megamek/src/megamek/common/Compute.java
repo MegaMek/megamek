@@ -3961,7 +3961,7 @@ public class Compute {
             int roll = Compute.d6(2);
             int tn = ae.getCrew().getPiloting();
             int autoVisualRange = 0;
-            int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket() + 1);
+            int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
             
             //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
             if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
@@ -3977,7 +3977,7 @@ public class Compute {
                 return true;
             }
             
-            if (distance >= outOfVisualRange) {
+            if (distance > outOfVisualRange) {
                 return false;
             }
             

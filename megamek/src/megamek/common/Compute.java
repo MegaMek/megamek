@@ -3958,6 +3958,51 @@ public class Compute {
         if (game.getBoard().inSpace() && game.getOptions().booleanOption("tacops_sensors")) {
             Coords targetPos = target.getPosition();
             int distance = ae.getPosition().distance(targetPos);
+            int roll = Compute.d6(2);
+            int tn = ae.getCrew().getPiloting();
+            int autoVisualRange = 0;
+            int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket() + 1);
+            
+            //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
+            if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                autoVisualRange = 55;
+            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+                autoVisualRange = 14;
+            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+                autoVisualRange = 555;
+            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                autoVisualRange = 139;
+            }
+            if (distance <= autoVisualRange) {
+                return true;
+            }
+            
+            if (distance >= outOfVisualRange) {
+                return false;
+            }
+            
+            //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
+            tn += (distance / autoVisualRange);
+            
+            // Now, apply ECM/ECCM effects
+            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
+                if (!ae.isLargeCraft()) {
+                    ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
+                }
+                ecm = Math.min(4, ecm);
+                int eccm = 0;
+                if (ae.isLargeCraft()) {
+                    eccm = ((Aero) ae).getECCMBonus();
+                }
+                if (ecm > 0) {
+                    tn += ecm;
+                    if (eccm > 0) {
+                        tn -= (Math.min(ecm, eccm));
+                    }
+                }
+            }
+            
         }
 
         //Check for factors that only apply to an entity target

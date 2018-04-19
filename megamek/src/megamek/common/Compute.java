@@ -4022,6 +4022,15 @@ public class Compute {
                 }
             }
             
+            //Apply modifiers for attacker's equipment
+            //-2 for a working Large NCSS
+            if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+                tn -= 2;
+            }
+            //-1 for a working Small NCSS
+            if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+                tn -= 1;
+            }
         }
 
         //Check for factors that only apply to an entity target

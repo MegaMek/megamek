@@ -38,6 +38,7 @@ import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.QuadVee;
+import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -462,6 +463,18 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curSensorsR.setString(en.getSensorDesc());
             visualRangeR.setString(Integer.toString(en.getGame()
                     .getPlanetaryConditions().getVisualRange(en, false)));
+            //If using sensors, update our visual range display to the automatic detection range of the current sensor
+            if (en.isSpaceborne() && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+                int autoVisualRange = 0;
+                if (en.getActiveSensor() != null) {
+                    if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                        autoVisualRange = 55;
+                    } else {
+                        autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);
+                    }
+                }
+                visualRangeR.setString(Integer.toString(autoVisualRange));
+            }
         } else {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);

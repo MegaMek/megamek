@@ -468,6 +468,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 int autoVisualRange = 0;
                 if (en.getActiveSensor() != null) {
                     if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                        //required because the return on this from the method below is for ground maps
                         autoVisualRange = 55;
                     } else {
                         autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);

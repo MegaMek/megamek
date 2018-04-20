@@ -3956,11 +3956,15 @@ public class Compute {
         //These rules will make their own return and ignore all the atmospheric rules that follow, though LOS will still
         //apply for sensor shadows, asteroids and that sort of thing.
         if (game.getBoard().inSpace() && game.getOptions().booleanOption("tacops_sensors")) {
+            //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
+            if (ae.getActiveSensor() == null) {
+                return false;
+            }
             Coords targetPos = target.getPosition();
             int distance = ae.getPosition().distance(targetPos);
             int roll = Compute.d6(2);
             int tn = ae.getCrew().getPiloting();
-            int autoVisualRange = 0;
+            int autoVisualRange = 1;
             int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
             
             //If using active radar or optical sensors, targets at 1/10 max range are automatically detected

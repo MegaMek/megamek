@@ -3973,6 +3973,8 @@ public class Compute {
             } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
                 autoVisualRange = 139;
             }
+            visualRange = autoVisualRange;
+            
             if (distance <= autoVisualRange) {
                 return true;
             }
@@ -4008,13 +4010,13 @@ public class Compute {
                     && game.getBoard().inSpace() && target.getTargetType() == Targetable.TYPE_ENTITY) {
                 Entity te = (Entity) target;
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
                         tn ++;
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae)
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
                             && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
                         tn ++;
                         break;

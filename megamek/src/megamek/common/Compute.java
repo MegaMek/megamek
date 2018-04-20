@@ -4031,6 +4031,17 @@ public class Compute {
             if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
                 tn -= 1;
             }
+            //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
+            if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
+                    || ae.hasBAP(false)) {
+                tn -= 2;
+            }
+            
+            //Now, determine if we've detected the target this round
+            if (roll >= tn) {
+                return true;
+            }
+            return false;
         }
 
         //Check for factors that only apply to an entity target

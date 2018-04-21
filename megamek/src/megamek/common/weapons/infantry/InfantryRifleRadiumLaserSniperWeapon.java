@@ -39,6 +39,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 9500;
 		bv = 2.58;
+		tonnage = .012;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.36;
 		infantryRange = 3;

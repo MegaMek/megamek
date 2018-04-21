@@ -39,6 +39,7 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 750;
 		bv = 0.86;
+		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.28;
 		infantryRange = 1;

@@ -39,6 +39,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 185;
 		bv = 0.15;
+        tonnage = .0004;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.16;
 		infantryRange = 0;

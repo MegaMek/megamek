@@ -39,6 +39,7 @@ public class InfantryPistolMauserNeedlerPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 100;
 		bv = 0.10;
+		tonnage = .0005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.11;
 		infantryRange = 0;

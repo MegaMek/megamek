@@ -39,6 +39,7 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 50;
 		bv = 0.31;
+		tonnage = .0012;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.34;
 		infantryRange = 0;

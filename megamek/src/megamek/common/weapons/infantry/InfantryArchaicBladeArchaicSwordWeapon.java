@@ -39,7 +39,7 @@ public class InfantryArchaicBladeArchaicSwordWeapon extends InfantryWeapon {
 		addLookupName("Archaic Sword");
 		ammoType = AmmoType.T_NA;
 		cost = 45;
-		tonnage = .0035f;
+		tonnage = .0035;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.04;

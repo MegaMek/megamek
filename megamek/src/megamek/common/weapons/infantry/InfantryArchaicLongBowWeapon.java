@@ -39,6 +39,7 @@ public class InfantryArchaicLongBowWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 20;
 		bv = 0.01;
+        tonnage = .0015; 
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
 		infantryDamage = 0.01;
 		infantryRange = 0;

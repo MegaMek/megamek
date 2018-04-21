@@ -39,6 +39,7 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 175;
 		bv = 0.25;
+		tonnage = .0045;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.27;
 		infantryRange = 0;

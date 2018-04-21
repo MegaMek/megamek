@@ -39,6 +39,7 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 100;
 		bv = 0.13;
+		tonnage = 0015;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.14;
 		infantryRange = 0;

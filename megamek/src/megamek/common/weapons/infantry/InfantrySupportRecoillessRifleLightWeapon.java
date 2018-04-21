@@ -40,6 +40,7 @@ public class InfantrySupportRecoillessRifleLightWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 300;
 		bv = 2.45;
+		tonnage = .008;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
 		infantryDamage = 0.48;
 		infantryRange = 2;

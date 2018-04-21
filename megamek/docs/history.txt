@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
-v0.43.10-RC4
+v0.43.11-RC5-git
+Data: Adding missing weights for infantry weapons.
+
+v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix
 	Fixes issue #864: SRMs properly deal damage to airborne targets in the event that they hit
 + PR #964: Aero Sensor Suites and Visibility in Atmosphere/Low Vis Conditions
@@ -31,7 +34,7 @@ v0.43.10-RC4
 	Fixes issues #829: Switching off PPC Field Inhibitor has no effect
 
 
-v0.43.9-RC3
+v0.43.9-RC3 (2018-03-13 18:00 UTC)
 + Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
 + PR #916: Make MUL files work for tracking ammo on GunEmplacements
 + PR #928: Corrections to scenarios, new keyword for handling random maps

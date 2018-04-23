@@ -3955,7 +3955,7 @@ public class Compute {
         //sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
         //These rules will make their own return and ignore all the atmospheric rules that follow, though LOS will still
         //apply for sensor shadows, asteroids and that sort of thing.
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
             if (ae.getActiveSensor() == null) {
                 return false;

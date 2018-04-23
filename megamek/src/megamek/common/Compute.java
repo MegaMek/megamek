@@ -3987,6 +3987,11 @@ public class Compute {
                 return false;
             }
             
+            //Apply Sensor Geek SPA, if present
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+                tn -= 2;
+            }
+            
             //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
             tn += (distance / autoVisualRange);
             

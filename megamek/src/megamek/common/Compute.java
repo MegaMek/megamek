@@ -3969,13 +3969,13 @@ public class Compute {
             
             //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
             if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                autoVisualRange = 55;
+                autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
             } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-                autoVisualRange = 14;
+                autoVisualRange = Sensor.ASF_OPTICAL_AUTOSPOT_RANGE;
             } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-                autoVisualRange = 555;
+                autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
             } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-                autoVisualRange = 139;
+                autoVisualRange = Sensor.LC_OPTICAL_AUTOSPOT_RANGE;
             }
             visualRange = autoVisualRange;
             

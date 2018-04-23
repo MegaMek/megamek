@@ -468,12 +468,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 int autoVisualRange = 0;
                 //For squadrons. Default to the passive thermal/optical value used by component fighters
                 if (en.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
-                    autoVisualRange = 14;
+                    autoVisualRange = Sensor.ASF_OPTICAL_AUTOSPOT_RANGE;
                 }
                 if (en.getActiveSensor() != null) {
                     if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
                         //required because the return on this from the method below is for ground maps
-                        autoVisualRange = 55;
+                        autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
                     } else {
                         autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);
                     }

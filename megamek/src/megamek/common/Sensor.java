@@ -74,6 +74,12 @@ public class Sensor implements Serializable {
             "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)", "Spacecraft Electronic Support Measures (Passive)",
             "Spacecraft Thermal/Optical Sensors (Passive)", "Aero Thermal/Optical Sensors (Passive)"};
     public static final int SIZE = sensorNames.length;
+    
+    //Constants for space automatic visual detection ranges
+    public static final int ASF_RADAR_AUTOSPOT_RANGE = 55;
+    public static final int ASF_OPTICAL_AUTOSPOT_RANGE = 14;
+    public static final int LC_RADAR_AUTOSPOT_RANGE = 555;
+    public static final int LC_OPTICAL_AUTOSPOT_RANGE = 139;
 
     /**
      * Constructor

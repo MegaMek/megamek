@@ -3967,6 +3967,16 @@ public class Compute {
             int autoVisualRange = 1;
             int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
             
+            if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+                Aero aero = (Aero) ae;
+                //Account for sensor damage
+                if (aero.isAeroSensorDestroyed()) {
+                    return false;
+                } else {
+                    tn += aero.getSensorHits();
+                }
+            }
+            
             //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
             if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
                 autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
@@ -4149,7 +4159,7 @@ public class Compute {
         //Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
         //sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
         //These rules will make their own return and ignore all the atmospheric rules that follow.
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getBoard().inSpace()) {
             //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
             if (ae.getActiveSensor() == null) {
                 return false;
@@ -4158,26 +4168,47 @@ public class Compute {
             int distance = ae.getPosition().distance(targetPos);
             int roll = Compute.d6(2);
             int tn = ae.getCrew().getPiloting();
-            int autoVisualRange = 1;
-            int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
+            int rangeIncrement = (int) Math.ceil(range / 10.0);
             
-            //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
-            if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-                autoVisualRange = Sensor.ASF_OPTICAL_AUTOSPOT_RANGE;
-            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-                autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-                autoVisualRange = Sensor.LC_OPTICAL_AUTOSPOT_RANGE;
-            }
-            visualRange = autoVisualRange;
-            
-            if (distance <= autoVisualRange) {
-                return true;
+            if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+                Aero aero = (Aero) ae;
+                //Account for sensor damage
+                if (aero.isAeroSensorDestroyed()) {
+                    return false;
+                } else {
+                    tn += aero.getSensorHits();
+                }
             }
             
-            if (distance > outOfVisualRange) {
+            //Apply modifiers for attacker's equipment
+            //-2 for a working Large NCSS.  Triple the detection range.
+            if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+                maxSensorRange *= 3;
+                tn -= 2;
+            }
+            //-1 for a working Small NCSS. Double the detection range.
+            if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+                maxSensorRange *= 2;
+                tn -= 1;
+            }
+            //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
+            if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
+                    || ae.hasBAP(false)) {
+                tn -= 2;
+            }
+            
+            //Military ESM automatically detects anyone using active sensors
+            if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM && target.getTargetType() == Targetable.TYPE_ENTITY) {
+                Entity te = (Entity) target;
+                if (te.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR 
+                        || te.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+                    return true;
+                }
+                return false;
+            }
+            
+            //Can't detect anything beyond this distance
+            if (distance > maxSensorRange) {
                 return false;
             }
             
@@ -4187,7 +4218,7 @@ public class Compute {
             }
             
             //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
-            tn += (distance / autoVisualRange);
+            tn += (distance / rangeIncrement);
             
             // Now, apply ECM/ECCM effects
             if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
@@ -4225,21 +4256,6 @@ public class Compute {
                         break;
                     }
                 }
-            }
-            
-            //Apply modifiers for attacker's equipment
-            //-2 for a working Large NCSS
-            if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
-                tn -= 2;
-            }
-            //-1 for a working Small NCSS
-            if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
-                tn -= 1;
-            }
-            //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
-            if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
-                    || ae.hasBAP(false)) {
-                tn -= 2;
             }
             
             //Now, determine if we've detected the target this round

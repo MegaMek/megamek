@@ -46,6 +46,7 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
         this.extremeRange = 120; // No extreme range.
         this.tonnage = 100f;
         this.criticals = 100;
+        this.flags = flags.or(F_CRUISE_MISSILE);
         this.bv = 1530;
         this.cost = 1250000;
         rulesRefs = "284,TO";

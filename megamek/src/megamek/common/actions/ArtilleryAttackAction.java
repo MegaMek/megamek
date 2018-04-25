@@ -21,6 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.WeaponType;
 
@@ -49,10 +50,21 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         this.launchVelocity = 50;
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
-        // adjust distance for gravity
+        //adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
+        if (game.getEntity(entityId).usesWeaponBays()) {
+            for (int wId : game.getEntity(entityId).getEquipment(weaponId).getBayWeapons()) {
+                Mounted bayW = game.getEntity(entityId).getEquipment(wId);
+                WeaponType bayWType = ((WeaponType) bayW.getType());
+                if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
+                    break;
+                }
+            }
+            turnsTilHit = 1 + (distance / 17 / 5);
+            return;
+        }
         //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
         //An aaa will only be returned if the weapon is set to the correct mode
         if (((wType.getAtClass() == WeaponType.CLASS_AR10)
@@ -60,15 +72,19 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                 || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
                 && (distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
             turnsTilHit = (int) (distance / launchVelocity);
+            return;
         }
-        if(getEntity(game).isAirborne()) {
+        //Currently, spaceborne entities also count as airborne, though the reverse is not true.
+        if(getEntity(game).isAirborne() && !getEntity(game).isSpaceborne()) {
             if(getEntity(game).getAltitude() < 9) {
                 turnsTilHit = 1;
             } else {
                 turnsTilHit = 2;
             }
+            return;
         } else if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
             turnsTilHit = 1 + (distance / 17 / 5);
+            return;
         } else {
             if (distance <= 17)
                 turnsTilHit = 0;

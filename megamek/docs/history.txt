@@ -1,7 +1,8 @@
 VERSION HISTORY:
 ----------------
 v0.43.11-RC5-git
-Data: Adding missing weights for infantry weapons.
++ Data: Adding missing weights for infantry weapons.
++ PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

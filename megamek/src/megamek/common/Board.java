@@ -63,7 +63,12 @@ public class Board implements Serializable, IBoard {
     public static final int START_W = 8;
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
-
+    
+    //Board Dimensions
+    //Used for things like artillery rules that reference the standard mapsheet dimensions
+    public static final int DEFAULT_BOARD_HEIGHT = 17;
+    public static final int DEFAULT_BOARD_WIDTH = 16;
+    //Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
     protected int width;
     protected int height;
 

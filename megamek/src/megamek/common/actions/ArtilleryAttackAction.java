@@ -17,6 +17,7 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.Vector;
 
+import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
@@ -47,22 +48,22 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         super(entityId, targetType, targetId, weaponId);
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
-        this.launchVelocity = 50;
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
         //adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
-        EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
+        EquipmentType eType = getEntity(game).getEquipment(weaponId).getType();
         WeaponType wType = (WeaponType) eType;
-        if (game.getEntity(entityId).usesWeaponBays()) {
+        if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (int wId : game.getEntity(entityId).getEquipment(weaponId).getBayWeapons()) {
                 Mounted bayW = game.getEntity(entityId).getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 if (bayWType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
+                    //See TO p181. Cruise missile flight time is (1+(Mapsheets/5, round down)
+                    turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
                     break;
                 }
             }
-            turnsTilHit = 1 + (distance / 17 / 5);
             return;
         }
         //Capital missiles fired at bearings-only ranges will act like artillery and use this aaa.
@@ -71,10 +72,12 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
                 || (wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE))
                 && (distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
+            this.launchVelocity = wType.extremeRange;
             turnsTilHit = (int) (distance / launchVelocity);
             return;
         }
         //Currently, spaceborne entities also count as airborne, though the reverse is not true.
+        //See TO p181. Flight time is 1 turn at altitude 1-8,  2 turns at alt 9.
         if(getEntity(game).isAirborne() && !getEntity(game).isSpaceborne()) {
             if(getEntity(game).getAltitude() < 9) {
                 turnsTilHit = 1;
@@ -83,18 +86,20 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
             }
             return;
         } else if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
-            turnsTilHit = 1 + (distance / 17 / 5);
+            //See TO p181. Cruise missile flight time is (1+(Mapsheets/5, round down)
+            turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
             return;
         } else {
+            //See indirect flight times table, TO p181
             if (distance <= 17)
                 turnsTilHit = 0;
-            else if (distance <= (8 * 17))
+            else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT))
                 turnsTilHit = 1;
-            else if (distance <= (15 * 17))
+            else if (distance <= (15 * Board.DEFAULT_BOARD_HEIGHT))
                 turnsTilHit = 2;
-            else if (distance <= (21 * 17))
+            else if (distance <= (21 * Board.DEFAULT_BOARD_HEIGHT))
                 turnsTilHit = 3;
-            else if (distance <= (26 * 17))
+            else if (distance <= (26 * Board.DEFAULT_BOARD_HEIGHT))
                 turnsTilHit = 4;
             else
                 turnsTilHit = 5;

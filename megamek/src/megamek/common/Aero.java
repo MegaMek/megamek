@@ -38,6 +38,10 @@ public class Aero extends Entity implements IAero, IBomber {
      *
      */
     private static final long serialVersionUID = 7196307097459255187L;
+    
+    //Game option for Capital Missile Waypoint launch. Used for altered firing arcs
+    protected boolean waypointLaunch = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH);
+    protected boolean isCapitalMissile = false;
 
     // locations
     public static final int LOC_NOSE = 0;

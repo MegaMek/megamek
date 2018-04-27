@@ -171,13 +171,15 @@ public class Warship extends Jumpship {
             break;
         case LOC_LBS:
             if (mounted.isInWaypointLaunchMode()) {
-                return Compute.ARC_SPONSON_TURRET_LEFT;
+                arc = Compute.ARC_SPONSON_TURRET_LEFT;
+                break;
             }
             arc = Compute.ARC_LEFT_BROADSIDE;
             break;
         case LOC_RBS:
             if (mounted.isInWaypointLaunchMode()) {
-                return Compute.ARC_SPONSON_TURRET_RIGHT;
+                arc = Compute.ARC_SPONSON_TURRET_RIGHT;
+                break;
             }
             arc = Compute.ARC_RIGHT_BROADSIDE;
             break;

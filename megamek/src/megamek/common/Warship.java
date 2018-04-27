@@ -148,12 +148,14 @@ public class Warship extends Jumpship {
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if (mounted.getType() instanceof WeaponType) {
+        isCapitalMissileWaypointLaunch = false;
+        if (mounted.getType() instanceof WeaponType && game != null && game.getBoard().inSpace()) {
             WeaponType wType = (WeaponType) mounted.getType();
-            if (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE 
+            if ((wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE 
                     || wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE
-                    || wType.getAtClass() == WeaponType.CLASS_AR10) {
-                isCapitalMissile = true;
+                    || wType.getAtClass() == WeaponType.CLASS_AR10)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
+                isCapitalMissileWaypointLaunch = true;
             }
         }
         
@@ -178,13 +180,13 @@ public class Warship extends Jumpship {
             arc = Compute.ARC_AFT;
             break;
         case LOC_LBS:
-            if (waypointLaunch) {
+            if (isCapitalMissileWaypointLaunch) {
                 return Compute.ARC_SPONSON_TURRET_LEFT;
             }
             arc = Compute.ARC_LEFT_BROADSIDE;
             break;
         case LOC_RBS:
-            if (waypointLaunch && isCapitalMissile) {
+            if (isCapitalMissileWaypointLaunch) {
                 arc = Compute.ARC_SPONSON_TURRET_RIGHT;
             }
             arc = Compute.ARC_RIGHT_BROADSIDE;

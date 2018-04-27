@@ -469,10 +469,11 @@ public class Jumpship extends Aero {
         final Mounted mounted = getEquipment(wn);
         if (mounted.getType() instanceof WeaponType) {
             WeaponType wType = (WeaponType) mounted.getType();
-            if (wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE 
+            if ((wType.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE 
                     || wType.getAtClass() == WeaponType.CLASS_TELE_MISSILE
-                    || wType.getAtClass() == WeaponType.CLASS_AR10) {
-                isCapitalMissile = true;
+                    || wType.getAtClass() == WeaponType.CLASS_AR10)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
+                isCapitalMissileWaypointLaunch = true;
             }
         }
 

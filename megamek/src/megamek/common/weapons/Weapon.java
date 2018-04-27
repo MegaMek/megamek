@@ -121,7 +121,6 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     setInstantModeSwitch(false);
-                    addMode("Normal");
                     addMode("Bearings-Only Extreme Detection Range");
                     addMode("Bearings-Only Long Detection Range");
                     addMode("Bearings-Only Medium Detection Range");

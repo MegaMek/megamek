@@ -1700,7 +1700,26 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (curMode().equals("Bearings-Only Extreme Detection Range")
                     || curMode().equals("Bearings-Only Long Detection Range")
                     || curMode().equals("Bearings-Only Medium Detection Range")
-                    || curMode().equals("Bearings-Only Short Detection Range")) {
+                    || curMode().equals("Bearings-Only Short Detection Range")
+                    || curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
+                    || curMode().equals("Waypoint Launch Bearings-Only Long Detection Range")
+                    || curMode().equals("Waypoint Launch Bearings-Only Medium Detection Range")
+                    || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Method that checks to see if our capital missile bay is in waypoint launch mode
+     * @return
+     */
+    public boolean isInWaypointLaunchMode() {
+        if (curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
+                || curMode().equals("Waypoint Launch Bearings-Only Long Detection Range")
+                || curMode().equals("Waypoint Launch Bearings-Only Medium Detection Range")
+                || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")
+                || curMode().equals("Waypoint Launch")) {
             return true;
         }
         return false;

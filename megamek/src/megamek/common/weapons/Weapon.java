@@ -118,9 +118,29 @@ public abstract class Weapon extends WeaponType implements Serializable {
                 }
 
             } else {
+                
+                if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
+                    setInstantModeSwitch(false);
+                    addMode("Normal");
+                    addMode("Waypoint Launch");
+                    if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                        addMode("Waypoint Launch Bearings-Only Extreme Detection Range");
+                        addMode("Waypoint Launch Bearings-Only Long Detection Range");
+                        addMode("Waypoint Launch Bearings-Only Medium Detection Range");
+                        addMode("Waypoint Launch Bearings-Only Short Detection Range");
+                    } else {
+                        removeMode("Waypoint Launch Bearings-Only Extreme Detection Range");
+                        removeMode("Waypoint Launch Bearings-Only Long Detection Range");
+                        removeMode("Waypoint Launch Bearings-Only Medium Detection Range");
+                        removeMode("Waypoint Launch Bearings-Only Short Detection Range");
+                    }
+                } else {
+                    removeMode("Waypoint Launch");
+                }
 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     setInstantModeSwitch(false);
+                    addMode("Normal");
                     addMode("Bearings-Only Extreme Detection Range");
                     addMode("Bearings-Only Long Detection Range");
                     addMode("Bearings-Only Medium Detection Range");

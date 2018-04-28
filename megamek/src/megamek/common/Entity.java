@@ -13635,7 +13635,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc,
                                    HashMap<Integer, List<CriticalSlot>> vCriticals) {
-        if (masc != null) {
+        if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
             if (masc.getType().hasSubType(MiscType.S_SUPERCHARGER)

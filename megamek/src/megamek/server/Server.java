@@ -7311,6 +7311,27 @@ public class Server implements Runnable {
                     // Check for failure and process it
                     if (mascFailure) {
                         addReport(vReport);
+                        // If this is supercharger failure we need to damage the supercharger as well as
+                        // the additional criticals. For mechs this requires the additional step of finding
+                        // the slot and marking it as hit so it can't absorb future damage.
+                        Mounted supercharger = entity.getSuperCharger();
+                        if ((null != supercharger) && supercharger.curMode().equals("Armed")) {
+                            if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
+                                final int loc = supercharger.getLocation();
+                                for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
+                                    final CriticalSlot crit = entity.getCritical(loc, slot);
+                                    if ((null != crit) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                                            && (crit.getMount().getType().equals(supercharger.getType()))) {
+                                        addReport(applyCriticalHit(entity, loc, crit,
+                                                true, 0, false));
+                                        break;
+                                    }
+                                }
+                            } else {
+                                supercharger.setHit(true);
+                            }
+                            supercharger.setMode("Off");
+                        }
                         for (Integer loc : crits.keySet()) {
                             List<CriticalSlot> lcs = crits.get(loc);
                             for (CriticalSlot cs : lcs) {

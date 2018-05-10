@@ -97,6 +97,19 @@ public class Compute {
     public static final int ARC_HEXSIDE_3 = 35;
     public static final int ARC_HEXSIDE_4 = 36;
     public static final int ARC_HEXSIDE_5 = 37;
+    //Expanded arcs for Waypoint Launched Capital Missiles
+    public static final int ARC_NOSE_WPL = 38;
+    public static final int ARC_LWING_WPL = 39;
+    public static final int ARC_RWING_WPL = 40;
+    public static final int ARC_LWINGA_WPL = 41;
+    public static final int ARC_RWINGA_WPL = 42;
+    public static final int ARC_LEFTSIDE_SPHERE_WPL = 43;
+    public static final int ARC_RIGHTSIDE_SPHERE_WPL = 44;
+    public static final int ARC_LEFTSIDEA_SPHERE_WPL = 45;
+    public static final int ARC_RIGHTSIDEA_SPHERE_WPL = 46;
+    public static final int ARC_AFT_WPL = 47;
+    public static final int ARC_LEFT_BROADSIDE_WPL = 48;
+    public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -3772,8 +3785,18 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_NOSE_WPL:
+                    if ((fa > 240) || (fa < 120)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LWING:
                     if ((fa > 300) || (fa <= 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LWING_WPL:
+                    if ((fa > 240) || (fa <= 60)) {
                         return true;
                     }
                     break;
@@ -3782,13 +3805,28 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_RWING_WPL:
+                    if ((fa >= 300) || (fa < 120)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LWINGA:
                     if ((fa >= 180) && (fa < 240)) {
                         return true;
                     }
                     break;
+                case ARC_LWINGA_WPL:
+                    if ((fa >= 120) && (fa < 300)) {
+                        return true;
+                    }
+                    break;    
                 case ARC_RWINGA:
                     if ((fa > 120) && (fa <= 180)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RWINGA_WPL:
+                    if ((fa > 60) && (fa <= 240)) {
                         return true;
                     }
                     break;
@@ -3797,8 +3835,18 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_AFT_WPL:
+                    if ((fa > 60) && (fa < 300)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LEFTSIDE_SPHERE:
                     if ((fa > 240) || (fa < 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDE_SPHERE_WPL:
+                    if ((fa > 180) || (fa < 60)) {
                         return true;
                     }
                     break;
@@ -3807,8 +3855,18 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_RIGHTSIDE_SPHERE_WPL:
+                    if ((fa > 300) || (fa < 180)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LEFTSIDEA_SPHERE:
                     if ((fa > 180) && (fa < 300)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDEA_SPHERE_WPL:
+                    if ((fa > 120) && (fa < 360)) {
                         return true;
                     }
                     break;
@@ -3817,13 +3875,28 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_RIGHTSIDEA_SPHERE_WPL:
+                    if ((fa > 0) && (fa < 240)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LEFT_BROADSIDE:
                     if ((fa >= 240) && (fa <= 300)) {
                         return true;
                     }
                     break;
+                case ARC_LEFT_BROADSIDE_WPL:
+                    if ((fa > 180) && (fa <= 360)) {
+                        return true;
+                    }
+                    break;
                 case ARC_RIGHT_BROADSIDE:
                     if ((fa >= 60) && (fa <= 120)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHT_BROADSIDE_WPL:
+                    if ((fa > 0) && (fa < 180)) {
                         return true;
                     }
                     break;

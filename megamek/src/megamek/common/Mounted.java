@@ -1694,17 +1694,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     
     /**
      * Method that checks to see if our capital missile bay is in bearings-only mode
+     * Only available in space games
      * @return
      */
     public boolean isInBearingsOnlyMode() {
-        if (curMode().equals("Bearings-Only Extreme Detection Range")
+        if ((curMode().equals("Bearings-Only Extreme Detection Range")
                     || curMode().equals("Bearings-Only Long Detection Range")
                     || curMode().equals("Bearings-Only Medium Detection Range")
                     || curMode().equals("Bearings-Only Short Detection Range")
                     || curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
                     || curMode().equals("Waypoint Launch Bearings-Only Long Detection Range")
                     || curMode().equals("Waypoint Launch Bearings-Only Medium Detection Range")
-                    || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")) {
+                    || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")) 
+                && getEntity().isSpaceborne()) {
             return true;
         }
         return false;
@@ -1712,14 +1714,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     
     /**
      * Method that checks to see if our capital missile bay is in waypoint launch mode
+     * Only available in space games
      * @return
      */
     public boolean isInWaypointLaunchMode() {
-        if (curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
+        if ((curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
                 || curMode().equals("Waypoint Launch Bearings-Only Long Detection Range")
                 || curMode().equals("Waypoint Launch Bearings-Only Medium Detection Range")
                 || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")
-                || curMode().equals("Waypoint Launch")) {
+                || curMode().equals("Waypoint Launch")) 
+            && getEntity().isSpaceborne()) {
             return true;
         }
         return false;

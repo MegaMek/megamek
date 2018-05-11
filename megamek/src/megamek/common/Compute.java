@@ -3796,7 +3796,7 @@ public class Compute {
                     }
                     break;
                 case ARC_LWING_WPL:
-                    if ((fa > 240) || (fa <= 60)) {
+                    if ((fa > 240) || (fa < 60)) {
                         return true;
                     }
                     break;
@@ -3806,7 +3806,7 @@ public class Compute {
                     }
                     break;
                 case ARC_RWING_WPL:
-                    if ((fa >= 300) || (fa < 120)) {
+                    if ((fa > 300) || (fa < 120)) {
                         return true;
                     }
                     break;
@@ -3816,7 +3816,7 @@ public class Compute {
                     }
                     break;
                 case ARC_LWINGA_WPL:
-                    if ((fa >= 120) && (fa < 300)) {
+                    if ((fa > 120) && (fa < 300)) {
                         return true;
                     }
                     break;    
@@ -3826,7 +3826,7 @@ public class Compute {
                     }
                     break;
                 case ARC_RWINGA_WPL:
-                    if ((fa > 60) && (fa <= 240)) {
+                    if ((fa > 60) && (fa < 240)) {
                         return true;
                     }
                     break;

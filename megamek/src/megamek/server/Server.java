@@ -7271,75 +7271,9 @@ public class Server implements Runnable {
             // like MASc
             if (firstStep
                     && ((entity instanceof Mech) || (entity instanceof Tank))) {
-                HashMap<Integer, List<CriticalSlot>> crits = new HashMap<Integer, List<CriticalSlot>>();
-                Vector<Report> vReport = new Vector<Report>();
-                if (entity.checkForMASCFailure(md, vReport, crits)) {
-                    boolean mascFailure = true;
-                    // Check to see if the pilot can reroll due to Edge
-                    if (entity.getCrew().hasEdgeRemaining()
-                            && entity.getCrew().getOptions()
-                                    .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
-                        entity.getCrew().decreaseEdge();
-                        // Need to reset the MASCUsed flag
-                        entity.setMASCUsed(false);
-                        // Report to notify user that masc check was rerolled
-                        Report masc_report = new Report(6501);
-                        masc_report.subject = entity.getId();
-                        masc_report.indent(2);
-                        masc_report.addDesc(entity);
-                        vReport.add(masc_report);
-                        // Report to notify user how much edge pilot has left
-                        masc_report = new Report(6510);
-                        masc_report.subject = entity.getId();
-                        masc_report.indent(2);
-                        masc_report.addDesc(entity);
-                        masc_report.add(entity.getCrew().getOptions()
-                                .intOption(OptionsConstants.EDGE));
-                        vReport.addElement(masc_report);
-                        // Recheck MASC failure
-                        if (!entity.checkForMASCFailure(md, vReport, crits)) { // The
-                            // reroll
-                            // passed,
-                            // don't
-                            // process
-                            // the
-                            // failure
-                            mascFailure = false;
-                            addReport(vReport);
-                        }
-                    }
-                    // Check for failure and process it
-                    if (mascFailure) {
-                        addReport(vReport);
-                        for (Integer loc : crits.keySet()) {
-                            List<CriticalSlot> lcs = crits.get(loc);
-                            for (CriticalSlot cs : lcs) {
-                                // HACK: if loc is -1, we need to deal motive
-                                // damage
-                                // to
-                                // the tank, the severity of which is stored in
-                                // the
-                                // critslot index
-                                if (loc == -1) {
-                                    addReport(vehicleMotiveDamage((Tank) entity,
-                                            0, true, cs.getIndex()));
-                                } else {
-                                    addReport(applyCriticalHit(entity, loc, cs,
-                                            true, 0, false));
-                                }
-                            }
-                        }
-                        // do any PSR immediately
-                        addReport(resolvePilotingRolls(entity));
-                        game.resetPSRs(entity);
-                        // let the player replot their move as MP might be
-                        // changed
-                        md.clear();
-                        fellDuringMovement = true; // so they get a new turn
-                    }
-                } else {
-                    addReport(vReport);
-                }
+                // Not necessarily a fall, but we need to give them a new turn to plot movement with
+                // likely reduced MP.
+                fellDuringMovement = checkMASCFailure(entity, md);
             }
             
             if (firstStep) {
@@ -10000,6 +9934,108 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+
+    /**
+     * Checks whether the entity used MASC or a supercharger during movement, and if so checks for
+     * and resolves any failures.
+     *  
+     * @param entity  The unit using MASC/supercharger
+     * @param md      The current <code>MovePath</code>
+     * @return        Whether the unit failed the check
+     */
+    private boolean checkMASCFailure(Entity entity, MovePath md) {
+        HashMap<Integer, List<CriticalSlot>> crits = new HashMap<Integer, List<CriticalSlot>>();
+        Vector<Report> vReport = new Vector<Report>();
+        if (entity.checkForMASCFailure(md, vReport, crits)) {
+            boolean mascFailure = true;
+            // Check to see if the pilot can reroll due to Edge
+            if (entity.getCrew().hasEdgeRemaining()
+                    && entity.getCrew().getOptions()
+                            .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
+                entity.getCrew().decreaseEdge();
+                // Need to reset the MASCUsed flag
+                entity.setMASCUsed(false);
+                // Report to notify user that masc check was rerolled
+                Report masc_report = new Report(6501);
+                masc_report.subject = entity.getId();
+                masc_report.indent(2);
+                masc_report.addDesc(entity);
+                vReport.add(masc_report);
+                // Report to notify user how much edge pilot has left
+                masc_report = new Report(6510);
+                masc_report.subject = entity.getId();
+                masc_report.indent(2);
+                masc_report.addDesc(entity);
+                masc_report.add(entity.getCrew().getOptions()
+                        .intOption(OptionsConstants.EDGE));
+                vReport.addElement(masc_report);
+                // Recheck MASC failure
+                if (!entity.checkForMASCFailure(md, vReport, crits)) { // The
+                    // reroll
+                    // passed,
+                    // don't
+                    // process
+                    // the
+                    // failure
+                    mascFailure = false;
+                    addReport(vReport);
+                }
+            }
+            // Check for failure and process it
+            if (mascFailure) {
+                addReport(vReport);
+                // If this is supercharger failure we need to damage the supercharger as well as
+                // the additional criticals. For mechs this requires the additional step of finding
+                // the slot and marking it as hit so it can't absorb future damage.
+                Mounted supercharger = entity.getSuperCharger();
+                if ((null != supercharger) && supercharger.curMode().equals("Armed")) {
+                    if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
+                        final int loc = supercharger.getLocation();
+                        for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
+                            final CriticalSlot crit = entity.getCritical(loc, slot);
+                            if ((null != crit) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                                    && (crit.getMount().getType().equals(supercharger.getType()))) {
+                                addReport(applyCriticalHit(entity, loc, crit,
+                                        true, 0, false));
+                                break;
+                            }
+                        }
+                    } else {
+                        supercharger.setHit(true);
+                    }
+                    supercharger.setMode("Off");
+                }
+                for (Integer loc : crits.keySet()) {
+                    List<CriticalSlot> lcs = crits.get(loc);
+                    for (CriticalSlot cs : lcs) {
+                        // HACK: if loc is -1, we need to deal motive
+                        // damage
+                        // to
+                        // the tank, the severity of which is stored in
+                        // the
+                        // critslot index
+                        if (loc == -1) {
+                            addReport(vehicleMotiveDamage((Tank) entity,
+                                    0, true, cs.getIndex()));
+                        } else {
+                            addReport(applyCriticalHit(entity, loc, cs,
+                                    true, 0, false));
+                        }
+                    }
+                }
+                // do any PSR immediately
+                addReport(resolvePilotingRolls(entity));
+                game.resetPSRs(entity);
+                // let the player replot their move as MP might be
+                // changed
+                md.clear();
+                return true;
+            }
+        } else {
+            addReport(vReport);
+        }
+        return false;
     }
 
     /**

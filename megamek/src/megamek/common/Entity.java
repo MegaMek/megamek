@@ -13635,7 +13635,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc,
                                    HashMap<Integer, List<CriticalSlot>> vCriticals) {
-        if (masc != null) {
+        if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
             if (masc.getType().hasSubType(MiscType.S_SUPERCHARGER)
@@ -13663,10 +13663,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 if (((MiscType) (masc.getType()))
                         .hasSubType(MiscType.S_SUPERCHARGER)) {
-                    if (masc.getType().hasFlag(MiscType.F_MASC)) {
-                        masc.setHit(true);
-                        masc.setMode("Off");
-                    }
                     // do the damage - engine crits
                     int hits = 0;
                     int roll = Compute.d6(2);

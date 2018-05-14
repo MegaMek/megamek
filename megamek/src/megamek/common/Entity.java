@@ -11639,6 +11639,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : getWeaponList()) {
             if (mounted.getType() instanceof Weapon)
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
+                mounted.setModesForMapType();
         }
 
         for (Mounted misc : getMisc()) {

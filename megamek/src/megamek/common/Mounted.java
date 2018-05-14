@@ -1729,6 +1729,33 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return false;
     }
     
+    /**
+     * Method that adds/removes available capital missile modes as we move between space and atmospheric maps
+     * Called by Entity.setGameOptions(), which is in turn called during a mode change by server.
+     */
+    //Though we can't currently switch maps, this is needed to ensure space-only modes are removed on ground maps
+    public void setModesForMapType() {
+        //If the entity is not in space, remove these modes, which get set up based on game options in Weapon before game type is known
+        if (!getEntity().isSpaceborne()) {
+            getType().removeMode("Waypoint Launch Bearings-Only Extreme Detection Range");
+            getType().removeMode("Waypoint Launch Bearings-Only Long Detection Range");
+            getType().removeMode("Waypoint Launch Bearings-Only Medium Detection Range");
+            getType().removeMode("Waypoint Launch Bearings-Only Short Detection Range");
+            getType().removeMode("Waypoint Launch");
+            getType().removeMode("Tele-Operated");
+            getType().removeMode("Bearings-Only Extreme Detection Range");
+            getType().removeMode("Bearings-Only Long Detection Range");
+            getType().removeMode("Bearings-Only Medium Detection Range");
+            getType().removeMode("Bearings-Only Short Detection Range");
+        }
+        /*
+        //Placeholder. This will be used to add the space modes back when we're able to switch maps.
+        if (getEntity().isSpaceborne()) {
+            
+        }
+        */
+    }
+    
     public int getBaMountLoc() {
         return baMountLoc;
     }

@@ -4,6 +4,9 @@ v0.43.11-RC5-git
 + Data: Adding missing weights for infantry weapons.
 + PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
 + PR #696: Fixes #974: Edge Reroll for Superchargers Breaks Superchargers
++ PR #983: Implement "waypoint launch" for capital missiles
+		Prevent capital missiles from being fired in anything other than normal mode on non-space maps
+		Fix inability to switch firing modes on capital missiles
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

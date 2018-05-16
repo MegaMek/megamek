@@ -16,7 +16,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
     public InfantryPathRanker(Princess princess) {
         super(princess);
 
-        setFireControl(princess.getFireControl());
+        setFireControl(new InfantryFireControl(princess));
         setPathEnumerator(princess.getPrecognition().getPathEnumerator());
     }
 
@@ -175,7 +175,12 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             if (closest == null) {
                 return returnResponse;
             }
+            
             int range = closest.distance(finalCoords);
+            // assume that an enemy unit is highly unlikely to stand there and let you swarm them 
+            if(range <= 0) {
+                range = 1;
+            }
 
             // for infantry, facing doesn't matter (unless you're using "dig in" rules, but we're not there yet)
             returnResponse.addToMyEstimatedDamage(

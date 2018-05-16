@@ -236,7 +236,7 @@ public class FireControl {
             new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
 
-    private final Princess owner;
+    protected final Princess owner;
 
     /**
      * Constructor
@@ -2328,6 +2328,7 @@ public class FireControl {
                 maxDamage += weaponType.getDamage();
             }
         }
+        int alpha = 1;
         return maxDamage;
     }
 

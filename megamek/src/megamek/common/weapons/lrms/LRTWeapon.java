@@ -17,6 +17,8 @@ import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
@@ -35,7 +37,6 @@ public abstract class LRTWeapon extends MissileWeapon {
     public LRTWeapon() {
         super();
         ammoType = AmmoType.T_LRM_TORPEDO;
-        setModes(new String[] { "", "Indirect" });
         flags = flags.andNot(F_AERO_WEAPON);
     }
 
@@ -56,5 +57,19 @@ public abstract class LRTWeapon extends MissileWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_TORP;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

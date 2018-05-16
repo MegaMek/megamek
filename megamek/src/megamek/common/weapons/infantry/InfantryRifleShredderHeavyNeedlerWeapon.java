@@ -39,6 +39,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 150;
 		bv = 0.31;
+		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.34;
 		infantryRange = 0;

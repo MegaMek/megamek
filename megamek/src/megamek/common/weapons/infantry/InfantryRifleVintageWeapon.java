@@ -38,7 +38,7 @@ public class InfantryRifleVintageWeapon extends InfantryWeapon {
 		addLookupName("Vintage Assault Rifle");
 		ammoType = AmmoType.T_NA;
 		cost = 2000;
-		tonnage = 0;
+		tonnage = 0.0045;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.17;

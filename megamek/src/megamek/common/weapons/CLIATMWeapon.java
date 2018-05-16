@@ -19,6 +19,8 @@ import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.Server;
 
@@ -41,7 +43,6 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         techAdvancement.setTechRating(RATING_F);
         techAdvancement.setAvailability(new int[]{ RATING_X, RATING_X, RATING_F, RATING_E });
         
-        setModes(new String[] { "", "Indirect" }); // iATMS can IDF
     }
 
     /*
@@ -84,5 +85,19 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

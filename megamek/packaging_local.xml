@@ -51,6 +51,7 @@
             <fileset dir="lib/">
                 <include name="*.jar"/>
             </fileset>
+            <pathelement location="${propdir}"/>
         </path>
         <mapper>
             <chainedmapper>

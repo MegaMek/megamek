@@ -39,6 +39,7 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 8000;
 		bv = 4.75;
+		tonnage = .0108;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.93;
 		infantryRange = 2;

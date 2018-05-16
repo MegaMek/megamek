@@ -39,6 +39,7 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 60000;
 		bv = 0.0;
+        tonnage = 1.6;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
 		infantryDamage = 1.58;
 		infantryRange = 5;

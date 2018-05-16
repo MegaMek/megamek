@@ -1677,7 +1677,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
-        if (weapon.isKindRapidFire() && weapon.curMode().equals("Rapid")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) 
+                && weapon.curMode().equals("Rapid")) {
             toHit.addModifier(1, "AC rapid fire mode");
         }
 

@@ -29,6 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
@@ -1698,14 +1699,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return
      */
     public boolean isInBearingsOnlyMode() {
-        if ((curMode().equals("Bearings-Only Extreme Detection Range")
-                    || curMode().equals("Bearings-Only Long Detection Range")
-                    || curMode().equals("Bearings-Only Medium Detection Range")
-                    || curMode().equals("Bearings-Only Short Detection Range")
-                    || curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
-                    || curMode().equals("Waypoint Launch Bearings-Only Long Detection Range")
-                    || curMode().equals("Waypoint Launch Bearings-Only Medium Detection Range")
-                    || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")) 
+        if ((curMode().equals(Weapon.Mode_CapMissile_Bearing_Ext)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Long)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Med)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Short)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)) 
                 && getEntity().isSpaceborne()) {
             return true;
         }
@@ -1718,11 +1719,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return
      */
     public boolean isInWaypointLaunchMode() {
-        if ((curMode().equals("Waypoint Launch Bearings-Only Extreme Detection Range")
-                || curMode().equals("Waypoint Launch Bearings-Only Long Detection Range")
-                || curMode().equals("Waypoint Launch Bearings-Only Medium Detection Range")
-                || curMode().equals("Waypoint Launch Bearings-Only Short Detection Range")
-                || curMode().equals("Waypoint Launch")) 
+        if ((curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint)) 
             && getEntity().isSpaceborne()) {
             return true;
         }
@@ -1737,16 +1738,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModesForMapType() {
         //If the entity is not in space, remove these modes, which get set up based on game options in Weapon before game type is known
         if (!getEntity().isSpaceborne()) {
-            getType().removeMode("Waypoint Launch Bearings-Only Extreme Detection Range");
-            getType().removeMode("Waypoint Launch Bearings-Only Long Detection Range");
-            getType().removeMode("Waypoint Launch Bearings-Only Medium Detection Range");
-            getType().removeMode("Waypoint Launch Bearings-Only Short Detection Range");
-            getType().removeMode("Waypoint Launch");
-            getType().removeMode("Tele-Operated");
-            getType().removeMode("Bearings-Only Extreme Detection Range");
-            getType().removeMode("Bearings-Only Long Detection Range");
-            getType().removeMode("Bearings-Only Medium Detection Range");
-            getType().removeMode("Bearings-Only Short Detection Range");
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Long);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Med);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Short);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint);
+            getType().removeMode(Weapon.Mode_CapMissile_Tele_Operated);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Ext);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Long);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Med);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Short);
         }
         /*
         //Placeholder. This will be used to add the space modes back when we're able to switch maps.

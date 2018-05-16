@@ -29,6 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
@@ -1694,16 +1695,66 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     
     /**
      * Method that checks to see if our capital missile bay is in bearings-only mode
+     * Only available in space games
      * @return
      */
     public boolean isInBearingsOnlyMode() {
-        if (curMode().equals("Bearings-Only Extreme Detection Range")
-                    || curMode().equals("Bearings-Only Long Detection Range")
-                    || curMode().equals("Bearings-Only Medium Detection Range")
-                    || curMode().equals("Bearings-Only Short Detection Range")) {
+        if ((curMode().equals(Weapon.Mode_CapMissile_Bearing_Ext)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Long)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Med)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Short)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)) 
+                && getEntity().isSpaceborne()) {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Method that checks to see if our capital missile bay is in waypoint launch mode
+     * Only available in space games
+     * @return
+     */
+    public boolean isInWaypointLaunchMode() {
+        if ((curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint)) 
+            && getEntity().isSpaceborne()) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Method that adds/removes available capital missile modes as we move between space and atmospheric maps
+     * Called by Entity.setGameOptions(), which is in turn called during a mode change by server.
+     */
+    //Though we can't currently switch maps, this is needed to ensure space-only modes are removed on ground maps
+    public void setModesForMapType() {
+        //If the entity is not in space, remove these modes, which get set up based on game options in Weapon before game type is known
+        if (!getEntity().isSpaceborne()) {
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Long);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Med);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Short);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint);
+            getType().removeMode(Weapon.Mode_CapMissile_Tele_Operated);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Ext);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Long);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Med);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Short);
+        }
+        /*
+        //Placeholder. This will be used to add the space modes back when we're able to switch maps.
+        if (getEntity().isSpaceborne()) {
+            
+        }
+        */
     }
     
     public int getBaMountLoc() {

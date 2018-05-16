@@ -1070,6 +1070,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasFlag(WeaponType.F_MASS_DRIVER)) {
             toHit.addModifier(2, "Mass Driver to-hit Penalty");
         }
+        
+        //Capital missiles in waypoint launch mode
+        if (weapon.isInWaypointLaunchMode()) {
+            toHit.addModifier(1, "Weapon in Waypoint Launch Mode");
+        }
 
         if (te instanceof Entity && te.isAero() && te.isAirborne()) {
 

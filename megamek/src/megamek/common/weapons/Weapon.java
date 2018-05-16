@@ -45,6 +45,32 @@ public abstract class Weapon extends WeaponType implements Serializable {
         this.ammoType = AmmoType.T_NA;
         this.minimumRange = WEAPON_NA;
     }
+    
+    //Mode text tokens
+    public static final String Mode_Flamer_Damage = "Damage";
+    public static final String Mode_Flamer_Heat = "Heat";
+    
+    public static final String Mode_CapLaser_AAA = "AAA";
+    
+    public static final String Mode_Capital_Bracket_80 = "Bracket 80%";
+    public static final String Mode_Capital_Bracket_60 = "Bracket 60%";
+    public static final String Mode_Capital_Bracket_40 = "Bracket 40%";
+    
+    public static final String Mode_CapMissile_Waypoint_Bearing_Ext = "Waypoint Launch Bearings-Only Extreme Detection Range";
+    public static final String Mode_CapMissile_Waypoint_Bearing_Long = "Waypoint Launch Bearings-Only Long Detection Range";
+    public static final String Mode_CapMissile_Waypoint_Bearing_Med = "Waypoint Launch Bearings-Only Medium Detection Range";
+    public static final String Mode_CapMissile_Waypoint_Bearing_Short = "Waypoint Launch Bearings-Only Short Detection Range";
+    public static final String Mode_CapMissile_Waypoint = "Waypoint Launch";
+    
+    public static final String Mode_CapMissile_Bearing_Ext = "Bearings-Only Extreme Detection Range";
+    public static final String Mode_CapMissile_Bearing_Long = "Bearings-Only Long Detection Range";
+    public static final String Mode_CapMissile_Bearing_Med = "Bearings-Only Medium Detection Range";
+    public static final String Mode_CapMissile_Bearing_Short = "Bearings-Only Short Detection Range";
+    
+    public static final String Mode_CapMissile_Tele_Operated = "Tele-Operated";
+    
+    public static final String Mode_Normal = "Normal";
+    
 
     public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
         ToHitData toHit = waa.toHit(game);
@@ -118,18 +144,38 @@ public abstract class Weapon extends WeaponType implements Serializable {
                 }
 
             } else {
+                
+                if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
+                    setInstantModeSwitch(false);
+                    addMode(Mode_Normal);
+                    addMode(Mode_CapMissile_Waypoint);
+                    if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
+                        addMode(Mode_CapMissile_Waypoint_Bearing_Ext);
+                        addMode(Mode_CapMissile_Waypoint_Bearing_Long);
+                        addMode(Mode_CapMissile_Waypoint_Bearing_Med);
+                        addMode(Mode_CapMissile_Waypoint_Bearing_Short);
+                    } else {
+                        removeMode(Mode_CapMissile_Waypoint_Bearing_Ext);
+                        removeMode(Mode_CapMissile_Waypoint_Bearing_Long);
+                        removeMode(Mode_CapMissile_Waypoint_Bearing_Med);
+                        removeMode(Mode_CapMissile_Waypoint_Bearing_Short);
+                    }
+                } else {
+                    removeMode(Mode_CapMissile_Waypoint);
+                }
 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
                     setInstantModeSwitch(false);
-                    addMode("Bearings-Only Extreme Detection Range");
-                    addMode("Bearings-Only Long Detection Range");
-                    addMode("Bearings-Only Medium Detection Range");
-                    addMode("Bearings-Only Short Detection Range");
+                    addMode(Mode_Normal);
+                    addMode(Mode_CapMissile_Bearing_Ext);
+                    addMode(Mode_CapMissile_Bearing_Long);
+                    addMode(Mode_CapMissile_Bearing_Med);
+                    addMode(Mode_CapMissile_Bearing_Short);
                 } else {
-                    removeMode("Bearings-Only Extreme Detection Range");
-                    removeMode("Bearings-Only Long Detection Range");
-                    removeMode("Bearings-Only Medium Detection Range");
-                    removeMode("Bearings-Only Short Detection Range");
+                    removeMode(Mode_CapMissile_Bearing_Ext);
+                    removeMode(Mode_CapMissile_Bearing_Long);
+                    removeMode(Mode_CapMissile_Bearing_Med);
+                    removeMode(Mode_CapMissile_Bearing_Short);
                 }
             }
         }

@@ -46,9 +46,7 @@
     <showIncorrectIntroYear>
     true
     </showIncorrectIntroYear>
-    <introYearMargin>
-    5
-    </introYearMargin>
+    <introYearMargin>2</introYearMargin>
   </mech>
   <tank>
     <ceilWeight>
@@ -82,8 +80,6 @@
     <showIncorrectIntroYear>
     true
     </showIncorrectIntroYear>
-    <introYearMargin>
-    5
-    </introYearMargin>
+    <introYearMargin>2</introYearMargin>
   </tank>
 </entityverifier>

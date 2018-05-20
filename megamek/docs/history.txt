@@ -8,6 +8,7 @@ v0.43.11-RC5-git
 		Prevent capital missiles from being fired in anything other than normal mode on non-space maps
 		Fix inability to switch firing modes on capital missiles
 + PR #963: Fix for glitchy-looking empty hexes near window edges when rendering large/zoomed maps in isometric mode
++ Updated RAT generator files with dropship name changes and conformed mechs and vehicles to MUL early SW era.
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

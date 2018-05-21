@@ -57,8 +57,6 @@ Tracked
 </armor>
 
 <Body Equipment>
-CLMG
-CLMG
 Clan Streak SRM 6 Ammo
 Clan Streak SRM 6 Ammo
 Clan Machine Gun Ammo - Half
@@ -71,9 +69,11 @@ CLStreakSRM6
 </Front Equipment>
 
 <Right Equipment>
+CLMG
 </Right Equipment>
 
 <Left Equipment>
+CLMG
 </Left Equipment>
 
 <Rear Equipment>

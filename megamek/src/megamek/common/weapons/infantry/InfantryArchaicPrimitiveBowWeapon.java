@@ -38,7 +38,7 @@ public class InfantryArchaicPrimitiveBowWeapon extends InfantryWeapon {
 		addLookupName("Primitive Bow");
 		ammoType = AmmoType.T_NA;
 		cost = 5;
-		tonnage = 0.001f;
+		tonnage = 0.001;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
 		infantryDamage = 0.02;

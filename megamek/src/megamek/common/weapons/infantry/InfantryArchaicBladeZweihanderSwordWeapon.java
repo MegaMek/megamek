@@ -38,7 +38,7 @@ public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
 		addLookupName("ZweihanderSword");
 		ammoType = AmmoType.T_NA;
 		cost = 60;
-		tonnage = 0.0051f;
+		tonnage = 0.0051;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.05;

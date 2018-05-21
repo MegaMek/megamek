@@ -41,6 +41,7 @@ public class InfantryRifleThunderstrokeIIWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 3500;
 		bv = 2.71;
+		tonnage = .0065;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.53;
 		infantryRange = 2;

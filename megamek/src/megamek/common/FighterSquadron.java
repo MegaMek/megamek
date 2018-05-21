@@ -111,6 +111,16 @@ public class FighterSquadron extends Aero {
                 .mapToInt(fid -> ((IAero) game.getEntity(fid)).getCap0Armor())
                 .sum();
     }
+    
+    /*
+     * Per SO, fighter squadrons can't actually be crippled
+     * Individual crippled fighters should be detached and sent home, but it isn't required by the rules
+     * @see megamek.common.Aero#isCrippled()
+     */
+    @Override
+    public boolean isCrippled() {
+        return false;
+    }
 
     /**
      * Returns the percent of the armor remaining
@@ -145,12 +155,11 @@ public class FighterSquadron extends Aero {
     }
 
     /*
-     * base this on the max size of the fighter squadron, since the initial size
-     * can fluctuate due to joining and splitting
+     * Squadrons have an SI for PSR purposes, but don't take SI damage. This should return 100%.
      */
     @Override
     public double getInternalRemainingPercent() {
-        return (getActiveSubEntities().orElse(Collections.emptyList()).size() * 1.0 / getMaxSize());
+        return 1.0;
     }
 
     @Override

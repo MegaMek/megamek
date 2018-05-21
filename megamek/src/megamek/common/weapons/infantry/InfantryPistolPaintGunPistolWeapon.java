@@ -39,6 +39,7 @@ public class InfantryPistolPaintGunPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 50;
 		bv = 0;
+		tonnage = .0018;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.0;
 		infantryRange = 0;

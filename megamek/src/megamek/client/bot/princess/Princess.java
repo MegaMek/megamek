@@ -55,6 +55,7 @@ import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.Transporter;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
@@ -712,10 +713,17 @@ public class Princess extends BotClient {
         final StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (final Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
+            
+            if(entity.isDone()) {
+                msg.append("has already moved this phase");
+                continue;
+            }
+            
             if ((entity.isOffBoard() 
-                || (null == entity.getPosition())
-                || !getGame().getTurn().isValidEntity(entity, getGame()))
-                && !getGame().isPhaseSimultaneous()) {
+                    || (null == entity.getPosition())
+                    || entity.isUnloadedThisTurn()
+                    || !getGame().getTurn().isValidEntity(entity, getGame()))
+                            && !getGame().isPhaseSimultaneous()){
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -1630,20 +1638,84 @@ public class Princess extends BotClient {
     }
     
     /**
-     * Helper function to perform some modifications to a given path
-     * Currently insinuates an "evasion" step for aircraft that will not be shooting.
+     * Helper function to perform some modifications to a given path.
+     * Intended to happen after we pick the best path. 
      * @param path The path to process
      */
     private void performPathPostProcessing(final RankedPath path) {
+        evadeIfNotFiring(path);
+        unloadTransportedInfantry(path);
+    }
+    
+    /**
+     * Helper function that insinuates an "evade" step for aircraft that will not be shooting.
+     * @param path The path to process
+     */
+    private void evadeIfNotFiring(final RankedPath path) {
         // if we're an airborne aircraft
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR
         // then evade
         if(path.getPath().getEntity().isAirborne() &&
-           (0 == path.getExpectedDamage()) &&
+           (0 >= path.getExpectedDamage()) &&
            (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath()
                                                                                                   .getEntity()) - 2)) {
             path.getPath().addStep(MoveStepType.EVADE);
+        }
+    }
+    
+    /**
+     * Helper function that adds an "unload" step for units that are transporting infantry
+     * if the conditions for unloading are favorable.
+     * 
+     * Infantry unloading logic is different from, for example, hot-dropping mechs or launching aerospace fighters,
+     * so we handle it separately.
+     * @param path The path to modify
+     */
+    private void unloadTransportedInfantry(final RankedPath path) {
+        // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
+        // behind. They're not that good at screening against high speed pursuit anyway.
+        if(getBehaviorSettings().shouldGoHome()) {
+            return;
+        }
+        
+        Entity movingEntity = path.getPath().getEntity();
+        Coords pathEndpoint = path.getPath().getFinalCoords();
+        Entity closestEnemy = getPathRanker().findClosestEnemy(movingEntity, pathEndpoint, getGame());
+
+        // if there are no enemies on the board, then we're not unloading anything.
+        if(null == closestEnemy) {
+            return;
+        }
+        
+        int distanceToClosestEnemy = pathEndpoint.distance(closestEnemy.getPosition());
+        
+        // loop through all entities carried by the current entity
+        for(Transporter transport : movingEntity.getTransports()) {
+            for(Entity loadedEntity : transport.getLoadedUnits()) {
+                // favorable conditions include: 
+                // - the loaded entity should be able to enter the current terrain
+                // - the loaded entity should be within max weapons range + movement range of an enemy
+                // - unloading the loaded entity cannot violate stacking limits
+                // - only one unit 
+                
+                // this condition is a simple check that we're not unloading infantry into deep space
+                // or into lava or some other such nonsense
+                boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                        loadedEntity.isLocationProhibited(pathEndpoint);
+                
+                // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, pathEndpoint, movingEntity) != null;
+                
+                // this is a primitive condition that checks whether we're within "engagement range" of an enemy
+                // where "engagement range" is defined as the maximum range of our weapons plus our walking movement
+                boolean inEngagementRange = loadedEntity.getWalkMP() + loadedEntity.getMaxWeaponRange() >= distanceToClosestEnemy;
+                
+                if(!unloadFatal && !unloadIllegal && inEngagementRange) {
+                    path.getPath().addStep(MoveStepType.UNLOAD, loadedEntity, pathEndpoint);
+                    return; // we can only unload one infantry unit per hex per turn, so once we've unloaded, we're done. 
+                }
+            }
         }
     }
 

@@ -40,10 +40,11 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 250;
         bv = 0.19;
+        tonnage = .0027;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 1;
-        rulesRefs = "273,TM";
+        rulesRefs = "176,HBHK";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2600, 2620, 2630);
         techAdvancement.setTechRating(RATING_C);

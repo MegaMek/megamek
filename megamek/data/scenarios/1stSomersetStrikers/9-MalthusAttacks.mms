@@ -4,7 +4,7 @@ Name=MALTHUS ATTACKS (EPISODE 13)
 Description=The Strikers battle the clan garrison on Somerset.  The Somerset cadets are armed and join the fight.
 BoardWidth=1
 BoardHeight=2
-Maps=scenarios/citytech(SMA),battletech
+Maps=scenarios/citytech(SMA),MapSet2/16x17 BattleTech
 # Place Light Elevation 1 buildings in Hexes 0606, 0608, 0610, 1006, 1008, and 1010.  Place a Medium Elevation 2 building in Hex 0806.
 Factions=FalconsClaws,1stSomersetStrikers
 Location_FalconsClaws=S

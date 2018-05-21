@@ -38,6 +38,7 @@ public class InfantryRifleStalkerSniperRifleWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 5000;
         bv = .25;
+        tonnage = .009;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.25;
         infantryRange = 2;

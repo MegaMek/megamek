@@ -27,6 +27,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
@@ -170,7 +171,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
-                || !advancedPD) {
+                || !advancedPD
+                //Don't defend against ground fire with bay fire unless attacked by bay fire
+                //Prevents ammo and heat being used twice for dropships defending here and with getAMSHitsMod()
+                || (waa.isGroundToAir(game) && !ae.usesWeaponBays())) {
+            return false;
+        }
+        if (target instanceof Dropship 
+                && waa.isAirToGround(game)
+                && !ae.usesWeaponBays()
+                && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER)) {
+            //Prevents a grounded dropship using individual weapons from engaging with AMSBays unless attacked by a dropship or capital fighter
+            //You can get some blank missile weapons fire reports due to the attackvalue / ndamageperhit conversion if this isn't done
             return false;
         }
         return true;
@@ -266,11 +278,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     
                     // build up some heat
                     //First Check to see if we have enough heat capacity to fire
-                    if (pdOverheated) {
-                        continue;
-                    } else if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                    if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
                         pdOverheated = true;
-                        continue;
+                        break;
                     }
                     if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
                         int heatDice = Compute.d6(bayW
@@ -919,7 +929,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
-            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if ((target.isAirborne() && !waa.isGroundToAir(game)) || game.getBoard().inSpace() || ae.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {

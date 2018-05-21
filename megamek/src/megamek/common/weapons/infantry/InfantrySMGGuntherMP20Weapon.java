@@ -39,6 +39,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 125;
 		bv = 0.30;
+		tonnage = .0025;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.33;
 		infantryRange = 0;

@@ -139,6 +139,10 @@ class EntitySprite extends Sprite {
     }
 
     private void updateLabel() {
+        Rectangle oldRect = new Rectangle();
+        if (labelRect != null)
+            oldRect = new Rectangle(labelRect);
+        
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? 
                 Font.ITALIC : Font.PLAIN;
         labelFont = new Font("SansSerif", face, (int)(10*Math.max(bv.scale,0.9))); //$NON-NLS-1$
@@ -173,8 +177,19 @@ class EntitySprite extends Sprite {
         } 
 
         // If multiple units are present in a hex, fan out the labels
-        labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
-                bv.game.getEntitiesVector(position).indexOf(entity);
+        // In the deployment phase, indexOf returns -1 for the current unit
+        int indexEntity = bv.game.getEntitiesVector(position).indexOf(entity);
+        if (indexEntity != -1) {
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
+                    indexEntity;
+        } else {
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
+                    bv.game.getEntitiesVector(position).size();
+        }
+
+        // If the label has changed, force a redraw (necessary
+        // for the Deployment phase
+        if (!labelRect.equals(oldRect)) image = null;
     }
 
     // Happy little class to hold status info until it gets drawn

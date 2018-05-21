@@ -23,6 +23,8 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -39,7 +41,6 @@ public abstract class PPCWeapon extends EnergyWeapon {
 
     public PPCWeapon() {
         super();
-        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         flags = flags.or(F_DIRECT_FIRE).or(F_PPC);
         atClass = CLASS_PPC;
     }
@@ -82,5 +83,22 @@ public abstract class PPCWeapon extends EnergyWeapon {
             }
         }
         return damage / 10.0;        
+    }
+
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Modes for disengaging PPC field inhibitors according to TacOps, p.103.
+        // The benefit is removing the minimum range, so only PPCs with a minimum range get the modes.
+        if (minimumRange > 0) {
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) { 
+                addMode("Field Inhibitor ON");
+                addMode("Field Inhibitor OFF");
+            } else {
+                removeMode("Field Inhibitor ON");
+                removeMode("Field Inhibitor OFF");
+            }
+        }
     }
 }

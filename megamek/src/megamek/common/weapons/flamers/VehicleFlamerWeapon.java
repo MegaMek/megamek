@@ -45,8 +45,6 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON)
                 .or(F_FLAMER).or(F_ENERGY).or(F_BURST_FIRE);
         ammoType = AmmoType.T_VEHICLE_FLAMER;
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
         atClass = CLASS_POINT_DEFENSE;
     }
 

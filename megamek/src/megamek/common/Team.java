@@ -30,6 +30,7 @@ public final class Team extends TurnOrdered {
     private static final long serialVersionUID = 2270215552964191597L;
     private Vector<IPlayer> players = new Vector<IPlayer>();
     private int id;
+    private Boolean ObserverTeam = null;
 
     public Team(int newID) {
         id = newID;
@@ -39,8 +40,28 @@ public final class Team extends TurnOrdered {
         return players.size();
     }
 
+    public int getNonObserverSize() {
+        int nonObservers = 0;
+        for (int i = 0; i < players.size(); i++) {
+            if (!players.get(i).isObserver()) {
+                nonObservers++;
+            }
+        }
+        return nonObservers;
+    }
+
     public Enumeration<IPlayer> getPlayers() {
         return players.elements();
+    }
+
+    public Enumeration<IPlayer> getNonObserverPlayers() {
+        Vector<IPlayer> nonObservers = new Vector<IPlayer>();
+        for (int i = 0; i < players.size(); i++) {
+            if (!players.get(i).isObserver()) {
+                nonObservers.add(players.get(i));
+            }
+        }
+        return nonObservers.elements();
     }
     
     public Vector<IPlayer> getPlayersVector() {
@@ -53,6 +74,22 @@ public final class Team extends TurnOrdered {
 
     public void addPlayer(IPlayer p) {
         players.addElement(p);
+    }
+    
+    public boolean isObserverTeam() {
+        if (ObserverTeam == null) {
+            cacheObversverStatus();
+        }
+        return ObserverTeam.booleanValue();
+    }
+    
+    public void cacheObversverStatus() {
+        ObserverTeam = new Boolean(true);
+        for (int i = 0; i < players.size(); i++) {
+            if (!players.get(i).isObserver()) {
+                ObserverTeam = false;
+            }
+        }
     }
 
     //get the next player on this team.
@@ -278,14 +315,19 @@ public final class Team extends TurnOrdered {
         return constantb + turnb + commandb
                 + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
+    
+    @Override
+    public int getInitCompensationBonus() {
+        return getInitCompensationBonus(true);
+    }
 
     public int getInitCompensationBonus(boolean bUseInitCompensation) {
         int nInitCompBonus = 0;
 
         if (bUseInitCompensation) {
             for (IPlayer player : getPlayersVector()) {
-                if (player.getCompensationInitBonus() > nInitCompBonus) {
-                    nInitCompBonus = player.getCompensationInitBonus();
+                if (player.getInitCompensationBonus() > nInitCompBonus) {
+                    nInitCompBonus = player.getInitCompensationBonus();
                 }
             }
         }
@@ -293,10 +335,11 @@ public final class Team extends TurnOrdered {
         return nInitCompBonus;
     }
 
+    @Override
     public void setInitCompensationBonus(int nNewValue) {
         for (Enumeration<IPlayer> p = getPlayers(); p.hasMoreElements(); ) {
             IPlayer player = p.nextElement();
-            player.setCompensationInitBonus(nNewValue);
+            player.setInitCompensationBonus(nNewValue);
         }
     }
 

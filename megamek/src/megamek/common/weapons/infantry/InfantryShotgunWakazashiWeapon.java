@@ -38,10 +38,11 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 180;
         bv = 0.35;
+        tonnage = .0052;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.23;
         infantryRange = 0;
-        rulesRefs =" 273,TM";
+        rulesRefs =" 176,HBHK";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
         techAdvancement.setTechRating(RATING_D);

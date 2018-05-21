@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2290-Inner Sphere2310-Inner Sphere2295-Inner Sphere,2290-IS_Experimental2310-IS_Box_Set2295-IS_Advanced,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,2285-Inner Sphere,2285-IS_Experimental,Primitive Prototype Medium Laser,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -3084,11 +3084,11 @@ M,2820-Clan2830-Clan2815-Clan,2820-Clan_Advanced2830-Clan_TW2815-Clan_Experiment
 M,3051-Inner Sphere3069-Inner Sphere3070-Inner Sphere,3051-IS_Experimental3069-IS_Advanced3070-IS_TW_Non_Box,IS Heavy Ferro-Aluminum,IS Heavy Ferro-Aluminum Armor,
 M,3050-Inner Sphere3067-Inner Sphere3070-Inner Sphere,3050-IS_Experimental3067-IS_Advanced3070-IS_TW_Non_Box,IS Light Ferro-Aluminum,IS Light Ferro-Aluminum Armor,
 M,3076-Inner Sphere3061-Inner Sphere3047-Inner Sphere,3076-IS_Advanced3061-IS_Experimental3047-IS_Experimental,IS Hardened,Clan Hardened,
-M,2434-Inner Sphere2425-Inner Sphere,2434-IS_TW_Non_Box2425-IS_Experimental,IS Industrial ,Clan Industrial Armor,
+M,2434-Inner Sphere2425-Inner Sphere,2434-IS_TW_Non_Box2425-IS_Experimental,IS Industrial ,Clan Industrial ,Clan Industrial Armor,
 M,2100-Inner Sphere2310-Inner Sphere2285-Inner Sphere,2100-IS_Experimental2310-IS_TW_Non_Box2285-IS_Advanced,IS Primitive,
 M,2100-Inner Sphere2310-Inner Sphere2295-Inner Sphere,2100-IS_Experimental2310-IS_TW_Non_Box2295-IS_Advanced,IS Primitive Fighter,
-M,2465-Inner Sphere2470-Inner Sphere2460-Inner Sphere,2465-IS_Advanced2470-IS_TW_Non_Box2460-IS_Experimental,IS Heavy Industrial,
-M,2310-Inner Sphere2295-Inner Sphere2285-Inner Sphere,2310-IS_TW_Non_Box2295-IS_Advanced2285-IS_Experimental,IS Commercial,
+M,2465-Inner Sphere2470-Inner Sphere2460-Inner Sphere,2465-IS_Advanced2470-IS_TW_Non_Box2460-IS_Experimental,IS Heavy Industrial,Clan Heavy Industrial,
+M,2310-Inner Sphere2295-Inner Sphere2285-Inner Sphere,2310-IS_TW_Non_Box2295-IS_Advanced2285-IS_Experimental,IS Commercial,Clan Commercial,
 M,3109-Clan3070-Clan,3109-Clan_Advanced3070-Clan_Experimental,Clan Ferro-Lamellor,
 M,2466-Inner Sphere,2466-IS_Experimental,IS Endo Steel Prototype,IS Endo Steel Prototype,IS Endo-Steel Prototype,
 M,3057-Inner Sphere3079-Inner Sphere3065-Inner Sphere,3057-IS_Experimental3079-IS_Advanced3065-IS_Experimental,Reinforced,IS Reinforced,Clan Reinforced,
@@ -3204,7 +3204,8 @@ M,2295-Inner Sphere2490-Inner Sphere2350-Inner Sphere,2295-IS_Experimental2490-I
 M,2295-Inner Sphere2490-Inner Sphere2350-Inner Sphere,2295-IS_Experimental2490-IS_TW_Non_Box2350-IS_Advanced,Extended Fuel Tank (3.5 tons),
 M,2295-Inner Sphere2490-Inner Sphere2350-Inner Sphere,2295-IS_Experimental2490-IS_TW_Non_Box2350-IS_Advanced,Extended Fuel Tank (4 tons),
 M,3053-Inner Sphere,3053-IS_Experimental,Blue Shield Particle Field Damper,
-M,3073-Inner Sphere3080-Inner Sphere3067-Inner Sphere,3073-IS_Experimental3080-IS_Advanced3067-IS_Experimental,Endo-Composite,IS Endo-Composite,Clan Endo-Composite,
+M,3080-Inner Sphere3067-Inner Sphere,3080-IS_Advanced3067-IS_Experimental,IS Endo-Composite,IS Endo-Composite,
+M,3073-Clan,3073-Clan_Experimental,Clan Endo-Composite,Clan Endo-Composite,
 M,2575-Inner Sphere,2575-IS_Experimental,ISLaserInsulator,CLLaserInsulator,
 M,3025-Inner Sphere3015-Inner Sphere,3025-IS_Advanced3015-IS_Experimental,ISElectronicWarfareEquipment,
 M,2710-Inner Sphere2695-Inner Sphere,2710-IS_Advanced2695-IS_Experimental,ISCollapsibleCommandModule,ISCCM,CollapsibleCommandModule,

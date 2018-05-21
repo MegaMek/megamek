@@ -112,33 +112,33 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.newlines = 0;
                 r.subject = subjectId;
                 r.add(wtype.getName());
-                r.add(aaa.turnsTilHit);
+                r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
 
                 artyMsg = "Artillery fire Incoming, landing on round "
-                        + (game.getRoundCount() + aaa.turnsTilHit)
+                        + (game.getRoundCount() + aaa.getTurnsTilHit())
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
                 game.getBoard().addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(),
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
-                                        .getRoundCount() + aaa.turnsTilHit,
+                                        .getRoundCount() + aaa.getTurnsTilHit(),
                                 game.getPlayer(aaa.getPlayerId()), artyMsg,
                                 SpecialHexDisplay.SHD_OBSCURED_TEAM));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
             // off-board attack phase that follows.
-            if (aaa.turnsTilHit == 0) {
+            if (aaa.getTurnsTilHit() == 0) {
                 setAnnouncedEntityFiring(false);
             }
             return true;
         }
-        if (aaa.turnsTilHit > 0) {
-            aaa.turnsTilHit--;
+        if (aaa.getTurnsTilHit() > 0) {
+            aaa.decrementTurnsTilHit();
             return true;
         }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();

@@ -38,7 +38,7 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
 		addLookupName("ShockStaff");
 		ammoType = AmmoType.T_NA;
 		cost = 1500;
-		tonnage = 0.003f;
+		tonnage = 0.003;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING);
 		infantryDamage = 0.21;

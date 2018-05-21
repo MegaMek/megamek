@@ -21,6 +21,8 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMAntiTSMHandler;
 import megamek.common.weapons.LRMDeadFireHandler;
@@ -54,7 +56,6 @@ public abstract class MMLWeapon extends MissileWeapon {
     public MMLWeapon() {
         super();
         this.ammoType = AmmoType.T_MML;
-        this.setModes(new String[] { "", "Indirect" });
         this.atClass = CLASS_MML;
     }
 
@@ -162,5 +163,19 @@ public abstract class MMLWeapon extends MissileWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

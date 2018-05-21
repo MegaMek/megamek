@@ -40,6 +40,7 @@ public class InfantrySupportRocketLauncherVLAWWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 75;
 		bv = 1.47;
+		tonnage = .0022;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
 		infantryDamage = 0.48;
 		infantryRange = 1;

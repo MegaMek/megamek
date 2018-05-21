@@ -1722,7 +1722,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolTKEnforcerAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolTranqGunWeapon());
         EquipmentType.addType(new InfantryPistolWhiteDwarfLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistoMachinePistolSPEC7AWeapon());
+        EquipmentType.addType(new InfantryPistolSMGGHTSpec7aWeapon());
         EquipmentType.addType(new InfantryPistolVintageWeapon());
 
         //Clan Pistols - Commented out can be considered Obsolete

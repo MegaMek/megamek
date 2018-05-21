@@ -39,6 +39,7 @@ public class InfantryArchaicStunstickWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 200;
 		bv = 0.06;
+        tonnage = .0002; 
 		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.07;
 		infantryRange = 0;

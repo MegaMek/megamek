@@ -40,6 +40,7 @@ public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
 		tonnage = 0.0012;
 		cost = 18000;
 		bv = 9.82;
+		tonnage = .012;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
 		infantryDamage = 1.37;
 		infantryRange = 3;

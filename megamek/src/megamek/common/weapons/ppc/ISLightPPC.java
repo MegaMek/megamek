@@ -46,7 +46,6 @@ public class ISLightPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         tonnage = 3.0f;
         criticals = 2;
         bv = 88;

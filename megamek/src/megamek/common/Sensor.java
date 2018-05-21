@@ -47,6 +47,10 @@ public class Sensor implements Serializable {
     public static final int TYPE_EW_EQUIPMENT = 15;
     public static final int TYPE_NOVA = 16;
     public static final int TYPE_BAPP = 17;
+    public static final int TYPE_AERO_SENSOR = 18;
+    //TODO: These are placeholders and will be implemented in a later PR
+    public static final int TYPE_SPACECRAFT_ACTIVE = 19;
+    public static final int TYPE_SPACECRAFT_PASSIVE = 20;
 
     public static final String WATCHDOG = "WatchdogECMSuite";
     public static final String NOVA = "NovaCEWS";
@@ -65,7 +69,8 @@ public class Sensor implements Serializable {
             "Beagle Active Probe", "Clan BAP", "Bloodhound AP", "Watchdog",
             "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan",
             "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
-            "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype"};
+            "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype", 
+            "Aero Sensor Suite", "Spacecraft Active Sensor Suite", "Spacecraft Passive Sensor Suite"};
     public static final int SIZE = sensorNames.length;
 
     /**
@@ -116,6 +121,9 @@ public class Sensor implements Serializable {
                 return 9;
             case TYPE_MEK_MAGSCAN:
             case TYPE_MEK_IR:
+                //Under the current errata (3.0,Dec 2017), the rules only give aero sensor ranges against overflown ground units
+                //No differences in range are mentioned for any sensor but active probe, so I'm assuming magscan range for standard sensors
+            case TYPE_AERO_SENSOR:
                 return 10;
             case TYPE_MEK_RADAR:
                 return 8;
@@ -140,7 +148,7 @@ public class Sensor implements Serializable {
                 && ((los.getHardBuildings() + los.getSoftBuildings()) > 0)) {
             return 0;
         }
-
+        
         if (los.isBlockedByHill()
                 && (type != TYPE_MEK_SEISMIC)
                 && (type != TYPE_VEE_SEISMIC)

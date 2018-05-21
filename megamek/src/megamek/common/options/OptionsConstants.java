@@ -477,6 +477,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_STRATOPS_OVER_PENETRATE= "stratops_over_penetrate";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_SPACE_BOMB= "stratops_space_bomb";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH= "stratops_bearings_only";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH= "stratops_waypoint_launch";  //$NON-NLS$
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
     public static final String ADVAERORULES_AT2_NUKES= "at2_nukes";  //$NON-NLS$
     public static final String ADVAERORULES_AERO_SANITY= "aero_sanity";  //$NON-NLS$

@@ -97,6 +97,7 @@ public class ScenarioLoader {
     private static final String PARAM_BOARD_HEIGHT = "BoardHeight"; //$NON-NLS-1$
     private static final String PARAM_BRIDGE_CF = "BridgeCF"; //$NON-NLS-1$
     private static final String PARAM_MAPS = "Maps"; //$NON-NLS-1$
+    private static final String PARAM_MAP_DIRECTORIES = "RandomDirs"; //$NON-NLS-1$
 
     private static final String PARAM_TEAM = "Team"; //$NON-NLS-1$
     private static final String PARAM_LOCATION = "Location"; //$NON-NLS-1$
@@ -843,9 +844,24 @@ public class ScenarioLoader {
         // basically copied from Server.java. Should get moved somewhere neutral
         List<String> boards = new ArrayList<>();
 
-        for(String file : Configuration.boardsDir().list()) {
-            if(file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
-                boards.add(file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
+        // Find subdirectories given in the scenario file
+        List<String> allDirs = new LinkedList<>();
+        // "" entry stands for the boards base directory 
+        allDirs.add("");
+
+        if (p.getString(PARAM_MAP_DIRECTORIES) != null) {
+            allDirs = Arrays.asList(p.getString(PARAM_MAP_DIRECTORIES)
+                    .split(SEPARATOR_COMMA, -1));
+        }
+
+        for (String dir: allDirs) {
+            File curDir = new File(Configuration.boardsDir(), dir);
+            if (curDir.exists()) {
+                for(String file : curDir.list()) {
+                    if(file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
+                        boards.add(dir+"/"+file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
+                    }
+                }
             }
         }
 

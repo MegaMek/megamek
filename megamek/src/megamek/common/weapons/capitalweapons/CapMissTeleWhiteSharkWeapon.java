@@ -42,6 +42,9 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
         this.name = "Tele-operated Missile (White Shark-T)";
         this.setInternalName(this.name);
         this.addLookupName("WhiteSharkT");
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 15;
         this.damage = 3;
         this.ammoType = AmmoType.T_WHITE_SHARK_T;
@@ -85,7 +88,7 @@ public class CapMissTeleWhiteSharkWeapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE))
+        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace())
             return new WhiteSharkTHandler(toHit, waa, game, server);
         return new WhiteSharkHandler(toHit, waa, game, server);
     }

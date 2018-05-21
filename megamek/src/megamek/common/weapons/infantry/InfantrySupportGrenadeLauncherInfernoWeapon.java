@@ -40,6 +40,7 @@ public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon 
 		ammoType = AmmoType.T_NA;
 		cost = 465;
 		bv = 1.04;
+		tonnage = .005;
 		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);

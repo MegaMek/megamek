@@ -512,21 +512,45 @@ public class Jumpship extends Aero {
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
         case LOC_NOSE:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_NOSE_WPL;
+                break;
+            }
             arc = Compute.ARC_NOSE;
             break;
         case LOC_FRS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDE_SPHERE;
             break;
         case LOC_FLS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDE_SPHERE;
             break;
         case LOC_ARS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
             break;
         case LOC_ALS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDEA_SPHERE;
             break;
         case LOC_AFT:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_AFT_WPL;
+                break;
+            }
             arc = Compute.ARC_AFT;
             break;
         default:

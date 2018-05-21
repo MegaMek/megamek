@@ -12,6 +12,7 @@ v0.43.11-RC5-git
 + Updated RAT generator files with dropship name changes and conformed mechs and vehicles to MUL early SW era.
 + Data: New and Fixed RATs (thanks mkerensky)
 + Data: Various minor data fixes, including fix for #984,#719
++ Data: Fixing #906 Incorrect heat for Prototype Rocket Launcher 15 
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

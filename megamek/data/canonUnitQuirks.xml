@@ -10534,7 +10534,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Phoenix</chassis>
 		<model>PX-3R</model>
 		<unitType>Mech</unitType>
-		<quirk>em_inter_whole</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>direct_torso_mount</weaponQuirkName>
 			<location>LT</location>
@@ -10553,7 +10552,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Phoenix</chassis>
 		<model>PX-4R</model>
 		<unitType>Mech</unitType>
-		<quirk>em_inter_whole</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>direct_torso_mount</weaponQuirkName>
 			<location>LT</location>
@@ -10568,6 +10566,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<quirk>poor_work</quirk>
 		<quirk>weak_legs</quirk>
+		<quirk>em_inter_whole</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>direct_torso_mount</weaponQuirkName>
 			<location>LT</location>

@@ -2342,25 +2342,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private void drawHexes(Graphics g, Rectangle view, boolean saveBoardImage) {
         // only update visible hexes
-        int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
-        int drawY = (int) (view.y / (HEX_H * scale)) - 1;
+        double xs = (int) (HEX_WC*scale);
+        double ys = (int) (HEX_H*scale);
+        
+        int drawX = (int) (view.x / xs) - 1;
+        int drawY = (int) (view.y / ys) - 1;
 
-        int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
-        int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
-
+        int drawWidth = (int) (view.width / xs) + 3;
+        int drawHeight = (int) (view.height / ys) + 3;
+        
         // draw some hexes.
         if (useIsometric()) {
-            // When using isometric rendering, hexes within a given row
-            // must be drawn from lowest to highest elevation.
             IBoard board = game.getBoard();
-            final int minElev = board.getMinElevation();
-            final int maxElev = board.getMaxElevation();
-            for (int i = 0; i < drawHeight; i++) {
-                for (int x = minElev; x <= maxElev; x++) {
-                    for (int j = 0; j < drawWidth; j++) {
-                        Coords c = new Coords(j + drawX, i + drawY);
+            for (int y = 0; y < drawHeight; y++) {
+                // Half of each row is one-half hex
+                // farther back (above) the other; draw those first
+                for (int s = 0; s <= 1; s++) {
+                    for (int x = s; x < drawWidth+s+1; x=x+2) {
+                        // For s == 0 the x coordinate MUST be an even number
+                        // to get correct occlusion; drawX may be any int though
+                        Coords c = new Coords(x + drawX/2*2, y + drawY);
                         IHex hex = board.getHex(c);
-                        if ((hex != null) && (hex.getLevel() == x)) {
+                        if ((hex != null)) { 
                             drawHex(c, g, saveBoardImage);
                             if (GUIPreferences.getInstance()
                                     .getShowFieldOfFire()) {
@@ -2374,14 +2377,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 drawHexBorder(g, getHexLocation(c),
                                         Color.yellow);
                             }
+                            drawOrthograph(c, g);
                         }
                     }
                 }
-                for (int k = 0; k < drawWidth; k++) {
-                    Coords c = new Coords(k + drawX, i + drawY);
+                for (int x = 0; x < drawWidth; x++) {
+                    Coords c = new Coords(x + drawX, y + drawY);
                     IHex hex = board.getHex(c);
                     if (hex != null) {
-                        drawOrthograph(c, g);
                         if (!saveBoardImage) {
                             if (GUIPreferences.getInstance().getShowWrecks()) {
                                 drawIsometricWreckSpritesForHex(c, g,

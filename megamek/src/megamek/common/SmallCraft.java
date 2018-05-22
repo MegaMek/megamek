@@ -449,23 +449,47 @@ public class SmallCraft extends Aero {
         if (!isSpheroid()) {
             switch (mounted.getLocation()) {
                 case LOC_NOSE:
+                    if (mounted.isInWaypointLaunchMode()) {
+                        arc = Compute.ARC_NOSE_WPL;
+                        break;
+                    }
                     arc = Compute.ARC_NOSE;
                     break;
                 case LOC_RWING:
                     if (mounted.isRearMounted()) {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_RWINGA_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_RWINGA;
                     } else {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_RWING_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_RWING;
                     }
                     break;
                 case LOC_LWING:
                     if (mounted.isRearMounted()) {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_LWINGA_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_LWINGA;
                     } else {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_LWING_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_LWING;
                     }
                     break;
                 case LOC_AFT:
+                    if (mounted.isInWaypointLaunchMode()) {
+                        arc = Compute.ARC_AFT_WPL;
+                        break;
+                    }
                     arc = Compute.ARC_AFT;
                     break;
                 default:
@@ -475,23 +499,47 @@ public class SmallCraft extends Aero {
             if ((game != null) && game.getBoard().inSpace()) {
                 switch (mounted.getLocation()) {
                     case LOC_NOSE:
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_NOSE_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_NOSE;
                         break;
                     case LOC_RWING:
                         if (mounted.isRearMounted()) {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                         } else {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_RIGHTSIDE_SPHERE;
                         }
                         break;
                     case LOC_LWING:
                         if (mounted.isRearMounted()) {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_LEFTSIDEA_SPHERE;
                         } else {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_LEFTSIDE_SPHERE;
                         }
                         break;
                     case LOC_AFT:
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_AFT_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_AFT;
                         break;
                     default:

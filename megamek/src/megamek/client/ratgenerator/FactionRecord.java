@@ -13,12 +13,19 @@
  */
 package megamek.client.ratgenerator;
 
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Node;
+
+import megamek.common.UnitType;
 
 /**
  * Stores data about factions used for building RATs, including
@@ -344,6 +351,13 @@ public class FactionRecord {
 		}
 	}
 	
+    /**
+     * Sets the target percentage for a tech category.
+     * 
+     * @param category The category (omni, clan, SL/upgraded)
+     * @param era      The year for which to set the tech percentage
+     * @param str      A comma-separated list of percentages from the highest unit rating to the lowest.
+     */
 	public void setPctTech(TechCategory category, int era, String str) {
 		if (!pctTech.containsKey(category)) {
 			pctTech.put(category, new HashMap<Integer,ArrayList<Integer>>());
@@ -360,6 +374,24 @@ public class FactionRecord {
 			}
 		}
 		pctTech.get(category).put(era, list);
+	}
+	
+	/**
+	 * Sets the target percentage for a tech category for a particular rating.
+	 * 
+	 * @param category The category (omni, clan, SL/upgraded)
+	 * @param era      The year for which to set the tech percentage
+	 * @param rating   The unit rating for which to set the tech percentage
+	 * @param pct      The percentage of the force that should match the given tech category
+	 */
+	public void setPctTech(TechCategory category, int era, int rating, int pct) {
+	    pctTech.putIfAbsent(category, new HashMap<>());
+	    pctTech.get(category).putIfAbsent(era, new ArrayList<>());
+        while (pctTech.get(category).get(era).size() <= rating) {
+            pctTech.get(category).get(era).add(0);
+        }
+        pctTech.get(category).get(era).set(rating, pct);
+	    
 	}
 	
 	public int getOmniMargin(int era) {
@@ -543,8 +575,198 @@ public class FactionRecord {
 			}
 		}
 	}
-	
-	public String toString() {
+
+    public void writeToXml(PrintWriter pw) {
+        pw.println("\t<faction key='" + key + "' name='"
+                + name + "' minor='" + minor
+                + "' clan='" + clan
+                + "' periphery='" + periphery + "'>");
+        for (Integer year : altNames.keySet()) {
+            pw.println("\t\t<nameChange year='" + year + "'>"
+                    + altNames.get(year) + "</nameChange>");
+        }
+        pw.print("\t\t<years>");
+        pw.print(getYearsAsString());
+        pw.println("</years>");
+        if (ratingLevels.size() > 0) {
+            pw.println("\t\t<ratingLevels>" + ratingLevels.stream().collect(Collectors.joining(",")) + "</ratingLevels>");
+        }
+        if (parentFactions != null) {
+            pw.println("\t\t<parentFaction>" + parentFactions.stream().collect(Collectors.joining(",")) + "</parentFaction>");
+        }       
+        pw.println("\t</faction>");
+    }
+
+    
+    public void writeToXml(PrintWriter pw, int era, int nextEra) {
+        pw.println("\t<faction key='" + key + "'>");
+        if (pctTech.containsKey(TechCategory.OMNI)
+                && pctTech.get(TechCategory.OMNI).containsKey(era)
+                && (pctTech.get(TechCategory.OMNI).get(era).size() > 0)) {
+            pw.println("\t\t<pctOmni>"
+                    + pctTech.get(TechCategory.OMNI).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctOmni>");
+        }
+        if (pctTech.containsKey(TechCategory.CLAN)
+                && pctTech.get(TechCategory.CLAN).containsKey(era)
+                && (pctTech.get(TechCategory.CLAN).get(era).size() > 0)) {
+            pw.println("\t\t<pctClan>"
+                    + pctTech.get(TechCategory.CLAN).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctClan>");
+        }
+        if (pctTech.containsKey(TechCategory.IS_ADVANCED)
+                && pctTech.get(TechCategory.IS_ADVANCED).containsKey(era)
+                && (pctTech.get(TechCategory.IS_ADVANCED).get(era).size() > 0)) {
+            pw.println("\t\t<pctSL>"
+                    + pctTech.get(TechCategory.IS_ADVANCED).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctSL>");
+        }
+        if (pctTech.containsKey(TechCategory.OMNI_AERO)
+                && pctTech.get(TechCategory.OMNI_AERO).containsKey(era)
+                && (pctTech.get(TechCategory.OMNI_AERO).get(era).size() > 0)) {
+            pw.println("\t\t<pctOmni unitType='Aero'>"
+                    + pctTech.get(TechCategory.OMNI_AERO).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctOmni>");
+        }
+        if (pctTech.containsKey(TechCategory.CLAN_AERO)
+                && pctTech.get(TechCategory.CLAN_AERO).containsKey(era)
+                && (pctTech.get(TechCategory.CLAN_AERO).get(era).size() > 0)) {
+            pw.println("\t\t<pctClan unitType='Aero'>"
+                    + pctTech.get(TechCategory.CLAN_AERO).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctClan>");
+        }
+        if (pctTech.containsKey(TechCategory.IS_ADVANCED_AERO)
+                && pctTech.get(TechCategory.IS_ADVANCED_AERO).containsKey(era)
+                && (pctTech.get(TechCategory.IS_ADVANCED_AERO).get(era).size() > 0)) {
+            pw.println("\t\t<pctSL unitType='Aero'>"
+                    + pctTech.get(TechCategory.IS_ADVANCED_AERO).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctSL>");
+        }
+        if (pctTech.containsKey(TechCategory.CLAN_VEE)
+                && pctTech.get(TechCategory.CLAN_VEE).containsKey(era)
+                && (pctTech.get(TechCategory.CLAN_VEE).get(era).size() > 0)) {
+            pw.println("\t\t<pctClan unitType='Vehicle'>"
+                    + pctTech.get(TechCategory.CLAN_VEE).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctClan>");
+        }
+        if (pctTech.containsKey(TechCategory.IS_ADVANCED_VEE)
+                && pctTech.get(TechCategory.IS_ADVANCED_VEE).containsKey(era)
+                && (pctTech.get(TechCategory.IS_ADVANCED_VEE).get(era).size() > 0)) {
+            pw.println("\t\t<pctSL unitType='Vehicle'>"
+                    + pctTech.get(TechCategory.IS_ADVANCED_VEE).get(era).stream().map(Object::toString)
+                    .collect(Collectors.joining(",")) + "</pctSL>");
+        }
+        if (era > 3067) {
+            if (!isClan() && !key.equals("CGB.FRR") && !key.equals("RA.OA")) {
+                pw.println("\t\t<omniMargin>" + ((era - 3067) / 5) + "</omniMargin>");
+                pw.println("\t\t<techMargin>" + ((era - 3067) / 5) + "</techMargin>");
+                if (era > 3085) {
+                    pw.println("\t\t<upgradeMargin>" + ((era - 3085) / 5) + "</upgradeMargin>");
+                }
+            } else {
+                pw.println("\t\t<techMargin>" + ((era - 3067) / 5) + "</techMargin>");
+            }
+        }
+
+        Integer pct = pctSalvage.get(era);
+        if (pct != null) {
+            String line = "\t\t<salvage pct='" + pct + "'>";
+            int length = salvage.get(era).size();
+            for (String faction : salvage.get(era).keySet()) {
+                FactionRecord fr = RATGenerator.getInstance().getFaction(faction);
+                if (fr == null || !fr.isInEra(era)) {
+                    continue;
+                }
+                line += faction + ":" + salvage.get(era).get(faction);
+                length--;
+                if (length > 0) {
+                    line += ",";
+                }
+            }
+            pw.println(line + "</salvage>");
+        }
+        final int[] unitWeightKeys = { UnitType.MEK, UnitType.TANK, UnitType.AERO };
+        if (weightDistribution.containsKey(era)) {
+            for (int unitType : unitWeightKeys) {
+                if (weightDistribution.get(era).containsKey(unitType)
+                        && weightDistribution.get(era).get(unitType).size() > 0) {
+                    pw.println("\t\t<weightDistribution era='" + era + "' unitType='"
+                            + unitType + "'>" + getWeightDistributionAsString(era, unitType)
+                            + "</weightDistribution>");
+                }
+            }
+        }
+        pw.println("\t</faction>");
+    }
+
+    /**
+     * Checks whether the faction is active at any point from the given year to the next reference 
+     * @param era
+     * @return
+     */
+    public boolean isInEra(int era) {
+        if (isActiveInYear(era)) {
+            return true;
+        }
+        /* May still be in era if start date comes before the next era */
+        TreeSet<Integer> eraSet = RATGenerator.getInstance().getEraSet();
+        Integer next = eraSet.ceiling(era + 1);
+        if (next == null) {
+            return false;
+        }
+        for (DateRange dr : yearsActive) {
+            if (dr.start != null && dr.start > era && dr.start < next) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+	 * @return CSV of all names of the faction, with the original name given first followed by name
+	 *         changes in the format year:name
+	 */
+    public Object getNamesAsString() {
+        String retVal = name;
+        for (Integer y : altNames.keySet()) {
+            retVal += "," + y + ":" + altNames.get(y);
+        }
+        return retVal;
+    }
+
+    /**
+     * @return CSV String of all date ranges in which the faction is active.
+     */
+    public String getYearsAsString() {
+        StringBuilder sb = new StringBuilder();
+        for (Iterator<DateRange> iter = yearsActive.iterator(); iter.hasNext();) {
+            DateRange dr = iter.next();
+            sb.append(dr.toString());
+            if (iter.hasNext()) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Formats the weight distribution for a given unit type in an era as a String.
+     * 
+     * @param era        The game year
+     * @param unitType   The type of unit
+     * @return           A formatted String
+     */
+    public String getWeightDistributionAsString(int era, int unitType) {
+        StringJoiner sj = new StringJoiner(",");
+        if (weightDistribution.containsKey(era) && weightDistribution.get(era).containsKey(unitType)) {
+            for (Integer i : weightDistribution.get(era).get(unitType)) {
+                sj.add(String.valueOf(i));
+            }
+        }
+        return sj.toString();
+    }
+
+    public String toString() {
 		return key;
 	}
 	

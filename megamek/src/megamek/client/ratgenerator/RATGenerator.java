@@ -18,12 +18,17 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -184,6 +189,108 @@ public class RATGenerator {
 		}
 		return null;
 	}
+
+	/**
+	 * Provides a list of availability ratings for a unit in a given era. Used in editing and reporting.
+	 * 
+	 * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
+	 * @param unit The lookup name of the unit to find records for.
+	 * @return     A <code>Collection</code> of all the availability ratings for the unit in the era,
+	 *             or null if there are no records for that era.
+	 */
+    public Collection<AvailabilityRating> getModelFactionRatings(int era, String unit) {
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+            return modelIndex.get(era).get(unit).values();
+        }
+        return null;
+    }
+
+    /**
+     * Adds or changes an availability rating entry for a model.
+     * 
+     * @param era  The year of the record to change
+     * @param unit The name of the model for which to change the record
+     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
+     *             faction.
+     */
+    public void setModelFactionRating(int era, String unit, AvailabilityRating ar) {
+        if (modelIndex.get(era).get(unit) == null) {
+            modelIndex.get(era).put(unit, new HashMap<String, AvailabilityRating>());
+        }
+        modelIndex.get(era).get(unit).put(ar.getFactionCode(), ar);
+        models.get(unit).getIncludedFactions().add(ar.getFactionCode());
+    }
+
+    /**
+     * Removes the availability rating entry.
+     * 
+     * @param era      The year of the record to remove.
+     * @param unit     The model to remove the record for.
+     * @param faction  The faction to remove the record for.
+     */
+    public void removeModelFactionRating(int era, String unit, String faction) {
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+            modelIndex.get(era).get(unit).remove(faction);
+        }
+        for (int e : eraSet) {
+            if (modelIndex.get(e).containsKey(unit) &&
+                    modelIndex.get(e).get(unit).containsKey(faction)) {
+                return;
+            }
+        }
+        models.get(unit).getIncludedFactions().remove(faction);
+    }
+
+    /**
+     * Provides a list of availability ratings for a chassis in a given era. Used in editing and reporting.
+     * 
+     * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
+     * @param unit The chassis name to find records for.
+     * @return     A <code>Collection</code> of all the availability ratings for the chassis in the era,
+     *             or null if there are no records for that era.
+     */
+    public Collection<AvailabilityRating> getChassisFactionRatings(int era, String chassis) {
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(chassis)) {
+            return chassisIndex.get(era).get(chassis).values();
+        }
+        return null;
+    }
+
+    /**
+     * Adds or changes an availability rating entry for a chassis.
+     * 
+     * @param era  The year of the record to change
+     * @param unit The name of the chassis for which to change the record
+     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
+     *             faction.
+     */
+    public void setChassisFactionRating(int era, String unit, AvailabilityRating ar) {
+        if (chassisIndex.get(era).get(unit) == null) {
+            chassisIndex.get(era).put(unit, new HashMap<String, AvailabilityRating>());
+        }
+        chassisIndex.get(era).get(unit).put(ar.getFactionCode(), ar);
+        chassis.get(unit).getIncludedFactions().add(ar.getFactionCode());
+    }
+
+    /**
+     * Removes the availability rating entry.
+     * 
+     * @param era      The year of the record to remove.
+     * @param unit     The chassis to remove the record for.
+     * @param faction  The faction to remove the record for.
+     */
+    public void removeChassisFactionRating(int era, String unit, String faction) {
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+            chassisIndex.get(era).get(unit).remove(faction);
+        }
+        for (int e : eraSet) {
+            if (chassisIndex.get(e).containsKey(unit) &&
+                    chassisIndex.get(e).get(unit).containsKey(faction)) {
+                return;
+            }
+        }
+        chassis.get(unit).getIncludedFactions().remove(faction);
+    }
 
 	public TreeSet<Integer> getEraSet() {
 		return eraSet;
@@ -964,4 +1071,160 @@ public class RATGenerator {
             }
         }
     }
+    
+    public void exportRATGen(File dir) {
+        File file = null;
+        PrintWriter pw = null;
+        
+        FactionRecord[] factionRecs = factions.values().toArray(new FactionRecord[0]);
+        Arrays.sort(factionRecs, new Comparator<FactionRecord>() {
+            @Override
+            public int compare(FactionRecord arg0, FactionRecord arg1) {
+                if (arg0.getParentFactions() == null && arg1.getParentFactions() != null) {
+                    return -1;
+                }
+                if (arg0.getParentFactions() != null && arg1.getParentFactions() == null) {
+                    return 1;
+                }
+                if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
+                    return 1;
+                }
+                if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
+                    return -1;
+                }
+                return arg0.getName().compareTo(arg1.getName());
+            }
+        });
+
+        file = new File(dir + "/factions.xml");
+        try {
+            pw = new PrintWriter(file);
+        } catch (FileNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        pw.println("<?xml version='1.0' encoding='UTF-8'?>");
+        pw.println("<factions>");
+        for (FactionRecord fRec : factionRecs) {
+            fRec.writeToXml(pw);
+        }
+        pw.println("</factions>");
+        pw.close();
+
+        ChassisRecord[] chassisRecs = chassis.values().toArray(new ChassisRecord[0]);
+        Arrays.sort(chassisRecs);
+        ArrayList<String> avFields = new ArrayList<>();
+        
+        final List<Integer> ERAS = new ArrayList<>(eraSet);
+
+        for (int i = 0; i < ERAS.size(); i++) {
+            int era = ERAS.get(i);
+            int nextEra = (i < ERAS.size() - 1)? ERAS.get(i + 1) : era;
+            try {
+                file = new File(dir + "/" + era + ".xml");
+                pw = new PrintWriter(file);
+                pw.println("<?xml version='1.0' encoding='UTF-8'?>");
+                pw.println("<!-- Era " + era + "-->");
+                pw.println("<ratgen>");
+                pw.println("<factions>");
+                for (FactionRecord fRec : factionRecs) {
+                    if (fRec.isInEra(era)) {
+                        fRec.writeToXml(pw, era, nextEra);
+                    }
+                }
+                pw.println("</factions>");
+                pw.println("<units>");
+                for (ChassisRecord cr : chassisRecs) {
+                    if (cr.getIntroYear() < nextEra && chassisIndex.get(era).containsKey(cr.getKey())) {
+                        avFields.clear();
+                        for (Iterator<AvailabilityRating> iter = chassisIndex.get(era).get(cr.getKey()).values().iterator();
+                                iter.hasNext();) {
+                            AvailabilityRating av = iter.next();
+                            if (shouldExportAv(av, era)) {
+                                avFields.add(av.toString());
+                            }
+                        }
+                        if (avFields.size() > 0) {
+                            String omni = "";
+                            if (cr.isOmni() && cr.getModels().size() > 0) {
+                                omni = cr.getModels().iterator().next().isClan()?
+                                        "' omni='Clan" : "' omni='IS";
+                            }
+                            pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
+                                    + "' unitType='" + cr.getUnitType()
+                                    + omni + "'>");
+                            pw.print("\t\t<availability>");
+                            for (Iterator<String> iter = avFields.iterator(); iter.hasNext();) {
+                                pw.print(iter.next());
+                                if (iter.hasNext()) {
+                                    pw.print(",");
+                                }
+                            }
+                            pw.println("</availability>");
+
+                            for (ModelRecord mr : cr.getModels()) {
+                                if (cr.getIntroYear() < nextEra
+                                        && modelIndex.get(era).containsKey(mr.getKey())) {
+                                    avFields.clear();
+                                    for (Iterator<AvailabilityRating> iter = modelIndex.get(era).get(mr.getKey()).values().iterator();
+                                            iter.hasNext();) {
+                                        AvailabilityRating av = iter.next();
+                                        if (shouldExportAv(av, era)) {
+                                            avFields.add(av.toString());
+                                        }
+                                    }
+                                    for (String fKey : mr.getExcludedFactions()) {
+                                        avFields.add(fKey + ":0");
+                                    }
+                                    if (avFields.size() > 0) {
+                                        pw.print("\t\t<model name='" + mr.getModel().replaceAll("'", "&apos;"));
+                                        if (mr.getUnitType() == UnitType.BATTLE_ARMOR) {
+                                            pw.print("' mechanized='" + mr.canDoMechanizedBA());
+                                        }
+                                        pw.println("'>");
+                                        if (mr.getRoles().size() > 0) {
+                                            String str = mr.getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
+                                            if (str.length() > 0) {
+                                                pw.println("\t\t\t<roles>" + str + "</roles>");
+                                            }
+                                        }
+                                        if (mr.getDeployedWith().size() > 0 || mr.getRequiredUnits().size() > 0) {
+                                            pw.print("\t\t\t<deployedWith>");
+                                            StringJoiner sj = new StringJoiner(",");
+                                            mr.getDeployedWith().forEach(s -> sj.add(s));
+                                            mr.getRequiredUnits().forEach(s -> sj.add("req:" + s));
+                                            pw.print(sj.toString());
+                                            pw.println("</deployedWith>");
+                                        }
+                                        pw.print("\t\t\t<availability>");
+                                        for (Iterator<String> iter = avFields.iterator(); iter.hasNext();) {
+                                            pw.print(iter.next());
+                                            if (iter.hasNext()) {
+                                                pw.print(",");
+                                            }
+                                        }
+                                        pw.println("</availability>");
+                                        pw.println("\t\t</model>");                         
+                                    }
+                                }
+                            }
+                            pw.println("\t</chassis>");
+                        }
+                    }
+                }
+                pw.println("</units>");
+                pw.println("</ratgen>");
+                pw.close();
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean shouldExportAv(AvailabilityRating av, int era) {
+        FactionRecord fRec = factions.get(av.getFaction());
+        return fRec == null || fRec.isInEra(era);
+    }
+    
 }

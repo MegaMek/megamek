@@ -268,6 +268,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         LosEffects losEffects = calcLosEffects(game,
                                                enemy.getId(),
                                                path.getEntity());
+        
+        losEffects = LosEffects.calculateLos(game, enemy.getId(), path.getEntity(), enemy.getPosition(), path.getFinalCoords(), false);
+        
         if (!losEffects.canSee()) {
             return 0;
         }
@@ -376,9 +379,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
-                                                               null,
+                                                               new EntityState(enemy),
                                                                path,
-                                                               null,
+                                                               new EntityState(path),
                                                                distance,
                                                                game);
 

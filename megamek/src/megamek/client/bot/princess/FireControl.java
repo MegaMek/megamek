@@ -1267,13 +1267,14 @@ public class FireControl {
         modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
         modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
 
+        double expectedDamage = firingPlan.getExpectedDamage();
         double utility = 0;
-        utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
+        utility += DAMAGE_UTILITY * expectedDamage;
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
         // Multiply the combined damage/crit/kill utility for a target by a log-scaled factor based on the target's damage potential.
         utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
-        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcDamageAllocationUtility(firingPlan.getTarget(), firingPlan.getExpectedDamage());
+        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
@@ -2338,7 +2339,7 @@ public class FireControl {
      * @param facing The facing to be corrected.
      * @return The properly adjusted facing.
      */
-    static int correctFacing(int facing) {
+    public static int correctFacing(int facing) {
         while (0 > facing) {
             facing += 6;
         }

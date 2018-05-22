@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -95,6 +96,7 @@ public class InfantryPathFinder {
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
+                infantryPaths.add(fleePath);
             }
             
             // TODO: but low priority - if we're using "TacOps Dig In" or "Tac Ops Using Non-Infantry Units as Cover"
@@ -156,7 +158,9 @@ public class InfantryPathFinder {
             // are we going off board?
             // are we going into a building?
             // are we going onto a bridge?
-            IHex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(), direction);
+            // make sure we're adjusting facing relative to the unit's current facing
+            IHex destinationHex = game.getBoard().getHexInDir(startingPath.getFinalCoords(), 
+                    FireControl.correctFacing(startingPath.getFinalFacing() + direction));
             
             // if we're going off board, we may as well not bother continuing
             // additionally, if we're definitely going to collapse a bridge we're stepping on let's just stop right here.

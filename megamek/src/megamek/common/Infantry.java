@@ -2688,6 +2688,11 @@ public class Infantry extends Entity {
         this.isTakingCover = isTakingCover;
     }
 
+    @Override
+    protected boolean hasViableWeapons() {
+        return !isCrippled();
+    }
+    
     /**
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other

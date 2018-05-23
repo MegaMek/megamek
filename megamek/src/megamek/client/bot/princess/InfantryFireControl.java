@@ -46,8 +46,7 @@ public class InfantryFireControl extends FireControl {
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
-            final WeaponType weaponType = (WeaponType) weapon.getType();
-            double damage = 0;           
+            final WeaponType weaponType = (WeaponType) weapon.getType();      
             
             final int bracket = RangeType.rangeBracket(range,
                     weaponType.getRanges(weapon),

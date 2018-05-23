@@ -66,10 +66,10 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
                 // For units that have already moved
                 // TODO: Always consider Aeros to have moved, as right now we
                 // don't try to predict their movement.
-                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile() || enemy.isAero()) { 
+                if (!enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAero()) { 
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
-                    eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
+                    eval = evaluateUnmovedEnemy(enemy, pathCopy, extremeRange, losRange);
                 }
                 
                 if (maximumDamageDone < eval.getMyEstimatedDamage()) {
@@ -137,12 +137,6 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
-    }
-    
-    @Override
-    EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path,
-            IGame game) {
-        return super.evaluateMovedEnemy(enemy, path, game);
     }
     
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, 

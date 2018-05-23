@@ -29,6 +29,7 @@ import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -265,18 +266,19 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         //  If they don't have LoS, they can't do damage.
-        LosEffects losEffects = calcLosEffects(game,
-                                               enemy.getId(),
-                                               path.getEntity());
-        
-        losEffects = LosEffects.calculateLos(game, enemy.getId(), path.getEntity(), enemy.getPosition(), path.getFinalCoords(), false);
+        LosEffects losEffects = 
+                LosEffects.calculateLos(game, enemy.getId(), path.getEntity(), shooterState.getPosition(), targetState.getPosition(), false);
         
         if (!losEffects.canSee()) {
             return 0;
         }
-
-        if (targetState == null) {
-            targetState = new EntityState(path);
+        
+        Targetable actualTarget = path.getEntity();
+        
+        // if the target is infantry protected by a building, we have to fire at the building instead. 
+        if(losEffects.infantryProtected()) {
+            actualTarget = new BuildingTarget(targetState.getPosition(), game.getBoard(), false);
+            targetState = new EntityState(actualTarget);            
         }
 
         int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + 5;
@@ -284,7 +286,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 new FiringPlanCalculationParameters.Builder()
                         .buildGuess(enemy,
                                     shooterState,
-                                    path.getEntity(),
+                                    actualTarget,
                                     targetState,
                                     maxHeat,
                                     null);
@@ -323,7 +325,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         // If I don't have LoS, I can't do damage.  ToDo: Account for indirect fire.
-        LosEffects losEffects = calcLosEffects(game, me.getId(), enemy);
+        LosEffects losEffects = 
+                LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
+        //calcLosEffects(game, me.getId(), enemy);
         if (!losEffects.canSee()) {
             return 0;
         }
@@ -375,8 +379,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
-        int distance = enemy.getPosition().distance(path.getFinalCoords());
-
+        int distance = enemy.getPosition().distance(path.getFinalCoords());                
+        
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
                                                                new EntityState(enemy),
@@ -397,7 +401,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                                        enemy,
                                                                        distance,
                                                                        game));
-
+       
         // How much physical damage can I do to them?
         if (distance <= 1) {
             returnResponse.setMyEstimatedPhysicalDamage(

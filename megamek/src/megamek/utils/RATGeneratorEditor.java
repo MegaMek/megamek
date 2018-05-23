@@ -20,6 +20,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -33,6 +34,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -59,6 +61,7 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
+import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 
@@ -177,7 +180,13 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private void saveValues() {
-        // TODO Auto-generated method stub
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(Configuration.forceGeneratorDir());
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            rg.exportRATGen(chooser.getSelectedFile());
+        }
     }
 
     private void buildOptionPanel() {

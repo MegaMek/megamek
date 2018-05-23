@@ -59,6 +59,7 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
+import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 
 /**
@@ -586,8 +587,7 @@ public class RATGeneratorEditor extends JFrame {
                     return false;
                 }
                 if (cbMovementType.getSelectedIndex() > 0 &&
-                        rec.getMovementMode().toString().toLowerCase()
-                        .equals(cbMovementType.getSelectedItem().toString().toLowerCase())) {
+                        (rec.getMovementMode() != EntityMovementMode.getMode(cbMovementType.getSelectedItem().toString()))) {
                     return false;
                 }
                 if (txtSearch.getText().length() > 0) {

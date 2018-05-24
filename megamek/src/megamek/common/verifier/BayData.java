@@ -9,6 +9,7 @@ import megamek.common.ASFBay;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.CargoBay;
+import megamek.common.DropshuttleBay;
 import megamek.common.Entity;
 import megamek.common.HeavyVehicleBay;
 import megamek.common.InfantryBay;
@@ -59,6 +60,8 @@ public enum BayData {
             (size, num) -> new ASFBay(size, 1, num)),
     SMALL_CRAFT ("Small Craft", 200.0, 5, SmallCraftBay.techAdvancement(),
             (size, num) -> new SmallCraftBay(size, 1, num)),
+    DROPSHUTTLE ("Dropshuttle", 11000.0, 0, DropshuttleBay.techAdvancement(),
+            (size, num) -> new DropshuttleBay(0)),
     CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
             (size, num) -> new CargoBay(size, 1, num)),
     LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),

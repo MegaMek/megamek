@@ -5344,7 +5344,7 @@ public class Compute {
         return Compute.isInBuilding(game, entity.getElevation(), coords);
     }
 
-    static boolean isInBuilding(IGame game, int entityElev, Coords coords) {
+    public static boolean isInBuilding(IGame game, int entityElev, Coords coords) {
 
         // Get the Hex at those coordinates.
         final IHex curHex = game.getBoard().getHex(coords);

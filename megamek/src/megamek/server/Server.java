@@ -32525,19 +32525,8 @@ public class Server implements Runnable {
             return vDesc;
         }
         // Calculate the amount of damage the infantry will sustain.
-        float percent = 0.0f;
+        float percent = bldg.getDamageReductionFromOutside();
         Report r;
-        switch (bldg.getType()) {
-            case Building.LIGHT:
-                percent = 0.75f;
-                break;
-            case Building.MEDIUM:
-                percent = 0.5f;
-                break;
-            case Building.HEAVY:
-                percent = 0.25f;
-                break;
-        }
 
         // Round up at .5 points of damage.
         int toInf = Math.round(damage * percent);

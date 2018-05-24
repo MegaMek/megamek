@@ -186,13 +186,14 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
 
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
-                    getMaxDamageAtRange(getFireControl(),
+                    getMaxDamageAtRange((InfantryFireControl) getFireControl(),
                                         enemy,
+                                        path,
                                         range,
                                         useExtremeRange,
                                         useLOSRange)
                                                      * damageDiscount);
-
+            
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
             if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
                 returnResponse.addToEstimatedEnemyDamage(
@@ -203,5 +204,12 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    double getMaxDamageAtRange(InfantryFireControl fireControl, Entity shooter, MovePath movePath,
+            int range, boolean useExtremeRange,
+            boolean useLOSRange) {
+        return fireControl.getMaxDamageAtRange(shooter, movePath, range, useExtremeRange,
+                                    useLOSRange);
     }
 }

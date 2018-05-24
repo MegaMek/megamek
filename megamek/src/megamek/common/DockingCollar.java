@@ -291,6 +291,10 @@ public class DockingCollar implements Transporter {
     public void setDamaged(boolean b) {
         damaged = b;
     }
+    
+    public int hardpointCost() {
+        return 1;
+    }
 
     public void setGame(IGame game) {
         this.game = game;

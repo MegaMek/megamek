@@ -484,6 +484,19 @@ public class Bay implements Transporter, ITechnology {
     public int getBayNumber() {
         return bayNumber;
     }
+    
+    /**
+     * Some bays (dropshuttle and repair facility) have a maximum number per armor facing.
+     * @return The facing of the bay, or Entity.LOC_NONE if the bay does not require a facing.
+     */
+    public int getFacing() {
+        return Entity.LOC_NONE;
+    }
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 
     @Override
     public void setGame(IGame game) {

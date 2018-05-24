@@ -8580,6 +8580,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getTransportId() {
         return conveyance;
     }
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 
     /**
      * Determine if this unit has an active and working stealth system.

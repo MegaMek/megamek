@@ -2329,7 +2329,7 @@ public class FireControl {
                 maxDamage += weaponType.getDamage();
             }
         }
-        int alpha = 1;
+
         return maxDamage;
     }
 

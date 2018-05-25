@@ -563,11 +563,19 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Worker method that calculates a point blank shot action vector given a firing entity ID and a target ID.
+     * 
+     * @param firingEntityID the ID of the entity taking the point blank shot
+     * @param targetID the ID of the entity being shot at potentially
+     */
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
         Entity shooter = getGame().getEntity(firingEntityID);
         Targetable target = getGame().getEntity(targetID); 
         
-        FiringPlan plan = fireControl.getBestFiringPlan(shooter, target, game, calcAmmoConservation(shooter));
+        final FiringPlanCalculationParameters fccp = 
+                new FiringPlanCalculationParameters.Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
+        FiringPlan plan = fireControl.determineBestFiringPlan(fccp); 
         fireControl.loadAmmo(shooter, plan);
         plan.sortPlan();
 

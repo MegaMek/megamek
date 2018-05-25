@@ -959,6 +959,39 @@ public class RATGenerator {
 		}
 		notifyListenersEraLoaded();
 	}
+	
+	/**
+	 * Creates model and chassis records for all units that don't already have entries. This should
+	 * only be called after all availability records are loaded, otherwise they will be overwritten.
+	 * 
+	 * Used for editing.
+	 */
+	public void initRemainingUnits() {
+        for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
+            if (models.containsKey(ms.getName())) {
+                continue;
+            }
+            ModelRecord mr = new ModelRecord(ms);
+
+            models.put(mr.getKey(), mr);
+            String chassisKey = mr.getChassisKey();
+            if (chassis.containsKey(chassisKey)) {
+                if (chassis.get(chassisKey).getIntroYear() == 0 ||
+                        chassis.get(chassisKey).getIntroYear() > ms.getYear()) {
+                    chassis.get(chassisKey).setIntroYear(ms.getYear());
+                }
+                chassis.get(chassisKey).addModel(mr);
+            } else {
+                ChassisRecord cr = new ChassisRecord(mr.getChassis());
+                cr.setIntroYear(mr.getIntroYear());
+                cr.setOmni(mr.isOmni());
+                cr.setClan(mr.isClan());
+                cr.setUnitType(mr.getUnitType());
+                cr.addModel(mr);
+                chassis.put(chassisKey, cr);
+            }
+        }
+	}
 
 	private void parseChassisNode(int era, Node wn) {
 		boolean omni = false;

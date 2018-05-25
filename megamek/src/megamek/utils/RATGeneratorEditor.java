@@ -20,7 +20,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -123,6 +122,7 @@ public class RATGeneratorEditor extends JFrame {
         rg.getEraSet().forEach(e -> rg.loadYear(e));
         
         ERAS = rg.getEraSet().toArray(new Integer[0]);
+        rg.initRemainingUnits();
 
         initUI();
     }

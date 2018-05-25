@@ -28,8 +28,10 @@ import megamek.common.LightVehicleBay;
 import megamek.common.LiquidCargoBay;
 import megamek.common.LivestockCargoBay;
 import megamek.common.MechBay;
+import megamek.common.NavalRepairFacility;
 import megamek.common.ProtomechBay;
 import megamek.common.RefrigeratedCargoBay;
+import megamek.common.ReinforcedRepairFacility;
 import megamek.common.SmallCraftBay;
 import megamek.common.SuperHeavyVehicleBay;
 import megamek.common.TechAdvancement;
@@ -72,6 +74,12 @@ public enum BayData {
             (size, num) -> new SmallCraftBay(size, 1, num)),
     DROPSHUTTLE ("Dropshuttle", 11000.0, 0, DropshuttleBay.techAdvancement(),
             (size, num) -> new DropshuttleBay(0)),
+    REPAIR_UNPRESSURIZED ("Standard Repair Facility (Unpressurized)", 0.025, 0, NavalRepairFacility.techAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, false, 0)),
+    REPAIR_PRESSURIZED ("Standard Repair Facility (Pressurized)", 0.075, 0, NavalRepairFacility.techAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, true, 0)),
+    REPAIR_REINFORCED ("Reinforced Repair Facility", 0.1, 0, ReinforcedRepairFacility.techAdvancement(),
+            (size, num) -> new ReinforcedRepairFacility(size, 0)),
     CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
             (size, num) -> new CargoBay(size, 1, num)),
     LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),
@@ -201,8 +209,6 @@ public enum BayData {
      * @return true if the bay is a type of cargo bay rather than a unit transport bay.
      */
     public boolean isCargoBay() {
-        //TODO: Container cargo bays aren't implemented, but when added they can be carried by
-        // industrial but not battlemechs.
         return ordinal() >= CARGO.ordinal();
     }
     
@@ -214,8 +220,15 @@ public enum BayData {
      * @return
      */
     public boolean isLegalFor(Entity en) {
+        //TODO: Container cargo bays aren't implemented, but when added they can be carried by
+        // industrial but not battlemechs.
         if (en.hasETypeFlag(Entity.ETYPE_MECH)) {
             return isCargoBay() && (this != LIVESTOCK_CARGO);
+        } else if ((this == DROPSHUTTLE)
+                || (this == REPAIR_UNPRESSURIZED)
+                || (this == REPAIR_PRESSURIZED)
+                || (this == REPAIR_REINFORCED)) {
+            return en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         } else {
             return en.hasETypeFlag(Entity.ETYPE_TANK)
                     || en.hasETypeFlag(Entity.ETYPE_AERO);

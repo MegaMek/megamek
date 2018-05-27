@@ -27,10 +27,11 @@ public class Bay implements Transporter, ITechnology {
 
     // Private attributes and helper functions.
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -9056450317468016272L;
+    
+    public final static String FIELD_SEPARATOR = ":";
+    public final static String FACING_PREFIX = "f";
+    
     int doors = 1;
     int doorsNext = 1;
     int currentdoors = doors;

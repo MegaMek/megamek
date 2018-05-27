@@ -37,10 +37,11 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
      * Create a new repair facility
      *
      * @param size   Maximum capacity in tons
+     * @param pressurized Whether the facility is pressurized
      * @param facing The armor facing of the facility
      */
-    public ReinforcedRepairFacility(double size, int facing) {
-        super(size, false, facing);
+    public ReinforcedRepairFacility(double size, int doors, int bayNumber, int facing) {
+        super(size, doors, bayNumber, facing, false);
     }
     
     @Override
@@ -55,7 +56,11 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
 
     @Override
     public String toString() {
-        return "reinforcedrepairfacility:" + totalSpace + ":1:" + bayNumber;
+        return "reinforcedrepairfacility:"
+                + totalSpace + FIELD_SEPARATOR
+                + doors + FIELD_SEPARATOR
+                + bayNumber + FIELD_SEPARATOR
+                + FACING_PREFIX + getFacing();
     }
     
     public static TechAdvancement techAdvancement() {

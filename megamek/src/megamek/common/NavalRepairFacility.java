@@ -45,11 +45,15 @@ public class NavalRepairFacility extends Bay {
      * @param pressurized Whether the facility is pressurized
      * @param facing The armor facing of the facility
      */
-    public NavalRepairFacility(double size, boolean pressurized, int facing) {
+    public NavalRepairFacility(double size, int doors, int bayNumber, int facing, boolean pressurized) {
         totalSpace = size;
         currentSpace = size;
-        this.pressurized = pressurized;
+        this.doors = doors;
+        doorsNext = doors;
+        this.bayNumber = bayNumber;
+        currentdoors = doors;
         this.facing = facing;
+        this.pressurized = pressurized;
     }
     
     /**
@@ -101,7 +105,11 @@ public class NavalRepairFacility extends Bay {
     
     @Override
     public String toString() {
-        return "repairfacility:" + pressurized + ":" + totalSpace + ":1:" + bayNumber;
+        return "navalrepair" + (pressurized? "pressurized:" : "unpressurized:")
+                + totalSpace + FIELD_SEPARATOR
+                + doors + FIELD_SEPARATOR
+                + bayNumber + FIELD_SEPARATOR
+                + FACING_PREFIX + getFacing();
     }
     
     @Override

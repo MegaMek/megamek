@@ -43,11 +43,17 @@ public class DropshuttleBay extends Bay {
     /**
      * Create a new dropshuttle bay
      *
-     * @param facing The armor facing of the bay
+     * @param doors     The number of bay doors
+     * @param bayNumber The bay index, unique to the Entity 
+     * @param facing    The armor facing of the bay
      */
-    public DropshuttleBay(int facing) {
+    public DropshuttleBay(int doors, int bayNumber, int facing) {
         totalSpace = 2;
         currentSpace = 2;
+        this.doors = doors;
+        doorsNext = doors;
+        this.bayNumber = bayNumber;
+        currentdoors = doors;
         this.facing = facing;
     }
 
@@ -78,7 +84,10 @@ public class DropshuttleBay extends Bay {
     
     @Override
     public String toString() {
-        return "dropshuttlebay:" + facing;
+        return "dropshuttlebay:" + totalSpace + FIELD_SEPARATOR
+                + doors + FIELD_SEPARATOR
+                + bayNumber + FIELD_SEPARATOR
+                + FACING_PREFIX + facing; 
     }
     
     @Override

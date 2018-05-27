@@ -31,6 +31,7 @@ import megamek.common.ConvFighter;
 import megamek.common.CrewQuartersCargoBay;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
+import megamek.common.DropshuttleBay;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -979,7 +980,7 @@ public class BLKFile {
      * @author NickAragua
      *
      */
-    public class ParsedBayInfo {
+    public static class ParsedBayInfo {
         private double size;
         private int doors;
         private int bayNumber = -1;

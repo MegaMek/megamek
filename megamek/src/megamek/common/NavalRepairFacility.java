@@ -91,6 +91,11 @@ public class NavalRepairFacility extends Bay {
     }
     
     @Override
+    public double getWeight() {
+        return Math.ceil(2 * totalSpace * (pressurized? 0.075 : 0.025)) * 0.5;
+    }
+    
+    @Override
     public int getFacing() {
         return facing;
     }

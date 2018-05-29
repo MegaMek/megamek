@@ -55,6 +55,11 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
     }
 
     @Override
+    public double getWeight() {
+        return Math.ceil(2 * totalSpace * 0.1) * 0.5;
+    }
+    
+    @Override
     public String toString() {
         return "reinforcedrepairfacility:"
                 + totalSpace + FIELD_SEPARATOR

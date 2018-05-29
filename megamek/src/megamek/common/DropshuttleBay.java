@@ -70,6 +70,11 @@ public class DropshuttleBay extends Bay {
     }
     
     @Override
+    public double getWeight() {
+        return 11000;
+    }
+    
+    @Override
     public int getFacing() {
         return facing;
     }

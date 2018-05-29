@@ -493,6 +493,17 @@ public class Bay implements Transporter, ITechnology {
     public int getFacing() {
         return Entity.LOC_NONE;
     }
+
+    /**
+     * Sets the armor facing for the bay, if the bay type requires it. If not required by the bay
+     * type, does nothing.
+     * 
+     * @param value The location to use for the facing.
+     */
+    public void setFacing(int facing) {
+        // do nothing by default
+    }
+
     
     @Override
     public int hardpointCost() {

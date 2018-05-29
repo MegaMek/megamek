@@ -187,6 +187,12 @@ public enum BayData {
             return IS_BATTLE_ARMOR;
         } else if (bay instanceof ASFBay) {
             return FIGHTER;
+        } else if (bay instanceof DropshuttleBay) {
+            return DROPSHUTTLE;
+        } else if (bay instanceof ReinforcedRepairFacility) {
+            return REPAIR_REINFORCED;
+        } else if (bay instanceof NavalRepairFacility) {
+            return ((NavalRepairFacility) bay).isPressurized()? REPAIR_PRESSURIZED : REPAIR_UNPRESSURIZED;
         } else if (bay instanceof SmallCraftBay) {
             return SMALL_CRAFT;
         } else if (bay instanceof LiquidCargoBay) {
@@ -233,6 +239,16 @@ public enum BayData {
             return en.hasETypeFlag(Entity.ETYPE_TANK)
                     || en.hasETypeFlag(Entity.ETYPE_AERO);
         }
+    }
+
+    /**
+     * @return Whether the bay type requires a designated armor facing.
+     */
+    public boolean requiresFacing() {
+        return (this == DROPSHUTTLE)
+                || (this == REPAIR_UNPRESSURIZED)
+                || (this == REPAIR_PRESSURIZED)
+                || (this == REPAIR_REINFORCED);
     }
 }
 

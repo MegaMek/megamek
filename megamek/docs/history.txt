@@ -14,6 +14,7 @@ v0.43.11-RC5-git
 + Data: Various minor data fixes, including fix for #984,#719
 + Data: Fixing #906 Incorrect heat for Prototype Rocket Launcher 15 
 + PR #985: When considering point blank shots from hidden units, Princess will make use of torso twists.
++ PR #988: Sniper SPA should not affect LOS-range shots, per errata
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

@@ -307,11 +307,19 @@ public class TestAdvancedAerospace extends TestAero {
     }
     
     /**
+     * The maximum number of docking hardpoints (collars) depends on the tonnage of the vessel. Naval
+     * Repair Facilities and Dropshuttle bays count against the total and reduce the maximum number
+     * by two each.
+     * 
      * @param vessel The ship
      * @return       The maximum number of docking hardpoints (collars) that can be mounted on the ship.
      */
     public static int getMaxDockingHardpoints(Jumpship vessel) {
-        return (int) Math.floor(vessel.getWeight() / 5000);
+        int max = (int) Math.floor(vessel.getWeight() / 5000);
+        for (Bay bay : vessel.getTransportBays()) {
+            max -= bay.hardpointCost();
+        }
+        return max;
     }
     
     /**

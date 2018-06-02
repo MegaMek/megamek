@@ -321,6 +321,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         // set up a new bay type
         boolean newBay = false;
         double bayDamage = 0;
+        
         if (saEquip[0] != null) {
             for (String element : saEquip) {
                 rearMount = false;
@@ -407,7 +408,15 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                     }
                     // ammo should also get loaded into the bay
                     if (newmount.getType() instanceof AmmoType) {
-                        bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
+                        if (null != bayMount) {
+                            bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
+                        } else {
+                            // If we get to ammo when we're not working on a bay we treat it as failed
+                            // equipment rather than trying to guess.
+                            a.getEquipment().remove(newmount);
+                            a.getAmmo().remove(newmount);
+                            a.addFailedEquipment(equipName);
+                        }
                     }
                 } else if (!equipName.equals("")) {
                     a.addFailedEquipment(equipName);

@@ -17,8 +17,10 @@ package megamek.common.verifier;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -30,6 +32,7 @@ import megamek.common.ITechManager;
 import megamek.common.Jumpship;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.NavalRepairFacility;
 import megamek.common.TechConstants;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
@@ -708,6 +711,7 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
         correct &= correctGravDecks(buff);
+        correct &= correctBays(buff);
         
         return correct;
     }
@@ -939,6 +943,41 @@ public class TestAdvancedAerospace extends TestAero {
             }
         }
         return !illegal;
+    }
+    
+    /**
+     * Checks that the unit does not have more than one naval repair facility or dropshuttle bay
+     * per facing, all are assigned a facing, and non-stations have no more than one repair facility.
+     * 
+     * @param buffer Where to write messages explaining failures.
+     * @return  true if the bay data is valid
+     */
+    public boolean correctBays(StringBuffer buffer) {
+        boolean legal = true;
+        
+        Set<Integer> facings = new HashSet<>();
+        int repairCount = 0;
+        for (Bay bay : vessel.getTransportBays()) {
+            if (bay.hardpointCost() > 0) {
+                if ((bay.getFacing() < 0) || (bay.getFacing() >= Warship.LOC_LBS)) {
+                    buffer.append(bay.getType() + " is not assigned a legal armor facing.\n");
+                    legal = false;
+                } else if (facings.contains(bay.getFacing())) {
+                    buffer.append("Exceeds maximum of one repair facility or dropshuttle bay per armor facing.\n");
+                    legal = false;
+                }
+                facings.add(bay.getFacing());
+                if (bay instanceof NavalRepairFacility) {
+                    repairCount++;
+                }
+            }
+        }
+        if ((repairCount > 0) && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            buffer.append("Only a space station may mount multiple naval repair facilities.\n");
+            legal = false;
+        }
+        
+        return legal;
     }
     
     @Override

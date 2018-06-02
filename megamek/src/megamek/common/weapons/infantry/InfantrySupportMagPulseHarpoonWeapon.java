@@ -37,14 +37,14 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
 		addLookupName("InfantryMagpulseHarpoonGun");
 		addLookupName("MagpulseHarpoonGun");
 		ammoType = AmmoType.T_NA;
-		cost = 75;
+		cost = 12000;
 		bv = 1.47;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
 		infantryDamage = 0.37;
 		infantryRange = 3;
 		crew = 2;
 		tonnage = .095;
-		rulesRefs = "273,TM";
+		rulesRefs = "176,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3070, 3079, 3100, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

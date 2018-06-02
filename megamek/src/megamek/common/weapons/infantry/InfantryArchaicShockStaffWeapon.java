@@ -43,7 +43,7 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING);
 		infantryDamage = 0.21;
 		infantryRange = 0;
-		rulesRefs = "272,TM";
+		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3077, 3130, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, true, false, false, false)
 				.setClanAdvancement(3074, 3077, 3130, DATE_NONE, DATE_NONE)

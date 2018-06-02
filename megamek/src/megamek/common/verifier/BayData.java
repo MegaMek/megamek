@@ -250,5 +250,12 @@ public enum BayData {
                 || (this == REPAIR_PRESSURIZED)
                 || (this == REPAIR_REINFORCED);
     }
+
+    /**
+     * @return Whether the bay capacity can be changed.
+     */
+    public boolean hasVariableSize() {
+        return this != DROPSHUTTLE;
+    }
 }
 

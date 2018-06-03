@@ -138,12 +138,6 @@ public class Warship extends Jumpship {
         return kf_integrity > 0;
     }
     
-    @Override
-    public double getJumpDriveWeight() {
-        double pct = 0.45; //TODO: compact
-        return Math.ceil(getWeight() * pct); 
-    }
-
     // broadside weapon arcs
     @Override
     public int getWeaponArc(int wn) {

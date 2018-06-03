@@ -141,6 +141,20 @@ public class Jumpship extends Aero {
     public TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
+    
+    /**
+     * Tech advancement data for lithium fusion batteries
+     */
+    public static TechAdvancement getLFBatteryTA() {
+        return new TechAdvancement(TECH_BASE_IS)
+                .setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS)
+                .setClanAdvancement(2520, 2529)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;

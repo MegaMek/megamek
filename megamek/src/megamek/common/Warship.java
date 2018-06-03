@@ -83,6 +83,10 @@ public class Warship extends Jumpship {
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
+        // Primitives don't distinguish between jumpships and warships.
+        if (isPrimitive()) {
+            return super.getConstructionTechAdvancement();
+        }
         return TA_WARSHIP;
     }
 

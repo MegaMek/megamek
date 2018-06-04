@@ -40,8 +40,6 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
@@ -57,7 +55,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      */
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
-    private MMLogger logger = null;
     boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
     boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
     boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
@@ -68,25 +65,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      */
     protected CapitalMissileBearingsOnlyHandler() {
         super(); 
-    }
-    
-    /**
-     * Write debug information to the logs.
-     *
-     * @param methodName Name of the method logging is coming from
-     * @param message Message to log
-     */
-    @SuppressWarnings("unused")
-    private void logDebug(String methodName, String message) {
-        getLogger().log(getClass(), methodName, LogLevel.DEBUG, message);
-    }
-    
-    private MMLogger getLogger() {
-        if (null == logger) {
-            logger = DefaultMmLogger.getInstance();
-        }
-
-        return logger;
     }
 
     /**

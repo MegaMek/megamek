@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -42,6 +43,35 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             Server s) {
         super(t, w, g, s);
     }
+    private AmmoType at = null;
+    
+    @Override
+    protected void useAmmo() {
+        final String METHOD_NAME = "useAmmo()";
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+
+            if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
+                // *shouldn't* fire.
+                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+            }
+
+            int shots = bayW.getCurrentShots();
+            for (int i = 0; i < shots; i++) {
+                if (null == bayWAmmo
+                        || bayWAmmo.getUsableShotsLeft() < 1) {
+                    // try loading something else
+                    ae.loadWeaponWithSameAmmo(bayW);
+                    bayWAmmo = bayW.getLinked();
+                }
+                if (null != bayWAmmo) {
+                    bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
+                }
+            }
+        }
+    }
 
     /**
      * handle this weapons firing
@@ -51,10 +81,13 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-
-        AmmoType atype = (AmmoType) ammo.getType();
+        final String METHOD_NAME = "handle()";
+        
+        if (at == null) {
+            logDebug(METHOD_NAME, "AmmoType is null!");
+        }
         // just launch the tele-missile
-        server.deployTeleMissile(ae, atype, ae.getEquipmentNum(weapon),
+        server.deployTeleMissile(ae, at, ae.getEquipmentNum(weapon),
                 getCapMisMod(), vPhaseReport);
 
         return false;

@@ -42,9 +42,6 @@ import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -58,7 +55,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
      */
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
-    private MMLogger logger = null;
+
 
     /**
      * This consructor may only be used for deserialization.
@@ -67,23 +64,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         super();
     }
     
-    /**
-     * Write debug information to the logs.
-     *
-     * @param methodName Name of the method logging is coming from
-     * @param message Message to log
-     */
-    private void logDebug(String methodName, String message) {
-        getLogger().log(getClass(), methodName, LogLevel.DEBUG, message);
-    }
-    
-    private MMLogger getLogger() {
-        if (null == logger) {
-            logger = DefaultMmLogger.getInstance();
-        }
-
-        return logger;
-    }
 
     /**
      * @param t

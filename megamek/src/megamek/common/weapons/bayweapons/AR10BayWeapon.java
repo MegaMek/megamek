@@ -25,6 +25,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
+import megamek.common.weapons.TeleMissileHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
@@ -90,7 +92,9 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
         if (weapon.isInBearingsOnlyMode() && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
-        } else {    
+        } else if (weapon.curMode().equals(Weapon.Mode_CapMissile_Tele_Operated)) {
+            return new TeleMissileHandler(toHit, waa, game, server);
+        } else {  
             return new CapitalMissileBayHandler(toHit, waa, game, server);
         }
     }

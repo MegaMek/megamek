@@ -25,7 +25,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class TeleMissileHandler extends AmmoWeaponHandler {
+public class TeleMissileHandler extends CapitalMissileBayHandler {
 
     /**
      * 

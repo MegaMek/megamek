@@ -1145,7 +1145,7 @@ public class RATGenerator {
         pw.close();
 
         ChassisRecord[] chassisRecs = chassis.values().toArray(new ChassisRecord[0]);
-        Arrays.sort(chassisRecs);
+        Arrays.sort(chassisRecs, (r1, r2) -> r1.getKey().compareTo(r2.getKey()));
         ArrayList<String> avFields = new ArrayList<>();
         
         final List<Integer> ERAS = new ArrayList<>(eraSet);

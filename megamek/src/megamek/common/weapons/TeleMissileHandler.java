@@ -57,7 +57,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
                 // *shouldn't* fire.
                 logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
             }
-
+            at = (AmmoType) bayWAmmo.getType();
             int shots = bayW.getCurrentShots();
             for (int i = 0; i < shots; i++) {
                 if (null == bayWAmmo
@@ -82,7 +82,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         final String METHOD_NAME = "handle()";
-        
+        useAmmo();        
         if (at == null) {
             logDebug(METHOD_NAME, "AmmoType is null!");
         }

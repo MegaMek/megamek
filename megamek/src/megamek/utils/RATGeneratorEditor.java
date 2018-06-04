@@ -183,8 +183,9 @@ public class RATGeneratorEditor extends JFrame {
         JFileChooser chooser = new JFileChooser();
         chooser.setCurrentDirectory(Configuration.forceGeneratorDir());
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setDialogTitle("Select save directory");
         chooser.setAcceptAllFileFilterUsed(false);
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             rg.exportRATGen(chooser.getSelectedFile());
         }
     }

@@ -31,7 +31,6 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
@@ -209,7 +208,13 @@ public abstract class PathRanker implements IPathRanker {
         return returnPaths;
     }
 
-    RankedPath getBestPath(List<RankedPath> ps) {
+    /**
+     * Returns the best path of a list of ranked paths.
+     * 
+     * @param ps The list of ranked paths to process
+     * @return "Best" out of those paths
+     */
+    public RankedPath getBestPath(List<RankedPath> ps) {
         final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
@@ -235,7 +240,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    Entity findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Entity findClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
@@ -323,7 +328,7 @@ public abstract class PathRanker implements IPathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    protected int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 

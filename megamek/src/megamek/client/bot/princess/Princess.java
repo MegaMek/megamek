@@ -80,9 +80,11 @@ public class Princess extends BotClient {
 
     private boolean initialized = false;
 
-    //private PathSearcher pathSearcher;
-    private BasicPathRanker pathRanker;
     private FireControl fireControl;
+    
+    private HashMap<Long, IPathRanker> pathRankers;
+    
+    
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private final Precognition precognition;
@@ -149,8 +151,19 @@ public class Princess extends BotClient {
         return getBehaviorSettings().getVerbosity();
     }
 
-    BasicPathRanker getPathRanker() {
-        return pathRanker;
+    /**
+     * Gets the appropriate path ranker instance given an entity
+     * Uses the entity's EType flags to figure out which one to return
+     * Returns BasicPathRanker by default.
+     * @param entity The entity whose ETYPE to check
+     * @return Path ranker instance
+     */
+    IPathRanker getPathRanker(Entity entity) {
+        if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            return pathRankers.get(Entity.ETYPE_INFANTRY);
+        }
+        
+        return pathRankers.get((long) Entity.NONE);
     }
 
     public boolean getFallBack() {
@@ -623,10 +636,8 @@ public class Princess extends BotClient {
             msg.append("\n\t\tFastest Move = ").append(fastestMove);
 
             // Get the distance to the nearest enemy.
-            final double distance =
-                    getPathRanker().distanceToClosestEnemy(entity,
-                                                           entity.getPosition(),
-                                                           game);
+            final double distance = getPathRanker(entity).distanceToClosestEnemy(entity, entity.getPosition(), game);
+            
             msg.append("\n\t\tDistance to Nearest Enemy: ")
                .append(numberFormat.format(distance));
 
@@ -936,7 +947,7 @@ public class Princess extends BotClient {
         if (!entity.canFlee()) {
             return false;
         }
-        if (0 < getPathRanker().distanceToHomeEdge(entity.getPosition(),
+        if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(),
                                                    getHomeEdge(), getGame())) {
             return false;
         }
@@ -1042,21 +1053,6 @@ public class Princess extends BotClient {
         return getBoard().getHex(coords);
     }
 
-    private ArrayList<RankedPath> rankPaths(final List<MovePath> paths,
-                                            final int maxRange,
-                                            final double fallTollerance,
-                                            final int startingHomeDistance,
-                                            final List<Entity> enemies,
-                                            final List<Entity> friends) {
-        return getPathRanker().rankPaths(paths,
-                                         getGame(),
-                                         maxRange,
-                                         fallTollerance,
-                                         startingHomeDistance,
-                                         enemies,
-                                         friends);
-    }
-
     @Override
     protected MovePath continueMovementFor(final Entity entity) {
         final String METHOD_NAME = "continueMovementFor(Entity)";
@@ -1133,30 +1129,22 @@ public class Princess extends BotClient {
             }
 
             final long startTime = System.currentTimeMillis();
-            getPathRanker().initUnitTurn(entity, getGame());
+            getPathRanker(entity).initUnitTurn(entity, getGame());
             final double fallTolerance =
                     getBehaviorSettings().getFallShameIndex() / 10d;
-            final int startingHomeDistance = getPathRanker().distanceToHomeEdge(
+            final int startingHomeDistance = getPathRanker(entity).distanceToHomeEdge(
                     entity.getPosition(),
                     getBehaviorSettings().getHomeEdge(),
                     getGame());
+                       
+            final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
+                                                    getGame(),
+                                                    entity.getMaxWeaponRange(),
+                                                    fallTolerance,
+                                                    startingHomeDistance,
+                                                    getEnemyEntities(),
+                                                    getFriendEntities());
             
-            if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-                pathRanker = new InfantryPathRanker(this);
-                pathRanker.initUnitTurn(entity, game);
-            } else {
-                pathRanker = new BasicPathRanker(this);
-                pathRanker.setFireControl(getFireControl());
-                pathRanker.setPathEnumerator(getPrecognition().getPathEnumerator());
-                pathRanker.initUnitTurn(entity, game);
-            }
-            
-            final List<RankedPath> rankedpaths = rankPaths(paths,
-                                                           entity.getMaxWeaponRange(),
-                                                           fallTolerance,
-                                                           startingHomeDistance,
-                                                           getEnemyEntities(),
-                                                           getFriendEntities());
             final long stop_time = System.currentTimeMillis();
 
             // update path evaluation time estimate
@@ -1165,15 +1153,18 @@ public class Princess extends BotClient {
             if (0 == moveEvaluationTimeEstimate) {
                 moveEvaluationTimeEstimate = updatedEstimate;
             }
-            moveEvaluationTimeEstimate =
-                    0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+            
+            moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
+            
             if (0 == rankedpaths.size()) {
                 return new MovePath(game, entity);
             }
+            
             log(getClass(), METHOD_NAME,
                 "Path ranking took " +
                 Long.toString(stop_time - startTime) + " millis");
-            final RankedPath bestpath = getPathRanker().getBestPath(rankedpaths);
+            
+            final RankedPath bestpath = getPathRanker(entity).getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO,
                 "Best Path: " + bestpath.getPath() + "  Rank: "
                 + bestpath.getRank());
@@ -1416,12 +1407,9 @@ public class Princess extends BotClient {
             if (initialized) {
                 return; // no need to initialize twice
             }
-            final PathSearcher pathSearcher = new PathSearcher(this);
-            pathRanker = new BasicPathRanker(this);
-            pathSearcher.ranker = pathRanker;
+
+            initializePathRankers();
             fireControl = new FireControl(this);
-            pathRanker.setFireControl(fireControl);
-            pathRanker.setPathEnumerator(precognition.getPathEnumerator());
 
             // Pick up any turrets and add their buildings to the strategic 
             // targets list.
@@ -1451,6 +1439,22 @@ public class Princess extends BotClient {
         }
     }
 
+    public void initializePathRankers() {
+        pathRankers = new HashMap<>();
+
+        BasicPathRanker basicPathRanker = new BasicPathRanker(this);
+        FireControl fireControl = new FireControl(this);
+        basicPathRanker.setFireControl(fireControl);
+        basicPathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put((long) Entity.NONE, basicPathRanker);
+        
+        InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
+        InfantryFireControl infantryFireControl = new InfantryFireControl(this);
+        infantryPathRanker.setFireControl(infantryFireControl);
+        infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(Entity.ETYPE_INFANTRY, infantryPathRanker);
+    }
+    
     private boolean isEnemyGunEmplacement(final Entity entity,
                                           final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
@@ -1692,7 +1696,7 @@ public class Princess extends BotClient {
         
         Entity movingEntity = path.getPath().getEntity();
         Coords pathEndpoint = path.getPath().getFinalCoords();
-        Entity closestEnemy = getPathRanker().findClosestEnemy(movingEntity, pathEndpoint, getGame());
+        Entity closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame());
 
         // if there are no enemies on the board, then we're not unloading anything.
         if(null == closestEnemy) {

@@ -687,11 +687,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     }
 
-    @Override
-    Entity findClosestEnemy(Entity me, Coords position, IGame game) {
-        return super.findClosestEnemy(me, position, game);
-    }
-
     /**
      * Calculate who all other units would shoot at if I weren't around
      */
@@ -737,7 +732,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * @param position Coords from which the closest enemy is found
      * @param game     IGame that we're playing
      */
-    double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
+    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
         getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 

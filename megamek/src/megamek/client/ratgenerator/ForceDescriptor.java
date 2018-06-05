@@ -327,9 +327,53 @@ public class ForceDescriptor {
 	        params.add(e.getKey());
 	        numUnits.add(e.getValue());
 	    }
+	    // Check for amount of C3 equipment generated and if certain thresholds are met regenerate the unit
+	    // with a valid network.
 	    List<MechSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
-	    return unitList.stream().map(ms -> RATGenerator.getInstance().getModelRecord(ms.getName()))
-	            .collect(Collectors.toList());
+	    if (networkMask == ModelRecord.NETWORK_NONE) { 
+    	    int c3m = 0;
+    	    int c3s = 0;
+    	    int c3i = 0;
+    	    for (MechSummary ms : unitList) {
+    	        ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
+    	        int mask = mRec == null? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
+    	        
+                if ((mask & ModelRecord.NETWORK_C3_MASTER) != 0) {
+                    c3m++;
+                }
+                if ((mask & ModelRecord.NETWORK_C3_SLAVE) != 0) {
+                    c3s++;
+                }
+                if ((mask & ModelRecord.NETWORK_C3I) != 0) {
+                    c3i++;
+                }
+    	    }
+    	    // Any lance with a C3 master should have three slave units (or the remainder of the unit, if smaller)
+    	    if (c3m > 0) {
+    	        if ((c3m > 1) || (c3s < Math.max(3, unitList.size() - 1))) {
+    	            networkMask = ModelRecord.NETWORK_C3_MASTER;
+    	        }
+    	    } else {
+    	        // If no master was generated, each slave unit gives a cumulative 1/3 chance of a network. Isolated
+    	        // C3 slaves will be encountered, but not usually more than one or maybe two in a lance.
+    	        if (c3s > Compute.randomInt(3)) {
+        	        networkMask = ModelRecord.NETWORK_C3_MASTER;
+    	        } else if (c3i > Compute.randomInt(5)) {
+    	            // Each C3i gives a 1/5 chance of a full C3i network. A network is still useful if not full.
+    	            networkMask = ModelRecord.NETWORK_C3I;
+    	        }
+    	    }
+    	    if (networkMask != ModelRecord.NETWORK_NONE) {
+    	        List<MechSummary> netList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
+    	        // Attempt to create the type of network indicated. If no unit can be created that fits the
+    	        // criteria, fall back on the unit that was originally generated.
+    	        if (!netList.isEmpty()) {
+    	            unitList = netList;
+    	        }
+    	    }
+	    }
+        return unitList.stream().map(ms -> RATGenerator.getInstance().getModelRecord(ms.getName()))
+                .collect(Collectors.toList());
 	}
 	
 	/**

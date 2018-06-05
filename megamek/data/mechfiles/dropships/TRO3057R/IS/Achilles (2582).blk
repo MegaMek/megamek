@@ -39,7 +39,7 @@ Aerodyne
 <transporters>
 asfbay:2.0:1:1
 smallcraftbay:2.0:1:2
-infantrybay:1.0:1:3:Foot
+infantrybay:1.0:1:3
 2ndclassquarters:0.0:0
 1stclassquarters:50.0:0
 crewquarters:175.0:0

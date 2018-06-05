@@ -38,7 +38,7 @@ Spheroid
 
 <transporters>
 lightvehiclebay:40.0:1:1
-infantrybay:9.0:1:2:Foot
+infantrybay:9.0:1:2
 cargobay:489.0:1:3
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0

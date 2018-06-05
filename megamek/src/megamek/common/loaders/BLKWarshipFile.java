@@ -215,12 +215,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             }
         }
 
-        // Switch older files with standard armor to aerospace
-        int at = EquipmentType.T_ARMOR_AEROSPACE;
+        // Switch older files with standard armor to capital
+        int at = EquipmentType.T_ARMOR_STANDARD_CAPITAL;
         if (dataFile.exists("armor_type")) {
             at = dataFile.getDataAsInt("armor_type")[0];
-            if (at == EquipmentType.T_ARMOR_STANDARD) {
-                at = EquipmentType.T_ARMOR_AEROSPACE;
+            if ((at == EquipmentType.T_ARMOR_STANDARD) || (at == EquipmentType.T_ARMOR_AEROSPACE)) {
+                at = EquipmentType.T_ARMOR_STANDARD_CAPITAL;
             }
         }
         a.setArmorType(at);

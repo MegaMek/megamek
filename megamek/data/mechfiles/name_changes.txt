@@ -4,8 +4,8 @@
 # campaign file. Each entry should be on a separate line and have the
 # format "oldname|currentname"
 
-#Mechs
-Jagermech JM6-DG|JagerMech JM6-DG
+#Aerospace
+Persepolis 2 (Standard)|Persepolis 2
 
 #Dropships
 Behemoth (Standard)|Behemoth (2658)
@@ -45,3 +45,10 @@ Titan (Clan)|Titan (2953)
 Union C|Union C (2829)
 Vampire II|Vampire II (Standard)
 Vengeance Danai Centrella|Vengeance (Danai Centrella)
+
+#Mechs
+Jagermech JM6-DG|JagerMech JM6-DG
+
+#Tanks
+Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
+SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)

@@ -44,7 +44,7 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 		infantryDamage = 1.58;
 		infantryRange = 5;
 		crew = 3;
-		rulesRefs = "273,TM";
+		rulesRefs = "176,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3082, 3090, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_DC)

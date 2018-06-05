@@ -38,8 +38,8 @@ Spheroid
 
 <transporters>
 smallcraftbay:1.0:1:1
-infantrybay:18.0:1:2:Foot
-infantrybay:18.0:1:3:Foot
+infantrybay:18.0:1:2
+infantrybay:18.0:1:3
 2ndclassquarters:0.0:0
 1stclassquarters:90.0:0
 crewquarters:308.0:0

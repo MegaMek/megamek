@@ -10821,6 +10821,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 15;
 	            ammo.ammoType = AmmoType.T_LIGHT_NGAUSS;
 	            ammo.shots = 1;
+	            ammo.tonnage = .2;
 	            ammo.bv = 378;
 	            ammo.cost = 45000;
 	            ammo.ammoRatio = 0.2;
@@ -10850,6 +10851,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 25;
 	            ammo.ammoType = AmmoType.T_MED_NGAUSS;
 	            ammo.shots = 1;
+	            ammo.tonnage = .4;
 	            ammo.bv = 630;
 	            ammo.cost = 75000;
 	            ammo.ammoRatio = 0.4;
@@ -10879,6 +10881,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.damagePerShot = 40;
 	            ammo.ammoType = AmmoType.T_HEAVY_NGAUSS;
 	            ammo.shots = 1;
+	            ammo.tonnage = .5;
 	            ammo.bv = 756;
 	            ammo.cost = 90000;
 	            ammo.ammoRatio = 0.5;
@@ -10909,6 +10912,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.rackSize = 10;
 	            ammo.ammoType = AmmoType.T_NAC;
 	            ammo.shots = 1;
+	            ammo.tonnage = .2;
 	            ammo.bv = 237;
 	            ammo.cost = 30000;
 	            ammo.ammoRatio = 0.2;
@@ -10938,6 +10942,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.rackSize = 20;
 	            ammo.ammoType = AmmoType.T_NAC;
 	            ammo.shots = 1;
+	            ammo.tonnage = .4;
 	            ammo.bv = 474;
 	            ammo.cost = 60000;
 	            ammo.ammoRatio = 0.4;
@@ -10967,6 +10972,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.rackSize = 25;
 	            ammo.ammoType = AmmoType.T_NAC;
 	            ammo.shots = 1;
+	            ammo.tonnage = .6;
 	            ammo.bv = 593;
 	            ammo.cost = 75000;
 	            ammo.ammoRatio = 0.6;
@@ -10996,6 +11002,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.rackSize = 30;
 	            ammo.ammoType = AmmoType.T_NAC;
 	            ammo.shots = 1;
+	            ammo.tonnage = .8;
 	            ammo.bv = 711;
 	            ammo.cost = 90000;
 	            ammo.ammoRatio = 0.8;
@@ -11025,6 +11032,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.rackSize = 35;
 	            ammo.ammoType = AmmoType.T_NAC;
 	            ammo.shots = 1;
+	            ammo.tonnage = 1;
 	            ammo.bv = 620;
 	            ammo.cost = 105000;
 	            ammo.ammoRatio = 1.0;
@@ -11054,6 +11062,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.rackSize = 40;
 	            ammo.ammoType = AmmoType.T_NAC;
 	            ammo.shots = 1;
+	            ammo.tonnage = 1.2;
 	            ammo.bv = 708;
 	            ammo.cost = 120000;
 	            ammo.ammoRatio = 1.2;

@@ -47,7 +47,7 @@ cargobay:220.0:0:8
 cargobay:220.0:0:9
 2ndclassquarters:42.0:0
 crewquarters:112.0:0
-infantrybay:1.0:6:3:Foot
+infantrybay:1.0:6:3
 1stclassquarters:40.0:0
 cargobay:633.5:0:10
 </transporters>

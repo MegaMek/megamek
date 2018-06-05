@@ -14,6 +14,8 @@
 
 package megamek.common.actions;
 
+import java.util.ArrayList;
+
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -28,6 +30,7 @@ import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
+import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -41,6 +44,9 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      *
      */
     private static final long serialVersionUID = -4702357516725749181L;
+    // equipment that affects this attack (AMS, ECM?, etc)
+    // only used server-side for manually guided Telemissile attacks
+    private transient ArrayList<Mounted> vCounterEquipment;
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
@@ -147,6 +153,25 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         return null;
+    }
+    
+    /**
+     * Returns the list of Counter Equipment used against this physical attack
+     * This is for AMS assignment to manual tele-operated missiles
+     */
+    public ArrayList<Mounted> getCounterEquipment() {
+        return vCounterEquipment;
+    }
+    
+    /**
+     * Adds 'm' to the list of Counter Equipment used against this physical attack
+     * This is for AMS assignment to manual tele-operated missiles
+     */
+    public void addCounterEquipment(Mounted m) {
+        if (vCounterEquipment == null) {
+            vCounterEquipment = new ArrayList<Mounted>();
+        }
+        vCounterEquipment.add(m);
     }
 
     protected static void setCommonModifiers(ToHitData toHit, IGame game,

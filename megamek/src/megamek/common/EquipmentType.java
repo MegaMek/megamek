@@ -91,6 +91,7 @@ public class EquipmentType implements ITechnology {
     public static final int T_ARMOR_PRIMITIVE_FIGHTER = 39;
     public static final int T_ARMOR_PRIMITIVE_AERO = 40;
     public static final int T_ARMOR_AEROSPACE = 41;
+    public static final int T_ARMOR_STANDARD_CAPITAL = 42;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -116,7 +117,7 @@ public class EquipmentType implements ITechnology {
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
             "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
             "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)",
-            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace"};
+            "Primitive Fighter", "Primitive Aerospace", "Standard Aerospace", "Standard Capital"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",
@@ -133,14 +134,14 @@ public class EquipmentType implements ITechnology {
             3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
             25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
             12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000, 10000 };
+            5000, 10000, 10000 };
 
     public static final double[] armorPointMultipliers = {
             1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
             1.5, 1.52, 1.72, 1.32, 0.67, 1.0, 0.875, 0.67, 1, 1.12,
             1.24, 1.06, 1, 0.75, 0.625, 0.875, 0.75, 1.12, 0.8, 1.6,
             0.64, 0.48, 0.96, 0.96, 1.6, 0.48, 0.8, 0.88, 0.96, 0.67,
-            0.66, 1 };
+            0.66, 1, 1 };
 
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;

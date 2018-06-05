@@ -51,8 +51,8 @@ public class TestAdvancedAerospace extends TestAero {
     private final Jumpship vessel;
 
     public static enum CapitalArmor{
-        STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
-        CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
+        STANDARD(EquipmentType.T_ARMOR_STANDARD_CAPITAL, false),   
+        CLAN_STANDARD(EquipmentType.T_ARMOR_STANDARD_CAPITAL, true),
         IS_IMP_FERRO_ALUM(EquipmentType.T_ARMOR_LC_FERRO_IMP, false),
         CLAN_IMP_FERRO_ALUM(EquipmentType.T_ARMOR_LC_FERRO_IMP, true),
         IS_FERRO_CARBIDE(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, false),

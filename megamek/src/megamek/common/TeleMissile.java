@@ -149,6 +149,12 @@ public class TeleMissile extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
+    
+    //Telemissiles don't mount Stealth systems. Would be kind of cool if they did, though.
+    @Override
+    public boolean hasStealth() {
+        return false;
+    }
 
     @Override
     public int calculateBattleValue() {

@@ -221,7 +221,8 @@ public class TestSmallCraft extends TestAero {
         if (sc.isSpheroid()) {
             if (sc.isPrimitive()) {
                 return (int)Math.floor(Math.sqrt(engineTonnage * 1.3));
-            } else if (sc.getDesignType() == SmallCraft.MILITARY) {
+            } else if ((sc.getDesignType() == SmallCraft.MILITARY)
+                    && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 return (int)Math.floor(Math.sqrt(engineTonnage * 6.8));
             } else {
                 return (int)Math.floor(Math.sqrt(engineTonnage * 1.6));
@@ -229,7 +230,8 @@ public class TestSmallCraft extends TestAero {
         } else {
             if (sc.isPrimitive()) {
                 return (int)Math.floor(engineTonnage / 75.0);
-            } else if (sc.getDesignType() == SmallCraft.MILITARY) {
+            } else if ((sc.getDesignType() == SmallCraft.MILITARY)
+                    && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 return (int)Math.floor(engineTonnage / 20.0);
             } else {
                 return (int)Math.floor(engineTonnage / 60.0);
@@ -744,6 +746,11 @@ public class TestSmallCraft extends TestAero {
         return illegal;
     }
     
+    /**
+     * Checks that the unit meets minimum crew and quarters requirements.
+     * @param buffer Where to write messages explaining failures.
+     * @return  true if the crew data is valid.
+     */
     public boolean correctCrew(StringBuffer buffer) {
         boolean illegal = false;
         int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
@@ -770,7 +777,7 @@ public class TestSmallCraft extends TestAero {
             buffer.append("Requires quarters for " + crewSize + " crew but only has " + quarters + "\n");
             illegal = true;
         }
-        return illegal;
+        return !illegal;
     }
 
     @Override

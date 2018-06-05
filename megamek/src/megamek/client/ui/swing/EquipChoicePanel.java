@@ -519,6 +519,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // Weapons that can be used in an Armored Glove
         ArrayList<WeaponType> agWeapTypes = new ArrayList<WeaponType>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
+        int gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
         while (allTypes.hasMoreElements()){
             EquipmentType eq = allTypes.nextElement();
             
@@ -528,7 +530,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
             
             // Check to see if the tech level of the equipment is legal
-            if (!eq.isLegal(entity.getTechLevelYear(), entity.getTechLevel(), entity.isMixedTech())) {
+            if (!eq.isLegal(gameYear, legalLevel, entity.isClan(), entity.isMixedTech())) {
                 continue;
             }
             
@@ -547,6 +549,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 agWeapTypes.add(infWeap);
             }
         }
+        Collections.sort(apWeapTypes, (w1, w2) -> w1.getName().compareTo(w2.getName()));
+        Collections.sort(agWeapTypes, (w1, w2) -> w1.getName().compareTo(w2.getName()));
 
         ArrayList<Mounted> armoredGloves = new ArrayList<Mounted>(2);
         for (Mounted m : entity.getMisc()){

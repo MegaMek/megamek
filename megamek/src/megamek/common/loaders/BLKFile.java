@@ -16,6 +16,8 @@ package megamek.common.loaders;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 import megamek.common.ASFBay;
@@ -24,6 +26,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
+import megamek.common.BayType;
 import megamek.common.CargoBay;
 import megamek.common.ConvFighter;
 import megamek.common.CrewQuartersCargoBay;
@@ -37,6 +40,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.HeavyVehicleBay;
 import megamek.common.Infantry;
 import megamek.common.InfantryBay;
+import megamek.common.InfantryBay.PlatoonType;
 import megamek.common.InsulatedCargoBay;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
@@ -88,6 +92,9 @@ public class BLKFile {
     public static final int STEAM = 10;
     public static final int BATTERY = 11;
     public static final int SOLAR = 12;
+    
+    private static final String BAY_DATA_SEPARATOR = ":"; 
+    private static final String COMSTAR_BAY = "c*";
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {
@@ -821,13 +828,15 @@ public class BLKFile {
     protected void addTransports(Entity e) {
         if (dataFile.exists("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");
+            HashSet<Integer> usedBayNumbers = new HashSet<>();
+            
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 transporter = transporter.toLowerCase();
             	boolean isPod = transporter.endsWith(":omni");
             	transporter = transporter.replace(":omni", "");
                 // for bays, we have to save the baynumber in each bay, because
-                // one conceputal bay can contain several different ones
+                // one conceptual bay can contain several different ones
                 // we default to bay 1
                 int bayNumber = 1;
                 // TroopSpace:
@@ -837,331 +846,187 @@ public class BLKFile {
                     e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new CargoBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new CargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("liquidcargobay:", 0)) {
                     String numbers = transporter.substring(15);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new LiquidCargoBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new LiquidCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("insulatedcargobay:", 0)) {
                     String numbers = transporter.substring(18);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new InsulatedCargoBay(size, doors,
-                            bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new InsulatedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("refrigeratedcargobay:", 0)) {
                     String numbers = transporter.substring(21);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new RefrigeratedCargoBay(size, doors,
-                            bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new RefrigeratedCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("livestockcargobay:", 0)) {
                     String numbers = transporter.substring(18);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new LivestockCargoBay(size, doors,
-                            bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new LivestockCargoBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("asfbay:", 0)) {
                     String numbers = transporter.substring(7);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new ASFBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("smallcraftbay:", 0)) {
                     String numbers = transporter.substring(14);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new SmallCraftBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("mechbay:", 0)) {
                     String numbers = transporter.substring(8);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new MechBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new MechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("lightvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new LightVehicleBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new LightVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new HeavyVehicleBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new HeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("superheavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(21);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new SuperHeavyVehicleBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new SuperHeavyVehicleBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    InfantryBay.PlatoonType type = InfantryBay.PlatoonType.FOOT;
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    } catch (NumberFormatException ex) {
-                        // if not a number, check for c* bay
-                        if (temp[2].equalsIgnoreCase("jump")) {
-                            type = InfantryBay.PlatoonType.JUMP;
-                        } else if (temp[2].equalsIgnoreCase("motorized")) {
-                            type = InfantryBay.PlatoonType.MOTORIZED;
-                        } else if (temp[2].equalsIgnoreCase("mechanized")) {
-                            type = InfantryBay.PlatoonType.MECHANIZED;
-                        }
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    if (temp.length == 4) {
-                        if (temp[3].equalsIgnoreCase("jump")) {
-                            type = InfantryBay.PlatoonType.JUMP;
-                        } else if (temp[3].equalsIgnoreCase("motorized")) {
-                            type = InfantryBay.PlatoonType.MOTORIZED;
-                        } else if (temp[3].equalsIgnoreCase("mechanized")) {
-                            type = InfantryBay.PlatoonType.MECHANIZED;
-                        }
-                    }
-                    e.addTransporter(new InfantryBay(size, doors, bayNumber, type));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()));
                 } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    boolean comstar = false;
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    } catch (NumberFormatException ex) {
-                        // if not a number, check for c* bay
-                        if (temp[2].equalsIgnoreCase("c*")) {
-                            comstar = true;
-                        }
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    if (temp.length == 4) {
-                        if (temp[3].equalsIgnoreCase("c*")) {
-                            comstar = true;
-                        }
-                    }
-                    e.addTransporter(new BattleArmorBay(size, doors, bayNumber,
-                            e.isClan(), comstar));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new BattleArmorBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
+                            e.isClan(), pbi.isComstarBay()));
                 } else if (transporter.startsWith("bay:", 0)) {
                     String numbers = transporter.substring(4);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new Bay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("protomechbay:", 0)) {
                     String numbers = transporter.substring(13);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    try {
-                        bayNumber = Integer.parseInt(temp[2]);
-                    } catch (ArrayIndexOutOfBoundsException ex) {
-                        // Find an unused bay number and use it.
-                        int i = 1;
-                        while (e.getBayById(i) != null) {
-                            i++;
-                        }
-                        bayNumber = i;
-                    }
-                    e.addTransporter(new ProtomechBay(size, doors, bayNumber));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()));
                 } else if (transporter.startsWith("crewquarters:", 0)) {
                     String numbers = transporter.substring(13);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new CrewQuartersCargoBay(size, doors));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
                 } else if (transporter.startsWith("steeragequarters:", 0)) {
                     String numbers = transporter.substring(17);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new SteerageQuartersCargoBay(size, doors));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
                 } else if (transporter.startsWith("2ndclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new SecondClassQuartersCargoBay(size,
-                            doors));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
                 } else if (transporter.startsWith("1stclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new FirstClassQuartersCargoBay(size, doors));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()));
                 } else if (transporter.startsWith("pillionseats:", 0)) {
                     String numbers = transporter.substring(13);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new PillionSeatCargoBay(size, doors));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new PillionSeatCargoBay(pbi.getSize(), pbi.getDoors()));
                 } else if (transporter.startsWith("standardseats:", 0)) {
                     String numbers = transporter.substring(14);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new StandardSeatCargoBay(size, doors));
+                    ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                    e.addTransporter(new StandardSeatCargoBay(pbi.getSize(), pbi.getDoors()));
                 }
 
             } // Handle the next transportation component.
 
         } // End has-transporters
+    }
+    
+    /**
+     * Class that holds data relating to transport bays
+     * and functionality to parse .blk file transport bay entries
+     * @author NickAragua
+     *
+     */
+    public class ParsedBayInfo {
+        private double size;
+        private int doors;
+        private int bayNumber = -1;
+        private PlatoonType platoonType = InfantryBay.PlatoonType.FOOT;
+        private boolean isComstarBay;
+        
+        public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers) {
+            // expected format of "numbers" string:
+            // a:b:c:d
+            // a is the size of the bay, in tons or # of units and is required
+            // b is the number of doors in the bay, and is required
+            // c is the bay number OR an indicator that this bay is a comstar bay OR an indicator of the kind of infantry bay it is, and is optional
+            // d is like c except that it's not going to be the bay number
+            
+            String temp[] = numbers.split(BAY_DATA_SEPARATOR);
+            size = Double.parseDouble(temp[0]);
+            doors = Integer.parseInt(temp[1]);
+            
+            // the bay type indicator will be either the third or fourth item, but the bay number always comes before it
+            // so we make sure to pick the last item in the array
+            String potentialBayTypeIndicator = "";
+            boolean bayNumberPresent = false;
+            
+            if(temp.length == 3) {
+                potentialBayTypeIndicator = temp[2];
+            } else if (temp.length == 4) {
+                potentialBayTypeIndicator = temp[3];
+                bayNumberPresent = true; // a 4-length array indicates that the bay number is in the third element
+            }
+                        
+            if(!potentialBayTypeIndicator.isEmpty()) {
+                // normally a great time for a switch statement, but we're using equalsignorecase for the comparator
+                if(potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
+                    isComstarBay = true;
+                } else if (potentialBayTypeIndicator.equalsIgnoreCase("jump")) {
+                    platoonType = InfantryBay.PlatoonType.JUMP;
+                } else if (potentialBayTypeIndicator.equalsIgnoreCase("motorized")) {
+                    platoonType = InfantryBay.PlatoonType.MOTORIZED;
+                } else if (potentialBayTypeIndicator.equalsIgnoreCase("mechanized")) {
+                    platoonType = InfantryBay.PlatoonType.MECHANIZED;
+                } else {
+                    // if we looked at the 
+                    bayNumberPresent = temp.length == 3; 
+                }
+            }
+            
+            // if we are looking for a bay number
+            // and a bay number is present, parse it
+            if(usedBayNumbers != null && bayNumberPresent) {
+                bayNumber = Integer.parseInt(temp[2]);
+            }
+
+            // if a bay number was not specified, assign one
+            // if a bay number was specified but is a duplicate, assign a different one
+            int newBay = 1;
+            if(bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
+                while(usedBayNumbers.contains(newBay)) {
+                    newBay++;
+                }
+                
+                bayNumber = newBay;
+            }
+            
+            usedBayNumbers.add(bayNumber);
+        }
+        
+        public double getSize() {
+            return size;
+        }
+        
+        public int getDoors() {
+            return doors;
+        }
+        
+        public int getBayNumber() {
+            return bayNumber;
+        }
+        
+        public PlatoonType getPlatoonType() {
+            return platoonType;
+        }
+        
+        public boolean isComstarBay() {
+            return isComstarBay;
+        }
     }
 }

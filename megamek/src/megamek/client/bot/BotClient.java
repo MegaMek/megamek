@@ -266,12 +266,18 @@ public abstract class BotClient extends Client {
         
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
-        // For future development, consider not unloading a particular entity if doing so would kill it.
+        // unless doing so would kill it or be illegal due to stacking violation
         for(Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
-            Entity transport = currentEntity.getTransportId() != Entity.NONE ? game.getEntity(currentEntity.getTransportId()) : null;
+            Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
             
             if(transport != null && transport.isPermanentlyImmobilized(true)) {
-                entitiesToUnload.add(currentEntity.getId());
+                boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(), transport.getPosition());
+                boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                        currentEntity.isLocationProhibited(transport.getPosition());
+                        
+                if(!stackingViolation && !unloadFatal) {
+                    entitiesToUnload.add(currentEntity.getId());
+                }
             }
         }
         
@@ -849,7 +855,13 @@ public abstract class BotClient extends Client {
     }
 
     // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
-    // ToDo: This will require a new PathFinder.
+    /**
+     * Determines if the given entity has a reasonable path to the "opposite" edge of the board from its
+     * current position.
+     * @param entity
+     * @param board
+     * @return
+     */
     private boolean hasPathToEdge(Entity entity, IBoard board) {
         // Flying units can always get anywhere
         if (entity.isAero() || entity instanceof VTOL) {
@@ -1106,6 +1118,23 @@ public abstract class BotClient extends Client {
 
     public void endOfTurnProcessing() {
         // Do nothing;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void receiveBuildingCollapse(Packet packet) {
+        game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
+        
+        // once we've updated the game board with the building collapse, it is time to update
+        // the board edge pathfinder by purging any paths that go through or next to the collapsed hexes
+        for(BoardEdgePathFinder edgePathFinder : deploymentPathFinders.values()) {
+            for(Coords coords : (Vector<Coords>) packet.getObject(0)) {
+                edgePathFinder.invalidatePaths(coords);
+                
+                for(Coords neighbor : coords.allAdjacent()) {
+                    edgePathFinder.invalidatePaths(neighbor);
+                }
+            }
+        }
     }
 
     private class RankedCoords implements Comparable<RankedCoords> {

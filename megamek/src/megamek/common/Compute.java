@@ -97,6 +97,19 @@ public class Compute {
     public static final int ARC_HEXSIDE_3 = 35;
     public static final int ARC_HEXSIDE_4 = 36;
     public static final int ARC_HEXSIDE_5 = 37;
+    //Expanded arcs for Waypoint Launched Capital Missiles
+    public static final int ARC_NOSE_WPL = 38;
+    public static final int ARC_LWING_WPL = 39;
+    public static final int ARC_RWING_WPL = 40;
+    public static final int ARC_LWINGA_WPL = 41;
+    public static final int ARC_RWINGA_WPL = 42;
+    public static final int ARC_LEFTSIDE_SPHERE_WPL = 43;
+    public static final int ARC_RIGHTSIDE_SPHERE_WPL = 44;
+    public static final int ARC_LEFTSIDEA_SPHERE_WPL = 45;
+    public static final int ARC_RIGHTSIDEA_SPHERE_WPL = 46;
+    public static final int ARC_AFT_WPL = 47;
+    public static final int ARC_LEFT_BROADSIDE_WPL = 48;
+    public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -196,6 +209,7 @@ public class Compute {
     public static double oddsAbove(int n) {
         return oddsAbove(n, false);
     }
+    
 
     /**
      * Returns the odds that a certain number or above will be rolled on 2d6,
@@ -223,7 +237,7 @@ public class Compute {
             return odds[n];
         }
     }
-
+    
     /**
      * Returns an entity if the specified entity would cause a stacking
      * violation entering a hex, or returns null if it would not. The returned
@@ -452,7 +466,7 @@ public class Compute {
 
         // arguments valid?
         if (entity == null) {
-            throw new IllegalArgumentException("Entity invalid.");
+            throw new IllegalArgumentException("Entity invalid. ID " + entityId);
         }
         if (src.distance(dest) > 1) {
             throw new IllegalArgumentException("Coordinates must be adjacent.");
@@ -3626,6 +3640,16 @@ public class Compute {
             tPos = getClosestFlightPath(ae.getId(), ae.getPosition(),
                     (Entity) t);
         }
+        
+        // AMS defending against Ground to Air fire needs to calculate arc based on the closest flight path
+        // Technically it's an AirToGround attack since the AMS is on the aircraft
+        if (isAirToGround(ae, t) && (t instanceof Entity) 
+                && (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMS)
+                        || ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_AMSBAY))) {
+            Entity te = (Entity) t;
+            aPos = getClosestFlightPath(te.getId(), te.getPosition(),
+                    ae);
+        }
 
         tPosV.add(tPos);
         // check for secondary positions
@@ -3761,8 +3785,18 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_NOSE_WPL:
+                    if ((fa > 240) || (fa < 120)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LWING:
                     if ((fa > 300) || (fa <= 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LWING_WPL:
+                    if ((fa > 240) || (fa < 60)) {
                         return true;
                     }
                     break;
@@ -3771,13 +3805,28 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_RWING_WPL:
+                    if ((fa > 300) || (fa < 120)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LWINGA:
                     if ((fa >= 180) && (fa < 240)) {
                         return true;
                     }
                     break;
+                case ARC_LWINGA_WPL:
+                    if ((fa > 120) && (fa < 300)) {
+                        return true;
+                    }
+                    break;    
                 case ARC_RWINGA:
                     if ((fa > 120) && (fa <= 180)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RWINGA_WPL:
+                    if ((fa > 60) && (fa < 240)) {
                         return true;
                     }
                     break;
@@ -3786,8 +3835,18 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_AFT_WPL:
+                    if ((fa > 60) && (fa < 300)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LEFTSIDE_SPHERE:
                     if ((fa > 240) || (fa < 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDE_SPHERE_WPL:
+                    if ((fa > 180) || (fa < 60)) {
                         return true;
                     }
                     break;
@@ -3796,8 +3855,18 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_RIGHTSIDE_SPHERE_WPL:
+                    if ((fa > 300) || (fa < 180)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LEFTSIDEA_SPHERE:
                     if ((fa > 180) && (fa < 300)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDEA_SPHERE_WPL:
+                    if ((fa > 120) && (fa < 360)) {
                         return true;
                     }
                     break;
@@ -3806,13 +3875,28 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_RIGHTSIDEA_SPHERE_WPL:
+                    if ((fa > 0) && (fa < 240)) {
+                        return true;
+                    }
+                    break;
                 case ARC_LEFT_BROADSIDE:
                     if ((fa >= 240) && (fa <= 300)) {
                         return true;
                     }
                     break;
+                case ARC_LEFT_BROADSIDE_WPL:
+                    if ((fa > 180) && (fa <= 360)) {
+                        return true;
+                    }
+                    break;
                 case ARC_RIGHT_BROADSIDE:
                     if ((fa >= 60) && (fa <= 120)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHT_BROADSIDE_WPL:
+                    if ((fa > 0) && (fa < 180)) {
                         return true;
                     }
                     break;
@@ -3958,13 +4042,25 @@ public class Compute {
                 targetPos = Compute.getClosestFlightPath(ae.getId(),
                         ae.getPosition(), te);
             }
+            //Airborne aeros can only see ground targets they overfly, and only at Alt <=8
+            if (isAirToGround(ae, target)) {
+                if (ae.getAltitude() > 8) {
+                    return false;
+                }
+                if (ae.passedOver(target)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
 
         visualRange = Math.max(visualRange, 1);
         int distance;
         // Ground distance
         distance = ae.getPosition().distance(targetPos);
-        distance += 2 * target.getAltitude();
+        //Need to track difference in altitude, not just add altitude to the range
+        distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
         return distance <= visualRange;
 
     }
@@ -4013,9 +4109,28 @@ public class Compute {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
-
+                
         int distance = ae.getPosition().distance(target.getPosition());
-        distance += 2 * target.getAltitude();
+        
+        //Aeros have to check visibility to ground targets for the closest point of approach along their flight path
+        //Because the rules state "within X hexes of the flight path" we're using ground distance so altitude doesn't screw us up
+        if (isAirToGround(ae, target) && (target instanceof Entity)) {
+            Entity te = (Entity) target;
+            distance = te.getPosition().distance(
+                    getClosestFlightPath(te.getId(),
+                            te.getPosition(), (Entity) ae));
+            return (distance > minSensorRange) && (distance <= maxSensorRange);
+        }
+        //This didn't work right for Aeros. Should account for the difference in altitude, not just add the target's altitude to distance
+        distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
+        
+        // if this is an air-to-air scan on the ground map, then divide distance by 16 to match weapon ranges
+        // I purposely left this calculation out of visual spotting, so we should do some testing with this and 
+        // see if it's errata-worthy. The idea is that you'll boost sensor range to help find an enemy aero on the map
+        // but still won't be able to see it and shoot at it beyond normal visual conditions. 
+        if (isAirToAir(ae, target) && game.getBoard().onGround()) {
+            distance = (int) Math.ceil(distance / 16.0);
+        }
         return (distance > minSensorRange) && (distance <= maxSensorRange);
     }
 
@@ -4162,6 +4277,22 @@ public class Compute {
 
         // adjust the range based on LOS and planetary conditions
         range = sensor.adjustRange(range, game, los);
+        
+        //If we're an airborne aero, sensor range is limited to within a few hexes of the flightline against ground targets
+        //TO Dec 2017 Errata p17
+        if (te != null && ae.isAirborne() && !te.isAirborne()) {
+            //Can't see anything if above Alt 8.
+            if (ae.getAltitude() > 8) {
+                range = 0;
+            } else if (sensor.isBAP()) {
+            //Add 1 to range for active probe of any type            
+                range = 2;
+            } else {
+            //Basic sensor range listed in errata
+                range = 1;
+            }
+            return range;
+        }
 
         // now adjust for anything about the target entity (size, heat, etc)
         if (null != te) {

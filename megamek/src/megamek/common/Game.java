@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -1557,22 +1558,22 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Return a Vector of Entites at Coords <code>c</code>
+     * Return a List of Entities at Coords <code>c</code>
      *
-     * @param c
-     * @return <code>Vector<Entity></code>
+     * @param c The coordinates to check
+     * @return <code>List<Entity></code>
      */
     public List<Entity> getEntitiesVector(Coords c) {
         return getEntitiesVector(c, false);
     }
 
     /**
-     * Return a Vector of Entites at Coords <code>c</code>
+     * Return a List of Entities at Coords <code>c</code>
      *
-     * @param c
+     * @param c The coordinates to check
      * @param ignore
      *            Flag that determines whether the ability to target is ignored
-     * @return <code>Vector<Entity></code>
+     * @return <code>List<Entity></code>
      */
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         //checkPositionCacheConsistency();
@@ -1581,11 +1582,19 @@ public class Game implements Serializable, IGame {
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
-        HashSet<Integer> posEntities = entityPosLookup.get(c);
-        ArrayList<Entity> vector = new ArrayList<Entity>();
+        Set<Integer> posEntities = entityPosLookup.get(c);
+        List<Entity> vector = new ArrayList<Entity>();
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
+                
+                // if the entity with the given ID doesn't exist, we will update the lookup table
+                // and move on
+                if(e == null) {
+                    posEntities.remove(eId);
+                    continue;
+                }
+                
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
 
@@ -1604,7 +1613,7 @@ public class Game implements Serializable, IGame {
     /**
      * Return a Vector of gun emplacements at Coords <code>c</code>
      *
-     * @param c
+     * @param c The coordinates to check
      * @return <code>Vector<Entity></code>
      */
     public Vector<GunEmplacement> getGunEmplacements(Coords c) {
@@ -1612,15 +1621,35 @@ public class Game implements Serializable, IGame {
 
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
-            for (Entity entity : entities) {
-                if (c.equals(entity.getPosition())
-                    && (entity instanceof GunEmplacement)) {
+            for (Entity entity : getEntitiesVector(c, true)) {
+                if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
                     vector.addElement((GunEmplacement) entity);
                 }
             }
         }
 
         return vector;
+    }
+    
+    /**
+     * Determine if the given set of coordinates has a gun emplacement on the roof of a building.
+     * @param c The coordinates to check
+     */
+    public boolean hasRooftopGunEmplacement(Coords c) {
+        Building building = getBoard().getBuildingAt(c);
+        if(building == null) {
+            return false;
+        }
+        
+        IHex hex = getBoard().getHex(c);
+        
+        for (Entity entity : getEntitiesVector(c, true)) {
+            if (entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT) && entity.getElevation() == hex.ceiling()) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
@@ -1817,16 +1846,6 @@ public class Game implements Serializable, IGame {
         start = start % entities.size();
         int entityId = entities.get(start).getId();
         return getEntity(getNextEntityNum(getTurn(), entityId));
-    }
-
-    /**
-     * Returns the Entity id of the next entity that can move during the current
-     * turn.
-     *
-     * @param start the Entity Id to start at
-     */
-    public int getNextEntityNum(int start) {
-        return getNextEntityNum(getTurn(), start);
     }
 
     /**
@@ -2409,11 +2428,16 @@ public class Game implements Serializable, IGame {
             TurnOrdered.rollInitAndResolveTies(getEntitiesVector(), vRerolls, false);
         } else {
             TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests,
-                                               getOptions()
-                                                       .booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+                    getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
         initiativeRerollRequests.removeAllElements();
 
+    }
+    
+    public void handleInitiativeCompensation() {
+        if (getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)) {
+            TurnOrdered.resetInitiativeCompensation(teams, getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
+        }
     }
 
     public int getNoOfInitiativeRerollRequests() {

@@ -157,6 +157,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * not be modified for terrain or movement. See TW pg 260
      */
     protected boolean isPointblankShot = false;
+    
+    /**
+     * Boolean flag that determines if this shot was fired using homing ammunition.
+     * Can be checked to allow casting of attack handlers to the proper homing handler.
+     */
+    protected boolean isHomingShot = false;
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -516,7 +522,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
         boolean narcSpotter = false;
-        if (isIndirect) {
+        if (isIndirect && !ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             if ((target instanceof Entity) && !isTargetECMAffected && (te != null) && (atype != null) && usesAmmo
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     && (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam()))) {
@@ -563,7 +569,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         LosEffects los;
         ToHitData losMods;
 
-        if (!isIndirect || (spotter == null)) {
+        if (isIndirect && ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+                && !underWater) {
+            los = new LosEffects();
+            losMods = new ToHitData();
+        } else if (!isIndirect || (spotter == null)) {
             if (!exchangeSwarmTarget) {
                 los = LosEffects.calculateLos(game, attackerId, target);
             } else {
@@ -974,7 +984,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // targeting mods for evasive action by large craft
-            if (aero.isEvading()) {
+            // Per TW, this does not apply when firing Capital Missiles
+            if (aero.isEvading() &&
+                    (!(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE
+                            || wtype.getAtClass() == WeaponType.CLASS_AR10
+                            || wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE))) {
                 toHit.addModifier(+2, "attacker is evading");
             }
 
@@ -1055,6 +1069,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (wtype.hasFlag(WeaponType.F_MASS_DRIVER)) {
             toHit.addModifier(2, "Mass Driver to-hit Penalty");
+        }
+        
+        //Capital missiles in waypoint launch mode
+        if (weapon.isInWaypointLaunchMode()) {
+            toHit.addModifier(1, "Weapon in Waypoint Launch Mode");
         }
 
         if (te instanceof Entity && te.isAero() && te.isAirborne()) {
@@ -1249,7 +1268,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(+1, "Urban Guerrilla");
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
-                    && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
+                    && !ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
                 toHit.addModifier(+1, OptionsConstants.PILOT_SHAKY_STICK);
             }
             if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)
@@ -1663,7 +1682,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
-        if (weapon.isKindRapidFire() && weapon.curMode().equals("Rapid")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC) 
+                && weapon.curMode().equals("Rapid")) {
             toHit.addModifier(1, "AC rapid fire mode");
         }
 
@@ -3119,8 +3139,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE) && !isStrafing) {
                 // a friendly unit can never be the target of a direct attack.
                 // but we do allow vehicle flamers to cool
-                if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((te.getOwnerId() == ae.getOwnerId())
-                        || (te.getOwner().getTeam() == ae.getOwner().getTeam()))) {
+                if ((target.getTargetType() == Targetable.TYPE_ENTITY) && !te.getOwner().isEnemyOf(ae.getOwner())) {
                     if (!(usesAmmo && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
                         return "A friendly unit can never be the target of a direct attack.";
                     }
@@ -3733,7 +3752,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
-        if (!isIndirect || (isIndirect && (spotter == null))) {
+        if (isIndirect && ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+                && !underWater) {
+            // Assume that no LOS mods apply
+            los = new LosEffects();
+            losMods = new ToHitData();
+            
+        } else if (!isIndirect || (isIndirect && (spotter == null))) {
             if (!exchangeSwarmTarget) {
                 los = LosEffects.calculateLos(game, attackerId, target);
             } else {
@@ -3757,7 +3782,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((wtype instanceof MekMortarWeapon) && isIndirect) {
                 los.setArcedAttack(true);
             }
-
+            
             losMods = los.losModifiers(game, eistatus, underWater);
         } else {
             if (!exchangeSwarmTarget) {
@@ -4402,6 +4427,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     public void setPointblankShot(boolean isPointblankShot) {
         this.isPointblankShot = isPointblankShot;
+    }
+
+    public boolean isHomingShot() {
+        return isHomingShot;
+    }
+
+    public void setHomingShot(boolean isHomingShot) {
+        this.isHomingShot = isHomingShot;
     }
     
     /*

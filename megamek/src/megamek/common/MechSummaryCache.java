@@ -355,7 +355,7 @@ public class MechSummaryCache {
         ms.setName(e.getShortNameRaw());
         ms.setChassis(e.getChassis());
         ms.setModel(e.getModel());
-        ms.setUnitType(MechSummary.determineUnitType(e));
+        ms.setUnitType(UnitType.determineUnitType(e));
         ms.setSourceFile(f);
         ms.setEntryName(entry);
         ms.setYear(e.getYear());

@@ -58,7 +58,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
     private static final long serialVersionUID = -1277549123532227298L;
     boolean handledAmmoAndReport = false;
     private MMLogger logger = null;
-    boolean advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     boolean detRangeShort = weapon.curMode().equals("Bearings-Only Short Detection Range");
     boolean detRangeMedium = weapon.curMode().equals("Bearings-Only Medium Detection Range");
     boolean detRangeLong = weapon.curMode().equals("Bearings-Only Long Detection Range");
@@ -172,7 +171,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 r.newlines = 0;
                 r.subject = subjectId;
                 r.add(wtype.getName());
-                r.add(aaa.turnsTilHit);
+                r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
@@ -180,13 +179,13 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
             // off-board attack phase that follows.
-            if (aaa.turnsTilHit == 0) {
+            if (aaa.getTurnsTilHit() == 0) {
                 setAnnouncedEntityFiring(false);
             }
             return true;
         }
-        if (aaa.turnsTilHit > 0) {
-            aaa.turnsTilHit--;
+        if (aaa.getTurnsTilHit() > 0) {
+            aaa.decrementTurnsTilHit();
             return true;
         }
         Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
@@ -688,159 +687,32 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         return true;
     }
         
-    // check for AMS and Point Defense Bay fire
-    @Override
-    protected int calcCounterAV() {
-        if ((target == null)
-                || (target.getTargetType() != Targetable.TYPE_ENTITY)
-                || !advancedPD) {
-            return 0;
+    /**
+     * Checks to see if this point defense/AMS bay can engage a capital missile
+     * This should return true. Only when handling capital missile attacks can this be false.
+     */
+    protected boolean canEngageCapitalMissile(Mounted counter) {
+        if (counter.getBayWeapons().size() < 2) {
+            return false;
+        } else {
+            return true;
         }
-        int counterAV = 0;
-        int amsAV = 0;
-        double pdAV = 0;
-        Entity entityTarget = (Entity) target;
-        // any AMS bay attacks by the target?
-        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
-        if (null != lCounters) {
-            for (Mounted counter : lCounters) {               
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
-                Entity pdEnt = counter.getEntity();
-                boolean isInArc;
-                // If the defending unit is the target, use attacker for arc
-                if (entityTarget.equals(pdEnt)) {
-                    isInArc = Compute.isInArc(game, pdEnt.getId(),
-                            pdEnt.getEquipmentNum(counter),
-                            ae);
-                } else { // Otherwise, the attack must pass through an escort unit's hex
-                    // TODO: We'll get here, eventually
-                    isInArc = Compute.isInArc(game, pdEnt.getId(),
-                            pdEnt.getEquipmentNum(counter),
-                            entityTarget);
-                }
-                if (isAMSBay) {
-                    amsAV = 0;
-                    // Point defenses can't fire if they're not ready for any reason
-                    if (!(counter.getType() instanceof WeaponType)
-                             || !counter.isReady() || counter.isMissing()
-                                // shutdown means no Point defenses
-                                || pdEnt.isShutDown()
-                                // Point defenses only fire vs attacks in arc
-                                || !isInArc
-                                // Point defense bays must have at least 2 weapons to affect capital missiles
-                                || (counter.getBayWeapons().size() < 2)) {
-                            continue;
-                    }
-                    // Now for heat, damage and ammo we need the individual weapons in the bay
-                    for (int wId : counter.getBayWeapons()) {
-                        Mounted bayW = pdEnt.getEquipment(wId);
-                        Mounted bayWAmmo = bayW.getLinked();
-                        WeaponType bayWType = ((WeaponType) bayW.getType());
-                        
-                        // build up some heat
-                        //First Check to see if we have enough heat capacity to fire
-                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
-                            continue;
-                        }
-                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                            pdEnt.heatBuildup += Compute.d6(bayW
-                                    .getCurrentHeat());                     
-                        } else {
-                            pdEnt.heatBuildup += bayW.getCurrentHeat();
-                        }
-                        
-                        //Bays use lots of ammo. Check to make sure we haven't run out
-                        if (bayWAmmo != null) {
-                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
-                                continue;
-                            }
-                            // decrement the ammo
-                            bayWAmmo.setShotsLeft(Math.max(0,
-                                bayWAmmo.getBaseShotsLeft() - 1));
-                        }
-                        
-                        // get the attack value
-                        amsAV += bayWType.getShortAV();                                      
-                    }
-                                                            
-                } else if (isPDBay) {
-                    pdAV = 0;
-                    // Point defenses can't fire if they're not ready for any reason
-                    if (!(counter.getType() instanceof WeaponType)
-                             || !counter.isReady() || counter.isMissing()
-                                // shutdown means no Point defenses
-                                || pdEnt.isShutDown()
-                                // Point defenses only fire vs attacks in arc
-                                || !isInArc
-                                // Point defense bays must have at least 2 weapons to affect capital missiles
-                                || (counter.getBayWeapons().size() < 2)
-                                // Point defense bays only fire once per round
-                                || counter.isUsedThisRound() == true) {
-                            continue;
-                    }
-                    // Now for heat, damage and ammo we need the individual weapons in the bay
-                    for (int wId : counter.getBayWeapons()) {
-                        Mounted bayW = pdEnt.getEquipment(wId);
-                        Mounted bayWAmmo = bayW.getLinked();
-                        WeaponType bayWType = ((WeaponType) bayW.getType());
-                        
-                        // build up some heat
-                        //First Check to see if we have enough heat capacity to fire
-                        if ((pdEnt.heatBuildup + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
-                            continue;
-                        }
-                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                            pdEnt.heatBuildup += Compute.d6(bayW
-                                    .getCurrentHeat());                     
-                        } else {
-                            pdEnt.heatBuildup += bayW.getCurrentHeat();
-                        }
-                        
-                        //Bays use lots of ammo. Check to make sure we haven't run out
-                        if (bayWAmmo != null) {
-                            if (bayWAmmo.getBaseShotsLeft() < counter.getBayWeapons().size()) {
-                                continue;
-                            }
-                            // decrement the ammo
-                            bayWAmmo.setShotsLeft(Math.max(0,
-                                bayWAmmo.getBaseShotsLeft() - 1));
-                        }
-                        
-                        // get the attack value
-                        pdAV += bayWType.getShortAV();                    
-                    }
-                    
-                    // set the pdbay as having fired, if it was able to
-                    if (pdAV > 0 ) {
-                        counter.setUsedThisRound(true);                        
-                    }
-                                 
-                } //end PDBay fire 
-                
-                // non-AMS only add half their damage, rounded up
-                
-                // set the pdbay as having fired, if it did
-                if (pdAV > 0) {
-                    pdBayEngagedCap = true;
-                }
-                counterAV += (int) Math.ceil(pdAV / 2.0);
-                
-                // set the ams as having fired, if it did
-                if (amsAV > 0) {
-                    amsBayEngagedCap = true;
-                }
-                // AMS add their full damage
-                counterAV += amsAV;
-            } //end "for Mounted counter"
-        } // end check for counterfire
-        CounterAV = (int) counterAV;
-        return counterAV;
-    } // end getAMSAV
+    }
     
+    /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     */
     @Override
-    protected int getCounterAV() {
-        return CounterAV;
+    protected void setAMSBayReportingFlag() {
+        amsBayEngagedCap = true;
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     */
+    @Override
+    protected void setPDBayReportingFlag() {
+        pdBayEngagedCap = true;
     }
     
     @Override

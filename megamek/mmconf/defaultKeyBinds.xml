@@ -1,312 +1,306 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  This is the default key binding for MegaMek.  
-
+   This is the default key binding for MegaMek.  
    Key code numeric values are defined in awt.event.KeyEvent.
    See: http://docs.oracle.com/javase/7/docs/api/constant-values.html#java.awt.event.KeyEvent.CHAR_UNDEFINED
-
    The modifier numeric value is a mask that determines what modifier keys are pressed (ie; ctrl, shift, etc). 
    These are defined at the same webpage, however they should be combined using bitwise ors.
-
-    Commands are strings used to represent the possible actions MegaMek recognizes.
-    These are defined and listed in megamek.client.ui.swing.util.KeyBindCommand
--->
-<KeyBindings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:noNamespaceSchemaLocation="keyBindingSchema.xsl">
-
-      <KeyBind>
-        <command>scrollN</command>
-        <keyCode>87</keyCode> <!-- W -->
-        <modifier>0</modifier>          
+   Commands are strings used to represent the possible actions MegaMek recognizes.
+   These are defined and listed in megamek.client.ui.swing.util.KeyBindCommand
+ -->
+<KeyBindings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="keyBindingSchema.xsl">
+    <KeyBind>
+         <command>scrollN</command> <!-- W -->
+        <keyCode>87</keyCode>
+        <modifier>0</modifier>
         <isRepeatable>true</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>scrollS</command>
-        <keyCode>83</keyCode> <!-- S -->
-        <modifier>0</modifier>          
+    <KeyBind>
+         <command>scrollS</command> <!-- S -->
+        <keyCode>83</keyCode>
+        <modifier>0</modifier>
         <isRepeatable>true</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>scrollE</command>
-        <keyCode>68</keyCode> <!-- D -->
-        <modifier>0</modifier>          
+    <KeyBind>
+         <command>scrollE</command> <!-- D -->
+        <keyCode>68</keyCode>
+        <modifier>0</modifier>
         <isRepeatable>true</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>scrollW</command>
-        <keyCode>65</keyCode> <!-- A -->
-        <modifier>0</modifier>          
+    <KeyBind>
+         <command>scrollW</command> <!-- A -->
+        <keyCode>65</keyCode>
+        <modifier>0</modifier>
         <isRepeatable>true</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>toggleIso</command>
-        <keyCode>84</keyCode> <!-- T -->
+    <KeyBind>
+         <command>toggleIso</command> <!-- T -->
+        <keyCode>84</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>toggleChat</command>
-        <keyCode>10</keyCode> <!-- Enter -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>toggleChatCmd</command>
-        <keyCode>47</keyCode> <!-- / -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-
-      <KeyBind>
-        <command>turnLeft</command>
-        <keyCode>65</keyCode> <!-- Shift-A -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>turnRight</command>
-        <keyCode>68</keyCode> <!-- Shift-D -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>twistLeft</command>
-        <keyCode>65</keyCode> <!-- Shift-A -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>twistRight</command>
-        <keyCode>68</keyCode> <!-- Shift-D -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevUnit</command>
-        <keyCode>81</keyCode> <!-- Shift-Q -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextUnit</command>
-        <keyCode>69</keyCode> <!-- Shift-E -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevTarget</command>
-        <keyCode>90</keyCode> <!-- Z -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextTarget</command>
-        <keyCode>67</keyCode> <!-- C -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevTargetValid</command>
-        <keyCode>90</keyCode> <!-- Shift Z -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextTargetValid</command>
-        <keyCode>67</keyCode> <!-- Shift C -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevTargetNoAllies</command>
-        <keyCode>90</keyCode> <!-- Ctrl Z -->
-        <modifier>2</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextTargetNoAllies</command>
-        <keyCode>67</keyCode> <!-- Ctrl C -->
-        <modifier>2</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevTargetValidNoAllies</command>
-        <keyCode>90</keyCode> <!-- Ctrl-Shift Z -->
-        <modifier>3</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextTargetValidNoAllies</command>
-        <keyCode>67</keyCode> <!-- Ctrl-Shift C -->
-        <modifier>3</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevWeapon</command>
-        <keyCode>81</keyCode> <!-- Q -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextWeapon</command>
-        <keyCode>69</keyCode> <!-- E -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>fire</command>
-        <keyCode>70</keyCode> <!-- F -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>undo</command>
-        <keyCode>8</keyCode> <!-- Backspace -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-          <command>movementEnvelope</command>
-          <keyCode>82</keyCode> <!-- R -->
-          <modifier>0</modifier>
-          <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>centerOnSelected</command>
-        <keyCode>32</keyCode> <!-- Spacebar -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>autoArtyDeployZone</command>
-        <keyCode>90</keyCode> <!-- Shift-Spacebar -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>fieldOfFire</command>
-        <keyCode>82</keyCode> <!-- Shift-R -->
-        <modifier>1</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>cancel</command>
-        <keyCode>27</keyCode> <!-- Escape -->
+    <KeyBind>
+         <command>toggleChat</command> <!-- Enter -->
+        <keyCode>10</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>done</command>
-        <keyCode>10</keyCode> <!-- Ctrl-Enter -->
-        <modifier>2</modifier>
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>udGeneral</command>
-        <keyCode>112</keyCode> <!-- F1 -->
+    <KeyBind>
+         <command>toggleChatCmd</command> <!-- Slash -->
+        <keyCode>47</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>udPilot</command>
-        <keyCode>113</keyCode> <!-- F2 -->
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>udArmor</command>
-        <keyCode>114</keyCode> <!-- F3 -->
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>udSystems</command>
-        <keyCode>115</keyCode> <!-- F4 -->
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>udWeapons</command>
-        <keyCode>116</keyCode> <!-- F5 -->
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>udExtras</command>
-        <keyCode>117</keyCode> <!-- F6 -->
-        <modifier>0</modifier>
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-      
-      <KeyBind>
-        <command>toggleJump</command>
-        <keyCode>74</keyCode> <!-- J -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>toggleConversion</command>
-        <keyCode>77</keyCode> <!-- M -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevMode</command>
-        <keyCode>9</keyCode> <!-- Shift Tab -->
+    <KeyBind>
+         <command>turnLeft</command> <!-- Shift-A -->
+        <keyCode>65</keyCode>
         <modifier>1</modifier>
         <isRepeatable>false</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>nextMode</command>
-        <keyCode>9</keyCode> <!-- Tab -->
+    <KeyBind>
+         <command>turnRight</command> <!-- Shift-D -->
+        <keyCode>68</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>twistLeft</command> <!-- Shift-A -->
+        <keyCode>65</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>twistRight</command> <!-- Shift-D -->
+        <keyCode>68</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>fire</command> <!-- F -->
+        <keyCode>70</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
-      </KeyBind>
+    </KeyBind>
 
-      <KeyBind>
-        <command>toggleDrawLabels</command>
-        <keyCode>89</keyCode> <!-- Y -->
+    <KeyBind>
+         <command>nextWeapon</command> <!-- E -->
+        <keyCode>69</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
-      </KeyBind>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevWeapon</command> <!-- Q -->
+        <keyCode>81</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>nextUnit</command> <!-- Ctrl-N -->
+        <keyCode>78</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevUnit</command> <!-- Shift-Q -->
+        <keyCode>81</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>nextTarget</command> <!-- C -->
+        <keyCode>67</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevTarget</command> <!-- Z -->
+        <keyCode>90</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>nextTargetValid</command> <!-- Shift-C -->
+        <keyCode>67</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevTargetValid</command> <!-- Shift-Z -->
+        <keyCode>90</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>nextTargetNoAllies</command> <!-- Ctrl-C -->
+        <keyCode>67</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevTargetNoAllies</command> <!-- Ctrl-Z -->
+        <keyCode>90</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift-C -->
+        <keyCode>67</keyCode>
+        <modifier>3</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift-Z -->
+        <keyCode>90</keyCode>
+        <modifier>3</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>undo</command> <!-- Backspace -->
+        <keyCode>8</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>movementEnvelope</command> <!-- Ctrl-Q -->
+        <keyCode>81</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>centerOnSelected</command> <!-- Space -->
+        <keyCode>32</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>autoArtyDeployZone</command> <!-- Shift-Space -->
+        <keyCode>32</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>fieldOfFire</command> <!-- R -->
+        <keyCode>82</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>cancel</command> <!-- Escape -->
+        <keyCode>27</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>done</command> <!-- Ctrl-Enter -->
+        <keyCode>10</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>udGeneral</command> <!-- F1 -->
+        <keyCode>112</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>udPilot</command> <!-- F2 -->
+        <keyCode>113</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>udArmor</command> <!-- F3 -->
+        <keyCode>114</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>udSystems</command> <!-- F4 -->
+        <keyCode>115</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>udWeapons</command> <!-- F5 -->
+        <keyCode>116</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>udExtras</command> <!-- F6 -->
+        <keyCode>117</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>toggleJump</command> <!-- J -->
+        <keyCode>74</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>toggleConversion</command> <!-- M -->
+        <keyCode>77</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>prevMode</command> <!-- Shift-Tab -->
+        <keyCode>9</keyCode>
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>nextMode</command> <!-- Tab -->
+        <keyCode>9</keyCode>
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>toggleDrawLabels</command> <!-- Ctrl-Y -->
+        <keyCode>89</keyCode>
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
 
 </KeyBindings>

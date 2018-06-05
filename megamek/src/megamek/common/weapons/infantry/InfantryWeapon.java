@@ -70,6 +70,24 @@ public abstract class InfantryWeapon extends Weapon {
     public int getCrew() {
         return crew;
     }
+    
+    /**
+     * The long range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
+     * explicit short/long/medium ranges
+     */
+    @Override
+    public int getLongRange() {
+        return infantryRange * 3;
+    }
+
+    /**
+     * The extreme range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
+     * explicit short/long/medium ranges
+     */
+    @Override
+    public int getExtremeRange() {
+        return infantryRange * 4;
+    }
 
     /*
      * (non-Javadoc)

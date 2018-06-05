@@ -39,6 +39,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 60;
         bv = 0.16;
+		tonnage = .00065;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;

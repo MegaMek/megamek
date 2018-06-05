@@ -38,9 +38,8 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 		addLookupName("Flamer (Man-Pack)");
 		cost = 100;
 		bv = 0.50;
+        tonnage = .015;
 		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-		String[] modeStrings = { "Damage", "Heat" };
-		setModes(modeStrings);
 		infantryDamage = 0.55;
 		infantryRange = 0;
 		crew = 1;

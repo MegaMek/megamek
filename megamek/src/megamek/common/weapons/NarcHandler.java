@@ -59,7 +59,21 @@ public class NarcHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
         getAMSHitsMod(vPhaseReport);
-        if (amsEngaged) {
+        calcCounterAV();
+        // Report AMS/Pointdefense failure due to Overheating.
+        if (pdOverheated 
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            Report r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } 
+        if (amsEngaged || apdsEngaged || amsBayEngagedMissile || pdBayEngagedMissile) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);
@@ -84,6 +98,20 @@ public class NarcHandler extends MissileWeaponHandler {
         }
         return 1;
     }
+    
+    /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     */
+    protected void setAMSBayReportingFlag() {
+        amsBayEngagedMissile = true;
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     */
+    protected void setPDBayReportingFlag() {
+        pdBayEngagedMissile = true;
+    }
 
     /*
      * (non-Javadoc)
@@ -93,6 +121,15 @@ public class NarcHandler extends MissileWeaponHandler {
     @Override
     protected int calcnCluster() {
         return 1;
+    }
+    
+    @Override
+    /**
+     * Narcs apply "damage" all in one block for AMS purposes
+     * This was referenced incorrectly for Aero damage.
+     */
+    protected boolean usesClusterTable() {
+        return false;
     }
 
     /*

@@ -41,7 +41,7 @@ Aerodyne
 crewquarters:7.0:0
 steeragequarters:0.0:0
 2ndclassquarters:21.0:0
-cargobay:8.0:1:1
+cargobay:7.0:1:1
 </transporters>
 
 <SafeThrust>
@@ -114,7 +114,7 @@ HB: MPS - Early Succesion War
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

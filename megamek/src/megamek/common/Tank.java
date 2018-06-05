@@ -567,9 +567,19 @@ public class Tank extends Entity {
 
             case NAVAL:
             case HYDROFOIL:
+                // Can only deploy under a bridge if there is sufficient clearance.
+                if (hex.containsTerrain(Terrains.BRIDGE)
+                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.surface())) {
+                    return true;
+                }
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
                         || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE:
+                // Submarines get extra clearance equal to the depth of water.
+                if (hex.containsTerrain(Terrains.BRIDGE)
+                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.floor())) {
+                    return true;
+                }
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
                 return (hex.containsTerrain(Terrains.WOODS)

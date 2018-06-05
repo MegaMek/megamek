@@ -41,6 +41,9 @@ public class ISBombastLaser extends LaserWeapon {
         setInternalName(name);
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
+        String[] modeStrings = { "Damage 12", "Damage 11", "Damage 10", 
+                "Damage 9", "Damage 8", "Damage 7" };
+        setModes(modeStrings);
         heat = 12;
         damage = 12;
         shortRange = 5;

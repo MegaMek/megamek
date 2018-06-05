@@ -19,7 +19,10 @@ package megamek.common.weapons.lasers;
 
 import megamek.common.IGame;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
@@ -53,5 +56,29 @@ public abstract class EnergyWeapon extends Weapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new EnergyWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Add modes for dialed-down damage according to TacOps, p.102
+        // Adds a mode for each damage value down to zero; zero is included
+        // as it is specifically mentioned in TacOps.
+        // The bombast laser has its own rules with to-hit modifiers and does not
+        // get additional dial-down
+        if (!(this instanceof ISBombastLaser)) {
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+                int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
+                for (; dmg >= 0; dmg--) {
+                    addMode("Damage " + dmg);
+                }
+            } else {
+                int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
+                for (; dmg >= 0; dmg--) {
+                    removeMode("Damage " + dmg);
+                } 
+            }
+        }
     }
 }

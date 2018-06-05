@@ -41,7 +41,6 @@ import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.DisplacementAttackAction;
@@ -60,18 +59,15 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
+import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
@@ -85,9 +81,6 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
-import megamek.common.weapons.capitalweapons.AR10BayWeapon;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -168,6 +161,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final int DMG_CRIPPLED = 4;
     
     public static final int USE_STRUCTURAL_RATING = -1;
+    
+    public static final String ENTITY_AIR_TO_GROUND_SENSOR_RANGE= Messages.getString("Entity.sensor_range_vs_ground_target");
 
     // Weapon sort order defines
     public static enum WeaponSortOrder {
@@ -192,7 +187,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected String camoCategory = IPlayer.NO_CAMO;
     protected String camoFileName = null;
-
+    
     /**
      * ID settable by external sources (such as mm.net)
      */
@@ -1067,8 +1062,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     public CompositeTechLevel factionTechLevel(int techFaction) {
+        if (techFaction == F_NONE) {
+            return compositeTechLevel;
+        }
         CompositeTechLevel retVal = new CompositeTechLevel(this, techFaction);
         addSystemTechAdvancement(retVal);
+        for (Mounted m : getEquipment()) {
+            retVal.addComponent(m.getType());
+            if (m.isArmored()) {
+                retVal.addComponent(TA_ARMORED_COMPONENT);
+            }
+        }
         return retVal;
     }
     
@@ -1843,10 +1847,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             retVal += current.surface();
             retVal -= next.surface();
         } else {
+            // if we're a hovercraft, surface ship, WIGE or a "fully amphibious" vehicle, we go on the water surface
+            // without adjusting elevation
             if ((getMovementMode() != EntityMovementMode.HOVER)
                 && (getMovementMode() != EntityMovementMode.NAVAL)
                 && (getMovementMode() != EntityMovementMode.HYDROFOIL)
-                && (getMovementMode() != EntityMovementMode.WIGE)) {
+                && (getMovementMode() != EntityMovementMode.WIGE)
+                && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
@@ -2180,9 +2187,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE)
-                || ((getMovementMode() == EntityMovementMode.HOVER) && hex
-                    .containsTerrain(Terrains.WATER))) {
-                // surface of ice is OK, surface of water is OK for hovers
+                || (((getMovementMode() == EntityMovementMode.HOVER) || hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) && 
+                        hex.containsTerrain(Terrains.WATER))) {
+                // surface of ice is OK, surface of water is OK for hovers and "fully amphibious" units
                 if (assumedAlt == hex.surface()) {
                     return true;
                 }
@@ -6315,7 +6322,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             //AMS Bays can fire at all incoming attacks each round
-            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
+            //So can standard AMS if the unofficial option is turned on
+            if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
+                    || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
+                            && ams.getType().hasFlag(WeaponType.F_AMS))) {
                 for (WeaponAttackAction waa : vAttacksInArc) {
                     if (waa != null) {
                         waa.addCounterEquipment(ams);
@@ -8003,6 +8013,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public Bay getBayById(int bayNumber) {
+        //TODO: Change transports to a map or other indexed data structure to avoid
+        // linear-time algorithm.
         for (Transporter next : transports) {
             if (next instanceof Bay) {
                 if (((Bay) next).getBayNumber() == bayNumber) {
@@ -8425,7 +8437,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 result.append(next.getUnusedString());
             }
-            if (next instanceof TroopSpace && isOmni()) {
+            if (isOmni() && ((next instanceof TroopSpace)
+                    || (next instanceof Bay))) {
             	if (omniPodTransports.contains(next)) {
             		result.append(" (Pod)");
             	} else {
@@ -10157,9 +10170,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
-            mod = mod / 2;
-        }
         return mod;
     }
 
@@ -10332,7 +10342,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = implicitClanCASE();
         if (count > 0) {
             long itemCost = 50000;
-            cost += 50000 * itemCost;
+            cost += count * itemCost;
             if (null != bvText) {
                 for (int i = 0; i < count; i++) {
                     bvText.append(startColumn);
@@ -11614,10 +11624,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
             && !hasActiveECM() && isMilitary()) {
             try {
-                String prefix = "IS";
-                if (isClan()) {
-                    prefix = "CL";
-                }
+                String prefix = isClan() ? "CL" : "IS";
                 this.addEquipment(
                         EquipmentType.get(prefix + BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
@@ -11627,105 +11634,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof GaussWeapon)
-                && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
-                String[] modes = {"Powered Up", "Powered Down"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            } else if ((mounted.getType() instanceof ACWeapon)
-                       && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
-                String[] modes = {"", "Rapid"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                if (gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
-                    mounted.setKindRapidFire(true);
-                }
-            } else if (mounted.getType() instanceof ISBombastLaser) {
-                int damage = 12;
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-
-                for (; damage >= 7; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                ((WeaponType) mounted.getType()).setModes(modes
-                                                                  .toArray(stringArray));
-            } else if (((WeaponType) mounted.getType()).isCapital()
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                           != WeaponType.CLASS_CAPITAL_MISSILE)
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                               != WeaponType.CLASS_TELE_MISSILE)
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                           != WeaponType.CLASS_AR10)) {
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                modes.add("");
-                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
-                    modes.add("Bracket 80%");
-                    modes.add("Bracket 60%");
-                    modes.add("Bracket 40%");
-                }
-                if (((mounted.getType() instanceof CapitalLaserBayWeapon)
-                     || (mounted.getType() instanceof SubCapLaserBayWeapon))
-                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
-                    modes.add("AAA");
-                    ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
-                }
-                if (modes.size() > 1) {
-                    ((WeaponType) mounted.getType()).setModes(modes
-                                                                      .toArray(stringArray));
-                }
-            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
-                        || (((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_AR10)) {
-                 ArrayList<String> modes = new ArrayList<String>();
-                 String[] stringArray = {};
-                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-                 modes.add("Normal");
-                 if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
-                     modes.add("Bearings-Only Extreme Detection Range");
-                     modes.add("Bearings-Only Long Detection Range");
-                     modes.add("Bearings-Only Medium Detection Range");
-                     modes.add("Bearings-Only Short Detection Range");
-                 }
-
-                 if (modes.size() > 1) {
-                     ((WeaponType) mounted.getType()).setModes(modes
-                                                                       .toArray(stringArray));
-                 }
-                 
-            } else if ((((WeaponType) mounted.getType()).getAtClass() == WeaponType.CLASS_TELE_MISSILE)) {
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-                modes.add("Normal");
-                modes.add("Tele-Operated");                
-                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
-                    modes.add("Bearings-Only Extreme Detection Range");
-                    modes.add("Bearings-Only Long Detection Range");
-                    modes.add("Bearings-Only Medium Detection Range");
-                    modes.add("Bearings-Only Short Detection Range");
-                }
-
-                if (modes.size() > 1) {
-                    ((WeaponType) mounted.getType()).setModes(modes
-                                                                      .toArray(stringArray));
-                }
-                
-            } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
-                       && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
-                Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
-                ArrayList<String> newModes = new ArrayList<>();
-                while (modeEnum.hasMoreElements()) {
-                    newModes.add(modeEnum.nextElement().getName());
-                }
-                if (!newModes.contains("Automatic")) {
-                    newModes.add("Automatic");
-                }
-                String modes[] = new String[newModes.size()];
-                newModes.toArray(modes);
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            }
-
+            if (mounted.getType() instanceof Weapon)
+                ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
+                mounted.setModesForMapType();
         }
 
         for (Mounted misc : getMisc()) {
@@ -12689,10 +12600,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
         int range = getActiveSensor().getRangeByBracket();
+        int groundRange = 0;
+        if (getActiveSensor().isBAP()) {
+            groundRange = 2;
+        } else {
+            groundRange = 1;
+        }
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
+        int maxGroundSensorRange = bracket * groundRange;
+        int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
+            minGroundSensorRange = 0;
+        }
+        if (isAirborne() && game.getBoard().onGround()) {
+            return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
+                    + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"
+                    + maxGroundSensorRange + ")}";
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                + maxSensorRange + ")";
@@ -13708,7 +13633,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc,
                                    HashMap<Integer, List<CriticalSlot>> vCriticals) {
-        if (masc != null) {
+        if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
             if (masc.getType().hasSubType(MiscType.S_SUPERCHARGER)
@@ -13736,10 +13661,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 if (((MiscType) (masc.getType()))
                         .hasSubType(MiscType.S_SUPERCHARGER)) {
-                    if (masc.getType().hasFlag(MiscType.F_MASC)) {
-                        masc.setHit(true);
-                        masc.setMode("Off");
-                    }
                     // do the damage - engine crits
                     int hits = 0;
                     int roll = Compute.d6(2);

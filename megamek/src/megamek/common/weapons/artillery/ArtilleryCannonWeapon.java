@@ -20,6 +20,8 @@ package megamek.common.weapons.artillery;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryCannonWeaponHandler;
 import megamek.common.weapons.AttackHandler;
@@ -37,7 +39,6 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
 
     public ArtilleryCannonWeapon() {
         super();
-        setModes(new String[] { "", "Indirect" });
         damage = DAMAGE_ARTILLERY;
         flags = flags.or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON)
                 .or(F_TANK_WEAPON);
@@ -58,5 +59,19 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
         // AmmoType atype = (AmmoType)
         // game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         return new ArtilleryCannonWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

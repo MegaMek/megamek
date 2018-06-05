@@ -133,7 +133,7 @@ public class EquipmentType implements ITechnology {
             3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
             25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
             12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000 };
+            5000, 10000 };
 
     public static final double[] armorPointMultipliers = {
             1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
@@ -468,7 +468,7 @@ public class EquipmentType implements ITechnology {
      *         it can be in.
      */
     public boolean hasModes() {
-        return modes != null;
+        return (modes != null) && (!modes.isEmpty());
     }
 
     /**
@@ -529,6 +529,24 @@ public class EquipmentType implements ITechnology {
     public boolean removeMode(String mode) {
         if (modes != null) {
             return modes.remove(EquipmentMode.getMode(mode));
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Add a mode to the Equipment
+     *
+     * @param mode The mode to be added
+     * @return true if the mode was added; false if modes was null or the mode was already present
+     * @author Simon (Juliez)
+     */
+    public boolean addMode(String mode) {
+        if (modes == null) {
+            modes = new Vector<EquipmentMode>();
+        }
+        if (!modes.contains(EquipmentMode.getMode(mode))) {
+            return modes.add(EquipmentMode.getMode(mode));
         } else {
             return false;
         }

@@ -1,6 +1,127 @@
-﻿VERSION HISTORY:
+VERSION HISTORY:
 ----------------
-v0.43.6-git
+v0.43.11-RC5-git
++ Data: Adding missing weights for infantry weapons.
++ PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
++ PR #696: Fixes #974: Edge Reroll for Superchargers Breaks Superchargers
++ PR #983: Implement "waypoint launch" for capital missiles
+		Prevent capital missiles from being fired in anything other than normal mode on non-space maps
+		Fix inability to switch firing modes on capital missiles
++ PR #963: Fix for glitchy-looking empty hexes near window edges when rendering large/zoomed maps in isometric mode
++ Data: New and Updated Sprites.
++ Updated RAT generator files with dropship name changes and conformed mechs and vehicles to MUL early SW era.
++ Data: New and Fixed RATs (thanks mkerensky)
++ Data: Various minor data fixes, including fix for #984,#719
++ Data: Fixing #906 Incorrect heat for Prototype Rocket Launcher 15 
++ PR #985: When considering point blank shots from hidden units, Princess will make use of torso twists.
++ PR #988: Sniper SPA should not affect LOS-range shots, per errata
++ Data: Reference fixes for ATOW-C equipment, and making the Mydron a little lighter.
+
+v0.43.10-RC4 (2018-04-18 18:00 UTC)
++ PR #952: Ground to air fix
+	Fixes issue #864: SRMs properly deal damage to airborne targets in the event that they hit
++ PR #964: Aero Sensor Suites and Visibility in Atmosphere/Low Vis Conditions
+	Fixes issue #387: Fixed aero targeting in limited-visibility scenarios
++ PR #946: shaky stick logic adjustment
+	Fixes issue #942: Shaky Stick SPA now only applies to ground-to-air attacks
++ PR #945: Fix (Again) for Tooltip Problems
+	Fixes issue #943: Setting tooltip dismiss delay to -1 no longer freezes clint
++ PR #947: Fix for #936 && PR #938: Fix for tooltip NPEs
+	Fixes issue #936 revisited: Fixed a situation where Princess would freeze during simultaneous turn movement phase after mechwarrior ejection.
++ PR #959: Fixed cost for CASE
+	Fixes issue #949: Kraken (Bane) 3 costs over 5 billion c-bills
++ Issue #948: Error in armor of Reptar and Araña
++ PR #940: Fixed number of crits for Clan endo-composite
++ PR #939: Unit type adds for mhq
++ PR #937: Artillery Class Cast Errors
+	Cleans up Server.assignAMS() regarding NPE caused by non-homing artillery rounds
+	Partially fixes #936: 0.43.9-RC3 Princess crashes
++ PR #950: Make Mount List Submenus
+	Fixes issues #764: Mount List Too Long
++ PR #967: Ant bulid.xml fix
+	Fixes issue with ant build.xml not seeing localized messages.properties files
++ PR #956: Added cost for T_AEROSPACE_ARMOR
+	Fixes issue mekhq#671: aerospace armor costs -5
++ PR #941: Unload Stranded Bug fix and Voluntary Infantry Unloading Implementation
+	Fixes princess throwing NPEs when she has stranded units in the deployment phase
++ PR #953: Make weapon mode button handling better
+	Fixes issues #829: Switching off PPC Field Inhibitor has no effect
+
+
+v0.43.9-RC3 (2018-03-13 18:00 UTC)
++ Issue #902: Fixed multiple issues relating to configuring ammo in weapon bays
++ PR #916: Make MUL files work for tracking ammo on GunEmplacements
++ PR #928: Corrections to scenarios, new keyword for handling random maps
+	Fixes Issue #927: Scenario random maps don't work with the new board directory structure
++ PR #924: Fix for #215: Entity Sprites displacement in Deployment
+	Fixes Issue #215: Entity Sprites displacement in Deployment
++ PR #921: Fixes boardview tooltip NPEs
++ PR #919: Pavement hexes not turned to mud in rainy conditions
+	Fixes Issue #546: Can get bogged down on pavement
++ PR #915: Board Background / BoardEditor fixes
++ PR #839: Add check to ignore SI damage for squadron status display
++ PR #917: Implemented break in PD heat checks instead of continue
++ PR #909: Add MiscType entry for Clan Endo-Composite structure
+	Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
++ PR #923: Bogdown after DFA
+	Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Sucessful DFA
++ Remove duplicate Glancing Blow and Direct Blow report messages
++ PR #930: Fix the image cache
++ PR #931: Observer Initiative & TacGen ICB Reset
+	Fixes Issue #339: Init streak compensation
+	Fixes Issue #345: Using Tactical Genius should not reset Initiative Streak Compensation
+	Fixes Issue #804: Initiative Streak Compensation Counts Observers
+	Fixes round reports showing initiative for observers
+	Fixes round reports showing BV information for players who never had any (original observers)
++ PR #932: Add Handle override to CapitalMissileBayHandler
+	Fixes Glancing/Direct Blow with capital missiles
+	Fixes handling of AMS vs. capital missiles
++ PR #933: Fully amphibious water travel fix
+	Fixes Issue #913: [.43.8 RC2] Bridge has a basement for some reason
+
+v0.43.8-RC2 (2018-02-11 22:40 UTC)
++ PR#877: Add the missing new skin files.
++ PR#881: Fixed transparency around buttons in the new skins.
++ Issue #620: Unused bombs are not recovered for VTOLs after battle
++ VTOL cruise MP reduced by 1 per bomb carried per errata.
++ Reports about units being on fire and escaping unscathed are better formatted.
++ Issue 875: Over Verbose Princess.
+
+v0.43.7-RC1 (2018-01-21 22:00 UTC)
++ Issue #823: Charging Damage against Buildings looks wrong (Mech skidding into building)
++ Issue #637: Infantry in swamp/mud terrain should not have a psr check (Bog Down)
++ Data: Fixing Validation Errors
++ Issue #520: MM allows boats to be deployed under bridges, where they become entrapped.
++ Issue #554: Possible Unexpected Princess Indirect Fire Causes Crash
++ Issue #556: Ammo Explosion not treated as Area Effect vs Battle Armor
++ Issue #831: Fixed a few situations where hostile players were able to incorrectly detect hidden units
++ Issue #834: (PlayerColors) java.lang.ArrayIndexOutOfBoundsException
++ Issue #835: MRM-30 ammo does not explode when hit
++ Issue #696: Arrow IV infernos calculate cover incorrectly?
++ Issue #737: Oblique Attacker can't indirect fire without a spotter
++ Changed ghost target ECM modifier from +2 to +3 per errata.
++ Issue #761: Protomechs and ghost targets
++ Issue #815: Space movement for aero units being resolved incorrectly
++ Issue #837: Mauser IIc and other clan infantry weapons missing in customization
++ Issue #838: NPE Princess.calculatePhysicalTurn
++ Issue #463: Megamek sometimes fails to show the * symbol to warn that movement will require a PSR
++ Fixes for multiple hangs during turn change when deploying minefields and unloading stranded passengers from transports.
++ PR#842: Inner Sphere & Periphery skins update
++ Issue #839: Bots on "no team" no longer refuse to fire on other players with "no team".
++ Bug: Some BA were not writing all crit slots to MUL.
++ Issue #382: Added remaining structure CF to damage reports when structures (buildings, bridges, etc) are damaged.
++ Improvement to Princess deployment algorithm - should no longer put units in places where they can't get out.
++ Fixes for multiple issues relating to unit movement when unit is subjected to a point blank shot from a hidden unit
++ Errata: Infantry no longer get -1 modifier on bog down checks
++ Unofficial feature: option to allow AMS to engage multiple times per round.
++ Aeros can no longer attempt to 'evade' an unlimited number of times.
++ Issue #862: Fighter Squadron BV
++ Data: New Sprites and adding MWO Canon Mechs(Sun Spider and Roughneck)
++ Issue #859: Game Options Tooltip Exception
++ Princess will no longer waste firepower targeting solitary mechwarriors in buildings.
++ PR#851 Change Default KeyBinds (adds ctrl to overlay and unit label toggles).
+
+v0.43.6 (2017-12-22 10:00 UTC)
 + Bug: Weight issues with BA LRM5 and Ammo.
 + Account for Clan CASE in unit cost calculations.
 + Fixes for Princess aircraft refusing to engage ground targets, being stuck on the edge of the map
@@ -10,6 +131,7 @@ v0.43.6-git
 + Issue #362: Tooltips are a lot less sticky
 + Issue #819: Leap check for LAM passing over terrain.
 + Issue #818: Fighter stuck on atmospheric map with no movement options
++ Data: New Sprites
 
 v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.
@@ -12298,3 +12420,46 @@ versions before 0.06
 + i dunno
 
 
+
+*** File '(Unnamed)'
+1.8
+1.8
+localdir
+-Xmx1024m
+-Xmx1024m
+-Xmx1024m
+ 1 
+ 2 
+ 2 
+ls-UCS-1
+
+*** File '(Unnamed)'
+Excalibur
+1.7
+IMP-1B
+ls-ESXi_Host1
+ls-ESXi_Host1
+20:00:00:25
+ESXi
+Host
+Host1
+meach
+
+*** File '(Unnamed)'
+src/megamek/MegaMek.java
+packaging.xml
+src/megamek/server/Server.java
+../mekhq-0.43.8-RC2/Wolfs Dragoons.mul
+.project
+/Users/dylanmyers/git/mekhq/MekHQ/unittests/mekhq/campaign/CampaignTest.java
+ucs_2017_9_13.xml
+Repel Clan Wolf Invaders.mul
+Gentleman Bastards30430330.cpnx
+adLDAP/src/adLDAP.php
+docs/history.txt
+
+*** File '* Startup Log *'
+Processing '/usr/local/Cellar/joe/4.6/etc/joe/joerc'...
+Processing '/usr/local/Cellar/joe/4.6/etc/joe/ftyperc'...
+Finished processing /usr/local/Cellar/joe/4.6/etc/joe/ftyperc
+Finished processing /usr/local/Cellar/joe/4.6/etc/joe/joerc

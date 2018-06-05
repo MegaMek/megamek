@@ -51,6 +51,7 @@
             <fileset dir="lib/">
                 <include name="*.jar"/>
             </fileset>
+            <pathelement location="${propdir}"/>
         </path>
         <mapper>
             <chainedmapper>
@@ -444,7 +445,7 @@
         </copy>
     </target>
 
-    <!-- Runs all the unit tests unless the skip.tests variable is set to "true".  This can be done via the command 
+    <!-- Runs all the unit tests unless the skip.tests variable is set to "true".  This can be done via the command
     line by inserting -Dskip.tests=true as a command-line argument.  Also, your IDE may allow you to set this variable. -->
     <target depends="tests-compile" name="test-run" unless="${skip.tests}"
             description="Execute unit tests unless skip.tests=true.">

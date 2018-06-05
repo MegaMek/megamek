@@ -241,6 +241,10 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.hasETypeFlag(Entity.ETYPE_AERO) || ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            //ASFs and Conventional Fighters get a combined sensor suite
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
+            ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof BattleArmor) {
             if (ent.hasWorkingMisc(MiscType.F_HEAT_SENSOR)) {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_BA_HEAT));

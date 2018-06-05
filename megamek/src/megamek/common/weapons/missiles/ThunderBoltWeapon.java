@@ -17,6 +17,8 @@ import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ThunderBoltWeaponHandler;
 import megamek.server.Server;
@@ -36,7 +38,6 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
      */
     public ThunderBoltWeapon() {
         super();
-        this.setModes(new String[] { "", "Indirect" });
         this.rackSize = 1;
         atClass = CLASS_THUNDERBOLT;
     }
@@ -69,5 +70,19 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

@@ -39,6 +39,7 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 20;
 		bv = 0.03;
+		tonnage = .0002;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.03;
 		infantryRange = 0;

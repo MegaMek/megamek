@@ -39,6 +39,7 @@ public class InfantryRifleMakeshiftWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 20;
 		bv = 0.09;
+		tonnage = .006;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.03;
 		infantryRange = 1;

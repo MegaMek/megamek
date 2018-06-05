@@ -148,31 +148,63 @@ public class Warship extends Jumpship {
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-
+        
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
         case LOC_NOSE:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_NOSE_WPL;
+                break;
+            }
             arc = Compute.ARC_NOSE;
             break;
         case LOC_FRS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDE_SPHERE;
             break;
         case LOC_FLS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDE_SPHERE;
             break;
         case LOC_ARS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
             break;
         case LOC_ALS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFTSIDEA_SPHERE;
             break;
         case LOC_AFT:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_AFT_WPL;
+                break;
+            }
             arc = Compute.ARC_AFT;
             break;
         case LOC_LBS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_LEFT_BROADSIDE_WPL;
+                break;
+            }
             arc = Compute.ARC_LEFT_BROADSIDE;
             break;
         case LOC_RBS:
+            if (mounted.isInWaypointLaunchMode()) {
+                arc = Compute.ARC_RIGHT_BROADSIDE_WPL;
+                break;
+            }
             arc = Compute.ARC_RIGHT_BROADSIDE;
             break;
         default:
@@ -222,6 +254,24 @@ public class Warship extends Jumpship {
             // add armor in discrete batches
         }
         return armWeight;
+    }
+    
+    @Override
+    //Jumpships and Space Stations use 10% of the fuel Warships do...
+    public double getStrategicFuelUse() {
+        double fuelUse;
+        if (weight >= 200000) {
+            fuelUse = 39.52;
+        } else if (weight >= 100000) {
+            fuelUse = 19.75;
+        } else {
+            //Per Stratops, this is impossible for Warships, but Primitive Jumpships in IO can be this small
+            fuelUse = 9.77;
+        } 
+        if (isPrimitive()) {
+            return fuelUse * primitiveFuelFactor();
+        }
+        return fuelUse;
     }
 
     @Override

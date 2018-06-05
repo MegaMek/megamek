@@ -1,0 +1,178 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Excalibur
+</Name>
+
+<Model>
+(3056)
+</Model>
+
+<year>
+3056
+</year>
+
+<originalBuildYear>
+0
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+heavyvehiclebay:72.0:1:1
+mechbay:12.0:1
+infantrybay:9.0:1:3:Foot
+cargobay:2238.0:0:4
+2ndclassquarters:0.0:0
+1stclassquarters:90.0:0
+crewquarters:287.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+145
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+9000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+200
+180
+180
+154
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+(B) ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) LRM 10
+LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISERLargeLaser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) LRM 10
+LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+ISArtemisIV
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+(R) (B) ISERLargeLaser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+14
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+16000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+902
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+25
+</escape_pod>
+

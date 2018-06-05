@@ -54,6 +54,7 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
@@ -96,7 +97,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
-import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -860,8 +860,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
-                && (!enemyTarget || target.hasSeenEntity(localPlayer)
-                    || target.hasDetectedEntity(localPlayer))
+                && (!enemyTarget || EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, target))
                 && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
@@ -1668,18 +1667,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
+        clientgui.mechD.wPan.selectNextWeapon();
 
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
             clientgui.mechD.wPan.displayMech(ce());
         }
 
-        if (weaponId == -1) {
-            setFireModeEnabled(false);
-        } else {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
-        }
         updateTarget();
     }
 
@@ -1690,18 +1683,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
+
+        clientgui.mechD.wPan.selectPrevWeapon();
 
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
             clientgui.mechD.wPan.displayMech(ce());
         }
 
-        if (weaponId == -1) {
-            setFireModeEnabled(false);
-        } else {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
-        }
         updateTarget();
     }
 
@@ -1985,9 +1973,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         if ((weaponId != -1) && (ce() != null) && !isStrafing) {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
-        }
+            adaptFireModeEnabled(ce().getEquipment(weaponId));
+        } else {
+            setFireModeEnabled(false);
+        } 
 
         updateSearchlight();
 
@@ -2393,6 +2382,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
     }
+    
+    /**
+     * Enables the mode button when mode switching is allowed
+     * (always true except for LAMs with certain weapons) and
+     * the weapon has modes. Disables otherwise.
+     *  
+     * @param m The active weapon
+     */
+    protected void adaptFireModeEnabled(Mounted m) {
+        setFireModeEnabled(m.isModeSwitchable() & m.getType().hasModes());
+    }
 
     protected void setFireCalledEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CALLED).setEnabled(enabled);
@@ -2561,11 +2561,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             Targetable t = choices.next();
             boolean isSensorReturn = false;
             boolean isVisible = true;
+            boolean isHidden = false;
             if (t instanceof Entity) {
                 isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
                 isVisible = ((Entity) t).hasSeenEntity(localPlayer);
+                isHidden = ((Entity) t).isHidden();
             }
-            if (!ce().equals(t) && !isSensorReturn && isVisible) {
+            if (!ce().equals(t) && !isSensorReturn && isVisible && !isHidden) {
                 targets.add(t);
             }
         }

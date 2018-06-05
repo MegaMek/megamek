@@ -57,7 +57,7 @@ public final class PhysicalCalculator {
                 return bestAttack;
 
             } // End no-attack
-            entNum = bot.getGame().getNextEntityNum(entNum);
+            entNum = bot.getGame().getNextEntityNum(bot.getMyTurn(), entNum);
 
         } while ((entNum != -1) && (entNum != first));
 

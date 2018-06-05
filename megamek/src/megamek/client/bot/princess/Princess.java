@@ -19,7 +19,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,6 +55,7 @@ import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.Transporter;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
@@ -403,14 +403,9 @@ public class Princess extends BotClient {
                 }
             }
         }
-        
-        turretDeploymentLocations.sort(new Comparator<Coords>() {
-            @Override
-            public int compare(final Coords arg0,
-                               final Coords arg1) {
-                return calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(arg0);
-            }
-        });        
+
+        turretDeploymentLocations.sort((arg0, arg1) -> calculateTurretDeploymentValue(arg1) - calculateTurretDeploymentValue(
+                arg0));        
         return turretDeploymentLocations;
     }
     
@@ -460,6 +455,13 @@ public class Princess extends BotClient {
                 } finally {
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
                 }
+            }
+            
+            // TODO: Make hidden units spot since they can't do anything else
+            if(shooter.isHidden()) {
+                sendAttackData(shooter.getId(), new Vector<>(0));
+                log(getClass(), METHOD_NAME, LogLevel.INFO, "Hidden unit skips firing.");
+                return;
             }
 
             // Set up ammo conservation.
@@ -561,11 +563,19 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Worker method that calculates a point blank shot action vector given a firing entity ID and a target ID.
+     * 
+     * @param firingEntityID the ID of the entity taking the point blank shot
+     * @param targetID the ID of the entity being shot at potentially
+     */
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
         Entity shooter = getGame().getEntity(firingEntityID);
         Targetable target = getGame().getEntity(targetID); 
         
-        FiringPlan plan = fireControl.getBestFiringPlan(shooter, target, game, calcAmmoConservation(shooter));
+        final FiringPlanCalculationParameters fccp = 
+                new FiringPlanCalculationParameters.Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
+        FiringPlan plan = fireControl.determineBestFiringPlan(fccp); 
         fireControl.loadAmmo(shooter, plan);
         plan.sortPlan();
 
@@ -711,9 +721,17 @@ public class Princess extends BotClient {
         final StringBuilder msg = new StringBuilder("Deciding who to move next.");
         for (final Entity entity : myEntities) {
             msg.append("\n\tUnit ").append(entity.getDisplayName());
-            if (entity.isOffBoard() || (null == entity.getPosition())
-                || !entity.isSelectableThisTurn()
-                || !getGame().getTurn().isValidEntity(entity, getGame())) {
+            
+            if(entity.isDone()) {
+                msg.append("has already moved this phase");
+                continue;
+            }
+            
+            if ((entity.isOffBoard() 
+                    || (null == entity.getPosition())
+                    || entity.isUnloadedThisTurn()
+                    || !getGame().getTurn().isValidEntity(entity, getGame()))
+                            && !getGame().isPhaseSimultaneous()){
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -724,6 +742,7 @@ public class Princess extends BotClient {
                 movingEntity = entity;
                 break;
             }
+            
             if (entity instanceof MechWarrior) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
@@ -800,7 +819,7 @@ public class Princess extends BotClient {
 
             do {
                 final Entity hitter = game.getEntity(nextEntityId);
-                nextEntityId = game.getNextEntityNum(hitter.getId());
+                nextEntityId = game.getNextEntityNum(getMyTurn(), hitter.getId());
 
                 if (null == hitter.getPosition()) {
                     continue;
@@ -1108,8 +1127,7 @@ public class Princess extends BotClient {
 
             final double thisTimeEstimate =
                     (paths.size() * moveEvaluationTimeEstimate) / 1e3;
-            if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() >
-                LogLevel.WARNING.toInt()) {
+            if (getVerbosity().willLog(LogLevel.INFO)) {
                 String timeestimate = "unknown.";
                 if (0 != thisTimeEstimate) {
                     timeestimate = Integer.toString((int) thisTimeEstimate)
@@ -1432,7 +1450,7 @@ public class Princess extends BotClient {
 
     private boolean isEnemyGunEmplacement(final Entity entity,
                                           final Coords coords) {
-        return entity instanceof GunEmplacement
+        return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
                && (null != entity.getCrew()) && !entity.getCrew().isDead();
@@ -1440,7 +1458,7 @@ public class Princess extends BotClient {
 
     private boolean isEnemyInfantry(final Entity entity,
                                     final Coords coords) {
-        return (entity instanceof Infantry)
+        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords);
     }
@@ -1628,28 +1646,91 @@ public class Princess extends BotClient {
     }
     
     /**
-     * Helper function to perform some modifications to a given path
-     * Currently insinuates an "evasion" step for aircraft that will not be shooting.
+     * Helper function to perform some modifications to a given path.
+     * Intended to happen after we pick the best path. 
      * @param path The path to process
      */
     private void performPathPostProcessing(final RankedPath path) {
+        evadeIfNotFiring(path);
+        unloadTransportedInfantry(path);
+    }
+    
+    /**
+     * Helper function that insinuates an "evade" step for aircraft that will not be shooting.
+     * @param path The path to process
+     */
+    private void evadeIfNotFiring(final RankedPath path) {
         // if we're an airborne aircraft
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR
         // then evade
         if(path.getPath().getEntity().isAirborne() &&
-           (0 == path.getExpectedDamage()) &&
+           (0 >= path.getExpectedDamage()) &&
            (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath()
                                                                                                   .getEntity()) - 2)) {
             path.getPath().addStep(MoveStepType.EVADE);
         }
     }
+    
+    /**
+     * Helper function that adds an "unload" step for units that are transporting infantry
+     * if the conditions for unloading are favorable.
+     * 
+     * Infantry unloading logic is different from, for example, hot-dropping mechs or launching aerospace fighters,
+     * so we handle it separately.
+     * @param path The path to modify
+     */
+    private void unloadTransportedInfantry(final RankedPath path) {
+        // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
+        // behind. They're not that good at screening against high speed pursuit anyway.
+        if(getBehaviorSettings().shouldGoHome()) {
+            return;
+        }
+        
+        Entity movingEntity = path.getPath().getEntity();
+        Coords pathEndpoint = path.getPath().getFinalCoords();
+        Entity closestEnemy = getPathRanker().findClosestEnemy(movingEntity, pathEndpoint, getGame());
+
+        // if there are no enemies on the board, then we're not unloading anything.
+        if(null == closestEnemy) {
+            return;
+        }
+        
+        int distanceToClosestEnemy = pathEndpoint.distance(closestEnemy.getPosition());
+        
+        // loop through all entities carried by the current entity
+        for(Transporter transport : movingEntity.getTransports()) {
+            for(Entity loadedEntity : transport.getLoadedUnits()) {
+                // favorable conditions include: 
+                // - the loaded entity should be able to enter the current terrain
+                // - the loaded entity should be within max weapons range + movement range of an enemy
+                // - unloading the loaded entity cannot violate stacking limits
+                // - only one unit 
+                
+                // this condition is a simple check that we're not unloading infantry into deep space
+                // or into lava or some other such nonsense
+                boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType()) ||
+                        loadedEntity.isLocationProhibited(pathEndpoint);
+                
+                // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
+                boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, pathEndpoint, movingEntity) != null;
+                
+                // this is a primitive condition that checks whether we're within "engagement range" of an enemy
+                // where "engagement range" is defined as the maximum range of our weapons plus our walking movement
+                boolean inEngagementRange = loadedEntity.getWalkMP() + loadedEntity.getMaxWeaponRange() >= distanceToClosestEnemy;
+                
+                if(!unloadFatal && !unloadIllegal && inEngagementRange) {
+                    path.getPath().addStep(MoveStepType.UNLOAD, loadedEntity, pathEndpoint);
+                    return; // we can only unload one infantry unit per hex per turn, so once we've unloaded, we're done. 
+                }
+            }
+        }
+    }
 
     public void sendChat(final String message,
                          final LogLevel logLevel) {
-        if (logLevel.getLevel().isGreaterOrEqual(getVerbosity().getLevel())) {
-            return;
+        if (getVerbosity().willLog(logLevel)) {
+            super.sendChat(message);
         }
-        super.sendChat(message);
     }
 }

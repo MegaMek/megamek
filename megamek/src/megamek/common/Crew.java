@@ -1104,6 +1104,13 @@ public class Crew implements Serializable {
     public void incrementFatigueCount() {
         fatigueCount++;
     }
+    
+    /**
+     * Sets fatigue counter back to zero.
+     */
+    public void resetFatigue() {
+        fatigueCount = 0;
+    }
 
     public int rollGunnerySkill() {
         if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {

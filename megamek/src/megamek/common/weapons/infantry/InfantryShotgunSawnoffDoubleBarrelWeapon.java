@@ -39,6 +39,7 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 30;
 		bv = 0.03;
+		tonnage = .003;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.03;
 		infantryRange = 0;

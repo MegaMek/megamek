@@ -173,9 +173,9 @@ public interface IPlayer extends ITurnOrdered {
 
     int getInitialBV();
 
-    void setCompensationInitBonus(int newBonus);
+    void setInitCompensationBonus(int newBonus);
 
-    int getCompensationInitBonus();
+    int getInitCompensationBonus();
 
     void setConstantInitBonus(int b);
 

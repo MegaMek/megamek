@@ -39,6 +39,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 1400;
 		bv = 0.79;
+		tonnage = .050;
 		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);

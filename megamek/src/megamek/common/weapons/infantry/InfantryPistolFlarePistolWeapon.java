@@ -38,6 +38,7 @@ public class InfantryPistolFlarePistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 25;
 		bv = 0.08;
+		tonnage = .0004;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.09;
 		infantryRange = 0;

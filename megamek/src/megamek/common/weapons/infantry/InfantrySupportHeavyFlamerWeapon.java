@@ -36,9 +36,8 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
 		// Flamer (Heavy), TM p. 300
 		cost = 200;
 		bv = 0.72;
+		tonnage = .025;
 		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT);
-		String[] modeStrings = { "Damage", "Heat" };
-		setModes(modeStrings);
 		infantryDamage = 0.79;
 		infantryRange = 0;
 		crew = 2;

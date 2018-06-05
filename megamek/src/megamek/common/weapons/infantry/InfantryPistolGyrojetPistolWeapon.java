@@ -37,6 +37,7 @@ public class InfantryPistolGyrojetPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 450;
 		bv = 0.04;
+		tonnage = .0025;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.04;
 		infantryRange = 0;

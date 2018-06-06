@@ -1221,7 +1221,7 @@ public class FireControl {
         }
 
         final StringBuilder ret = new StringBuilder();
-        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
         for (final Targetable enemy : enemies) {
             for (final Mounted weapon : shooter.getWeaponList()) {
                 final String shootingCheck = checkGuess(shooter, enemy, weapon, game);
@@ -2206,7 +2206,8 @@ public class FireControl {
      * @return A list of potential targets.
      */
     private List<Targetable> getTargetableEnemyEntities(final Entity shooter,
-                                                        final IGame game) {
+                                                        final IGame game,
+                                                        final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
@@ -2228,7 +2229,7 @@ public class FireControl {
         }
 
         // Add in potential building targets and the like.
-        targetableEnemyList.addAll(getAdditionalTargets());
+        targetableEnemyList.addAll(fireControlState.getAdditionalTargets());
 
         return targetableEnemyList;
     }
@@ -2279,7 +2280,7 @@ public class FireControl {
         FiringPlan bestPlan = null;
 
         // Get a list of potential targets.
-        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
 
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
@@ -2396,21 +2397,6 @@ public class FireControl {
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                                  shooter.getEquipmentNum(mountedAmmo));
         }
-    }
-
-    /*
-     * Here's a list of things that aren't technically units, but I want to be
-     * able to target anyways. This is create with buildings and bridges and
-     * mind
-     */
-    private List<Targetable> additionalTargets = new ArrayList<>();
-
-    List<Targetable> getAdditionalTargets() {
-        return additionalTargets;
-    }
-
-    void setAdditionalTargets(final List<Targetable> targets) {
-        additionalTargets = targets;
     }
 
     Mounted getClusterAmmo(final List<Mounted> ammoList,

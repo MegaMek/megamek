@@ -14027,6 +14027,14 @@ public class Server implements Runnable {
                 htTMAttacks.put(target, v);
             }
         }
+        
+        // Let each target assign its AMS
+        for (Entity e : htTMAttacks.keySet()) {
+            Vector<AttackAction> vTMAttacks = htTMAttacks.get(e);
+            // Allow MM to automatically assign AMS targets
+            // AMS bays can fire multiple times, so manual target assignment is kind of pointless
+            e.assignTMAMS(vTMAttacks);
+        }
     }
 
     /**
@@ -33942,7 +33950,7 @@ public class Server implements Runnable {
                                                   (Entity)aaa.getTarget(game));
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
-            assignAMS();
+            assignTeleMissileAMS();
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
         } else if (aaa instanceof BAVibroClawAttackAction) {

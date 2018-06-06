@@ -19,9 +19,12 @@
 
 package megamek.common.actions;
 
+import java.util.ArrayList;
+
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.TeleMissile;
@@ -39,6 +42,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * 
      */
     private static final long serialVersionUID = -1054613811287285482L;
+    // only used server-side for manually guided Telemissile attacks
+    private transient ArrayList<Mounted> vCounterEquipment;
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());
@@ -49,6 +54,25 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             return ((TeleMissile)entity).getDamageValue();
         }
         return 0;
+    }
+    
+    /**
+     * Returns the list of Counter Equipment used against this physical attack
+     * This is for AMS assignment to manual tele-operated missiles
+     */
+    public ArrayList<Mounted> getCounterEquipment() {
+        return vCounterEquipment;
+    }
+    
+    /**
+     * Adds 'm' to the list of Counter Equipment used against this physical attack
+     * This is for AMS assignment to manual tele-operated missiles
+     */
+    public void addCounterEquipment(Mounted m) {
+        if (vCounterEquipment == null) {
+            vCounterEquipment = new ArrayList<Mounted>();
+        }
+        vCounterEquipment.add(m);
     }
     
     /**

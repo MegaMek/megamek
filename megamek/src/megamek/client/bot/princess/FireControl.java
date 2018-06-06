@@ -236,6 +236,15 @@ public class FireControl {
             new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
 
+    /**
+     * The possible fire control types.
+     * If you're adding a new one, add it here then make sure to add it to Princess.InitializeFireControls
+     */
+    public enum FireControlType {
+        Basic, 
+        Infantry
+    }
+    
     protected final Princess owner;
 
     /**
@@ -2231,8 +2240,7 @@ public class FireControl {
      * @param game    The game being played.
      * @return A list of potential targets.
      */
-    List<Targetable> getAllTargetableEnemyEntities(final IPlayer player,
-                                                   final IGame game) {
+    static List<Targetable> getAllTargetableEnemyEntities(final IPlayer player, final IGame game, final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
@@ -2249,7 +2257,7 @@ public class FireControl {
         }
 
         // Add in potential building targets and the like.
-        targetableEnemyList.addAll(getAdditionalTargets());
+        targetableEnemyList.addAll(fireControlState.getAdditionalTargets());
 
         return targetableEnemyList;
     }

@@ -2,13 +2,11 @@ package megamek.client.bot.princess;
 
 import java.util.List;
 
-import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MechWarrior;
 import megamek.common.MovePath;
-import megamek.common.Targetable;
 import megamek.common.options.OptionsConstants;
 
 public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
@@ -36,7 +34,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             MovePath pathCopy = path.clone();
                        
             // look at all of my enemies
-            double maximumDamageDone = 0;
+            FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
             double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                       movingUnit,
@@ -72,38 +70,15 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
                     eval = evaluateUnmovedEnemy(enemy, pathCopy, extremeRange, losRange);
                 }
                 
-                if (maximumDamageDone < eval.getMyEstimatedDamage()) {
-                    maximumDamageDone = eval.getMyEstimatedDamage();
+                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
                 }
                 
                 expectedDamageTaken += eval.getEstimatedEnemyDamage();
             }
             
-            // Include damage I can do to strategic targets
-            for (int i = 0; i < getOwner().getFireControl()
-                                   .getAdditionalTargets().size(); i++) {
-                Targetable target = getOwner().getFireControl()
-                                           .getAdditionalTargets().get(i);
-                if (target.isOffBoard() || (target.getPosition() == null)
-                 || !game.getBoard().contains(target.getPosition())) {
-                    continue; // Skip targets not actually on the board.
-                }
-                
-                FiringPlanCalculationParameters guess =
-                     new FiringPlanCalculationParameters.Builder()
-                             .buildGuess(path.getEntity(),
-                                         new EntityState(path),
-                                         target,
-                                         null,
-                                         FireControl.DOES_NOT_TRACK_HEAT,
-                                         null);
-                
-                FiringPlan myFiringPlan = getOwner().getFireControl().determineBestFiringPlan(guess);
-                double myDamagePotential = myFiringPlan.getUtility();
-                if (myDamagePotential > maximumDamageDone) {
-                    maximumDamageDone = myDamagePotential;
-                }
-            }
+            calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
+            double maximumDamageDone = damageEstimate.firingDamage;
                     
             // My bravery modifier is based on my chance of getting to the 
             // firing position (successProbability), how much damage I can do 

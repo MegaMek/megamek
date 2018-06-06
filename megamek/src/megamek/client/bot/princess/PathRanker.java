@@ -42,6 +42,19 @@ import megamek.common.util.StringUtil;
 
 public abstract class PathRanker implements IPathRanker {
 
+    //TODO: Introduce PathRankerCacheHelper class that contains "global" path ranker state
+    //TODO: Introduce FireControlCacheHelpr class that contains "global" Fire Control state
+    //PathRanker classes should be pretty stateless, except pointers to princess and such
+    
+    /**
+     * The possible path ranker types.
+     * If you're adding a new one, add it here then make sure to add it to Princess.InitializePathRankers
+     */
+    public enum PathRankerType {
+        Basic,
+        Infantry
+    }
+    
     private Princess owner;
 
     public PathRanker(Princess princess) {

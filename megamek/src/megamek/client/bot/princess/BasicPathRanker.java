@@ -532,9 +532,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                                       formula);
             double utility = -calculateFallMod(successProbability, formula);
 
-            // look at all of my enemies
-            double maximumDamageDone = 0;
-            double maximumPhysicalDamage = 0;
+            // look at all of my enemies          
+            FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
+            
             double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                              movingUnit,
                                                              game);
@@ -573,51 +573,16 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
                                                 losRange);
                 }
-                if (maximumDamageDone < eval.getMyEstimatedDamage()) {
-                    maximumDamageDone = eval.getMyEstimatedDamage();
+                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
                 }
-                if (maximumPhysicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                    maximumPhysicalDamage = eval.getMyEstimatedPhysicalDamage();
+                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
                 }
                 expectedDamageTaken += eval.getEstimatedEnemyDamage();
             }
 
-            // Include damage I can do to strategic targets
-            for (int i = 0; i < getOwner().getFireControl()
-                                          .getAdditionalTargets().size(); i++) {
-                Targetable target = getOwner().getFireControl()
-                                              .getAdditionalTargets().get(i);
-                if (target.isOffBoard() || (target.getPosition() == null)
-                    || !game.getBoard().contains(target.getPosition())) {
-                    continue; // Skip targets not actually on the board.
-                }
-                FiringPlanCalculationParameters guess =
-                        new FiringPlanCalculationParameters.Builder()
-                                .buildGuess(path.getEntity(),
-                                            new EntityState(path),
-                                            target,
-                                            null,
-                                            FireControl.DOES_NOT_TRACK_HEAT,
-                                            null);
-                FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(guess);
-                double myDamagePotential = myFiringPlan.getUtility();
-                if (myDamagePotential > maximumDamageDone) {
-                    maximumDamageDone = myDamagePotential;
-                }
-                if (path.getEntity() instanceof Mech) {
-                    PhysicalInfo myKick = new PhysicalInfo(
-                            path.getEntity(), new EntityState(path), target,
-                            null,
-                            PhysicalAttackType.RIGHT_KICK, game, getOwner(),
-                            true);
-                    double expectedKickDamage =
-                            myKick.getExpectedDamageOnHit() *
-                            myKick.getProbabilityToHit();
-                    if (expectedKickDamage > maximumPhysicalDamage) {
-                        maximumPhysicalDamage = expectedKickDamage;
-                    }
-                }
-            }
+            calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
             // If I cannot kick because I am a clan unit and "No physical 
             // attacks for the clans"
@@ -625,12 +590,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             if (game.getOptions()
                     .booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) &&
                 path.getEntity().isClan()) {
-                maximumPhysicalDamage = 0;
+                damageEstimate.physicalDamage = 0;
             }
 
             // I can kick a different target than I shoot, so add physical to 
             // total damage after I've looked at all enemies
-            maximumDamageDone += maximumPhysicalDamage;
+            double maximumDamageDone = damageEstimate.firingDamage + damageEstimate.physicalDamage;
 
             // My bravery modifier is based on my chance of getting to the 
             // firing position (successProbability), how much damage I can do 
@@ -725,6 +690,47 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
 
+    protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
+            FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
+        for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
+            Targetable target = fireControlState.getAdditionalTargets().get(i);
+            
+            if (target.isOffBoard() || (target.getPosition() == null)
+                || !game.getBoard().contains(target.getPosition())) {
+                continue; // Skip targets not actually on the board.
+            }
+            
+            FiringPlanCalculationParameters guess =
+                    new FiringPlanCalculationParameters.Builder()
+                            .buildGuess(path.getEntity(),
+                                        new EntityState(path),
+                                        target,
+                                        null,
+                                        FireControl.DOES_NOT_TRACK_HEAT,
+                                        null);
+            FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(guess);
+            
+            double myDamagePotential = myFiringPlan.getUtility();
+            if (myDamagePotential > damageStructure.firingDamage) {
+                damageStructure.firingDamage = myDamagePotential;
+            }
+            
+            if (path.getEntity() instanceof Mech) {
+                PhysicalInfo myKick = new PhysicalInfo(
+                        path.getEntity(), new EntityState(path), target,
+                        null,
+                        PhysicalAttackType.RIGHT_KICK, game, getOwner(),
+                        true);
+                double expectedKickDamage =
+                        myKick.getExpectedDamageOnHit() *
+                        myKick.getProbabilityToHit();
+                if (expectedKickDamage > damageStructure.physicalDamage) {
+                    damageStructure.physicalDamage = expectedKickDamage;
+                }
+            }
+        }
+    }
+    
     /**
      * Gives the distance to the closest enemy unit, or zero if none exist
      *
@@ -1230,5 +1236,14 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         hazardValue += dmg;
 
         return hazardValue;
+    }
+
+    /**
+     * Simple data structure that holds a separate firing and physical damage number.
+     *
+     */
+    protected class FiringPhysicalDamage {
+        public double firingDamage;
+        public double physicalDamage;
     }
 }

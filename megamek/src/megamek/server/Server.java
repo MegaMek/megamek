@@ -13996,36 +13996,21 @@ public class Server implements Runnable {
      * Determine which telemissile attack actions could be affected by AMS, and
      * assign AMS to those attacks.
      */
-    public void assignTeleMissileAMS() {
+    public void assignTeleMissileAMS(TeleMissileAttackAction taa) {
         final String METHOD_NAME = "assignTeleMissileAMS()";
         // Map target to a list of telemissile attacks directed at entities
         Hashtable<Entity, Vector<AttackAction>> htTMAttacks = new Hashtable<>();
-        
-        //All telemissile attacks are eligible for AMS fire. just assign them.
-        for (AttackAction aa : game.getTeleMissileAttacksVector()) {
             
-            //There should never be anything but TeleMissileAttackActions in this vector
-            //but just in case...
-            if (!(aa instanceof TeleMissileAttackAction)) {
-                logInfo(METHOD_NAME, "Attack Action is the wrong type!");
-                continue;
-            }
-            
-            TeleMissileAttackAction taa = (TeleMissileAttackAction) aa;
-            
-            // Telemissiles are slow. The attacking entity
-            // might no longer be in the game.
-            if (game.getEntity(taa.getEntityId()) == null) {
-                logInfo(METHOD_NAME, "Can't Assign AMS: Firer is null!");
-                continue;
-            }
-            
-            Entity target = game.getEntity(taa.getTargetId());
-            Vector<AttackAction> v = htTMAttacks.get(target);
-            if (v == null) {
-                v = new Vector<AttackAction>();
-                htTMAttacks.put(target, v);
-            }
+        //This should be impossible but just in case...
+        if (!(taa instanceof TeleMissileAttackAction)) {
+            logInfo(METHOD_NAME, "Attack Action is the wrong type!");
+        }
+                    
+        Entity target = game.getEntity(taa.getTargetId());
+        Vector<AttackAction> v = htTMAttacks.get(target);
+        if (v == null) {
+            v = new Vector<AttackAction>();
+            htTMAttacks.put(target, v);
         }
         
         // Let each target assign its AMS
@@ -33950,7 +33935,7 @@ public class Server implements Runnable {
                                                   (Entity)aaa.getTarget(game));
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
-            assignTeleMissileAMS();
+            assignTeleMissileAMS(taa);
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
         } else if (aaa instanceof BAVibroClawAttackAction) {

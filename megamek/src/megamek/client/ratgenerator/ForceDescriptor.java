@@ -352,6 +352,8 @@ public class ForceDescriptor {
     	    if (c3m > 0) {
     	        if ((c3m > 1) || (c3s < Math.max(3, unitList.size() - 1))) {
     	            networkMask = ModelRecord.NETWORK_C3_MASTER;
+    	        } else {
+    	            flags.add("c3");
     	        }
     	    } else {
     	        // If no master was generated, each slave unit gives a cumulative 1/3 chance of a network. Isolated
@@ -369,6 +371,11 @@ public class ForceDescriptor {
     	        // criteria, fall back on the unit that was originally generated.
     	        if (!netList.isEmpty()) {
     	            unitList = netList;
+    	            if (networkMask == ModelRecord.NETWORK_C3I) {
+    	                flags.add("c3i");
+    	            } else {
+    	                flags.add("c3");
+    	            }
     	        }
     	    }
 	    }
@@ -1230,6 +1237,11 @@ public class ForceDescriptor {
 			retVal.append("Artillery");
 		} else if (roles.contains(MissionRole.URBAN)) {
 			retVal.append("Urban");
+		}
+		if (flags.contains("c3")) {
+		    retVal.append(" (C3)");
+		} else if (flags.contains("c3i")) {
+		    retVal.append(" (C3I)");
 		}
 		Ruleset rules = Ruleset.findRuleset(this);
 		String eschName = null;

@@ -43,7 +43,30 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             Server s) {
         super(t, w, g, s);
     }
-    private AmmoType at = null;
+    
+    /**
+     * Method that collects the linked ammo type for a weapon bay
+     * We need this to pass through to server without using the ammo
+     * in the process
+     */
+    private AmmoType getBayAmmoType() {
+        final String METHOD_NAME = "getBayAmmoType()";
+        AmmoType at = null;
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            // check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+
+            if (bayWAmmo == null) {
+                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+                continue;
+            }
+             //Once we have some ammo to send to the server, stop looking
+             at = (AmmoType) bayWAmmo.getType();
+             break;
+        }
+        return at;
+    }
     
     @Override
     protected void useAmmo() {
@@ -57,7 +80,6 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
                 // *shouldn't* fire.
                 logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
             }
-            at = (AmmoType) bayWAmmo.getType();
             int shots = bayW.getCurrentShots();
             for (int i = 0; i < shots; i++) {
                 if (null == bayWAmmo
@@ -81,13 +103,8 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        final String METHOD_NAME = "handle()";
-        useAmmo();        
-        if (at == null) {
-            logDebug(METHOD_NAME, "AmmoType is null!");
-        }
         // just launch the tele-missile
-        server.deployTeleMissile(ae, at, ae.getEquipmentNum(weapon),
+        server.deployTeleMissile(ae, getBayAmmoType(), ae.getEquipmentNum(weapon),
                 getCapMisMod(), vPhaseReport);
 
         return false;

@@ -14012,7 +14012,7 @@ public class Server implements Runnable {
             v = new Vector<AttackAction>();
             htTMAttacks.put(target, v);
         }
-        
+        v.addElement(taa);
         // Let each target assign its AMS
         for (Entity e : htTMAttacks.keySet()) {
             Vector<AttackAction> vTMAttacks = htTMAttacks.get(e);

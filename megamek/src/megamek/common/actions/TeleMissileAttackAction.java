@@ -44,6 +44,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -1054613811287285482L;
     // only used server-side for manually guided Telemissile attacks
     private transient ArrayList<Mounted> vCounterEquipment;
+    protected boolean advancedPD = false; //true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());
@@ -73,6 +74,21 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             vCounterEquipment = new ArrayList<Mounted>();
         }
         vCounterEquipment.add(m);
+    }
+    
+    /**
+     * Checks to see if the basic conditions needed for point defenses to work are in place
+     * Since this normally only applies to weaponhandlers, we must recreate it to deal with telemissile
+     * entities
+     */
+    private boolean checkPDConditions(IGame game, Targetable target) {
+        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)
+                || !advancedPD) {
+            return false;
+        }
+        return true;
     }
     
     /**

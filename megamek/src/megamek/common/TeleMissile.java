@@ -16,8 +16,6 @@
  */
 package megamek.common;
 
-
-
 /**
  * @author Jay Lawson
  */

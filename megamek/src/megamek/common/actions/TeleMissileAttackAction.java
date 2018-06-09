@@ -48,7 +48,16 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -1054613811287285482L;
     // only used server-side for manually guided Telemissile attacks
     private transient ArrayList<Mounted> vCounterEquipment;
-    protected boolean advancedPD = false; //true if advanced StratOps game rule is on
+    
+    //Large Craft Point Defense/AMS Bay Stuff
+    private int CapMissileAMSMod; //the to-hit mod inflicted against a capital missile attack if it isn't completely destroyed
+    private boolean CapMissileMissed = false; //true if the AMSmod causes a capital missile attack to miss. Used for reporting.
+    private boolean amsBayEngaged = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a standard missile (LRM, MRM, etc) attack.
+    private boolean pdBayEngaged = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a standard missile (LRM, MRM, etc) attack.
+    private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
+    private boolean amsBayEngagedCap = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a capital missile attack.
+    private boolean pdBayEngagedCap = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a capital missile attack.
+    private boolean advancedPD = false; //true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());

@@ -50,7 +50,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     private transient ArrayList<Mounted> vCounterEquipment;
     
     //Large Craft Point Defense/AMS Bay Stuff
-    private int CounterAVInt = 0;
+    public int CounterAVInt = 0;
     private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
     private boolean amsBayEngagedCap = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a capital missile attack.
     private boolean pdBayEngagedCap = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a capital missile attack.

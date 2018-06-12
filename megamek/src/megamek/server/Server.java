@@ -18374,6 +18374,7 @@ public class Server implements Runnable {
                                                  taa.getTargetId());
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
+        int amsDamage = taa.CounterAVInt;
         Entity te = null;
         if ((target != null)
             && (target.getTargetType() == Targetable.TYPE_ENTITY)) {
@@ -18387,6 +18388,20 @@ public class Server implements Runnable {
         }
 
         Report r;
+        
+        //If point defenses engaged the missile, handle that damage
+        if (amsDamage > 0) {
+            //Report the attack
+            r = new Report(3350);
+            r.subject = ae.getId();
+            addReport(r);
+            
+            //Damage the missile
+            HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
+                    tm.sideTable(te.getPosition(), true));
+            addReport(damageEntity(ae, hit, amsDamage, false,
+                    DamageType.NONE, false, false, false));
+        }
 
         if (lastEntityId != taa.getEntityId()) {
             // who is making the attack
@@ -27561,7 +27576,7 @@ public class Server implements Runnable {
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage,
             boolean damagedByFire) {
-
+        
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
         }
@@ -27578,7 +27593,8 @@ public class Server implements Runnable {
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage, damagedByFire);
         }
-        if (en instanceof Aero) {
+        //Telemissiles don't take critical hits
+        if (en instanceof Aero && !en.hasETypeFlag(Entity.ETYPE_TELEMISSILE)) {
             return criticalAero((Aero) en, loc, critMod, "unknown", 8, damage,
                     isCapital);
         }
@@ -27946,12 +27962,13 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
-        // BattleArmor does not breach
-        if (entity instanceof Infantry) {
-            return vDesc;
-        }
-
-        if (entity instanceof VTOL) {
+        // Infantry do not suffer breaches
+        // Telemissiles don't either
+        // VTOLs can't operate in vaccuum or underwater, so no breaches
+        if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                || entity.hasETypeFlag(Entity.ETYPE_INFANTRY)
+                || entity.hasETypeFlag(Entity.ETYPE_TELEMISSILE)
+                || entity.hasETypeFlag(Entity.ETYPE_VTOL)) {
             return vDesc;
         }
 

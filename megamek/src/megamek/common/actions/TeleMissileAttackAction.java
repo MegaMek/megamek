@@ -170,7 +170,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
-    protected int calcCounterAV(IGame game, Targetable target) {
+    public int calcCounterAV(IGame game, Targetable target) {
         if (!checkPDConditions(game, target)) {
             return 0;
         }

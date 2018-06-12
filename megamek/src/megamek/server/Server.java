@@ -33936,6 +33936,7 @@ public class Server implements Runnable {
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
             assignTeleMissileAMS(taa);
+            taa.calcCounterAV(game, taa.getTarget(game));
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
         } else if (aaa instanceof BAVibroClawAttackAction) {

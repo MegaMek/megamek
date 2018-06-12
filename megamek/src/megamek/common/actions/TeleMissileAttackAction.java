@@ -50,8 +50,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     private transient ArrayList<Mounted> vCounterEquipment;
     
     //Large Craft Point Defense/AMS Bay Stuff
-    private boolean amsBayEngaged = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a standard missile (LRM, MRM, etc) attack.
-    private boolean pdBayEngaged = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a standard missile (LRM, MRM, etc) attack.
+    private int CounterAVInt = 0;
     private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
     private boolean amsBayEngagedCap = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a capital missile attack.
     private boolean pdBayEngagedCap = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a capital missile attack.
@@ -137,6 +136,34 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             }
         }
         return totalheat;
+    }
+    
+    /**
+     * Checks to see if this point defense/AMS bay can engage a capital missile
+     * This should return true. Only when handling capital missile attacks can this be false.
+     */
+    protected boolean canEngageCapitalMissile(Mounted counter) {
+        if (counter.getBayWeapons().size() < 2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     * See also TeleMissileAttackAction, which contains a modified version of this to work against 
+     * a TeleMissile entity in the physical phase
+     */
+    protected void setAMSBayReportingFlag() {
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     * See also TeleMissileAttackAction, which contains a modified version of this to work against 
+     * a TeleMissile entity in the physical phase
+     */
+    protected void setPDBayReportingFlag() {
     }
     
     /**
@@ -240,7 +267,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 counterAV += amsAV;
             } //end "for Mounted counter"
         } // end check for counterfire
-        CounterAV = (int) counterAV;
+        CounterAVInt = (int) counterAV;
         return counterAV;
     }
     

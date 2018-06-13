@@ -18401,6 +18401,11 @@ public class Server implements Runnable {
                     tm.sideTable(te.getPosition(), true));
             addReport(damageEntity(ae, hit, amsDamage, false,
                     DamageType.NONE, false, false, false));
+            
+            //If point defense fire destroys the missile, don't process a hit
+            if (ae.isDoomed()) {
+                return;
+            }
         }
 
         if (lastEntityId != taa.getEntityId()) {
@@ -18433,8 +18438,9 @@ public class Server implements Runnable {
 
         // add some stuff to the to hit value
         // need to add damage done modifier
-        if (ae.damageThisRound > 10) {
-            toHit.addModifier((int) (Math.floor(ae.damageThisRound / 10.0)),
+        int damageTaken = (ae.getOArmor(TeleMissile.LOC_BODY) - ae.getArmor(TeleMissile.LOC_BODY));
+        if (damageTaken > 10) {
+            toHit.addModifier((int) (Math.floor(damageTaken / 10.0)),
                               "damage taken");
         }
 

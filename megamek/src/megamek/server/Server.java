@@ -18391,11 +18391,6 @@ public class Server implements Runnable {
         
         //If point defenses engaged the missile, handle that damage
         if (amsDamage > 0) {
-            //Report the attack
-            r = new Report(3350);
-            r.subject = ae.getId();
-            addReport(r);
-            
             //Damage the missile
             HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
                     tm.sideTable(te.getPosition(), true));
@@ -33963,7 +33958,7 @@ public class Server implements Runnable {
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
             assignTeleMissileAMS(taa);
-            taa.calcCounterAV(game, taa.getTarget(game));
+            taa.calcCounterAV(game, taa.getTarget(game), vPhaseReport);
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
         } else if (aaa instanceof BAVibroClawAttackAction) {

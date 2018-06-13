@@ -21,12 +21,14 @@ package megamek.common.actions;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Mounted;
+import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.TeleMissile;
@@ -52,8 +54,6 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     //Large Craft Point Defense/AMS Bay Stuff
     public int CounterAVInt = 0;
     private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
-    private boolean amsBayEngagedCap = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a capital missile attack.
-    private boolean pdBayEngagedCap = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a capital missile attack.
     private boolean advancedPD = false; //true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
@@ -170,7 +170,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
-    public int calcCounterAV(IGame game, Targetable target) {
+    public int calcCounterAV(IGame game, Targetable target, Vector<Report> vPhaseReport) {
         if (!checkPDConditions(game, target)) {
             return 0;
         }
@@ -187,7 +187,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 // Point defenses only fire vs attacks against the arc they protect
                 Entity pdEnt = counter.getEntity();
                 
-                //We already checked arc when AMS was assigned. No need to worry about fleet missile defense here
+                //We already checked arc when AMS was assigned. No need to worry about fleet missile defense here:
                 //Telemissiles are entities. Other craft can just shoot at them.
                 
                 // Point defenses can't fire if they're not ready for any other reason
@@ -212,6 +212,22 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         continue;
                     }
                 }
+                Report r;
+                
+                //If the target is overheating, report it and don't process any more point defense attacks
+                if (pdOverheated) {
+                    r = new Report(3359);
+                    r.newlines = 0;
+                    r.subject = pdEnt.getId();
+                    vPhaseReport.add(r);
+                    break;
+                }
+                
+                //Otherwise, report an AMS attack
+                r = new Report(3350);
+                r.newlines = 1;
+                r.subject = pdEnt.getId();
+                vPhaseReport.add(r);
                 
                 // Now for heat, damage and ammo we need the individual weapons in the bay
                 // First, reset the temporary damage counters
@@ -225,6 +241,10 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                     // build up some heat
                     //First Check to see if we have enough heat capacity to fire
                     if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
+                        r = new Report(3361);
+                        r.newlines = 1;
+                        r.subject = pdEnt.getId();
+                        vPhaseReport.add(r);
                         pdOverheated = true;
                         break;
                     }

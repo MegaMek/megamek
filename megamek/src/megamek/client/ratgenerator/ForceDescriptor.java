@@ -118,6 +118,9 @@ public class ForceDescriptor {
 	private ForceDescriptor parent;
 	private ArrayList<ForceDescriptor> subforces;
 	private ArrayList<ForceDescriptor> attached;
+	private double dropshipPct = 0.0;
+	private double jumpshipPct = 0.0;
+	private double cargo = 0.0;
 	
 	public ForceDescriptor() {
 		faction = "IS";
@@ -1061,9 +1064,12 @@ public class ForceDescriptor {
 	 * @param jumpship The ratio of the number of jumpships to the number of docking collars needed by
 	 *                 the entire unit, including the generated transports.
 	 */
-	public ForceDescriptor assignTransport(double dropshipPct, double jumpshipPct) {
+	public ForceDescriptor assignTransport() {
+	    if ((getDropshipPct() <= 0) && (getJumpshipPct() <= 0) && (getCargo() <= 0)) {
+	        return null;
+	    }
 	    TransportCalculator tp = new TransportCalculator(this);
-	    List<MechSummary> dropships = tp.calcDropships(dropshipPct);
+	    List<MechSummary> dropships = tp.calcDropships(getDropshipPct());
 	    ForceDescriptor transports = createChild(subforces.size() + attached.size());
 	    transports.setUnitType(null);
 	    transports.setName("Transport");
@@ -1524,6 +1530,30 @@ public class ForceDescriptor {
 	public void addAttached(ForceDescriptor fd) {
 		attached.add(fd);
 	}
+	
+    public double getDropshipPct() {
+        return dropshipPct;
+    }
+    
+    public void setDropshipPct(double dropshipPct) {
+        this.dropshipPct = dropshipPct;
+    }
+
+    public double getJumpshipPct() {
+        return jumpshipPct;
+    }
+    
+    public void setJumpshipPct(double jumpshipPct) {
+        this.jumpshipPct = jumpshipPct;
+    }
+
+    public double getCargo() {
+        return cargo;
+    }
+    
+    public void setCargo(double cargo) {
+        this.cargo = cargo;
+    }
 
 	public Set<String> getFlags() {
 		return flags;

@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -117,6 +119,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	private JCheckBox chkRoleBomber;
 	private JCheckBox chkRoleAssault;
 	private JCheckBox chkRoleAirTransport;
+	
+	private JTextField txtDropshipPct;
+	private JTextField txtJumpshipPct;
+	private JTextField txtCargo;
 
 	private JButton btnGenerate;
 	private JButton btnExportMUL;
@@ -265,6 +271,25 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridy = y++;
 		add(panAirRole, gbc);
 		panAirRole.setVisible(false);
+		
+		gbc.gridx = 0;
+		gbc.gridy = y++;
+		
+		JPanel panTransport = new JPanel(new GridLayout(3, 2));
+		txtDropshipPct = new JTextField("0");
+		txtJumpshipPct = new JTextField("0");
+		txtCargo = new JTextField("0");
+        panTransport.add(new JLabel("Dropship Percentage:"));
+        panTransport.add(txtDropshipPct, gbc);
+        panTransport.add(new JLabel("Jumpship Percentage:"));
+        panTransport.add(txtJumpshipPct, gbc);
+        panTransport.add(new JLabel("Cargo Tonnage:"));
+        panTransport.add(txtCargo, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = y++;
+        gbc.fill = GridBagConstraints.NONE;
+        panTransport.setBorder(BorderFactory.createTitledBorder("Transport"));
+        add(panTransport, gbc);
 
 		btnGenerate = new JButton("Generate");
 		gbc.gridx = 0;
@@ -494,6 +519,24 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 				}
 			}
 		}
+        try {
+            fd.setDropshipPct(Double.parseDouble(txtDropshipPct.getText()) * 0.01);
+        } catch (NumberFormatException ex) {
+            fd.setDropshipPct(0.0);
+            txtDropshipPct.setText("0");
+        }
+        try {
+            fd.setJumpshipPct(Double.parseDouble(txtJumpshipPct.getText()) * 0.01);
+        } catch (NumberFormatException ex) {
+            fd.setJumpshipPct(0.0);
+            txtJumpshipPct.setText("0");
+        }
+        try {
+            fd.setCargo(Double.parseDouble(txtCargo.getText()));
+        } catch (NumberFormatException ex) {
+            fd.setCargo(0.0);
+            txtCargo.setText("0");
+        }
 		
 		ProgressMonitor monitor = new ProgressMonitor(this, "Generate Formation", "", 0, 100);
 		monitor.setProgress(0);

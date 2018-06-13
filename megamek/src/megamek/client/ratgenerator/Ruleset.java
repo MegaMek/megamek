@@ -171,7 +171,7 @@ public class Ruleset {
         fd.loadEntities(l, 0.4);
 //      fd.assignBloodnames();
         
-        ForceDescriptor transports = fd.assignTransport(0.5, 0);
+        ForceDescriptor transports = fd.assignTransport();
         transports.loadEntities(l, 0);
         fd.addAttached(transports);
         

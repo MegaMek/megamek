@@ -676,9 +676,12 @@ public class ForceDescriptor {
     		element = true;
     		movementModes.clear();
     		movementModes.add(unit.getMovementMode());
-    		if ((unitType.equals("Mek") || unitType.equals("Aero")
-    				|| unitType.equals("Tank"))
-    				&&unit.isOmni()) {
+    		if (null == unitType) {
+    		    unitType = unit.getUnitType();
+    		}
+    		if (((unitType == UnitType.MEK) || (unitType == UnitType.AERO)
+    				|| (unitType == UnitType.TANK))
+    				&& unit.isOmni()) {
     			flags.add("omni");
     		}
     		if (unit.getRoles().contains(MissionRole.ARTILLERY)) {
@@ -1047,6 +1050,38 @@ public class ForceDescriptor {
 			return rank(arg1) - rank(arg0);
 		}
 	};
+	
+	/**
+	 * Calculates transport needs of the unit and generates enough dropships and jumpships to carry
+	 * the indicated portion of the unit.
+	 *  
+	 * @param dropship The ratio of dropships to the number required to transport the entire unit
+	 *                 (e.g. 0.5 will carry at least half the units, and 1.2 will carry the entire unit
+	 *                 with 20% excess capacity.
+	 * @param jumpship The ratio of the number of jumpships to the number of docking collars needed by
+	 *                 the entire unit, including the generated transports.
+	 */
+	public ForceDescriptor assignTransport(double dropshipPct, double jumpshipPct) {
+	    TransportCalculator tp = new TransportCalculator(this);
+	    List<MechSummary> dropships = tp.calcDropships(dropshipPct);
+	    ForceDescriptor transports = createChild(subforces.size() + attached.size());
+	    transports.setUnitType(null);
+	    transports.setName("Transport");
+	    // TODO: put this in the faction files
+	    transports.setEschelon(3);
+	    transports.setCoRank(35);
+	    for (MechSummary ms : dropships) {
+	        ForceDescriptor sub = transports.createChild(transports.getSubforces().size());
+	        sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
+	        sub.setEschelon(1);
+	        sub.setCoRank(34);
+	        transports.addSubforce(sub);
+	    }
+	    transports.assignCommanders();
+	    transports.assignPositions();
+	    
+	    return transports;
+	}
 	
 	/*
 	public void assignBloodnames() {

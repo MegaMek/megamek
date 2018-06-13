@@ -241,8 +241,10 @@ public class ForceGeneratorDialog extends JDialog {
 
     	@Override
     	public boolean isLeaf(Object node) {
-    		return ((ForceDescriptor)node).getEschelon() == 0
-    				|| (node instanceof ForceDescriptor && getChildCount(node) == 0);
+    	    return (getChildCount(node) == 0)
+    	            || ((node instanceof ForceDescriptor)
+    	                    && (((ForceDescriptor) node).getEschelon() != null)
+    	                    && (((ForceDescriptor)node).getEschelon() == 0));
     	}
 
     	@Override

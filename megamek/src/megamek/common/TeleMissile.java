@@ -43,6 +43,12 @@ public class TeleMissile extends Aero {
         super();
         damThresh = new int[] {0};
     }
+    
+    @Override
+    //Telemissiles shouldn't get a firing phase
+    public boolean isEligibleForFiring() {
+        return false;
+    }
 
     public TeleMissile(Entity originalRide, int damageValue, double weight, int type, int capMisMod) {
         this();

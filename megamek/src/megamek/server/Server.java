@@ -27526,6 +27526,11 @@ public class Server implements Runnable {
             String reason, int target, int damage, boolean isCapital) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
+        
+        //Telemissiles don't take critical hits
+        if (a instanceof TeleMissile) {
+            return vDesc;
+        }
 
         // roll the critical
         r = new Report(9100);
@@ -27593,8 +27598,8 @@ public class Server implements Runnable {
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage, damagedByFire);
         }
-        //Telemissiles don't take critical hits
-        if (en instanceof Aero && !en.hasETypeFlag(Entity.ETYPE_TELEMISSILE)) {
+
+        if (en instanceof Aero) {
             return criticalAero((Aero) en, loc, critMod, "unknown", 8, damage,
                     isCapital);
         }
@@ -27965,10 +27970,9 @@ public class Server implements Runnable {
         // Infantry do not suffer breaches
         // Telemissiles don't either
         // VTOLs can't operate in vaccuum or underwater, so no breaches
-        if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                || entity.hasETypeFlag(Entity.ETYPE_INFANTRY)
-                || entity.hasETypeFlag(Entity.ETYPE_TELEMISSILE)
-                || entity.hasETypeFlag(Entity.ETYPE_VTOL)) {
+        if (entity instanceof Infantry
+                || entity instanceof TeleMissile
+                || entity instanceof VTOL) {
             return vDesc;
         }
 

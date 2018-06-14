@@ -283,8 +283,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
         panTransport.add(txtDropshipPct, gbc);
         panTransport.add(new JLabel("Jumpship Percentage:"));
         panTransport.add(txtJumpshipPct, gbc);
-        panTransport.add(new JLabel("Cargo Tonnage:"));
-        panTransport.add(txtCargo, gbc);
+        // Cargo needs more work to select cargo dropships.
+//        panTransport.add(new JLabel("Cargo Tonnage:"));
+//        panTransport.add(txtCargo, gbc);
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;

@@ -54,6 +54,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     //Large Craft Point Defense/AMS Bay Stuff
     public int CounterAVInt = 0;
     private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
+    private boolean engagementReportingFlag = false; //Makes sure we only get one 'point defense engaged' report per telemissile attack
     private boolean advancedPD = false; //true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
@@ -151,22 +152,6 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     }
     
     /**
-     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
-     * See also TeleMissileAttackAction, which contains a modified version of this to work against 
-     * a TeleMissile entity in the physical phase
-     */
-    protected void setAMSBayReportingFlag() {
-    }
-    
-    /**
-     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
-     * See also TeleMissileAttackAction, which contains a modified version of this to work against 
-     * a TeleMissile entity in the physical phase
-     */
-    protected void setPDBayReportingFlag() {
-    }
-    
-    /**
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
@@ -214,20 +199,19 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 }
                 Report r;
                 
-                //If the target is overheating, report it and don't process any more point defense attacks
+                //If the target is overheating don't process any more point defense attacks
                 if (pdOverheated) {
-                    r = new Report(3359);
-                    r.newlines = 0;
-                    r.subject = pdEnt.getId();
-                    vPhaseReport.add(r);
                     break;
                 }
                 
-                //Otherwise, report an AMS attack
-                r = new Report(3350);
-                r.newlines = 1;
-                r.subject = pdEnt.getId();
-                vPhaseReport.add(r);
+                //Otherwise, report a Point Defense attack, but only once
+                if (!engagementReportingFlag) {
+                    r = new Report(3362);
+                    r.newlines = 1;
+                    r.subject = pdEnt.getId();
+                    vPhaseReport.add(r);
+                    engagementReportingFlag = true;
+                }
                 
                 // Now for heat, damage and ammo we need the individual weapons in the bay
                 // First, reset the temporary damage counters
@@ -271,14 +255,12 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         // get the attack value
                         amsAV += bayWType.getShortAV();
                         // set the ams as having fired, if it did
-                        setAMSBayReportingFlag();
                     }
                     if (isPDBay) {
                         // get the attack value
                         pdAV += bayWType.getShortAV();
                         // set the pdbay as having fired, if it was able to
                         counter.setUsedThisRound(true); 
-                        setPDBayReportingFlag();
                     }
                 }
                 // non-AMS only add half their damage, rounded up

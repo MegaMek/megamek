@@ -10803,14 +10803,14 @@ public class Server implements Runnable {
     /**
      * deploys a new tele-missile entity onto the map
      */
-    public void deployTeleMissile(Entity ae, AmmoType atype, int wId,
+    public void deployTeleMissile(Entity ae, WeaponType wtype, AmmoType atype, int wId,
             int capMisMod, int damage, Vector<Report> vPhaseReport) {
         Report r = new Report(9080);
         r.subject = ae.getId();
         r.addDesc(ae);
         r.indent(2);
         r.newlines = 0;
-        r.add(atype.getName());
+        r.add(wtype.getName());
         vPhaseReport.add(r);
         TeleMissile tele = new TeleMissile(ae, damage,
                 atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
@@ -21242,6 +21242,14 @@ public class Server implements Runnable {
                 // check for enemy units
                 Vector<Integer> potTargets = new Vector<Integer>();
                 for (Entity te : game.getEntitiesVector(entity.getPosition())) {
+                    //Telemissiles cannot target fighters or other telemissiles
+                    if (!(te.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                            || te.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
+                            || te.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                            || te.hasETypeFlag(Entity.ETYPE_WARSHIP)
+                            || te.hasETypeFlag(Entity.ETYPE_SPACE_STATION))) {
+                        continue;
+                    }
                     if (te.isEnemyOf(entity)) {
                         // then add it to a vector of potential targets
                         potTargets.add(te.getId());

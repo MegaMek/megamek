@@ -20,6 +20,7 @@ import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -68,6 +69,16 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
         return at;
     }
     
+    private int getBayDamage() {
+        int damage = 0;
+        for (int wId : weapon.getBayWeapons()) {
+            Mounted bayW = ae.getEquipment(wId);
+            WeaponType bayWType = ((WeaponType) bayW.getType());
+            damage += (int) bayWType.getShortAV();
+        }
+        return damage;
+    }
+    
     @Override
     protected void useAmmo() {
         final String METHOD_NAME = "useAmmo()";
@@ -105,7 +116,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
         server.deployTeleMissile(ae, getBayAmmoType(), ae.getEquipmentNum(weapon),
-                getCapMisMod(), vPhaseReport);
+                getCapMisMod(), getBayDamage(), vPhaseReport);
 
         return false;
 

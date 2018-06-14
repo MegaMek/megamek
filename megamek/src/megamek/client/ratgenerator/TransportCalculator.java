@@ -93,6 +93,12 @@ public class TransportCalculator {
         return unitCounts;
     }
     
+    /**
+     * Generates dropships to provide enough capacity to transport the given ratio of the formation.
+     * 
+     * @param ratio            The ratio of dropships to generate to the total needs of the unit
+     * @return                 A list of generated dropships
+     */
     public List<MechSummary> calcDropships(double ratio) {
         UnitTable table = UnitTable.findTable(fd.getFactionRec(), UnitType.DROPSHIP,
                 fd.getYear(), fd.getRating(), null, ModelRecord.NETWORK_NONE,
@@ -116,6 +122,35 @@ public class TransportCalculator {
                 });
                 retVal.add(dropship);
             }
+        }
+        return retVal;
+    }
+    
+    /**
+     * Generates jumpships to provide enough docking collars to transport the given ratio of dropships.
+     * 
+     * @param ratio            The ratio of jumpships to generate to the total needs of the unit
+     * @param transportCollars The number of dropships generated for transport
+     * @return                 A list of generated jumpships
+     */
+    public List<MechSummary> calcJumpships(double ratio, int transportCollars) {
+        UnitTable table = UnitTable.findTable(fd.getFactionRec(), UnitType.JUMPSHIP,
+                fd.getYear(), fd.getRating(), null, ModelRecord.NETWORK_NONE,
+                EnumSet.noneOf(EntityMovementMode.class), EnumSet.noneOf(MissionRole.class),
+                0);
+        List<MechSummary> retVal = new ArrayList<>();
+        int currentCapacity = 0;
+        if (unitCounts.containsKey(UnitType.DROPSHIP)) {
+            transportCollars += unitCounts.get(UnitType.DROPSHIP);
+        }
+        while (transportCollars * ratio > currentCapacity) {
+            // It's possible to have a jumpship with no docking collars, e.g. for scout use
+            MechSummary jumpship = table.generateUnit(ms -> countHardpoints(ms) > 0);
+            if (null == jumpship) {
+                break; // Could not find any transport for the unit type; skip
+            }
+            currentCapacity += countHardpoints(jumpship);
+            retVal.add(jumpship);
         }
         return retVal;
     }
@@ -193,6 +228,24 @@ public class TransportCalculator {
             }
         }
         return bayCount;
+    }
+    
+    /**
+     * Loads the Entity and counts the number of docking hardpoints.
+     * 
+     * @param ms The unit to load
+     * @return   The number of docking hardpoints on the unit.
+     */
+    private int countHardpoints(MechSummary ms) {
+        try {
+            Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            int hardpoints = entity.getDockingCollars().size();
+            // TODO: count dropshuttle bays
+            hardpointCache.put(ms, hardpoints);
+            return hardpoints;
+        } catch (EntityLoadingException ex) {
+            return 0;
+        }
     }
 
 }

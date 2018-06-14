@@ -1076,7 +1076,10 @@ public class ForceDescriptor {
 	    // TODO: put this in the faction files
 	    transports.setEschelon(3);
 	    transports.setCoRank(35);
-	    for (MechSummary ms : dropships) {
+	    
+	    List<MechSummary> shipList = tp.calcJumpships(getJumpshipPct(), dropships.size());
+	    shipList.addAll(dropships);
+	    for (MechSummary ms : shipList) {
 	        ForceDescriptor sub = transports.createChild(transports.getSubforces().size());
 	        sub.setUnit(RATGenerator.getInstance().getModelRecord(ms.getName()));
 	        sub.setEschelon(1);

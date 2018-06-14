@@ -69,12 +69,13 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
         return at;
     }
     
-    private int getBayDamage() {
+    private int calcBayDamageAndHeat() {
         int damage = 0;
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             WeaponType bayWType = ((WeaponType) bayW.getType());
             damage += (int) bayWType.getShortAV();
+            ae.heatBuildup += bayW.getCurrentHeat();
         }
         return damage;
     }
@@ -116,7 +117,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
         server.deployTeleMissile(ae, getBayAmmoType(), ae.getEquipmentNum(weapon),
-                getCapMisMod(), getBayDamage(), vPhaseReport);
+                getCapMisMod(), calcBayDamageAndHeat(), vPhaseReport);
 
         return false;
 

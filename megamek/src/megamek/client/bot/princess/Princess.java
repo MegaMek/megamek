@@ -81,9 +81,7 @@ public class Princess extends BotClient {
     private final IHonorUtil honorUtil = new HonorUtil();
 
     private boolean initialized = false;
-
-    //private FireControl fireControl;
-    
+   
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
     private HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
@@ -124,6 +122,8 @@ public class Princess extends BotClient {
         getLogger().setLogLevel(LOGGING_CATEGORY, verbosity);
         setBehaviorSettings(BehaviorSettingsFactory.getInstance(getLogger())
                                     .DEFAULT_BEHAVIOR);
+        
+        fireControlState = new FireControlState();
         
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
@@ -173,6 +173,10 @@ public class Princess extends BotClient {
         }
         
         return pathRankers.get(PathRankerType.Basic);
+    }
+    
+    IPathRanker getPathRanker(PathRankerType pathRankerType) {
+        return pathRankers.get(pathRankerType);
     }
 
     public boolean getFallBack() {

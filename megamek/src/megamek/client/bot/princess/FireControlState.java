@@ -1,5 +1,6 @@
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.Targetable;
@@ -10,6 +11,10 @@ import megamek.common.Targetable;
  */
 public class FireControlState {
     private List<Targetable> additionalTargets;
+    
+    public FireControlState() {
+        additionalTargets = new ArrayList<>();
+    }
     
     /**
      * The list of "additional targets", such as buildings, bridges and arbitrary hexes

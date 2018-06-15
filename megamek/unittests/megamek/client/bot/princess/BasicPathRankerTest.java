@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
@@ -85,7 +86,7 @@ public class BasicPathRankerTest {
         final List<Targetable> testAdditionalTargets = new ArrayList<>();
 
         mockFireControl = Mockito.mock(FireControl.class);
-        Mockito.when(mockFireControl.getAdditionalTargets()).thenReturn(testAdditionalTargets);
+        //Mockito.when(mockFireControl.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
         final IHonorUtil mockHonorUtil = Mockito.mock(IHonorUtil.class);
         Mockito.when(mockHonorUtil.isEnemyBroken(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
@@ -93,7 +94,7 @@ public class BasicPathRankerTest {
 
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
-        Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);

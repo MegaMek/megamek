@@ -14009,16 +14009,12 @@ public class Server implements Runnable {
         Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) taa
                 .getTarget(game) : null;
                 
-        //If a telemissile is still on the board and its original target is not
-        //First try to assign it a new one
+        //If a telemissile is still on the board and its original target is not....
         if (target == null) {
-            checkForTeleMissileAttacks();
-            //if the target is still null...
-            if (target == null) {
-                logInfo(METHOD_NAME, "Telemissile has no target. AMS not assigned.");
-                return;
-            }
+            logInfo(METHOD_NAME, "Telemissile has no target. AMS not assigned.");
+            return;
         }
+
         Vector<AttackAction> v = htTMAttacks.get(target);
         if (v == null) {
             v = new Vector<AttackAction>();
@@ -21269,6 +21265,8 @@ public class Server implements Runnable {
                 Vector<Integer> potTargets = new Vector<Integer>();
                 for (Entity te : game.getEntitiesVector(entity.getPosition())) {
                     //Telemissiles cannot target fighters or other telemissiles
+                    //Fighters don't have a distinctive Etype flag, so we have to do
+                    //this by exclusion.
                     if (!(te.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                             || te.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                             || te.hasETypeFlag(Entity.ETYPE_JUMPSHIP)

@@ -10812,7 +10812,8 @@ public class Server implements Runnable {
         r.newlines = 0;
         r.add(wtype.getName());
         vPhaseReport.add(r);
-        TeleMissile tele = new TeleMissile(ae, damage,
+        int armor = wtype.missileArmor;
+        TeleMissile tele = new TeleMissile(ae, damage, armor,
                 atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
         tele.setDeployed(true);
         tele.setId(getFreeEntityId());
@@ -14005,8 +14006,20 @@ public class Server implements Runnable {
         if (!(taa instanceof TeleMissileAttackAction)) {
             logInfo(METHOD_NAME, "Attack Action is the wrong type!");
         }
-                    
-        Entity target = game.getEntity(taa.getTargetId());
+
+        Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) taa
+                .getTarget(game) : null;
+                
+        //If a telemissile is still on the board and its original target is not
+        //First try to assign it a new one
+        if (target == null) {
+            checkForTeleMissileAttacks();
+            //if the target is still null...
+            if (target == null) {
+                logInfo(METHOD_NAME, "Telemissile has no target. AMS not assigned.");
+                return;
+            }
+        }
         Vector<AttackAction> v = htTMAttacks.get(target);
         if (v == null) {
             v = new Vector<AttackAction>();

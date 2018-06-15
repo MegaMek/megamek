@@ -50,7 +50,7 @@ public class TeleMissile extends Aero {
         return false;
     }
 
-    public TeleMissile(Entity originalRide, int damageValue, double weight, int type, int capMisMod) {
+    public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, int type, int capMisMod) {
         this();
                 
         //fuel
@@ -85,7 +85,7 @@ public class TeleMissile extends Aero {
         setModel("");
         setWeight(weight);
         setDamageValue(damageValue);
-        initializeArmor(damageValue*10, LOC_BODY);
+        initializeArmor(armorValue, LOC_BODY);
         autoSetInternal();
         initializeSI(0);
         setMovementMode(EntityMovementMode.AERODYNE);

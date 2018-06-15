@@ -45,6 +45,8 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
         super(t, w, g, s);
     }
     
+    private int missileArmor = 0;
+    
     /**
      * Method that collects the linked ammo type for a weapon bay
      * We need this to pass through to server without using the ammo
@@ -76,6 +78,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             WeaponType bayWType = ((WeaponType) bayW.getType());
             damage += (int) bayWType.getShortAV();
             ae.heatBuildup += bayW.getCurrentHeat();
+            missileArmor = bayWType.missileArmor;
         }
         return damage;
     }
@@ -117,7 +120,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
         server.deployTeleMissile(ae, wtype, getBayAmmoType(), ae.getEquipmentNum(weapon),
-                getCapMisMod(), calcBayDamageAndHeat(), vPhaseReport);
+                getCapMisMod(), calcBayDamageAndHeat(), missileArmor, vPhaseReport);
 
         return false;
 

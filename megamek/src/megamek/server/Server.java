@@ -10804,7 +10804,7 @@ public class Server implements Runnable {
      * deploys a new tele-missile entity onto the map
      */
     public void deployTeleMissile(Entity ae, WeaponType wtype, AmmoType atype, int wId,
-            int capMisMod, int damage, Vector<Report> vPhaseReport) {
+            int capMisMod, int damage, int armor, Vector<Report> vPhaseReport) {
         Report r = new Report(9080);
         r.subject = ae.getId();
         r.addDesc(ae);
@@ -10812,7 +10812,6 @@ public class Server implements Runnable {
         r.newlines = 0;
         r.add(wtype.getName());
         vPhaseReport.add(r);
-        int armor = wtype.missileArmor;
         TeleMissile tele = new TeleMissile(ae, damage, armor,
                 atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
         tele.setDeployed(true);

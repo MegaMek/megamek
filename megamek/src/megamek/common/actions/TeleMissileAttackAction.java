@@ -21,14 +21,12 @@ package megamek.common.actions;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Mounted;
-import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.TeleMissile;
@@ -54,7 +52,6 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     //Large Craft Point Defense/AMS Bay Stuff
     public int CounterAVInt = 0;
     private boolean pdOverheated = false; // true if counterfire + offensive weapon attacks made this round cause the defending unit to overheat. Used for reporting.
-    private boolean engagementReportingFlag = false; //Makes sure we only get one 'point defense engaged' report per telemissile attack
     private boolean advancedPD = false; //true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
@@ -66,6 +63,13 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
             return ((TeleMissile)entity).getDamageValue();
         }
         return 0;
+    }
+    
+    /**
+     * Returns the value of the pdOverheated flag
+     */
+    public boolean getPDOverheated() {
+        return pdOverheated;
     }
     
     /**
@@ -155,7 +159,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
-    public int calcCounterAV(IGame game, Targetable target, Vector<Report> vPhaseReport) {
+    public int calcCounterAV(IGame game, Targetable target) {
         if (!checkPDConditions(game, target)) {
             return 0;
         }
@@ -197,20 +201,10 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         continue;
                     }
                 }
-                Report r;
                 
                 //If the target is overheating don't process any more point defense attacks
                 if (pdOverheated) {
                     break;
-                }
-                
-                //Otherwise, report a Point Defense attack, but only once
-                if (!engagementReportingFlag) {
-                    r = new Report(3362);
-                    r.newlines = 1;
-                    r.subject = pdEnt.getId();
-                    vPhaseReport.add(r);
-                    engagementReportingFlag = true;
                 }
                 
                 // Now for heat, damage and ammo we need the individual weapons in the bay
@@ -225,10 +219,6 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                     // build up some heat
                     //First Check to see if we have enough heat capacity to fire
                     if ((weaponHeat + bayW.getCurrentHeat()) > pdEnt.getHeatCapacity()) {
-                        r = new Report(3361);
-                        r.newlines = 1;
-                        r.subject = pdEnt.getId();
-                        vPhaseReport.add(r);
                         pdOverheated = true;
                         break;
                     }

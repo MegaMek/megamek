@@ -18388,20 +18388,6 @@ public class Server implements Runnable {
         }
 
         Report r;
-        
-        //If point defenses engaged the missile, handle that damage
-        if (amsDamage > 0) {
-            //Damage the missile
-            HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
-                    tm.sideTable(te.getPosition(), true));
-            addReport(damageEntity(ae, hit, amsDamage, false,
-                    DamageType.NONE, false, false, false));
-            
-            //If point defense fire destroys the missile, don't process a hit
-            if (ae.isDoomed()) {
-                return;
-            }
-        }
 
         if (lastEntityId != taa.getEntityId()) {
             // who is making the attack
@@ -18417,7 +18403,7 @@ public class Server implements Runnable {
                                                                                .isDestroyed() || te.isDoomed() || te
                                                                                .getCrew()
                                                                                .isDead()))) {
-            r = new Report(4190);
+            r = new Report(4191);
             r.subject = ae.getId();
             r.indent();
             addReport(r);
@@ -18428,8 +18414,36 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.indent();
         r.add(target.getDisplayName());
-        r.newlines = 0;
+        r.newlines = 1;
         addReport(r);
+        
+        //If point defenses engaged the missile, handle that damage
+        if (amsDamage > 0) {
+            //Report the attack
+            r = new Report(3362);
+            r.newlines = 1;
+            r.subject = te.getId();
+            vPhaseReport.add(r);
+            
+            //If the target's point defenses overheated, report that
+            if (taa.getPDOverheated()) {
+                r = new Report(3361);
+                r.newlines = 1;
+                r.subject = te.getId();
+                vPhaseReport.add(r);
+            }
+            
+            //Damage the missile
+            HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
+                    tm.sideTable(te.getPosition(), true));
+            addReport(damageEntity(ae, hit, amsDamage, false,
+                    DamageType.NONE, false, false, false));
+            
+            //If point defense fire destroys the missile, don't process a hit
+            if (ae.isDoomed()) {
+                return;
+            }
+        }
 
         // add some stuff to the to hit value
         // need to add damage done modifier
@@ -18466,13 +18480,13 @@ public class Server implements Runnable {
 
         if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             roll = Integer.MAX_VALUE;
-            r = new Report(4225);
+            r = new Report(4226);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
         } else {
             // report the roll
-            r = new Report(9032);
+            r = new Report(9033);
             r.subject = ae.getId();
             r.add(toHit.getValue());
             r.add(toHit.getDesc());
@@ -33966,7 +33980,7 @@ public class Server implements Runnable {
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
             assignTeleMissileAMS(taa);
-            taa.calcCounterAV(game, taa.getTarget(game), vPhaseReport);
+            taa.calcCounterAV(game, taa.getTarget(game));
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
         } else if (aaa instanceof BAVibroClawAttackAction) {

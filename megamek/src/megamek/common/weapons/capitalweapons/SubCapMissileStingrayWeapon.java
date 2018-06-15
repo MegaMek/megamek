@@ -53,6 +53,7 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.bv = 496;
         this.cost = 85000;
         this.flags = flags.or(F_MISSILE);
+        this.atClass = CLASS_CAPITAL_MISSILE;
         this.shortAV = 3.5;
         this.medAV = 3.5;
         this.missileArmor = 35;

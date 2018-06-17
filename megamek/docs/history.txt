@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.43.12-RC6
 + Data: Dropship infantry bay fixes.
 + PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
++ Data: New Sprites
 
 v0.43.11-RC5 (2018-06-04 0100 UTC)
 + Data: Adding missing weights for infantry weapons.

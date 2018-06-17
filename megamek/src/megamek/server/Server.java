@@ -28249,6 +28249,15 @@ public class Server implements Runnable {
             while (iter.hasMoreElements()) {
                 int mechWarriorId = iter.nextElement();
                 Entity mw = game.getEntity(mechWarriorId);
+                
+                // in some situations, a "picked up" mechwarrior won't actually exist
+                // probably this is brought about by picking up a mechwarrior in a previous MekHQ scenario
+                // then having the same unit get blown up in a subsequent scenario 
+                // in that case, we simply move on
+                if(mw == null) {
+                    continue;
+                }
+                
                 mw.setDestroyed(true);
                 // We can safely remove these, as they can't be targeted
                 game.removeEntity(mw.getId(), condition);

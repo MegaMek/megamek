@@ -41,7 +41,7 @@ asfbay:2.0:2:1
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
 crewquarters:105.0:0
-infantrybay:2.0:1:2:Foot
+infantrybay:2.0:1:2
 cargobay:58.5:1:3
 </transporters>
 

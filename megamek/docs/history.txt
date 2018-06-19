@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
-v0.43.11-RC5-git
+v0.43.12-RC6
++ Data: Dropship infantry bay fixes.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
++ Data: New Sprites
+
+v0.43.11-RC5 (2018-06-04 0100 UTC)
 + Data: Adding missing weights for infantry weapons.
 + PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
 + PR #696: Fixes #974: Edge Reroll for Superchargers Breaks Superchargers
@@ -13,6 +18,9 @@ v0.43.11-RC5-git
 + Data: New and Fixed RATs (thanks mkerensky)
 + Data: Various minor data fixes, including fix for #984,#719
 + Data: Fixing #906 Incorrect heat for Prototype Rocket Launcher 15 
++ PR #985: When considering point blank shots from hidden units, Princess will make use of torso twists.
++ PR #988: Sniper SPA should not affect LOS-range shots, per errata
++ Data: Reference fixes for ATOW-C equipment, and making the Mydron a little lighter.
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

@@ -618,8 +618,8 @@ public class Princess extends BotClient {
         
         final FiringPlanCalculationParameters fccp = 
                 new FiringPlanCalculationParameters.Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
-        FiringPlan plan = fireControl.determineBestFiringPlan(fccp); 
-        fireControl.loadAmmo(shooter, plan);
+        FiringPlan plan = getFireControl(shooter).determineBestFiringPlan(fccp); 
+        getFireControl(shooter).loadAmmo(shooter, plan);
         plan.sortPlan();
 
         return plan.getEntityActionVector();

@@ -1,26 +1,15 @@
 package megamek.client.bot.princess;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.RangeType;
-import megamek.common.Targetable;
 import megamek.common.WeaponType;
-import megamek.common.logging.LogLevel;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.ServerHelper;
-import megamek.common.weapons.StopSwarmAttack;
 
 /**
  * This class is intended to help the bot calculate firing plans for infantry

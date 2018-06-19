@@ -1,11 +1,9 @@
 package megamek.server;
 
 import megamek.common.Entity;
-import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
-import megamek.common.Report;
 import megamek.common.Terrains;
 import megamek.common.options.OptionsConstants;
 

@@ -20,9 +20,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import megamek.client.ui.SharedUtility;
 import megamek.common.BombType;
@@ -61,8 +59,6 @@ public abstract class PathRanker implements IPathRanker {
         owner = princess;
     }
 
-    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
-    
     /**
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
@@ -95,7 +91,7 @@ public abstract class PathRanker implements IPathRanker {
             }
 
             // the cached path probability data is really only relevant for one iteration through this method
-            pathSuccessProbabilities.clear();
+            getPathRankerState().getPathSuccessProbabilities().clear();
             
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
@@ -291,8 +287,8 @@ public abstract class PathRanker implements IPathRanker {
      */
     protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         // introduced a caching mechanism, as the success probability was being calculated at least twice
-        if(pathSuccessProbabilities.containsKey(movePath.getKey())) {
-            return pathSuccessProbabilities.get(movePath.getKey());
+        if(getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
+            return getPathRankerState().getPathSuccessProbabilities().get(movePath.getKey());
         }
         
         MovePath pathCopy = movePath.clone();
@@ -332,7 +328,7 @@ public abstract class PathRanker implements IPathRanker {
         }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
-        pathSuccessProbabilities.put(movePath.getKey(), successProbability);
+        getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
         
         return successProbability;
     }
@@ -499,5 +495,13 @@ public abstract class PathRanker implements IPathRanker {
 
     protected Princess getOwner() {
         return owner;
+    }
+    
+    /**
+     * Convenience property to access bot-wide state information.
+     * @return
+     */
+    protected PathRankerState getPathRankerState() {
+        return owner.getPathRankerState();
     }
 }

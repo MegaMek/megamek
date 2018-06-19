@@ -87,6 +87,7 @@ public class Princess extends BotClient {
     private HashMap<FireControlType, FireControl> fireControls;
     
     private FireControlState fireControlState;
+    private PathRankerState pathRankerState;
     
     
     private BehaviorSettings behaviorSettings;
@@ -124,6 +125,7 @@ public class Princess extends BotClient {
                                     .DEFAULT_BEHAVIOR);
         
         fireControlState = new FireControlState();
+        pathRankerState = new PathRankerState();
         
         // Start-up precog now, so that it can instantiate its game instance,
         // and it will stay up-to date.
@@ -202,6 +204,10 @@ public class Princess extends BotClient {
 
     FireControlState getFireControlState() {
         return fireControlState;
+    }
+    
+    PathRankerState getPathRankerState() {
+        return pathRankerState;
     }
     
     Precognition getPrecognition() {
@@ -1450,6 +1456,7 @@ public class Princess extends BotClient {
 
             initializePathRankers();
             fireControlState = new FireControlState();
+            pathRankerState = new PathRankerState();
 
             // Pick up any turrets and add their buildings to the strategic 
             // targets list.

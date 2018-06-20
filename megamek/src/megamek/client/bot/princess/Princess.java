@@ -202,11 +202,11 @@ public class Princess extends BotClient {
         this.fleeBoard = fleeBoard;
     }
 
-    FireControlState getFireControlState() {
+    public FireControlState getFireControlState() {
         return fireControlState;
     }
     
-    PathRankerState getPathRankerState() {
+    public PathRankerState getPathRankerState() {
         return pathRankerState;
     }
     

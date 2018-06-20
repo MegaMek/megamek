@@ -40,6 +40,7 @@ import megamek.common.VTOL;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import org.junit.Assert;
@@ -54,6 +55,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -73,6 +75,8 @@ public class BasicPathRankerTest {
 
     private Princess mockPrincess;
     private FireControl mockFireControl;
+    private FireControlState mockFireControlState;
+    private PathRankerState mockPathRankerState;
 
     @Before
     public void setUp() {
@@ -83,21 +87,29 @@ public class BasicPathRankerTest {
         Mockito.when(mockBehavior.getHerdMentalityValue()).thenReturn(BehaviorSettings.HERD_MENTALITY_VALUES[5]);
         Mockito.when(mockBehavior.getSelfPreservationValue()).thenReturn(BehaviorSettings.SELF_PRESERVATION_VALUES[5]);
 
-        final List<Targetable> testAdditionalTargets = new ArrayList<>();
-
         mockFireControl = Mockito.mock(FireControl.class);
-        //Mockito.when(mockFireControl.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
         final IHonorUtil mockHonorUtil = Mockito.mock(IHonorUtil.class);
         Mockito.when(mockHonorUtil.isEnemyBroken(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
                .thenReturn(false);
+        
+        final List<Targetable> testAdditionalTargets = new ArrayList<>();
+        mockFireControlState = Mockito.mock(FireControlState.class);
+        Mockito.when(mockFireControlState.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
+        
+        final Map<MovePath.Key, Double> testSuccessProbabilities = new HashMap<>();
+        mockPathRankerState = Mockito.mock(PathRankerState.class);
+        Mockito.when(mockPathRankerState.getPathSuccessProbabilities()).thenReturn(testSuccessProbabilities);
+        
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
+        Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
+        Mockito.when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);
     }
 
     private void assertRankedPathEquals(final RankedPath expected,
@@ -284,6 +296,16 @@ public class BasicPathRankerTest {
         Mockito.doReturn(mockPrincess).when(testRanker).getOwner();
 
         final MovePath mockPath = Mockito.mock(MovePath.class);
+        final Entity mockMyUnit = Mockito.mock(BipedMech.class);
+        final Crew mockCrew = Mockito.mock(Crew.class);
+        final PilotOptions mockOptions = Mockito.mock(PilotOptions.class);
+        
+        
+        // we need to initialize the unit's crew and options
+        Mockito.when(mockPath.getEntity()).thenReturn(mockMyUnit);
+        Mockito.when(mockMyUnit.getCrew()).thenReturn(mockCrew);
+        Mockito.when(mockCrew.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(Mockito.any(String.class))).thenReturn(false);
         Mockito.when(mockPath.getFinalCoords()).thenReturn(new Coords(0, 0));
 
         final IGame mockGame = Mockito.mock(IGame.class);
@@ -293,6 +315,8 @@ public class BasicPathRankerTest {
         final Entity mockEnemyMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockEnemyMech.getId()).thenReturn(mockEnemyMechId);
         Mockito.when(mockEnemyMech.getPosition()).thenReturn(new Coords(1, 0));
+        Mockito.when(mockEnemyMech.getCrew()).thenReturn(mockCrew);
+        
         Mockito.doReturn(15.0)
                .when(testRanker)
                .calculateDamagePotential(Mockito.eq(mockEnemyMech), Mockito.any(EntityState.class),

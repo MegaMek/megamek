@@ -6014,7 +6014,7 @@ public class Compute {
             return false;
         }
 
-        if (attacker.game.getBoard().inSpace()) {
+        if (attacker.getGame().getBoard().inSpace()) {
             return false;
         }
         // According to errata, VTOL and WiGes are considered ground targets

@@ -248,10 +248,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return fallMod;
     }
 
-    LosEffects calcLosEffects(IGame game, int shooterId, Targetable target) {
-        return LosEffects.calculateLos(game, shooterId, target);
-    }
-
     double calculateDamagePotential(Entity enemy,
                                     EntityState shooterState,
                                     MovePath path,
@@ -317,7 +313,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         // If I don't have range, I can't do damage.
         // exception: I might, if I'm an aero on a ground map attacking a ground unit because aero unit ranges are a "special case"
-        boolean aeroAttackingGroundUnitOnGroundMap = path.getEntity().isAirborne() && !enemy.isAero() && game.getBoard().onGround();
+        boolean aeroAttackingGroundUnitOnGroundMap = me.isAirborne() && !enemy.isAero() && game.getBoard().onGround();
         
         int maxRange = me.getMaxWeaponRange();
         if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
@@ -327,7 +323,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // If I don't have LoS, I can't do damage.  ToDo: Account for indirect fire.
         LosEffects losEffects = 
                 LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
-        //calcLosEffects(game, me.getId(), enemy);
         if (!losEffects.canSee()) {
             return 0;
         }

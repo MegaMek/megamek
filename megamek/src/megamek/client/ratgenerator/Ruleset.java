@@ -16,7 +16,6 @@ package megamek.client.ratgenerator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,6 +34,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import megamek.client.RandomNameGenerator;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 
 /**
  * Container for all the rule nodes for a faction. Has methods for processing the rules to
@@ -337,6 +338,8 @@ public class Ruleset {
 	}
 	
 	public static void loadConstants(File f) {
+	    final String METHOD_NAME = "loadConstants(File)"; //$NON-NLS-1$
+	    
 		constants = new HashMap<>();
 		InputStream is;
 		try {
@@ -350,28 +353,27 @@ public class Ruleset {
         			try {
         				constants.put(fields[0], fields[1]);
         			} catch (NumberFormatException e) {
-	        			System.err.println("Malformed line in force generator constants file: " + line);
+                        DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                                "Malformed line in force generator constants file: " + line); //$NON-NLS-1$
         			}
 	        	}
 	        }
 	        reader.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, e); //$NON-NLS-1$
 		}
 	}
 	
 	public static void loadData() {
+	    final String METHOD_NAME = "loadData()"; //$NON-NLS-1$
 		initialized = false;
 		initializing = true;
 		rulesets = new HashMap<String,Ruleset>();
 		
 		File dir = new File(directory);
 		if (!dir.exists()) {
-			System.err.println("Could not locate force generator faction rules.");
+            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                    "Could not locate force generator faction rules."); //$NON-NLS-1$
 			initializing = false;
 		}
 		
@@ -383,7 +385,6 @@ public class Ruleset {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 // Ignore
-                e.printStackTrace();
             }
 		}
 		
@@ -397,7 +398,8 @@ public class Ruleset {
 					rulesets.put(rs.getFaction(), rs);
 				}
 			} catch (IllegalArgumentException ex) {
-				System.err.println("While parsing file " + f.toString() + ": " + ex.getMessage());
+                DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                        "While parsing file " + f.toString() + ": " + ex.getMessage());
 			}
 		}
 		initialized = true;
@@ -405,6 +407,8 @@ public class Ruleset {
 	}
 	
 	private static Ruleset createFromFile(File f) {
+	    final String METHOD_NAME = "createFromFile(File)"; //$NON-NLS-1$
+	    
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		Document xmlDoc = null;
 		
@@ -415,8 +419,9 @@ public class Ruleset {
 			xmlDoc = db.parse(fis);
 			fis.close();
 		} catch (Exception e) {
-			System.err.println("While loading force template from file " + f.getName()
-					+ ": " + e.getMessage());
+            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                    "While loading force template from file " + f.getName() + ": " //$NON-NLS-1$
+                            + e.getMessage());
 			return null;
 		}
 		
@@ -424,13 +429,15 @@ public class Ruleset {
 		
 		Element elem = xmlDoc.getDocumentElement();
 		if (!elem.getNodeName().equals("ruleset")) {
-			System.err.println("Could not find ruleset element in file " + f.getName());
+            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                    "Could not find ruleset element in file " + f.getName()); //$NON-NLS-1$
 			return null;
 		}
 		if (elem.getAttribute("faction").length() > 0) {
 			retVal.faction = elem.getAttribute("faction");
 		} else {
-			System.err.println("Faction is not declared in ruleset file " + f.getName());
+            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                    "Faction is not declared in ruleset file " + f.getName()); //$NON-NLS-1$
 			return null;
 		}
 		if (elem.getAttribute("parent").length() > 0) {
@@ -508,12 +515,11 @@ public class Ruleset {
 				try {
 					fn = ForceNode.createFromXml(wn);
 				} catch (IllegalArgumentException ex) {
-					System.err.println("In file " + f.getName()
-							+ " while processing force node" + 
-							((wn.getAttributes().getNamedItem("eschName") == null)?"":
-								" " + wn.getAttributes().getNamedItem("eschName")) +
-								": ");
-					System.err.println(ex.getMessage());
+		            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+		                    "In file " + f.getName() + " while processing force node" + //$NON-NLS-1$
+							((wn.getAttributes().getNamedItem("eschName") == null)?"": //$NON-NLS-1$
+								" " + wn.getAttributes().getNamedItem("eschName")) + //$NON-NLS-1$
+								": " + ex.getMessage()); //$NON-NLS-1$
 				}
 				if (fn != null) {
 					retVal.forceNodes.add(fn);

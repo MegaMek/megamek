@@ -15,10 +15,12 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
-import megamek.common.EntityMovementMode;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import megamek.common.EntityMovementMode;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 
 /**
  * 
@@ -132,7 +134,8 @@ public class ForceNode extends RulesetNode {
     				    if (content != null) {
     				        FormationType ft = FormationType.getFormationType(content);
     				        if (null == ft) {
-    				            System.err.println("Force generator: could not parse formation type " + content);
+    				            DefaultMmLogger.getInstance().log(getClass(), "apply(ForceDescriptor)",
+    				                    LogLevel.ERROR, "Could not parse formation type " + content);
     				        }
     				        fd.setFormationType(ft);
     				    }
@@ -163,7 +166,8 @@ public class ForceNode extends RulesetNode {
 						if (role != null) {
 							fd.getRoles().add(role);
 						} else {
-							System.err.println("Force generator could not parse mission role " + p);
+                            DefaultMmLogger.getInstance().log(getClass(), "apply(ForceDescriptor)",
+                                    LogLevel.ERROR, "Force generator could not parse mission role " + p);
 						}
 					}
 					break;
@@ -242,26 +246,6 @@ public class ForceNode extends RulesetNode {
 	public void processSubforces(ForceDescriptor fd, String generate, Ruleset ruleset) {
 		for (SubforcesNode n : subforces) {
 			if (n.matches(fd)) {
-/*				
-				if (n.assertions.containsKey("generate") &&
-						(n.assertions.getProperty("generate").equals("chassis")
-								|| n.assertions.getProperty("generate").equals("model"))) {
-					if (fd.getUnitType() == null) {
-						System.err.println("Attempted to generate units of unknown type.");
-					} else {
-						ModelRecord mRec = fd.generate();
-						if (mRec != null) {
-							if (subforces.size() == 0) {
-								fd.setUnit(mRec);
-							} else if (n.assertions.getProperty("generate").equals("chassis")) {
-								fd.getChassis().add(mRec.getChassis());
-							} else {
-								fd.getModels().add(mRec.getKey());
-							}
-						}
-					}
-				}
-*/
 				ArrayList<ForceDescriptor> subs = null;
 				if (n.getAltFaction() != null || n.useParentFaction()) {
 					String faction = n.getAltFaction();

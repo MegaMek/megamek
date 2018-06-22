@@ -34,6 +34,8 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.
@@ -170,6 +172,8 @@ public class ForceDescriptor {
 	 * Goes through the force tree structure and generates units for all leaf nodes.
 	 */
 	public void generateUnits(Ruleset.ProgressListener l, double progress) {
+	    final String METHOD_NAME = "generateUnits(Ruleset#ProgressListener, double)"; //$NON-NLS-1$
+	    
 	    //If the parent node has a chassis or model assigned, it carries through to the children.
 	    if (null != parent) {
 	        chassis.addAll(parent.getChassis());
@@ -184,7 +188,9 @@ public class ForceDescriptor {
 	        if (null != mr) {
 	            setUnit(mr);
 	        } else {
-	            System.err.println("Could not generate unit");
+	            DefaultMmLogger.getInstance().log(getClass(),
+	                    "generateUnits(Ruleset#ProgressListener, double)", LogLevel.ERROR,
+	                    "Could not generate unit");
 	        }
 	    } else {
     	    if (null != formationType) {
@@ -213,8 +219,8 @@ public class ForceDescriptor {
                             generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
         	            }
                     } catch (NullPointerException ex) {
-                        System.err.println("Found null generation rule in force node with formation set.");
-                        ex.printStackTrace();
+                        DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                                "Found null generation rule in force node with formation set.");
                     }
     	        }
     	    } else {
@@ -741,15 +747,6 @@ public class ForceDescriptor {
 				if (useWeightClass() && null != fd.getWeightClass() && fd.getWeightClass() >= 0) {
 					wcs.add(fd.getWeightClass());
 				}
-/*				System.out.println("Getting table: " + fd.getFaction() + ","
-						+ fd.getUnitType() + "," + fd.getYear() + ","
-						+ fd.getRating() + ","
-							+ wcs.stream().map(i -> String.valueOf(i))
-								.collect(Collectors.joining("|"))
-						+ "," + roles.stream().collect(Collectors.joining("|"))
-						+ "," + roleStrictness);
-*/
-				//TODO: Add cache to UnitTable
 				String ratGenRating = null;
 				int ratingLevel = getRatingLevel();
 				if (ratingLevel >= 0) {
@@ -785,7 +782,8 @@ public class ForceDescriptor {
 			}
 		};
 		
-		System.err.println("Could not find unit for " + unitType);
+		DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.INFO, 
+		        "Could not find unit for " + unitType);
 		return null;
 	}
 	
@@ -797,7 +795,11 @@ public class ForceDescriptor {
 					entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 					entity.setCrew(getCo().createCrew(entity.defaultCrewType()));
 				} catch (EntityLoadingException ex) {
-					System.err.println("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
+                    DefaultMmLogger.getInstance().log(getClass(),
+                            "loadEntities(Ruleset#ProgressListener, double)", LogLevel.ERROR,
+                            "Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
+                    DefaultMmLogger.getInstance().log(getClass(),
+                            "loadEntities(Ruleset#ProgressListener, double)", ex);
 				}
 			}
 		}
@@ -954,7 +956,8 @@ public class ForceDescriptor {
 			for (ForceDescriptor sub : subforces) {
 				if (sub.useWeightClass()) {
 					if (sub.getWeightClass() == null) {
-						System.err.println("Weight class == null for " + sub.getUnitType() + " with " + sub.getSubforces().size() + " subforces.");
+					    DefaultMmLogger.getInstance().log(getClass(), "assignCommanders()", LogLevel.ERROR,
+					            "Weight class == null for " + sub.getUnitType() + " with " + sub.getSubforces().size() + " subforces.");
 					} else {
 						wt += sub.getWeightClass();
 						c++;
@@ -1633,7 +1636,13 @@ public class ForceDescriptor {
 		return retVal;
 	}
 	
-	public void show(String indent) {
+	/**
+	 * Intended for debugging output. Shows description of current eschelon and all subforces
+	 * 
+	 * @param indent   Prefix for the current eschelon
+	 * @param logLevel The level to pass to the logging utility
+	 */
+	public void show(String indent, LogLevel logLevel) {
 		final String[] eschelonNames = {
 				"Element", "Squad", "(2)", "Lance", "Company", "Battalion",
 				"Regiment", "Brigade", "Division", "Corps", "Army"
@@ -1642,13 +1651,14 @@ public class ForceDescriptor {
 				"Element", "(1)", "(2)", "Flight", "Squadron", "Group", "Wing", "Regiment"
 		};
 
-		System.out.println(indent + weightClass + " " + unitType + " "
+		DefaultMmLogger.getInstance().log(getClass(), "show(String, LogLevel)",
+		        logLevel, indent + weightClass + " " + unitType + " "
 				+ ((unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER)?airEschelonNames[eschelon]:eschelonNames[eschelon]));
 		for (ForceDescriptor sub : subforces) {
-			sub.show(indent + "  ");
+			sub.show(indent + "  ", logLevel);
 		}
 		for (ForceDescriptor sub : attached) {
-			sub.show(indent + " +");
+			sub.show(indent + " +", logLevel);
 		}
 	}
 }

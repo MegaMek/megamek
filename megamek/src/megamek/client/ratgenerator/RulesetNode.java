@@ -14,13 +14,16 @@
 package megamek.client.ratgenerator;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.w3c.dom.Node;
+
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
-
-import org.w3c.dom.Node;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 
 /**
  * Base class of all nodes in the Force Generator faction ruleset files.
@@ -84,15 +87,11 @@ public class RulesetNode {
 				}
 				break;
 			case "ifRole":
-				try {
 				if (!collectionMatchesProperty(fd.getRoles().stream()
-//						.filter(Objects::nonNull)
+						.filter(Objects::nonNull)
 						.map(r -> r.toString())
 						.collect(Collectors.toList()), predicates.getProperty((String)key))) {
 					return false;
-				}
-				}catch (NullPointerException ex) {
-					System.out.println(key);
 				}
 				break;
 			case "ifFlags":
@@ -247,6 +246,8 @@ public class RulesetNode {
 	}
 	
 	public void apply(ForceDescriptor fd, int i) {
+	    final String METHOD_NAME = "apply(ForceDescriptor, int)";
+	    
 		for (Object key : assertions.keySet()) {
 			String property = assertions.getProperty((String)key);
 			switch ((String)key) {
@@ -281,7 +282,8 @@ public class RulesetNode {
 						if (role != null) {
 							fd.getRoles().add(role);
 						} else {
-							System.err.println("Force generator could not parse role " + p);
+						    DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR,
+						            "Force generator could not parse role " + p); //$NON-NLS-1$
 						}
 					}
 				}

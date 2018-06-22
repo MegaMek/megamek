@@ -41,6 +41,8 @@ import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.util.MegaMekFile;
 
 /**
@@ -303,6 +305,12 @@ public class RATGenerator {
 			Collection<EntityMovementMode> movementModes,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
+	    final String METHOD_NAME = "generateTable(FactionRecord, int, int,\n" + 
+                "            String, Collection<Integer>, int,\n" + 
+                "            Collection<EntityMovementMode>,\n" + 
+                "            Collection<MissionRole>, int,\n" + 
+                "            FactionRecord)";
+	    
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
 		HashMap<FactionRecord, Double> salvageWeights = new HashMap<FactionRecord, Double>();
 		
@@ -346,7 +354,8 @@ public class RATGenerator {
 		for (String chassisKey : chassisIndex.get(early).keySet()) {
 			ChassisRecord cRec = chassis.get(chassisKey);
 			if (cRec == null) {
-				System.err.println("Could not locate chassis " + chassisKey);
+                DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME,
+                        LogLevel.ERROR, "Could not locate chassis " + chassisKey);
 				continue;
 			}
 			
@@ -478,7 +487,8 @@ public class RATGenerator {
 			for (String fKey : salvageEntries.keySet()) {
 				FactionRecord salvageFaction = factions.get(fKey);
 				if (salvageFaction == null) {
-					System.err.println("Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
+				    DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.INFO,
+				            "Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
 				} else {
 					double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
 					salvageWeights.put(salvageFaction, wt);
@@ -754,12 +764,15 @@ public class RATGenerator {
 	}
 	
 	private void loadFactions() {
+	    final String METHOD_NAME = "loadFactions()";
+	    
 		File file = new MegaMekFile(Configuration.forceGeneratorDir(), "factions.xml").getFile();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			System.err.println("Unable to read RAT generator factions file"); //$NON-NLS-1$
+			DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR, //$NON-NLS-1$
+			        "Unable to read RAT generator factions file"); //$NON-NLS-1$
 			return;
 		}
 
@@ -770,7 +783,7 @@ public class RATGenerator {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
-			System.err.println(ex.getMessage());
+			DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, ex);
 		}
 
 		Element element = xmlDoc.getDocumentElement();
@@ -785,13 +798,15 @@ public class RATGenerator {
 					FactionRecord rec = FactionRecord.createFromXml(wn);
 					factions.put(rec.getKey(), rec);
 				} else {
-					System.err.println("Faction key not found in " + file.getPath());
+		            DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.WARNING,
+		                    "Faction key not found in " + file.getPath());
 				}
 			}			
 		}
 	}
 	
 	private synchronized void loadEra(int era) {
+	    final String METHOD_NAME = "loadEra(int)"; //$NON-NLS-1$
 		if (eraIsLoaded(era)) {
 			return;
 		}
@@ -802,7 +817,8 @@ public class RATGenerator {
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			System.err.println("Unable to read RAT generator file for era " + era); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR, //$NON-NLS-1$
+                    "Unable to read RAT generator file for era " + era); //$NON-NLS-1$
 			return;
 		}
 		while (!MechSummaryCache.getInstance().isInitialized()) {
@@ -820,7 +836,7 @@ public class RATGenerator {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
-			System.err.println(ex.getMessage());
+            DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, ex);
 		}
 
 		Element element = xmlDoc.getDocumentElement();
@@ -840,11 +856,13 @@ public class RATGenerator {
 							if (rec != null) {
 								rec.loadEra(wn, era);
 							} else {
-								System.err.println("Faction " + fKey + " not found in "
+					            DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR,
+					                    "Faction " + fKey + " not found in " //$NON-NLS-1$
 										+ file.getPath());
 							}
 						} else {
-							System.err.println("Faction key not found in " + file.getPath());
+                            DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR,
+                                    "Faction key not found in " + file.getPath()); //$NON-NLS-1$
 						}
 					}
 				}
@@ -911,8 +929,9 @@ public class RATGenerator {
 				models.put(modelKey, mr);
 			}
 			if (mr == null) {
-				System.err.println("RATGenerator: " + cr.getChassis() + " "
-						+ wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
+                DefaultMmLogger.getInstance().log(getClass(), "parseModelNode(int, ChassisRecord, Node)", //$NON-NLS-1$
+                        LogLevel.ERROR,
+                        cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent() + " not found."); //$NON-NLS-1$
 				return;
 			}
 		}

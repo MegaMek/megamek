@@ -14,6 +14,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,6 +40,8 @@ public class ForceNode extends RulesetNode {
 	protected ArrayList<ArrayList <OptionGroupNode>> ruleGroups;
 	protected ArrayList <SubforcesNode> subforces;
 	protected ArrayList <SubforcesNode> attached;
+	
+	protected String desc;
 	
 	private ForceNode() {
 		super();
@@ -397,4 +400,24 @@ public class ForceNode extends RulesetNode {
 			}
 		}
 	}
+
+	/**
+	 * Used for debugging output
+	 * 
+	 * @return A description of the node
+	 */
+    public String show() {
+        if (null == desc) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Force Node [eschelon:").append(eschelon).append(" predicates:");
+            sb.append(predicates.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                    .collect(Collectors.joining(",")));
+            sb.append(" assertions:");
+            sb.append(assertions.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                    .collect(Collectors.joining(",")));
+            sb.append("]");
+            desc = sb.toString();
+        }
+        return desc;
+    }
 }

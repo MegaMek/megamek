@@ -192,6 +192,8 @@ public class Ruleset {
 	 * @param fd
 	 */
 	private void buildForceTree (ForceDescriptor fd, ProgressListener l, double progress) {
+	    final String METHOD_NAME = "buildForceTree(ForceDescriptor, ProgressListener, double)"; //$NON-NLS-1$
+	    
 	    //Find the most specific ruleset for this faction.
 		Ruleset rs = findRuleset(fd.getFaction());
 		boolean applied = false;
@@ -208,6 +210,9 @@ public class Ruleset {
 				}				
 			} else {
 				applied = fn.apply(fd);
+		        DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.DEBUG,
+		                "Selecting force node " + fn.show() //$NON-NLS-1$
+		                + " from ruleset " + rs.getFaction()); //$NON-NLS-1$
 			}
 		} while (rs != null && (fn == null || !applied));
 

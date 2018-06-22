@@ -5,6 +5,7 @@ v0.43.12-RC6
 + PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
 + Data: New Sprites
 + Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
++ PR #1003: Fix validation failures from configuring ammo.
 
 v0.43.11-RC5 (2018-06-04 0100 UTC)
 + Data: Adding missing weights for infantry weapons.

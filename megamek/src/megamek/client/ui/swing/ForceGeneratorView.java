@@ -616,7 +616,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 						}
 					} else {
 						cbUnitType.addItem(AbstractUnitRecord.parseUnitType(unitType));
-						if (currentType != null && currentType.equals(unitType)) {
+						if (currentType != null && UnitType.getTypeDisplayableName(currentType).equals(unitType)) {
 							hasCurrent = true;
 						}
 					}

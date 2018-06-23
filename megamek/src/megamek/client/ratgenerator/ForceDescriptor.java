@@ -853,7 +853,7 @@ public class ForceDescriptor {
 					ForceDescriptor coFound = null;
 					if (coNode.getUnitType() != null) {
 						for (ForceDescriptor fd : forces) {
-							if (fd.getUnitType() != null && fd.getUnitType().equals(coNode.getUnitType())) {
+							if (fd.getUnitType() != null && fd.getUnitTypeName().equals(coNode.getUnitType())) {
 								coFound = fd;
 							}
 						}
@@ -879,7 +879,7 @@ public class ForceDescriptor {
 						if (xoNode.getUnitType() != null) {
 							for (int i = coPos; i < subforces.size(); i++) {
 								if (subforces.get(i).getUnitType() != null &&
-										(xoNode.getUnitType().equals(subforces.get(i).getUnitType())
+										(xoNode.getUnitType().equals(subforces.get(i).getUnitTypeName())
 										|| (xoNode.getUnitType().equals("other")
 												&& !subforces.get(i).getUnitType().equals(co.getAssignment().getUnitType())))) {
 									xoFound = subforces.get(i);
@@ -922,8 +922,8 @@ public class ForceDescriptor {
 			for (ForceDescriptor fd : subforces) {
 				movementModes.addAll(fd.getMovementModes());
 				if ((fd.getUnitType() == null ||
-						!(fd.getUnitType().equals("Mek") || fd.getUnitType().equals("Aero")
-						|| fd.getUnitType().equals("Tank"))) ||
+						!((UnitType.MEK == fd.getUnitType()) || (UnitType.AERO == fd.getUnitType())
+						|| (UnitType.TANK == fd.getUnitType()))) ||
 						!fd.getFlags().contains("omni")) {
 					isOmni = false;
 				}
@@ -1270,7 +1270,7 @@ public class ForceDescriptor {
 			}
 			
 			if (roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) {
-				retVal.append(unitType.equals("Infantry")?"Field":"Mobile").append(" ");
+				retVal.append(getUnitTypeName().equals("Infantry")?"Field":"Mobile").append(" ");
 			} else {
 				retVal.append(UnitType.getTypeName(unitType)).append(" ");
 			}
@@ -1383,6 +1383,13 @@ public class ForceDescriptor {
 
 	public void setUnitType(Integer unitType) {
 		this.unitType = unitType;
+	}
+	
+	public String getUnitTypeName() {
+	    if (null != unitType) {
+	        return UnitType.getTypeDisplayableName(unitType);
+	    }
+	    return "";
 	}
 
 	public HashSet<EntityMovementMode> getMovementModes() {

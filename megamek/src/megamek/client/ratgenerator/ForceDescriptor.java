@@ -782,7 +782,7 @@ public class ForceDescriptor {
 			}
 		};
 		
-		DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.INFO, 
+		DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.DEBUG, 
 		        "Could not find unit for " + unitType);
 		return null;
 	}

@@ -39,6 +39,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 200;
 		bv = 1.59;
+		tonnage = .0035;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.52;
 		infantryRange = 1;

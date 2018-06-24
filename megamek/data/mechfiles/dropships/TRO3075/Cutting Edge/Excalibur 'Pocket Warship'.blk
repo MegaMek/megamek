@@ -1,0 +1,229 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Excalibur
+</Name>
+
+<Model>
+'Pocket Warship'
+</Model>
+
+<year>
+3059
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+1stclassquarters:90.0:0
+asfbay:6.0:2:2
+crewquarters:287.0:0
+steeragequarters:140.0:0
+cargobay:419.0:1:1
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+445
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+9000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+200
+182
+182
+150
+</armor>
+
+<Nose Equipment>
+ISArtemisIV
+(B) Tele-operated Missile (Kraken T)
+Tele-operated Missile (Kraken T)
+Ammo KrakenT:20
+(B) ISGaussRifle
+IS Gauss Ammo:32
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+(B) ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Nose Equipment>
+
+<Left Side Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:8
+Ammo AR10 White Shark:8
+Ammo AR10 Barracuda:12
+(B) ISERPPC
+(B) LRM 10
+LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(B) Screen Launcher
+Ammo Screen:20
+(R) (B) Capital Missile Launcher (AR10 Launcher)
+(R) Capital Missile Launcher (AR10 Launcher)
+(R) Ammo AR10 Killer Whale:8
+(R) Ammo AR10 White Shark:8
+(R) Ammo AR10 Barracuda:12
+(R) (B) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:8
+Ammo AR10 White Shark:8
+Ammo AR10 Barracuda:12
+(B) ISERPPC
+(B) LRM 10
+LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(B) Screen Launcher
+Ammo Screen:20
+(R) (B) Capital Missile Launcher (AR10 Launcher)
+(R) Capital Missile Launcher (AR10 Launcher)
+(R) Ammo AR10 Killer Whale:8
+(R) Ammo AR10 White Shark:8
+(R) Ammo AR10 Barracuda:12
+(R) (B) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) (B) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAntiMissileSystem
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(B) Screen Launcher
+Ammo Screen:20
+</Aft Equipment>
+
+<structural_integrity>
+14
+</structural_integrity>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<tonnage>
+16000.0
+</tonnage>
+
+<crew>
+53
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+20
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+28
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+25
+</escape_pod>
+

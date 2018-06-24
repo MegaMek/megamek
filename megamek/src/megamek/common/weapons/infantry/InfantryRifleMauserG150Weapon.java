@@ -39,6 +39,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 270;
 		bv = 1.64;
+		tonnage = .0035;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.32;
 		infantryRange = 2;

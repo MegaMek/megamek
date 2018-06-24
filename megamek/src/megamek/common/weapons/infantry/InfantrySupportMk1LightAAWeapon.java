@@ -39,6 +39,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 1000;
 		bv = 0.70;
+		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
 		infantryDamage = 0.23;
 		infantryRange = 1;

@@ -201,7 +201,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
         }
 
-        if (entity.hasC3() || entity.hasC3i()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
             add(labC3, GBC.std());
             add(choC3, GBC.eol());
             refreshC3();
@@ -407,6 +407,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         } else if (entity.hasC3i() && (choC3.getSelectedIndex() > -1)) {
             entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
                                                                     .getSelectedIndex()]));
+        } else if (entity.hasNavalC3() && (choC3.getSelectedIndex() > -1)) {
+            entity.setC3NetId(client.getEntity(entityCorrespondance[choC3
+                                                                    .getSelectedIndex()]));
         }
     }
 
@@ -516,6 +519,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // Weapons that can be used in an Armored Glove
         ArrayList<WeaponType> agWeapTypes = new ArrayList<WeaponType>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
+        int gameYear = clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
+        SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(clientgui.getClient().getGame());
         while (allTypes.hasMoreElements()){
             EquipmentType eq = allTypes.nextElement();
             
@@ -525,7 +530,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
             
             // Check to see if the tech level of the equipment is legal
-            if (!eq.isLegal(entity.getTechLevelYear(), entity.getTechLevel(), entity.isMixedTech())) {
+            if (!eq.isLegal(gameYear, legalLevel, entity.isClan(), entity.isMixedTech())) {
                 continue;
             }
             
@@ -544,6 +549,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 agWeapTypes.add(infWeap);
             }
         }
+        Collections.sort(apWeapTypes, (w1, w2) -> w1.getName().compareTo(w2.getName()));
+        Collections.sort(agWeapTypes, (w1, w2) -> w1.getName().compareTo(w2.getName()));
 
         ArrayList<Mounted> armoredGloves = new ArrayList<Mounted>(2);
         for (Mounted m : entity.getMisc()){
@@ -1608,7 +1615,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             int listIndex = 0;
             entityCorrespondance = new int[client.getGame().getNoOfEntities() + 2];
 
-            if (entity.hasC3i()) {
+            if (entity.hasC3i() || entity.hasNavalC3()) {
                 choC3.addItem(Messages
                         .getString("CustomMechDialog.CreateNewNetwork")); //$NON-NLS-1$
                 if (entity.getC3Master() == null) {
@@ -1665,6 +1672,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (entity.hasC3i() != e.hasC3i()) {
                     continue;
                 }
+                // NC3 only links with NC3
+                if (entity.hasNavalC3() != e.hasNavalC3()) {
+                    continue;
+                }
                 // likewise can't connect c3 to nova
                 if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
                     continue;
@@ -1682,14 +1693,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (entity.C3MasterIs(e) && !entity.equals(e)) {
                     nodes++;
                 }
-                if (entity.hasC3i()
+                if ((entity.hasC3i() || entity.hasNavalC3())
                         && (entity.onSameC3NetworkAs(e) || entity.equals(e))) {
                     nodes++;
                 }
                 if (nodes == 0) {
                     continue;
                 }
-                if (e.hasC3i()) {
+                if (e.hasC3i() || e.hasNavalC3()) {
                     if (entity.onSameC3NetworkAs(e)) {
                         choC3.addItem(Messages
                                 .getString(

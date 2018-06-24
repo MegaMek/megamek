@@ -1,0 +1,208 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Model 96 'Elephant'
+</Name>
+
+<Model>
+Mk I
+</Model>
+
+<year>
+2600
+</year>
+
+<originalBuildYear>
+2600
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:2528.5:1:1
+smallcraftbay:4.0:2:2
+mechbay:12.0:2
+heavyvehiclebay:8.0:2:4
+2ndclassquarters:0.0:0
+steeragequarters:125.0:0
+crewquarters:259.0:0
+1stclassquarters:70.0:0
+infantrybay:4.0:1:5:Jump
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+200
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+21000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+371
+325
+325
+278
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+(B) PPC
+PPC
+PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Large Laser
+ISNavalTugAdaptor
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+(B) PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Large Laser
+(R) (B) ISGaussRifle
+(R) ISGaussRifle
+(R) IS Gauss Ammo:48
+(R) (B) PPC
+(R) PPC
+(R) (B) Medium Laser
+(R) Medium Laser
+(R) Large Laser
+(R) Large Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:48
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+(B) PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Large Laser
+(R) (B) ISGaussRifle
+(R) ISGaussRifle
+(R) IS Gauss Ammo:48
+(R) (B) PPC
+(R) PPC
+(R) (B) Medium Laser
+(R) Medium Laser
+(R) Large Laser
+(R) Large Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) LRM 10
+IS Ammo LRM-10 Artemis-capable:24
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+15000.0
+</tonnage>
+
+<crew>
+229
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+25
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+

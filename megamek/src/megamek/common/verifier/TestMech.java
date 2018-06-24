@@ -133,7 +133,7 @@ public class TestMech extends TestEntity {
                         && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
                         && techManager.isLegal(eq2)
                         && (!isLam || (eq2.getCriticals(null) == 0))
-                        && (!industrialOnly || ((MiscType)eq).isIndustrial())) {
+                        && (!industrialOnly || ((null != eq) && ((MiscType)eq).isIndustrial()))) {
                     retVal.add(eq2);
                 }
             }

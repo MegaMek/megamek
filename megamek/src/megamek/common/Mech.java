@@ -23,12 +23,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -39,7 +44,6 @@ import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
-import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
@@ -5345,7 +5349,7 @@ public abstract class Mech extends Entity {
         
         if (this instanceof LandAirMech) {
             costs[i++] = (structureCost + weaponCost)
-                    * ((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75;
+                    * (((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
         } else if (this instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {
@@ -5382,6 +5386,26 @@ public abstract class Mech extends Entity {
         cost = Math.round(cost * weightMultiplier);
         addCostDetails(cost, costs);
         return cost;
+    }
+    
+    @Override
+    protected int implicitClanCASE() {
+        if (!isClan()) {
+            return 0;
+        }
+        int explicit = 0;
+        Set<Integer> caseLocations = new HashSet<>();
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+                explicit++;
+            } else if (m.getType().isExplosive(m)) {
+                caseLocations.add(m.getLocation());
+                if (m.getSecondLocation() >= 0) {
+                    caseLocations.add(m.getSecondLocation());
+                }
+            }
+        }
+        return Math.max(0, caseLocations.size() - explicit);
     }
 
     private void addCostDetails(double cost, double[] costs) {
@@ -6338,6 +6362,9 @@ public abstract class Mech extends Entity {
             case COCKPIT_SUPERHEAVY_TRIPOD:
                 inName = "COCKPIT_SUPERHEAVY_TRIPOD";
                 break;
+            case COCKPIT_TRIPOD:
+                inName = "COCKPIT_TRIPOD";
+                break;
             case COCKPIT_INTERFACE:
                 inName = "COCKPIT_INTERFACE";
                 break;
@@ -6712,28 +6739,27 @@ public abstract class Mech extends Entity {
                         .append(armoredText);
             } else if ((m.getType() instanceof WeaponType)
                     && m.getType().hasFlag(WeaponType.F_VGL)) {
+                toReturn.append(m.getType().getInternalName());
                 switch (m.getFacing()) {
                     case 1:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FR)").append(armoredText);
+                        toReturn.append(" (FR)");
                         break;
                     case 2:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RR)").append(armoredText);
+                        toReturn.append(" (RR)");
                         break;
                     // case 3:
                         // already handled by isRearMounted() above
                     case 4:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (RL)").append(armoredText);
+                        toReturn.append(" (RL)");
                         break;
                     case 5:
-                        toReturn.append(m.getType().getInternalName())
-                                .append(" (FL)").append(armoredText);
+                        toReturn.append(" (FL)");
                         break;
                     default:
+                        // forward facing
                         break;
                 }
+                toReturn.append(armoredText);
             } else {
                 toReturn.append(m.getType().getInternalName()).append(
                         armoredText);
@@ -7449,45 +7475,6 @@ public abstract class Mech extends Entity {
         }
 
         return false;
-    }
-
-    @Override
-    public void setGameOptions() {
-        super.setGameOptions();
-
-        for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon)
-                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA)
-                    && (game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
-
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-
-                if ((mounted.getType() instanceof PPCWeapon) && (((WeaponType) mounted.getType()).getMinimumRange() > 0)
-                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
-                    modes.add("Field Inhibitor ON");
-                    modes.add("Field Inhibitor OFF");
-                }
-                int damage = ((WeaponType) mounted.getType()).getDamage();
-
-                if (damage == WeaponType.DAMAGE_VARIABLE) {
-                    damage = ((WeaponType) mounted.getType()).damageShort;
-                }
-
-                for (; damage >= 0; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                if (((WeaponType) mounted.getType())
-                        .hasFlag(WeaponType.F_FLAMER)) {
-                    modes.add("Heat");
-                }
-                ((WeaponType) mounted.getType()).setModes(modes
-                        .toArray(stringArray));
-            }
-
-        }
-
     }
 
     @Override
@@ -8336,54 +8323,42 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
+        final String METHOD_NAME = "isCrippled(boolean)";
+        MMLogger logger = DefaultMmLogger.getInstance();
         if (countInternalDamagedLimbs() >= 3) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: 3+ limbs have taken internals.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: 2+ torsos have taken internals.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
             return true;
         }
 
         if (isLocationBad(LOC_LT)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Left Torso destroyed.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: Left Torso destroyed.");
             return true;
         }
 
         if (isLocationBad(LOC_RT)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Right Torso destroyed.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: Right Torso destroyed.");
             return true;
         }
 
         if (getEngineHits() >= 2) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: 2 Engine Hits.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: 2 Engine Hits.");
             return true;
 
         }
 
         if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Engine + Gyro hit.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
             return true;
         }
 
@@ -8393,27 +8368,21 @@ public abstract class Mech extends Entity {
             if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
                     || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                             SYSTEM_SENSORS, LOC_CT) > 0)) {
-                if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                    System.out.println(getDisplayName()
-                            + " CRIPPLED: Sensors destroyed.");
-                }
+                logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                        getDisplayName() + " CRIPPLED: Sensors destroyed.");
                 return true;
             }
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Pilot has taken 4+ damage.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             return true;
         }
 
         if (isPermanentlyImmobilized(checkCrew)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out
-                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -8426,10 +8395,8 @@ public abstract class Mech extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: has no more viable weapons.");
-            }
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -8521,31 +8488,47 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
+        final String METHOD_NAME = "isDmgHeavy";
+        MMLogger logger = DefaultMmLogger.getInstance();
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.33) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Less than 1/3 head armor remaining");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.25) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Less than 25% armor remaining");
             return true;
         }
 
         if (countInternalDamagedLimbs() == 2) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Two limbs with internal damage");
             return true;
         }
 
         if (countInternalDamagedTorsos() == 1) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Torse internal damage");
             return true;
         }
 
         if (getEngineHits() == 1) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Engine hit");
             return true;
         }
 
         if (getGyroHits() == 1) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Gyro hit");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " Three crew hits");
             return true;
         }
 
@@ -8561,24 +8544,39 @@ public abstract class Mech extends Entity {
                 totalInoperable++;
             }
         }
-        return ((double) totalInoperable / totalWeapons) >= 0.75;
+        if (((double) totalInoperable / totalWeapons) >= 0.75) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Less than 25% weapons operable");
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean isDmgModerate() {
+        final String METHOD_NAME = "isDmgHeavy";
+        MMLogger logger = DefaultMmLogger.getInstance();
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.67) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " MODERATE DAMAGE: Less than 2/3 head armor");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.5) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " MODERATE DAMAGE: Less than 50% armor");
             return true;
         }
 
         if (countInternalDamagedLimbs() == 1) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " MODERATE DAMAGE: Limb with internal damage");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " MODERATE DAMAGE: 2 crew hits");
             return true;
         }
 
@@ -8595,20 +8593,33 @@ public abstract class Mech extends Entity {
             }
         }
 
-        return ((double) totalInoperable / totalWeapons) >= 0.5;
+        if (((double) totalInoperable / totalWeapons) >= 0.5) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Less than 50% weapons operable");
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean isDmgLight() {
+        final String METHOD_NAME = "isDmgHeavy";
+        MMLogger logger = DefaultMmLogger.getInstance();
         if (getArmor(LOC_HEAD) < getOArmor(LOC_HEAD)) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " LIGHT DAMAGE: head armor damaged");
             return true;
         }
 
         if (getArmorRemainingPercent() <= 0.75) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " LIGHT DAMAGE: less than 75% armor remaining");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " LIGHT DAMAGE: crew hit");
             return true;
         }
 
@@ -8625,7 +8636,12 @@ public abstract class Mech extends Entity {
             }
         }
 
-        return ((double) totalInoperable / totalWeapons) >= 0.25;
+        if (((double) totalInoperable / totalWeapons) >= 0.5) {
+            logger.log(Mech.class, METHOD_NAME, LogLevel.DEBUG,
+                    getDisplayName() + " HEAVY DAMAGE: Less than 75% weapons operable");
+            return true;
+        }
+        return false;
     }
 
     public boolean hasCompactHeatSinks() {

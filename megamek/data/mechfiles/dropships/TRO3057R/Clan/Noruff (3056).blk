@@ -1,0 +1,211 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Noruff
+</Name>
+
+<Model>
+(3056)
+</Model>
+
+<year>
+3056
+</year>
+
+<originalBuildYear>
+3056
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:70.0:0
+cargobay:92.0:1:1
+</transporters>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<heatsinks>
+96
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+450
+252
+252
+350
+</armor>
+
+<Nose Equipment>
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLStreakSRM6
+Clan Streak SRM 6 Ammo:15
+(B) CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo:32
+(B) CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:36
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+(B) CLUltraAC20
+Clan Ultra AC/20 Ammo:20
+(B) CLStreakSRM6
+Clan Streak SRM 6 Ammo:15
+(R) (B) CLERMediumLaser
+(R) CLERMediumLaser
+(R) (B) CLMediumPulseLaser
+(R) (B) CLLRM15
+(R) Clan Ammo LRM-15 (Clan) Artemis-capable:16
+(R) CLArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+(B) CLUltraAC20
+Clan Ultra AC/20 Ammo:20
+(B) CLStreakSRM6
+Clan Streak SRM 6 Ammo:15
+(R) (B) CLERMediumLaser
+(R) CLERMediumLaser
+(R) (B) CLMediumPulseLaser
+(R) (B) CLLRM15
+(R) Clan Ammo LRM-15 (Clan) Artemis-capable:16
+(R) CLArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLERLargeLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+(B) CLGaussRifle
+Clan Gauss Ammo:16
+(B) CLLRM20
+CLLRM15
+Clan Ammo LRM-20 (Clan) Artemis-capable:12
+Clan Ammo LRM-15 (Clan) Artemis-capable:16
+CLArtemisIV
+CLArtemisIV
+(B) CLStreakSRM6
+Clan Streak SRM 6 Ammo:15
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+1900.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+13
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+8
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

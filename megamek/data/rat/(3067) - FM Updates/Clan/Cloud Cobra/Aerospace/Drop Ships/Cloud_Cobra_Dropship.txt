@@ -1,12 +1,14 @@
 Cloud Cobra Dropships (FMU)
-Carrier (Standard),1
-Carrier (Standard),2
-Lion (Clan),3
-Noruff (Standard),4
-Overlord C,5
-Union C,6
-Titan (Clan),5
-Miraborg (Standard),4
-Lion (Clan),3
-Confederate (Clan),2
-Noruff (Standard),1
+Carrier (2882),3
+Lion (2835),3
+Noruff (3056),4
+Overlord C (2818),4
+Overlord C (2818) (Tank),1
+Titan (2953),5
+Miraborg (3053),4
+Lion (2835),3
+Confederate C (3048),2
+Noruff (3056),1
+Union C (2829),4
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

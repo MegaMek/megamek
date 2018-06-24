@@ -1462,9 +1462,15 @@ public class Infantry extends Entity {
      * roll for the piloting skill check. now includes the level 3 terains which
      * can bog down
      */
+    public PilotingRollData checkBogDown(MoveStep step,
+            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            Coords curPos, int lastElev, boolean isPavementStep) {
+        return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
+    }
+    
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
-        PilotingRollData roll = new PilotingRollData(getId(), 5,
+        PilotingRollData roll = new PilotingRollData(getId(), 4,
                 "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0)

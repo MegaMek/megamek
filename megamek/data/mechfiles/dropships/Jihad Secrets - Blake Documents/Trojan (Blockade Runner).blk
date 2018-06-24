@@ -1,0 +1,168 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Trojan
+</Name>
+
+<Model>
+(Blockade Runner)
+</Model>
+
+<year>
+2720
+</year>
+
+<originalBuildYear>
+2720
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+1stclassquarters:20.0:0
+2ndclassquarters:42.0:0
+crewquarters:56.0:0
+cargobay:1533.0:2:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+84
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+7500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+105
+105
+105
+81
+</armor>
+
+<Nose Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:30
+(B) Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:30
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:30
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<source>
+Jihad Secrets: The Blake Documents - Star League
+</source>
+
+<tonnage>
+3200.0
+</tonnage>
+
+<designtype>
+0
+</designtype>
+
+<crew>
+18
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+6
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

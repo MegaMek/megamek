@@ -1,0 +1,185 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Dragau II
+</Name>
+
+<Model>
+(3097)
+</Model>
+
+<year>
+3097
+</year>
+
+<originalBuildYear>
+3097
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+battlearmorbay:1.0:1:2
+2ndclassquarters:0.0:0
+1stclassquarters:30.0:0
+crewquarters:70.0:0
+cargobay:98.0:1:1
+</transporters>
+
+<SafeThrust>
+9
+</SafeThrust>
+
+<heatsinks>
+122
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6960
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+444
+336
+336
+263
+</armor>
+
+<Nose Equipment>
+(B) ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGauss Ammo:32
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) Heavy PPC
+Heavy PPC
+Heavy PPC
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:48
+ISNC3
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:96
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15 Artemis-capable:96
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+(R) (B) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Aft Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<source>
+RS 3145 NTNU - Early Republic
+</source>
+
+<tonnage>
+2500.0
+</tonnage>
+
+<crew>
+16
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

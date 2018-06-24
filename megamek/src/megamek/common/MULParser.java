@@ -64,6 +64,8 @@ public class MULParser {
     private static final String BLOWN_OFF = "blownOff";
     private static final String C3I = "c3iset";
     private static final String C3ILINK = "c3i_link";
+    private static final String NC3 = "NC3set";
+    private static final String NC3LINK = "NC3_link";
     private static final String LINK = "link";
     private static final String RFMG = "rfmg";
 
@@ -147,6 +149,7 @@ public class MULParser {
     private static final String BAYDOORS = "doors";
     private static final String BAY = "transportBay";
     private static final String BAYDAMAGE = "damage";
+    private static final String WEAPONS_BAY_INDEX = "weaponsBayIndex";
     private static final String MDAMAGE = "damage";
     private static final String MPENALTY = "penalty";
     private static final String C3MASTERIS = "c3MasterIs";
@@ -479,6 +482,8 @@ public class MULParser {
                     parseBombs(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(C3I)){
                     parseC3I(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(NC3)){
+                    parseNC3(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BA_MEA)){
                     parseBAMEA(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BA_APM)){
@@ -1339,6 +1344,7 @@ public class MULParser {
         String quirks = slotTag.getAttribute(QUIRKS);
         String trooperMiss = slotTag.getAttribute(TROOPER_MISS);
         String rfmg = slotTag.getAttribute(RFMG);
+        String bayIndex = slotTag.getAttribute(WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
         if ((index == null) || (index.length() == 0)) {
@@ -1362,7 +1368,7 @@ public class MULParser {
 
                 // Protomechs only have system slots, 
                 // so we have to handle the ammo specially.
-                if (entity instanceof Protomech) {
+                if (entity instanceof Protomech || entity instanceof GunEmplacement) {
                     // Get the saved ammo load.
                     EquipmentType newLoad = EquipmentType.get(type);
                     if (newLoad instanceof AmmoType) {
@@ -1473,7 +1479,17 @@ public class MULParser {
             // Try to get the critical slot.
             CriticalSlot slot = entity.getCritical(loc, indexVal);
 
-            // Did we get it?
+            // If we couldn't find a critical slot, 
+            // it's possible that this is "extra" ammo in a weapons bay, so we may attempt
+            // to shove it in there
+            if (slot == null) {
+                if(entity.usesWeaponBays() &&
+                        !bayIndex.isEmpty()) {
+                    addExtraAmmoToBay(entity, loc, type, bayIndex);
+                    slot = entity.getCritical(loc, indexVal);
+                }
+            }
+            
             if (slot == null) {
                 if (!type.equals(EMPTY)) {
                     warning.append("Could not find the ")
@@ -1906,7 +1922,7 @@ public class MULParser {
     		if (bay < 0) {
     			warning.append("Found invalid index value for bay: ").append(index).append(".\n");
     			return;
-    		} else if (bay > entity.getTransportBays().size()) {
+    		} else if (entity.getBayById(bay) == null) {
     			warning.append("The entity, ")
     			.append(entity.getShortName())
     			.append(" does not have a bay at index: ")
@@ -2001,8 +2017,12 @@ public class MULParser {
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0){
-                        bombChoices[BombType.getBombTypeFromInternalName(type)] 
-                                += Integer.parseInt(load);
+                        int bombType = BombType.getBombTypeFromInternalName(type);
+                        if(bombType <= BombType.B_NONE || bombType >= BombType.B_NUM) {
+                            continue;
+                        }
+                        
+                        bombChoices[bombType] += Integer.parseInt(load);
                         ((IBomber) entity).setBombChoices(bombChoices);
                     }
                 }
@@ -2038,6 +2058,40 @@ public class MULParser {
                         System.out.println("Loading C3i UUID " + pos + 
                                 ": " + link);
                         entity.setC3iNextUUIDAsString(pos, link);
+                    }
+                }
+            } else {
+                continue;
+            }
+        }
+    }
+    
+    /**
+     * Parse an NC3 tag for the given <code>Entity</code>.
+     * 
+     * @param nc3Tag
+     * @param entity
+     */
+    private void parseNC3(Element nc3Tag, Entity entity){
+        // Deal with any child nodes
+        NodeList nl = nc3Tag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+
+            if (currNode.getParentNode() != nc3Tag) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                Element currEle = (Element)currNode;
+                String nodeName = currNode.getNodeName();
+                if (nodeName.equalsIgnoreCase(NC3LINK)){
+                    String link = currEle.getAttribute(LINK);
+                    int pos = entity.getFreeNC3UUID();
+                    if ((link.length() > 0) && (pos != -1)) {
+                        System.out.println("Loading NC3 UUID " + pos + 
+                                ": " + link);
+                        entity.setNC3NextUUIDAsString(pos, link);
                     }
                 }
             } else {
@@ -2191,6 +2245,35 @@ public class MULParser {
             ex.printStackTrace();
         }
         
+    }
+    
+    /**
+     * Worker function that takes an entity, a location, an ammo type string and the critical index
+     * of a weapons bay in the given location and attempts to add the ammo type there.
+     * @param entity The entity we're working on loading
+     * @param loc The location index on the entity
+     * @param type The ammo type string
+     * @param bayIndex The crit index of the bay where we want to load the ammo on the location where the bay is
+     * @return A generated critical slot entry
+     */
+    private void addExtraAmmoToBay(Entity entity, int loc, String type, String bayIndex) {
+        // here, we need to do the following:
+        // 1: get the bay to which this ammo belongs, and add it to said bay
+        // 2: add the ammo to the entity as a "new" piece of equipment
+        // 3: add the ammo to a crit slot on the bay's location
+        
+        int bayCritIndex = Integer.parseInt(bayIndex);
+        Mounted bay = entity.getCritical(loc, bayCritIndex - 1).getMount();
+        
+        Mounted ammo = new Mounted(entity, AmmoType.get(type));
+
+        try {
+            entity.addEquipment(ammo, loc, bay.isRearMounted());
+        } catch(LocationFullException lfe) {
+            // silently swallow it, since dropship locations have about a hundred crit slots
+        }
+        
+        bay.addAmmoToBay(entity.getEquipmentNum(ammo));
     }
     
     /**

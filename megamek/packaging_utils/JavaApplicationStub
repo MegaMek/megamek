@@ -140,7 +140,7 @@ if [ $exitcode -eq 0 ]; then
 
     # read the Java WorkingDirectory
     JVMWorkDir=`/usr/libexec/PlistBuddy -c "print ${JavaKey}:WorkingDirectory" "${InfoPlistFile}" 2> /dev/null | xargs`
-    
+
     # set Working Directory based upon Plist info
     if [[ ! -z ${JVMWorkDir} ]]; then
         WorkingDirectory="${JVMWorkDir}"
@@ -212,15 +212,15 @@ else
     # replace occurences of $APP_ROOT with its content
     JVMOptions=`eval "echo ${JVMOptions}"`
 
-    # read the ClassPath in either Array or String style 
-    JVMClassPath_RAW=`/usr/libexec/PlistBuddy -c "print JVMClassPath" "${InfoPlistFile}" 2> /dev/null` 
-    if [[ $JVMClassPath_RAW == *Array* ]] ; then 
-        JVMClassPath=.`/usr/libexec/PlistBuddy -c "print JVMClassPath" "${InfoPlistFile}" 2> /dev/null | grep "    " | sed 's/^ */:/g' | tr -d '\n' | xargs` 
-    elif [[ ! -z ${JVMClassPath_RAW} ]] ; then 
-        JVMClassPath=${JVMClassPath_RAW} 
-    else 
-        #default: fallback to OracleJavaFolder 
-        JVMClassPath="${JavaFolder}/*"  
+    # read the ClassPath in either Array or String style
+    JVMClassPath_RAW=`/usr/libexec/PlistBuddy -c "print JVMClassPath" "${InfoPlistFile}" 2> /dev/null`
+    if [[ $JVMClassPath_RAW == *Array* ]] ; then
+        JVMClassPath=.`/usr/libexec/PlistBuddy -c "print JVMClassPath" "${InfoPlistFile}" 2> /dev/null | grep "    " | sed 's/^ */:/g' | tr -d '\n' | xargs`
+    elif [[ ! -z ${JVMClassPath_RAW} ]] ; then
+        JVMClassPath=${JVMClassPath_RAW}
+    else
+        #default: fallback to OracleJavaFolder
+        JVMClassPath="${JavaFolder}/*"
     fi
     # expand variables $APP_PACKAGE, $JAVAROOT, $USER_HOME
     JVMClassPath=`eval "echo ${JVMClassPath}"`
@@ -244,7 +244,7 @@ fi
 function JavaVersionSatisfiesRequirement() {
   java_ver=$1
   java_req=$2
-  
+
   # e.g. 1.8*
   if [[ ${java_req} =~ ^[0-9]\.[0-9]\*$ ]] ; then
     java_req_num=${java_req:0:3}
@@ -254,7 +254,7 @@ function JavaVersionSatisfiesRequirement() {
     else
       return 1
     fi
-  
+
   # e.g. 1.8+
   elif [[ ${java_req} =~ ^[0-9]\.[0-9]\+$ ]] ; then
     java_req_num=`echo ${java_req} | sed -E 's/[[:punct:]]//g'`
@@ -264,7 +264,7 @@ function JavaVersionSatisfiesRequirement() {
     else
       return 1
     fi
-  
+
   # e.g. 1.8
   elif [[ ${java_req} =~ ^[0-9]\.[0-9]$ ]] ; then
     if [ ${java_ver} == ${java_req} ] ; then
@@ -272,7 +272,7 @@ function JavaVersionSatisfiesRequirement() {
     else
       return 1
     fi
-  
+
   # not matching any of the above patterns
   else
     return 2
@@ -303,7 +303,7 @@ oracle_jre_version=`extractJavaMajorVersion "${oracle_jre_plugin}"`
 # first check system variable "$JAVA_HOME"
 if [ -n "$JAVA_HOME" ] ; then
     JAVACMD="$JAVA_HOME/bin/java"
-    
+
 # check for JVMversion requirements
 elif [ ! -z ${JVMVersion} ] ; then
 

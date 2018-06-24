@@ -38,6 +38,7 @@ public class InfantryRifleStrikerCarbineRifleWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 875;
         bv = .29;
+        tonnage = .003;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.29;
         infantryRange = 1;

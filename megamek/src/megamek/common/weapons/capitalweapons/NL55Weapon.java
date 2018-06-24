@@ -33,6 +33,8 @@ public class NL55Weapon extends NLWeapon {
         this.name = "Naval Laser 55";
         this.setInternalName(this.name);
         this.addLookupName("NL55");
+        this.addLookupName("Naval Laser 55 (Clan)");
+        this.shortName = "NL55";
         this.heat = 85;
         this.damage = 5;
         this.shortRange = 13;

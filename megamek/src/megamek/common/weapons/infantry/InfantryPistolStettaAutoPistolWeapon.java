@@ -39,6 +39,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 150;
         bv = 0.16;
+        tonnage = .002;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;

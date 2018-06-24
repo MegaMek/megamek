@@ -50,6 +50,25 @@ public class ArtilleryTracker implements Serializable {
     public void addWeapon(Mounted mounted) {
         weapons.put(mounted, new Vector<ArtilleryModifier>());
     }
+    
+    /**
+     * Removes a weapon - needed when capital missile bays change modes
+     *
+     * @param mounted - existing weapon
+     */
+    public void removeWeapon(Mounted mounted) {
+        if (weapons.contains(mounted)) {
+            weapons.remove(mounted);
+        }
+    }
+    
+    /**
+     * Returns the size of the weapons hashtable
+     *
+     */
+    public int getSize() {
+        return weapons.size();
+    }
 
     /**
      * Sets the modifier for artillery weapons on this unit. All weapons use the

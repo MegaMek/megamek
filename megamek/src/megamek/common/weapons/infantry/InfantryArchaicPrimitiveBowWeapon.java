@@ -38,12 +38,12 @@ public class InfantryArchaicPrimitiveBowWeapon extends InfantryWeapon {
 		addLookupName("Primitive Bow");
 		ammoType = AmmoType.T_NA;
 		cost = 5;
-		tonnage = 0.001f;
+		tonnage = 0.001;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
 		infantryDamage = 0.02;
 		infantryRange = 0;
-		rulesRefs = " 272,TM";
+		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

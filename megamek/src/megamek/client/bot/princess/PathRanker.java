@@ -49,7 +49,7 @@ public abstract class PathRanker {
         owner = princess;
     }
 
-    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<MovePath.Key, Double>();
+    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
     
     /**
      * Gives the "utility" of a path; a number representing how good it is.
@@ -102,9 +102,8 @@ public abstract class PathRanker {
                                          allyCenter));
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
-                if ((percent.compareTo(interval) >= 0)
-                    && (LogLevel.INFO.toInt() <= getOwner().getVerbosity().toInt())) {
-                    getOwner().sendChat("... " + percent.intValue() + "% complete.");
+                if (percent.compareTo(interval) >= 0) {
+                    getOwner().sendChat("... " + percent.intValue() + "% complete.", LogLevel.INFO);
                     interval = percent.add(new BigDecimal(5));
                 }
             }
@@ -137,7 +136,7 @@ public abstract class PathRanker {
         HomeEdge homeEdge = getOwner().getHomeEdge();
         boolean fleeing = getOwner().isFallingBack(mover);
         //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
-        boolean isZeroMoveInfantry = mover instanceof Infantry && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
+        boolean isZeroMoveInfantry = mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
         if (isZeroMoveInfantry) {
             startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
         }
@@ -252,7 +251,7 @@ public abstract class PathRanker {
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
                 // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-                if (e.isAero() && e.isAirborne() || 
+                if ((e.isAero() && e.isAirborne()) || 
                         getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
                     continue;
                 }

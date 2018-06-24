@@ -40,6 +40,7 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 20;
 		bv = 0.02;
+        tonnage = .004;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
 		infantryDamage = 0.02;
 		infantryRange = 0;

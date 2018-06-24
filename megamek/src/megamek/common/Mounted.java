@@ -29,6 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
@@ -53,8 +54,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean tsempDowntime = false; // Needed for "every other turn"
                                            // TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
-    private boolean kindRapidFire = false; // Reduced jam chance for rapid fired
-                                           // ACs.
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
@@ -363,7 +362,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 mode = newMode;
                 pendingMode = -1;
             } else if (pendingMode != newMode) {
-                pendingMode = newMode;
+                if (mode == newMode) {
+                    pendingMode = -1;
+                } else {
+                    pendingMode = newMode;
+                }
             }
         }
         // all communications equipment mounteds need to have the same mode at
@@ -1674,14 +1677,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return facing;
     }
 
-    public boolean isKindRapidFire() {
-        return kindRapidFire;
-    }
-
-    public void setKindRapidFire(boolean kindRapidFire) {
-        this.kindRapidFire = kindRapidFire;
-    }
-
     public int getOriginalShots() {
         return originalShots;
     }
@@ -1696,6 +1691,70 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
+    }
+    
+    /**
+     * Method that checks to see if our capital missile bay is in bearings-only mode
+     * Only available in space games
+     * @return
+     */
+    public boolean isInBearingsOnlyMode() {
+        if ((curMode().equals(Weapon.Mode_CapMissile_Bearing_Ext)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Long)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Med)
+                    || curMode().equals(Weapon.Mode_CapMissile_Bearing_Short)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
+                    || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)) 
+                && getEntity().isSpaceborne()) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Method that checks to see if our capital missile bay is in waypoint launch mode
+     * Only available in space games
+     * @return
+     */
+    public boolean isInWaypointLaunchMode() {
+        if ((curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Long)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Med)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint_Bearing_Short)
+                || curMode().equals(Weapon.Mode_CapMissile_Waypoint)) 
+            && getEntity().isSpaceborne()) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Method that adds/removes available capital missile modes as we move between space and atmospheric maps
+     * Called by Entity.setGameOptions(), which is in turn called during a mode change by server.
+     */
+    //Though we can't currently switch maps, this is needed to ensure space-only modes are removed on ground maps
+    public void setModesForMapType() {
+        //If the entity is not in space, remove these modes, which get set up based on game options in Weapon before game type is known
+        if (!getEntity().isSpaceborne()) {
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Ext);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Long);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Med);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint_Bearing_Short);
+            getType().removeMode(Weapon.Mode_CapMissile_Waypoint);
+            getType().removeMode(Weapon.Mode_CapMissile_Tele_Operated);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Ext);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Long);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Med);
+            getType().removeMode(Weapon.Mode_CapMissile_Bearing_Short);
+        }
+        /*
+        //Placeholder. This will be used to add the space modes back when we're able to switch maps.
+        if (getEntity().isSpaceborne()) {
+            
+        }
+        */
     }
     
     public int getBaMountLoc() {

@@ -8302,6 +8302,7 @@ public class AmmoType extends EquipmentType {
 	            ammo.shortName = "MRM 30";
 	            ammo.setInternalName("IS MRM 30 Ammo");
 	            ammo.addLookupName("ISMRM30 Ammo");
+	            ammo.damagePerShot = 1;
 	            ammo.rackSize = 30;
 	            ammo.ammoType = AmmoType.T_MRM;
 	            ammo.shots = 8;
@@ -12999,7 +13000,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.kgPerShot = 33.3;
+        ammo.kgPerShot = 33.4;
         ammo.rulesRefs = "261,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
@@ -14918,11 +14919,11 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
-        ammo.tonnage = 50.0;
+        ammo.tonnage = 40.0;
         ammo.shots = 1;
         ammo.bv = 1000;
         ammo.cost = 15000000;
-        ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_NUCLEAR)
+        ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_NUCLEAR)
                 .or(F_CAP_MISSILE).or(F_SANTA_ANNA);
         ammo.capital = true;
 
@@ -14944,8 +14945,8 @@ public class AmmoType extends EquipmentType {
         ammo.subMunitionBegin = 0;
         ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
-        ammo.ammoType = AmmoType.T_KILLER_WHALE;
-        ammo.tonnage = 50.0;
+        ammo.ammoType = AmmoType.T_WHITE_SHARK;
+        ammo.tonnage = 40.0;
         ammo.shots = 1;
         ammo.bv = 1000;
         ammo.cost = 15000000;

@@ -39,6 +39,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 2500;
 		bv = 1.07;
+		tonnage = .010;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.21;
 		infantryRange = 2;

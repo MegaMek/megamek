@@ -265,6 +265,7 @@ public class SharedUtility {
 
             // check for leap
             if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+                    && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE() // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());

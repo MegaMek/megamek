@@ -39,6 +39,7 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 200;
 		bv = 0.10;
+		tonnage = .0015;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.11;
 		infantryRange = 0;

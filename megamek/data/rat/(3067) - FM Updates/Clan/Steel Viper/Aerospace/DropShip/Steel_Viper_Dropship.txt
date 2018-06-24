@@ -1,12 +1,14 @@
 Steel Viper Dropships (FMU)
-Broadsword (Standard),1
-Broadsword (Standard),2
-Sassanid (Standard),3
-Miraborg (Standard),4
-Noruff (Standard),5
-Union C,6
-Overlord C,5
+Broadsword (2979),1
+Broadsword (2979),2
+Sassanid (2875),3
+Miraborg (3053),4
+Noruff (3056),5
+Overlord C (2818),5
 Mercer (3065),4
-Carrier (Standard),3
-Lion (Clan),2
-Titan (Clan),1
+Carrier (2882),3
+Lion (2835),2
+Titan (2953),1
+Union C (2829),4
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

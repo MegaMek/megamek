@@ -596,8 +596,15 @@ public class VTOL extends Tank implements IBomber {
             j--;
         }
 
-        // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        // Per TacOps errata v3.0, movement reduction is per bomb rather than per 5 bomb points
+        for (Mounted m : getBombs()) {
+            if (m.getUsableShotsLeft() > 0) {
+                j--;
+            }
+        }
+        if (j < 0) {
+            j = 0;
+        }
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);

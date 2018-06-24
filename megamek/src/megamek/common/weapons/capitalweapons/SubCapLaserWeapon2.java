@@ -33,6 +33,8 @@ public class SubCapLaserWeapon2 extends SubCapLaserWeapon {
         this.name = "Sub-Capital Laser (SCL/2)";
         this.setInternalName(this.name);
         this.addLookupName("SCL2");
+        this.addLookupName("Sub-Capital Laser 2");
+        this.shortName = "SCL/2";
         this.heat = 28;
         this.damage = 2;
         this.shortRange = 11;

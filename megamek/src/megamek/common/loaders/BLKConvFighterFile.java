@@ -91,7 +91,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
-        a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
+//        a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
 
         // figure out fuel
         if (!dataFile.exists("fuel")) {

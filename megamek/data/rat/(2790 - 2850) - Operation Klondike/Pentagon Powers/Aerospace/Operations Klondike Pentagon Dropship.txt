@@ -3,10 +3,10 @@ Fortress (2613),1
 Gazelle (2531),2
 Triumph (2593),3
 Overlord (2762),4
-Mule (Standard),5
+Mule (2737),5
 Union (2708),6
-Buccaneer (Standard),5
+Buccaneer (2708),5
 Dictator (Standard),4
 Vulture (Standard),3
-Monarch (Standard),2
+Monarch (2759),2
 Colossus Mk I,1

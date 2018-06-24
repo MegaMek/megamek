@@ -118,6 +118,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -193,8 +194,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int BOARD_HEX_POPUP = 4;
 
     // the dimensions of megamek's hex images
-    static final int HEX_W = HexTileset.HEX_W;
-    static final int HEX_H = HexTileset.HEX_H;
+    public static final int HEX_W = HexTileset.HEX_W;
+    public static final int HEX_H = HexTileset.HEX_H;
+    public static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
+
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
@@ -492,6 +495,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Holds the final Coords for a planned movement. Set by MovementDisplay,
      *  used to display the distance in the board tooltip. */ 
     private Coords movementTarget;
+
+    // Used to track the previous x/y for tooltip display
+    int prevTipX = -1, prevTipY = -1;
+
+    /**
+     * Flag to indicate if we should display informatin about illegal terrain in hexes.
+     */
+    boolean displayInvalidHexInfo = false;
+
+    /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
+    private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay(); 
 
 
     /**
@@ -2328,25 +2342,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private void drawHexes(Graphics g, Rectangle view, boolean saveBoardImage) {
         // only update visible hexes
-        int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
-        int drawY = (int) (view.y / (HEX_H * scale)) - 1;
+        double xs = (int) (HEX_WC*scale);
+        double ys = (int) (HEX_H*scale);
+        
+        int drawX = (int) (view.x / xs) - 1;
+        int drawY = (int) (view.y / ys) - 1;
 
-        int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
-        int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
-
+        int drawWidth = (int) (view.width / xs) + 3;
+        int drawHeight = (int) (view.height / ys) + 3;
+        
         // draw some hexes.
         if (useIsometric()) {
-            // When using isometric rendering, hexes within a given row
-            // must be drawn from lowest to highest elevation.
             IBoard board = game.getBoard();
-            final int minElev = board.getMinElevation();
-            final int maxElev = board.getMaxElevation();
-            for (int i = 0; i < drawHeight; i++) {
-                for (int x = minElev; x <= maxElev; x++) {
-                    for (int j = 0; j < drawWidth; j++) {
-                        Coords c = new Coords(j + drawX, i + drawY);
+            for (int y = 0; y < drawHeight; y++) {
+                // Half of each row is one-half hex
+                // farther back (above) the other; draw those first
+                for (int s = 0; s <= 1; s++) {
+                    for (int x = s; x < drawWidth+s+1; x=x+2) {
+                        // For s == 0 the x coordinate MUST be an even number
+                        // to get correct occlusion; drawX may be any int though
+                        Coords c = new Coords(x + drawX/2*2, y + drawY);
                         IHex hex = board.getHex(c);
-                        if ((hex != null) && (hex.getLevel() == x)) {
+                        if ((hex != null)) { 
                             drawHex(c, g, saveBoardImage);
                             if (GUIPreferences.getInstance()
                                     .getShowFieldOfFire()) {
@@ -2360,14 +2377,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 drawHexBorder(g, getHexLocation(c),
                                         Color.yellow);
                             }
+                            drawOrthograph(c, g);
                         }
                     }
                 }
-                for (int k = 0; k < drawWidth; k++) {
-                    Coords c = new Coords(k + drawX, i + drawY);
+                for (int x = 0; x < drawWidth; x++) {
+                    Coords c = new Coords(x + drawX, y + drawY);
                     IHex hex = board.getHex(c);
                     if (hex != null) {
-                        drawOrthograph(c, g);
                         if (!saveBoardImage) {
                             if (GUIPreferences.getInstance().getShowWrecks()) {
                                 drawIsometricWreckSpritesForHex(c, g,
@@ -2709,6 +2726,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), 0, 0
                     + (int) (12 * scale), font_hexnum, g);
+        }
+
+        if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
+            Point hexCenter = new Point((int)(HEX_W / 2 * scale), (int)(HEX_H / 2 * scale));
+            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED, false,
+                    new Font("SansSerif", Font.BOLD, 14));
         }
 
         // write terrain level / water depth / building height
@@ -3460,16 +3483,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Create the new sprites
         Coords position = entity.getPosition();
-        boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || entity.hasSeenEntity(localPlayer)
-                || entity.hasDetectedEntity(localPlayer);
-
-        canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
-                || !entity.getOwner().isEnemyOf(localPlayer)
-                || !entity.isHidden();
+        boolean canSee = EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
 
         if ((position != null) && canSee) {
             // Add new EntitySprite
@@ -3524,7 +3538,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Update C3 link, if necessary
-        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+        if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
             addC3Link(entity);
         }
 
@@ -3643,7 +3657,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
-            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
+            if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3()) {
                 addC3Link(entity);
             }
 
@@ -4226,6 +4240,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
             }
+        } else if (e.hasNavalC3()) {
+            for (Entity fe : game.getEntitiesVector()) {
+                if (fe.getPosition() == null) {
+                    return;
+                }
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
+                    c3Sprites.add(new C3Sprite(this, e, fe));
+                }
+            }
         } else if (e.hasActiveNovaCEWS()) {
             // WOR Nova CEWS
             for (Entity fe : game.getEntitiesVector()) {
@@ -4738,6 +4761,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void mouseExited(MouseEvent me) {
+        // Reset the tooltip dismissal delay to the preference
+        // value so that elements outside the boardview can
+    	// use tooltips
+    	if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+    		ToolTipManager.sharedInstance().setDismissDelay(
+    				GUIPreferences.getInstance().getTooltipDismissDelay());
+    	} else {
+    		ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+    	}
     }
 
     public void mouseClicked(MouseEvent me) {
@@ -5517,10 +5549,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public String getToolTipText(MouseEvent e) {
         // If new instance of mouse event, redraw obscured hexes and elevations.
         repaint();
-
+        
         StringBuffer txt = new StringBuffer();
         IHex mhex = null;
         final Point point = e.getPoint();
+        if (prevTipX > 0 && prevTipY > 0) {
+            int deltaX = point.x - prevTipX;
+            int deltaY = point.y - prevTipY;
+            double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
+                prevTipX = -1; prevTipY = -1;
+                // Set the dismissal delay to 0 so that the tooltip 
+                // goes away and does not reappear until the mouse 
+                // has moved more than the suppression distance
+                ToolTipManager.sharedInstance().setDismissDelay(0);
+                return new String(""); //$NON-NLS-1$
+            }
+        }
+        prevTipX = point.x; prevTipY = point.y;
         final Coords mcoords = getCoordsAt(point);
         final ArrayList<ArtilleryAttackAction> artilleryAttacks =
                 getArtilleryAttacksAtLocation(mcoords);
@@ -5683,6 +5729,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
 
+            if (displayInvalidHexInfo) {
+                StringBuffer errBuff = new StringBuffer();
+                if (!mhex.isValid(errBuff)) {
+                    txt.append(Messages.getString("BoardView1.invalidHex"));
+                    txt.append("<br>"); //$NON-NLS-1$
+                    String errors = errBuff.toString();
+                    errors = errors.replace("\n", "<br>");
+                    txt.append(errors);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+            }
         }
         
         // Show the player(s) that may deploy here 
@@ -5812,12 +5869,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             
             txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
-            if (aaa.turnsTilHit == 1)
+            if (aaa.getTurnsTilHit() == 1)
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
                         new Object[] { wpName, ammoName }));
             else
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
-                        new Object[] { wpName, ammoName, aaa.turnsTilHit }));
+                        new Object[] { wpName, ammoName, aaa.getTurnsTilHit() }));
             txt.append("</FONT></TD></TR></TABLE>");
         }
 
@@ -5880,13 +5937,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         txt.append("</html>"); //$NON-NLS-1$
+
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals("<html></html>")) {
-            // Returning null prevents the tooltip from being displayed
-            // This prevents a small blue tooltip rectangle being drawn at the
-            // edge of the board
-            return null;
+        if (txt.toString().equals("<html></html>")) { //$NON-NLS-1$
+            return new String(""); //$NON-NLS-1$
         }
+        
+        // Now that a valid tooltip text seems to be present,
+        // (re)set the tooltip dismissal delay time to the preference 
+        // value so that the tooltip actually appears
+        if (GUIPreferences.getInstance().getTooltipDismissDelay() >= 0) {
+        	ToolTipManager.sharedInstance().setDismissDelay(
+        			GUIPreferences.getInstance().getTooltipDismissDelay());
+        } else {
+        	ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
+        }
+
         return txt.toString();
     }
 
@@ -6539,9 +6605,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int boardX = (int)((c.getX() + 0.0) / board.getSubBoardWidth());
         int boardY = (int)((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
-        if (linIdx < 0 || linIdx > boardBackgrounds.size()) {
-            System.out.println("Error computing linear index "
-                    + "in BoardView1.getTransparentImage!");
+        if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
+            System.out.println("Error computing linear index or "
+                    + "missing background images "
+                    + "in BoardView1.getBoardBackgroundHexImage!");
             return null;
         }
         Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);
@@ -6600,4 +6667,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return hexImage;
     }
 
+    public void setDisplayInvalidHexInfo(boolean v) {
+        displayInvalidHexInfo = v;
+    }
+
+    public boolean getDisplayInvalidHexInfo() {
+        return displayInvalidHexInfo;
+    }
 }

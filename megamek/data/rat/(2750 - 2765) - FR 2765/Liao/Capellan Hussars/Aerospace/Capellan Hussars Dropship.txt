@@ -1,5 +1,5 @@
 Capellan Hussars Dropship
-Confederate (2703),1
+Confederate (2602),1
 Gazelle (2531),2
 Dictator (Standard),3
 Triumph (2593),4

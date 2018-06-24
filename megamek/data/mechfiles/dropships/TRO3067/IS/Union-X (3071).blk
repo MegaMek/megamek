@@ -1,0 +1,198 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union-X
+</Name>
+
+<Model>
+(3071)
+</Model>
+
+<year>
+3071
+</year>
+
+<originalBuildYear>
+3071
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:4.0:2:1
+battlearmorbay:12.0:1:3
+mechbay:4.0:4
+heavyvehiclebay:4.0:1:5
+1stclassquarters:40.0:0
+2ndclassquarters:0.0:0
+crewquarters:91.0:0
+cargobay:335.0:0:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+120
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+190
+184
+184
+179
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:80
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:60
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGauss Ammo:80
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:60
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGauss Ammo:80
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:60
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+ISERPPC
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(B) Heavy PPC
+Heavy PPC
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<source>
+TRO 3067 - Jihad
+</source>
+
+<tonnage>
+3700.0
+</tonnage>
+
+<crew>
+133
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+

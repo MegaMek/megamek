@@ -42,6 +42,9 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
         this.name = "Tele-operated Missile (Killer Whale-T)";
         this.setInternalName(this.name);
         this.addLookupName("KillerWhaleT");
+        String[] modeStrings = { "Normal", "Tele-Operated" };
+        setModes(modeStrings);
+        setInstantModeSwitch(false);
         this.heat = 20;
         this.damage = 4;
         this.ammoType = AmmoType.T_KILLER_WHALE_T;
@@ -53,6 +56,7 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
         this.bv = 923;
         this.cost = 165000;
         this.flags = flags.or(F_MISSILE);
+        this.atClass = CLASS_TELE_MISSILE;
         this.shortAV = 4;
         this.medAV = 4;
         this.longAV = 4;
@@ -83,7 +87,7 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.hasFlag(AmmoType.F_TELE_MISSILE))
+        if (atype.hasFlag(AmmoType.F_TELE_MISSILE) && game.getBoard().inSpace())
             return new KillerWhaleTHandler(toHit, waa, game, server);
         return new KillerWhaleHandler(toHit, waa, game, server);
     }

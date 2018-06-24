@@ -1,0 +1,230 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Overlord
+</Name>
+
+<Model>
+A3
+</Model>
+
+<year>
+3058
+</year>
+
+<originalBuildYear>
+3058
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:6.0:3:1
+battlearmorbay:3.0:1:2
+2ndclassquarters:0.0:0
+1stclassquarters:80.0:0
+crewquarters:378.0:0
+cargobay:518.0:2:3
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+240
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+15300
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+522
+490
+490
+450
+</armor>
+
+<Nose Equipment>
+(B) Tele-operated Missile (Kraken T)
+Ammo KrakenT:10
+(B) ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+(B) ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:96
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:5
+Ammo AR10 Killer Whale:5
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:40
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:42
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(R) (B) ISERPPC
+(R) ISERPPC
+(R) ISERPPC
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:5
+Ammo AR10 Killer Whale:5
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:40
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:42
+ISArtemisIV
+(B) ISLargePulseLaser
+ISLargePulseLaser
+(R) (B) ISERPPC
+(R) ISERPPC
+(R) ISERPPC
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:64
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:78
+ISArtemisIV
+ISArtemisIV
+</Aft Equipment>
+
+<structural_integrity>
+40
+</structural_integrity>
+
+<source>
+TRO 3067 - Clan Invasion
+</source>
+
+<tonnage>
+9700.0
+</tonnage>
+
+<crew>
+84
+</crew>
+
+<officers>
+8
+</officers>
+
+<gunners>
+15
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

@@ -1463,6 +1463,9 @@ public class Client implements IClientCommandHandler {
                 cfrEvt.setEntityId((int) c.getObject(1));
                 cfrEvt.setTargetId((int) c.getObject(2));
                 break;
+            case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                cfrEvt.setTeleguidedMissileTargets((List<String>)c.getObject(1));
+                break;
             }
             game.processGameEvent(cfrEvt);
             break;
@@ -1512,6 +1515,12 @@ public class Client implements IClientCommandHandler {
 
     public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
         Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
+    public void sendTelemissileTargetCFRResponse(int index) {
+        Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

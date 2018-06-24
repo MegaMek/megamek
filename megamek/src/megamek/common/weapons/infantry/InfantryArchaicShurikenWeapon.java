@@ -39,6 +39,7 @@ public class InfantryArchaicShurikenWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 5;
 		bv = 0;
+        tonnage = .0001; 
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0;
 		infantryRange = 0;

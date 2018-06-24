@@ -511,8 +511,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         boolean isAero = ce().isAero();
         boolean isVTOL = ce() instanceof VTOL;
         boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
-        boolean isTankOnPavement = ((ce().getEntityType() & Entity.ETYPE_TANK) == Entity.ETYPE_TANK)
-                && !((ce().getEntityType() & Entity.ETYPE_GUN_EMPLACEMENT) == Entity.ETYPE_GUN_EMPLACEMENT)
+        boolean isTankOnPavement = ce().hasETypeFlag(Entity.ETYPE_TANK) 
+                && !ce().hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
+                && !ce().isNaval()
                 && (deployhex.containsTerrain(Terrains.PAVEMENT)
                         || deployhex.containsTerrain(Terrains.ROAD)
                         || deployhex.containsTerrain(Terrains.BRIDGE_ELEV));
@@ -675,7 +676,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!ce().isLocationProhibited(moveto)) {
             floors.add(Messages.getString("DeploymentDisplay.belowbridge"));
         }
-        floors.add(Messages.getString("DeploymentDisplay.topbridge"));
+        
+        // ships can't deploy to the top of a bridge
+        if(!ce().isNaval()) {
+            floors.add(Messages.getString("DeploymentDisplay.topbridge"));
+        }
         
         String i18nString = "DeploymentDisplay.bridgeDialog.title"; 
         String title = Messages
@@ -689,7 +694,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (input.equals(Messages.getString("DeploymentDisplay.topbridge"))) {
                 ce().setElevation(height);
             } else {
-                ce().setElevation(deployhex.floor() - deployhex.surface());
+                if(ce().isNaval() && (ce().getMovementMode() != EntityMovementMode.SUBMARINE)) {
+                    ce().setElevation(0);
+                } else {
+                    ce().setElevation(deployhex.floor() - deployhex.surface());
+                }
             }
             return true;
         } else {

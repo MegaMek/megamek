@@ -39,6 +39,7 @@ public class InfantryPistolISPulseLaserPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 1000;
 		bv = 0.13;
+		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.14;
 		infantryRange = 0;

@@ -30,6 +30,7 @@ import megamek.common.Targetable;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
@@ -344,8 +345,13 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
-        return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
-                                      getShooter().getEquipmentNum(getWeapon()));
+        if (!getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+                                          getShooter().getEquipmentNum(getWeapon()));
+        } else {
+            return new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+                    getShooter().getEquipmentNum(getWeapon()), getGame());
+        }
     }
 
     private WeaponAttackAction buildBombAttackAction(final int[] bombPayload) {
@@ -589,9 +595,15 @@ public class WeaponFireInfo {
             if (null != getAction()) {
                 return getAction();
             }
-            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
-                                             getShooter().getEquipmentNum(getWeapon())));
-            if (null == getAction()) {
+            if (!getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
+                        getShooter().getEquipmentNum(getWeapon())));
+            } else {
+                setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
+                        getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
+                        getGame()));
+            }
+            if (getAction() == null) {
                 setProbabilityToHit(0);
                 return null;
             }

@@ -39,6 +39,7 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 150;
 		bv = 0.39;
+        tonnage = .005; 
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.42;
 		infantryRange = 0;

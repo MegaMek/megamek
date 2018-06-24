@@ -1,0 +1,212 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+M3 Drone
+</Name>
+
+<Model>
+CASPAR
+</Model>
+
+<year>
+2698
+</year>
+
+<originalBuildYear>
+2698
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:196.0:0
+cargobay:154.5:1:1
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<heatsinks>
+200
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+18000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+368
+323
+323
+278
+</armor>
+
+<Nose Equipment>
+(B) PPC
+PPC
+PPC
+PPC
+(B) ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:96
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:96
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ImprovedCasparDroneControlSystem
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+PPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(R) (B) PPC
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+PPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) ISERLargeLaser
+ISERLargeLaser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(R) (B) PPC
+(R) (B) ISERLargeLaser
+(R) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) (B) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) PPC
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+SDSSelfDestructSystem
+</Aft Equipment>
+
+<structural_integrity>
+21
+</structural_integrity>
+
+<source>
+H:Liberation of Terra I - Star League
+</source>
+
+<tonnage>
+4000.0
+</tonnage>
+
+<crew>
+14
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+14
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

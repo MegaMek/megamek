@@ -1,0 +1,218 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Miraborg
+</Name>
+
+<Model>
+(3053)
+</Model>
+
+<year>
+3053
+</year>
+
+<originalBuildYear>
+3053
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:10.0:2:1
+cargobay:338.5:0:2
+asfbay:10.0:2:3
+cargobay:338.5:0:4
+asfbay:10.0:2:5
+cargobay:338.5:0:6
+2ndclassquarters:0.0:0
+1stclassquarters:70.0:0
+crewquarters:231.0:0
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+162
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+9000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+200
+180
+180
+160
+</armor>
+
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLGaussRifle
+CLUltraAC20
+CLUltraAC20
+Clan Gauss Ammo:16
+Clan Ultra AC/20 Ammo:50
+(B) CLLRM20
+CLLRM15
+Clan Ammo LRM-20 (Clan) Artemis-capable:12
+Clan Ammo LRM-15 (Clan) Artemis-capable:16
+CLArtemisIV
+CLArtemisIV
+(B) CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable:30
+CLArtemisIV
+(B) CLLBXAC20
+Clan LB 20-X Cluster Ammo:10
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+(B) CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable:30
+CLArtemisIV
+(B) CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable:16
+CLArtemisIV
+(B) CLLBXAC20
+Clan LB 20-X Cluster Ammo:10
+(R) (B) CLERLargeLaser
+(R) (B) CLMediumPulseLaser
+(R) (B) CLSRM4
+(R) Clan Ammo SRM-4 (Clan) Artemis-capable:25
+(R) CLArtemisIV
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+(B) CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable:30
+CLArtemisIV
+(B) CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable:16
+CLArtemisIV
+(B) CLLBXAC20
+Clan LB 20-X Cluster Ammo:10
+(R) (B) CLERLargeLaser
+(R) (B) CLMediumPulseLaser
+(R) (B) CLSRM4
+(R) Clan Ammo SRM-4 (Clan) Artemis-capable:25
+(R) CLArtemisIV
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLGaussRifle
+CLUltraAC20
+Clan Gauss Ammo:16
+Clan Ultra AC/20 Ammo:25
+(B) CLERLargeLaser
+CLERMediumLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:12
+CLArtemisIV
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+9800.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+100
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+7
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+15
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

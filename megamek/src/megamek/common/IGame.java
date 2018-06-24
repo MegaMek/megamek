@@ -790,12 +790,12 @@ public interface IGame {
     abstract Iterator<Entity> getEntities(Coords c, boolean ignore);
 
     /**
-     * Returns a Vector of the active entities at the given coordinates.
+     * Returns a List of the active entities at the given coordinates.
      */
     abstract List<Entity> getEntitiesVector(Coords c);
     
     /**
-     * Returns a Vector of the active entities at the given coordinates.
+     * Returns a List of the active entities at the given coordinates.
      */
     abstract List<Entity> getEntitiesVector(Coords c, boolean ignore);
 
@@ -804,6 +804,11 @@ public interface IGame {
      */
     abstract Vector<GunEmplacement> getGunEmplacements(Coords c);
 
+    /**
+     * Determine if the given set of coordinates has a gun emplacement on the roof of a building.
+     */
+    abstract boolean hasRooftopGunEmplacement(Coords c);
+    
     /**
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
@@ -904,15 +909,6 @@ public interface IGame {
      *            the index number to start at (not an Entity Id)
      */
     abstract Entity getNextEntity(int start);
-
-    /**
-     * Returns the next selectable entity ID that can act this turn, or null if
-     * none can.
-     *
-     * @param start the index number to start at (and index into the entities
-     *                  collection)
-     */
-    abstract int getNextEntityNum(int start);
 
     /**
      * Returns the entity id of the next entity that can move during the
@@ -1088,6 +1084,8 @@ public interface IGame {
     abstract void addInitiativeRerollRequest(Team t);
 
     abstract void rollInitAndResolveTies();
+    
+    abstract void handleInitiativeCompensation();
 
     abstract int getNoOfInitiativeRerollRequests();
 

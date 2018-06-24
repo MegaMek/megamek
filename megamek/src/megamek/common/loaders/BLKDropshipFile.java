@@ -291,7 +291,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 }
 
                 // check for ammo loadouts
-                if (equipName.contains(":") && equipName.contains("Ammo")) {
+                if (equipName.contains(":") && (equipName.contains("Ammo")
+                        || equipName.contains("Pod"))) {
                     // then split by the :
                     String[] temp;
                     temp = equipName.split(":");

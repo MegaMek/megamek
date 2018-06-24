@@ -63,7 +63,12 @@ public class Board implements Serializable, IBoard {
     public static final int START_W = 8;
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
-
+    
+    //Board Dimensions
+    //Used for things like artillery rules that reference the standard mapsheet dimensions
+    public static final int DEFAULT_BOARD_HEIGHT = 17;
+    public static final int DEFAULT_BOARD_WIDTH = 16;
+    //Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
     protected int width;
     protected int height;
 
@@ -753,6 +758,27 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
+     * Determine the opposite edge from the given edge
+     * Returns START_NONE for non-cardinal edges (North, South, West, East)
+     * @param cardinalEdge The edge to return the opposite off
+     * @return Constant representing the opposite edge
+     */
+    public int getOppositeEdge(int cardinalEdge) {
+        switch(cardinalEdge) {
+        case Board.START_E:
+            return Board.START_W;
+        case Board.START_N:
+            return Board.START_S;
+        case Board.START_W:
+            return Board.START_E;
+        case Board.START_S:
+            return Board.START_N;
+        default:
+            return Board.START_NONE;
+        }
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -885,6 +911,11 @@ public class Board implements Serializable, IBoard {
     public boolean isValid() {
         // Search for black-listed hexes
         return isValid(data, width, height, null);
+    }
+
+    public boolean isValid(StringBuffer errBuff) {
+        // Search for black-listed hexes
+        return isValid(data, width, height, errBuff);
     }
 
     private boolean isValid(IHex[] data, int width, int height, StringBuffer errBuff) {

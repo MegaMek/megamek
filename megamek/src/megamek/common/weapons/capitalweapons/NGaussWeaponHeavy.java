@@ -36,6 +36,8 @@ public class NGaussWeaponHeavy extends NGaussWeapon {
         this.setInternalName(this.name);
         this.addLookupName("HeavyNGauss");
         this.addLookupName("CLHeavyNGauss");
+        this.addLookupName("Heavy N-Gauss (Clan)");
+        this.shortName = "Heavy NGauss";
         this.heat = 18;
         this.damage = 30;
         this.ammoType = AmmoType.T_HEAVY_NGAUSS;

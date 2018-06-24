@@ -73,6 +73,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
@@ -97,7 +98,6 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.MegaMekFile;
 
 /**
@@ -1143,15 +1143,6 @@ public class MiniMap extends JPanel {
     }
 
     private void paintUnit(Graphics g, Entity entity) {
-        boolean sensors = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
-        boolean sensorsDetectAll = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());
-        boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
-        
         int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
                 + leftMargin + hexSide[zoom];
         int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity
@@ -1159,8 +1150,7 @@ public class MiniMap extends JPanel {
         int[] xPoints;
         int[] yPoints;
 
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && hasDetected && !hasVisual) { // Sensor Return
+        if (EntityVisibilityUtils.onlyDetectedBySensors(m_bview.getLocalPlayer(), entity)) { // Sensor Return
             String sensorReturn = "?";           
             Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$            
             int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
@@ -1169,7 +1159,7 @@ public class MiniMap extends JPanel {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (doubleBlind && !hasVisual) { // Unseen Unit
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(m_bview.getLocalPlayer(), m_game, entity)) { // Unseen Unit
             // Do nothing
             return;
         } else if (entity instanceof Mech) {

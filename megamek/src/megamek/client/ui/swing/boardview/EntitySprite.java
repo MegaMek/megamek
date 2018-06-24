@@ -23,6 +23,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
@@ -138,6 +139,10 @@ class EntitySprite extends Sprite {
     }
 
     private void updateLabel() {
+        Rectangle oldRect = new Rectangle();
+        if (labelRect != null)
+            oldRect = new Rectangle(labelRect);
+        
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? 
                 Font.ITALIC : Font.PLAIN;
         labelFont = new Font("SansSerif", face, (int)(10*Math.max(bv.scale,0.9))); //$NON-NLS-1$
@@ -172,8 +177,19 @@ class EntitySprite extends Sprite {
         } 
 
         // If multiple units are present in a hex, fan out the labels
-        labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
-                bv.game.getEntitiesVector(position).indexOf(entity);
+        // In the deployment phase, indexOf returns -1 for the current unit
+        int indexEntity = bv.game.getEntitiesVector(position).indexOf(entity);
+        if (indexEntity != -1) {
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
+                    indexEntity;
+        } else {
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent()+4) * 
+                    bv.game.getEntitiesVector(position).size();
+        }
+
+        // If the label has changed, force a redraw (necessary
+        // for the Deployment phase
+        if (!labelRect.equals(oldRect)) image = null;
     }
 
     // Happy little class to hold status info until it gets drawn
@@ -600,17 +616,7 @@ class EntitySprite extends Sprite {
      * mechs and teammates mechs (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-        IPlayer localPlayer = bv.getLocalPlayer();
-        if (localPlayer == null) {
-            return false;
-        }
-        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
-                && ((e.getOwner().getId() == localPlayer.getId()) || (bv.game
-                        .getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
-                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
-            return true;
-        }
-        return false;
+        return EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(bv.getLocalPlayer(), e);
     }
 
     /**
@@ -620,22 +626,7 @@ class EntitySprite extends Sprite {
      * @return
      */
     public boolean onlyDetectedBySensors() {
-        boolean sensors = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
-        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
-        boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
-
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && !trackThisEntitiesVisibilityInfo(entity)
-                && hasDetected && !hasVisual) {
-            return true;
-        } else {
-            return false;
-        }
+        return EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity);
     }
 
     private Color getStatusBarColor(double percentRemaining) {

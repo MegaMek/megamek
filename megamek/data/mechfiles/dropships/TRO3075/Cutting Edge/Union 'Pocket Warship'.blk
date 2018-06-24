@@ -1,0 +1,195 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union
+</Name>
+
+<Model>
+'Pocket Warship'
+</Model>
+
+<year>
+3071
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+battlearmorbay:4.0:1:2
+1stclassquarters:30.0:0
+crewquarters:91.0:0
+smallcraftbay:2.0:2:3
+asfbay:2.0:2:4
+cargobay:175.5:3:1
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+100
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+6450
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+182
+171
+171
+120
+</armor>
+
+<Nose Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+(B) ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:2
+Ammo AR10 White Shark:3
+Ammo AR10 Barracuda:5
+(R) (B) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) ISERPPC
+(B) ISGaussRifle
+IS Gauss Ammo:24
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:24
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Killer Whale:2
+Ammo AR10 White Shark:3
+Ammo AR10 Barracuda:5
+(R) (B) ISERLargeLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+3600.0
+</tonnage>
+
+<crew>
+51
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+7
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+7
+</escape_pod>
+

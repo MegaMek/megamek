@@ -40,6 +40,7 @@ public class InfantrySupportRecoillessRifleHeavyInfernoWeapon extends InfantryWe
 		ammoType = AmmoType.T_NA;
 		cost = 3000;
 		bv = 1.74;
+		tonnage = .060;
 		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);

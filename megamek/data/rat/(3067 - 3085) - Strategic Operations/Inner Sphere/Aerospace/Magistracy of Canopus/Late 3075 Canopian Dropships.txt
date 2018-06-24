@@ -6,7 +6,7 @@ Triumph (3057),4
 Union (3055),5
 Leopard (3056),6
 Condor (3054),5
-Mule (Standard),4
+Mule (2737),4
 Seeker (3054),3
 Fury (3056),2
 Seeker (3054),1

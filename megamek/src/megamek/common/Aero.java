@@ -20,13 +20,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
@@ -37,7 +38,7 @@ public class Aero extends Entity implements IAero, IBomber {
      *
      */
     private static final long serialVersionUID = 7196307097459255187L;
-
+    
     // locations
     public static final int LOC_NOSE = 0;
     public static final int LOC_LWING = 1;
@@ -344,7 +345,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         return j;
     }
-
+   
     /**
      * Returns the number of locations in the entity
      */
@@ -363,9 +364,12 @@ public class Aero extends Entity implements IAero, IBomber {
         return false;
     }
 
+    /**
+     * Aeros really can't torso twist?
+     */
     @Override
     public int clipSecondaryFacing(int n) {
-        return n;
+        return getFacing();
     }
 
     @Override
@@ -809,7 +813,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setFuelTonnage(double fuelTons) {
         double pointsPerTon = getFuelPointsPerTon();
-        fuel = (int) Math.ceil(pointsPerTon * fuelTons);
+        fuel = (int) Math.floor(pointsPerTon * fuelTons + 0.001);
     }
 
     /**
@@ -819,7 +823,10 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public double getFuelTonnage() {
-        return fuel / getFuelPointsPerTon();
+        // Rounding required for primitive small craft/dropship fuel multipliers.
+        // The reason this is rounded normally instead of up is that the fuel points are actually calculated
+        // from the tonnage and rounded down.
+        return Math.round(2.0 * fuel / getFuelPointsPerTon()) / 2.0;
     }
 
     /**
@@ -2852,6 +2859,29 @@ public class Aero extends Entity implements IAero, IBomber {
         return Math.round(cost * omniMultiplier * weightMultiplier);
 
     }
+    
+    @Override
+    protected int implicitClanCASE() {
+        if (!isClan() || !isFighter()) {
+            return 0;
+        }
+        // Ammo is actually supposed to be assigned to a fuselage location rather than one of the four
+        // weapon arcs. We will use LOC_NONE to record the existence of non-weapon explosive equipment.
+        Set<Integer> caseLocations = new HashSet<>();
+        int explicit = 0;
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+                explicit++;
+            } else if (m.getType().isExplosive(m)) {
+                if (m.getType() instanceof WeaponType) {
+                    caseLocations.add(m.getLocation());
+                } else {
+                    caseLocations.add(LOC_NONE);
+                }
+            }
+        }
+        return Math.max(0, caseLocations.size() - explicit);
+    }
 
     @Override
     public boolean doomedInExtremeTemp() {
@@ -3297,36 +3327,6 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean didAccDecNow() {
         return accDecNow;
-    }
-
-    @Override
-    public void setGameOptions() {
-        super.setGameOptions();
-
-        for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon)
-                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
-
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                int damage = ((WeaponType) mounted.getType()).getDamage();
-
-                if (damage == WeaponType.DAMAGE_VARIABLE) {
-                    damage = ((WeaponType) mounted.getType()).damageShort;
-                }
-
-                for (; damage >= 0; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                if (((WeaponType) mounted.getType()).hasFlag(WeaponType.F_FLAMER)) {
-                    modes.add("Heat");
-                }
-                ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
-            }
-
-        }
-
     }
 
     /*

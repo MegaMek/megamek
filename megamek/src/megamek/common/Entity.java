@@ -59,14 +59,16 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
+import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
+import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
-import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
+import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.bombs.BombArrowIV;
 import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
@@ -79,8 +81,6 @@ import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -161,6 +161,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final int DMG_CRIPPLED = 4;
     
     public static final int USE_STRUCTURAL_RATING = -1;
+    
+    public static final String ENTITY_AIR_TO_GROUND_SENSOR_RANGE= Messages.getString("Entity.sensor_range_vs_ground_target");
 
     // Weapon sort order defines
     public static enum WeaponSortOrder {
@@ -185,7 +187,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected String camoCategory = IPlayer.NO_CAMO;
     protected String camoFileName = null;
-
+    
     /**
      * ID settable by external sources (such as mm.net)
      */
@@ -391,6 +393,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private String c3UUID = null;
     private String c3MasterIsUUID = null;
     private String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    private String[] NC3UUIDs = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
@@ -1059,8 +1062,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     public CompositeTechLevel factionTechLevel(int techFaction) {
+        if (techFaction == F_NONE) {
+            return compositeTechLevel;
+        }
         CompositeTechLevel retVal = new CompositeTechLevel(this, techFaction);
         addSystemTechAdvancement(retVal);
+        for (Mounted m : getEquipment()) {
+            retVal.addComponent(m.getType());
+            if (m.isArmored()) {
+                retVal.addComponent(TA_ARMORED_COMPONENT);
+            }
+        }
         return retVal;
     }
     
@@ -1835,10 +1847,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             retVal += current.surface();
             retVal -= next.surface();
         } else {
+            // if we're a hovercraft, surface ship, WIGE or a "fully amphibious" vehicle, we go on the water surface
+            // without adjusting elevation
             if ((getMovementMode() != EntityMovementMode.HOVER)
                 && (getMovementMode() != EntityMovementMode.NAVAL)
                 && (getMovementMode() != EntityMovementMode.HYDROFOIL)
-                && (getMovementMode() != EntityMovementMode.WIGE)) {
+                && (getMovementMode() != EntityMovementMode.WIGE)
+                && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
@@ -2018,7 +2033,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case SPHEROID:
                 assumedAlt = assumedElevation;
                 if (game.getBoard().inAtmosphere()) {
-                    minAlt = hex.ceiling(true) + 1;
+                    minAlt = Math.max(0, hex.ceiling(true)) + 1;
                 } else if (game.getBoard().onGround() && isAirborne()) {
                     minAlt = 1;
                 }
@@ -2172,9 +2187,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE)
-                || ((getMovementMode() == EntityMovementMode.HOVER) && hex
-                    .containsTerrain(Terrains.WATER))) {
-                // surface of ice is OK, surface of water is OK for hovers
+                || (((getMovementMode() == EntityMovementMode.HOVER) || hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) && 
+                        hex.containsTerrain(Terrains.WATER))) {
+                // surface of ice is OK, surface of water is OK for hovers and "fully amphibious" units
                 if (assumedAlt == hex.surface()) {
                     return true;
                 }
@@ -3437,9 +3452,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 weaponList.add(mounted);
             }
+            
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
-            }
+            } 
 
             // one-shot launchers need their single shot of ammo added.
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
@@ -3618,8 +3634,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
 
-            // Artillery only in the correct phase...
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+            // Artillery and Bearings-Only Capital Missiles only in the correct phase...
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || mounted.isInBearingsOnlyMode())
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 continue;
             }
@@ -3677,9 +3694,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return false;
             }
 
-            // Artillery only in the correct phase...
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+            // Artillery or Bearings-only missiles only in the targeting phase...
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || mounted.isInBearingsOnlyMode())
                 && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
+                return false;
+            }
+            // No Bearings-only missiles in the firing phase
+            if (mounted.isInBearingsOnlyMode() && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 return false;
             }
 
@@ -5412,6 +5434,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return false;
     }
+    
+    public boolean hasNavalC3() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                && m.getType().hasFlag(MiscType.F_NAVAL_C3) && !m.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public boolean hasC3i() {
         if (isShutDown() || isOffBoard()) {
@@ -5440,6 +5475,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 c3NetIdString = "C3i." + getId();
             } else if (hasActiveNovaCEWS()) {
                 c3NetIdString = "C3Nova." + getId();
+            } else if (hasNavalC3()) {
+                c3NetIdString = "NC3." + getId();
             }
         }
         return c3NetIdString;
@@ -5496,6 +5533,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setC3NetIdSelf() {
         if (hasActiveNovaCEWS()) {
             c3NetIdString = "C3Nova." + getId();
+        } else if (hasNavalC3()) {
+            c3NetIdString = "NC3." + getId();
         } else {
             c3NetIdString = "C3i." + getId();
         }
@@ -5559,7 +5598,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int calculateFreeC3Nodes() {
         int nodes = 0;
-        if (hasC3i()) {
+        if (hasC3i() || hasNavalC3()) {
             nodes = 5;
             if (game != null) {
                 for (Entity e : game.getEntitiesVector()) {
@@ -5785,7 +5824,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             c3NetIdString = "C3." + id;
         } else if (hasC3i() && (entityId == NONE)) {
             c3NetIdString = "C3i." + id;
-        } else if (hasC3() || hasC3i()) {
+        } else if (hasNavalC3() && (entityId == NONE)) {
+            c3NetIdString = "NC3." + id;
+        } else if (hasC3() || hasC3i() || hasNavalC3()) {
             c3NetIdString = game.getEntity(entityId).getC3NetId();
         }
         for (Entity e : game.getEntitiesVector()) {
@@ -5833,6 +5874,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                 e.getPosition()))
                    && !(ComputeECM.isAffectedByECM(this, getPosition(),
                                                    getPosition()));
+        }
+        
+        // NC3 is easy too - if they both have NC3, and their net ID's match,
+        // they're on the same network! 
+        if (hasNavalC3() && e.hasNavalC3() && getC3NetId().equals(e.getC3NetId())) {
+            int distance = Compute.effectiveDistance(game,this,e,false);
+            //Naval C3 is not affected by ECM, but nodes must be within 60 hexes of one another
+            if (game.getRoundCount() > 0) {
+                if (distance > 60) {
+                    return false;
+                }
+                //Naval C3 only works in space
+                if (!game.getBoard().inSpace()) {
+                    return false;
+                }
+            } 
+            return true;
         }
 
         // Nova is easy - if they both have Nova, and their net ID's match,
@@ -6249,14 +6307,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
                     vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
-                if (!targets.contains(wr.waa)
-                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                game.getEntity(wr.waa.getEntityId()))) {
-                    vAttacksInArc.addElement(wr.waa);
+                if (wr instanceof CapitalMissileBearingsOnlyHandler) {
+                    if (!targets.contains(wr.waa)
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    game.getTarget(wr.waa.getOriginalTargetType(), wr.waa.getOriginalTargetId()))) {
+                        vAttacksInArc.addElement(wr.waa);
+                    } 
+                } else {
+                    if (!targets.contains(wr.waa)
+                            && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                    game.getEntity(wr.waa.getEntityId()))) {
+                        vAttacksInArc.addElement(wr.waa);
+                    }
                 }
             }
             //AMS Bays can fire at all incoming attacks each round
-            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)) {
+            //So can standard AMS if the unofficial option is turned on
+            if ((ams.getType().hasFlag(WeaponType.F_AMSBAY))
+                    || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS)
+                            && ams.getType().hasFlag(WeaponType.F_AMS))) {
                 for (WeaponAttackAction waa : vAttacksInArc) {
                     if (waa != null) {
                         waa.addCounterEquipment(ams);
@@ -7944,6 +8013,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public Bay getBayById(int bayNumber) {
+        //TODO: Change transports to a map or other indexed data structure to avoid
+        // linear-time algorithm.
         for (Transporter next : transports) {
             if (next instanceof Bay) {
                 if (((Bay) next).getBayNumber() == bayNumber) {
@@ -8366,7 +8437,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 result.append(next.getUnusedString());
             }
-            if (next instanceof TroopSpace && isOmni()) {
+            if (isOmni() && ((next instanceof TroopSpace)
+                    || (next instanceof Bay))) {
             	if (omniPodTransports.contains(next)) {
             		result.append(" (Pod)");
             	} else {
@@ -9380,7 +9452,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
             return true;
         }
-
+        
         // must be active
         if (!isActive()) {
             return false;
@@ -9603,6 +9675,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return true;
             }
+            //Bearings-only capital missiles fire during the targeting phase
+            if ((wtype instanceof TeleOperatedMissileBayWeapon)
+                    || (wtype instanceof CapitalMissileBayWeapon)
+                    || (wtype instanceof AR10BayWeapon)) {
+                if (mounted.isInBearingsOnlyMode()) {
+                    return true;
+                } 
+            }            
         }
         return false;
     }
@@ -10090,9 +10170,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
-            mod = mod / 2;
-        }
         return mod;
     }
 
@@ -10262,7 +10339,33 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 bvText.append(endRow);
             }
         }
+        int count = implicitClanCASE();
+        if (count > 0) {
+            long itemCost = 50000;
+            cost += count * itemCost;
+            if (null != bvText) {
+                for (int i = 0; i < count; i++) {
+                    bvText.append(startColumn);
+                    bvText.append("CASE");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append(commafy.format(itemCost));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
+            }
+        }
         return cost;
+    }
+    
+    /**
+     * Used to for cost calculations. Though the TM rules allow a Clan unit to be designed without CASE,
+     * MM assumes that CASE is present in any location that has explosive equipment.
+     * 
+     * @return The number of locations protected by Clan CASE beyond what is explicitly mounted.
+     */
+    protected int implicitClanCASE() {
+        return 0;
     }
 
     public boolean removePartialCoverHits(int location, int cover, int side) {
@@ -10399,6 +10502,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.canon = canon;
     }
 
+    /**
+     * Get the entity's "climbing mode"
+     * @return True or false, where true = climb up and false = go through
+     */
     public boolean climbMode() {
         return climbMode;
     }
@@ -11517,10 +11624,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
             && !hasActiveECM() && isMilitary()) {
             try {
-                String prefix = "IS";
-                if (isClan()) {
-                    prefix = "CL";
-                }
+                String prefix = isClan() ? "CL" : "IS";
                 this.addEquipment(
                         EquipmentType.get(prefix + BattleArmor.SINGLE_HEX_ECM),
                         Aero.LOC_NOSE, false);
@@ -11530,67 +11634,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof GaussWeapon)
-                && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
-                String[] modes = {"Powered Up", "Powered Down"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            } else if ((mounted.getType() instanceof ACWeapon)
-                       && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
-                String[] modes = {"", "Rapid"};
-                ((WeaponType) mounted.getType()).setModes(modes);
-                if (gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
-                    mounted.setKindRapidFire(true);
-                }
-            } else if (mounted.getType() instanceof ISBombastLaser) {
-                int damage = 12;
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-
-                for (; damage >= 7; damage--) {
-                    modes.add("Damage " + damage);
-                }
-                ((WeaponType) mounted.getType()).setModes(modes
-                                                                  .toArray(stringArray));
-            } else if (((WeaponType) mounted.getType()).isCapital()
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                           != WeaponType.CLASS_CAPITAL_MISSILE)
-                       && (((WeaponType) mounted.getType()).getAtClass()
-                           != WeaponType.CLASS_AR10)) {
-                ArrayList<String> modes = new ArrayList<String>();
-                String[] stringArray = {};
-                modes.add("");
-                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
-                    modes.add("Bracket 80%");
-                    modes.add("Bracket 60%");
-                    modes.add("Bracket 40%");
-                }
-                if (((mounted.getType() instanceof CapitalLaserBayWeapon)
-                     || (mounted.getType() instanceof SubCapLaserBayWeapon))
-                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
-                    modes.add("AAA");
-                    ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
-                }
-                if (modes.size() > 1) {
-                    ((WeaponType) mounted.getType()).setModes(modes
-                                                                      .toArray(stringArray));
-                }
-            } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
-                       && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
-                Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
-                ArrayList<String> newModes = new ArrayList<>();
-                while (modeEnum.hasMoreElements()) {
-                    newModes.add(modeEnum.nextElement().getName());
-                }
-                if (!newModes.contains("Automatic")) {
-                    newModes.add("Automatic");
-                }
-                String modes[] = new String[newModes.size()];
-                newModes.toArray(modes);
-                ((WeaponType) mounted.getType()).setModes(modes);
-                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            }
-
+            if (mounted.getType() instanceof Weapon)
+                ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
+                mounted.setModesForMapType();
         }
 
         for (Mounted misc : getMisc()) {
@@ -12399,10 +12445,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // TODO: assuming submarines on the surface act like surface naval
         // vessels until rules clarified
         // http://www.classicbattletech.com/forums/index.php/topic,48987.0.html
-        return (getElevation() == 0)
-               && ((getMovementMode() == EntityMovementMode.NAVAL)
-                   || (getMovementMode() == EntityMovementMode.HYDROFOIL) || (getMovementMode() == EntityMovementMode
-                .SUBMARINE));
+        return (getElevation() == 0) && isNaval();
+    }
+    
+    /**
+     * Is this a naval vessel?
+     * @return Whether it is or not.
+     */
+    public boolean isNaval() {
+        return (getMovementMode() == EntityMovementMode.NAVAL) 
+                || (getMovementMode() == EntityMovementMode.HYDROFOIL) 
+                || (getMovementMode() == EntityMovementMode.SUBMARINE);
     }
 
     /**
@@ -12547,10 +12600,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
         int range = getActiveSensor().getRangeByBracket();
+        int groundRange = 0;
+        if (getActiveSensor().isBAP()) {
+            groundRange = 2;
+        } else {
+            groundRange = 1;
+        }
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
+        int maxGroundSensorRange = bracket * groundRange;
+        int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
+            minGroundSensorRange = 0;
+        }
+        if (isAirborne() && game.getBoard().onGround()) {
+            return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
+                    + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"
+                    + maxGroundSensorRange + ")}";
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                + maxSensorRange + ")";
@@ -13342,7 +13409,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((game != null)
             && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                 || (hasC3M() && (calculateFreeC3Nodes() < 3))
-                || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5)))) {
+                || (hasC3S() && (c3Master > NONE)) || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
             int totalForceBV = 0;
             totalForceBV += baseBV;
             for (Entity e : game.getC3NetworkMembers(this)) {
@@ -13566,7 +13633,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc,
                                    HashMap<Integer, List<CriticalSlot>> vCriticals) {
-        if (masc != null) {
+        if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
             if (masc.getType().hasSubType(MiscType.S_SUPERCHARGER)
@@ -13594,10 +13661,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 if (((MiscType) (masc.getType()))
                         .hasSubType(MiscType.S_SUPERCHARGER)) {
-                    if (masc.getType().hasFlag(MiscType.F_MASC)) {
-                        masc.setHit(true);
-                        masc.setMode("Off");
-                    }
                     // do the damage - engine crits
                     int hits = 0;
                     int roll = Compute.d6(2);
@@ -13927,6 +13990,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getFreeC3iUUID() {
         int pos = 0;
         while (c3iUUIDs[pos] != null) {
+            pos++;
+            if (pos >= MAX_C3i_NODES) {
+                return -1;
+            }
+        }
+        return pos;
+    }
+    
+    public void setNC3NextUUIDAsString(int pos, String c3id) {
+        NC3UUIDs[pos] = c3id;
+    }
+
+    public String getNC3NextUUIDAsString(int pos) {
+        return NC3UUIDs[pos];
+    }
+
+    public int getFreeNC3UUID() {
+        int pos = 0;
+        while (NC3UUIDs[pos] != null) {
             pos++;
             if (pos >= MAX_C3i_NODES) {
                 return -1;

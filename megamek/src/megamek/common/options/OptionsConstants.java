@@ -421,6 +421,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_FULL_ROTOR_HITS= "full_rotor_hits";  //$NON-NLS$
     public static final String ADVCOMBAT_FOREST_FIRES_NO_SMOKE= "forest_fires_no_smoke";  //$NON-NLS$
     public static final String ADVCOMBAT_HOTLOAD_IN_GAME= "hotload_in_game";  //$NON-NLS$
+    public static final String ADVCOMBAT_MULTI_USE_AMS= "multiuse_ams"; //$NON-NLS$
 
 
     public static final String ADVGRNDMOV_TACOPS_SPRINT= "tacops_sprint";  //$NON-NLS$
@@ -475,6 +476,8 @@ public class OptionsConstants {
     public static final String ADVAERORULES_STRATOPS_SENSOR_SHADOW= "stratops_sensor_shadow";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_OVER_PENETRATE= "stratops_over_penetrate";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_SPACE_BOMB= "stratops_space_bomb";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH= "stratops_bearings_only";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH= "stratops_waypoint_launch";  //$NON-NLS$
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
     public static final String ADVAERORULES_AT2_NUKES= "at2_nukes";  //$NON-NLS$
     public static final String ADVAERORULES_AERO_SANITY= "aero_sanity";  //$NON-NLS$

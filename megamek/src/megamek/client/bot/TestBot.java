@@ -227,7 +227,7 @@ public class TestBot extends BotClient {
                     lance.evolve();
                     min = lance.getResult();
                     old_moves = lance;
-                } else if ((possible.get(0) != null)
+                } else if (possible.size() > 0 && (possible.get(0) != null)
                            && (possible.get(0).length > 0)) {
                     min = possible.get(0)[0];
                 }

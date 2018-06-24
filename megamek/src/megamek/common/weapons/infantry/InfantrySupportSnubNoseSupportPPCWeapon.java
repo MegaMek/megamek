@@ -39,11 +39,12 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 60000;
 		bv = 0.0;
+        tonnage = 1.6;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
 		infantryDamage = 1.58;
 		infantryRange = 5;
 		crew = 3;
-		rulesRefs = "273,TM";
+		rulesRefs = "176,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3082, 3090, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_DC)

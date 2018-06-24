@@ -81,6 +81,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         for (int era = 0; era < ERA_NUM; era++) {
             availability[era] = initialTA.getBaseAvailability(era);
         }
+        staticTechLevel = initialTA.getStaticTechLevel();
     }
     
     /**
@@ -425,7 +426,8 @@ public class CompositeTechLevel implements ITechnology, Serializable {
 
     @Override
     public int getBaseAvailability(int era) {
-        if (era < 0 || era > availability.length) {
+        if ((era < 0) || (era > availability.length)
+                || (ITechnology.getTechEra(introYear) > era)) {
             return RATING_X;
         }
         return availability[era];

@@ -33,6 +33,7 @@ import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -172,6 +173,8 @@ public class Princess extends BotClient {
     IPathRanker getPathRanker(Entity entity) {
         if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             return pathRankers.get(PathRankerType.Infantry);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_AERO) && game.useVectorMove()) {
+            return pathRankers.get(PathRankerType.NewtonianAerospace);
         }
         
         return pathRankers.get(PathRankerType.Basic);
@@ -1517,6 +1520,11 @@ public class Princess extends BotClient {
         infantryPathRanker.setFireControl(fireControls.get(FireControlType.Infantry));
         infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Infantry, infantryPathRanker);
+        
+        NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
+        newtonianAerospacePathRanker.setFireControl(fireControls.get(FireControlType.Basic));
+        newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
     }
     
     private boolean isEnemyGunEmplacement(final Entity entity,
@@ -1724,6 +1732,12 @@ public class Princess extends BotClient {
     private void performPathPostProcessing(final RankedPath path) {
         evadeIfNotFiring(path);
         unloadTransportedInfantry(path);
+        
+        // if we are using vector movement, there's a whole bunch of post-processing that happens to
+        // aircraft flight paths when a player does it, so we apply it here.
+        if(path.getPath().getEntity().isAero()) {
+            SharedUtility.moveAero(path.getPath(), null);
+        }
     }
     
     /**

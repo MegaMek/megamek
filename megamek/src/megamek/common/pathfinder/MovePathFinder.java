@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
@@ -68,6 +69,16 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         public CoordsWithFacing(MovePath mp) {
             this(mp.getFinalCoords(), mp.getFinalFacing());
+        }
+        
+        /** 
+         * Constructs a "coords with facing" object, given a starting position, thrust vectors and ending facing.
+         * @param startCoords Where the object started
+         * @param thrustVectors How much thrust was applied in what directions
+         * @param facing The direction in which the object is facing at the end of the procedure
+         */
+        public CoordsWithFacing(Coords startCoords, int[] thrustVectors, int facing) {
+            this(Compute.getFinalPosition(startCoords, thrustVectors), facing);
         }
 
         @Override

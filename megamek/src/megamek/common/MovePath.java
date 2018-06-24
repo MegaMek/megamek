@@ -720,6 +720,9 @@ public class MovePath implements Cloneable, Serializable {
      */
     public Coords getFinalCoords() {
         if (getLastStep() != null) {
+            if(getGame().useVectorMove()) {
+                return Compute.getFinalPosition(getStartCoords(), getFinalVectors());
+            }
             return getLastStep().getPosition();
         }
         return getEntity().getPosition();

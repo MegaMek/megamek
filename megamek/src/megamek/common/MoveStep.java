@@ -375,6 +375,8 @@ public class MoveStep implements Serializable {
                 return "Evade";
             case CONVERT_MODE:
                 return "ConvMode";
+            case THRUST:
+                return "Thrust";
             default:
                 return "???";
         }

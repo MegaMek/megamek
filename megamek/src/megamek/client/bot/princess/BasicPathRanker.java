@@ -52,6 +52,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
@@ -374,7 +375,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
-        int distance = enemy.getPosition().distance(path.getFinalCoords());                
+        int distance = calculateDistance(path, enemy.getPosition());                
         
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
@@ -563,6 +564,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 // don't try to predict their movement.
                 if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()
                         || enemy.isAero()) { //For units that have already moved
+                    int alpha = 1;
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
@@ -1233,6 +1235,16 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazardValue;
     }
 
+    /**
+     * Worker method for the distance calculation between a considered move path and a set of coordinates.
+     * @param path The move path being considered.
+     * @param coords The coordinates being considered.
+     * @return
+     */
+    protected int calculateDistance(MovePath path, Coords coords) {
+        return coords.distance(path.getFinalCoords());
+    }
+    
     /**
      * Simple data structure that holds a separate firing and physical damage number.
      *

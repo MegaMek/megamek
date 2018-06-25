@@ -37,7 +37,7 @@ Spheroid
 </motion_type>
 
 <transporters>
-infantrybay:4.0:1:1:Foot
+infantrybay:4.0:1:1
 asfbay:2.0:2:2
 1stclassquarters:60.0:0
 2ndclassquarters:0.0:0

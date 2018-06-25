@@ -1,6 +1,16 @@
 VERSION HISTORY:
 ----------------
-v0.43.11-RC5-git
+v0.45.0-git
++ Issue #1008: When adding units through Add A Combat Unit dialog adds two instead of one when using enter key
+
+v0.44.0 (2018-06-24 1900 UTC)
++ Data: Dropship infantry bay fixes.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
++ Data: New Sprites
++ Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
++ PR #1003: Fix validation failures from configuring ammo.
+
+v0.43.11-RC5 (2018-06-04 0100 UTC)
 + Data: Adding missing weights for infantry weapons.
 + PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
 + PR #696: Fixes #974: Edge Reroll for Superchargers Breaks Superchargers

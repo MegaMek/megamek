@@ -1291,6 +1291,12 @@ public class TestBattleArmor extends TestEntity {
                     && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
                 continue;
             }
+            
+            // The weight of an anti-personnel weapon in an AP mount or armored glove manipulator doesn't
+            // count toward suit weight limit.
+            if (m.isAPMMounted()) {
+                continue;
+            }
 
             WeaponType wt = (WeaponType) m.getType();
             if (m.isDWPMounted()) {

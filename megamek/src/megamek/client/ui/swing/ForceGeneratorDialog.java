@@ -19,13 +19,18 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
@@ -133,6 +138,7 @@ public class ForceGeneratorDialog extends JDialog {
 				panForce.revalidate();
 			}
 		});
+		forceTree.addMouseListener(mouseListener);
 		
 		panForce = new JPanel(new GridBagLayout());
 		gbc = new GridBagConstraints();
@@ -192,6 +198,34 @@ public class ForceGeneratorDialog extends JDialog {
 				+ ((fd.getRating() == null)?"":"/" + fd.getRating()));
 				
 	}
+	
+	private MouseListener mouseListener = new MouseAdapter() {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            showPopup(e);
+        }
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            showPopup(e);
+        }
+        
+        private void showPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                TreePath path = forceTree.getPathForLocation(e.getX(), e.getY());
+                Object node = path.getLastPathComponent();
+                if (node instanceof ForceDescriptor) {
+                    JPopupMenu menu = new JPopupMenu();
+                    JMenuItem item = new JMenuItem("Export as MUL");
+                    item.addActionListener(ev -> panControls.exportMUL((ForceDescriptor) node));
+                    menu.add(item);
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        }
+	    
+	};
 
     static class ForceTreeModel implements TreeModel {
     	

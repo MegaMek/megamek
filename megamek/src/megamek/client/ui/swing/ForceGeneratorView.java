@@ -854,21 +854,25 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			generateForce();
 			btnExportMUL.setEnabled(true);
 		} else if (ev.getSource() == btnExportMUL) {
-			ArrayList<Entity> list = new ArrayList<>();
-			forceDesc.addAllEntities(list);
-			//Create a fake game so we can write the entities to a file without adding them to the real game.
-			Game game = new Game();
-			//Add a player to prevent complaining in the log file
-			Player p = new Player(1, "Observer");
-			game.addPlayer(1, p);
-			game.setOptions(clientGui.getClient().getGame().getOptions());
-			list.stream().forEach(en -> {
-				en.setOwner(p);
-				game.addEntity(en);
-			});
-			clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
+			exportMUL(forceDesc);
 		}
 	}
+
+    void exportMUL(ForceDescriptor fd) {
+        ArrayList<Entity> list = new ArrayList<>();
+        fd.addAllEntities(list);
+        //Create a fake game so we can write the entities to a file without adding them to the real game.
+        Game game = new Game();
+        //Add a player to prevent complaining in the log file
+        Player p = new Player(1, "Observer");
+        game.addPlayer(1, p);
+        game.setOptions(clientGui.getClient().getGame().getOptions());
+        list.stream().forEach(en -> {
+        	en.setOwner(p);
+        	game.addEntity(en);
+        });
+        clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
+    }
 
 	private void setFormation(String esch) {
 		forceDesc.setEschelon(Integer.parseInt(esch.replaceAll("[^0-9]", "")));

@@ -229,15 +229,17 @@ public class ForceNode extends RulesetNode {
 		
 		processSubforces(fd, generate);
 		
-		for (SubforcesNode n : attached) {
-			if (n.matches(fd)) {
-				ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, true);
-				if (subs != null) {
-					for (ForceDescriptor sub : subs) {
-						fd.addAttached(sub);
-					}
-				}
-			}
+		if (fd.shouldGenerateAttachments()) {
+    		for (SubforcesNode n : attached) {
+    			if (n.matches(fd)) {
+    				ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, true);
+    				if (subs != null) {
+    					for (ForceDescriptor sub : subs) {
+    						fd.addAttached(sub);
+    					}
+    				}
+    			}
+    		}
 		}
 		return true;
 	}

@@ -82,6 +82,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 
 	private JComboBox<String> cbExperience;
 	private JComboBox<Integer> cbWeightClass;
+	private JCheckBox chkAttachments;
 	
 	private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>("General",
 			fRec -> fRec.getName(currentYear));
@@ -253,6 +254,13 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridy = y++;
 		add(cbExperience, gbc);
 		cbExperience.addActionListener(this);
+		
+		gbc.gridx = 0;
+		gbc.gridy = y++;
+		gbc.gridwidth = 2;
+		chkAttachments = new JCheckBox("Include support forces");
+		chkAttachments.setSelected(true);
+		add(chkAttachments, gbc);
 		
 		gbc.gridwidth = 4;
 		panGroundRole = new JPanel(new GridBagLayout());
@@ -447,6 +455,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		fd.getFlags().addAll(forceDesc.getFlags());
 		fd.setRating(forceDesc.getRating());
 		fd.setWeightClass(forceDesc.getWeightClass());
+		fd.setAttachments(chkAttachments.isSelected());
 		if (forceDesc.getUnitType() != null) {
 			switch (forceDesc.getUnitType()) {
 			case UnitType.MEK:case UnitType.TANK:

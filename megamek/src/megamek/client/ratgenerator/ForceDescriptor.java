@@ -117,6 +117,7 @@ public class ForceDescriptor {
 	private Entity entity;
 	private List<ValueNode> nameNodes;
 	
+	private boolean generateAttachments;
 	private ForceDescriptor parent;
 	private ArrayList<ForceDescriptor> subforces;
 	private ArrayList<ForceDescriptor> attached;
@@ -1519,6 +1520,15 @@ public class ForceDescriptor {
 	public void setParent(ForceDescriptor parent) {
 		this.parent = parent;
 	}
+	
+	public boolean shouldGenerateAttachments() {
+	    return generateAttachments;
+	}
+	
+	public void setAttachments(boolean attachments) {
+	    generateAttachments = attachments;
+	}
+	
 	public ArrayList<ForceDescriptor> getSubforces() {
 		return subforces;
 	}
@@ -1639,6 +1649,7 @@ public class ForceDescriptor {
 		retVal.flags.addAll(flags);
 		retVal.topLevel = false;
 		retVal.rankSystem = rankSystem;
+		retVal.generateAttachments = generateAttachments;
 		
 		return retVal;
 	}

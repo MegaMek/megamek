@@ -49,11 +49,15 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ratgenerator.TOCNode;
 import megamek.client.ratgenerator.ValueNode;
+import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.UnitType;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Controls to set options for force generator.
@@ -84,7 +88,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	private JComboBox<Integer> cbWeightClass;
 	private JCheckBox chkAttachments;
 	
-	private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>("General",
+	private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>
+	    (Messages.getString("ForceGeneratorDialog.general"),
 			fRec -> fRec.getName(currentYear));
 	
 	private HashMap<String,String> ratingDisplayNames = new HashMap<>();
@@ -140,7 +145,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	}
 	
 	private void initUi() {
-		currentYear = clientGui.getClient().getGame().getOptions().intOption("year");
+		currentYear = clientGui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
 		forceDesc.setYear(currentYear);
 		RATGenerator rg = RATGenerator.getInstance();
 		rg.loadYear(currentYear);
@@ -155,7 +160,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel("Year:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc);
 		txtYear = new JTextField();
 		txtYear.setEditable(true);
 		txtYear.setText(Integer.toString(currentYear));
@@ -165,7 +170,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		txtYear.addFocusListener(this);
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel("Faction:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
 		cbFaction = new JComboBox<>();
 		cbFaction.setRenderer(factionRenderer);
 		gbc.gridx = 1;
@@ -175,7 +180,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel("Subfaction:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc);
 		cbSubfaction = new JComboBox<>();
 		cbSubfaction.setRenderer(factionRenderer);
 		gbc.gridx = 3;
@@ -185,9 +190,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel("Unit Type:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
 		cbUnitType = new JComboBox<Integer>();
-		cbUnitType.setRenderer(new CBRenderer<Integer>("Combined",
+		cbUnitType.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.combined"),
 				ut -> UnitType.getTypeName(ut)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
@@ -196,9 +201,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel("Formation:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc);
 		cbFormation = new JComboBox<>();
-		cbFormation.setRenderer(new CBRenderer<String>("Random", f -> formationDisplayNames.get(f)));
+		cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
+		        f -> formationDisplayNames.get(f)));
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbFormation, gbc);
@@ -206,9 +212,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel("Rating:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
 		cbRating = new JComboBox<>();
-		cbRating.setRenderer(new CBRenderer<String>("Random", r -> ratingDisplayNames.get(r)));
+		cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
+		        r -> ratingDisplayNames.get(r)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbRating, gbc);
@@ -218,7 +225,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridy = y;
 		add(new JLabel("Weight:"), gbc);
 		cbWeightClass = new JComboBox<Integer>();
-		cbWeightClass.setRenderer(new CBRenderer<Integer>("Random",
+		cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
 				wc -> EntityWeightClass.getClassName(wc)));
 		cbWeightClass.addItem(null);
 		cbWeightClass.addItem(EntityWeightClass.WEIGHT_LIGHT);
@@ -243,13 +250,13 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel("Experience:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc);
 		cbExperience = new JComboBox<String>();
-		cbExperience.addItem("Random");
-		cbExperience.addItem("Green");
-		cbExperience.addItem("Regular");
-		cbExperience.addItem("Veteran");
-		cbExperience.addItem("Elite");
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random"));
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green"));
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular"));
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran"));
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite"));
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbExperience, gbc);
@@ -258,7 +265,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridx = 0;
 		gbc.gridy = y++;
 		gbc.gridwidth = 2;
-		chkAttachments = new JCheckBox("Include support forces");
+		chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces"));
 		chkAttachments.setSelected(true);
 		add(chkAttachments, gbc);
 		
@@ -287,9 +294,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		txtDropshipPct = new JTextField("0");
 		txtJumpshipPct = new JTextField("0");
 		txtCargo = new JTextField("0");
-        panTransport.add(new JLabel("Dropship Percentage:"));
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
         panTransport.add(txtDropshipPct, gbc);
-        panTransport.add(new JLabel("Jumpship Percentage:"));
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
         panTransport.add(txtJumpshipPct, gbc);
         // Cargo needs more work to select cargo dropships.
 //        panTransport.add(new JLabel("Cargo Tonnage:"));
@@ -297,10 +304,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
-        panTransport.setBorder(BorderFactory.createTitledBorder("Transport"));
+        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
         add(panTransport, gbc);
 
-		btnGenerate = new JButton("Generate");
+		btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		gbc.gridwidth = 1;
@@ -308,7 +315,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		add(btnGenerate, gbc);
 		btnGenerate.addActionListener(this);
 
-		btnExportMUL = new JButton("Export MUL");
+		btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		gbc.weighty = 1.0;
@@ -319,67 +326,67 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		
-		chkRoleRecon = new JCheckBox("Reconnaisance");
+		chkRoleRecon = createMissionRoleCheck(MissionRole.RECON);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		panGroundRole.add(chkRoleRecon, gbc);
 		
-		chkRoleFireSupport = new JCheckBox("Fire Support");
+		chkRoleFireSupport = createMissionRoleCheck(MissionRole.FIRE_SUPPORT);
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		panGroundRole.add(chkRoleFireSupport, gbc);
 		
-		chkRoleUrban = new JCheckBox("Urban");
+		chkRoleUrban = createMissionRoleCheck(MissionRole.URBAN);
 		gbc.gridx = 2;
 		gbc.gridy = 0;
 		panGroundRole.add(chkRoleUrban, gbc);
 		
-		chkRoleCavalry = new JCheckBox("Cavalry");
+		chkRoleCavalry = createMissionRoleCheck(MissionRole.CAVALRY);
 		gbc.gridx = 3;
 		gbc.gridy = 0;
 		panGroundRole.add(chkRoleCavalry, gbc);
 		
-		chkRoleRaider = new JCheckBox("Raider");
+		chkRoleRaider = createMissionRoleCheck(MissionRole.RAIDER);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		panGroundRole.add(chkRoleRaider, gbc);
 		
-		chkRoleIncindiary = new JCheckBox("Incindiary");
+		chkRoleIncindiary = createMissionRoleCheck(MissionRole.INCENDIARY);
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		panGroundRole.add(chkRoleIncindiary, gbc);
 		
-		chkRoleAntiAircraft = new JCheckBox("Anti-Aircraft");
+		chkRoleAntiAircraft = createMissionRoleCheck(MissionRole.ANTI_AIRCRAFT);
 		gbc.gridx = 2;
 		gbc.gridy = 1;
 		panGroundRole.add(chkRoleAntiAircraft, gbc);
 		
-		chkRoleAntiInfantry = new JCheckBox("Anti-Infantry");
+		chkRoleAntiInfantry = createMissionRoleCheck(MissionRole.ANTI_INFANTRY);
 		gbc.gridx = 3;
 		gbc.gridy = 1;
 		panGroundRole.add(chkRoleAntiInfantry, gbc);
 		
-		chkRoleArtillery = new JCheckBox("Artillery");
+		chkRoleArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		panGroundRole.add(chkRoleArtillery, gbc);
 		
-		chkRoleMissileArtillery = new JCheckBox("Missile Artillery");
+		chkRoleMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		panGroundRole.add(chkRoleMissileArtillery, gbc);
 		
-		chkRoleInfantrySupport = new JCheckBox("Infantry Support");
+		chkRoleInfantrySupport = createMissionRoleCheck(MissionRole.INF_SUPPORT);
 		gbc.gridx = 2;
 		gbc.gridy = 2;
 		panGroundRole.add(chkRoleInfantrySupport, gbc);
 		
-		chkRoleTransport = new JCheckBox("Transport");
+		chkRoleTransport = createMissionRoleCheck(MissionRole.CARGO);
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		panGroundRole.add(chkRoleTransport, gbc);
 		
-		chkRoleEngineer = new JCheckBox("Engineer");
+		chkRoleEngineer = createMissionRoleCheck(MissionRole.ENGINEER);
 		gbc.gridx = 1;
 		gbc.gridy = 3;
 		panGroundRole.add(chkRoleEngineer, gbc);
@@ -387,17 +394,17 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		
-		chkRoleFieldGun = new JCheckBox("Field Gun");
+		chkRoleFieldGun = createMissionRoleCheck(MissionRole.FIELD_GUN);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		panInfRole.add(chkRoleFieldGun, gbc);
 		
-		chkRoleFieldArtillery = new JCheckBox("Field Artillery");
+		chkRoleFieldArtillery = createMissionRoleCheck(MissionRole.ARTILLERY);
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		panInfRole.add(chkRoleFieldArtillery, gbc);
 		
-		chkRoleFieldMissileArtillery = new JCheckBox("Missile Artillery");
+		chkRoleFieldMissileArtillery = createMissionRoleCheck(MissionRole.MISSILE_ARTILLERY);
 		gbc.gridx = 2;
 		gbc.gridy = 0;
 		panInfRole.add(chkRoleFieldMissileArtillery, gbc);
@@ -405,42 +412,49 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		
-		chkRoleAirRecon = new JCheckBox("Recon");
+		chkRoleAirRecon = createMissionRoleCheck(MissionRole.RECON);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		panAirRole.add(chkRoleAirRecon, gbc);
 		
-		chkRoleGroundSupport = new JCheckBox("Ground Support");
+		chkRoleGroundSupport = createMissionRoleCheck(MissionRole.GROUND_SUPPORT);
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		panAirRole.add(chkRoleGroundSupport, gbc);
 		
-		chkRoleInterceptor = new JCheckBox("Interceptor");
+		chkRoleInterceptor = createMissionRoleCheck(MissionRole.INTERCEPTOR);
 		gbc.gridx = 2;
 		gbc.gridy = 0;
 		panAirRole.add(chkRoleInterceptor, gbc);
 				
-		chkRoleEscort = new JCheckBox("Escort");
+		chkRoleEscort = createMissionRoleCheck(MissionRole.ESCORT);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		panAirRole.add(chkRoleEscort, gbc);
 				
-		chkRoleBomber = new JCheckBox("Bomber");
+		chkRoleBomber = createMissionRoleCheck(MissionRole.BOMBER);
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		panAirRole.add(chkRoleBomber, gbc);
 				
-		chkRoleAssault = new JCheckBox("Dropship Assault");
+		chkRoleAssault = createMissionRoleCheck(MissionRole.ASSAULT);
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		panAirRole.add(chkRoleAssault, gbc);
 		
-		chkRoleAirTransport = new JCheckBox("Transport");
+		chkRoleAirTransport = createMissionRoleCheck(MissionRole.CARGO);
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		panAirRole.add(chkRoleAirTransport, gbc);
 		
 		refreshFactions();
+	}
+	
+	private JCheckBox createMissionRoleCheck(MissionRole role) {
+	    String key = "MissionRole." + role.toString().toLowerCase();
+        JCheckBox chk = new JCheckBox(Messages.getString(key));
+        chk.setToolTipText(Messages.getString(key + ".tooltip"));
+        return chk;
 	}
 	
 	private void generateForce() {
@@ -548,7 +562,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
             txtCargo.setText("0");
         }
 		
-		ProgressMonitor monitor = new ProgressMonitor(this, "Generate Formation", "", 0, 100);
+		ProgressMonitor monitor = new ProgressMonitor(this, Messages.getString("ForceGeneratorDialog.generateFormation"), "", 0, 100);
 		monitor.setProgress(0);
 		GenerateTask task = new GenerateTask(fd);
 		task.addPropertyChangeListener(e -> {
@@ -631,7 +645,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 					}
 				}
 			} else {
-				System.out.println("No unit type node found.");
+			    DefaultMmLogger.getInstance().log(getClass(),  "refreshUnitTypes()",
+			            LogLevel.WARNING, "No unit type node found.");
 				cbUnitType.addItem(null);
 			}
 		} else {
@@ -693,10 +708,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 					} while (fn == null && rs != null);
 					String formName = (fn != null)?fn.getEschelonName() : formation;
 					if (formation.endsWith("+")) {
-						formName = "Reinforced " + formName;
+						formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
 					}
 					if (formation.endsWith("-")) {
-						formName = "Understrength " + formName;
+						formName = Messages.getString("ForceGeneratorDialog.understrength") + formName;
 					}
 					formationDisplayNames.put(formation, formName);
 					cbFormation.addItem(formation);
@@ -706,7 +721,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 				}
 			}
 		} else {
-			System.out.println("No eschelon node found.");
+		    DefaultMmLogger.getInstance().log(getClass(), "refreshFormations()",
+		            LogLevel.WARNING, "No eschelon node found.");
 		}
 		
 		if (hasCurrent) {
@@ -750,7 +766,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 					}
 				}
 			} else {
-				System.out.println("No rating found.");
+			    DefaultMmLogger.getInstance().log(getClass(), "refreshRatings()",
+			            LogLevel.WARNING, "No rating found.");
 			}
 		}
 		
@@ -922,7 +939,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		
 		private static final long serialVersionUID = 4895258839502183158L;
 
-		private String nullVal = "Default";
+		private String nullVal = Messages.getString("ForceGeneratorDialog.default");
 		private Function<T,String> toString;
 		
 		public CBRenderer(String nullVal) {
@@ -1056,7 +1073,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
                 StringBuilder name = new StringBuilder();
                 String uname = "";
                 if(fd.getCo() == null) {
-                    name.append("<font color='red'>No Crew</font>");
+                    name.append("<font color='red'>")
+                    .append(Messages.getString("ForceGeneratorDialog.noCrew"))
+                    .append("</font>");
                 } else {
                     name.append(fd.getCo().getName());
                     name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting()).append(")");

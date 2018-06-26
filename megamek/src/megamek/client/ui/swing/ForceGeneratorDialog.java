@@ -45,6 +45,7 @@ import megamek.client.RandomSkillsGenerator;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
+import megamek.client.ui.Messages;
 import megamek.common.UnitType;
 
 /**
@@ -70,7 +71,7 @@ public class ForceGeneratorDialog extends JDialog {
 	ClientGUI clientGui;
 	
 	public ForceGeneratorDialog(ClientGUI gui) {
-		super(gui.frame, "Force Generator", true);
+		super(gui.frame, Messages.getString("ForceGeneratorDialog.title"), true);
 		clientGui = gui;
 		initUi();
 	}
@@ -87,7 +88,7 @@ public class ForceGeneratorDialog extends JDialog {
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panForce.add(new JLabel("Organization:"), gbc);
+		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
 		lblOrganization = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 0;
@@ -95,7 +96,7 @@ public class ForceGeneratorDialog extends JDialog {
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		panForce.add(new JLabel("Faction:"), gbc);
+		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
 		lblFaction = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -103,7 +104,7 @@ public class ForceGeneratorDialog extends JDialog {
 
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		panForce.add(new JLabel("Rating:"), gbc);
+		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
 		lblRating = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 2;
@@ -148,7 +149,7 @@ public class ForceGeneratorDialog extends JDialog {
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panForce.add(new JLabel("Organization:"), gbc);
+		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
 		lblOrganization = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 0;
@@ -156,7 +157,7 @@ public class ForceGeneratorDialog extends JDialog {
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		panForce.add(new JLabel("Faction:"), gbc);
+		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
 		lblFaction = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 1;
@@ -164,7 +165,7 @@ public class ForceGeneratorDialog extends JDialog {
 
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		panForce.add(new JLabel("Rating:"), gbc);
+		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
 		lblRating = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 2;
@@ -334,7 +335,9 @@ public class ForceGeneratorDialog extends JDialog {
                 StringBuilder name = new StringBuilder();
                 String uname = "";
                 if(fd.getCo() == null) {
-                    name.append("<font color='red'>No Crew</font>");
+                    name.append("<font color='red'>")
+                        .append(Messages.getString("ForceGeneratorDialog.noCrew"))
+                        .append("</font>");
                 } else {
                     name.append(fd.getCo().getName());
                     name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting()).append(")");

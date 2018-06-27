@@ -163,6 +163,11 @@ public class RATGenerator {
 	}
 
 	public AvailabilityRating findModelAvailabilityRecord(int era, String unit, FactionRecord fRec) {
+	    if (null == models.get(unit)) {
+	        DefaultMmLogger.getInstance().log(getClass(), "findModelAvailablilityRecord(int, String FactionRecord)",
+	                LogLevel.ERROR, "Trying to find record for unknown model " + unit);
+	        return null;
+	    }
 		if (fRec == null || models.get(unit).factionIsExcluded(fRec)) {
 			return null;
 		}

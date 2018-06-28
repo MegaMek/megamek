@@ -80,7 +80,8 @@ public class ForceDescriptor {
 	};
 	
 	public static final String[] ROMAN = {
-		"I", "II", "III", "IV", "V", "VI", "VIII", "IX", "X"
+	        "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+	        "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"
 	};
 	
 	private int index;

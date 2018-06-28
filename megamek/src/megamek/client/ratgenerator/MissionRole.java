@@ -120,7 +120,10 @@ public enum MissionRole {
 			return unitType == UnitType.WARSHIP;
 			
 		case OMNI:
-		    return unitType <= UnitType.TANK;
+		    return (unitType == UnitType.MEK)
+		            || (unitType == UnitType.AERO)
+		            || (unitType == UnitType.TANK);
+		    // This should apply to fixed-wing support also, but that cannot be distinguished from conventional fighters here.
 		    
 		case MECHANIZED_BA:
 		case MAG_CLAMP:

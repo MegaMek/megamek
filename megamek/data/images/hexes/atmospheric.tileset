@@ -74,9 +74,6 @@ super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
 super * "woods:1" "snow" "snow/snow_lf.png"
 super * "woods:2" "snow" "snow/snow_hf.png"
 
-super * "woods:1" "volcano" "snow/snow_lf.png"
-super * "woods:2" "volcano" "snow/snow_hf.png"
-
 super * "woods:1;fluff:12" "" "boring/orchard.png"
 super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
 #hf2.gif has been taken out because it looks too much like ultra heavy

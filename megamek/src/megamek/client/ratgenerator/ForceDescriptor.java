@@ -449,7 +449,8 @@ public class ForceDescriptor {
         List<ModelRecord> baseUnitList = null;
         if (!baseSubs.isEmpty()) {
             baseUnitList = generateFormation(baseSubs, networkMask, numGroups);
-        } else {
+        }
+        if (null == baseUnitList) {
             generateLance(baseSubs);
             baseUnitList = baseSubs.stream().map(ForceDescriptor::getModelName)
                     .map(m -> RATGenerator.getInstance().getModelRecord(m))
@@ -785,7 +786,7 @@ public class ForceDescriptor {
 		};
 		
 		DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.DEBUG, 
-		        "Could not find unit for " + unitType);
+		        "Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
 		return null;
 	}
 	

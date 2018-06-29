@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,7 +26,13 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -33,19 +40,25 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import megamek.client.Client;
 import megamek.client.RandomSkillsGenerator;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.IGame.Phase;
 import megamek.common.UnitType;
 
 /**
@@ -67,6 +80,10 @@ public class ForceGeneratorDialog extends JDialog {
 	private JLabel lblRating;
 	private JScrollPane paneForceTree;
 	private JTree forceTree;
+	
+	private JTable tblChosen;
+	private ChosenEntityModel modelChosen;
+	private JComboBox<String> cbPlayer;
 	
 	ClientGUI clientGui;
 	
@@ -181,13 +198,72 @@ public class ForceGeneratorDialog extends JDialog {
 		paneForceTree.setPreferredSize(new Dimension(600, 800));
 		paneForceTree.setMinimumSize(new Dimension(600, 800));
 		panForce.add(paneForceTree, gbc);
+		
+		modelChosen = new ChosenEntityModel();
+		tblChosen = new JTable(modelChosen);
+		gbc.gridy++;
+		tblChosen.setIntercellSpacing(new Dimension(0, 0));
+		tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        JScrollPane scroll = new JScrollPane(tblChosen);
+        scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
 
-		JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panControls, panForce);
+		JSplitPane panLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panControls, scroll);
+		panLeft.setOneTouchExpandable(true);
+		panLeft.setResizeWeight(1.0);
+		JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panLeft, panForce);
 		panSplit.setOneTouchExpandable(true);
 		panSplit.setResizeWeight(1.0);
 
-		add(panSplit);
+		setLayout(new BorderLayout());
+		add(panSplit, BorderLayout.CENTER);
+		
+		JPanel panButtons = new JPanel();
+        JButton button = new JButton(Messages.getString("Okay"));
+        button.addActionListener(ev -> {
+            addChosenUnits();
+            modelChosen.clearData();
+            setVisible(false);   
+        });
+        panButtons.add(button);
+        button = new JButton(Messages.getString("Cancel"));
+        button.addActionListener(ev -> setVisible(false));
+        panButtons.add(button);
+        panButtons.add(new JLabel(Messages.getString("RandomArmyDialog.Player")));
+        cbPlayer = new JComboBox<>();
+        panButtons.add(cbPlayer);
+        
+        add(panButtons, BorderLayout.SOUTH);
+        
 		pack();
+	}
+	
+	/**
+	 * Adds the chosen units to the game
+	 */
+	private void addChosenUnits() {
+	    List<Entity> entities = new ArrayList<Entity>(
+	            modelChosen.allEntities().size());
+	    Client c = null;
+	    if (cbPlayer.getSelectedIndex() > 0) {
+	        String name = (String) cbPlayer.getSelectedItem();
+	        c = clientGui.getBots().get(name);
+	    }
+	    if (null == c) {
+	        c = clientGui.getClient();
+	    }
+        for (Entity e : modelChosen.allEntities()) {
+            e.setOwner(c.getLocalPlayer());
+            if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
+                e.setDeployRound(c.getGame().getRoundCount()+1);
+                e.setGame(c.getGame());
+                // Set these to true, otherwise units reinforced in
+                // the movement turn are considered selectable
+                e.setDone(true);
+                e.setUnloaded(true);
+            }
+            entities.add(e);
+        }
+        c.sendAddEntity(entities);
 	}
 	
 	private void setGeneratedForce(ForceDescriptor fd) {
@@ -217,11 +293,18 @@ public class ForceGeneratorDialog extends JDialog {
                 TreePath path = forceTree.getPathForLocation(e.getX(), e.getY());
                 Object node = path.getLastPathComponent();
                 if (node instanceof ForceDescriptor) {
+                    final ForceDescriptor fd = (ForceDescriptor) node;
                     JPopupMenu menu = new JPopupMenu();
-                    JMenuItem item = new JMenuItem("Export as MUL");
-                    item.addActionListener(ev -> panControls.exportMUL((ForceDescriptor) node));
+                    
+                    JMenuItem item = new JMenuItem("Add to game");
+                    item.addActionListener(ev -> modelChosen.addEntities(fd));
+                    menu.add(item);
+                    
+                    item = new JMenuItem("Export as MUL");
+                    item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
                     menu.show(e.getComponent(), e.getX(), e.getY());
+                    
                 }
             }
         }
@@ -366,5 +449,91 @@ public class ForceGeneratorDialog extends JDialog {
             }
             return this;
         }
-    }    
+    }
+    
+    private static class ChosenEntityModel extends AbstractTableModel {
+        
+        private static final long serialVersionUID = 779497693159590878L;
+        
+        public static final int COL_ENTITY = 0;
+        public static final int COL_BV     = 1;
+        public static final int COL_MOVE   = 2;
+        public static final int NUM_COLS   = 3;
+        
+        private final List<Entity> entities = new ArrayList<>();
+        private Set<String> entityIds = new HashSet<>();
+        
+        public void addEntity(Entity en) {
+            if (!entityIds.contains(en.getExternalIdAsString())) {
+                entities.add(en);
+                entityIds.add(en.getExternalIdAsString());
+            }
+            fireTableDataChanged();
+        }
+        
+        public void clearData() {
+            entityIds.clear();
+            entities.clear();
+            fireTableDataChanged();
+        }
+
+        public void removeEntity(Entity en) {
+            entityIds.remove(en.getExternalIdAsString());
+            entities.remove(en);
+            fireTableDataChanged();
+        }
+        
+        public void addEntities(ForceDescriptor fd) {
+            if (fd.isElement()) {
+                if (fd.getEntity() != null) {
+                    addEntity(fd.getEntity());
+                }
+            }
+            fd.getSubforces().stream().forEach(sf -> addEntities(sf));
+            fd.getAttached().stream().forEach(sf -> addEntities(sf));
+            
+        }
+        
+        public List<Entity> allEntities() {
+            return entities;
+        }
+
+        @Override
+        public int getRowCount() {
+            return entities.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return NUM_COLS;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            final Entity en = entities.get(rowIndex);
+            switch (columnIndex) {
+                case COL_ENTITY:
+                    return en.getShortNameRaw();
+                case COL_BV:
+                    return en.calculateBattleValue();
+                case COL_MOVE:
+                    return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getJumpMP();
+            }
+            return "";
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case (COL_ENTITY):
+                    return Messages.getString("RandomArmyDialog.colUnit");
+                case (COL_MOVE):
+                    return Messages.getString("RandomArmyDialog.colMove");
+                case (COL_BV):
+                    return Messages.getString("RandomArmyDialog.colBV");
+            }
+            return "??";
+        }
+
+    }
 }

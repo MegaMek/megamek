@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import megamek.common.Compute;
@@ -797,6 +798,7 @@ public class ForceDescriptor {
 				try {
 					entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
 					entity.setCrew(getCo().createCrew(entity.defaultCrewType()));
+					entity.setExternalIdAsString(UUID.randomUUID().toString());
 				} catch (EntityLoadingException ex) {
                     DefaultMmLogger.getInstance().log(getClass(),
                             "loadEntities(Ruleset#ProgressListener, double)", LogLevel.ERROR,

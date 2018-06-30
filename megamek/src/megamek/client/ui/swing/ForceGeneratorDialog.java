@@ -292,6 +292,28 @@ public class ForceGeneratorDialog extends JDialog {
 	                }
 	            }
 	        }
+	    } else if (fd.getFlags().contains("c3i")) {
+	        String netId = null;
+	        int nodes = 0;
+	        for (ForceDescriptor sf : fd.getSubforces()) {
+	            if (modelChosen.hasEntity(sf.getEntity())
+	                    && sf.getEntity().hasC3i()) {
+	                sf.getEntity().setC3UUID();
+	                if (null == netId) {
+	                    netId = sf.getEntity().getC3UUIDAsString();
+	                    nodes++;
+	                } else {
+	                    int pos = sf.getEntity().getFreeC3iUUID();
+	                    if (pos >= 0) {
+	                        sf.getEntity().setC3iNextUUIDAsString(pos, netId);
+	                        nodes++;
+	                    }
+	                }
+	            }
+	            if (nodes >= Entity.MAX_C3i_NODES) {
+	                break;
+	            }
+	        }
 	    }
         fd.getSubforces().forEach(sf -> configureNetworks(sf));
         fd.getAttached().forEach(sf -> configureNetworks(sf));

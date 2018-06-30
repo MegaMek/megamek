@@ -346,6 +346,7 @@ public class ForceDescriptor {
     	    int c3m = 0;
     	    int c3s = 0;
     	    int c3i = 0;
+    	    int nova = 0;
     	    for (MechSummary ms : unitList) {
     	        ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
     	        int mask = mRec == null? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
@@ -358,6 +359,9 @@ public class ForceDescriptor {
                 }
                 if ((mask & ModelRecord.NETWORK_C3I) != 0) {
                     c3i++;
+                }
+                if ((mask & ModelRecord.NETWORK_NOVA) != 0) {
+                    nova++;
                 }
     	    }
     	    // Any lance with a C3 master should have three slave units (or the remainder of the unit, if smaller)
@@ -375,6 +379,9 @@ public class ForceDescriptor {
     	        } else if (c3i > Compute.randomInt(5)) {
     	            // Each C3i gives a 1/5 chance of a full C3i network. A network is still useful if not full.
     	            networkMask = ModelRecord.NETWORK_C3I;
+    	        } else if (nova > 0) {
+    	            // The Nova CEWS is specialized enough to add a complete network if any is present.
+    	            networkMask = ModelRecord.NETWORK_NOVA;
     	        }
     	    }
     	    if (networkMask != ModelRecord.NETWORK_NONE) {
@@ -385,6 +392,8 @@ public class ForceDescriptor {
     	            unitList = netList;
     	            if (networkMask == ModelRecord.NETWORK_C3I) {
     	                flags.add("c3i");
+    	            } else if (networkMask == ModelRecord.NETWORK_NOVA) {
+    	                flags.add("novacews");
     	            } else {
     	                flags.add("c3");
     	            }

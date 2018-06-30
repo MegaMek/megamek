@@ -380,6 +380,7 @@ public class Ruleset {
             DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
                     "Could not locate force generator faction rules."); //$NON-NLS-1$
 			initializing = false;
+			return;
 		}
 		
 		loadConstants(new File(dir, CONSTANTS_FILE));

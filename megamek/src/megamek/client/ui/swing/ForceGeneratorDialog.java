@@ -220,6 +220,10 @@ public class ForceGeneratorDialog extends JDialog {
 		JPanel panButtons = new JPanel();
         JButton button = new JButton(Messages.getString("Okay"));
         button.addActionListener(ev -> {
+            if ((null != forceTree.getModel().getRoot())
+                    && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
+                configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
+            }
             addChosenUnits();
             modelChosen.clearData();
             setVisible(false);   
@@ -264,6 +268,33 @@ public class ForceGeneratorDialog extends JDialog {
             entities.add(e);
         }
         c.sendAddEntity(entities);
+	}
+	
+	private void configureNetworks(ForceDescriptor fd) {
+	    if (fd.getFlags().contains("c3")) {
+	        Entity master = fd.getSubforces().stream().map(ForceDescriptor::getEntity)
+	                .filter(en -> modelChosen.hasEntity(en)
+	                        && (en.hasC3M() || en.hasC3MM()))
+	                .findFirst().orElse(null);
+	        if (null != master) {
+	            master.setC3UUID();
+	            int c3s = 0;
+	            for (ForceDescriptor sf : fd.getSubforces()) {
+	                if (modelChosen.hasEntity(sf.getEntity())
+	                        && !sf.getEntity().getExternalIdAsString().equals(master.getExternalIdAsString())
+	                        && sf.getEntity().hasC3S()) {
+	                    sf.getEntity().setC3UUID();
+	                    sf.getEntity().setC3MasterIsUUIDAsString(master.getC3UUIDAsString());
+	                    c3s++;
+	                    if (c3s == 3) {
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	    }
+        fd.getSubforces().forEach(sf -> configureNetworks(sf));
+        fd.getAttached().forEach(sf -> configureNetworks(sf));
 	}
 	
 	private void setGeneratedForce(ForceDescriptor fd) {
@@ -462,6 +493,10 @@ public class ForceGeneratorDialog extends JDialog {
         
         private final List<Entity> entities = new ArrayList<>();
         private Set<String> entityIds = new HashSet<>();
+        
+        public boolean hasEntity(Entity en) {
+            return (null != en) && entityIds.contains(en.getExternalIdAsString());
+        }
         
         public void addEntity(Entity en) {
             if (!entityIds.contains(en.getExternalIdAsString())) {

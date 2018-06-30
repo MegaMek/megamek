@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
-v0.43.12-RC6
+v0.45.0-git
++ Issue #1008: When adding units through Add A Combat Unit dialog adds two instead of one when using enter key
+
+v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.
 + PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
 + Data: New Sprites

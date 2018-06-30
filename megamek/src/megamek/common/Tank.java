@@ -4052,4 +4052,96 @@ public class Tank extends Entity {
     public int getSpriteDrawPriority() {
         return 4;
     }
+    
+    //Tractors and Trailers
+    
+    /**
+     * A trailer attached directly to this entity, if present
+     * You can only have one hitch, so this will be 0 or 1
+     */
+    private Entity connectedTrailer;
+    
+    /**
+     * Returns the trailer connected directly to this entity
+     * 
+     * @return
+     */
+    public Entity getConnectedTrailer() {
+        return connectedTrailer;
+    }
+    
+    /**
+     * Attaches a trailer directly to this entity's hitch
+     * 
+     * @param tr - the trailer to be attached
+     */
+    public void attachTrailer(Entity tr) {
+        connectedTrailer = tr;
+    }
+    
+    /**
+     * Detaches a trailer from this entity's hitch
+     */
+    public void detachTrailer() {
+        connectedTrailer = null;
+    }
+    
+    /**
+     * A list of all the trailers towed by this entity,
+     * including those connected to towed trailers
+     * 
+     * Use this for the tractor/engine in a train SV or road train
+     */
+    private ArrayList<Entity> towedTrailers;
+    
+    /**
+     * Adds a trailer to this train
+     */
+    public void addTrailer(Entity tr) {
+        towedTrailers.add(tr);
+    }
+    
+    /**
+     * Removes a trailer from this train
+     */
+    public void removeTrailer(Entity tr) {
+        towedTrailers.remove(tr);
+    }
+    
+    /**
+     * Used to determine if this vehicle can tow trailers
+     * 
+     * @return
+     */
+    public boolean canTowTrailers() {
+        if (hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Used to determine if this vehicle can be towed by a tractor
+     * 
+     * @return
+     */
+    public boolean isTrailer() {
+        if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Used to determine if this vehicle can be the engine/tractor 
+     * for a bunch of trailers
+     * 
+     * @return
+     */
+    public boolean isTractor() {
+        if (canTowTrailers() && !isTrailer()) {
+            return true;
+        }
+        return false;
+    }
 }

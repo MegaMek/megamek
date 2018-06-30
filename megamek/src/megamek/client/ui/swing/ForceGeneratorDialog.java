@@ -292,7 +292,9 @@ public class ForceGeneratorDialog extends JDialog {
 	                }
 	            }
 	        }
-	    } else if (fd.getFlags().contains("c3i")) {
+	    } else {
+            // Even if we haven't reworked this into a full C3i network, we can still connect
+            // any C3i units that happen to be present.
 	        String netId = null;
 	        int nodes = 0;
 	        for (ForceDescriptor sf : fd.getSubforces()) {

@@ -895,11 +895,67 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
         game.setOptions(clientGui.getClient().getGame().getOptions());
         list.stream().forEach(en -> {
         	en.setOwner(p);
+        	// If we don't set the id, the first unit will be left at -1, which in most cases is interpreted
+        	// as no entity
+        	en.setId(game.getNextEntityId());
         	game.addEntity(en);
         });
+        configureNetworks(fd);
         clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
     }
 
+    /**
+     * Searches recursively for nodes that are flagged with C3 networks and configures them.
+     * 
+     * @param fd
+     */
+    private void configureNetworks(ForceDescriptor fd) {
+        if (fd.getFlags().contains("c3")) {
+            Entity master = fd.getSubforces().stream().map(ForceDescriptor::getEntity)
+                    .filter(en -> (null != en)
+                            && (en.hasC3M() || en.hasC3MM()))
+                    .findFirst().orElse(null);
+            if (null != master) {
+                int c3s = 0;
+                for (ForceDescriptor sf : fd.getSubforces()) {
+                    if ((null != sf.getEntity())
+                            && (sf.getEntity().getId() != master.getId())
+                            && sf.getEntity().hasC3S()) {
+                        sf.getEntity().setC3Master(master, false);
+                        c3s++;
+                        if (c3s == 3) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            // Even if we haven't reworked this into a full C3i network, we can still connect
+            // any C3i units that happen to be present.
+            Entity first = null;
+            int nodes = 0;
+            for (ForceDescriptor sf : fd.getSubforces()) {
+                if ((null != sf.getEntity())
+                        && sf.getEntity().hasC3i()) {
+                    sf.getEntity().setC3UUID();
+                    if (null == first) {
+                        sf.getEntity().setC3NetIdSelf();
+                        first = sf.getEntity();
+                        nodes++;
+                    } else {
+                        sf.getEntity().setC3NetId(first);
+                        nodes++;
+                    }
+                }
+                if (nodes >= Entity.MAX_C3i_NODES) {
+                    break;
+                }
+            }
+        }
+        fd.getSubforces().forEach(sf -> configureNetworks(sf));
+        fd.getAttached().forEach(sf -> configureNetworks(sf));
+    }
+    
 	private void setFormation(String esch) {
 		forceDesc.setEschelon(Integer.parseInt(esch.replaceAll("[^0-9]", "")));
 		forceDesc.setAugmented(esch.contains("^"));

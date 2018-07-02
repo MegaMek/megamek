@@ -4144,4 +4144,27 @@ public class Tank extends Entity {
         }
         return false;
     }
+    
+    /**
+     * Used to determine if this vehicle is currently being towed by another
+     */
+    private boolean isTowed = false;
+
+    /**
+     * Returns the towed status of this entity
+     * 
+     * @return
+     */
+    public boolean getTowed() {
+        return isTowed;
+    }
+    
+    /**
+     * Change the towed status of this entity
+     * 
+     * @param b - is the entity being towed or not?
+     */
+    public void setTowed(boolean b) {
+        isTowed = b;
+    }
 }

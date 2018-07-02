@@ -3905,6 +3905,10 @@ public class Compute {
      * but not necessarily LoS
      */
     public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
+        //Visual range on a space map actually involves sensors
+        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+            return inFiringSolutionRange(game, null, ae, target);
+        }
         return inVisualRange(game, null, ae, target);
     }
     
@@ -3948,122 +3952,7 @@ public class Compute {
         if (los == null) {
             los = LosEffects.calculateLos(game, ae.getId(), target);
         }
-        int visualRange = getVisualRange(game, ae, los, teIlluminated);
-        
-        //If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
-        //Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
-        //sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
-        //These rules will make their own return and ignore all the atmospheric rules that follow, though LOS will still
-        //apply for sensor shadows, asteroids and that sort of thing.
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-            //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
-            if (ae.getActiveSensor() == null) {
-                return false;
-            }
-            Coords targetPos = target.getPosition();
-            int distance = ae.getPosition().distance(targetPos);
-            int roll = Compute.d6(2);
-            int tn = ae.getCrew().getPiloting();
-            int autoVisualRange = 1;
-            int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
-            
-            if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
-                Aero aero = (Aero) ae;
-                //Account for sensor damage
-                if (aero.isAeroSensorDestroyed()) {
-                    return false;
-                } else {
-                    tn += aero.getSensorHits();
-                }
-            }
-            
-            //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
-            if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-                autoVisualRange = Sensor.ASF_OPTICAL_AUTOSPOT_RANGE;
-            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-                autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-            } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-                autoVisualRange = Sensor.LC_OPTICAL_AUTOSPOT_RANGE;
-            }
-            visualRange = autoVisualRange;
-            
-            if (distance <= autoVisualRange) {
-                return true;
-            }
-            
-            if (distance > outOfVisualRange) {
-                return false;
-            }
-            
-            //Apply Sensor Geek SPA, if present
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
-                tn -= 2;
-            }
-            
-            //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
-            tn += (distance / autoVisualRange);
-            
-            // Now, apply ECM/ECCM effects
-            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
-                if (!ae.isLargeCraft()) {
-                    ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
-                }
-                ecm = Math.min(4, ecm);
-                int eccm = 0;
-                if (ae.isLargeCraft()) {
-                    eccm = ((Aero) ae).getECCMBonus();
-                }
-                if (ecm > 0) {
-                    tn += ecm;
-                    if (eccm > 0) {
-                        tn -= (Math.min(ecm, eccm));
-                    }
-                }
-            }
-            
-            // Apply large craft sensor shadows
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
-                    && game.getBoard().inSpace() && target.getTargetType() == Targetable.TYPE_ENTITY) {
-                Entity te = (Entity) target;
-                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                        tn ++;
-                        break;
-                    }
-                }
-                for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
-                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                        tn ++;
-                        break;
-                    }
-                }
-            }
-            
-            //Apply modifiers for attacker's equipment
-            //-2 for a working Large NCSS
-            if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
-                tn -= 2;
-            }
-            //-1 for a working Small NCSS
-            if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
-                tn -= 1;
-            }
-            //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
-            if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
-                    || ae.hasBAP(false)) {
-                tn -= 2;
-            }
-            
-            //Now, determine if we've detected the target this round
-            if (roll >= tn) {
-                return true;
-            }
-            return false;
-        }
+        int visualRange = getVisualRange(game, ae, los, teIlluminated);        
 
         //Check for factors that only apply to an entity target
         Coords targetPos = target.getPosition();
@@ -4108,6 +3997,149 @@ public class Compute {
         distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
         return distance <= visualRange;
 
+    }
+    
+    /**
+     *If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
+     *Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
+     *sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
+     * This requires line of sight effects to determine if there are
+     * certain intervening obstructions, like sensor shadows, asteroids and that sort of thing, that can reduce visual 
+     * range.  Since repeated LoSEffects computations can be expensive, it is
+     * possible to pass in the LosEffects, since they are commonly already
+     * computed when this method is called.
+     * 
+     * @param game
+     * @param los
+     * @param ae
+     * @param target
+     * @return
+     */
+    
+    public static boolean inFiringSolutionRange(IGame game, LosEffects los, Entity ae,
+            Targetable target) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+            if (te.isOffBoard()) {
+                return false;
+            }
+        }
+
+        // if either does not have a position then return false
+        if ((ae.getPosition() == null) || (target.getPosition() == null)) {
+            return false;
+        }
+
+        // check visual range based on planetary conditions
+        if (los == null) {
+            los = LosEffects.calculateLos(game, ae.getId(), target);
+        }
+        int visualRange = getVisualRange(game, ae, los, false);
+    
+        //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
+        if (ae.getActiveSensor() == null) {
+            return false;
+        }
+        Coords targetPos = target.getPosition();
+        int distance = ae.getPosition().distance(targetPos);
+        int roll = Compute.d6(2);
+        int tn = ae.getCrew().getPiloting();
+        int autoVisualRange = 1;
+        int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
+        
+        if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+            Aero aero = (Aero) ae;
+            //Account for sensor damage
+            if (aero.isAeroSensorDestroyed()) {
+                return false;
+            } else {
+                tn += aero.getSensorHits();
+            }
+        }
+        
+        //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
+        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+            autoVisualRange = Sensor.ASF_OPTICAL_AUTOSPOT_RANGE;
+        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+            autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
+        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+            autoVisualRange = Sensor.LC_OPTICAL_AUTOSPOT_RANGE;
+        }
+        visualRange = autoVisualRange;
+        
+        if (distance <= autoVisualRange) {
+            return true;
+        }
+        
+        if (distance > outOfVisualRange) {
+            return false;
+        }
+        
+        //Apply Sensor Geek SPA, if present
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+            tn -= 2;
+        }
+        
+        //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
+        tn += (distance / autoVisualRange);
+        
+        // Now, apply ECM/ECCM effects
+        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
+            if (!ae.isLargeCraft()) {
+                ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
+            }
+            ecm = Math.min(4, ecm);
+            int eccm = 0;
+            if (ae.isLargeCraft()) {
+                eccm = ((Aero) ae).getECCMBonus();
+            }
+            if (ecm > 0) {
+                tn += ecm;
+                if (eccm > 0) {
+                    tn -= (Math.min(ecm, eccm));
+                }
+            }
+        }
+        
+        // Apply large craft sensor shadows
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
+                && game.getBoard().inSpace() && target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+            for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
+                if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                    tn ++;
+                    break;
+                }
+            }
+            for (Entity en : game.getEntitiesVector(target.getPosition())) {
+                if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
+                        && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                    tn ++;
+                    break;
+                }
+            }
+        }
+        
+        //Apply modifiers for attacker's equipment
+        //-2 for a working Large NCSS
+        if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+            tn -= 2;
+        }
+        //-1 for a working Small NCSS
+        if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            tn -= 1;
+        }
+        //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
+        if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
+                || ae.hasBAP(false)) {
+            tn -= 2;
+        }
+        
+        //Now, determine if we've detected the target this round
+        return roll >= tn;
     }
 
     public static int getVisualRange(IGame game, Entity ae, LosEffects los,

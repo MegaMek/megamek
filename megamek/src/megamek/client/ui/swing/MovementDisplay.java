@@ -151,6 +151,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_LOAD("moveLoad", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_UNLOAD("moveUnload", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_MOUNT("moveMount", CMD_GROUND), //$NON-NLS-1$
+        MOVE_TOW("moveTow", CMD_TANK), //$NON-NLS-1$
+        MOVE_DISCONNECT("moveDisconnect", CMD_TANK), //$NON-NLS-1$
         MOVE_UNJAM("moveUnjam", CMD_NON_INF), //$NON-NLS-1$
         MOVE_CLEAR("moveClear", CMD_INF), //$NON-NLS-1$
         MOVE_CANCEL("moveCancel", CMD_NONE), //$NON-NLS-1$

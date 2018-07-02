@@ -14892,4 +14892,60 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getTilesetModeString() {
         return "";
     }
+    
+    //Tractors and trailers, tugs, etc
+    
+    /**
+     * A list of entities being towed directly by this entity, if present
+     */
+    private ArrayList<Entity> connectedUnits;
+    
+    /**
+     * Returns the towed entities connected directly to this entity
+     * 
+     * @return
+     */
+    public ArrayList<Entity> getConnectedUnits() {
+        return connectedUnits;
+    }
+    
+    /**
+     * Attaches a trailer directly to this entity's towing mechanism
+     * 
+     * @param e - the entity to be towed
+     */
+    public void towUnit(Entity e) {
+        connectedUnits.add(e);
+    }
+    
+    /**
+     * Detaches an entity from this entity's towing mechanism
+     *
+     * @param e - the entity to be towed
+     */
+    public void disconnectUnit(Entity e) {
+        connectedUnits.remove(e);
+    }
+    
+    /**
+     * A list of all the entities towed by this entity,
+     * including those connected to other towed trailers
+     * 
+     * Use this for the tractor/engine/tug
+     */
+    private ArrayList<Entity> towedUnits;
+    
+    /**
+     * Adds an entity to this train
+     */
+    public void addTowedUnit(Entity e) {
+        towedUnits.add(e);
+    }
+    
+    /**
+     * Removes an entity from this train
+     */
+    public void removeTowedUnit(Entity e) {
+        towedUnits.remove(e);
+    }
 }

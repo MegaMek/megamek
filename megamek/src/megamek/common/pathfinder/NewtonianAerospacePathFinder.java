@@ -3,19 +3,12 @@ package megamek.common.pathfinder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import megamek.client.bot.princess.FireControl;
-import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.IGame;
-import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Terrains;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
@@ -112,11 +105,7 @@ public class NewtonianAerospacePathFinder {
     private List<MovePath> generateChildren(MovePath startingPath) {
         List<MovePath> retval = new ArrayList<>();
         
-        CoordsWithFacing pathDestination = new CoordsWithFacing(startingPath.getEntity().getPosition(), 
-                                                                startingPath.getFinalVectors(), 
-                                                                startingPath.getFinalFacing());
-        
-        
+        CoordsWithFacing pathDestination = new CoordsWithFacing(startingPath);
         
         // terminator conditions:
         // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex

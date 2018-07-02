@@ -96,6 +96,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     void setPathEnumerator(PathEnumerator pathEnumerator) {
         this.pathEnumerator = pathEnumerator;
     }
+    
+    PathEnumerator getPathEnumerator() {
+        return pathEnumerator;
+    }
 
     Map<Integer, Double> getBestDamageByEnemies() {
         return bestDamageByEnemies;
@@ -375,7 +379,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
-        int distance = calculateDistance(path, enemy.getPosition());                
+        int distance = enemy.getPosition().distance(path.getFinalCoords());                
         
         // How much damage can they do to me?
         double theirDamagePotential = calculateDamagePotential(enemy,
@@ -560,11 +564,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 }
 
                 EntityEvaluationResponse eval;
-                // TODO: Always consider Aeros to have moved, as right now we
-                // don't try to predict their movement.
-                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()
-                        || enemy.isAero()) { //For units that have already moved
-                    int alpha = 1;
+
+                if (evaluateAsMoved(enemy)) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
@@ -649,6 +650,15 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     }
 
+    /**
+     * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
+     */
+    protected boolean evaluateAsMoved(Entity enemy) {
+        // Aerospace units on ground maps can go pretty much anywhere they want, so it's
+        // somewhat pointless to try to predict their movement.
+        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAero();
+    }
+    
     /**
      * Calculate who all other units would shoot at if I weren't around
      */
@@ -1233,16 +1243,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         hazardValue += dmg;
 
         return hazardValue;
-    }
-
-    /**
-     * Worker method for the distance calculation between a considered move path and a set of coordinates.
-     * @param path The move path being considered.
-     * @param coords The coordinates being considered.
-     * @return
-     */
-    protected int calculateDistance(MovePath path, Coords coords) {
-        return coords.distance(path.getFinalCoords());
     }
     
     /**

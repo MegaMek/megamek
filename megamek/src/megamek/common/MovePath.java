@@ -719,12 +719,14 @@ public class MovePath implements Cloneable, Serializable {
      * this path.
      */
     public Coords getFinalCoords() {
+        if(getGame().useVectorMove()) {
+            return Compute.getFinalPosition(getEntity().getPosition(), getFinalVectors());
+        }
+        
         if (getLastStep() != null) {
-            if(getGame().useVectorMove()) {
-                return Compute.getFinalPosition(getStartCoords(), getFinalVectors());
-            }
             return getLastStep().getPosition();
         }
+        
         return getEntity().getPosition();
     }
 

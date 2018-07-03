@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -205,7 +206,7 @@ public class ForceGeneratorDialog extends JDialog {
 		tblChosen = new JTable(modelChosen);
 		gbc.gridy++;
 		tblChosen.setIntercellSpacing(new Dimension(0, 0));
-		tblChosen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(tblChosen);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
         tblChosen.addMouseListener(tableMouseListener);
@@ -382,12 +383,11 @@ public class ForceGeneratorDialog extends JDialog {
         
         private void showPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
-                int selected = tblChosen.getSelectedRow();
-                if (selected >= 0) {
+                if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
                     
                     JMenuItem item = new JMenuItem("Remove");
-                    item.addActionListener(ev -> modelChosen.removeEntityAt(selected));
+                    item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
                     menu.add(item);
                     
                     menu.show(e.getComponent(), e.getX(), e.getY());
@@ -414,11 +414,9 @@ public class ForceGeneratorDialog extends JDialog {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-                int selected = tblChosen.getSelectedRow();
-                if (selected >= 0) {
-                    modelChosen.removeEntityAt(selected);
-                }
+            if ((e.getKeyCode() == KeyEvent.VK_DELETE)
+                    && (tblChosen.getSelectedRowCount() > 0)) {
+                modelChosen.removeEntities(tblChosen.getSelectedRows());
             }
         }
         
@@ -573,7 +571,7 @@ public class ForceGeneratorDialog extends JDialog {
         public static final int COL_MOVE   = 2;
         public static final int NUM_COLS   = 3;
         
-        private final List<Entity> entities = new ArrayList<>();
+        private List<Entity> entities = new ArrayList<>();
         private Set<String> entityIds = new HashSet<>();
         
         public boolean hasEntity(Entity en) {
@@ -594,14 +592,18 @@ public class ForceGeneratorDialog extends JDialog {
             fireTableDataChanged();
         }
 
-        public void removeEntityAt(int index) {
-            if ((index >= 0) && (index < entities.size())) {
-                entityIds.remove(entities.get(index).getExternalIdAsString());
-                entities.remove(index);
-                fireTableDataChanged();
+        public void removeEntities(int[] selectedRows) {
+            for (int r : selectedRows) {
+                if ((r >= 0) && (r < entities.size())) {
+                    entityIds.remove(entities.get(r).getExternalIdAsString());
+                }
             }
+            List<Entity> newList = entities.stream().filter(e -> entityIds.contains(e.getExternalIdAsString()))
+                    .collect(Collectors.toList());
+            entities = newList;
+            fireTableDataChanged();
         }
-        
+
         public void addEntities(ForceDescriptor fd) {
             if (fd.isElement()) {
                 if (fd.getEntity() != null) {

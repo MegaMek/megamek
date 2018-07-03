@@ -1257,6 +1257,9 @@ public class Game implements Serializable, IGame {
         for (int i = 0; i < entities.size(); i++) {
             addEntity(entities.get(i), false);
         }
+        // We need to delay calculating BV until all units have been added because
+        // C3 network connections will be cleared if the master is not in the game yet.
+        entities.forEach(e -> e.setInitialBV(e.calculateBattleValue(false, false)));
         processGameEvent(new GameEntityNewEvent(this, entities));
     }
 
@@ -1325,10 +1328,9 @@ public class Game implements Serializable, IGame {
             ((Mech) entity).setCondEjectHeadshot(true);
         }
 
-        entity.setInitialBV(entity.calculateBattleValue(false, false));
-
         assert (entities.size() == entityIds.size()) : "Add Entity failed";
         if (genEvent) {
+            entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
         }
     }

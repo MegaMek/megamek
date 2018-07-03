@@ -159,7 +159,7 @@ public class PhysicalInfo {
 
         // Build the to hit data.
         if (guess) {
-            setHitData(owner.getFireControl().guessToHitModifierPhysical(getShooter(), shooterState, getTarget(),
+            setHitData(owner.getFireControl(getShooter()).guessToHitModifierPhysical(getShooter(), shooterState, getTarget(),
                                                                          targetState, getAttackType(), game));
         } else {
             PhysicalAttackAction action = buildAction(physicalAttackType, getShooter().getId(), getTarget());

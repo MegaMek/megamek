@@ -22734,25 +22734,15 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !hit.isIgnoreInfantryDoubleDamage()
-                && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
-                && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
-            te_hex = game.getBoard().getHex(te.getPosition());
-            if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
-                    && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
-                    && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)
-                    && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED)
-                    && (!te.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
-                    && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
-                    && !ammoExplosion) {
-                // PBI. Damage is doubled.
-                damage *= 2;
-                r = new Report(6040);
-                r.subject = te_n;
-                r.indent(2);
-                vDesc.addElement(r);
-            }
+        if(ServerHelper.infantryInOpen(te, te_hex, game, isPlatoon, ammoExplosion, hit.isIgnoreInfantryDoubleDamage())) {
+            // PBI. Damage is doubled.
+            damage *= 2;
+            r = new Report(6040);
+            r.subject = te_n;
+            r.indent(2);
+            vDesc.addElement(r);
         }
+        
         // Is the infantry in vacuum?
         if ((isPlatoon || isBattleArmor) && !te.isDestroyed() && !te.isDoomed()
             && game.getPlanetaryConditions().isVacuum()) {
@@ -32534,19 +32524,8 @@ public class Server implements Runnable {
             return vDesc;
         }
         // Calculate the amount of damage the infantry will sustain.
-        float percent = 0.0f;
+        float percent = bldg.getDamageReductionFromOutside();
         Report r;
-        switch (bldg.getType()) {
-            case Building.LIGHT:
-                percent = 0.75f;
-                break;
-            case Building.MEDIUM:
-                percent = 0.5f;
-                break;
-            case Building.HEAVY:
-                percent = 0.25f;
-                break;
-        }
 
         // Round up at .5 points of damage.
         int toInf = Math.round(damage * percent);

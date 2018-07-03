@@ -1,5 +1,6 @@
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -36,7 +37,7 @@ public class PhysicalInfoTest {
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         FireControl mockFireControl = Mockito.mock(FireControl.class);
-        Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
 
         ToHitData mockToHit = Mockito.mock(ToHitData.class);
         Mockito.when(mockFireControl.guessToHitModifierPhysical(Mockito.any(Entity.class),

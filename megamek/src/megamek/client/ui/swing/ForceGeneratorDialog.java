@@ -20,6 +20,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -156,7 +158,7 @@ public class ForceGeneratorDialog extends JDialog {
 				panForce.revalidate();
 			}
 		});
-		forceTree.addMouseListener(mouseListener);
+		forceTree.addMouseListener(treeMouseListener);
 		
 		panForce = new JPanel(new GridBagLayout());
 		gbc = new GridBagConstraints();
@@ -203,9 +205,11 @@ public class ForceGeneratorDialog extends JDialog {
 		tblChosen = new JTable(modelChosen);
 		gbc.gridy++;
 		tblChosen.setIntercellSpacing(new Dimension(0, 0));
-		tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		tblChosen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scroll = new JScrollPane(tblChosen);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
+        tblChosen.addMouseListener(tableMouseListener);
+        tblChosen.addKeyListener(tableKeyListener);
 
 		JSplitPane panLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panControls, scroll);
 		panLeft.setOneTouchExpandable(true);
@@ -331,7 +335,7 @@ public class ForceGeneratorDialog extends JDialog {
 				
 	}
 	
-	private MouseListener mouseListener = new MouseAdapter() {
+    private MouseListener treeMouseListener = new MouseAdapter() {
 
         @Override
         public void mousePressed(MouseEvent e) {
@@ -359,12 +363,66 @@ public class ForceGeneratorDialog extends JDialog {
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
                     menu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        }
+    };
+
+    private MouseListener tableMouseListener = new MouseAdapter() {
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            showPopup(e);
+        }
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            showPopup(e);
+        }
+        
+        private void showPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                int selected = tblChosen.getSelectedRow();
+                if (selected >= 0) {
+                    JPopupMenu menu = new JPopupMenu();
+                    
+                    JMenuItem item = new JMenuItem("Remove");
+                    item.addActionListener(ev -> modelChosen.removeEntityAt(selected));
+                    menu.add(item);
+                    
+                    menu.show(e.getComponent(), e.getX(), e.getY());
                     
                 }
             }
         }
-	    
-	};
+        
+    };
+    
+    private KeyListener tableKeyListener = new KeyListener() {
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                int selected = tblChosen.getSelectedRow();
+                if (selected >= 0) {
+                    modelChosen.removeEntityAt(selected);
+                }
+            }
+        }
+        
+    };
 
     static class ForceTreeModel implements TreeModel {
     	
@@ -536,10 +594,12 @@ public class ForceGeneratorDialog extends JDialog {
             fireTableDataChanged();
         }
 
-        public void removeEntity(Entity en) {
-            entityIds.remove(en.getExternalIdAsString());
-            entities.remove(en);
-            fireTableDataChanged();
+        public void removeEntityAt(int index) {
+            if ((index >= 0) && (index < entities.size())) {
+                entityIds.remove(entities.get(index).getExternalIdAsString());
+                entities.remove(index);
+                fireTableDataChanged();
+            }
         }
         
         public void addEntities(ForceDescriptor fd) {

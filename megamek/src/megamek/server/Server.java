@@ -3058,6 +3058,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_INITIATIVE:
                 resolveWhatPlayersCanSeeWhatUnits();
+                calculateSpaceECM();
                 game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 break;
@@ -3080,6 +3081,7 @@ public class Server implements Runnable {
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
                 resolveWhatPlayersCanSeeWhatUnits();
+                calculateSpaceECM();
                 doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
@@ -14332,6 +14334,16 @@ public class Server implements Runnable {
         return apdsCoords;
     }
     
+    /**
+     * Calculates the ECM information for each entity/target pair on space maps
+     */
+    private void calculateSpaceECM() {
+        // Don't bother if we're not in space
+        if (!game.getBoard().inSpace()) {
+            return;
+        }
+        
+    }
 
     /**
      * Checks to see if any units can detected hidden units.

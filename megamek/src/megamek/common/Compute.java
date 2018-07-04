@@ -3907,7 +3907,7 @@ public class Compute {
     public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
         //Visual range on a space map actually involves sensors
         if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-            return inFiringSolutionRange(game, null, ae, target);
+            return calcFiringSolution(game, ae, target);
         }
         return inVisualRange(game, null, ae, target);
     }
@@ -3999,6 +3999,106 @@ public class Compute {
 
     }
     
+    //Store Space ECM and Sensor Shadow Effects
+    private static int spaceEcmMod;
+    
+    private static int sensorShadowMod;
+    
+    /**
+     * Returns the ECM effects for this entity/target combination
+     * 
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
+     */
+    public static int getSpaceECM(IGame game, Entity ae,
+            Targetable target) {
+        return spaceEcmMod;
+    }
+    
+    /**
+     * Returns the Sensor Shadow effects for this entity/target combination
+     * 
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
+     */
+    public static int getSensorShadowMod(IGame game, Entity ae,
+            Targetable target) {
+        return sensorShadowMod;
+    }
+    
+    /**
+     * Sets the ECM effects for this entity/target combination
+     * 
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
+     */
+    public void setSpaceECM(IGame game, Entity ae,
+            Targetable target, int mod) {
+        spaceEcmMod = mod;
+    }
+    
+    /**
+     * Sets the ECM effects for this entity/target combination
+     * 
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
+     */
+    public void setSensorShadowMod(IGame game, Entity ae,
+            Targetable target, int mod) {
+        sensorShadowMod = mod;
+    }
+    
+    //Calculate Sensor Shadows and ECM effects. This is expensive, so we only do it at the start of the movement phase
+    //and the start of the firing phase
+    public void calcSpaceECM(IGame game, Entity ae,
+            Targetable target) {
+        int tn = 0;
+        int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
+        if (!ae.isLargeCraft()) {
+            ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
+        }
+        ecm = Math.min(4, ecm);
+        int eccm = 0;
+        if (ae.isLargeCraft()) {
+            eccm = ((Aero) ae).getECCMBonus();
+        }
+        if (ecm > 0) {
+            tn += ecm;
+            if (eccm > 0) {
+                tn = (Math.min(ecm, eccm));
+            }
+        }
+        setSpaceECM(game, ae, target, tn);
+    }
+    
+    public void calcSensorShadow(IGame game, Entity ae,
+            Targetable target) {
+        int tn = 0;
+        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
+            return;
+        }
+        Entity te = (Entity) target;
+        for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
+            if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                tn ++;
+                break;
+            }
+        }
+        for (Entity en : game.getEntitiesVector(target.getPosition())) {
+            if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
+                    && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                tn ++;
+                break;
+            }
+        }
+        setSensorShadowMod(game, ae, target, tn);
+    }
+    
+    
     /**
      *If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
      *Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
@@ -4009,14 +4109,13 @@ public class Compute {
      * possible to pass in the LosEffects, since they are commonly already
      * computed when this method is called.
      * 
-     * @param game
-     * @param los
-     * @param ae
-     * @param target
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
      * @return
      */
     
-    public static boolean inFiringSolutionRange(IGame game, LosEffects los, Entity ae,
+    public static boolean calcFiringSolution(IGame game, Entity ae,
             Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
@@ -4029,12 +4128,6 @@ public class Compute {
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
-
-        // check visual range based on planetary conditions
-        if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
-        }
-        int visualRange = getVisualRange(game, ae, los, false);
     
         //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
         if (ae.getActiveSensor() == null) {
@@ -4067,7 +4160,6 @@ public class Compute {
         } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
             autoVisualRange = Sensor.LC_OPTICAL_AUTOSPOT_RANGE;
         }
-        visualRange = autoVisualRange;
         
         if (distance <= autoVisualRange) {
             return true;
@@ -4085,42 +4177,14 @@ public class Compute {
         //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
         tn += (distance / autoVisualRange);
         
-        // Now, apply ECM/ECCM effects
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
-            if (!ae.isLargeCraft()) {
-                ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
-            }
-            ecm = Math.min(4, ecm);
-            int eccm = 0;
-            if (ae.isLargeCraft()) {
-                eccm = ((Aero) ae).getECCMBonus();
-            }
-            if (ecm > 0) {
-                tn += ecm;
-                if (eccm > 0) {
-                    tn -= (Math.min(ecm, eccm));
-                }
-            }
+        // Apply ECM/ECCM effects
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            tn -= getSpaceECM(game, ae, target);
         }
         
         // Apply large craft sensor shadows
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
-                && game.getBoard().inSpace() && target.getTargetType() == Targetable.TYPE_ENTITY) {
-            Entity te = (Entity) target;
-            for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                    tn ++;
-                    break;
-                }
-            }
-            for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
-                        && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                    tn ++;
-                    break;
-                }
-            }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+            tn += getSensorShadowMod(game, ae, target);
         }
         
         //Apply modifiers for attacker's equipment
@@ -4252,49 +4316,18 @@ public class Compute {
             //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
             tn += (distance / rangeIncrement);
             
-            // Now, apply ECM/ECCM effects
-            if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
-                if (!ae.isLargeCraft()) {
-                    ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
-                }
-                ecm = Math.min(4, ecm);
-                int eccm = 0;
-                if (ae.isLargeCraft()) {
-                    eccm = ((Aero) ae).getECCMBonus();
-                }
-                if (ecm > 0) {
-                    tn += ecm;
-                    if (eccm > 0) {
-                        tn -= (Math.min(ecm, eccm));
-                    }
-                }
+            // Apply ECM/ECCM effects
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+                tn -= getSpaceECM(game, ae, target);
             }
             
             // Apply large craft sensor shadows
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
-                    && game.getBoard().inSpace() && target.getTargetType() == Targetable.TYPE_ENTITY) {
-                Entity te = (Entity) target;
-                for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                        tn ++;
-                        break;
-                    }
-                }
-                for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
-                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                        tn ++;
-                        break;
-                    }
-                }
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+                tn += getSensorShadowMod(game, ae, target);
             }
             
             //Now, determine if we've detected the target this round
-            if (roll >= tn) {
-                return true;
-            }
-            return false;
+            return roll >= tn;
         }
                 
         int distance = ae.getPosition().distance(target.getPosition());

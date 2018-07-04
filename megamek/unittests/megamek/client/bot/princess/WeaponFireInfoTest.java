@@ -1,6 +1,7 @@
 package megamek.client.bot.princess;
 
 import junit.framework.TestCase;
+import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -75,7 +76,7 @@ public class WeaponFireInfoTest {
 
         MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
-        Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         mockShooter = Mockito.mock(BipedMech.class);

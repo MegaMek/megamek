@@ -39,6 +39,7 @@ import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
@@ -267,7 +268,12 @@ public class PathEnumerator {
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
-            } else { // Non-Aero movement
+            } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+                InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
+                ipf.run(new MovePath(game, mover));
+                paths.addAll(ipf.getAllComputedPathsUncategorized());
+            }
+            else { // Non-Aero movement
                 //add running moves
                 // TODO: Will this cause Princess to never use MASC?
                 LongestPathFinder lpf = LongestPathFinder
@@ -292,6 +298,10 @@ public class PathEnumerator {
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
+                for(MovePath path : paths) {
+                    this.owner.log(this.getClass(), "Path ", LogLevel.DEBUG, path.toString());
+                }
+                
                 // Try climbing over obstacles and onto bridges
                 adjustPathsForBridges(paths);
 

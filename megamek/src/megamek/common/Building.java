@@ -906,6 +906,24 @@ public class Building implements Serializable {
                 return 0;
         }
     }
+    
+    /**
+     * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that
+     * passes through to infantry inside the building.
+     * @return Damage fraction.
+     */
+    public float getDamageReductionFromOutside() {
+        switch (getType()) {
+            case Building.LIGHT:
+                return 0.75f;
+            case Building.MEDIUM:
+                return 0.5f;
+            case Building.HEAVY:
+                return 0.25f;
+            default:
+                return 0f;
+        }
+    }
 
     public BasementType getBasement(Coords coords) {
         return basement.get(coords);

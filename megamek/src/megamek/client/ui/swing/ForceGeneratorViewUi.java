@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -34,15 +33,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
@@ -66,18 +62,19 @@ import megamek.common.UnitType;
 
 /**
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
- * the generated force.
+ * the generated force. The left and right sides of the view are made available separately for use by
+ * RandomArmyDialog.
  * 
  * @author Neoancient
  *
  */
 
-public class ForceGeneratorDialog extends JDialog {
+public class ForceGeneratorViewUi {
 	
-	private static final long serialVersionUID = 6855878459680509594L;
+	private JPanel leftPanel;
+    private JPanel rightPanel;
 	
-	private ForceGeneratorView panControls;
-	private JPanel panForce;
+	private ForceGeneratorOptionsView panControls;
 	private JLabel lblOrganization;
 	private JLabel lblFaction;
 	private JLabel lblRating;
@@ -86,21 +83,19 @@ public class ForceGeneratorDialog extends JDialog {
 	
 	private JTable tblChosen;
 	private ChosenEntityModel modelChosen;
-	private JComboBox<String> cbPlayer;
 	
 	ClientGUI clientGui;
 	
-	public ForceGeneratorDialog(ClientGUI gui) {
-		super(gui.frame, Messages.getString("ForceGeneratorDialog.title"), true);
+	public ForceGeneratorViewUi(ClientGUI gui) {
 		clientGui = gui;
 		initUi();
 	}
 
 	private void initUi() {
-		panControls = new ForceGeneratorView(clientGui, fd -> setGeneratedForce(fd));
+		panControls = new ForceGeneratorOptionsView(clientGui, fd -> setGeneratedForce(fd));
 		
-		panForce = new JPanel();
-		panForce = new JPanel(new GridBagLayout());
+		rightPanel = new JPanel();
+		rightPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.NONE;
@@ -108,27 +103,27 @@ public class ForceGeneratorDialog extends JDialog {
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
+		rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
 		lblOrganization = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		panForce.add(lblOrganization, gbc);
+		rightPanel.add(lblOrganization, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
+		rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
 		lblFaction = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		panForce.add(lblFaction, gbc);
+		rightPanel.add(lblFaction, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
+		rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
 		lblRating = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 2;
-		panForce.add(lblRating, gbc);
+		rightPanel.add(lblRating, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 3;
@@ -139,7 +134,7 @@ public class ForceGeneratorDialog extends JDialog {
 		paneForceTree.setViewportView(forceTree);
 		paneForceTree.setPreferredSize(new Dimension(600, 800));
 		paneForceTree.setMinimumSize(new Dimension(600, 800));
-		panForce.add(paneForceTree, gbc);		
+		rightPanel.add(paneForceTree, gbc);		
 		
 		forceTree = new JTree(new ForceTreeModel(null));
 		forceTree.setCellRenderer(new UnitRenderer());
@@ -153,15 +148,15 @@ public class ForceGeneratorDialog extends JDialog {
 			@Override
 			public void treeExpanded(TreeExpansionEvent arg0) {
 				if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
-					panForce.setMinimumSize(new Dimension(forceTree.getMinimumSize().width, panForce.getMinimumSize().height));
-					panForce.setPreferredSize(new Dimension(forceTree.getPreferredSize().width, panForce.getPreferredSize().height));
+					rightPanel.setMinimumSize(new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
+					rightPanel.setPreferredSize(new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
 				}
-				panForce.revalidate();
+				rightPanel.revalidate();
 			}
 		});
 		forceTree.addMouseListener(treeMouseListener);
 		
-		panForce = new JPanel(new GridBagLayout());
+		rightPanel = new JPanel(new GridBagLayout());
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.NONE;
@@ -169,27 +164,27 @@ public class ForceGeneratorDialog extends JDialog {
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
+		rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.organization")), gbc);
 		lblOrganization = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		panForce.add(lblOrganization, gbc);
+		rightPanel.add(lblOrganization, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
+		rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
 		lblFaction = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		panForce.add(lblFaction, gbc);
+		rightPanel.add(lblFaction, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		panForce.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
+		rightPanel.add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
 		lblRating = new JLabel();
 		gbc.gridx = 1;
 		gbc.gridy = 2;
-		panForce.add(lblRating, gbc);
+		rightPanel.add(lblRating, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 3;
@@ -200,62 +195,45 @@ public class ForceGeneratorDialog extends JDialog {
 		paneForceTree.setViewportView(forceTree);
 		paneForceTree.setPreferredSize(new Dimension(600, 800));
 		paneForceTree.setMinimumSize(new Dimension(600, 800));
-		panForce.add(paneForceTree, gbc);
+		rightPanel.add(paneForceTree, gbc);
 		
 		modelChosen = new ChosenEntityModel();
 		tblChosen = new JTable(modelChosen);
-		gbc.gridy++;
 		tblChosen.setIntercellSpacing(new Dimension(0, 0));
 		tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(tblChosen);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
         tblChosen.addMouseListener(tableMouseListener);
         tblChosen.addKeyListener(tableKeyListener);
-
-		JSplitPane panLeft = new JSplitPane(JSplitPane.VERTICAL_SPLIT, panControls, scroll);
-		panLeft.setOneTouchExpandable(true);
-		panLeft.setResizeWeight(1.0);
-		JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panLeft, panForce);
-		panSplit.setOneTouchExpandable(true);
-		panSplit.setResizeWeight(1.0);
-
-		setLayout(new BorderLayout());
-		add(panSplit, BorderLayout.CENTER);
-		
-		JPanel panButtons = new JPanel();
-        JButton button = new JButton(Messages.getString("Okay"));
-        button.addActionListener(ev -> {
-            if ((null != forceTree.getModel().getRoot())
-                    && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
-                configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
-            }
-            addChosenUnits();
-            modelChosen.clearData();
-            setVisible(false);   
-        });
-        panButtons.add(button);
-        button = new JButton(Messages.getString("Cancel"));
-        button.addActionListener(ev -> setVisible(false));
-        panButtons.add(button);
-        panButtons.add(new JLabel(Messages.getString("RandomArmyDialog.Player")));
-        cbPlayer = new JComboBox<>();
-        panButtons.add(cbPlayer);
         
-        add(panButtons, BorderLayout.SOUTH);
-        
-		pack();
+        leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.add(panControls);
+        leftPanel.add(scroll);
+	}
+	
+	public Component getLeftPanel() {
+	    return new JScrollPane(leftPanel);
+	}
+	
+	public Component getRightPanel() {
+	    return rightPanel;
 	}
 	
 	/**
 	 * Adds the chosen units to the game
 	 */
-	private void addChosenUnits() {
+	public void addChosenUnits(String playerName) {
+        if ((null != forceTree.getModel().getRoot())
+                && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
+            configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
+        }
+        
 	    List<Entity> entities = new ArrayList<Entity>(
 	            modelChosen.allEntities().size());
 	    Client c = null;
-	    if (cbPlayer.getSelectedIndex() > 0) {
-	        String name = (String) cbPlayer.getSelectedItem();
-	        c = clientGui.getBots().get(name);
+	    if (null != playerName) {
+	        c = clientGui.getBots().get(playerName);
 	    }
 	    if (null == c) {
 	        c = clientGui.getClient();
@@ -273,6 +251,8 @@ public class ForceGeneratorDialog extends JDialog {
             entities.add(e);
         }
         c.sendAddEntity(entities);
+        
+        modelChosen.clearData();
 	}
 	
 	private void configureNetworks(ForceDescriptor fd) {

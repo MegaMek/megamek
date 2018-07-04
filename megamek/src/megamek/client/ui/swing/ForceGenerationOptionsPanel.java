@@ -94,8 +94,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
    
     private int ratGenYear;
     
-    private ForceGeneratorDialog fgd;
-    
     private static final int[] UNIT_TYPES = {
         UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
         UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
@@ -111,10 +109,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     public ForceGenerationOptionsPanel(Use use, ClientGUI gui) {
         setLayout(new GridBagLayout());
         
-        if (gui != null) {
-            fgd = new ForceGeneratorDialog(gui);
-        }
-
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -214,22 +208,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weighty = 0.0;
         add(chkShowMinor, c);
         chkShowMinor.addActionListener(this);
-
-        //FIXME: find a good place for this
-        if (gui != null) {
-            JButton btnForceGen = new JButton("Force Generator...");
-            c = new GridBagConstraints();
-            c.gridx = 3;
-            c.gridy = 1;
-            c.fill = GridBagConstraints.NONE;
-            c.anchor = GridBagConstraints.WEST;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-            add(btnForceGen, c);
-            btnForceGen.addActionListener(ev -> {
-                fgd.setVisible(true);
-            });
-        }
 
         c = new GridBagConstraints();
         c.gridx = 0;

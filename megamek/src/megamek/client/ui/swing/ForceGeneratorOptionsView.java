@@ -67,7 +67,7 @@ import megamek.common.options.OptionsConstants;
  */
 
 
-public class ForceGeneratorView extends JPanel implements FocusListener, ActionListener {
+public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
 	
 	private static final long serialVersionUID = 5269823128861856001L;
 	
@@ -135,7 +135,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	
 	private ClientGUI clientGui;
 	
-	public ForceGeneratorView(ClientGUI gui, Consumer<ForceDescriptor> onGenerate) {
+	public ForceGeneratorOptionsView(ClientGUI gui, Consumer<ForceDescriptor> onGenerate) {
 		clientGui = gui;
 		this.onGenerate = onGenerate;
 		if (!Ruleset.isInitialized()) {

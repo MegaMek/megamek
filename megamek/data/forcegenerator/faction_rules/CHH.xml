@@ -360,7 +360,6 @@
 		<attachedForces ifFlags="horde">
 			<subforce augmented="1">%TRINARY%</subforce>
 		</attachedForces>
-
 		
 		<attachedForces ifFlags="!horde|ranger">
 			<subforceOption>
@@ -371,6 +370,18 @@
 					role="artillery"
 					name="Binary Artillery">%BINARY%</option>
 				<option weight="11" />
+			</subforceOption>
+		</attachedForces>
+		
+		<!-- Per TRO3075 entry on Orc (p. 154), protomeks were attached to FL clusters as a Star,
+		     or sometimes as a binary or even a trinary. Numbers declined in the 3070s, but were
+		     part of the rearming process after the long war with Clan Wolf (TRO:Prototypes, p. 88). -->
+		<attachedForces ifRating="Keshik|FL">
+			<subforceOption>
+				<option ifYearBetween="3060," unitType="ProtoMek" weight="3">%STAR%</option>
+				<option ifYearBetween="3060," unitType="ProtoMek" weight="2">%BINARY%</option>
+				<option ifYearBetween="3060," unitType="ProtoMek" weight="1">%TRINARY%</option>
+				<option ifYearBetween="3071,3080" weight="4" />
 			</subforceOption>
 		</attachedForces>
 	</force>
@@ -1664,15 +1675,6 @@
 			<option ifRole="command" weight="1">H</option>
 		</weightClass>
 
-		<!-- PMs are about 10% of Mek forces in the 3060s, then increase
-		to 25% after relocation to IS.-->
-		<unitType ifUnitType="Mek" ifDateBetween="3060," ifRole="!command">
-			<option weight="9" />
-			<option>ProtoMek</option>
-			<option ifDateBetween="3070,"
-				weight="2">ProtoMek</option>
-		</unitType>
-		
         <ruleGroup>
 			<formation ifIndex="0">
 				<option weight="30">Battle</option>

@@ -132,6 +132,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
 	private JButton btnGenerate;
 	private JButton btnExportMUL;
+	private JButton btnClear;
 	
 	private ClientGUI clientGui;
 	
@@ -318,10 +319,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
 		gbc.gridx = 1;
 		gbc.gridy = y;
-		gbc.weighty = 1.0;
 		add(btnExportMUL, gbc);
 		btnExportMUL.addActionListener(this);
 		btnExportMUL.setEnabled(false);
+
+        btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear"));
+        gbc.gridx = 2;
+        gbc.gridy = y;
+        gbc.weighty = 1.0;
+        add(btnClear, gbc);
+        btnClear.addActionListener(this);
+        btnClear.setEnabled(false);
 
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -573,6 +581,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		    }
 		});
 		task.execute();
+	}
+	
+	private void clearForce() {
+	    if (null != onGenerate) {
+	        onGenerate.accept(null);
+	    }
 	}
 	
 	public ForceDescriptor getForceDescriptor() {
@@ -879,8 +893,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		} else if (ev.getSource() == btnGenerate) {
 			generateForce();
 			btnExportMUL.setEnabled(true);
+			btnClear.setEnabled(true);
 		} else if (ev.getSource() == btnExportMUL) {
 			exportMUL(forceDesc);
+		} else if (ev.getSource() == btnClear) {
+		    clearForce();
+		    btnExportMUL.setEnabled(false);
+            btnClear.setEnabled(false);
 		}
 	}
 

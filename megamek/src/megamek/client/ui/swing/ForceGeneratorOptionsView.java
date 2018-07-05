@@ -589,10 +589,6 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 	    }
 	}
 	
-	public ForceDescriptor getForceDescriptor() {
-		return forceDesc;
-	}
-	
 	private void refreshFactions() {
 		FactionRecord oldFaction = (FactionRecord)cbFaction.getSelectedItem();
 		cbFaction.removeActionListener(this);
@@ -744,7 +740,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		} else {
 			Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
 			String esch = rs.getDefaultEschelon(forceDesc);
-			if ((esch == null || !!formationDisplayNames.containsKey(esch)
+			if ((esch == null || !formationDisplayNames.containsKey(esch)
 					&& cbFormation.getItemCount() > 0)) {
 				esch = (String)cbFormation.getItemAt(0);
 			}

@@ -37,7 +37,7 @@ public class NewtonianAerospacePathFinder {
         
         // put together a pre-defined array of possible moves
         moves = new ArrayList<>();
-        //moves.add(MoveStepType.TURN_RIGHT);
+        moves.add(MoveStepType.TURN_RIGHT);
         moves.add(MoveStepType.TURN_LEFT);
         moves.add(MoveStepType.THRUST);
     }
@@ -65,6 +65,31 @@ public class NewtonianAerospacePathFinder {
             
             /*MovePath testPath = startingEdge.clone();
             testPath.addStep(MoveStepType.TURN_LEFT);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            aerospacePaths.add(testPath);
+            
+            testPath = startingEdge.clone();
+            testPath.addStep(MoveStepType.TURN_RIGHT);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            aerospacePaths.add(testPath);
+            
+            testPath = startingEdge.clone();
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            testPath.addStep(MoveStepType.THRUST);
+            aerospacePaths.add(testPath);
+            
+            testPath = startingEdge.clone();
+            testPath.addStep(MoveStepType.YAW);
+            testPath.addStep(MoveStepType.THRUST);
             testPath.addStep(MoveStepType.THRUST);
             testPath.addStep(MoveStepType.THRUST);
             aerospacePaths.add(testPath);*/

@@ -444,7 +444,7 @@ public class PathEnumerator {
         return unitPaths;
     }
 
-    protected Map<Integer, ConvexBoardArea> getUnitMovableAreas() {
+    public Map<Integer, ConvexBoardArea> getUnitMovableAreas() {
         return unitMovableAreas;
     }
 

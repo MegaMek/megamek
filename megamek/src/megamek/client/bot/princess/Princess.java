@@ -34,6 +34,7 @@ import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.ui.SharedUtility;
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -1745,11 +1746,18 @@ public class Princess extends BotClient {
      * @param path The path to process
      */
     private void evadeIfNotFiring(final RankedPath path) {
+        Entity pathEntity = path.getPath().getEntity();
+        
+        // we cannot evade if we are out of control
+        if(pathEntity.isAirborne() && ((Aero) pathEntity).isOutControlTotal()) {
+            return;
+        }
+        
         // if we're an airborne aircraft
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR
         // then evade
-        if(path.getPath().getEntity().isAirborne() &&
+        if(pathEntity.isAirborne() &&
            (0 >= path.getExpectedDamage()) &&
            (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath()
                                                                                                   .getEntity()) - 2)) {

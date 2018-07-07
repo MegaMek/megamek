@@ -614,7 +614,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             utility += braveryMod;
 
             //noinspection StatementWithEmptyBody
-            if (path.getEntity().isAero()) {
+            if (path.getEntity().isAero() && !path.getEntity().isSpaceborne()) {
                 // No idea what original implementation was meant to be.
 
             } else {

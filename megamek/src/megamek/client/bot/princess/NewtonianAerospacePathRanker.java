@@ -2,9 +2,12 @@ package megamek.client.bot.princess;
 
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.common.Aero;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -12,7 +15,7 @@ import megamek.common.LosEffects;
 import megamek.common.MovePath;
 
 public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPathRanker {
-
+    
     public NewtonianAerospacePathRanker(Princess owningPrincess) {
         super(owningPrincess);
     }
@@ -124,84 +127,49 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
                 range = 1;
             }
 
+            
+            // placeholder logic:
+            // if we are a spheroid, we can fire viably in any direction
+            // if we are a fighter or aerodyne dropship, our most effective arc is forward
+            int arcToUse = ((Aero) path.getEntity()).isSpheroid() ? Compute.ARC_360 : Compute.ARC_NOSE;
+            double vertexCoverage = 1.0;
+            
+            // the idea here is that, if we have a limited firing arc, the target
+            // will likely make an effort to move out of the arc, so it reduces our expected damage
+            // we calculate the proportion by looking at the number of "enemy movable area" vertices
+            // that are in our main firing arc, compared to the max (6).
+            if(arcToUse != Compute.ARC_360) {
+                int inArcVertexCount = 0;
+                
+                for(int vertexNum = 0; vertexNum < 6; vertexNum++) {
+                    Coords vertex = getPathEnumerator().getUnitMovableAreas().get(enemy.getId()).getVertexNum(vertexNum);
+                    
+                    if(Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
+                        inArcVertexCount++;
+                    }
+                }
+                
+                vertexCoverage = inArcVertexCount / 6;
+            }
+                
+            double myDamageDiscount = Compute.oddsAbove(path.getEntity().getCrew().getGunnery()) / 100 * vertexCoverage;
+            
+            // my estimated damage is my max damage at the 
             returnResponse.addToMyEstimatedDamage(
                         getMaxDamageAtRange(getFireControl(),
                                             path.getEntity(),
                                             range,
                                             useExtremeRange,
-                                            useLOSRange));
+                                            useLOSRange) * myDamageDiscount);
 
+            double enemyDamageDiscount = Compute.oddsAbove(enemy.getCrew().getGunnery()) / 100;
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
                     getMaxDamageAtRange(getFireControl(),
                                         enemy,
                                         range,
                                         useExtremeRange,
-                                        useLOSRange));
-
-
-            // check the potential places the other unit could get to.
-            // for each potential place, check the max damage I can do to the enemy, and the max damage he can do to me
-            // assume that the enemy will move in such a way as to do the most damage to me while taking the least damage
-            /*Set<CoordFacingCombo> potentialEnemyLocations = getPathEnumerator().getUnitPotentialLocations().get(enemy.getId());
-            getPathEnumerator().getUnitMovableAreas()
-            
-            EntityState myState = new EntityState(path);
-            double maxEnemyUtility = -9999;
-            
-            myState.getPosition().
-            
-            for(CoordFacingCombo potentialEnemyLocation: potentialEnemyLocations) {
-                EntityState enemyState = new EntityState(enemy, potentialEnemyLocation);
-                
-                // if the hex is entirely out of range, we may skip all the expensive calculations 
-                if(enemyState.getPosition().distance(myState.getPosition()) > enemy.getMaxWeaponRange()) {
-                    
-                    if(maxEnemyUtility < 0) {
-                        maxEnemyUtility = 0;
-                    }
-                    
-                    continue;
-                }
-                
-                // figure out the best shot the enemy an take from where they are
-                FiringPlanCalculationParameters enemyGuess =
-                        new FiringPlanCalculationParameters.Builder()
-                                .buildGuess(enemy,
-                                        enemyState,
-                                        path.getEntity(),
-                                        myState,
-                                        enemy.getHeatCapacity(),
-                                        null);
-                
-                FiringPlan projectedEnemyFiringPlan = getFireControl().determineBestFiringPlan(enemyGuess);
-
-                
-                // figure out the best shot I can take at the enemy from where I am
-                FiringPlanCalculationParameters myGuess =
-                        new FiringPlanCalculationParameters.Builder()
-                                .buildGuess(enemy,
-                                        enemyState,
-                                        path.getEntity(),
-                                        myState,
-                                        enemy.getHeatCapacity(),
-                                        null);
-                
-                FiringPlan projectedMyFiringPlan = getFireControl().determineBestFiringPlan(myGuess);
-                
-                if(projectedMyFiringPlan.getUtility() > 0) {
-                    int alpha = 1;
-                }
-                
-                // assume that, after I move, the enemy will move in such a way as to maximize their outgoing damage to me while
-                // minimizing the damage I do
-                double combinedUtilityToEnemy = projectedEnemyFiringPlan.getUtility() - projectedMyFiringPlan.getUtility();
-                if(combinedUtilityToEnemy > maxEnemyUtility) {
-                    maxEnemyUtility = combinedUtilityToEnemy;
-                    returnResponse.setEstimatedEnemyDamage(projectedEnemyFiringPlan.getUtility());
-                    returnResponse.setMyEstimatedDamage(projectedMyFiringPlan.getUtility());
-                }
-            }*/
+                                        useLOSRange) * enemyDamageDiscount);
 
             return returnResponse;
         } finally {

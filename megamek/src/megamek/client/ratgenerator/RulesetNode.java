@@ -288,6 +288,15 @@ public class RulesetNode {
 					}
 				}
 				break;
+			case "formation":
+			    FormationType ft = FormationType.getFormationType(property);
+			    if (null != ft) {
+			        fd.setFormationType(ft);
+			    } else {
+			        DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.WARNING,
+			                "Could not parse formation type " + property);
+			    }
+			    break;
 			case "flags":
 				if (!property.startsWith("+") && !property.startsWith("-")) {
 					fd.getFlags().clear();

@@ -23,6 +23,7 @@ elementFormDefault="qualified">
 		<xs:attribute name="unitType" type="xs:string" />
 		<xs:attribute name="weightClass" type="xs:string" />
 		<xs:attribute name="rating" type="xs:string" />
+		<xs:attribute name="formation" type="xs:string" />
 		<xs:attribute name="role" type="xs:string" />
 		<xs:attribute name="motive" type="xs:string" />
 		<xs:attribute name="augmented" type="xs:boolean" />

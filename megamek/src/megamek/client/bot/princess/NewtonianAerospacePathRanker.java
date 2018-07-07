@@ -1,11 +1,7 @@
 package megamek.client.bot.princess;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
 
-import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -104,18 +100,6 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         try {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
-            
-            // this path ends with a set of coordinates and a direction that I'm facing. 
-            // we examine the vertices of the area into which this enemy could potentially move, and make an 
-            // attempt to evaluate how much of that area is out of my main weapons arc
-            // a reasonable estimate is the percentage of vertices that are not in the main weapons arc
-            // that number will be the multiplier for the amount of damage *I* can do to the enemy.
-            // we will assume that the enemy will always move in such a way as to maximize their damage to me.
-            // due to characteristics of space combat (no minimum range) however, if their "optimal firing point"
-            // will result in me getting hit in a low-armor location, we apply a multiplier to the damage, 
-            // as it is really bad to get hit in an un-armored location
-            
-            // don't feel like doing this tonight, though, thanks wife.
             
             Coords finalCoords = path.getFinalCoords();
             Coords closest = getClosestCoordsTo(enemy.getId(), finalCoords);

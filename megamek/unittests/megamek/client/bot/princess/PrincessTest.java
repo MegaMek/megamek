@@ -66,6 +66,7 @@ public class PrincessTest {
         Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
         Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
@@ -426,7 +427,7 @@ public class PrincessTest {
         BasicPathRanker mockRanker = Mockito.mock(BasicPathRanker.class);
         Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
                                                    Mockito.any(IGame.class))).thenReturn(0);
-        Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockRanker);
+        Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
         Coords mockCoords = Mockito.mock(Coords.class);

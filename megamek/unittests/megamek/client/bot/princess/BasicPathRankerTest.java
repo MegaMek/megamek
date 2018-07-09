@@ -203,6 +203,7 @@ public class BasicPathRankerTest {
         final Entity mockAero = Mockito.mock(Aero.class);
         Mockito.when(mockAero.getId()).thenReturn(2);
         Mockito.when(mockAero.isAero()).thenReturn(true);
+        Mockito.when(mockAero.isAirborne()).thenReturn(true);
         EntityEvaluationResponse expected = new EntityEvaluationResponse();
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);

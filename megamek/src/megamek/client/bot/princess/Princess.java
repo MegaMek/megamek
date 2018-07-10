@@ -174,7 +174,7 @@ public class Princess extends BotClient {
     IPathRanker getPathRanker(Entity entity) {
         if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             return pathRankers.get(PathRankerType.Infantry);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_AERO) && game.useVectorMove()) {
+        } else if (entity.isAero() && game.useVectorMove()) {
             return pathRankers.get(PathRankerType.NewtonianAerospace);
         }
         
@@ -345,6 +345,18 @@ public class Princess extends BotClient {
                 sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
             }
 
+            // if we are using forced withdrawal, and the entity being considered is crippled
+            // we will opt to not re-deploy the entity
+            if(getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+                log(getClass(),
+                        METHOD_NAME,
+                        LogLevel.INFO,
+                        "Declining to deploy crippled unit: "
+                        + getEntity(entityNum).getChassis() + ". Removing unit.");
+                sendDeleteEntity(entityNum);
+                return;
+            }
+            
             // on the list to be deployed get a set of all the
             final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
             if (0 == startingCoords.size()) {
@@ -1749,7 +1761,7 @@ public class Princess extends BotClient {
         Entity pathEntity = path.getPath().getEntity();
         
         // we cannot evade if we are out of control
-        if(pathEntity.isAirborne() && ((Aero) pathEntity).isOutControlTotal()) {
+        if(pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
             return;
         }
         

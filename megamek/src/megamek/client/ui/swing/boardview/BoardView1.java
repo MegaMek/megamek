@@ -1399,6 +1399,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         //renderMovementBoundingBox((Graphics2D) g);
     }
     
+    /** 
+     * Debugging method that renders the bounding hex of a unit's movement envelope.
+     * Warning: very slow when rendering the bounding hex for really fast units.
+     * @param g Graphics object on which to draw.
+     */
     private void renderMovementBoundingBox(Graphics2D g) {
         if(selectedEntity != null) {
             Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
@@ -1420,10 +1425,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             
-            Coords d = cba.getEdges()[2].getIntersection(cba.getEdges()[3]);
-            
             for(Integer x = 0; x < 6; x++) {
                 Coords c = cba.getVertexNum(x);
+                if(c == null) {
+                    continue;
+                }
 
                 Point p = getCentreHexLocation(c.getX(), c.getY(), true);
                 p.translate(HEX_W / 2, HEX_H  / 2);

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Aero;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -65,7 +65,7 @@ public class NewtonianAerospacePathFinder {
             aerospacePaths.add(startingEdge);
             
             // can't do anything if the unit is out of control.
-            if(((Aero) startingEdge.getEntity()).isOutControlTotal()) {
+            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
                 return;
             }
             
@@ -75,6 +75,14 @@ public class NewtonianAerospacePathFinder {
             reverseEdge.addStep(MoveStepType.YAW);
             aerospacePaths.add(reverseEdge);
             aerospacePaths.addAll(generateChildren(reverseEdge));
+            
+            // it's possible that we generated some number of paths that go off-board
+            // now is the time to clean those out.
+            // except for the one that we designated as the shortest off-board path
+            aerospacePaths.removeIf(path -> !startingEdge.getGame().getBoard().contains(path.getFinalCoords()));
+            if(offBoardPath != null) {
+                aerospacePaths.add(offBoardPath);
+            }
             
             visitedCoords.clear();
         } catch (OutOfMemoryError e) {
@@ -128,9 +136,11 @@ public class NewtonianAerospacePathFinder {
             
             childPath.addStep(nextStepType);
             
+            boolean maxMPUsed = childPath.getMpUsed() >= childPath.getEntity().getRunMP();
+            
             // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
             // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on
-            if(!childPath.isMoveLegal()) {
+            if(!childPath.isMoveLegal() && maxMPUsed) {
                 continue;
             }
             
@@ -139,8 +149,8 @@ public class NewtonianAerospacePathFinder {
             // terminator conditions:
             // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
             // OR we have used all our MP
-            if((visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < childPath.getMpUsed()) ||
-                    (childPath.getMpUsed() >= childPath.getEntity().getRunMP())) {
+            if((visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < childPath.getMpUsed()) 
+                    || maxMPUsed) {
                 continue;
             }
             

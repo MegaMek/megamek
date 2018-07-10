@@ -52,7 +52,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
@@ -168,7 +167,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             //Airborne aeros always move after other units, and would require an 
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy.isAirborne()) {
+            if (enemy.isAero() && enemy.isAirborne()) {
                 return returnResponse;
             }
             
@@ -656,7 +655,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     protected boolean evaluateAsMoved(Entity enemy) {
         // Aerospace units on ground maps can go pretty much anywhere they want, so it's
         // somewhat pointless to try to predict their movement.
-        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAero();
+        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || (enemy.isAero() && enemy.isAirborne());
     }
     
     /**

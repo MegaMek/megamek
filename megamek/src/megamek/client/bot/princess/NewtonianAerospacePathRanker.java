@@ -2,10 +2,11 @@ package megamek.client.bot.princess;
 
 import java.util.List;
 
-import megamek.common.Aero;
+import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
@@ -115,7 +116,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             // placeholder logic:
             // if we are a spheroid, we can fire viably in any direction
             // if we are a fighter or aerodyne dropship, our most effective arc is forward
-            int arcToUse = ((Aero) path.getEntity()).isSpheroid() ? Compute.ARC_360 : Compute.ARC_NOSE;
+            int arcToUse = ((IAero) path.getEntity()).isSpheroid() ? Compute.ARC_360 : Compute.ARC_NOSE;
             double vertexCoverage = 1.0;
             
             // the idea here is that, if we have a limited firing arc, the target
@@ -124,11 +125,12 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             // that are in our main firing arc, compared to the max (6).
             if(arcToUse != Compute.ARC_360) {
                 int inArcVertexCount = 0;
+                ConvexBoardArea movableArea = getPathEnumerator().getUnitMovableAreas().get(enemy.getId());
                 
-                for(int vertexNum = 0; vertexNum < 6; vertexNum++) {
-                    Coords vertex = getPathEnumerator().getUnitMovableAreas().get(enemy.getId()).getVertexNum(vertexNum);
+                for(int vertexNum = 0; vertexNum < 6; vertexNum++) {                    
+                    Coords vertex = movableArea.getVertexNum(vertexNum);
                     
-                    if(Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
+                    if(vertex != null && Compute.isInArc(finalCoords, path.getFinalFacing(), vertex, arcToUse)) {
                         inArcVertexCount++;
                     }
                 }

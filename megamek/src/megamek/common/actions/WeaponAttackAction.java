@@ -3873,7 +3873,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)
                 && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
-                && !ae.isMakingVTOLGroundAttack()) {
+                && !ae.isMakingVTOLGroundAttack()
+                && !ae.isOffBoard()) {
             return "Target not in arc.";
         }
 

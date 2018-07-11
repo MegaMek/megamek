@@ -161,72 +161,78 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.year")), gbc); //$NON-NLS-1$
 		txtYear = new JTextField();
 		txtYear.setEditable(true);
 		txtYear.setText(Integer.toString(currentYear));
+		txtYear.setToolTipText(Messages.getString("ForceGeneratorDialog.year.tooltip")); //$NON-NLS-1$
 		gbc.gridx = 1;
 		gbc.gridy = y++;
 		add(txtYear, gbc);
 		txtYear.addFocusListener(this);
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.faction")), gbc); //$NON-NLS-1$
 		cbFaction = new JComboBox<>();
 		cbFaction.setRenderer(factionRenderer);
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbFaction, gbc);
+		cbFaction.setToolTipText(Messages.getString("ForceGeneratorDialog.faction.tooltip")); //$NON-NLS-1$
 		cbFaction.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.subfaction")), gbc); //$NON-NLS-1$
 		cbSubfaction = new JComboBox<>();
 		cbSubfaction.setRenderer(factionRenderer);
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbSubfaction, gbc);
+		cbSubfaction.setToolTipText(Messages.getString("ForceGeneratorDialog.subfaction.tooltip")); //$NON-NLS-1$
 		cbSubfaction.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		add(new JLabel(Messages.getString("ForceGeneratorDialog.unitType")), gbc);
 		cbUnitType = new JComboBox<Integer>();
-		cbUnitType.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.combined"),
+		cbUnitType.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.combined"), //$NON-NLS-1$
 				ut -> UnitType.getTypeName(ut)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbUnitType, gbc);
+		cbUnitType.setToolTipText(Messages.getString("ForceGeneratorDialog.unitType.tooltip")); //$NON-NLS-1$
 		cbUnitType.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.formation")), gbc); //$NON-NLS-1$
 		cbFormation = new JComboBox<>();
-		cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
+		cbFormation.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"), //$NON-NLS-1$
 		        f -> formationDisplayNames.get(f)));
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbFormation, gbc);
+		cbFormation.setToolTipText(Messages.getString("ForceGeneratorDialog.formation.tooltip")); //$NON-NLS-1$
 		cbFormation.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.rating")), gbc); //$NON-NLS-1$
 		cbRating = new JComboBox<>();
-		cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"),
+		cbRating.setRenderer(new CBRenderer<String>(Messages.getString("ForceGeneratorDialog.random"), //$NON-NLS-1$
 		        r -> ratingDisplayNames.get(r)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbRating, gbc);
+		cbRating.setToolTipText(Messages.getString("ForceGeneratorDialog.rating.tooltip")); //$NON-NLS-1$
 		cbRating.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel("Weight:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.weight")), gbc); //$NON-NLS-1$
 		cbWeightClass = new JComboBox<Integer>();
-		cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
+		cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"), //$NON-NLS-1$
 				wc -> EntityWeightClass.getClassName(wc)));
 		cbWeightClass.addItem(null);
 		cbWeightClass.addItem(EntityWeightClass.WEIGHT_LIGHT);
@@ -236,37 +242,41 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbWeightClass, gbc);
+		cbWeightClass.setToolTipText(Messages.getString("ForceGeneratorDialog.weight.tooltip")); //$NON-NLS-1$
 		cbWeightClass.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		add(new JLabel("Other:"), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.other")), gbc); //$NON-NLS-1$
 		cbFlags = new JComboBox<>();
 		cbFlags.setRenderer(new CBRenderer<String>("---",
 				f -> flagDisplayNames.get(f)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbFlags, gbc);
+		cbFlags.setToolTipText(Messages.getString("ForceGeneratorDialog.other.tooltip")); //$NON-NLS-1$
 		cbFlags.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc);
+		add(new JLabel(Messages.getString("ForceGeneratorDialog.experience")), gbc); //$NON-NLS-1$
 		cbExperience = new JComboBox<String>();
-		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random"));
-		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green"));
-		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular"));
-		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran"));
-		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite"));
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.random")); //$NON-NLS-1$
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.green")); //$NON-NLS-1$
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.regular")); //$NON-NLS-1$
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.veteran")); //$NON-NLS-1$
+		cbExperience.addItem(Messages.getString("ForceGeneratorDialog.elite")); //$NON-NLS-1$
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbExperience, gbc);
+		cbExperience.setToolTipText(Messages.getString("ForceGeneratorDialog.experience.tooltip")); //$NON-NLS-1$
 		cbExperience.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y++;
 		gbc.gridwidth = 2;
-		chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces"));
+		chkAttachments = new JCheckBox(Messages.getString("ForceGeneratorDialog.includeSupportForces")); //$NON-NLS-1$
+		chkAttachments.setToolTipText(Messages.getString("ForceGeneratorDialog.includeSupportForces.tooltip")); //$NON-NLS-1$
 		chkAttachments.setSelected(true);
 		add(chkAttachments, gbc);
 		
@@ -292,12 +302,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		gbc.gridy = y++;
 		
 		JPanel panTransport = new JPanel(new GridLayout(3, 2));
-		txtDropshipPct = new JTextField("0");
-		txtJumpshipPct = new JTextField("0");
+		txtDropshipPct = new JTextField("0"); //$NON-NLS-1$
+		txtDropshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.dropshipPercentage.tooltip")); //$NON-NLS-1$
+		txtJumpshipPct = new JTextField("0"); //$NON-NLS-1$
+		txtJumpshipPct.setToolTipText(Messages.getString("ForceGeneratorDialog.jumpshipPercentage.tooltip")); //$NON-NLS-1$
 		txtCargo = new JTextField("0");
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage")));
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.dropshipPercentage"))); //$NON-NLS-1$
         panTransport.add(txtDropshipPct, gbc);
-        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage")));
+        panTransport.add(new JLabel(Messages.getString("ForceGeneratorDialog.jumpshipPercentage"))); //$NON-NLS-1$
         panTransport.add(txtJumpshipPct, gbc);
         // Cargo needs more work to select cargo dropships.
 //        panTransport.add(new JLabel("Cargo Tonnage:"));
@@ -305,10 +317,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         gbc.gridx = 0;
         gbc.gridy = y++;
         gbc.fill = GridBagConstraints.NONE;
-        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport")));
+        panTransport.setBorder(BorderFactory.createTitledBorder(Messages.getString("ForceGeneratorDialog.transport"))); //$NON-NLS-1$
         add(panTransport, gbc);
 
-		btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate"));
+		btnGenerate = new JButton(Messages.getString("ForceGeneratorDialog.generate")); //$NON-NLS-1$
+		btnGenerate.setToolTipText(Messages.getString("ForceGeneratorDialog.generate.tooltip")); //$NON-NLS-1$
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		gbc.gridwidth = 1;
@@ -316,14 +329,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		add(btnGenerate, gbc);
 		btnGenerate.addActionListener(this);
 
-		btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL"));
+		btnExportMUL = new JButton(Messages.getString("ForceGeneratorDialog.exportMUL")); //$NON-NLS-1$
+		btnExportMUL.setToolTipText(Messages.getString("ForceGeneratorDialog.exportMUL.tooltip")); //$NON-NLS-1$
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(btnExportMUL, gbc);
 		btnExportMUL.addActionListener(this);
 		btnExportMUL.setEnabled(false);
 
-        btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear"));
+        btnClear = new JButton(Messages.getString("ForceGeneratorDialog.clear")); //$NON-NLS-1$
+        btnClear.setToolTipText(Messages.getString("ForceGeneratorDialog.clear.tooltip")); //$NON-NLS-1$
         gbc.gridx = 2;
         gbc.gridy = y;
         gbc.weighty = 1.0;

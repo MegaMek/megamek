@@ -9,6 +9,7 @@ v0.45.0-git
         Fixes bug that disconnects C3 networks when loading from MUL of any unit loaded before the C3 master.
 + Issue #1027: Off-board Infantry Field Artillery "Target Out of Arc"
 + Issue #1028: Infantry TAG has 0 range
++ PR #1025: [Feature] Princess can now fly spacecraft using the advanced flight rules.
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

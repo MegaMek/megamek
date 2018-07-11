@@ -7,6 +7,8 @@ v0.45.0-git
 + PR #1001: Prototype improvements to infantry pathfinding allowing Princess to make significantly better use of infantry than previously.
 + PR #1013: Defer calculating initial BV when adding multiple entities to game.
         Fixes bug that disconnects C3 networks when loading from MUL of any unit loaded before the C3 master.
++ Issue #1027: Off-board Infantry Field Artillery "Target Out of Arc"
++ Issue #1028: Infantry TAG has 0 range
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

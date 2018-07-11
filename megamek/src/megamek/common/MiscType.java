@@ -4900,11 +4900,11 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SWORD;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "237,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_B)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_B)
                 .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
-                .setISAdvancement(3050, 3058, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setISAdvancement(3050, 3058, 3060).setISApproximate(true, false, false)
+                .setPrototypeFactions(F_DC).setProductionFactions(F_DC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 

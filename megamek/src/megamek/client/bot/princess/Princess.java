@@ -33,6 +33,8 @@ import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.client.ui.SharedUtility;
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -172,6 +174,8 @@ public class Princess extends BotClient {
     IPathRanker getPathRanker(Entity entity) {
         if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
             return pathRankers.get(PathRankerType.Infantry);
+        } else if (entity.isAero() && game.useVectorMove()) {
+            return pathRankers.get(PathRankerType.NewtonianAerospace);
         }
         
         return pathRankers.get(PathRankerType.Basic);
@@ -341,6 +345,18 @@ public class Princess extends BotClient {
                 sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
             }
 
+            // if we are using forced withdrawal, and the entity being considered is crippled
+            // we will opt to not re-deploy the entity
+            if(getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+                log(getClass(),
+                        METHOD_NAME,
+                        LogLevel.INFO,
+                        "Declining to deploy crippled unit: "
+                        + getEntity(entityNum).getChassis() + ". Removing unit.");
+                sendDeleteEntity(entityNum);
+                return;
+            }
+            
             // on the list to be deployed get a set of all the
             final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
             if (0 == startingCoords.size()) {
@@ -1517,6 +1533,11 @@ public class Princess extends BotClient {
         infantryPathRanker.setFireControl(fireControls.get(FireControlType.Infantry));
         infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Infantry, infantryPathRanker);
+        
+        NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
+        newtonianAerospacePathRanker.setFireControl(fireControls.get(FireControlType.Basic));
+        newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
     }
     
     private boolean isEnemyGunEmplacement(final Entity entity,
@@ -1724,6 +1745,12 @@ public class Princess extends BotClient {
     private void performPathPostProcessing(final RankedPath path) {
         evadeIfNotFiring(path);
         unloadTransportedInfantry(path);
+        
+        // if we are using vector movement, there's a whole bunch of post-processing that happens to
+        // aircraft flight paths when a player does it, so we apply it here.
+        if(path.getPath().getEntity().isAero()) {
+            SharedUtility.moveAero(path.getPath(), null);
+        }
     }
     
     /**
@@ -1731,11 +1758,18 @@ public class Princess extends BotClient {
      * @param path The path to process
      */
     private void evadeIfNotFiring(final RankedPath path) {
+        Entity pathEntity = path.getPath().getEntity();
+        
+        // we cannot evade if we are out of control
+        if(pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
+            return;
+        }
+        
         // if we're an airborne aircraft
         // and we're not going to do any damage anyway
         // and we can do so without causing a PSR
         // then evade
-        if(path.getPath().getEntity().isAirborne() &&
+        if(pathEntity.isAirborne() &&
            (0 >= path.getExpectedDamage()) &&
            (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath()
                                                                                                   .getEntity()) - 2)) {

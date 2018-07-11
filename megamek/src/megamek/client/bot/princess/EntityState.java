@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -111,6 +112,15 @@ public class EntityState {
         setSecondaryFacing(getFacing());
     }
 
+    /**
+     * Create an entity state from a Targetable, but pretend it's in a different hex facing in a different direction.
+     */
+    EntityState(Targetable target, CoordFacingCombo projectedTargetLocation) {
+        this(target);
+        position = projectedTargetLocation.getCoords();
+        facing = projectedTargetLocation.getFacing();
+    }
+    
     public Coords getPosition() {
         return position;
     }

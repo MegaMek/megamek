@@ -89,6 +89,9 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
+import megamek.client.bot.princess.PathEnumerator;
+import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
@@ -168,6 +171,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
@@ -1389,6 +1393,51 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setFont(fpsFont);
             g.setColor(Color.YELLOW);
             g.drawString(s, -getX() + 5, -getY() + 20);
+        }
+        
+        // debugging method that renders the bounding box of a unit's movement envelope.
+        //renderMovementBoundingBox((Graphics2D) g);
+    }
+    
+    /** 
+     * Debugging method that renders the bounding hex of a unit's movement envelope.
+     * Warning: very slow when rendering the bounding hex for really fast units.
+     * @param g Graphics object on which to draw.
+     */
+    private void renderMovementBoundingBox(Graphics2D g) {
+        if(selectedEntity != null) {
+            Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
+            princess.getGame().setBoard(this.game.getBoard());
+            PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
+            pathEnum.recalculateMovesFor(this.selectedEntity);
+            
+            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.selectedEntity.getId());
+            for(int x = 0; x < game.getBoard().getWidth(); x++) {
+                for(int y = 0; y < game.getBoard().getHeight(); y++) {
+                    Point p = getCentreHexLocation(x, y, true);
+                    p.translate(HEX_W  / 2, HEX_H  / 2);   
+                    Coords c = new Coords(x, y);
+                    
+                    if(cba.contains(c)) {
+                        
+                        drawHexBorder(g, p, Color.PINK, 0, 6);
+                    }
+                }
+            }
+            
+            for(Integer x = 0; x < 6; x++) {
+                Coords c = cba.getVertexNum(x);
+                if(c == null) {
+                    continue;
+                }
+
+                Point p = getCentreHexLocation(c.getX(), c.getY(), true);
+                p.translate(HEX_W / 2, HEX_H  / 2);
+                
+                drawHexBorder(g, p, Color.yellow, 0, 3);
+                String s = x.toString();
+                this.drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
+            }
         }
     }
     

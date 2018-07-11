@@ -131,7 +131,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             //Aeros always move after other units, and would require an 
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy.isAero()) {
+            if (enemy.isAirborne()) {
                 return returnResponse;
             }
             

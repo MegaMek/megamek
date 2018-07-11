@@ -853,7 +853,9 @@ public class SharedUtility {
                 // for purposes of bombing
                 en.addPassedThrough(right);
                 en.addPassedThrough(left);
-                client.sendUpdateEntity(en);
+                if(client !=  null) {
+                    client.sendUpdateEntity(en);
+                }
 
                 // if the left is preferred, increment i so next one is skipped
                 if ((leftTonnage < rightTonnage)

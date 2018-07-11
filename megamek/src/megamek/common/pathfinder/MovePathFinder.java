@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;

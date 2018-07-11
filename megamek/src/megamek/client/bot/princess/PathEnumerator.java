@@ -42,6 +42,7 @@ import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
+import megamek.common.pathfinder.NewtonianAerospacePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 
 public class PathEnumerator {
@@ -240,6 +241,10 @@ public class PathEnumerator {
                 for(Integer length : pathLengths.keySet()) {
                     this.owner.log(this.getClass(), METHOD_NAME, LogLevel.DEBUG, "Paths of length " + length + ": " + pathLengths.get(length));
                 }
+            } else if(mover.isAero() && game.useVectorMove()) {
+                NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
+                npf.run(new MovePath(game, mover));
+                paths.addAll(npf.getAllComputedPathsUncategorized());
             } else if (mover.isAero()) {
                 IAero aeroMover = (IAero)mover;
                 // Get the shortest paths possible.
@@ -439,7 +444,7 @@ public class PathEnumerator {
         return unitPaths;
     }
 
-    protected Map<Integer, ConvexBoardArea> getUnitMovableAreas() {
+    public Map<Integer, ConvexBoardArea> getUnitMovableAreas() {
         return unitMovableAreas;
     }
 

@@ -95,6 +95,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     void setPathEnumerator(PathEnumerator pathEnumerator) {
         this.pathEnumerator = pathEnumerator;
     }
+    
+    PathEnumerator getPathEnumerator() {
+        return pathEnumerator;
+    }
 
     Map<Integer, Double> getBestDamageByEnemies() {
         return bestDamageByEnemies;
@@ -160,10 +164,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 
-            //Aeros always move after other units, and would require an 
+            //Airborne aeros always move after other units, and would require an 
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy.isAero()) {
+            if (enemy.isAero() && enemy.isAirborne()) {
                 return returnResponse;
             }
             
@@ -559,10 +563,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 }
 
                 EntityEvaluationResponse eval;
-                // TODO: Always consider Aeros to have moved, as right now we
-                // don't try to predict their movement.
-                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()
-                        || enemy.isAero()) { //For units that have already moved
+
+                if (evaluateAsMoved(enemy)) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
@@ -611,7 +613,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             utility += braveryMod;
 
             //noinspection StatementWithEmptyBody
-            if (path.getEntity().isAero()) {
+            if (path.getEntity().isAero() && !path.getEntity().isSpaceborne()) {
                 // No idea what original implementation was meant to be.
 
             } else {
@@ -647,6 +649,15 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     }
 
+    /**
+     * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
+     */
+    protected boolean evaluateAsMoved(Entity enemy) {
+        // Aerospace units on ground maps can go pretty much anywhere they want, so it's
+        // somewhat pointless to try to predict their movement.
+        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || (enemy.isAero() && enemy.isAirborne());
+    }
+    
     /**
      * Calculate who all other units would shoot at if I weren't around
      */
@@ -1232,7 +1243,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         return hazardValue;
     }
-
+    
     /**
      * Simple data structure that holds a separate firing and physical damage number.
      *

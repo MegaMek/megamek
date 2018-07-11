@@ -164,6 +164,23 @@ public class TeleMissile extends Aero {
     public int calculateBattleValue() {
         return 0;
     }
+    
+    /**
+     * Returns this entity's safe thrust, factored for heat, extreme
+     * temperatures, gravity, partial repairs and bomb load (not that
+     * telemissiles are affected by anything but remaining fuel...).
+     */
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int j = getCurrentFuel();
+        return j;
+    }
+    
+    //Telemissiles don't have runMP like other units
+    @Override
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+    }
 
     @Override
     public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {

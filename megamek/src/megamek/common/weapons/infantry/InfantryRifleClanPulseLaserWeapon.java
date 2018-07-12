@@ -39,6 +39,7 @@ public class InfantryRifleClanPulseLaserWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 3000;
 		bv = 1.69;
+		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.33;
 		rulesRefs = "273,TM";

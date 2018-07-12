@@ -37,7 +37,7 @@ Spheroid
 </motion_type>
 
 <transporters>
-infantrybay:6.0:1:1:Foot
+infantrybay:6.0:1:1
 lightvehiclebay:12.0:2:2
 cargobay:1100.5:1:3
 2ndclassquarters:0.0:0

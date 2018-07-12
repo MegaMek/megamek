@@ -39,6 +39,7 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 10000;
 		bv = 5.32;
+		tonnage = .011;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 1.04;
 		infantryRange = 2;

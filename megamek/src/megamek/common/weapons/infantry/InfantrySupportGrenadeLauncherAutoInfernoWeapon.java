@@ -39,6 +39,7 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
 		ammoType = AmmoType.T_NA;
 		cost = 975;
 		bv = 1.25;
+		tonnage = .012;
 		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 0.41;
 		infantryRange = 1;

@@ -32,20 +32,20 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 	public InfantrySupportGungnirHeavyGaussWeapon() {
 		super();
 
-		name = "Gauss Rifle (Gungnir Heavy)";
+		name = "Gauss Rifle (Gungnir Heavy Support)";
 		setInternalName(name);
 		addLookupName("InfantryGungnirHeavySupportGaussRifle");
 		addLookupName("GungnirHeavySupportGaussRifle");
 		ammoType = AmmoType.T_NA;
 		cost = 15000;
-		tonnage = 0.006f;
+		tonnage = 0.006;
 		bv = 0.0;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 1.23;
 		infantryRange = 3;
 		crew = 3;
 		tonnage = .060;
-		rulesRefs = "273,TM";
+		rulesRefs = "176,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

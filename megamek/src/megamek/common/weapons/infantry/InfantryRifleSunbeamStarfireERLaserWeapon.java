@@ -39,6 +39,7 @@ public class InfantryRifleSunbeamStarfireERLaserWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 2500;
 		bv = 2.01;
+		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.28;
 		infantryRange = 3;

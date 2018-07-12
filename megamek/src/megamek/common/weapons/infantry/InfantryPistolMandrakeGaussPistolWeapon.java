@@ -39,6 +39,7 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 750;
 		bv = 0.02;
+		tonnage = .0001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.02;
 		infantryRange = 0;

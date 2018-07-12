@@ -1923,7 +1923,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // send event to other parts of the UI which care
-        setFieldofFire(mounted);
+        if (oldmount.isInWaypointLaunchMode()) {
+            setFieldofFire(oldmount);
+        } else {
+            setFieldofFire(mounted);
+        }
         unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
         onResize();
         addListeners();

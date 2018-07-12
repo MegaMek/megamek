@@ -10094,9 +10094,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
             mod = 6;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
-            mod = 8;
-        }
         if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
@@ -10168,12 +10165,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
-            mod = 0;
-        }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
-            mod = mod / 2;
-        }
+
         return mod;
     }
 
@@ -11640,6 +11632,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : getWeaponList()) {
             if (mounted.getType() instanceof Weapon)
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
+                mounted.setModesForMapType();
         }
 
         for (Mounted misc : getMisc()) {
@@ -13661,7 +13654,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc,
                                    HashMap<Integer, List<CriticalSlot>> vCriticals) {
-        if (masc != null) {
+        if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
             if (masc.getType().hasSubType(MiscType.S_SUPERCHARGER)
@@ -13689,10 +13682,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 if (((MiscType) (masc.getType()))
                         .hasSubType(MiscType.S_SUPERCHARGER)) {
-                    if (masc.getType().hasFlag(MiscType.F_MASC)) {
-                        masc.setHit(true);
-                        masc.setMode("Off");
-                    }
                     // do the damage - engine crits
                     int hits = 0;
                     int roll = Compute.d6(2);

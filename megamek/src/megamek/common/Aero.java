@@ -38,7 +38,7 @@ public class Aero extends Entity implements IAero, IBomber {
      *
      */
     private static final long serialVersionUID = 7196307097459255187L;
-
+    
     // locations
     public static final int LOC_NOSE = 0;
     public static final int LOC_LWING = 1;

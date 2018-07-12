@@ -43,7 +43,7 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.33;
 		infantryRange = 1;
-		rulesRefs = "273,TM";
+		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3077, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setPrototypeFactions(F_FS)

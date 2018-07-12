@@ -39,6 +39,7 @@ public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 300;
 		bv = 0.06;
+        tonnage = .0003; 
 		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.07;
 		infantryRange = 0;

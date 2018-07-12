@@ -89,6 +89,9 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
+import megamek.client.bot.princess.PathEnumerator;
+import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
@@ -168,6 +171,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
@@ -1390,6 +1394,51 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setColor(Color.YELLOW);
             g.drawString(s, -getX() + 5, -getY() + 20);
         }
+        
+        // debugging method that renders the bounding box of a unit's movement envelope.
+        //renderMovementBoundingBox((Graphics2D) g);
+    }
+    
+    /** 
+     * Debugging method that renders the bounding hex of a unit's movement envelope.
+     * Warning: very slow when rendering the bounding hex for really fast units.
+     * @param g Graphics object on which to draw.
+     */
+    private void renderMovementBoundingBox(Graphics2D g) {
+        if(selectedEntity != null) {
+            Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
+            princess.getGame().setBoard(this.game.getBoard());
+            PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
+            pathEnum.recalculateMovesFor(this.selectedEntity);
+            
+            ConvexBoardArea cba = pathEnum.getUnitMovableAreas().get(this.selectedEntity.getId());
+            for(int x = 0; x < game.getBoard().getWidth(); x++) {
+                for(int y = 0; y < game.getBoard().getHeight(); y++) {
+                    Point p = getCentreHexLocation(x, y, true);
+                    p.translate(HEX_W  / 2, HEX_H  / 2);   
+                    Coords c = new Coords(x, y);
+                    
+                    if(cba.contains(c)) {
+                        
+                        drawHexBorder(g, p, Color.PINK, 0, 6);
+                    }
+                }
+            }
+            
+            for(Integer x = 0; x < 6; x++) {
+                Coords c = cba.getVertexNum(x);
+                if(c == null) {
+                    continue;
+                }
+
+                Point p = getCentreHexLocation(c.getX(), c.getY(), true);
+                p.translate(HEX_W / 2, HEX_H  / 2);
+                
+                drawHexBorder(g, p, Color.yellow, 0, 3);
+                String s = x.toString();
+                this.drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
+            }
+        }
     }
     
     /**
@@ -2342,25 +2391,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private void drawHexes(Graphics g, Rectangle view, boolean saveBoardImage) {
         // only update visible hexes
-        int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
-        int drawY = (int) (view.y / (HEX_H * scale)) - 1;
+        double xs = (int) (HEX_WC*scale);
+        double ys = (int) (HEX_H*scale);
+        
+        int drawX = (int) (view.x / xs) - 1;
+        int drawY = (int) (view.y / ys) - 1;
 
-        int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
-        int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
-
+        int drawWidth = (int) (view.width / xs) + 3;
+        int drawHeight = (int) (view.height / ys) + 3;
+        
         // draw some hexes.
         if (useIsometric()) {
-            // When using isometric rendering, hexes within a given row
-            // must be drawn from lowest to highest elevation.
             IBoard board = game.getBoard();
-            final int minElev = board.getMinElevation();
-            final int maxElev = board.getMaxElevation();
-            for (int i = 0; i < drawHeight; i++) {
-                for (int x = minElev; x <= maxElev; x++) {
-                    for (int j = 0; j < drawWidth; j++) {
-                        Coords c = new Coords(j + drawX, i + drawY);
+            for (int y = 0; y < drawHeight; y++) {
+                // Half of each row is one-half hex
+                // farther back (above) the other; draw those first
+                for (int s = 0; s <= 1; s++) {
+                    for (int x = s; x < drawWidth+s+1; x=x+2) {
+                        // For s == 0 the x coordinate MUST be an even number
+                        // to get correct occlusion; drawX may be any int though
+                        Coords c = new Coords(x + drawX/2*2, y + drawY);
                         IHex hex = board.getHex(c);
-                        if ((hex != null) && (hex.getLevel() == x)) {
+                        if ((hex != null)) { 
                             drawHex(c, g, saveBoardImage);
                             if (GUIPreferences.getInstance()
                                     .getShowFieldOfFire()) {
@@ -2374,14 +2426,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 drawHexBorder(g, getHexLocation(c),
                                         Color.yellow);
                             }
+                            drawOrthograph(c, g);
                         }
                     }
                 }
-                for (int k = 0; k < drawWidth; k++) {
-                    Coords c = new Coords(k + drawX, i + drawY);
+                for (int x = 0; x < drawWidth; x++) {
+                    Coords c = new Coords(x + drawX, y + drawY);
                     IHex hex = board.getHex(c);
                     if (hex != null) {
-                        drawOrthograph(c, g);
                         if (!saveBoardImage) {
                             if (GUIPreferences.getInstance().getShowWrecks()) {
                                 drawIsometricWreckSpritesForHex(c, g,

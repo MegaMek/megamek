@@ -39,6 +39,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 200;
 		bv = 0.06;
+		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.07;
 		infantryRange = 0;

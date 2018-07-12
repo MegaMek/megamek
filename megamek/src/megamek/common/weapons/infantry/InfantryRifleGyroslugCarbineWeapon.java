@@ -38,6 +38,7 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 800;
 		bv = 0.86;
+		tonnage = .004;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.28;
 		infantryRange = 1;

@@ -39,6 +39,7 @@ public class InfantryGrenadeMiniWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 8;
 		bv = 0.25;
+		tonnage = .00045;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 0.27;
 		infantryRange = 0;

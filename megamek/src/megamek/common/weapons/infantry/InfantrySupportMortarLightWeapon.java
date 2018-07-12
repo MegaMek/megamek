@@ -39,6 +39,7 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
 		ammoType = AmmoType.T_NA;
 		cost = 1400;
 		bv = 1.62;
+		tonnage = .050;
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 0.53;
 		infantryRange = 1;

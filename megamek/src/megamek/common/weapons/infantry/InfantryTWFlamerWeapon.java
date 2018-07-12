@@ -37,6 +37,7 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
 		addLookupName("InfantryTWPortableFlamer");
 		cost = 100;
 		bv = 0.36;
+		tonnage = .015;
 		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
 		infantryDamage = 0.35;
 		infantryRange = 1;

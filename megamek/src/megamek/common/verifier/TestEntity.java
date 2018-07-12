@@ -832,6 +832,7 @@ public abstract class TestEntity implements TestEntityOption {
          */
         boolean retVal = false;
         int eTechLevel = SimpleTechLevel.convertCompoundToSimple(getEntity().getTechLevel()).ordinal();
+        int ammoRulesLevel = SimpleTechLevel.convertCompoundToSimple(ammoTechLvl).ordinal();
         int eRulesLevel = getEntity().findMinimumRulesLevel().ordinal();
         if ((eTechLevel >= eRulesLevel) && (getEntity().getEarliestTechDate() <= getEntity().getYear())) {
             return false;
@@ -849,7 +850,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             int eqTechLevel = TechConstants.convertFromSimplelevel(eqRulesLevel, nextE.isClan());
             if (nextE instanceof AmmoType) {
-                if (eqRulesLevel > eRulesLevel) {
+                if (eqRulesLevel > ammoRulesLevel) {
                     if (!retVal) {
                         buff.append("Ammo illegal at unit's tech level (");
                         buff.append(TechConstants
@@ -1056,7 +1057,7 @@ public abstract class TestEntity implements TestEntityOption {
         Set<EquipmentType> checked = new HashSet<>();
         for (Mounted mounted : getEntity().getEquipment()) {
             final EquipmentType nextE = mounted.getType();
-            if (checked.contains(nextE)) {
+            if (checked.contains(nextE) || (nextE instanceof AmmoType)) {
                 continue;
             }
             checked.add(nextE);

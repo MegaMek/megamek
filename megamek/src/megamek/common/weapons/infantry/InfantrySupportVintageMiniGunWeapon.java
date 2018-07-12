@@ -44,7 +44,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 		infantryDamage = 0.81;
 		infantryRange = 2;
 		crew = 2;
-		rulesRefs = " 273,TM";
+		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)
 		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

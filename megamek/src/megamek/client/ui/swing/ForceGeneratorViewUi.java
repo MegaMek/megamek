@@ -58,6 +58,8 @@ import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.IGame.Phase;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.UnitType;
 
 /**
@@ -528,8 +530,14 @@ public class ForceGeneratorViewUi {
                 }
                 setText("<html>" + name.toString() + ", " + uname + "</html>");
                 if (fd.getEntity() != null) {
-                	clientGui.loadPreviewImage(this, fd.getEntity(),
-                			clientGui.getClient().getLocalPlayer());
+                    try {
+                    	clientGui.loadPreviewImage(this, fd.getEntity(),
+                    			clientGui.getClient().getLocalPlayer());
+                    } catch (NullPointerException ex) {
+                        DefaultMmLogger.getInstance().log(getClass(),
+                                "getTreeCellRendererComponent(JTree, Object, boolean, boolean, boolean, int, boolean)",
+                                LogLevel.WARNING, "No image found for " + fd.getEntity().getShortNameRaw());
+                    }
                 }
             } else {
             	StringBuilder desc = new StringBuilder("<html>");

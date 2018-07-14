@@ -46,6 +46,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     private transient int turns_ws = 0;
     private transient int turns_ds = 0;
     private transient int turns_sc = 0;
+    private transient int turns_tm = 0;
 
     /**
      * Return the number of "normal" turns that this item requires. This is
@@ -137,6 +138,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public int getSmallCraftTurns() {
         return turns_sc;
     }
+    
+    @Override
+    public int getTeleMissileTurns() {
+        return turns_tm;
+    }
 
     @Override
     public int getAeroTurns() {
@@ -191,6 +197,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void incrementSmallCraftTurns() {
         turns_sc++;
     }
+    
+    @Override
+    public void incrementTeleMissileTurns() {
+        turns_tm++;
+    }
 
     @Override
     public void incrementAeroTurns() {
@@ -240,6 +251,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
     @Override
     public void resetSmallCraftTurns() {
         turns_sc = 0;
+    }
+    
+    @Override
+    public void resetTeleMissileTurns() {
+        turns_tm = 0;
     }
 
     @Override
@@ -406,6 +422,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int[] num_warship_turns = new int[v.size()];
         int[] num_dropship_turns = new int[v.size()];
         int[] num_small_craft_turns = new int[v.size()];
+        int[] num_telemissile_turns = new int[v.size()];
         int[] num_aero_turns = new int[v.size()];
 
         int total_even_turns = 0;
@@ -415,6 +432,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int total_warship_turns = 0;
         int total_dropship_turns = 0;
         int total_small_craft_turns = 0;
+        int total_telemissile_turns = 0;
         int total_aero_turns = 0;
         int index;
         ITurnOrdered[] order = new ITurnOrdered[v.size()];
@@ -442,6 +460,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
             num_warship_turns[orderedItems] = item.getWarshipTurns();
             num_dropship_turns[orderedItems] = item.getDropshipTurns();
             num_small_craft_turns[orderedItems] = item.getSmallCraftTurns();
+            num_telemissile_turns[orderedItems] = item.getTeleMissileTurns();
             num_aero_turns[orderedItems] = item.getAeroTurns();
 
             // Keep a running total.
@@ -452,6 +471,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
             total_warship_turns += num_warship_turns[orderedItems];
             total_dropship_turns += num_dropship_turns[orderedItems];
             total_small_craft_turns += num_small_craft_turns[orderedItems];
+            total_telemissile_turns += num_telemissile_turns[orderedItems];
             total_aero_turns += num_aero_turns[orderedItems];
         }
 
@@ -463,6 +483,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int minWS;
         int minDS;
         int minSC;
+        int minTM;
         int minAero;
 
         // ok first we have to add in the special Aero turns and then go to
@@ -475,6 +496,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         minWS = Integer.MAX_VALUE;
         minDS = Integer.MAX_VALUE;
         minSC = Integer.MAX_VALUE;
+        minTM = Integer.MAX_VALUE;
         minAero = Integer.MAX_VALUE;
         for (index = 0; index < orderedItems; index++) {
             if ((num_normal_turns[index] != 0) && (num_normal_turns[index] < min)) {
@@ -495,17 +517,20 @@ public abstract class TurnOrdered implements ITurnOrdered {
             if ((num_small_craft_turns[index] != 0) && (num_small_craft_turns[index] < minSC)) {
                 minSC = num_small_craft_turns[index];
             }
+            if ((num_telemissile_turns[index] != 0) && (num_telemissile_turns[index] < minTM)) {
+                minTM = num_telemissile_turns[index];
+            }
             if ((num_aero_turns[index] != 0) && (num_aero_turns[index] < minAero)) {
                 minAero = num_aero_turns[index];
             }
         }
 
         int total_turns = total_normal_turns + total_space_station_turns + total_jumpship_turns + total_warship_turns
-                + total_dropship_turns + total_small_craft_turns + total_aero_turns;
+                + total_dropship_turns + total_small_craft_turns + total_telemissile_turns + total_aero_turns;
 
         TurnVectors turns = new TurnVectors(total_normal_turns, total_turns, total_space_station_turns,
                 total_jumpship_turns, total_warship_turns, total_dropship_turns, total_small_craft_turns,
-                total_aero_turns, total_even_turns, min);
+                total_telemissile_turns, total_aero_turns, total_even_turns, min);
 
         // Allocate the normal turns.
         turns_left = total_normal_turns;
@@ -709,7 +734,35 @@ public abstract class TurnOrdered implements ITurnOrdered {
             // Since the smallest unit count had to place 1, reduce min)
             minSC--;
 
-        } // Handle the next 'smal craft' turn.
+        } // Handle the next 'small craft' turn.
+        
+        // Allocate the telemissile turns.
+        turns_left = total_telemissile_turns;
+        while (turns_left > 0) {
+            for (index = 0; index < orderedItems; index++) {
+                // If you have no turns here, skip
+                if (num_telemissile_turns[index] == 0) {
+                    continue;
+                }
+
+                // If you have less than twice the lowest,
+                // move 1. Otherwise, move more.
+                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
+                    ntm = (int) Math.ceil(((double) num_telemissile_turns[index]) / (double) minTM);
+                } else {
+                    ntm = num_telemissile_turns[index] / minSC;
+                }
+                for (int j = 0; j < ntm; j++) {
+                    turns.addTelemissile(order[index]);
+                    num_telemissile_turns[index]--;
+                    turns_left--;
+                }
+
+            }
+            // Since the smallest unit count had to place 1, reduce min)
+            minTM--;
+
+        } // Handle the next 'telemissile' turn.
 
         // Allocate the aero turns.
         turns_left = total_aero_turns;

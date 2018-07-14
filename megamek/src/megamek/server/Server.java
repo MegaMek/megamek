@@ -3058,7 +3058,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_INITIATIVE:
                 resolveWhatPlayersCanSeeWhatUnits();
-                calculateSpaceECM();
+                //calculateSpaceECM();
                 game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 break;
@@ -3081,7 +3081,7 @@ public class Server implements Runnable {
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
                 resolveWhatPlayersCanSeeWhatUnits();
-                calculateSpaceECM();
+                //calculateSpaceECM();
                 doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
@@ -14371,14 +14371,27 @@ public class Server implements Runnable {
     }
     
     /**
-     * Calculates the ECM information for each entity/target pair on space maps
+     * Called at the start and end of movement. Determines if an entity
+     * has been detected and/or had a firing solution calculated 
      */
-    private void calculateSpaceECM() {
+    private void detectSpacecraft() {
         // Don't bother if we're not in space
         if (!game.getBoard().inSpace()) {
             return;
         }
+        // If double-blind and sensors aren't both on, nothing to do
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
+            return;
+        }        
+        //Only try to detect undetected, enemy units
+        ArrayList<Entity> detectedUnits = new ArrayList<>();
+        for (Entity ent : game.getEntitiesVector()) {
+            
+        }
         
+        //Only try to establish firing solutions on detected units
+        ArrayList<Entity> enemyUnits = new ArrayList<>();
     }
 
     /**

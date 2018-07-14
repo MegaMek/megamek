@@ -77,9 +77,9 @@ public class Sensor implements Serializable {
     
     //Constants for space automatic visual detection ranges
     public static final int ASF_RADAR_AUTOSPOT_RANGE = 55;
-    public static final int ASF_OPTICAL_AUTOSPOT_RANGE = 14;
+    public static final int ASF_OPTICAL_FIRING_SOLUTION_RANGE = 14;
     public static final int LC_RADAR_AUTOSPOT_RANGE = 555;
-    public static final int LC_OPTICAL_AUTOSPOT_RANGE = 139;
+    public static final int LC_OPTICAL_FIRING_SOLUTION_RANGE = 139;
 
     /**
      * Constructor

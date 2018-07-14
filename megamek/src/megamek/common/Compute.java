@@ -4072,64 +4072,49 @@ public class Compute {
 
     }
     
-    //Store Space ECM and Sensor Shadow Effects
-    private static int spaceEcmMod;
-    
-    private static int sensorShadowMod;
+    //Space Combat Detection stuff
     
     /**
-     * Returns the ECM effects for this entity/target combination
+     * Checks to see if an entity has already been detected by @detector
+     * 
+     * @param game - the current game
+     * @param detector - the entity making a sensor scan
+     */
+    public boolean isSensorContact(IGame game, Entity detector) {
+        for (Entity target : game.getEntitiesVector()) {
+            if (detector.sensorContacts.contains(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks to see if an entity has already had a firing solution established by @detector
+     * 
+     * @param game - the current game
+     * @param detector - the entity making a sensor scan
+     */
+    public boolean hasFiringSolution(IGame game, Entity detector) {
+        for (Entity target : game.getEntitiesVector()) {
+            if (detector.firingSolutions.contains(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Calculates the ECM effects in play between a detector and target pair
      * 
      * @param game - the current game
      * @param ae - the entity making a sensor scan
      * @param target - the entity we're trying to spot
+     * @return
      */
-    public static int getSpaceECM(IGame game, Entity ae,
+    private static int calcSpaceECM(IGame game, Entity ae,
             Targetable target) {
-        return spaceEcmMod;
-    }
-    
-    /**
-     * Returns the Sensor Shadow effects for this entity/target combination
-     * 
-     * @param game - the current game
-     * @param ae - the entity making a sensor scan
-     * @param target - the entity we're trying to spot
-     */
-    public static int getSensorShadowMod(IGame game, Entity ae,
-            Targetable target) {
-        return sensorShadowMod;
-    }
-    
-    /**
-     * Sets the ECM effects for this entity/target combination
-     * 
-     * @param game - the current game
-     * @param ae - the entity making a sensor scan
-     * @param target - the entity we're trying to spot
-     */
-    public void setSpaceECM(IGame game, Entity ae,
-            Targetable target, int mod) {
-        spaceEcmMod = mod;
-    }
-    
-    /**
-     * Sets the ECM effects for this entity/target combination
-     * 
-     * @param game - the current game
-     * @param ae - the entity making a sensor scan
-     * @param target - the entity we're trying to spot
-     */
-    public void setSensorShadowMod(IGame game, Entity ae,
-            Targetable target, int mod) {
-        sensorShadowMod = mod;
-    }
-    
-    //Calculate Sensor Shadows and ECM effects. This is expensive, so we only do it at the start of the movement phase
-    //and the start of the firing phase
-    public void calcSpaceECM(IGame game, Entity ae,
-            Targetable target) {
-        int tn = 0;
+        int mod = 0;
         int ecm = ComputeECM.getLargeCraftECM(ae, ae.getPosition(), target.getPosition());
         if (!ae.isLargeCraft()) {
             ecm += ComputeECM.getSmallCraftECM(ae, ae.getPosition(), target.getPosition());
@@ -4140,35 +4125,43 @@ public class Compute {
             eccm = ((Aero) ae).getECCMBonus();
         }
         if (ecm > 0) {
-            tn += ecm;
+            mod += ecm;
             if (eccm > 0) {
-                tn = (Math.min(ecm, eccm));
+                mod = (Math.min(ecm, eccm));
             }
         }
-        setSpaceECM(game, ae, target, tn);
+        return mod;
     }
     
-    public void calcSensorShadow(IGame game, Entity ae,
+    /**
+     * Calculates the Sensor Shadow effect in play between a detector and target pair
+     * 
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
+     * @return
+     */
+    private static int calcSensorShadow(IGame game, Entity ae,
             Targetable target) {
-        int tn = 0;
+        int mod = 0;
         if (target.getTargetType() != Targetable.TYPE_ENTITY) {
-            return;
+            return 0;
         }
         Entity te = (Entity) target;
         for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
             if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) te) && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                tn ++;
+                mod ++;
                 break;
             }
         }
         for (Entity en : game.getEntitiesVector(target.getPosition())) {
             if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) ae) && !en.equals((Entity) te)
                     && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
-                tn ++;
+                mod ++;
                 break;
             }
         }
-        setSensorShadowMod(game, ae, target, tn);
+        return mod;
     }
     
     /**
@@ -4286,12 +4279,12 @@ public class Compute {
         
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            tn -= getSpaceECM(game, ae, target);
+            tn -= calcSpaceECM(game, ae, target);
         }
         
         // Apply large craft sensor shadows
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
-            tn += getSensorShadowMod(game, ae, target);
+            tn += calcSensorShadow(game, ae, target);
         }
         
         //Apply modifiers for attacker's equipment
@@ -4307,6 +4300,93 @@ public class Compute {
         if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
                 || ae.hasBAP(false)) {
             tn -= 2;
+        }
+        
+        //Now, determine if we've detected the target this round
+        return roll >= tn;
+    }
+    
+    /**
+     *Determines whether we have an "object" detection as defined in SO's Advanced Sensors rules starting on p117
+     * 
+     * @param game - the current game
+     * @param ae - the entity making a sensor scan
+     * @param target - the entity we're trying to spot
+     * @return
+     */
+    
+    public static boolean calcSensorContact(IGame game, Entity ae,
+            Targetable target) {
+        //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
+        if (ae.getActiveSensor() == null) {
+            return false;
+        }
+        Coords targetPos = target.getPosition();
+        int distance = ae.getPosition().distance(targetPos);
+        int roll = Compute.d6(2);
+        int tn = ae.getCrew().getPiloting();
+        int maxSensorRange = ae.getActiveSensor().getRangeByBracket();
+        int rangeIncrement = (int) Math.ceil(maxSensorRange / 10.0);
+        
+        if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
+            Aero aero = (Aero) ae;
+            //Account for sensor damage
+            if (aero.isAeroSensorDestroyed()) {
+                return false;
+            } else {
+                tn += aero.getSensorHits();
+            }
+        }
+        
+        //Apply modifiers for attacker's equipment
+        //-2 for a working Large NCSS.  Triple the detection range.
+        if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+            maxSensorRange *= 3;
+            tn -= 2;
+        }
+        //-1 for a working Small NCSS. Double the detection range.
+        if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            maxSensorRange *= 2;
+            tn -= 1;
+        }
+        //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
+        if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
+                || ae.hasBAP(false)) {
+            tn -= 2;
+        }
+        
+        //Military ESM automatically detects anyone using active sensors, which includes all telemissiles
+        if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM && target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+            if (te.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR 
+                    || te.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR
+                    || te instanceof TeleMissile) {
+                return true;
+            }
+            return false;
+        }
+        
+        //Can't detect anything beyond this distance
+        if (distance > maxSensorRange) {
+            return false;
+        }
+        
+        //Apply Sensor Geek SPA, if present
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+            tn -= 2;
+        }
+            
+        //Otherwise, we add +1 to the tn for each 1/10 of the max sensor range (rounded up) between attacker and target
+        tn += (distance / rangeIncrement);
+        
+        // Apply ECM/ECCM effects
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            tn -= calcSpaceECM(game, ae, target);
+        }
+        
+        // Apply large craft sensor shadows
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+            tn += calcSensorShadow(game, ae, target);
         }
         
         //Now, determine if we've detected the target this round
@@ -4356,85 +4436,6 @@ public class Compute {
         int minSensorRange = Math.max((bracket - 1) * range, 0);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
-        }
-        
-        //If the game is in space, this represents an object detection as defined in SO starting on p117
-        //Also, in most cases each target must be detected with sensors before it can be seen, so we need to make
-        //sensor rolls for detection. This should only be used if Tacops sensor rules are in use.
-        //These rules will make their own return and ignore all the atmospheric rules that follow.
-        if (game.getBoard().inSpace()) {
-            //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
-            if (ae.getActiveSensor() == null) {
-                return false;
-            }
-            Coords targetPos = target.getPosition();
-            int distance = ae.getPosition().distance(targetPos);
-            int roll = Compute.d6(2);
-            int tn = ae.getCrew().getPiloting();
-            int rangeIncrement = (int) Math.ceil(range / 10.0);
-            
-            if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
-                Aero aero = (Aero) ae;
-                //Account for sensor damage
-                if (aero.isAeroSensorDestroyed()) {
-                    return false;
-                } else {
-                    tn += aero.getSensorHits();
-                }
-            }
-            
-            //Apply modifiers for attacker's equipment
-            //-2 for a working Large NCSS.  Triple the detection range.
-            if (ae.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
-                maxSensorRange *= 3;
-                tn -= 2;
-            }
-            //-1 for a working Small NCSS. Double the detection range.
-            if (ae.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
-                maxSensorRange *= 2;
-                tn -= 1;
-            }
-            //-2 for any type of BAP or EW Equipment. ECM is already accounted for, so don't let the BAP check do that
-            if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
-                    || ae.hasBAP(false)) {
-                tn -= 2;
-            }
-            
-            //Military ESM automatically detects anyone using active sensors
-            if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM && target.getTargetType() == Targetable.TYPE_ENTITY) {
-                Entity te = (Entity) target;
-                if (te.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR 
-                        || te.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-                    return true;
-                }
-                return false;
-            }
-            
-            //Can't detect anything beyond this distance
-            if (distance > maxSensorRange) {
-                return false;
-            }
-            
-            //Apply Sensor Geek SPA, if present
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
-                tn -= 2;
-            }
-            
-            //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
-            tn += (distance / rangeIncrement);
-            
-            // Apply ECM/ECCM effects
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-                tn -= getSpaceECM(game, ae, target);
-            }
-            
-            // Apply large craft sensor shadows
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
-                tn += getSensorShadowMod(game, ae, target);
-            }
-            
-            //Now, determine if we've detected the target this round
-            return roll >= tn;
         }
                 
         int distance = ae.getPosition().distance(target.getPosition());

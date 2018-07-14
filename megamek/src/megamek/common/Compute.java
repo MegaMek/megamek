@@ -4171,6 +4171,43 @@ public class Compute {
         setSensorShadowMod(game, ae, target, tn);
     }
     
+    /**
+     * Checks to see if an entity has passed out of range of a previously established firing solution 
+     */
+    public static void removeFiringSolution(Entity detector) {
+        for (Entity target : detector.firingSolutions) {
+            Coords targetPos = target.getPosition();
+            int distance = detector.getPosition().distance(targetPos);
+            //Per SO p119, optical firing solutions are lost if the target moves beyond 1/10 max range
+            if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+                if (distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
+                    detector.firingSolutions.remove(target);
+                }
+            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                if (distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
+                    detector.firingSolutions.remove(target);
+                }
+            } else {
+                if (distance > detector.getActiveSensor().getRangeByBracket()) {
+                    detector.firingSolutions.remove(target);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Checks to see if an entity has passed out of range of a previously established sensor lock 
+     */
+    public static void removeSensorContact(Entity detector) {
+        for (Entity target : detector.sensorContacts) {
+            Coords targetPos = target.getPosition();
+            int distance = detector.getPosition().distance(targetPos);
+            if (distance > detector.getActiveSensor().getRangeByBracket()) {
+                detector.sensorContacts.remove(target);
+            }
+        }
+    }
+    
     
     /**
      *If the game is in space, "visual range" represents a firing solution as defined in SO starting on p117
@@ -4223,15 +4260,11 @@ public class Compute {
             }
         }
         
-        //If using active radar or optical sensors, targets at 1/10 max range are automatically detected
+        //If using active radar, targets at 1/10 max range are automatically detected
         if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
             autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
-            autoVisualRange = Sensor.ASF_OPTICAL_AUTOSPOT_RANGE;
         } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
             autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
-        } else if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-            autoVisualRange = Sensor.LC_OPTICAL_AUTOSPOT_RANGE;
         }
         
         if (distance <= autoVisualRange) {

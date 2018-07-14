@@ -13490,8 +13490,13 @@ public class Server implements Runnable {
                     v[nFacing] = a.getCurrentVelocityActual();
                     entity.setVectors(v);
                 }
-            // this means the entity is coming back from off board, so we'll just set the velocity to 0.
+            // this means the entity is coming back from off board, so we'll rotate the velocity vector by 180
+            // and set it to 1/2 the magnitude
             } else {
+                for(int x = 0; x < 6; x++) {
+                    v[(x + 3) % 6] = entity.getVector(x) / 2;
+                }
+                
                 entity.setVectors(v);
             }
         }

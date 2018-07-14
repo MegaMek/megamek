@@ -4188,6 +4188,7 @@ public class Compute {
                     detector.firingSolutions.remove(target);
                 }
             } else {
+                //Radar firing solutions are only lost if the target moves out of range
                 if (distance > detector.getActiveSensor().getRangeByBracket()) {
                     detector.firingSolutions.remove(target);
                 }

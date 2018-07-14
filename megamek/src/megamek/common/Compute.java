@@ -4228,7 +4228,7 @@ public class Compute {
             }
         }
 
-        // if either does not have a position then return false
+        // if either entity does not have a position then return false
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
@@ -4317,6 +4317,11 @@ public class Compute {
     
     public static boolean calcSensorContact(IGame game, Entity ae,
             Targetable target) {
+        
+        // if either entity does not have a position then return false
+        if ((ae.getPosition() == null) || (target.getPosition() == null)) {
+            return false;
+        }
         //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
         if (ae.getActiveSensor() == null) {
             return false;

@@ -3,10 +3,12 @@ package megamek.client.bot.princess;
 import java.util.List;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
+import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
@@ -116,6 +118,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
             // placeholder logic:
             // if we are a spheroid, we can fire viably in any direction
             // if we are a fighter or aerodyne dropship, our most effective arc is forward
+            // larger craft are usually bristling with weapons all around
             int arcToUse = ((IAero) path.getEntity()).isSpheroid() ? Compute.ARC_360 : Compute.ARC_NOSE;
             double vertexCoverage = 1.0;
             
@@ -161,6 +164,49 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    /**
+     * Tells me whether this path will result in me flying to a location
+     * from which there is absolutely no way to remain on the board the following turn.
+     * 
+     * We also take into account the possibility that we are intentionally trying to
+     * a) retreat
+     * b) fly off a particular edge 
+     * @param path The path to examine
+     * @return 0 if we are A-Ok with it, .5 (maybe tune this) if we aren't looking to go off board
+     */
+    @Override
+    protected double calculateOffBoardMod(MovePath path) {
+        // step one: project given path's vector over the next turn.
+        Coords nextCoords = Compute.getFinalPosition(path.getFinalCoords(), path.getFinalVectors());
+        
+        int availableThrust = path.getEntity().getRunMP();
+        IBoard board = path.getGame().getBoard();
+        int offBoardDirection = -1;
+        
+        // step one: check if the position is out of bounds by more than the unit has available thrust
+        if(nextCoords.getX() < -availableThrust) {
+            offBoardDirection = HomeEdge.WEST.getIndex();
+        } else if (nextCoords.getX() > board.getWidth() + availableThrust) {
+            offBoardDirection = HomeEdge.EAST.getIndex();
+        } else if (nextCoords.getY() < -availableThrust) {
+            offBoardDirection = HomeEdge.NORTH.getIndex();
+        } else if(nextCoords.getY() > board.getHeight() + availableThrust) {
+            offBoardDirection = HomeEdge.SOUTH.getIndex();
+        }
+        
+        // if we want to flee the board from the edge in question, we're ok
+        if(getOwner().getHomeEdge() == HomeEdge.getHomeEdge(offBoardDirection) &&
+                getOwner().isFallingBack(path.getEntity())) {
+            return 0.0;
+        }
+        
+        if(offBoardDirection == -1) {
+            return 0.0;
+        }
+                
+        return .5;
     }
     
     /**

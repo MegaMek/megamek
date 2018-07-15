@@ -14442,9 +14442,7 @@ public class Server implements Runnable {
                     continue;
                 }
                 //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
-                //and remove it from the undetected units list so we don't have to process it again
                 if (Compute.calcSensorContact(game, detector, target)) {
-                    undetectedUnits.remove(target);
                     detector.sensorContacts.add(target);
                 }
             }

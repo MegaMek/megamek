@@ -3058,7 +3058,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_INITIATIVE:
                 resolveWhatPlayersCanSeeWhatUnits();
-                //calculateSpaceECM();
+                detectSpacecraft();
                 game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 break;
@@ -3080,8 +3080,8 @@ public class Server implements Runnable {
                 break;
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
+                detectSpacecraft();
                 resolveWhatPlayersCanSeeWhatUnits();
-                //calculateSpaceECM();
                 doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
@@ -14375,23 +14375,73 @@ public class Server implements Runnable {
      * has been detected and/or had a firing solution calculated 
      */
     private void detectSpacecraft() {
-        // Don't bother if we're not in space
-        if (!game.getBoard().inSpace()) {
+        // Don't bother if we're not in space or if the game option isn't on
+        if (!game.getBoard().inSpace() 
+                || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
-        // If double-blind and sensors aren't both on, nothing to do
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-            return;
-        }        
+      
         //Only try to detect undetected, enemy units
-        ArrayList<Entity> detectedUnits = new ArrayList<>();
-        for (Entity ent : game.getEntitiesVector()) {
-            
+        ArrayList<Entity> undetectedUnits = new ArrayList<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (!Compute.isSensorContact(game, target)) {
+                undetectedUnits.add(target);
+            }
         }
         
-        //Only try to establish firing solutions on detected units
-        ArrayList<Entity> enemyUnits = new ArrayList<>();
+        // If no one is undetected, there's nothing to do
+        if (undetectedUnits.size() < 1) {
+            return;
+        }
+        
+        //Now, run the detection rolls
+        for (Entity detector : game.getEntitiesVector()) {
+            for (Entity target : undetectedUnits) {
+                // Only process for enemy units
+                if (!detector.isEnemyOf(target)) {
+                    continue;
+                }
+                //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
+                //and remove it from the undetected units list so we don't have to process it again
+                if (Compute.calcSensorContact(game, detector, target)) {
+                    undetectedUnits.remove(target);
+                    detector.sensorContacts.add(target);
+                }
+            }
+        }
+        
+        //Now, try to establish firing solutions on detected units
+        ArrayList<Entity> detectedUnits = new ArrayList<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (Compute.isSensorContact(game, target)) {
+                detectedUnits.add(target);
+            }
+        }
+        
+        // If no one is detected, there's nothing more to do
+        if (detectedUnits.size() < 1) {
+            return;
+        }
+        
+        //TODO: Think about sharing firing solutions via Naval C3 networks
+        
+        //Now, run the detection rolls
+        for (Entity detector : game.getEntitiesVector()) {
+            for (Entity target : detectedUnits) {
+                //if we already have a firing solution, no need to process a new one
+                if (Compute.hasFiringSolution(game, target)) {
+                    continue;
+                }
+                // Only process for enemy units
+                if (!detector.isEnemyOf(target)) {
+                    continue;
+                }
+                //If we successfully lock up the enemy, add it to the appropriate detector's firing solutions list
+                if (Compute.calcFiringSolution(game, detector, target)) {
+                    detector.firingSolutions.add(target);
+                }
+            }
+        }
     }
 
     /**

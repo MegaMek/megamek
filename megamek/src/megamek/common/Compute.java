@@ -4080,7 +4080,7 @@ public class Compute {
      * @param game - the current game
      * @param detector - the entity making a sensor scan
      */
-    public boolean isSensorContact(IGame game, Entity detector) {
+    public static boolean isSensorContact(IGame game, Entity detector) {
         for (Entity target : game.getEntitiesVector()) {
             if (detector.sensorContacts.contains(target)) {
                 return true;
@@ -4095,7 +4095,7 @@ public class Compute {
      * @param game - the current game
      * @param detector - the entity making a sensor scan
      */
-    public boolean hasFiringSolution(IGame game, Entity detector) {
+    public static boolean hasFiringSolution(IGame game, Entity detector) {
         for (Entity target : game.getEntitiesVector()) {
             if (detector.firingSolutions.contains(target)) {
                 return true;

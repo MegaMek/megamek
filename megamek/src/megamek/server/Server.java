@@ -3081,6 +3081,7 @@ public class Server implements Runnable {
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
                 detectSpacecraft();
+                updateSpacecraftDetection();
                 resolveWhatPlayersCanSeeWhatUnits();
                 doAllAssaultDrops();
                 addMovementHeat();
@@ -14480,6 +14481,23 @@ public class Server implements Runnable {
                     detector.firingSolutions.add(target);
                 }
             }
+        }
+    }
+    
+    /**
+     * Called at the end of movement. Determines if an entity
+     * has moved beyond sensor range 
+     */
+    private void updateSpacecraftDetection() {
+        // Don't bother if we're not in space or if the game option isn't on
+        if (!game.getBoard().inSpace() 
+                || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+            return;
+        }
+        //Run through our list of units and remove any entities from the plotting board that have moved out of range
+        for (Entity detector : game.getEntitiesVector()) {
+            Compute.removeFiringSolution(detector);
+            Compute.removeSensorContact(detector);
         }
     }
 

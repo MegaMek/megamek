@@ -4129,7 +4129,7 @@ public class Compute {
         if (ecm > 0) {
             mod += ecm;
             if (eccm > 0) {
-                mod = (Math.min(ecm, eccm));
+                mod -= (Math.min(ecm, eccm));
             }
         }
         return mod;
@@ -4281,7 +4281,7 @@ public class Compute {
         
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            tn -= calcSpaceECM(game, ae, target);
+            tn += calcSpaceECM(game, ae, target);
         }
         
         // Apply large craft sensor shadows
@@ -4388,7 +4388,7 @@ public class Compute {
         
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
-            tn -= calcSpaceECM(game, ae, target);
+            tn += calcSpaceECM(game, ae, target);
         }
         
         // Apply large craft sensor shadows

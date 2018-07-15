@@ -144,6 +144,11 @@ public abstract class Weapon extends WeaponType implements Serializable {
                 }
 
             } else {
+                if (getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
+                    setInstantModeSwitch(false);
+                    addMode(Mode_Normal);
+                    addMode(Mode_CapMissile_Tele_Operated);
+                }
                 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
                     setInstantModeSwitch(false);

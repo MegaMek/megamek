@@ -5182,6 +5182,7 @@ public class Server implements Runnable {
         Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovePath md = (MovePath) packet.getObject(1);
+        md.setGame(game);
 
         // is this the right phase?
         if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
@@ -10805,16 +10806,16 @@ public class Server implements Runnable {
     /**
      * deploys a new tele-missile entity onto the map
      */
-    public void deployTeleMissile(Entity ae, AmmoType atype, int wId,
-            int capMisMod, Vector<Report> vPhaseReport) {
+    public void deployTeleMissile(Entity ae, WeaponType wtype, AmmoType atype, int wId,
+            int capMisMod, int damage, int armor, Vector<Report> vPhaseReport) {
         Report r = new Report(9080);
         r.subject = ae.getId();
         r.addDesc(ae);
         r.indent(2);
         r.newlines = 0;
-        r.add(atype.getName());
+        r.add(wtype.getName());
         vPhaseReport.add(r);
-        TeleMissile tele = new TeleMissile(ae, atype.getDamagePerShot(),
+        TeleMissile tele = new TeleMissile(ae, damage, armor,
                 atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
         tele.setDeployed(true);
         tele.setId(getFreeEntityId());
@@ -13991,6 +13992,44 @@ public class Server implements Runnable {
             // update all players on the attacks. Don't worry about pushes being
             // a "charge" attack. It doesn't matter to the client.
             send(p);
+        }
+    }
+    
+    /**
+     * Determine which telemissile attack actions could be affected by AMS, and
+     * assign AMS to those attacks.
+     */
+    public void assignTeleMissileAMS(TeleMissileAttackAction taa) {
+        final String METHOD_NAME = "assignTeleMissileAMS()";
+        // Map target to a list of telemissile attacks directed at entities
+        Hashtable<Entity, Vector<AttackAction>> htTMAttacks = new Hashtable<>();
+            
+        //This should be impossible but just in case...
+        if (!(taa instanceof TeleMissileAttackAction)) {
+            logInfo(METHOD_NAME, "Attack Action is the wrong type!");
+        }
+
+        Entity target = (taa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) taa
+                .getTarget(game) : null;
+                
+        //If a telemissile is still on the board and its original target is not....
+        if (target == null) {
+            logInfo(METHOD_NAME, "Telemissile has no target. AMS not assigned.");
+            return;
+        }
+
+        Vector<AttackAction> v = htTMAttacks.get(target);
+        if (v == null) {
+            v = new Vector<AttackAction>();
+            htTMAttacks.put(target, v);
+        }
+        v.addElement(taa);
+        // Let each target assign its AMS
+        for (Entity e : htTMAttacks.keySet()) {
+            Vector<AttackAction> vTMAttacks = htTMAttacks.get(e);
+            // Allow MM to automatically assign AMS targets
+            // AMS bays can fire multiple times, so manual target assignment is kind of pointless
+            e.assignTMAMS(vTMAttacks);
         }
     }
 
@@ -18419,6 +18458,7 @@ public class Server implements Runnable {
                                                  taa.getTargetId());
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
+        int amsDamage = taa.CounterAVInt;
         Entity te = null;
         if ((target != null)
             && (target.getTargetType() == Targetable.TYPE_ENTITY)) {
@@ -18447,7 +18487,7 @@ public class Server implements Runnable {
                                                                                .isDestroyed() || te.isDoomed() || te
                                                                                .getCrew()
                                                                                .isDead()))) {
-            r = new Report(4190);
+            r = new Report(4191);
             r.subject = ae.getId();
             r.indent();
             addReport(r);
@@ -18458,13 +18498,42 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.indent();
         r.add(target.getDisplayName());
-        r.newlines = 0;
+        r.newlines = 1;
         addReport(r);
+        
+        //If point defenses engaged the missile, handle that damage
+        if (amsDamage > 0) {
+            //Report the attack
+            r = new Report(3362);
+            r.newlines = 1;
+            r.subject = te.getId();
+            vPhaseReport.add(r);
+            
+            //If the target's point defenses overheated, report that
+            if (taa.getPDOverheated()) {
+                r = new Report(3361);
+                r.newlines = 1;
+                r.subject = te.getId();
+                vPhaseReport.add(r);
+            }
+            
+            //Damage the missile
+            HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
+                    tm.sideTable(te.getPosition(), true));
+            addReport(damageEntity(ae, hit, amsDamage, false,
+                    DamageType.NONE, false, false, false));
+            
+            //If point defense fire destroys the missile, don't process a hit
+            if (ae.isDoomed()) {
+                return;
+            }
+        }
 
         // add some stuff to the to hit value
         // need to add damage done modifier
-        if (ae.damageThisRound > 10) {
-            toHit.addModifier((int) (Math.floor(ae.damageThisRound / 10.0)),
+        int damageTaken = (ae.getOArmor(TeleMissile.LOC_BODY) - ae.getArmor(TeleMissile.LOC_BODY));
+        if (damageTaken > 10) {
+            toHit.addModifier((int) (Math.floor(damageTaken / 10.0)),
                               "damage taken");
         }
 
@@ -18495,13 +18564,13 @@ public class Server implements Runnable {
 
         if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             roll = Integer.MAX_VALUE;
-            r = new Report(4225);
+            r = new Report(4226);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
         } else {
             // report the roll
-            r = new Report(9032);
+            r = new Report(9033);
             r.subject = ae.getId();
             r.add(toHit.getValue());
             r.add(toHit.getDesc());
@@ -21271,6 +21340,16 @@ public class Server implements Runnable {
                 // check for enemy units
                 Vector<Integer> potTargets = new Vector<Integer>();
                 for (Entity te : game.getEntitiesVector(entity.getPosition())) {
+                    //Telemissiles cannot target fighters or other telemissiles
+                    //Fighters don't have a distinctive Etype flag, so we have to do
+                    //this by exclusion.
+                    if (!(te.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                            || te.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
+                            || te.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                            || te.hasETypeFlag(Entity.ETYPE_WARSHIP)
+                            || te.hasETypeFlag(Entity.ETYPE_SPACE_STATION))) {
+                        continue;
+                    }
                     if (te.isEnemyOf(entity)) {
                         // then add it to a vector of potential targets
                         potTargets.add(te.getId());
@@ -27546,6 +27625,11 @@ public class Server implements Runnable {
             String reason, int target, int damage, boolean isCapital) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
+        
+        //Telemissiles don't take critical hits
+        if (a instanceof TeleMissile) {
+            return vDesc;
+        }
 
         // roll the critical
         r = new Report(9100);
@@ -27596,7 +27680,7 @@ public class Server implements Runnable {
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage,
             boolean damagedByFire) {
-
+        
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
         }
@@ -27613,6 +27697,7 @@ public class Server implements Runnable {
         if (en instanceof Tank) {
             return criticalTank((Tank) en, loc, critMod, damage, damagedByFire);
         }
+
         if (en instanceof Aero) {
             return criticalAero((Aero) en, loc, critMod, "unknown", 8, damage,
                     isCapital);
@@ -27981,12 +28066,12 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
-        // BattleArmor does not breach
-        if (entity instanceof Infantry) {
-            return vDesc;
-        }
-
-        if (entity instanceof VTOL) {
+        // Infantry do not suffer breaches
+        // Telemissiles don't either
+        // VTOLs can't operate in vaccuum or underwater, so no breaches
+        if (entity instanceof Infantry
+                || entity instanceof TeleMissile
+                || entity instanceof VTOL) {
             return vDesc;
         }
 
@@ -33968,6 +34053,8 @@ public class Server implements Runnable {
                                                   (Entity)aaa.getTarget(game));
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
+            assignTeleMissileAMS(taa);
+            taa.calcCounterAV(game, taa.getTarget(game));
             toHit = taa.toHit(game);
             damage = TeleMissileAttackAction.getDamageFor(ae);
         } else if (aaa instanceof BAVibroClawAttackAction) {

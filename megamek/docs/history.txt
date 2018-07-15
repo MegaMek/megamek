@@ -10,6 +10,7 @@ v0.45.0-git
 + Issue #1027: Off-board Infantry Field Artillery "Target Out of Arc"
 + Issue #1028: Infantry TAG has 0 range
 + PR #1025: [Feature] Princess can now fly spacecraft using the advanced flight rules.
++ PR #997: [Feature] Spacecraft can now fire tele-operated missiles.
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

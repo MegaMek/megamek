@@ -1046,6 +1046,9 @@ public class WeaponType extends EquipmentType {
             case (CLASS_CAPITAL_MD):
                 return EquipmentType.get("Capital Mass Driver Bay");
             case (CLASS_CAPITAL_MISSILE):
+                if (subCapital) {
+                    return EquipmentType.get("Sub-Capital Missile Bay");
+                }
                 return EquipmentType.get("Capital Missile Bay");
             case (CLASS_TELE_MISSILE):
                 return EquipmentType.get("Tele-Operated Capital Missile Bay");

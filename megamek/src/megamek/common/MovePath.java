@@ -48,7 +48,7 @@ public class MovePath implements Cloneable, Serializable {
         return game;
     }
 
-    protected void setGame(IGame game) {
+    public void setGame(IGame game) {
         this.game = game;
     }
 

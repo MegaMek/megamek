@@ -240,6 +240,17 @@ public final class Team extends TurnOrdered {
         }
         return sum;
     }
+    
+    @Override
+    public int getTeleMissileTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<IPlayer> loop = players.elements(); loop
+                .hasMoreElements(); ) {
+            sum += loop.nextElement().getSmallCraftTurns();
+        }
+        return sum;
+    }
 
     @Override
     public int getAeroTurns() {

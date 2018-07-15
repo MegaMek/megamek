@@ -3979,8 +3979,10 @@ public class Compute {
      */
     public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
         //Visual range on a space map actually involves sensors
-        if (game.getBoard().inSpace() && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
-            return calcFiringSolution(game, ae, target);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+            return hasFiringSolution(game, te);
         }
         return inVisualRange(game, null, ae, target);
     }
@@ -4419,6 +4421,11 @@ public class Compute {
      */
     public static boolean inSensorRange(IGame game, Entity ae,
             Targetable target, List<ECMInfo> allECMInfo) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+            return isSensorContact(game, te);
+        }
         return inSensorRange(game, null, ae, target, allECMInfo);
     }
     

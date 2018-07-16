@@ -3980,9 +3980,10 @@ public class Compute {
     public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
         //Visual range on a space map actually involves sensors
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
-                && target.getTargetType() == Targetable.TYPE_ENTITY) {
+                && target.getTargetType() == Targetable.TYPE_ENTITY
+                && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
-            return hasFiringSolution(game, te);
+            return hasFiringSolution(game, ae, te);
         }
         return inVisualRange(game, null, ae, target);
     }
@@ -4097,11 +4098,9 @@ public class Compute {
      * @param game - the current game
      * @param detector - the entity making a sensor scan
      */
-    public static boolean hasFiringSolution(IGame game, Entity target) {
-        for (Entity detector : game.getEntitiesVector()) {
-            if (detector.firingSolutions.contains(target)) {
-                return true;
-            }
+    public static boolean hasFiringSolution(IGame game, Entity detector, Entity target) {
+        if (detector.firingSolutions.contains(target)) {
+            return true;
         }
         return false;
     }
@@ -4421,8 +4420,10 @@ public class Compute {
      */
     public static boolean inSensorRange(IGame game, Entity ae,
             Targetable target, List<ECMInfo> allECMInfo) {
+        //For Space games with this option, return something different
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
-                && target.getTargetType() == Targetable.TYPE_ENTITY) {
+                && target.getTargetType() == Targetable.TYPE_ENTITY
+                && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
             return isSensorContact(game, te);
         }

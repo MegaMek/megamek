@@ -14467,7 +14467,7 @@ public class Server implements Runnable {
         for (Entity detector : game.getEntitiesVector()) {
             for (Entity target : detectedUnits) {
                 //if we already have a firing solution, no need to process a new one
-                if (Compute.hasFiringSolution(game, target)) {
+                if (Compute.hasFiringSolution(game, detector, target)) {
                     continue;
                 }
                 // Only process for enemy units

@@ -4169,23 +4169,29 @@ public class Compute {
      * Checks to see if an entity has passed out of range of a previously established firing solution 
      */
     public static void removeFiringSolution(Entity detector) {
+        Vector<Entity> toRemove = new Vector<Entity>();
         for (Entity target : detector.firingSolutions) {
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             //Per SO p119, optical firing solutions are lost if the target moves beyond 1/10 max range
             if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
                 if (distance > Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE) {
-                    detector.firingSolutions.remove(target);
+                    toRemove.add(target);
                 }
             } else if (detector.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
                 if (distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
-                    detector.firingSolutions.remove(target);
+                    toRemove.add(target);
                 }
             } else {
                 //Radar firing solutions are only lost if the target moves out of range
                 if (distance > detector.getActiveSensor().getRangeByBracket()) {
-                    detector.firingSolutions.remove(target);
+                    toRemove.add(target);
                 }
+            }
+        }
+        if (toRemove.size() >= 1) {
+            for (Entity e : toRemove) {
+                detector.firingSolutions.remove(e);
             }
         }
     }
@@ -4244,6 +4250,7 @@ public class Compute {
         int tn = ae.getCrew().getPiloting();
         int autoVisualRange = 1;
         int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
+        int rangeIncrement = (int) Math.ceil(outOfVisualRange / 10.0);
         
         if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
             Aero aero = (Aero) ae;
@@ -4276,7 +4283,7 @@ public class Compute {
         }
         
         //Otherwise, we add +1 to the tn for detection for each increment of the autovisualrange between attacker and target
-        tn += (distance / autoVisualRange);
+        tn += (distance / rangeIncrement);
         
         // Apply ECM/ECCM effects
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {

@@ -1,5 +1,6 @@
 package megamek.client.bot.princess;
 
+import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -12,6 +13,8 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 
 public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPathRanker {
     
@@ -151,7 +154,8 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
                                             useExtremeRange,
                                             useLOSRange) * myDamageDiscount);
 
-            double enemyDamageDiscount = Compute.oddsAbove(enemy.getCrew().getGunnery()) / 100;
+            int sensorShadowMod = calculateSensorShadowMod(path);
+            double enemyDamageDiscount = Compute.oddsAbove(enemy.getCrew().getGunnery() + sensorShadowMod) / 100;
             //in general if an enemy can end its position in range, it can hit me
             returnResponse.addToEstimatedEnemyDamage(
                     getMaxDamageAtRange(getFireControl(),
@@ -164,6 +168,42 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    /**
+     * Estimates the sensor shadow modifier for a given path.
+     * Only checks adjacent hexes and doesn't attempt to count intervening craft  
+     * also only counts friendly entites that have already moved
+     * @param path The path to check
+     * @return 0 if there's no 
+     */
+    int calculateSensorShadowMod(MovePath path) {
+        if(!path.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+            return 0;
+        }
+        
+        int sensorShadowMod = 0;        
+        List<Coords> coordsToCheck = path.getFinalCoords().allAdjacent();
+        coordsToCheck.add(path.getFinalCoords());
+        for(Coords coords : coordsToCheck) {
+            // if the coordinate contains a large craft within a certain mass of me, it will generate a sensor shadow
+            Iterator<Entity> potentialShadowIter = path.getGame().getFriendlyEntities(coords, path.getEntity());
+                     
+            while(potentialShadowIter.hasNext() && sensorShadowMod == 0) {
+                Entity potentialShadow = potentialShadowIter.next();
+                if(potentialShadow.isDone() &&
+                        potentialShadow.isLargeCraft() && 
+                        (potentialShadow.getWeight() - path.getEntity().getWeight() >= -WeaponAttackAction.STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
+                    sensorShadowMod = 1;
+                }
+            }
+            
+            if(sensorShadowMod == 1) {
+                break;
+            }
+        }
+        
+        return sensorShadowMod;
     }
     
     /**

@@ -11,6 +11,7 @@ v0.45.0-git
 + Issue #1028: Infantry TAG has 0 range
 + PR #1025: [Feature] Princess can now fly spacecraft using the advanced flight rules.
 + PR #997: [Feature] Spacecraft can now fire tele-operated missiles.
++ Fixed fusion engine weight calculation for conventional fighter validation.
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

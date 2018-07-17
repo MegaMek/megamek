@@ -4170,6 +4170,13 @@ public class Compute {
      */
     public static void removeFiringSolution(Entity detector) {
         Vector<Entity> toRemove = new Vector<Entity>();
+        //If the detector is dead, has no position, or has flown offboard, remove everything
+        if (detector.isDestroyed() 
+                || detector.isOffBoard()
+                || detector.getPosition() == null) {
+            detector.firingSolutions.removeAllElements();
+            return;
+        }
         for (Entity target : detector.firingSolutions) {
             //If the target is dead, has no position or has flown offboard, remove it
             if (target.isDestroyed() 
@@ -4208,6 +4215,13 @@ public class Compute {
      */
     public static void removeSensorContact(Entity detector) {
         Vector<Entity> toRemove = new Vector<Entity>();
+        //If the detector is dead, has no position, or has flown offboard, remove everything
+        if (detector.isDestroyed() 
+                || detector.isOffBoard()
+                || detector.getPosition() == null) {
+            detector.firingSolutions.removeAllElements();
+            return;
+        }
         for (Entity target : detector.sensorContacts) {
             //If the target is dead, has no position or has flown offboard, remove it
             if (target.isDestroyed() 

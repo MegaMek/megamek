@@ -14488,7 +14488,7 @@ public class Server implements Runnable {
      */
     private void updateSpacecraftDetection() {
         // Don't bother if we're not in space or if the game option isn't on
-        if (!game.getBoard().inSpace() 
+        if (!game.getBoard().inSpace()
                 || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }

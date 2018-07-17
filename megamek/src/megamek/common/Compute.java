@@ -4171,6 +4171,13 @@ public class Compute {
     public static void removeFiringSolution(Entity detector) {
         Vector<Entity> toRemove = new Vector<Entity>();
         for (Entity target : detector.firingSolutions) {
+            //If the target is dead, has no position or has flown offboard, remove it
+            if (target.isDestroyed() 
+                    || target.isOffBoard()
+                    || target.getPosition() == null) {
+                toRemove.add(target);
+                continue;
+            }
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             //Per SO p119, optical firing solutions are lost if the target moves beyond 1/10 max range
@@ -4202,6 +4209,13 @@ public class Compute {
     public static void removeSensorContact(Entity detector) {
         Vector<Entity> toRemove = new Vector<Entity>();
         for (Entity target : detector.sensorContacts) {
+            //If the target is dead, has no position or has flown offboard, remove it
+            if (target.isDestroyed() 
+                    || target.isOffBoard()
+                    || target.getPosition() == null) {
+                toRemove.add(target);
+                continue;
+            }
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             if (distance > detector.getActiveSensor().getRangeByBracket()) {

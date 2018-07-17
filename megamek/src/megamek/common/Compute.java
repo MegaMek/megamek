@@ -4200,11 +4200,17 @@ public class Compute {
      * Checks to see if an entity has passed out of range of a previously established sensor lock 
      */
     public static void removeSensorContact(Entity detector) {
+        Vector<Entity> toRemove = new Vector<Entity>();
         for (Entity target : detector.sensorContacts) {
             Coords targetPos = target.getPosition();
             int distance = detector.getPosition().distance(targetPos);
             if (distance > detector.getActiveSensor().getRangeByBracket()) {
-                detector.sensorContacts.remove(target);
+                toRemove.add(target);
+            }
+        }
+        if (toRemove.size() >= 1) {
+            for (Entity e : toRemove) {
+                detector.sensorContacts.remove(e);
             }
         }
     }

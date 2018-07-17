@@ -98,6 +98,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      *
      */
     private static final long serialVersionUID = -9096603813317359351L;
+    
+    public static final int STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF = 100000;
+    
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Entity.LOC_NONE;
@@ -1120,14 +1123,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
                     if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
-                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }

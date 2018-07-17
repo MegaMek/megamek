@@ -506,6 +506,16 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
         return 0.0;
     }
+    
+    /**
+     * Tells me whether this path will result in me flying to a location
+     * from which there is absolutely no way to remain on the board the following turn.
+     * 
+     * Not applicable for ground units, so the default behavior is to return 0.
+     */
+    protected double calculateOffBoardMod(MovePath path) {
+        return 0.0;
+    }
 
     /**
      * A path ranking
@@ -639,6 +649,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // If I need to flee the board, I want to get closer to my home edge.
             utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game,
                                                     formula);
+            
+            // if we're an aircraft, we want to de-value paths that will force us off the board
+            // on the subsequent turn.
+            utility -= utility * calculateOffBoardMod(pathCopy);
 
             RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
             rankedPath.setExpectedDamage(maximumDamageDone);
@@ -648,7 +662,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
     }
-
+    
     /**
      * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
      */

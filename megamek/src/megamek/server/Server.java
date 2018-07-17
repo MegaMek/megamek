@@ -13482,9 +13482,21 @@ public class Server implements Runnable {
          */
         if (entity.isAero() && game.useVectorMove()) {
             IAero a = (IAero) entity;
-            if (a.getCurrentVelocityActual() > 0) {
-                int[] v = {0, 0, 0, 0, 0, 0};
-                v[nFacing] = a.getCurrentVelocityActual();
+            int[] v = {0, 0, 0, 0, 0, 0};
+            
+            // if this is the entity's first time deploying, we want to respect the "velocity" setting from the lobby
+            if(entity.wasNeverDeployed()) {
+                if (a.getCurrentVelocityActual() > 0) {
+                    v[nFacing] = a.getCurrentVelocityActual();
+                    entity.setVectors(v);
+                }
+            // this means the entity is coming back from off board, so we'll rotate the velocity vector by 180
+            // and set it to 1/2 the magnitude
+            } else {
+                for(int x = 0; x < 6; x++) {
+                    v[(x + 3) % 6] = entity.getVector(x) / 2;
+                }
+                
                 entity.setVectors(v);
             }
         }

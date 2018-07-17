@@ -14461,8 +14461,6 @@ public class Server implements Runnable {
             return;
         }
         
-        //TODO: Think about sharing firing solutions via Naval C3 networks
-        
         //Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
             for (Entity target : detectedUnits) {

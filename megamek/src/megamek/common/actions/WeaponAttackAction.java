@@ -3830,6 +3830,34 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
+        
+        //If using SO advanced sensors, the firing unit or one on its NC3 network must have a valid firing solution
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && ae.isSpaceborne()) {
+            boolean networkFiringSolution = false;
+            //unless we're using naval C3, check to see if the attacker has a firing solution
+            if (!ae.hasNavalC3()) {
+                if (!Compute.hasFiringSolution(game, ae, te)) {
+                    return "no firing solution to target";
+                }
+            } else {
+                for (Entity en : game.getEntitiesVector()) {
+                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
+                        networkFiringSolution = true;
+                        break;
+                    }
+                }
+            }
+            //If we ARE using Naval C3, the target still has to be on the attacker's sensors
+            if (networkFiringSolution) {
+                if (!ae.sensorContacts.contains(te)) {
+                    return "target beyond attacker's sensor range";
+                } else {
+                    return "target has not been spotted";
+                }
+            }
+        }
 
         // http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
         // anything outside of visual range requires a "sensor lock" in order to
@@ -3851,7 +3879,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                             // unit
                 && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3() || ae.hasActiveNovaCEWS()) {
+            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3()|| ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {

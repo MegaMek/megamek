@@ -3983,7 +3983,7 @@ public class Compute {
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && game.getBoard().inSpace()) {
             Entity te = (Entity) target;
-            return hasFiringSolution(game, ae, te);
+            return hasAnyFiringSolution(game, te);
         }
         return inVisualRange(game, null, ae, target);
     }
@@ -4093,7 +4093,24 @@ public class Compute {
     }
     
     /**
-     * Checks to see if an entity has already had a firing solution established by @detector
+     * Checks to see if an entity is in anyone's firing solutions list
+     * Used for visibility
+     * 
+     * @param game - the current game
+     * @param detector - the entity making a sensor scan
+     */
+    public static boolean hasAnyFiringSolution(IGame game, Entity target) {
+        for (Entity detector : game.getEntitiesVector()) {
+            if (detector.firingSolutions.contains(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks to see if target entity has already had a firing solution established by @detector
+     * Used to determine if @detector can fire weapons at @target
      * 
      * @param game - the current game
      * @param detector - the entity making a sensor scan

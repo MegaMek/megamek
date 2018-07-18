@@ -3843,7 +3843,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             } else {
                 for (Entity en : game.getEntitiesVector()) {
-                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
+                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
                         networkFiringSolution = true;
                         break;
                     }
@@ -3852,9 +3852,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //If we ARE using Naval C3, the target still has to be on the attacker's sensors
             if (networkFiringSolution) {
                 if (!ae.sensorContacts.contains(te)) {
-                    return "target beyond attacker's sensor range";
-                } else {
-                    return "target has not been spotted";
+                    return "target not detected by attacker's sensors";
                 }
             }
         }

@@ -4285,14 +4285,14 @@ public class Compute {
                 return false;
             }
         }
-
-        // if either entity does not have a position then return false
-        if ((ae.getPosition() == null) || (target.getPosition() == null)) {
-            return false;
-        }
     
         //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
         if (ae.getActiveSensor() == null) {
+            return false;
+        }
+        
+        //ESM sensor can't produce a firing solution
+        if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM) {
             return false;
         }
         Coords targetPos = target.getPosition();
@@ -4302,6 +4302,13 @@ public class Compute {
         int autoVisualRange = 1;
         int outOfVisualRange = (ae.getActiveSensor().getRangeByBracket());
         int rangeIncrement = (int) Math.ceil(outOfVisualRange / 10.0);
+        
+        //A bit of a hack here. "Aero Sensors" return the ground range, because Sensor doesn't know about Game or Entity
+        //to do otherwise. We need to use the space range instead.
+        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        }
         
         if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
             Aero aero = (Aero) ae;
@@ -4384,10 +4391,6 @@ public class Compute {
     public static boolean calcSensorContact(IGame game, Entity ae,
             Targetable target) {
         
-        // if either entity does not have a position then return false
-        if ((ae.getPosition() == null) || (target.getPosition() == null)) {
-            return false;
-        }
         //NPE check. Fighter squadrons don't start with sensors, but pick them up from the component fighters each round
         if (ae.getActiveSensor() == null) {
             return false;
@@ -4398,6 +4401,13 @@ public class Compute {
         int tn = ae.getCrew().getPiloting();
         int maxSensorRange = ae.getActiveSensor().getRangeByBracket();
         int rangeIncrement = (int) Math.ceil(maxSensorRange / 10.0);
+        
+        //A bit of a hack here. "Aero Sensors" return the ground range, because Sensor doesn't know about Game or Entity
+        //to do otherwise. We need to use the space range instead.
+        if (ae.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            maxSensorRange = Sensor.ASF_RADAR_MAX_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        }
         
         if (ae.hasETypeFlag(Entity.ETYPE_AERO)) {
             Aero aero = (Aero) ae;

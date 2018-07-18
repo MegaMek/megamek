@@ -3863,6 +3863,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // anything outside of visual range requires a "sensor lock" in order to
         // direct fire
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && !Compute.inVisualRange(game, ae, target)
                 && !(Compute.inSensorRange(game, ae, target, null) // Can shoot
                                                                    // at

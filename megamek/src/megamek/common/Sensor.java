@@ -79,6 +79,8 @@ public class Sensor implements Serializable {
     public static final int ASF_RADAR_AUTOSPOT_RANGE = 55;
     public static final int ASF_OPTICAL_FIRING_SOLUTION_RANGE = 14;
     public static final int LC_RADAR_AUTOSPOT_RANGE = 555;
+    //Yeah, same value, but we might want to know what it's for later...
+    public static final int ASF_RADAR_MAX_RANGE = 555;
     public static final int LC_OPTICAL_FIRING_SOLUTION_RANGE = 139;
 
     /**

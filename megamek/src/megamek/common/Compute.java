@@ -4213,7 +4213,12 @@ public class Compute {
                 if (distance > Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE) {
                     toRemove.add(target);
                 }
-            } else {
+            //For ASF sensors, make sure we're using the space range of 555...
+            } else if (detector.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                if (distance > Sensor.ASF_RADAR_MAX_RANGE) {
+                    toRemove.add(target);
+                }
+            }else {
                 //Radar firing solutions are only lost if the target moves out of range
                 if (distance > detector.getActiveSensor().getRangeByBracket()) {
                     toRemove.add(target);

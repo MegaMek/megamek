@@ -31,6 +31,7 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.common.Aero;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.Building;
@@ -376,6 +377,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 minElev++;
             }
             elevation = Math.max(elevation, minElev);
+        }
+        //Update Aero sensors for a space or atmospheric game
+        if (en.hasETypeFlag(Entity.ETYPE_AERO)) {
+            Aero a = (Aero) en;
+            a.updateSensorOptions();
         }
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 elevation, en.getLoadedUnits(), assaultDropPreference);

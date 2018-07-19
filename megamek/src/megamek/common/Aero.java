@@ -280,7 +280,7 @@ public class Aero extends Entity implements IAero, IBomber {
     // Is it Civilian or Military
     public static final int CIVILIAN = 0;
     public static final int MILITARY = 1;
-    protected int designType = 0;
+    protected int designType = MILITARY;
     
     /**
      * Sets the unit as either a civilian or military design 
@@ -301,10 +301,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * When double-blind is on, this affects both standard visibility and sensor rolls
      */
     public boolean isAeroSensorDestroyed() {
-        if (getSensorHits() >= 3) {
-            return true;
-        }
-        return false;
+        return getSensorHits() >= 3;
     }
     
     /**
@@ -951,7 +948,6 @@ public class Aero extends Entity implements IAero, IBomber {
             if (sensorsToRemove.size() >= 1) {
                 setNextSensor(getSensors().firstElement());
             }
-            sensorsToRemove.removeAllElements();
         }
 
         // if using variable damage thresholds then autoset them

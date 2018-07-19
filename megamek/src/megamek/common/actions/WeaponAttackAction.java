@@ -3836,12 +3836,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && ae.isSpaceborne()) {
             boolean networkFiringSolution = false;
-            //unless we're using naval C3, check to see if the attacker has a firing solution
-            if (!ae.hasNavalC3()) {
-                if (!Compute.hasFiringSolution(game, ae, te)) {
-                    return "no firing solution to target";
-                }
-            } else {
+            //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
+            if (ae.hasNavalC3()) {
                 for (Entity en : game.getEntitiesVector()) {
                     if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
                         networkFiringSolution = true;
@@ -3849,10 +3845,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
-            //If we ARE using Naval C3, the target still has to be on the attacker's sensors
-            if (networkFiringSolution) {
-                if (!Compute.hasSensorContact(game, ae, te)) {
-                    return "target not detected by attacker's sensors";
+            if (!networkFiringSolution) {
+                if (!Compute.hasFiringSolution(game, ae, te)) {
+                    return "no firing solution to target";
                 }
             }
         }

@@ -14420,23 +14420,14 @@ public class Server implements Runnable {
                 || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             return;
         }
-      
-        //Only try to detect undetected, enemy units
-        ArrayList<Entity> undetectedUnits = new ArrayList<>();
-        for (Entity target : game.getEntitiesVector()) {
-            if (!Compute.isSensorContact(game, target)) {
-                undetectedUnits.add(target);
-            }
-        }
-        
-        // If no one is undetected, there's nothing to do
-        if (undetectedUnits.size() < 1) {
-            return;
-        }
         
         //Now, run the detection rolls
         for (Entity detector : game.getEntitiesVector()) {
-            for (Entity target : undetectedUnits) {
+            for (Entity target : game.getEntitiesVector()) {
+                //Once a target is detected, we don't need to detect it again
+                if (Compute.hasSensorContact(game, detector, target)) {
+                    continue;
+                }
                 //Don't process for units with no position
                 if ((detector.getPosition() == null) || (target.getPosition() == null)) {
                     continue;
@@ -14448,6 +14439,14 @@ public class Server implements Runnable {
                 //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
                 if (Compute.calcSensorContact(game, detector, target)) {
                     detector.sensorContacts.add(target);
+                    //If detector is part of a C3 network, share the contact
+                    if (detector.hasNavalC3()) {
+                        for (Entity c3NetMate : game.getEntitiesVector()) {
+                            if (c3NetMate != detector && c3NetMate.onSameC3NetworkAs(detector)) {
+                                c3NetMate.sensorContacts.add(target);
+                            }
+                        }
+                    }
                 }
             }
         }

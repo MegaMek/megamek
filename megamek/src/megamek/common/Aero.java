@@ -924,31 +924,6 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // update velocity
         setCurrentVelocity(getNextVelocity());
-        
-        //If we're an aero on an atmospheric map, remove space-only sensors from the list of options
-        //Right now this is 'permanent' but I think it should be here under newRound for when we
-        //integrate moving between space/atmospheric maps
-        if (!game.getBoard().inSpace()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
-            if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-                for (Sensor sensor : getSensors()) {
-                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM
-                            || sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
-                        sensorsToRemove.add(sensor);
-                    } 
-                }
-            } else if (hasETypeFlag(Entity.ETYPE_AERO)) {
-                for (Sensor sensor : getSensors()) {
-                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
-                        sensorsToRemove.add(sensor);
-                    }
-                }
-            }
-            getSensors().removeAll(sensorsToRemove);
-            if (sensorsToRemove.size() >= 1) {
-                setNextSensor(getSensors().firstElement());
-            }
-        }
 
         // if using variable damage thresholds then autoset them
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
@@ -4242,5 +4217,56 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //ASFs and Small Craft should use regular old AMS...
         return super.getActiveAMS();
+    }
+    
+    /**
+     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     */
+    public void updateSensorOptions() {
+        //Remove everything but Radar if we're not in space
+        if (!isSpaceborne()) {
+            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM
+                            || sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                        sensorsToRemove.add(sensor);
+                    } 
+                }
+            } else if (hasETypeFlag(Entity.ETYPE_AERO)) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                        sensorsToRemove.add(sensor);
+                    }
+                }
+            }
+            getSensors().removeAll(sensorsToRemove);
+            if (sensorsToRemove.size() >= 1) {
+            setNextSensor(getSensors().firstElement());
+            }
+        }
+        //If we are in space, add them back...
+        if (isSpaceborne()) {
+            if (hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                    || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                    || hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                    || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                //Large craft get thermal/optical sensors
+                getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+                //Only military craft get ESM, which detects active radar
+                //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
+                if (getDesignType() == Aero.MILITARY 
+                        || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                        || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                    getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+                }
+                setNextSensor(getSensors().firstElement());
+            } else if (hasETypeFlag(Entity.ETYPE_AERO) 
+                        || hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+                //ASFs and small craft get thermal/optical sensors
+                getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
+                setNextSensor(getSensors().firstElement());
+            }
+        }
     }
 }

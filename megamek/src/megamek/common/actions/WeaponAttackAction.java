@@ -3851,7 +3851,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             //If we ARE using Naval C3, the target still has to be on the attacker's sensors
             if (networkFiringSolution) {
-                if (!ae.sensorContacts.contains(te)) {
+                if (!Compute.hasSensorContact(game, ae, te)) {
                     return "target not detected by attacker's sensors";
                 }
             }

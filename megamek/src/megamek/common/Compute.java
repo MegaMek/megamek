@@ -3978,13 +3978,6 @@ public class Compute {
      * but not necessarily LoS
      */
     public static boolean inVisualRange(IGame game, Entity ae, Targetable target) {
-        //Visual range on a space map actually involves sensors
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
-                && target.getTargetType() == Targetable.TYPE_ENTITY
-                && game.getBoard().inSpace()) {
-            Entity te = (Entity) target;
-            return hasAnyFiringSolution(game, te);
-        }
         return inVisualRange(game, null, ae, target);
     }
     
@@ -4004,6 +3997,13 @@ public class Compute {
      */
     public static boolean inVisualRange(IGame game, LosEffects los, Entity ae,
             Targetable target) {
+        //Use firing solution if Advanced Sensors is on
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && target.getTargetType() == Targetable.TYPE_ENTITY
+                && game.getBoard().inSpace()) {
+            Entity te = (Entity) target;
+            return hasAnyFiringSolution(game, te);
+        }
         boolean teIlluminated = false;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
@@ -4078,7 +4078,8 @@ public class Compute {
     //Space Combat Detection stuff
     
     /**
-     * Checks to see if an entity has already been detected by @detector
+     * Checks to see if an entity has already been detected by anyone
+     * Used for sensor return icons on board
      * 
      * @param game - the current game
      * @param detector - the entity making a sensor scan
@@ -4088,6 +4089,20 @@ public class Compute {
             if (detector.sensorContacts.contains(target)) {
                 return true;
             }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks to see if target entity has already appeared on @detector's sensors
+     * Used with Naval C3 to determine if @detector can fire weapons at @target
+     * 
+     * @param game - the current game
+     * @param detector - the entity making a sensor scan
+     */
+    public static boolean hasSensorContact(IGame game, Entity detector, Entity target) {
+        if (detector.sensorContacts.contains(target)) {
+            return true;
         }
         return false;
     }
@@ -4500,6 +4515,11 @@ public class Compute {
      */
     public static boolean inSensorRange(IGame game, Entity ae,
             Targetable target, List<ECMInfo> allECMInfo) {
+        return inSensorRange(game, null, ae, target, allECMInfo);
+    }
+    
+    public static boolean inSensorRange(IGame game, LosEffects los, Entity ae, 
+            Targetable target, List<ECMInfo> allECMInfo) {
         //For Space games with this option, return something different
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
@@ -4507,11 +4527,6 @@ public class Compute {
             Entity te = (Entity) target;
             return isSensorContact(game, te);
         }
-        return inSensorRange(game, null, ae, target, allECMInfo);
-    }
-    
-    public static boolean inSensorRange(IGame game, LosEffects los, Entity ae, 
-            Targetable target, List<ECMInfo> allECMInfo) {
 
         if (!game.getOptions().booleanOption("tacops_sensors")) {
             return false;
@@ -4575,12 +4590,6 @@ public class Compute {
         }
         if (target.isOffBoard()) {
             return false;
-        }
-        //If we're in space and our sensors are destroyed, we can't see anything.
-        if (game.getBoard().inSpace() && ae.hasETypeFlag(Entity.ETYPE_AERO)) {
-            if (ae.isAeroSensorDestroyed()) {
-                return false;
-            }
         }
         
         if (los == null) {

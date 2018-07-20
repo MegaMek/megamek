@@ -13,6 +13,7 @@ v0.45.0-git
 + PR #997: [Feature] Spacecraft can now fire tele-operated missiles.
 + Fixed fusion engine weight calculation for conventional fighter validation.
 + Issue #1048: Field Gunners unable to target Air Units
++ Issue #1046: Narc Ammo Type Missing From Reports
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

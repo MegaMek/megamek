@@ -12670,7 +12670,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //ASF sensors change range when in space, so we do that here
         if (isSpaceborne()) {
             if (getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                range = 555;
+                range = Sensor.ASF_RADAR_MAX_RANGE;
             }
         
             //If Aero/Spacecraft sensors are destroyed while in space, the range is 0.

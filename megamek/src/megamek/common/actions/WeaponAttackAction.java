@@ -4055,9 +4055,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "cannot target aero units beyond altitude 8";
         }
 
+        boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(WeaponType.F_INF_AA)
-                && !isArtilleryFLAK // Can make GroundToAir Flak attacks
-                && !((atype != null) && (atype.getAmmoType() == AmmoType.T_AC_LBX))) {
+                && !isArtilleryFLAK // Can make GroundToAir Flak attacks)
+                && !isWeaponFieldGuns) {
             return "Infantry cannot engage in ground-to-air attacks";
         }
 

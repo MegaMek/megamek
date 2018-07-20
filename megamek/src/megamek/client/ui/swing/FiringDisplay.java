@@ -2430,7 +2430,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && Compute.isGroundToAir(ce(), target)) {
             ((Entity)target).setPlayerPickedPassThrough(cen, null);
         }
-        if (!ce().isMakingVTOLGroundAttack()) {
+        if ((ce() != null) && !ce().isMakingVTOLGroundAttack()) {
             target(null);
         }
         clearAttacks();        

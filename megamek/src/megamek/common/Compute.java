@@ -4528,7 +4528,7 @@ public class Compute {
             return isSensorContact(game, te);
         }
 
-        if (!game.getOptions().booleanOption("tacops_sensors")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             return false;
         }
 
@@ -4636,7 +4636,7 @@ public class Compute {
         }
         
         //In space, sensors don't have brackets, so we should always return the range for bracket 1.
-        if (ae.getGame().getBoard().inSpace()) {
+        if (ae.isSpaceborne()) {
             return Compute.getSensorBracket(7);
         }
 
@@ -6455,7 +6455,7 @@ public class Compute {
             return false;
         }
 
-        if (attacker.getGame().getBoard().inSpace()) {
+        if (attacker.isSpaceborne()) {
             return false;
         }
         // According to errata, VTOL and WiGes are considered ground targets
@@ -6518,7 +6518,7 @@ public class Compute {
     }
 
     public static boolean inDeadZone(IGame game, Entity ae, Targetable target) {
-        if (game.getBoard().inSpace()) {
+        if (ae.isSpaceborne()) {
             return false;
         }
         // Account for "dead zones" between Aeros at different altitudes

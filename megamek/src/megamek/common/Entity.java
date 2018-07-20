@@ -5904,7 +5904,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return false;
                 }
                 //Naval C3 only works in space
-                if (!game.getBoard().inSpace()) {
+                if (!isSpaceborne()) {
                     return false;
                 }
             } 
@@ -12656,7 +12656,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "none";
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
-        if (game.getBoard().inSpace()) {
+        if (isSpaceborne()) {
             bracket = Compute.getSensorBracket(7);
         }
         int range = getActiveSensor().getRangeByBracket();
@@ -12668,7 +12668,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         
         //ASF sensors change range when in space, so we do that here
-        if (game.getBoard().inSpace()) {
+        if (isSpaceborne()) {
             if (getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
                 range = 555;
             }

@@ -2920,7 +2920,7 @@ public class Server implements Runnable {
 
             if (entity.isAero()) {
                 IAero a = (IAero) entity;
-                if (game.getBoard().inSpace()) {
+                if (a.isSpaceborne()) {
                     // altitude and elevation don't matter in space
                     a.liftOff(0);
                 } else {
@@ -9288,7 +9288,7 @@ public class Server implements Runnable {
                 }
 
                 // check to see if spheroids should lose one altitude
-                if (a.isSpheroid() && !game.getBoard().inSpace()
+                if (a.isSpheroid() && !a.isSpaceborne()
                         && a.isAirborne() && (md.getFinalNDown() == 0)
                         && (md.getMpUsed() == 0)) {
                     r = new Report(9392);
@@ -12213,7 +12213,7 @@ public class Server implements Runnable {
                 && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getPlanetaryConditions().isVacuum()
-                            || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && game.getBoard().inSpace())) {
+                            || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
                         entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
@@ -12242,7 +12242,7 @@ public class Server implements Runnable {
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getPlanetaryConditions().isVacuum()
-                        || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && game.getBoard().inSpace())) {
+                        || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
                     entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
@@ -20788,7 +20788,7 @@ public class Server implements Runnable {
                 addReport(r);
                 // if not already out of control, this may lead to
                 // elevation decline
-                if (!a.isOutControl() && !game.getBoard().inSpace()
+                if (!a.isOutControl() && !a.isSpaceborne()
                     && a.isAirborne()) {
                     int loss = Compute.d6(1);
                     r = new Report(9366);
@@ -22108,7 +22108,7 @@ public class Server implements Runnable {
                                 // if on the atmospheric map, then lose altitude
                                 // and check
                                 // for crash
-                                if (!game.getBoard().inSpace()
+                                if (!a.isSpaceborne()
                                         && a.isAirborne()) {
                                     int loss = Compute.d6(1);
                                     r = new Report(9366);

@@ -320,7 +320,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // ASEW Missiles cannot be launched in an atmosphere
         if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
-                && !game.getBoard().inSpace()) {
+                && !ae.isSpaceborne()) {
             return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch ASEW missile in an atmosphere."));
         }
         

@@ -147,7 +147,7 @@ public class BehaviorSettingsFactory {
                 return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
             }
         } catch (Exception e) {
-            getLogger().log(getClass(), METHOD_NAME, e);
+            getLogger().error(getClass(), METHOD_NAME, e);
             return null;
         }
     }
@@ -177,7 +177,7 @@ public class BehaviorSettingsFactory {
                 }
                 return true;
             } catch (Exception e) {
-                getLogger().log(getClass(), METHOD_NAME, e);
+                getLogger().error(getClass(), METHOD_NAME, e);
                 return false;
             } finally {
                 addDefaultBehaviors();
@@ -232,7 +232,7 @@ public class BehaviorSettingsFactory {
                 return true;
             }
         } catch (Exception e) {
-            getLogger().log(getClass(), METHOD_NAME, e);
+            getLogger().error(getClass(), METHOD_NAME, e);
             return false;
         }
     }
@@ -286,7 +286,7 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             return berserkBehavior;
         } catch (Exception e) {
-            getLogger().log(BehaviorSettingsFactory.class,
+            getLogger().error(BehaviorSettingsFactory.class,
                             "buildBerserkBehavior", e);
             return null;
         }
@@ -322,7 +322,7 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             return cowardlyBehavior;
         } catch (Exception e) {
-            getLogger().log(BehaviorSettingsFactory.class,
+            getLogger().error(BehaviorSettingsFactory.class,
                             "buildCowardlyBehavior", e);
             return null;
         }
@@ -361,7 +361,7 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             return escapeBehavior;
         } catch (Exception e) {
-            getLogger().log(BehaviorSettingsFactory.class,
+            getLogger().error(BehaviorSettingsFactory.class,
                             "buildEscapeBehavior", e);
             return null;
         }
@@ -397,7 +397,7 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             return defaultBehavior;
         } catch (Exception e) {
-            getLogger().log(BehaviorSettingsFactory.class,
+            getLogger().error(BehaviorSettingsFactory.class,
                             "buildDefaultBehavior", e);
             return null;
         }

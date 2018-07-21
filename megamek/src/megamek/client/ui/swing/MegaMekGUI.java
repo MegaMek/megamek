@@ -1026,7 +1026,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
+            DefaultMmLogger.getInstance().error(getClass(), "showSkinningHowTo", e);
         }
     }
 

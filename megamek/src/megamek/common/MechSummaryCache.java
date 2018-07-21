@@ -754,7 +754,7 @@ public class MechSummaryCache {
                 }
                 reader.close();
             } catch (IOException ex) {
-                DefaultMmLogger.getInstance().log(MechSummaryCache.class, METHOD_NAME, ex);
+                DefaultMmLogger.getInstance().error(MechSummaryCache.class, METHOD_NAME, ex);
             }
         }
         return needsUpdate;

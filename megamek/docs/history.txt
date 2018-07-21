@@ -16,6 +16,7 @@ v0.45.0-git
 + Issue #1046: Narc Ammo Type Missing From Reports
 + Issue #1039: NPE FiringDisplay.clear
 + PR #1054: Adding the small pilot custom trait [Pilot option that ignores effects of cramped cockpit quirk]
++ Issue #1038: BA leg attack doesn't report hit
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

@@ -5569,7 +5569,8 @@ public abstract class Mech extends Entity {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                && (!getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
+                && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
@@ -5593,7 +5594,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 

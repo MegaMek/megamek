@@ -12679,6 +12679,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         
+        //Dropships using radar in an atmosphere need a range that's a bit more sensible
+        if (hasETypeFlag(Entity.ETYPE_DROPSHIP) && !isSpaceborne()) {
+            if (getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+                range = Sensor.LC_RADAR_GROUND_RANGE;
+            }
+        }
+        
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;

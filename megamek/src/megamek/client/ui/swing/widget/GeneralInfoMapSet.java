@@ -464,7 +464,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             visualRangeR.setString(Integer.toString(en.getGame()
                     .getPlanetaryConditions().getVisualRange(en, false)));
             //If using sensors, update our visual range display to the automatic detection range of the current sensor
-            if (en.isSpaceborne() && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+            if (en.isSpaceborne() && en.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
                 int autoVisualRange = 0;
                 //For squadrons. Default to the passive thermal/optical value used by component fighters
                 if (en.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {

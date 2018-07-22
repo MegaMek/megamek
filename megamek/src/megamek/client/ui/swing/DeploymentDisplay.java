@@ -378,11 +378,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             elevation = Math.max(elevation, minElev);
         }
-        //Update Aero sensors for a space or atmospheric game
-        if (en.hasETypeFlag(Entity.ETYPE_AERO)) {
-            Aero a = (Aero) en;
-            a.updateSensorOptions();
-        }
+        
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 elevation, en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);

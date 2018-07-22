@@ -4222,6 +4222,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */
+    @Override
     public void updateSensorOptions() {
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {

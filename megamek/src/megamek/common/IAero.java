@@ -779,5 +779,11 @@ public interface IAero {
     default void useFuel(int fuelUsed) {
         setCurrentFuel(Math.max(0, getCurrentFuel() - fuelUsed));
     }
+    
+    /**
+     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     */
+    default void updateSensorOptions() {
+    }
 
 }

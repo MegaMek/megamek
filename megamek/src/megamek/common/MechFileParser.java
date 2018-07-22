@@ -262,8 +262,7 @@ public class MechFileParser {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
             }
         ent.setNextSensor(ent.getSensors().firstElement());
-        } else if (ent.hasETypeFlag(Entity.ETYPE_AERO) 
-                    || ent.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+        } else if (ent.isAero()) {
             //ASFs and small craft get a combined sensor suite
             //And thermal/optical sensors, which only work in space
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));

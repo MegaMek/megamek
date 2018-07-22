@@ -13386,6 +13386,12 @@ public class Server implements Runnable {
         // looks like mostly everything's okay
         processDeployment(entity, coords, nFacing, elevation, loadVector,
                           assaultDrop);
+        
+        //Update Aero sensors for a space or atmospheric game
+        if (entity.isAero()) {
+            IAero a = (IAero) entity;
+            a.updateSensorOptions();
+        }
 
         // Update visibility indications if using double blind.
         if (doBlind()) {

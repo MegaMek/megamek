@@ -3543,10 +3543,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
+        // Check to see if another solo weapon was fired
+        boolean hasSoloAttack = false;
+        String soloWeaponName = "";
+        for (EntityAction ea : game.getActionsVector()) {
+            if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
+                WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
+                final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
+
+                if (!(otherWeapon.getType() instanceof WeaponType)) {
+                    continue;
+                }
+                final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
+                hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) && otherWAA.getWeaponId() != weaponId);
+                if (hasSoloAttack) {
+                    soloWeaponName = otherWeapon.getName();
+                    break;
+                }
+            }
+        }
+        if (hasSoloAttack) {
+            return "Already firing a weapon that can only be fired by itself! (" + soloWeaponName + ")";
+        }
+        
         // Handle solo attack weapons.
         if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
+            for (EntityAction ea : game.getActionsVector()) {
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }

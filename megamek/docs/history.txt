@@ -17,6 +17,7 @@ v0.45.0-git
 + Issue #1039: NPE FiringDisplay.clear
 + PR #1054: Adding the small pilot custom trait [Pilot option that ignores effects of cramped cockpit quirk]
 + Issue #1038: BA leg attack doesn't report hit
++ Issue #1023: MM doesn't inform user if previous solo attack was made (like leg attack)
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

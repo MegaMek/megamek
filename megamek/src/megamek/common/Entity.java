@@ -9334,8 +9334,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (getOwner().getTeam() == spotter.getTeam() 
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
         
-        boolean sensors = game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensors = (game.getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(

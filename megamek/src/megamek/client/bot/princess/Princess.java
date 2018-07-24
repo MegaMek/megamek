@@ -429,9 +429,29 @@ public class Princess extends BotClient {
             }
             
             return null;
+        }
+        else if(getGame().useVectorMove()) {
+            return calculateAdvancedAerospaceDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else {
             return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
         }
+    }
+    
+    /**
+     * Function that calculates deployment coordinates 
+     * @param deployedUnit The unit being considered for deployment
+     * @param possibleDeployCoords The coordinates being considered for deployment
+     * @return The first valid deployment coordinates.
+     */
+    private Coords calculateAdvancedAerospaceDeploymentCoords(final Entity deployedUnit,
+                                                                    final List<Coords> possibleDeployCoords) {
+        for(Coords coords : possibleDeployCoords) {
+            if(!NewtonianAerospacePathRanker.willFlyOffBoard(deployedUnit, coords)) {
+                return coords;
+            }
+        }
+        
+        return null;
     }
     
     /**

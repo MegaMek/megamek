@@ -451,6 +451,12 @@ public class Princess extends BotClient {
             }
         }
         
+        // if we can't find any good deployment coordinates, deploy anyway to the first available one
+        // and maybe eventually we'll slow down enough that we can deploy without immediately flying off
+        if(possibleDeployCoords.size() > 0) {
+            return possibleDeployCoords.get(0);
+        }
+        
         return null;
     }
     

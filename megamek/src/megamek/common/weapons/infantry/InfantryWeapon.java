@@ -77,7 +77,10 @@ public abstract class InfantryWeapon extends Weapon {
      */
     @Override
     public int getLongRange() {
-        return infantryRange * 3;
+        if (longRange == 0) {
+            return infantryRange * 3;
+        }
+        return longRange;
     }
 
     /**
@@ -86,7 +89,10 @@ public abstract class InfantryWeapon extends Weapon {
      */
     @Override
     public int getExtremeRange() {
-        return infantryRange * 4;
+        if (extremeRange == 0) {
+            return infantryRange * 4;
+        }
+        return extremeRange;
     }
 
     /*

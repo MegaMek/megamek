@@ -41,11 +41,13 @@ import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.DisplacementAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
@@ -6289,6 +6291,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return ams;
     }
+    
+    /**
+     * Assign AMS systems to incoming telemissile attacks. This
+     * allows AMS bays to work against these modified physical attacks
+     */
+    public void assignTMAMS(Vector<AttackAction> vTMAttacks) {
+        HashSet<AttackAction> targets = new HashSet<AttackAction>();
+        for (Mounted ams : getActiveAMS()) {
+         // make a new vector of only incoming attacks in arc
+            Vector<TeleMissileAttackAction> vTMAttacksInArc = new Vector<TeleMissileAttackAction>(
+                    vTMAttacks.size());
+            
+            for (AttackAction aa : vTMAttacks) {
+                //We already made sure these are all telemissile attacks in Server
+                TeleMissileAttackAction taa = (TeleMissileAttackAction) aa;
+                if (!targets.contains(taa)
+                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                game.getEntity(taa.getEntityId()))) {
+                    vTMAttacksInArc.addElement(taa);
+                }
+            }
+            //AMS Bays can fire at all incoming attacks each round
+            //Point defense bays are added too. If they haven't fired
+            //at something else already, they can attack now. 
+            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)
+                    || (ams.getType().hasFlag(WeaponType.F_PDBAY)
+                            && !ams.isUsedThisRound())) {
+                for (TeleMissileAttackAction taa : vTMAttacksInArc) {
+                    if (taa != null) {
+                        taa.addCounterEquipment(ams);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Assign AMS systems to the most dangerous incoming missile attacks. This
@@ -10098,9 +10135,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
             mod = 6;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
-            mod = 8;
-        }
         if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
@@ -10172,9 +10206,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
-            mod = 0;
-        }
+
         return mod;
     }
 

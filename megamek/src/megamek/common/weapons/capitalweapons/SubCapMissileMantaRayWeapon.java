@@ -53,6 +53,7 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
         this.bv = 396;
         this.cost = 150000;
         this.flags = flags.or(F_MISSILE);
+        this.atClass = CLASS_CAPITAL_MISSILE;
         this.shortAV = 5;
         this.missileArmor = 50;
         this.maxRange = RANGE_SHORT;

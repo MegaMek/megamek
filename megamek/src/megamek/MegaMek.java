@@ -75,7 +75,7 @@ public class MegaMek {
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
 
-    public static String VERSION = "0.43.12-RC6"; //$NON-NLS-1$
+    public static String VERSION = "0.45.0-git"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -223,7 +223,7 @@ public class MegaMek {
             }
         } catch (IOException | NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
-            logger.log(MegaMek.class,
+            logger.error(MegaMek.class,
                        "getMegaMekSHA256()",
                        e);
             return null;
@@ -234,7 +234,7 @@ public class MegaMek {
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                logger.log(MegaMek.class,
+                logger.error(MegaMek.class,
                            "getMegaMekSHA256()",
                            e);
                 return null;
@@ -680,7 +680,7 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    logger.log(MegaMek.class, METHOD_NAME,
+                    logger.error(MegaMek.class, METHOD_NAME,
                                new IOException(filename + " not found.  Try using \"cassis model\" for input."));
                 } else {
                     try {
@@ -784,7 +784,7 @@ public class MegaMek {
                     }
                     w.close();
                 } catch (Exception ex) {
-                    logger.log(getClass(),
+                    logger.error(getClass(),
                                "processUnitBattleForceConverter()",
                                ex);
                 }
@@ -827,7 +827,7 @@ public class MegaMek {
                    }
                     w.close();
                 } catch (Exception ex) {
-                    logger.log(getClass(),
+                    logger.error(getClass(),
                                "processUnitAlphaStrikeConverter()",
                                ex);
                 }
@@ -930,7 +930,7 @@ public class MegaMek {
                     }
                     w.close();
                 } catch (Exception ex) {
-                    logger.log(getClass(),
+                    logger.error(getClass(),
                                "processUnitExporter(boolean)",
                                ex);
                 }

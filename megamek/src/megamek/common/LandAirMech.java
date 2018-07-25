@@ -719,7 +719,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             roll.addModifier(1, "Small Cockpit");
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 

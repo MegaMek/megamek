@@ -80,6 +80,13 @@ public class LegAttackHandler extends WeaponHandler {
             }
         }
         hit.setGeneralDamageType(generalDamageType);
+
+        Report r = new Report(3405);
+        r.subject = subjectId;
+        r.add(toHit.getTableDesc());
+        r.add(entityTarget.getLocationAbbr(hit));
+        vPhaseReport.addElement(r);
+
         int damage = 4;
         if (ae instanceof BattleArmor) {
             damage += ((BattleArmor) ae).getVibroClaws();

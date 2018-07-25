@@ -9208,6 +9208,8 @@ public class AmmoType extends EquipmentType {
 
 	            ammo.name = "Narc Explosive Pods";
 	            ammo.shortName = "Narc Explosive";
+                ammo.subMunitionBegin = 6;
+                ammo.subMunitionLength = 7;
 	            ammo.setInternalName("ISNarc ExplosivePods");
 	            ammo.damagePerShot = 4;
 	            ammo.rackSize = 1;
@@ -9235,6 +9237,8 @@ public class AmmoType extends EquipmentType {
 	            AmmoType ammo = new AmmoType();
 	            ammo.name = "Narc Explosive Pods";
 	            ammo.shortName = "Narc Explosive";
+                ammo.subMunitionBegin = 6;
+                ammo.subMunitionLength = 7;
 	            ammo.setInternalName("CLNarc Explosive Pods");
 	            ammo.damagePerShot = 4;
 	            ammo.rackSize = 1;
@@ -9293,6 +9297,8 @@ public class AmmoType extends EquipmentType {
 
 	            ammo.name = "iNarc ECM Pods";
 	            ammo.shortName = "iNarc ECM";
+	            ammo.subMunitionBegin = 6;
+	            ammo.subMunitionLength = 3;
 	            ammo.setInternalName("ISiNarc ECM Pods");
 	            ammo.addLookupName("iNarc ECM Ammo");
 	            ammo.damagePerShot = 3; // only used for ammo crits
@@ -9320,6 +9326,8 @@ public class AmmoType extends EquipmentType {
 
 	            ammo.name = "iNarc Explosive Pods";
 	            ammo.shortName = "iNarc Explosive";
+	            ammo.subMunitionBegin = 6;
+                ammo.subMunitionLength = 9;
 	            ammo.setInternalName("ISiNarc Explosive Pods");
 	            ammo.addLookupName("iNarc Explosive Ammo");
 	            ammo.damagePerShot = 6; // only used for ammo crits
@@ -9348,6 +9356,8 @@ public class AmmoType extends EquipmentType {
 
 	            ammo.name = "iNarc Haywire Pods";
 	            ammo.shortName = "iNarc Haywire";
+	            ammo.subMunitionBegin = 6;
+                ammo.subMunitionLength = 7;
 	            ammo.setInternalName("ISiNarc Haywire Pods");
 	            ammo.addLookupName("iNarc Haywire Ammo");
 	            ammo.damagePerShot = 3; // only used for ammo crits
@@ -9375,6 +9385,8 @@ public class AmmoType extends EquipmentType {
 
 	            ammo.name = "iNarc Nemesis Pods";
 	            ammo.shortName = "iNarc Nemesis";
+	            ammo.subMunitionBegin = 6;
+                ammo.subMunitionLength = 7;
 	            ammo.setInternalName("ISiNarc Nemesis Pods");
 	            ammo.addLookupName("iNarc Nemesis Ammo");
 	            ammo.damagePerShot = 3; // only used for ammo crits

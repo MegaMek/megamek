@@ -5344,7 +5344,7 @@ public class Compute {
         return Compute.isInBuilding(game, entity.getElevation(), coords);
     }
 
-    static boolean isInBuilding(IGame game, int entityElev, Coords coords) {
+    public static boolean isInBuilding(IGame game, int entityElev, Coords coords) {
 
         // Get the Hex at those coordinates.
         final IHex curHex = game.getBoard().getHex(coords);
@@ -6014,7 +6014,7 @@ public class Compute {
             return false;
         }
 
-        if (attacker.game.getBoard().inSpace()) {
+        if (attacker.getGame().getBoard().inSpace()) {
             return false;
         }
         // According to errata, VTOL and WiGes are considered ground targets

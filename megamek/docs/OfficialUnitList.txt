@@ -2201,26 +2201,6 @@ Mechanized Hover Platoon (LRM)|
 Mechanized Tracked Platoon (LRM)|
 Mechanized Wheeled Platoon (LRM)|
 Motorized Platoon (LRM)|
-Bayamo Hoverbike (Standard)|
-Bayamo Hoverbike (Standard)|
-Bayamo Hoverbike (Standard)|
-Minigun Cycle (SRM)|
-Minigun Cycle (Standard)|
-Monocycle (Standard)|
-Motuo Che Shang No.2 (Standard)|
-Squad Transport VTOL (Standard)|
-Motuo Che Shang No.2 (Standard)|
-Motuo Che Shang No.2 (Standard)|
-Prime Mover (SL Era Original)|
-Prime Mover (SL Era Refit)|
-Prime Mover (Standard)|
-Sturmvogel Gunship (LB 10-X)|
-Sturmvogel Gunship (Standard)|
-Sturmvogel Maritime Patrol WiGE (LB 2-X)|
-Sturmvogel Maritime Patrol WiGE (Standard)|
-Wheeled Scout (Recon Camera)|
-Wheeled Scout (Remote Sensor)|
-Wheeled Scout (Standard)|
 Comitatus JumpShip (Standard)|
 Hunter Jumpship (Lithium-Fusion)|
 Hunter Jumpship (Standard)|
@@ -5619,6 +5599,26 @@ Boggart (Quad) 1|
 Sprite 2|
 Sprite (Standard)|
 Minotaur XP|
+Bayamo Hoverbike (Standard)|
+Bayamo Hoverbike (Standard)|
+Bayamo Hoverbike (Standard)|
+Minigun Cycle (SRM)|
+Minigun Cycle (Standard)|
+Monocycle (Standard)|
+Motuo Che Shang No.2 (Standard)|
+Squad Transport VTOL (Standard)|
+Motuo Che Shang No.2 (Standard)|
+Motuo Che Shang No.2 (Standard)|
+Prime Mover (SL Era Original)|
+Prime Mover (SL Era Refit)|
+Prime Mover (Standard)|
+Sturmvogel Gunship (LB 10-X)|
+Sturmvogel Gunship (Standard)|
+Sturmvogel Maritime Patrol WiGE (LB 2-X)|
+Sturmvogel Maritime Patrol WiGE (Standard)|
+Wheeled Scout (Recon Camera)|
+Wheeled Scout (Remote Sensor)|
+Wheeled Scout (Standard)|
 Dragonstar Assault Transport (3060)|
 Dragonstar Passenger Transport (Standard)|
 Mowang Courier (Standard)|

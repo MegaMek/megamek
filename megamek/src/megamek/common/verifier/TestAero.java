@@ -575,6 +575,19 @@ public class TestAero extends TestEntity {
         }
         return 0;
     }
+    
+    @Override
+    public double getWeightEngine() {
+        double wt = super.getWeightEngine();
+        // Conventional fighters with fusion engines require extra shielding.
+        // Per TacOps fission engines require extra shielding as well.
+        if (getEntity().hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)
+                && (null != getEntity().getEngine())
+                && (getEntity().getEngine().isFusion() || getEntity().getEngine().hasFlag(Engine.FISSION))) {
+            wt = ceil(wt * 1.5, Ceil.HALFTON);
+        }
+        return wt;
+    }
 
     @Override
     public double getWeightControls() {

@@ -41,6 +41,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      *
      */
     private static final long serialVersionUID = -4702357516725749181L;
+    // equipment that affects this attack (AMS, ECM?, etc)
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);

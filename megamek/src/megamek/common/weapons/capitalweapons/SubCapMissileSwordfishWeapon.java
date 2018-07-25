@@ -52,6 +52,7 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
 		this.bv = 317;
 		this.cost = 110000;
 		this.flags = flags.or(F_MISSILE);
+		this.atClass = CLASS_CAPITAL_MISSILE;
 		this.shortAV = 4;
         this.missileArmor = 40;
 		this.maxRange = RANGE_SHORT;

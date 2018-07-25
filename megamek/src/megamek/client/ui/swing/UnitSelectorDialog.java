@@ -998,16 +998,6 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     }
 
     public void keyPressed(KeyEvent ke) {
-        if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-            ActionEvent event = new ActionEvent(btnSelect,
-                    ActionEvent.ACTION_PERFORMED, ""); //$NON-NLS-1$
-            actionPerformed(event);
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            ActionEvent event = new ActionEvent(btnClose,
-                    ActionEvent.ACTION_PERFORMED, ""); //$NON-NLS-1$
-            actionPerformed(event);
-        }
         long curTime = System.currentTimeMillis();
         if ((curTime - lastSearch) > KEY_TIMEOUT) {
             searchBuffer = new StringBuffer();

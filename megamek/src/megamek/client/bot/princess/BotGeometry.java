@@ -101,15 +101,15 @@ public class BotGeometry {
      * Coords stores x and y values. Since these are hexes, coordinates with odd x
      * values are a half-hex down. Directions work clockwise around the hex,
      * starting with zero at the top.
-     * -y
-     * 0
-     * _____
-     * 5 /     \ 1
+     *        -y
+     *        0
+     *      _____
+     *   5 /     \ 1
      * -x /       \ +x
-     * \       /
-     * 4 \_____/ 2
-     * 3
-     * +y
+     *    \       /
+     *   4 \_____/ 2
+     *        3
+     *        +y
      * ------------------------------
      * Direction is stored as above, but the meaning of 'intercept' depends
      * on the direction.  For directions 0,3, intercept means the y=0 intercept
@@ -239,7 +239,7 @@ public class BotGeometry {
                 if (getDirection() == 2) {
                     return h.getIntersection(this);
                 }
-                if (getDirection() == 0) {
+                if (getDirection() == 0 || getDirection() == 3) {
                     return new Coords(getIntercept(), h.getYfromX(getIntercept()));
                 }
                 //direction must be 1 here, and h.direction=2
@@ -392,7 +392,7 @@ public class BotGeometry {
             try {
                 while (cfit.hasNext()) {
                     CoordFacingCombo cf = cfit.next();
-                    if(cf != null) {
+                    if(cf != null && owner.getGame().getBoard().contains(cf.coords)) {
                         expandToInclude(cf.getCoords());
                     }
                 }
@@ -405,7 +405,7 @@ public class BotGeometry {
          * returns true if a point is inside the area
          * false if it is not
          */
-        boolean contains(Coords c) {
+        public boolean contains(Coords c) {
             final String METHOD_NAME = "contains(Coords)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -448,7 +448,7 @@ public class BotGeometry {
         /**
          * Returns a vertex, with zero starting at the upper left of the hex
          */
-        Coords getVertexNum(int i) {
+        public Coords getVertexNum(int i) {
             final String METHOD_NAME = "getVertexNum(int)";
             owner.methodBegin(getClass(), METHOD_NAME);
 
@@ -505,7 +505,7 @@ public class BotGeometry {
             }
         }
 
-        HexLine[] getEdges() {
+        public HexLine[] getEdges() {
             EDGES_LOCK.readLock().lock();
             try {
                 return Arrays.copyOf(edges, edges.length);

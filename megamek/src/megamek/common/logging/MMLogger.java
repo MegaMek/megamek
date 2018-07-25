@@ -44,7 +44,10 @@ public interface MMLogger {
      * @param methodName   The name of the originating method.
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     * 
+     * @deprecated Use {@link MMLogger#error(Class, String, Throwable)} instead.
      */
+    @Deprecated
     <T extends Throwable> T log(Class<?> callingClass, String methodName,
                                 T throwable);
 
@@ -98,7 +101,330 @@ public interface MMLogger {
      */
     void log(Class<?> callingClass, String methodName, LogLevel level,
              StringBuilder message);
+    
+    // Convenience methods
 
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#DEBUG} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T debug(String callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#DEBUG} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T debug(Class<?> callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#DEBUG} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T debug(Class<?> callingClass, String methodName, T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void debug(Class<?> callingClass, String methodName, String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#DEBUG} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void debug(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#ERROR} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T error(String callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#ERROR} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T error(Class<?> callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#ERROR} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T error(Class<?> callingClass, String methodName, T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void error(Class<?> callingClass, String methodName, String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#ERROR} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void error(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#FATAL} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T fatal(String callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#FATAL} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T fatal(Class<?> callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void fatal(Class<?> callingClass, String methodName, String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#FATAL} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void fatal(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#INFO} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T info(String callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#INFO} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T info(Class<?> callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#INFO} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T info(Class<?> callingClass, String methodName, T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void info(Class<?> callingClass, String methodName, String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#INFO} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void info(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#TRACE} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T trace(String callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#TRACE} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T trace(Class<?> callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#TRACE} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T trace(Class<?> callingClass, String methodName, T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void trace(Class<?> callingClass, String methodName, String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#TRACE} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void trace(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#WARNING} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T warning(String callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#WARNING} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T warning(Class<?> callingClass, String methodName, String message, T throwable);
+
+    /**
+     * Writes the passed {@link Throwable} to the log file at the
+     * {@link LogLevel#WARNING} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param throwable    The error object to be logged.
+     * @return The same throwable passed in to this method so that it may be re-thrown if desired.
+     */
+    <T extends Throwable> T warning(Class<?> callingClass, String methodName, T throwable);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void warning(Class<?> callingClass, String methodName, String message);
+
+    /**
+     * Writes the passed log entry to the file at the
+     * {@link LogLevel#WARNING} level.
+     *
+     * @param callingClass The name of the originating class.
+     * @param methodName   The name of the originating method.
+     * @param message      The message to be logged.
+     */
+    void warning(Class<?> callingClass, String methodName, StringBuilder message);
+    
+    // End convenience methods
+    
     /**
      * Used to log entry into a method.  The log entry is written at the
      * {@link LogLevel#DEBUG} level.

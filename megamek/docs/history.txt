@@ -1,7 +1,32 @@
 VERSION HISTORY:
 ----------------
-v0.43.12-RC6
+v0.45.0-git
++ PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.
++ Issue #1008: When adding units through Add A Combat Unit dialog adds two instead of one when using enter key
++ PR #989: Errata - Range Master SPA no longer applicable to LOS range
++ PR #1001: Prototype improvements to infantry pathfinding allowing Princess to make significantly better use of infantry than previously.
++ PR #1013: Defer calculating initial BV when adding multiple entities to game.
+        Fixes bug that disconnects C3 networks when loading from MUL of any unit loaded before the C3 master.
++ Issue #1027: Off-board Infantry Field Artillery "Target Out of Arc"
++ Issue #1028: Infantry TAG has 0 range
++ PR #1025: [Feature] Princess can now fly spacecraft using the advanced flight rules.
++ PR #997: [Feature] Spacecraft can now fire tele-operated missiles.
++ Fixed fusion engine weight calculation for conventional fighter validation.
++ Issue #1048: Field Gunners unable to target Air Units
++ Issue #1046: Narc Ammo Type Missing From Reports
++ Issue #1039: NPE FiringDisplay.clear
++ PR #1054: Adding the small pilot custom trait [Pilot option that ignores effects of cramped cockpit quirk]
++ Issue #1038: BA leg attack doesn't report hit
++ Issue #1023: MM doesn't inform user if previous solo attack was made (like leg attack)
++ Bug: ammo selection in lounge is filtered using variable tech level even when option is not enabled.
++ Issue #1017: Rotary AC Ammo Does Not Populate Munitions Carried Lists
+
+v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
++ Data: New Sprites
++ Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
++ PR #1003: Fix validation failures from configuring ammo.
 
 v0.43.11-RC5 (2018-06-04 0100 UTC)
 + Data: Adding missing weights for infantry weapons.

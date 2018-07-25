@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -182,7 +183,7 @@ public class FireControlTest {
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
 
         final BasicPathRanker mockPathRanker = Mockito.mock(BasicPathRanker.class);
-        Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
 
         final IHonorUtil mockHonorUtil = Mockito.mock(IHonorUtil.class);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);

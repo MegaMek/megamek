@@ -98,6 +98,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      *
      */
     private static final long serialVersionUID = -9096603813317359351L;
+    
+    public static final int STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF = 100000;
+    
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Entity.LOC_NONE;
@@ -1120,14 +1123,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
                     if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
-                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
@@ -3540,10 +3543,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
+        // Check to see if another solo weapon was fired
+        boolean hasSoloAttack = false;
+        String soloWeaponName = "";
+        for (EntityAction ea : game.getActionsVector()) {
+            if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
+                WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
+                final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
+
+                if (!(otherWeapon.getType() instanceof WeaponType)) {
+                    continue;
+                }
+                final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
+                hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) && otherWAA.getWeaponId() != weaponId);
+                if (hasSoloAttack) {
+                    soloWeaponName = otherWeapon.getName();
+                    break;
+                }
+            }
+        }
+        if (hasSoloAttack) {
+            return "Already firing a weapon that can only be fired by itself! (" + soloWeaponName + ")";
+        }
+        
         // Handle solo attack weapons.
         if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
+            for (EntityAction ea : game.getActionsVector()) {
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }
@@ -3873,7 +3898,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)
                 && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
-                && !ae.isMakingVTOLGroundAttack()) {
+                && !ae.isMakingVTOLGroundAttack()
+                && !ae.isOffBoard()) {
             return "Target not in arc.";
         }
 
@@ -4051,9 +4077,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "cannot target aero units beyond altitude 8";
         }
 
+        boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(WeaponType.F_INF_AA)
-                && !isArtilleryFLAK // Can make GroundToAir Flak attacks
-                && !((atype != null) && (atype.getAmmoType() == AmmoType.T_AC_LBX))) {
+                && !isArtilleryFLAK // Can make GroundToAir Flak attacks)
+                && !isWeaponFieldGuns) {
             return "Infantry cannot engage in ground-to-air attacks";
         }
 

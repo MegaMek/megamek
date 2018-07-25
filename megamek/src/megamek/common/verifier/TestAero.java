@@ -48,7 +48,6 @@ import megamek.common.SteerageQuartersCargoBay;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
-import megamek.common.verifier.TestAero.Quarters;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;

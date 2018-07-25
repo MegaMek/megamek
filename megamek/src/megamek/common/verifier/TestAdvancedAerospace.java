@@ -463,13 +463,13 @@ public class TestAdvancedAerospace extends TestAero {
                 + TestEntity.makeWeightString(getWeightEngine()) + "\n";
     }
     
-    public double getWeightDrive() {
+    public double getWeightKFDrive() {
         return vessel.getJumpDriveWeight();
     }
 
-    public String printWeightDrive() {
+    public String printWeightKFDrive() {
         return StringUtil.makeLength("K/F Drive Core: ", getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightDrive()) + "\n";
+                + TestEntity.makeWeightString(getWeightKFDrive()) + "\n";
     }
     
     public double getWeightSail() {
@@ -532,39 +532,75 @@ public class TestAdvancedAerospace extends TestAero {
         }
         return weight;
     }
-
-    @Override
-    public double getWeightMisc() {
-        double weight = 0.0;
-        // Add in extra fire control system weight for exceeding base slot limit
-        for (double extra : extraSlotCost(vessel)) {
-            weight += extra;
-        }
+    
+    /**
+     * @return The combined weight of grav decks mounted on the vessel
+     */
+    public double getWeightGravDecks() {
+        return vessel.getGravDeck() * 50
+            + vessel.getGravDeckLarge() * 100
+            + vessel.getGravDeckHuge() * 500;
+    }
+    
+    public String printWeightGravDecks() {
+        return StringUtil.makeLength("Gravity Decks: ", getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightGravDecks()) + "\n";
+    }
+    
+    /**
+     * @return The combined weight of all lifeboats and escape pods
+     */
+    public double getWeightLifeBoats() {
         // 7 tons each for life boats and escape pods, which includes the 5-ton vehicle and a
         // 2-ton launch mechanism
-        weight += (vessel.getLifeBoats() + vessel.getEscapePods()) * 7;
-        weight += vessel.getGravDeck() * 50;
-        weight += vessel.getGravDeckLarge() * 100;
-        weight += vessel.getGravDeckHuge() * 500;
-        if (vessel.hasLF()) {
-            weight += vessel.getWeight() * 0.01;
+        return (vessel.getLifeBoats() + vessel.getEscapePods()) * 7;
+    }
+    
+    public String printWeightLifeBoats() {
+        return StringUtil.makeLength("Life Boats/Escape Pods: ", getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightLifeBoats()) + "\n";
+    }
+    
+    /**
+     * 
+     * @return Extra fire control system weight for exceeding base slot limit per firing arc
+     */
+    public double getWeightFireControl() {
+        double weight = 0.0;
+        for (double extra : extraSlotCost(vessel)) {
+            weight += extra;
         }
         return weight;
     }
 
-    @Override
-    public String printWeightMisc() {
-        double weight = getWeightMisc();
-        if (weight > 0){
-            return StringUtil.makeLength(
-                    "Misc: ", getPrintSize() - 5) + weight + "\n";
-        }
-        return "";
+    public String printWeightFireControl() {
+        return StringUtil.makeLength("Extra Fire Control: ", getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightFireControl()) + "\n";
     }
     
-    @Override
-    public double getWeightCarryingSpace() {
-        return super.getWeightCarryingSpace() + 1000 * vessel.getDockingCollars().size();
+    /**
+     * 
+     * @return The weight of the lithium fusion battery (0 if not present).
+     */
+    public double getWeightLFBattery() {
+        if (vessel.hasLF()) {
+            return vessel.getWeight() * 0.01;
+        }
+        return 0.0;
+    }
+
+    public String printWeightLFBattery() {
+        return StringUtil.makeLength("LF Battery: ", getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightLFBattery()) + "\n";
+    }
+    
+    public double getWeightHardpoints() {
+        return 1000 * vessel.getDockingCollars().size();
+    }
+    
+    public String printWeightHardpoints() {
+        return StringUtil.makeLength("Docking Hardpoints: ", getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightHardpoints()) + "\n";
     }
     
     @Override
@@ -1008,33 +1044,38 @@ public class TestAdvancedAerospace extends TestAero {
         double weight = 0;
         weight += getWeightStructure();
         weight += getWeightEngine();
-        weight += getWeightDrive();
+        weight += getWeightKFDrive();
+        weight += getWeightLFBattery();
         weight += getWeightSail();
         weight += getWeightControls();
         weight += getWeightFuel();
         weight += getWeightHeatSinks();
         weight += getWeightArmor();
-        weight += getWeightMisc();
+        weight += getWeightFireControl();
 
         weight += getWeightMiscEquip();
         weight += getWeightWeapon();
         weight += getWeightAmmo();
 
         weight += getWeightCarryingSpace();
+        weight += getWeightHardpoints();
         weight += getWeightQuarters();
+        weight += getWeightGravDecks();
+        weight += getWeightLifeBoats();
 
         return weight;
     }
 
     @Override
     public String printWeightCalculation() {
-        return printWeightEngine()
-                + printWeightDrive() + printWeightSail()
-                + printWeightControls() + printWeightFuel() 
-                + printWeightHeatSinks()
-                + printWeightArmor() + printWeightMisc()
-                + printWeightCarryingSpace()
-                + printWeightQuarters()
+        return printWeightStructure() + printWeightEngine()
+                + printWeightKFDrive() + printWeightLFBattery()
+                + printWeightSail() + printWeightControls()
+                + printWeightFuel() + printWeightHeatSinks()
+                + printWeightArmor() + printWeightFireControl()
+                + printWeightCarryingSpace() + printWeightHardpoints()
+                + printWeightQuarters() + printWeightGravDecks()
+                + printWeightLifeBoats()
                 + "Equipment:\n"
                 + printMiscEquip() + printWeapon() + printAmmo();
     }

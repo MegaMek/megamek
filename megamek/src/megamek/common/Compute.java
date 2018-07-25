@@ -2357,10 +2357,11 @@ public class Compute {
         ToHitData toHit = Compute
                 .getTargetMovementModifier(
                         entity.delta_distance,
-                        ((entity.moved == EntityMovementType.MOVE_JUMP)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)),
+                        (entity.getMovementMode() != EntityMovementMode.WIGE)
+                        && ((entity.moved == EntityMovementType.MOVE_JUMP)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)),
                         
                         (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
@@ -2384,11 +2385,7 @@ public class Compute {
         }
         if ((entity.getElevation() > 0)
             && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-            if (entity instanceof Protomech) {
-                toHit.addModifier(3, "target is a gliding protomech");
-            } else {
-                toHit.addModifier(1, "target is a flying WiGE");
-            }
+                toHit.addModifier(1, "target is airborne");
         }
 
         // did the target sprint?

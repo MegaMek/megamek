@@ -6779,12 +6779,12 @@ public class Server implements Runnable {
     /**
      * Process any flee movement actions, including flying off the map
      *
-     * @param entity     the entity fleeing
+     * @param movePath   The move path which resulted in an entity leaving the map.
      * @param flewOff    whether this fleeing is a result of accidently flying off the
      *                   map
      * @param returnable the number of rounds until the unit can return to the map (-1
      *                   if it can't return)
-     * @return
+     * @return Vector of turn reports.
      */
     private Vector<Report> processLeaveMap(MovePath movePath,
                                            boolean flewOff, int returnable) {

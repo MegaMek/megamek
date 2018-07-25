@@ -52,7 +52,7 @@ public class MovePath implements Cloneable, Serializable {
         this.game = game;
     }
 
-    protected void setEntity(Entity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 

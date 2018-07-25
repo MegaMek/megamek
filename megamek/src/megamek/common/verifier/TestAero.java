@@ -21,8 +21,10 @@ package megamek.common.verifier;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.function.Function;
 
@@ -46,6 +48,7 @@ import megamek.common.SteerageQuartersCargoBay;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
+import megamek.common.verifier.TestAero.Quarters;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -217,6 +220,20 @@ public class TestAero extends TestEntity {
         
         public Bay newQuarters(int size) {
             return init.apply(size * tonnage);
+        }
+        
+        public static Map<Quarters, Integer> getQuartersByType(Aero aero) {
+            EnumMap<TestAero.Quarters, Integer> sizes = new EnumMap<>(TestAero.Quarters.class);
+            for (Quarters q : values()) {
+                sizes.put(q, 0);
+            }
+            for (Bay bay : aero.getTransportBays()) {
+                Quarters q = getQuartersForBay(bay);
+                if (null != q) {
+                    sizes.merge(q, (int) bay.getCapacity(), Integer::sum);
+                }
+            }
+            return sizes;
         }
     }
     

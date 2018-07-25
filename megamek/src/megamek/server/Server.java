@@ -7256,11 +7256,13 @@ public class Server implements Runnable {
                     entity.setWigeLiftoffHover(true);
                     entity.setAssaultDropInProgress(false);
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
+                    // If this is the first step, use the Entity's starting elevation
+                    int elevation = (prevStep == null)? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMech) {
-                        addReport(landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
+                        addReport(landAirMech((LandAirMech)entity, step.getPosition(), elevation,
                                 distance, prevStep));
                     } else if (entity instanceof Protomech) {
-                        addReport(landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
+                        addReport(landGliderPM((Protomech)entity, step.getPosition(), elevation,
                                 distance));
                     }
                     // landing always ends movement whether successful or not

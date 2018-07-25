@@ -27054,7 +27054,8 @@ public class Server implements Runnable {
             en.setElevation(0);
         }
         PilotingRollData psr = en.checkGliderLanding();
-        if (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false)) {
+        if ((psr.getValue() != TargetRoll.CHECK_FALSE)
+                && (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false))) {
             for (int i = 0; i < en.getNumberOfCriticals(Protomech.LOC_LEG); i++) {
                 en.getCritical(Protomech.LOC_LEG, i).setHit(true);
             }

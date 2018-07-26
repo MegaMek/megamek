@@ -9745,7 +9745,7 @@ public class Server implements Runnable {
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 IHex hex = game.getBoard().getHex(curPos);
-                if (md.automaticWiGELanding()) {
+                if (md.automaticWiGELanding(false)) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);
@@ -9796,15 +9796,18 @@ public class Server implements Runnable {
                                     violation instanceof Mech));
                         }
                     }
-                } else if (!((entity instanceof LandAirMech)
-                        || (entity instanceof Protomech))) {
+                } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)
+                        && !entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    entity.setElevation(1 + hex.maxTerrainFeatureElevation(
-                            game.getBoard().inAtmosphere()));
+                    
+                    entity.setElevation(Math.min(entity.getElevation(),
+                            1 + hex.maxTerrainFeatureElevation(
+                            game.getBoard().inAtmosphere())));
                 }
             }
             

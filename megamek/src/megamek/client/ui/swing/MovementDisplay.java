@@ -1538,7 +1538,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;            	
         }
         
-        if (cmd.automaticWiGELanding()
+        if (cmd.automaticWiGELanding(true)
                 && GUIPreferences.getInstance().getNagForWiGELanding()  ) {
             ConfirmDialog nag = new ConfirmDialog(
                     clientgui.frame,

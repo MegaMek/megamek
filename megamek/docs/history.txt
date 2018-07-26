@@ -20,6 +20,7 @@ v0.45.0-git
 + Issue #1023: MM doesn't inform user if previous solo attack was made (like leg attack)
 + Bug: ammo selection in lounge is filtered using variable tech level even when option is not enabled.
 + Issue #1017: Rotary AC Ammo Does Not Populate Munitions Carried Lists
++ PR #970: [Feature] Implementation of StartOps Advanced Space Sensors
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

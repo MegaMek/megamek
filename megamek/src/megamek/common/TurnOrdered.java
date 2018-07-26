@@ -750,7 +750,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
                     ntm = (int) Math.ceil(((double) num_telemissile_turns[index]) / (double) minTM);
                 } else {
-                    ntm = num_telemissile_turns[index] / minSC;
+                    ntm = num_telemissile_turns[index] / minTM;
                 }
                 for (int j = 0; j < ntm; j++) {
                     turns.addTelemissile(order[index]);

@@ -122,7 +122,7 @@ public class ComputeECM {
      * along the path from a to b
      */
     public static int getSmallCraftECM(Entity ae, Coords a, Coords b) {
-        if (!ae.getGame().getBoard().inSpace()) {
+        if (!ae.isSpaceborne()) {
             // only matters in space
             return 0;
         }
@@ -245,7 +245,7 @@ public class ComputeECM {
      * along the path from a to b
      */
     public static int getLargeCraftECM(Entity ae, Coords a, Coords b) {
-        if (!ae.getGame().getBoard().inSpace()) {
+        if (!ae.isSpaceborne()) {
             // only matters in space
             return 0;
         }
@@ -484,7 +484,7 @@ public class ComputeECM {
             ecmComparator = new ECMInfo.ECCMComparator();
         }
         
-        if (ae.getGame().getBoard().inSpace()) {
+        if (ae.isSpaceborne()) {
             // normal ECM effects don't apply in space
             return null;
         }

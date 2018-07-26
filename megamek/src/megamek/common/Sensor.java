@@ -48,9 +48,10 @@ public class Sensor implements Serializable {
     public static final int TYPE_NOVA = 16;
     public static final int TYPE_BAPP = 17;
     public static final int TYPE_AERO_SENSOR = 18;
-    //TODO: These are placeholders and will be implemented in a later PR
-    public static final int TYPE_SPACECRAFT_ACTIVE = 19;
-    public static final int TYPE_SPACECRAFT_PASSIVE = 20;
+    public static final int TYPE_SPACECRAFT_RADAR = 19;
+    public static final int TYPE_SPACECRAFT_ESM = 20;
+    public static final int TYPE_SPACECRAFT_THERMAL = 21;
+    public static final int TYPE_AERO_THERMAL = 22;
 
     public static final String WATCHDOG = "WatchdogECMSuite";
     public static final String NOVA = "NovaCEWS";
@@ -70,8 +71,18 @@ public class Sensor implements Serializable {
             "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan",
             "Vehicle Magscan", "Heat Sensors", "Improved Sensors",
             "Mech Seismic", "Vehicle Seismic", "EW Equipment", "Nova CEWS", "Beagle Active Probe Prototype", 
-            "Aero Sensor Suite", "Spacecraft Active Sensor Suite", "Spacecraft Passive Sensor Suite"};
+            "Aero Sensor Suite (Active)", "Spacecraft Radar (Active)", "Spacecraft Electronic Support Measures (Passive)",
+            "Spacecraft Thermal/Optical Sensors (Passive)", "Aero Thermal/Optical Sensors (Passive)"};
     public static final int SIZE = sensorNames.length;
+    
+    //Constants for space automatic visual detection ranges
+    public static final int ASF_RADAR_AUTOSPOT_RANGE = 55;
+    public static final int ASF_OPTICAL_FIRING_SOLUTION_RANGE = 14;
+    public static final int LC_RADAR_AUTOSPOT_RANGE = 555;
+    public static final int LC_RADAR_GROUND_RANGE = 30;
+    //Yeah, same value, but we might want to know what it's for later...
+    public static final int ASF_RADAR_MAX_RANGE = 555;
+    public static final int LC_OPTICAL_FIRING_SOLUTION_RANGE = 139;
 
     /**
      * Constructor
@@ -136,6 +147,15 @@ public class Sensor implements Serializable {
                 return 2;
             case TYPE_VEE_SEISMIC:
                 return 1;
+            //The ranges listed for the various sensors in SO are so far beyond gameplay distances that I'm condensing
+            //them into just the types that have different detection mechanics. 
+            case TYPE_SPACECRAFT_RADAR:
+            case TYPE_SPACECRAFT_ESM:
+                return 5555;
+            case TYPE_SPACECRAFT_THERMAL:
+                return 1388;
+            case TYPE_AERO_THERMAL:
+                return 139;
             default:
                 return 0;
         }
@@ -176,6 +196,19 @@ public class Sensor implements Serializable {
         if ((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
             range -= game.getPlanetaryConditions().getTemperatureDifference(50,
                     -30);
+        }
+        
+        //Most spacecraft sensors only work in space...
+        if (!game.getBoard().inSpace() && 
+                (type == TYPE_SPACECRAFT_ESM 
+                || type == TYPE_SPACECRAFT_THERMAL 
+                || type == TYPE_AERO_THERMAL)) {
+            range = 0;            
+        }
+        
+        //Aero/Small Craft Active Sensors have longer range in space
+        if (game.getBoard().inSpace() && type == TYPE_AERO_SENSOR) {
+            range = 555;
         }
 
         return range;

@@ -626,6 +626,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * double blind play.
      */
     private Vector<IPlayer> entityDetectedBy = new Vector<IPlayer>();
+    
+    /**
+     * Contains all entities that have been detected by this entity's sensors.
+     * Used for double-blind on space maps - SO p117
+     * 
+     * Entities need only be cleared from this when they move out of range
+     */
+    public Vector<Entity> sensorContacts = new Vector<Entity>();
+    
+    /**
+     * Contains all entities that this entity has established a firing solution on.
+     * Used for double-blind on space maps - SO p117
+     * 
+     * Entities need only be cleared from this when they move out of range
+     */
+    public Vector<Entity> firingSolutions = new Vector<Entity>();
 
     /**
      * Whether this entity is captured or not.
@@ -5888,7 +5904,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return false;
                 }
                 //Naval C3 only works in space
-                if (!game.getBoard().inSpace()) {
+                if (!isSpaceborne()) {
                     return false;
                 }
             } 
@@ -6078,6 +6094,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        
         // change the active sensor, if requested
         if (null != nextSensor) {
             activeSensor = nextSensor;
@@ -9317,8 +9334,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (getOwner().getTeam() == spotter.getTeam() 
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
         
-        boolean sensors = game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensors = (game.getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(
@@ -11795,6 +11813,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getSensorCheck() {
         return sensorCheck;
     }
+    
+    /**
+     * A method to determine if an aero has suffered 3 sensor hits. 
+     * When double-blind is on, this affects both standard visibility and sensor rolls
+     */
+    public boolean isAeroSensorDestroyed() {
+        return false;
+    }
 
     public boolean hasModularArmor() {
         return hasModularArmor(-1);
@@ -12631,6 +12657,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "none";
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
+        if (isSpaceborne()) {
+            bracket = Compute.getSensorBracket(7);
+        }
         int range = getActiveSensor().getRangeByBracket();
         int groundRange = 0;
         if (getActiveSensor().isBAP()) {
@@ -12638,6 +12667,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             groundRange = 1;
         }
+        
+        //ASF sensors change range when in space, so we do that here
+        if (isSpaceborne()) {
+            if (getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                range = Sensor.ASF_RADAR_MAX_RANGE;
+            }
+        
+            //If Aero/Spacecraft sensors are destroyed while in space, the range is 0.
+            if (isAeroSensorDestroyed()) {
+                range = 0;
+            }
+        }
+        
+        //Dropships using radar in an atmosphere need a range that's a bit more sensible
+        if (hasETypeFlag(Entity.ETYPE_DROPSHIP) && !isSpaceborne()) {
+            if (getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+                range = Sensor.LC_RADAR_GROUND_RANGE;
+            }
+        }
+        
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;
@@ -12646,6 +12695,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             minSensorRange = 0;
             minGroundSensorRange = 0;
         }
+        
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                     + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"

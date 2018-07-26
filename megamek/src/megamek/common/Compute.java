@@ -4536,6 +4536,11 @@ public class Compute {
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
+        
+        // If we have no sensors then return false
+        if (ae.getActiveSensor() == null) {
+            return false;
+        }
 
         int bracket = Compute.getSensorRangeBracket(ae, target, allECMInfo);
         int range = Compute.getSensorRangeByBracket(game, ae, target, los);

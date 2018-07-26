@@ -5180,7 +5180,8 @@ public class Server implements Runnable {
         Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovePath md = (MovePath) packet.getObject(1);
-        md.setGame(game);
+        md.setGame(getGame());
+        md.setEntity(entity);
 
         // is this the right phase?
         if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
@@ -6778,15 +6779,16 @@ public class Server implements Runnable {
     /**
      * Process any flee movement actions, including flying off the map
      *
-     * @param entity     the entity fleeing
+     * @param movePath   The move path which resulted in an entity leaving the map.
      * @param flewOff    whether this fleeing is a result of accidently flying off the
      *                   map
      * @param returnable the number of rounds until the unit can return to the map (-1
      *                   if it can't return)
-     * @return
+     * @return Vector of turn reports.
      */
-    private Vector<Report> processLeaveMap(Entity entity, int facing,
+    private Vector<Report> processLeaveMap(MovePath movePath,
                                            boolean flewOff, int returnable) {
+        Entity entity = movePath.getEntity();        
         Vector<Report> vReport = new Vector<Report>();
         Report r;
         // Unit has fled the battlefield.
@@ -6797,11 +6799,11 @@ public class Server implements Runnable {
         r.addDesc(entity);
         addReport(r);
         OffBoardDirection fleeDirection;
-        if (facing == 0) {
+        if (movePath.getFinalCoords().getY() <= 0) {
             fleeDirection = OffBoardDirection.NORTH;
-        } else if (facing == 3) {
+        } else if (movePath.getFinalCoords().getY() >= (getGame().getBoard().getHeight() - 1)) {
             fleeDirection = OffBoardDirection.SOUTH;
-        } else if (facing > 3) {
+        } else if (movePath.getFinalCoords().getX() <= 0) {
             fleeDirection = OffBoardDirection.WEST;
         } else {
             fleeDirection = OffBoardDirection.EAST;
@@ -6934,7 +6936,7 @@ public class Server implements Runnable {
 
         // check for fleeing
         if (md.contains(MoveStepType.FLEE)) {
-            addReport(processLeaveMap(entity, entity.getFacing(), false, -1));
+            addReport(processLeaveMap(md, false, -1));
             return;
         }
 
@@ -7433,7 +7435,7 @@ public class Server implements Runnable {
                 if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
-                    processLeaveMap(entity, curFacing, true,
+                    processLeaveMap(md, true,
                             Compute.roundsUntilReturn(game, entity));
                     return;
                 }
@@ -7441,7 +7443,7 @@ public class Server implements Runnable {
                 if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
-                    processLeaveMap(entity, curFacing, true, -1);
+                    processLeaveMap(md, true, -1);
                     return;
                 }
 
@@ -7471,7 +7473,7 @@ public class Server implements Runnable {
                             // make sure it didn't fly off the map
                             if (!game.getBoard().contains(curPos)) {
                                 a.setCurrentVelocity(md.getFinalVelocity());
-                                processLeaveMap(entity, curFacing, true, Compute
+                                processLeaveMap(md, true, Compute
                                         .roundsUntilReturn(game, entity));
                                 return;
                                 // make sure it didn't crash

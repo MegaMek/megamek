@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
-import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -13,10 +12,13 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
+import megamek.common.OffBoardDirection;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 
 public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPathRanker {
+    
+    public static final int REMAINS_ON_BOARD = -1;
     
     public NewtonianAerospacePathRanker(Princess owningPrincess) {
         super(owningPrincess);
@@ -219,34 +221,64 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     @Override
     protected double calculateOffBoardMod(MovePath path) {
         // step one: project given path's vector over the next turn.
-        Coords nextCoords = Compute.getFinalPosition(path.getFinalCoords(), path.getFinalVectors());
-        
-        int availableThrust = path.getEntity().getRunMP();
-        IBoard board = path.getGame().getBoard();
-        int offBoardDirection = -1;
-        
-        // step one: check if the position is out of bounds by more than the unit has available thrust
-        if(nextCoords.getX() < -availableThrust) {
-            offBoardDirection = HomeEdge.WEST.getIndex();
-        } else if (nextCoords.getX() > board.getWidth() + availableThrust) {
-            offBoardDirection = HomeEdge.EAST.getIndex();
-        } else if (nextCoords.getY() < -availableThrust) {
-            offBoardDirection = HomeEdge.NORTH.getIndex();
-        } else if(nextCoords.getY() > board.getHeight() + availableThrust) {
-            offBoardDirection = HomeEdge.SOUTH.getIndex();
-        }
+        OffBoardDirection offBoardDirection = calculateOffBoardDirection(path.getEntity(), path.getFinalCoords(), path.getFinalVectors());
         
         // if we want to flee the board from the edge in question, we're ok
-        if(getOwner().getHomeEdge() == HomeEdge.getHomeEdge(offBoardDirection) &&
+        if(getOwner().getHomeEdge() == HomeEdge.getHomeEdge(offBoardDirection.getValue()) &&
                 getOwner().isFallingBack(path.getEntity())) {
             return 0.0;
         }
         
-        if(offBoardDirection == -1) {
+        if(offBoardDirection == OffBoardDirection.NONE) {
             return 0.0;
         }
                 
         return .5;
+    }
+    
+    /**
+     * Worker function that determines the direction in which the given entity will go off board
+     * if it starts at the given coordinates with the given vectors.
+     * @param entity Entity to examine
+     * @param startingCoords Starting coordinates
+     * @param vectors Starting velocity vector
+     * @return Flight direction. OffBoardDirection.NONE if the given entity will be able to remain on board.
+     */
+    private static OffBoardDirection calculateOffBoardDirection(Entity entity, Coords startingCoords, int[] vectors) {
+        Coords nextCoords = Compute.getFinalPosition(startingCoords, vectors);
+        int availableThrust = entity.getRunMP();
+        IBoard board = entity.getGame().getBoard();
+        OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
+        
+        // step one: check if the position is out of bounds by more than the unit has available thrust
+        if(nextCoords.getX() < -availableThrust) {
+            offBoardDirection = OffBoardDirection.WEST;
+        } else if (nextCoords.getX() > board.getWidth() + availableThrust) {
+            offBoardDirection = OffBoardDirection.EAST;
+        } else if (nextCoords.getY() < -availableThrust) {
+            offBoardDirection = OffBoardDirection.NORTH;
+        } else if(nextCoords.getY() > board.getHeight() + availableThrust) {
+            offBoardDirection = OffBoardDirection.SOUTH;
+        }
+        
+        return offBoardDirection;
+    }
+    
+    /**
+     * Whether entity will go off board if it starts at the given coordinates with the given vectors.
+     * @param entity Entity to examine
+     * @param startingCoords Starting coordinates
+     * @param vectors Starting velocity vector
+     * @return Whether the entity will go off board or not.
+     */
+    public static boolean willFlyOffBoard(Entity entity, Coords coords) {
+        OffBoardDirection offBoardDirection = calculateOffBoardDirection(entity, coords, entity.getVectors());
+        
+        if(offBoardDirection == OffBoardDirection.NONE) {
+            return false;
+        }
+                
+        return true;
     }
     
     /**

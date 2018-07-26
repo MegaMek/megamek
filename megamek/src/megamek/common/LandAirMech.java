@@ -734,9 +734,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (moved == EntityMovementType.MOVE_OVER_THRUST) {
                 roll.addModifier(+1, "Used more than safe thrust");
             }
+            
             int vel = getCurrentVelocity();
             int vmod = vel - (2 * getWalkMP());
-            if (vmod > 0) {
+            if (!getGame().getBoard().inSpace() && (vmod > 0)) {
                 roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
             }
 

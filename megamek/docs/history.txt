@@ -21,6 +21,7 @@ v0.45.0-git
 + Bug: ammo selection in lounge is filtered using variable tech level even when option is not enabled.
 + Issue #1017: Rotary AC Ammo Does Not Populate Munitions Carried Lists
 + PR #970: [Feature] Implementation of StartOps Advanced Space Sensors
++ Issue #1060: Allow Princess to properly consider paths that take her aircraft (VTOL and ASF) over low-CF fixed structures
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

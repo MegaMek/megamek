@@ -771,6 +771,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 panMotive.add(createSubtypeCheck("leg", true));
                 panMotive.add(createSubtypeCheck("jump", true));
                 panMotive.add(createSubtypeCheck("umu", true));
+                panMotive.add(createSubtypeCheck("vtol", true));
                 break;
             case UnitType.NAVAL:
                 panMotive.add(createSubtypeCheck("naval", true));

@@ -19,10 +19,15 @@ v0.45.0-git
 + Issue #1038: BA leg attack doesn't report hit
 + Issue #1023: MM doesn't inform user if previous solo attack was made (like leg attack)
 + Bug: ammo selection in lounge is filtered using variable tech level even when option is not enabled.
-+ Issue #1017: Rotary AC Ammo Does Not Populate Munitions Carried Lists
++ Issue #1017: Advanced munitions available at standard tech level
 + PR #970: [Feature] Implementation of StartOps Advanced Space Sensors
 + Issue #1060: Allow Princess to properly consider paths that take her aircraft (VTOL and ASF) over low-CF fixed structures
 + Issue #1056: Rotary AC Ammo Does Not Populate Munitions Carried Lists
++ PR #1041: Force Generator
+	Available as tab in Random Army Dialog; generates faction- and era-appropriate forces up to a regiment
+	(larger for some factions) with optional support combat and transport forces. Some or all of the
+	force can be added to the forces in the lounge or exported to a MUL.
+	See documentation: docs/RAT Stuff/force-generator.txt
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

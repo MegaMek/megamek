@@ -4520,6 +4520,11 @@ public class Compute {
     
     public static boolean inSensorRange(IGame game, LosEffects los, Entity ae, 
             Targetable target, List<ECMInfo> allECMInfo) {
+        // This is not applicable to objects on the same team. 
+        if(!target.isEnemyOf(ae)) {
+            return false;
+        }
+        
         //For Space games with this option, return something different
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
@@ -4542,7 +4547,8 @@ public class Compute {
         
         //A bit of a hack here. "Spacecraft Sensors" return the ground range, because Sensor doesn't know about Game or Entity
         //to do otherwise. We need to use the ground range instead.
-        if (ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+        if ((ae.getActiveSensor() != null) &&
+                ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
             range = Sensor.LC_RADAR_GROUND_RANGE;
         }
 

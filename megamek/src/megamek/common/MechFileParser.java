@@ -241,8 +241,31 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
-        } else if (ent.hasETypeFlag(Entity.ETYPE_AERO) || ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            //ASFs and Conventional Fighters get a combined sensor suite
+        } else if (ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            //Conventional Fighters get a combined sensor suite
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
+            ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                || ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+        //Large craft get active radar
+        //And both a passive sensor suite and thermal/optical sensors, which only work in space
+        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
+            //Only military craft get ESM, which detects active radar
+            //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
+            Aero lc = (Aero) ent;
+            if (lc.getDesignType() == Aero.MILITARY 
+                    || lc.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                    || lc.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+            }
+        ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent.isAero()) {
+            //ASFs and small craft get a combined sensor suite
+            //And thermal/optical sensors, which only work in space
+            ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof BattleArmor) {

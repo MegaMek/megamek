@@ -34,7 +34,6 @@ import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.ui.SharedUtility;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -430,9 +429,35 @@ public class Princess extends BotClient {
             }
             
             return null;
+        }
+        else if(getGame().useVectorMove()) {
+            return calculateAdvancedAerospaceDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else {
             return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
         }
+    }
+    
+    /**
+     * Function that calculates deployment coordinates 
+     * @param deployedUnit The unit being considered for deployment
+     * @param possibleDeployCoords The coordinates being considered for deployment
+     * @return The first valid deployment coordinates.
+     */
+    private Coords calculateAdvancedAerospaceDeploymentCoords(final Entity deployedUnit,
+                                                                    final List<Coords> possibleDeployCoords) {
+        for(Coords coords : possibleDeployCoords) {
+            if(!NewtonianAerospacePathRanker.willFlyOffBoard(deployedUnit, coords)) {
+                return coords;
+            }
+        }
+        
+        // if we can't find any good deployment coordinates, deploy anyway to the first available one
+        // and maybe eventually we'll slow down enough that we can deploy without immediately flying off
+        if(possibleDeployCoords.size() > 0) {
+            return possibleDeployCoords.get(0);
+        }
+        
+        return null;
     }
     
     /**

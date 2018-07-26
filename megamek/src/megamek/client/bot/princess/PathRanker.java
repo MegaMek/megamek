@@ -152,7 +152,7 @@ public abstract class PathRanker implements IPathRanker {
             if(path == null) {
                 continue;
             }
-            
+
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
@@ -411,6 +411,11 @@ public abstract class PathRanker implements IPathRanker {
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, IGame game) {
+        // airborne aircraft cannot collapse buildings
+        if(path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+            return false;
+        }
+        
         // If we're jumping onto a building, make sure it can support our weight.
         if (path.isJumping()) {
             final Coords finalCoords = path.getFinalCoords();

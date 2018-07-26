@@ -1020,7 +1020,8 @@ class EntitySprite extends Sprite {
         }
 
         // If sensors, display what sensors this unit is using
-        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             addToTT("Sensors", BR, entity.getSensorDesc());
         }
 

@@ -125,8 +125,9 @@ class FovHighlightingAndDarkening {
             final int pad = 0;
             final int lw = 7;
 
-            boolean sensorsOn = boardView1.game.getOptions().booleanOption(
-                    OptionsConstants.ADVANCED_TACOPS_SENSORS);
+            boolean sensorsOn = (boardView1.game.getOptions().booleanOption(
+                    OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                    || boardView1.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
             boolean doubleBlindOn = boardView1.game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_DOUBLE_BLIND);
             boolean inclusiveSensorsOn = boardView1.game.getOptions().booleanOption(

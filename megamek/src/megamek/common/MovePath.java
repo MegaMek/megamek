@@ -132,6 +132,7 @@ public class MovePath implements Cloneable, Serializable {
         sb.append(this.getKey().hashCode());
         sb.append(' '); // it's useful to know for debugging purposes which path you're looking at.
         sb.append("Length: " + this.length());
+        sb.append("Final Coords: " + this.getFinalCoords());
         sb.append(System.lineSeparator());
         
         for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements(); ) {
@@ -685,6 +686,27 @@ public class MovePath implements Cloneable, Serializable {
      */
     private boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
+    }
+    
+    /**
+     * Method that determines whether a given path goes through a given set of x/y coordinates
+     * Useful for debugging mainly.
+     * Note that battletech map coordinates begin at 1, while the internal representation begins at 0
+     * so subtract 1 from each axis to get the actual coordinates.
+     * @param x X-coordinate
+     * @param y Y-coordinate
+     * @return Whether this path goes through the set of coordinates.
+     */
+    public boolean goesThroughCoords(int x, int y) {
+        Enumeration<MoveStep> steps = getSteps();
+        while(steps.hasMoreElements()) {
+            MoveStep step = steps.nextElement();
+            if(step.getPosition().getX() == x && step.getPosition().getY() == y) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**

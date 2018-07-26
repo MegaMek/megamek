@@ -7263,7 +7263,7 @@ public class Server implements Runnable {
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     if (entity instanceof LandAirMech) {
                         addReport(landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
-                                distance, prevStep));
+                                distance));
                     } else if (entity instanceof Protomech) {
                         addReport(landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
                                 distance));
@@ -9746,11 +9746,21 @@ public class Server implements Runnable {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 IHex hex = game.getBoard().getHex(curPos);
                 if (md.automaticWiGELanding(false)) {
-                    // try to land safely
-                    r = new Report(2123);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    vPhaseReport.add(r);
+                    // try to land safely; LAMs require a psr when landing with gyro or leg actuator
+                    // damage and protomechs always require a roll
+                    int elevation = (null == prevStep)? entity.getElevation() : prevStep.getElevation();
+                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+                        addReport(landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        vPhaseReport.addAll(landGliderPM((Protomech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else {
+                        r = new Report(2123);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                    }
     
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
@@ -19072,9 +19082,7 @@ public class Server implements Runnable {
                     r.choose(true);
                     reports.addElement(r);
                     if (ae instanceof LandAirMech) {
-                        MoveStep step = new MoveStep(null, MoveStepType.FORWARDS);
-                        step.setFromEntity(ae, game);
-                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance, step));
+                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance));
                     }
                 }
                 addReport(reports);
@@ -27089,7 +27097,7 @@ public class Server implements Runnable {
      * @param distance  the distance the unit moved in the turn prior to landing
      */
     private Vector<Report> landAirMech(LandAirMech lam, Coords pos, int elevation,
-            int distance, MoveStep lastStep) {
+            int distance) {
         Vector<Report> vDesc = new Vector<>();
         
         lam.setPosition(pos);

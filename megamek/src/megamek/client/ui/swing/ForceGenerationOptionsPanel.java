@@ -103,12 +103,12 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     private static final int LATEST_YEAR = 3150;
 
     public ForceGenerationOptionsPanel() {
-        this(null);
+        this(null, null);
     }
     
-    public ForceGenerationOptionsPanel(Use use) {
+    public ForceGenerationOptionsPanel(Use use, ClientGUI gui) {
         setLayout(new GridBagLayout());
-
+        
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -201,7 +201,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 1;
-        c.gridwidth = 2;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;

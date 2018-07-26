@@ -20,6 +20,9 @@ import java.util.TreeMap;
 
 import org.w3c.dom.Node;
 
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
+
 /**
  * Stores data about factions used for building RATs, including
  * parent factions, factions to salvage from, and percentages of
@@ -280,7 +283,8 @@ public class FactionRecord {
 						retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
 					}					
 				} else {
-					System.err.println("RATGenerator: could not locate salvage faction " + pKey
+		            DefaultMmLogger.getInstance().log(getClass(), "getSalvage(int)", LogLevel.DEBUG,
+		                    "RATGenerator: could not locate salvage faction " + pKey
 							+ " for " + key);
 				}
 			}
@@ -354,8 +358,8 @@ public class FactionRecord {
 				try {
 					list.add(Integer.parseInt(pct));
 				} catch (NumberFormatException ex) {
-					System.err.println("While loading faction data for " + key);
-					System.err.println(ex.getMessage());
+		            DefaultMmLogger.getInstance().log(getClass(), "setPctTech(TechCategory, int, String)", LogLevel.ERROR,
+		                    "While loading faction data for " + key);
 				}
 			}
 		}
@@ -463,7 +467,7 @@ public class FactionRecord {
 				try {
 					retVal.setYears(wn.getTextContent());
 				} catch (ParseException ex) {
-					System.err.println(ex.getMessage());
+		            DefaultMmLogger.getInstance().log(FactionRecord.class, "createFromXml(Node)", ex);
 				}
 			} else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
 				retVal.setRatings(wn.getTextContent());
@@ -536,7 +540,8 @@ public class FactionRecord {
 					int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
 					setWeightDistribution(era, unitType, wn.getTextContent());
 				} catch (Exception ex) {
-					System.err.println("RATGenerator: error parsing weight distributions for " + key
+		            DefaultMmLogger.getInstance().log(getClass(), "loadEra(Node, int)", LogLevel.ERROR,
+		                    "RATGenerator: error parsing weight distributions for " + key
 							+ ", " + era);
 				}
 				break;

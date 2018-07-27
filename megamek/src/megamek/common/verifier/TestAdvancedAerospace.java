@@ -1008,7 +1008,7 @@ public class TestAdvancedAerospace extends TestAero {
                 }
             }
         }
-        if ((repairCount > 0) && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+        if ((repairCount > 1) && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             buffer.append("Only a space station may mount multiple naval repair facilities.\n");
             legal = false;
         }

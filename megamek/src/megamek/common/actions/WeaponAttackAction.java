@@ -323,7 +323,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // ASEW Missiles cannot be launched in an atmosphere
         if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
-                && !game.getBoard().inSpace()) {
+                && !ae.isSpaceborne()) {
             return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch ASEW missile in an atmosphere."));
         }
         
@@ -3855,11 +3855,33 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
+        
+        //If using SO advanced sensors, the firing unit or one on its NC3 network must have a valid firing solution
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && ae.isSpaceborne()) {
+            boolean networkFiringSolution = false;
+            //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
+            if (ae.hasNavalC3()) {
+                for (Entity en : game.getEntitiesVector()) {
+                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
+                        networkFiringSolution = true;
+                        break;
+                    }
+                }
+            }
+            if (!networkFiringSolution) {
+                if (!Compute.hasFiringSolution(game, ae, te)) {
+                    return "no firing solution to target";
+                }
+            }
+        }
 
         // http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
         // anything outside of visual range requires a "sensor lock" in order to
         // direct fire
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && !Compute.inVisualRange(game, ae, target)
                 && !(Compute.inSensorRange(game, ae, target, null) // Can shoot
                                                                    // at
@@ -3876,7 +3898,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                             // unit
                 && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3() || ae.hasActiveNovaCEWS()) {
+            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3()|| ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {

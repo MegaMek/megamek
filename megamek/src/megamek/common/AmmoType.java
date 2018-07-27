@@ -1257,7 +1257,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2540, 2544, DATE_NONE, 2819, 3043)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"373,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
         
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
         		new TechAdvancement(TECH_BASE_IS)
@@ -1269,7 +1270,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS,F_LC),"373,TM"));
+                .setReintroductionFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
         
         //Armor Piercing is the base ammo type see further down.
         
@@ -1283,7 +1285,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS,F_LC),"373,TM"));
+                .setReintroductionFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
         		new TechAdvancement(TECH_BASE_IS)
@@ -1294,7 +1297,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW), "373,TM"));
+                .setProductionFactions(F_FW)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TM"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_IS)
@@ -1306,7 +1310,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS,F_LC),"373,TM"));
+                .setReintroductionFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
              
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1323,7 +1328,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2540, 2544, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"373,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
         
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -1334,7 +1340,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2540, 2544, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"373,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
         
         //Armor Piercing is the base ammo type see further down.
         
@@ -1347,7 +1354,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2533, 2536, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"373,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
         
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -1356,7 +1364,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             	.setClanAdvancement(3055, 3064, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(true,false,false,false,false), "373,TM"));
+            	.setClanApproximate(true,false,false,false,false)
+            	.setStaticTechLevel(SimpleTechLevel.STANDARD), "373,TM"));
                 
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -1367,7 +1376,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"373,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"373,TM"));
 
         AmmoType.createMunitions(clanMortarAmmos, munitions);
         
@@ -1455,8 +1465,7 @@ public class AmmoType extends EquipmentType {
 				new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
 						.setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
 						.setISAdvancement(3053).setPrototypeFactions(F_FS, F_LC)
-						.setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
-				"368,TO"));
+						.setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), "368,TO"));
 		
 /*		munitions.add(new MunitionMutator("Harpoon", 2, M_HARPOON,
 				new TechAdvancement(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
@@ -1475,7 +1484,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"369,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"369,TO"));
 		
         munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO,
 				new TechAdvancement(TECH_BASE_IS)
@@ -1486,7 +1496,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"229,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"229,TM"));
         
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
@@ -1498,7 +1509,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"371,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
         
         munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE,
 				new TechAdvancement(TECH_BASE_IS)
@@ -1524,7 +1536,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS),"104, IO"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"104, IO"));
         
         munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE,
 				new TechAdvancement(TECH_BASE_IS)
@@ -1535,7 +1548,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2592, 2598, 3045, 2855, 3035)
                 .setISApproximate(false,false,false, true, false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"207,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"207,TM"));
                 
         munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
 				new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
@@ -1552,7 +1566,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2375, 2377, 3058, 2790, 3054)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS), "230,TM"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
        
         munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL,
 				new TechAdvancement(TECH_BASE_IS)
@@ -1575,7 +1590,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS), "370,TO"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), "370,TO"));
         
         munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,
 				new TechAdvancement(TECH_BASE_IS)
@@ -1586,7 +1602,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2520, 2587, 3049, 2795, 3035)
                 .setISApproximate(true,false,false,true,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH), "142, TW"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "142, TW"));
         
         //TODO Anti-Radiation Missiles (see IO pg 62)
 
@@ -1626,7 +1643,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"369,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"369,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO,
 				new TechAdvancement(TECH_BASE_CLAN)
@@ -1637,7 +1655,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"229,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"229,TM"));
         
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
           
@@ -1649,7 +1668,8 @@ public class AmmoType extends EquipmentType {
 		    	.setClanAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
 		    	.setClanApproximate(true,false,false,false,false)
 		        .setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH),"371,TO"));
+		        .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
               
         munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2, M_TANDEM_CHARGE,
 				new TechAdvancement(TECH_BASE_CLAN)
@@ -1673,7 +1693,8 @@ public class AmmoType extends EquipmentType {
 		    	.setClanAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
 		    	.setClanApproximate(false,false,false,false,false)
 		        .setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS),"104, IO"));
+		        .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"104, IO"));
         
         munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE,
 				new TechAdvancement(TECH_BASE_CLAN)
@@ -1684,7 +1705,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(DATE_NONE, DATE_NONE, 2818, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_CSA)
-                .setProductionFactions(F_CSA),"207,TM"));
+                .setProductionFactions(F_CSA)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"207,TM"));
         
         munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,
 				new TechAdvancement(TECH_BASE_CLAN)
@@ -1695,7 +1717,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(3061, 3085, 3095, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CSF,F_RD),"283,TO"));
+                .setProductionFactions(F_CSF,F_RD)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
       
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
         		new TechAdvancement(TECH_BASE_CLAN).setTechRating(RATING_C)
@@ -1712,7 +1735,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2375, 2377, 3058, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS), "230,TM"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
  
         munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL,       
 				new TechAdvancement(TECH_BASE_CLAN)
@@ -1722,7 +1746,8 @@ public class AmmoType extends EquipmentType {
 		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
 		    	.setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
 		    	.setClanApproximate(true,false,false,false,false)
-		        .setPrototypeFactions(F_FS,F_LC), "230,TM"));
+		        .setPrototypeFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
      
        //TODO Mag Pulse See IO pg 62
         
@@ -1735,7 +1760,8 @@ public class AmmoType extends EquipmentType {
 		    	.setClanAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
 		    	.setClanApproximate(true,false,false,false,false)
 		        .setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS), "370,TO"));
+		        .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), "370,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE,
 				new TechAdvancement(TECH_BASE_CLAN)
@@ -1744,7 +1770,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_E)
 		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
 		    	.setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
-		    	.setClanApproximate(false,false,false,false,false),"370,TO"));
+		    	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"370,TO"));
         
         //TODO Anti-Radiation Missiles See IO pg 62 (TO 368)
 
@@ -1765,7 +1792,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_E)
 		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
 		    	.setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
-		    	.setClanApproximate(false,false,false,false,false),"370,TO"));
+		    	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
  
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1780,7 +1808,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3052, DATE_NONE, DATE_NONE)
-                .setISApproximate(false,false,false,false,false),"370,TO"));
+                .setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1797,7 +1826,8 @@ public class AmmoType extends EquipmentType {
 		    	.setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
 		    	.setClanApproximate(true,false,false,false,false)
 		        .setPrototypeFactions(F_CGS)
-		        .setProductionFactions(F_CGS), "229, TW"));
+		        .setProductionFactions(F_CGS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "229, TW"));
         
         
         munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
@@ -1807,7 +1837,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2828, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false,false,false,false,false),"370,TO"));
+                .setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1837,7 +1868,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"369,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"369,TO"));
         
         //TODO Incendiary LRMs - IO pg 61, TO pg 369
         
@@ -1861,7 +1893,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW),"231,TM"));
+                .setProductionFactions(F_FW)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"231,TM"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1872,7 +1905,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"371,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
                 
         munitions.add(new MunitionMutator("Swarm", 1, M_SWARM,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1883,7 +1917,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2615, 2621, 3058, 2833, 3053)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"371,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
         
         munitions.add(new MunitionMutator("Swarm-I", 1, M_SWARM_I,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1894,7 +1929,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW),"371,TO"));
+                .setProductionFactions(F_FW)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
         
         munitions.add(new MunitionMutator("Thunder", 1, M_THUNDER,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1906,7 +1942,8 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_LC,F_FS),"373,TO"));
+                .setReintroductionFactions(F_LC,F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Thunder-Active", 2, M_THUNDER_ACTIVE,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1917,7 +1954,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Thunder-Augmented", 2, M_THUNDER_AUGMENTED,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1928,7 +1966,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Thunder-Vibrabomb", 2, M_THUNDER_VIBRABOMB,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1939,7 +1978,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("Thunder-Inferno", 2, M_THUNDER_INFERNO,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1950,7 +1990,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
                 
         munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1961,7 +2002,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS),"104, IO"));        
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"104, IO"));        
         
         munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE,
                 new TechAdvancement(TECH_BASE_IS)
@@ -1972,7 +2014,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2592, 2598, 3045, 2855, 3035)
                 .setISApproximate(false,false,false, true, false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"207,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"207,TM"));
               
         munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
@@ -1990,7 +2033,8 @@ public class AmmoType extends EquipmentType {
                 .setISApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
-                .setReintroductionFactions(F_FW), "230,TM"));
+                .setReintroductionFactions(F_FW)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
                 
         munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL,
                 new TechAdvancement(TECH_BASE_IS)
@@ -2000,7 +2044,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
                 .setISAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
-                .setPrototypeFactions(F_FS,F_LC), "230,TM"));
+                .setPrototypeFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
         
         //TODO Mag Pulse see IO pg 62        
         
@@ -2012,7 +2057,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true,false,false,false,false)
-                .setPrototypeFactions(F_FS), "370,TO"));
+                .setPrototypeFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), "370,TO"));
                 
         munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE,
                 new TechAdvancement(TECH_BASE_IS)
@@ -2023,7 +2069,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2520, 2587, 3049, 2795, 3035)
                 .setISApproximate(true,false,false,true,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH), "142, TW"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "142, TW"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -2053,7 +2100,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2365, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"369,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"369,TO"));
         
         //TODO Incendiary LRMs - IO pg 61, TO pg 369
         
@@ -2077,7 +2125,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3053, 3057, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW),"231,TM"));
+                .setProductionFactions(F_FW)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"231,TM"));
         
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2088,7 +2137,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2333, 2370, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"371,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"371,TO"));
                 
         munitions.add(new MunitionMutator("(Clan) Swarm", 1, M_SWARM,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2099,7 +2149,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2615, 2621, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"371,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Swarm-I", 1, M_SWARM_I,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2110,7 +2161,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3052, 3057, 3066, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FW)
-                .setProductionFactions(F_FW),"371,TO"));
+                .setProductionFactions(F_FW)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"371,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Thunder", 1, M_THUNDER,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2122,7 +2174,8 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_LC,F_FS),"373,TO"));
+                .setReintroductionFactions(F_LC,F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Thunder-Active", 2, M_THUNDER_ACTIVE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2133,7 +2186,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3058, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Thunder-Augmented", 2, M_THUNDER_AUGMENTED,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2144,7 +2198,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3057, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Thunder-Vibrabomb", 2, M_THUNDER_VIBRABOMB,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2155,7 +2210,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3056, 3064, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Thunder-Inferno", 2, M_THUNDER_INFERNO,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2166,7 +2222,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3054, 3056, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"373,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"373,TO"));
                 
         munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2177,7 +2234,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3026, 3027, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS),"104, IO"));        
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"104, IO"));        
         
         munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2188,7 +2246,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"207,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"207,TM"));
                 
         munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2199,7 +2258,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3061, 3085, 3095, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_CGS)
-                .setProductionFactions(F_CSF,F_RD),"283,TO"));
+                .setProductionFactions(F_CSF,F_RD)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
               
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2209,7 +2269,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setClanAdvancement(3052, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
-                .setPrototypeFactions(F_DC), "131,TO"));
+                .setPrototypeFactions(F_DC)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), "131,IO"));
                 
         munitions.add(new MunitionMutator("(Clan) Fragmentation", 1, M_FRAGMENTATION,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2220,7 +2281,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2375, 2377, 3058, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS), "230,TM"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
                 
         munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2230,7 +2292,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
                 .setClanAdvancement(3037, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
-                .setPrototypeFactions(F_FS,F_LC), "230,TM"));
+                .setPrototypeFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "230,TM"));
         
         //TODO Mag Pulse see IO pg 62        
         
@@ -2242,7 +2305,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setClanAdvancement(3065, 3069, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
-                .setPrototypeFactions(F_FS), "370,TO"));
+                .setPrototypeFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), "370,TO"));
         
         munitions.add(new MunitionMutator("(Clan) Multi-Purpose", 2, M_MULTI_PURPOSE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2252,7 +2316,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
-                .setPrototypeFactions(F_CGS), "229, TW"));
+                .setPrototypeFactions(F_CGS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "229, TW"));
                 
         munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2263,7 +2328,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2520, 2587, 3049, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH), "142, TW"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), "142, TW"));
         
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -2282,7 +2348,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3055, 3059, 3063, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS),"208,TM"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
 		munitions.add(new MunitionMutator("Caseless", 1 , M_CASELESS,
 		        new TechAdvancement(TECH_BASE_ALL)
@@ -2302,7 +2369,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
             	.setISAdvancement(DATE_ES, 2310, 3070, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,true,false,false,false)
-                .setProductionFactions(F_TA),"352,TO"));
+                .setProductionFactions(F_TA)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"352,TO"));
         
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
 				new TechAdvancement(TECH_BASE_IS)
@@ -2313,7 +2381,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS),"208,TM"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
 				new TechAdvancement(TECH_BASE_IS)
@@ -2324,7 +2393,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3058, 3062, 3066, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS),"208,TM"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Tracer", 1, M_TRACER,
 				new TechAdvancement(TECH_BASE_ALL)
@@ -2334,7 +2404,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
             	.setISAdvancement(DATE_ES, 2300, 3060, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,true,false,false,false)
-                .setProductionFactions(F_TA),"353,TO"));
+                .setProductionFactions(F_TA)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"353,TO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -2352,7 +2423,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN),"208,TM"));
+                .setProductionFactions(F_CLAN)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
                 new TechAdvancement(TECH_BASE_ALL)
@@ -2362,7 +2434,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS),"352,TO"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2373,7 +2446,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
                 .setClanApproximate(false, true, false,true, false)
                 .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN),"352,TO"));
+                .setProductionFactions(F_CLAN)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"352,TO"));
         
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2384,7 +2458,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3105, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN),"208,TM"));
+                .setProductionFactions(F_CLAN)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2393,7 +2468,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setClanAdvancement(3053, 3055, 3058, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false,false, false),"208,TM"));
+                .setClanApproximate(false, false, false,false, false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Tracer", 1, M_TRACER,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2404,7 +2480,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)
                 .setClanApproximate(false, true, false,true, false)
                 .setPrototypeFactions(F_CLAN)
-                .setProductionFactions(F_CLAN),"208,TM"));
+                .setProductionFactions(F_CLAN)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"353,TO"));
         
         // Walk through both the base types and the
         // mutators, and create munition types.     
@@ -2420,7 +2497,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3109, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false,false, false)
-                .setProductionFactions(F_CJF),"208,TM"));
+                .setProductionFactions(F_CJF)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Caseless", 1, M_CASELESS,
                 new TechAdvancement(TECH_BASE_ALL)
@@ -2430,7 +2508,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3056, 3079, 3115, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
-                .setProductionFactions(F_FS),"352,TO"));
+                .setProductionFactions(F_FS)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"352,TO"));
         
         munitions.add(new MunitionMutator("Flak", 1, M_FLAK,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2441,7 +2520,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CBS)
-                .setProductionFactions(F_CBS),"352,TO"));
+                .setProductionFactions(F_CBS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"352,TO"));
         
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2451,7 +2531,8 @@ public class AmmoType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3105, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false,false, false)
-                .setProductionFactions(F_CHH),"208,TM"));
+                .setProductionFactions(F_CHH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2462,7 +2543,8 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(true, false, false, false, false)
                 .setClanApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_CBS)
-                .setProductionFactions(F_CBS),"208,TM"));
+                .setProductionFactions(F_CBS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"208,TM"));
         
         munitions.add(new MunitionMutator("Tracer", 1, M_TRACER,
                 new TechAdvancement(TECH_BASE_CLAN)
@@ -2473,7 +2555,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(3070, 3073, 3145, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CBS)
-                .setProductionFactions(F_CBS),"208,TM"));
+                .setProductionFactions(F_CBS)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"353,TO"));
         
         // Walk through both the base types and the
         // mutators, and create munition types. 
@@ -2500,7 +2583,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(false,false,false,false,false)
             	.setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC),"354,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2512,7 +2596,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC),"354,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("Illumination", 1, M_FLARE,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2524,7 +2609,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC),"355,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
 
         munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2535,7 +2621,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"355,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2557,7 +2644,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2595, 2600, DATE_NONE, 2840, 3044)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"356,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"356,TO"));
                 
         munitions.add(new MunitionMutator("Thunder (FASCAM)", 1, M_FASCAM,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2569,7 +2657,8 @@ public class AmmoType extends EquipmentType {
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_CHH)
-                .setReintroductionFactions(F_CC),"356,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"356,TO"));
 
         //TODO - Implement them.
 /*		munitions.add(new MunitionMutator("Thunder-Active-IV", 1, M_ACTIVE_IV,
@@ -2589,11 +2678,14 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"357,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"357,TO"));
         
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M,
-                TECH_BASE_IS, new int[] { 2412, DATE_NONE, DATE_NONE, 2830, 3044 },
-                RATING_D, new int[] { RATING_F, RATING_F, RATING_F, RATING_F }, "174, IO"));
+        munitions.add(new MunitionMutator("Davy Crocket-M", 5, M_DAVY_CROCKETT_M,
+                new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_D)
+                    .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+                    .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), "174, IO"));
 
         //TODO:
 /*      Fuel-Air Mutators (See IO 165),
@@ -2626,7 +2718,8 @@ public class AmmoType extends EquipmentType {
             	.setClanApproximate(false,false,false,false,false)
             	.setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC),"354,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2638,7 +2731,8 @@ public class AmmoType extends EquipmentType {
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC),"354,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("Illumination", 1, M_FLARE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2650,7 +2744,8 @@ public class AmmoType extends EquipmentType {
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_CC),"355,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
 
         munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2661,7 +2756,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"355,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2672,7 +2768,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS,F_LC),"355,TO"));
+                .setProductionFactions(F_FS,F_LC)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"355,TO"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2683,7 +2780,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"356,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"356,TO"));
                 
         munitions.add(new MunitionMutator("Thunder (FASCAM)", 1, M_FASCAM,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2695,7 +2793,8 @@ public class AmmoType extends EquipmentType {
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_CHH)
-                .setReintroductionFactions(F_CC),"356,TO"));
+                .setReintroductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"356,TO"));
 
         //TODO - Implement them.
 /*		munitions.add(new MunitionMutator("Thunder-Active-IV", 1, M_ACTIVE_IV,
@@ -2715,7 +2814,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_CC)
-                .setProductionFactions(F_CC),"357,TO"));        
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"357,TO"));        
 
      
         //TODO:
@@ -2736,7 +2836,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(3050, 3052, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(true,false,false,false,false)
                 .setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC),"363,TO"));
+                .setProductionFactions(F_DC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"363,TO"));
         
         munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2745,7 +2846,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setClanAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,true,false,false),"364,TO"));
+            	.setClanApproximate(false,false,true,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"364,TO"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2754,7 +2856,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setClanAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,true,false,false),"364,TO"));
+            	.setClanApproximate(false,false,true,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"364,TO"));
 
 
         AmmoType.createMunitions(clanVGLAmmos, munitions);
@@ -2768,7 +2871,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
             	.setISAdvancement(DATE_NONE, DATE_NONE, 3063, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"363,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"363,TO"));
         
         munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2777,7 +2881,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setISAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,true,false,false),"364,TO"));
+            	.setISApproximate(false,false,true,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"364,TO"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2786,7 +2891,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setISAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,true,false,false),"364,TO"));
+            	.setISApproximate(false,false,true,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"364,TO"));
 
         AmmoType.createMunitions(vglAmmos, munitions);
 
@@ -2799,7 +2905,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
             	.setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"354,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2810,7 +2917,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2640, 2645, DATE_NONE, 2800, 3051)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"354,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2821,7 +2929,8 @@ public class AmmoType extends EquipmentType {
             	.setISAdvancement(2621, 2844, DATE_NONE, 2770, 3051)
             	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CC),"355,TO"));
+                .setProductionFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2830,7 +2939,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
             	.setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"355,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Illumination", 1, M_FLARE,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2839,7 +2949,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
             	.setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"355,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_IS)
@@ -2848,7 +2959,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             	.setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"355,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
                      
         //TODO:
         //Fuel-Air Mutators (See IO 165)
@@ -2859,9 +2971,11 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crockett-M", 1, M_DAVY_CROCKETT_M,
-                TECH_BASE_IS, new int[] { 2412, DATE_NONE, DATE_NONE,DATE_NONE, DATE_NONE },
-                RATING_F, new int[] { RATING_F, RATING_F, RATING_F, RATING_F }, "174, IO"));
+        munitions.add(new MunitionMutator("Davy Crocket-M", 5, M_DAVY_CROCKETT_M,
+                new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_D)
+                    .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+                    .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
+                    .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL), "174, IO"));
         AmmoType.createMunitions(longTomAmmos, munitions);
 
         // Create the munition types for Artillery Cannons.
@@ -2947,10 +3061,11 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperCannonAmmos, munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        munitions.add(new MunitionMutator("Davy Crockett-M", 1, M_DAVY_CROCKETT_M,
-                TECH_BASE_IS, new int[] { 2480, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE },
-                RATING_F, new int[] { RATING_F, RATING_F, RATING_F, RATING_F }, "174, IO")
-                    .setUnofficial(true));
+        munitions.add(new MunitionMutator("Davy Crocket-M", 5, M_DAVY_CROCKETT_M,
+                new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_D)
+                    .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+                    .setISAdvancement(2412, DATE_NONE, DATE_NONE, 2830, 3044)
+                    .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL), "174, IO"));
         AmmoType.createMunitions(longTomCannonAmmos, munitions);
 
         // Create the munition types for Clan Artillery launchers.
@@ -2962,7 +3077,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
             	.setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false),"354,TO"));
+            	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2973,7 +3089,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2640, 2645, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"354,TO"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"354,TO"));
         
         munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2984,7 +3101,8 @@ public class AmmoType extends EquipmentType {
             	.setClanAdvancement(2621, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
             	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_CHH),"355,TO"));
+                .setProductionFactions(F_CHH)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -2993,7 +3111,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
             	.setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false),"355,TO"));
+            	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Illumination", 1, M_FLARE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -3002,7 +3121,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
             	.setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false),"355,TO"));
+            	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
         		new TechAdvancement(TECH_BASE_CLAN)
@@ -3011,7 +3131,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_B)
                 .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
             	.setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false),"355,TO"));
+            	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"355,TO"));
         //TODO:
         //Fuel-Air Mutators (See IO 165)
 
@@ -3030,7 +3151,8 @@ public class AmmoType extends EquipmentType {
                 .setISAdvancement(2592, 2598, 3045, 2855, 3035)
                 .setISApproximate(false,false,false, true, false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"207,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"207,TM"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -3048,7 +3170,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"207,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"207,TM"));
         munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
@@ -3058,7 +3181,8 @@ public class AmmoType extends EquipmentType {
                 .setClanAdvancement(2592, 2598, 3045, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH),"207,TM"));
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD),"207,TM"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -3076,7 +3200,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"360,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"360,TO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -3090,7 +3215,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false),"360,TO"));
+            	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"360,TO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -3105,7 +3231,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-            	.setISApproximate(false,false,false,false,false),"360,TO"));
+            	.setISApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"360,TO"));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(heavyFlamerAmmos, munitions);
@@ -3118,7 +3245,8 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
             	.setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false),"360,TO"));
+            	.setClanApproximate(false,false,false,false,false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED),"360,TO"));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
@@ -15102,86 +15230,6 @@ public class AmmoType extends EquipmentType {
 
         private TechAdvancement techAdvancement;
 
-        /**
-         * Create a mutator that will transform the <code>AmmoType</code> of a
-         * base round into one of its muntions. If the techBase is "All" the
-         * tech advancement dates must be the same for both IS and Clan.
-         *
-         * @param munitionName
-         *            - the <code>String</code> name of this munition type.
-         * @param weightRatio
-         *            - the <code>int</code> ratio of a round of this munition
-         *            to a round of the standard type.
-         * @param munitionType
-         *            - the <code>int</code> munition flag(s) of this type.
-         * @param techBase
-         *            - one of the TECH_BASE_* constants
-         * @param advancement
-         *            - an array of years for prototype, production, common, extinction, reintroduction
-         * @param techRating
-         *            - an tech rating of the equipment
-         * @param availRating
-         *            - an base availability ratings per era
-         * @param rulesRefs
-         *            - the sourcebook and page reference for the munition type
-         */
-        public MunitionMutator(String munitionName, int weightRatio,
-                long munitionType, int techBase, int[] advancement,
-                int techRating, int[] availRating, String rulesRefs) {
-            this(munitionName, weightRatio, munitionType, techBase,
-                    techBase == TECH_BASE_CLAN? null : advancement,
-                    techBase == TECH_BASE_IS? null : advancement,
-                    techRating, availRating, rulesRefs);
-        }
-        
-        /**
-         * Create a mutator that will transform the <code>AmmoType</code> of a
-         * base round into one of its muntions, using different values for IS
-         * and Clan advancements
-         *
-         * @param munitionName
-         *            - the <code>String</code> name of this munition type.
-         * @param weightRatio
-         *            - the <code>int</code> ratio of a round of this munition
-         *            to a round of the standard type.
-         * @param munitionType
-         *            - the <code>int</code> munition flag(s) of this type.
-         * @param techBase
-         *            - one of the TECH_BASE_* constants
-         * @param isAdvancement
-         *            - an array of years for prototype, production, common, extinction, reintroduction
-         *              for IS factions
-         * @param clanAdvancement
-         *            - an array of years for prototype, production, common, extinction, reintroduction
-         *              for Clan factions
-         * @param techRating
-         *            - an tech rating of the equipment
-         * @param availRating
-         *            - an base availability ratings per era
-         * @param rulesRefs
-         *            - the sourcebook and page reference for the munition type
-         */
-        public MunitionMutator(String munitionName, int weightRatio,
-                long munitionType, int techBase, int[] isAdvancement,
-                int[] clanAdvancement, int techRating, int[] availRating,
-                String rulesRefs) {
-            name = munitionName;
-            weight = weightRatio;
-            type = munitionType;
-            techAdvancement = new TechAdvancement();
-            techAdvancement.setTechBase(techBase);
-            if (isAdvancement != null) {
-                techAdvancement.setISAdvancement(isAdvancement);
-            }
-            if (clanAdvancement != null) {
-                techAdvancement.setClanAdvancement(clanAdvancement);
-            }
-            techAdvancement.setTechRating(techRating);
-            techAdvancement.setAvailability(availRating);
-            this.rulesRefs = rulesRefs;
-        }
-        
-        
         public MunitionMutator(String munitionName, int weightRatio,
                 long munitionType, TechAdvancement techAdvancement,
                 String rulesRefs) {
@@ -15192,17 +15240,6 @@ public class AmmoType extends EquipmentType {
             this.rulesRefs = rulesRefs;
         }
         
-        /**
-         * Adds or removes unofficial flag from tech progression
-         * 
-         * @param unofficial
-         * @return
-         */
-        public MunitionMutator setUnofficial(boolean unofficial) {
-            techAdvancement.setUnofficial(unofficial);
-            return this;
-        }
-
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
          * rack size.
@@ -15418,11 +15455,14 @@ public class AmmoType extends EquipmentType {
 
             // Make sure the tech level is now correct.
             if (techAdvancement.getIntroductionDate() > 0) {
-                munition.techAdvancement = techAdvancement;
+                munition.techAdvancement = new TechAdvancement(techAdvancement);
             } else {
-                munition.techAdvancement = base.techAdvancement;
+                munition.techAdvancement = new TechAdvancement(base.techAdvancement);
             }
-
+            munition.techAdvancement
+                .setStaticTechLevel(SimpleTechLevel.max(techAdvancement.getStaticTechLevel(),
+                        base.techAdvancement.getStaticTechLevel()));
+            
             munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.

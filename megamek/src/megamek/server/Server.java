@@ -2920,7 +2920,7 @@ public class Server implements Runnable {
 
             if (entity.isAero()) {
                 IAero a = (IAero) entity;
-                if (game.getBoard().inSpace()) {
+                if (a.isSpaceborne()) {
                     // altitude and elevation don't matter in space
                     a.liftOff(0);
                 } else {
@@ -3058,6 +3058,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_INITIATIVE:
                 resolveWhatPlayersCanSeeWhatUnits();
+                detectSpacecraft();
                 game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 break;
@@ -3079,6 +3080,8 @@ public class Server implements Runnable {
                 break;
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
+                detectSpacecraft();
+                updateSpacecraftDetection();
                 resolveWhatPlayersCanSeeWhatUnits();
                 doAllAssaultDrops();
                 addMovementHeat();
@@ -5180,7 +5183,8 @@ public class Server implements Runnable {
         Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovePath md = (MovePath) packet.getObject(1);
-        md.setGame(game);
+        md.setGame(getGame());
+        md.setEntity(entity);
 
         // is this the right phase?
         if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
@@ -6778,15 +6782,16 @@ public class Server implements Runnable {
     /**
      * Process any flee movement actions, including flying off the map
      *
-     * @param entity     the entity fleeing
+     * @param movePath   The move path which resulted in an entity leaving the map.
      * @param flewOff    whether this fleeing is a result of accidently flying off the
      *                   map
      * @param returnable the number of rounds until the unit can return to the map (-1
      *                   if it can't return)
-     * @return
+     * @return Vector of turn reports.
      */
-    private Vector<Report> processLeaveMap(Entity entity, int facing,
+    private Vector<Report> processLeaveMap(MovePath movePath,
                                            boolean flewOff, int returnable) {
+        Entity entity = movePath.getEntity();        
         Vector<Report> vReport = new Vector<Report>();
         Report r;
         // Unit has fled the battlefield.
@@ -6797,11 +6802,11 @@ public class Server implements Runnable {
         r.addDesc(entity);
         addReport(r);
         OffBoardDirection fleeDirection;
-        if (facing == 0) {
+        if (movePath.getFinalCoords().getY() <= 0) {
             fleeDirection = OffBoardDirection.NORTH;
-        } else if (facing == 3) {
+        } else if (movePath.getFinalCoords().getY() >= (getGame().getBoard().getHeight() - 1)) {
             fleeDirection = OffBoardDirection.SOUTH;
-        } else if (facing > 3) {
+        } else if (movePath.getFinalCoords().getX() <= 0) {
             fleeDirection = OffBoardDirection.WEST;
         } else {
             fleeDirection = OffBoardDirection.EAST;
@@ -6934,7 +6939,7 @@ public class Server implements Runnable {
 
         // check for fleeing
         if (md.contains(MoveStepType.FLEE)) {
-            addReport(processLeaveMap(entity, entity.getFacing(), false, -1));
+            addReport(processLeaveMap(md, false, -1));
             return;
         }
 
@@ -7258,7 +7263,7 @@ public class Server implements Runnable {
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     if (entity instanceof LandAirMech) {
                         addReport(landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
-                                distance, prevStep));
+                                distance));
                     } else if (entity instanceof Protomech) {
                         addReport(landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
                                 distance));
@@ -7433,7 +7438,7 @@ public class Server implements Runnable {
                 if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
-                    processLeaveMap(entity, curFacing, true,
+                    processLeaveMap(md, true,
                             Compute.roundsUntilReturn(game, entity));
                     return;
                 }
@@ -7441,7 +7446,7 @@ public class Server implements Runnable {
                 if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
-                    processLeaveMap(entity, curFacing, true, -1);
+                    processLeaveMap(md, true, -1);
                     return;
                 }
 
@@ -7471,7 +7476,7 @@ public class Server implements Runnable {
                             // make sure it didn't fly off the map
                             if (!game.getBoard().contains(curPos)) {
                                 a.setCurrentVelocity(md.getFinalVelocity());
-                                processLeaveMap(entity, curFacing, true, Compute
+                                processLeaveMap(md, true, Compute
                                         .roundsUntilReturn(game, entity));
                                 return;
                                 // make sure it didn't crash
@@ -9285,7 +9290,7 @@ public class Server implements Runnable {
                 }
 
                 // check to see if spheroids should lose one altitude
-                if (a.isSpheroid() && !game.getBoard().inSpace()
+                if (a.isSpheroid() && !a.isSpaceborne()
                         && a.isAirborne() && (md.getFinalNDown() == 0)
                         && (md.getMpUsed() == 0)) {
                     r = new Report(9392);
@@ -9740,12 +9745,22 @@ public class Server implements Runnable {
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 IHex hex = game.getBoard().getHex(curPos);
-                if (md.automaticWiGELanding()) {
-                    // try to land safely
-                    r = new Report(2123);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    vPhaseReport.add(r);
+                if (md.automaticWiGELanding(false)) {
+                    // try to land safely; LAMs require a psr when landing with gyro or leg actuator
+                    // damage and protomechs always require a roll
+                    int elevation = (null == prevStep)? entity.getElevation() : prevStep.getElevation();
+                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+                        addReport(landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        vPhaseReport.addAll(landGliderPM((Protomech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else {
+                        r = new Report(2123);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                    }
     
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
@@ -9791,15 +9806,18 @@ public class Server implements Runnable {
                                     violation instanceof Mech));
                         }
                     }
-                } else if (!((entity instanceof LandAirMech)
-                        || (entity instanceof Protomech))) {
+                } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)
+                        && !entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    entity.setElevation(1 + hex.maxTerrainFeatureElevation(
-                            game.getBoard().inAtmosphere()));
+                    
+                    entity.setElevation(Math.min(entity.getElevation(),
+                            1 + hex.maxTerrainFeatureElevation(
+                            game.getBoard().inAtmosphere())));
                 }
             }
             
@@ -12210,7 +12228,7 @@ public class Server implements Runnable {
                 && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getPlanetaryConditions().isVacuum()
-                            || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && game.getBoard().inSpace())) {
+                            || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
                         entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
@@ -12239,7 +12257,7 @@ public class Server implements Runnable {
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getPlanetaryConditions().isVacuum()
-                        || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && game.getBoard().inSpace())) {
+                        || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && entity.isSpaceborne())) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
                     entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
@@ -13383,6 +13401,12 @@ public class Server implements Runnable {
         // looks like mostly everything's okay
         processDeployment(entity, coords, nFacing, elevation, loadVector,
                           assaultDrop);
+        
+        //Update Aero sensors for a space or atmospheric game
+        if (entity.isAero()) {
+            IAero a = (IAero) entity;
+            a.updateSensorOptions();
+        }
 
         // Update visibility indications if using double blind.
         if (doBlind()) {
@@ -14419,6 +14443,99 @@ public class Server implements Runnable {
         return apdsCoords;
     }
     
+    /**
+     * Called at the start and end of movement. Determines if an entity
+     * has been detected and/or had a firing solution calculated 
+     */
+    private void detectSpacecraft() {
+        // Don't bother if we're not in space or if the game option isn't on
+        if (!game.getBoard().inSpace() 
+                || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+            return;
+        }
+        
+        //Now, run the detection rolls
+        for (Entity detector : game.getEntitiesVector()) {
+            for (Entity target : game.getEntitiesVector()) {
+                //Once a target is detected, we don't need to detect it again
+                if (Compute.hasSensorContact(game, detector, target)) {
+                    continue;
+                }
+                //Don't process for units with no position
+                if ((detector.getPosition() == null) || (target.getPosition() == null)) {
+                    continue;
+                }
+                // Only process for enemy units
+                if (!detector.isEnemyOf(target)) {
+                    continue;
+                }
+                //If we successfully detect the enemy, add it to the appropriate detector's sensor contacts list
+                if (Compute.calcSensorContact(game, detector, target)) {
+                    detector.sensorContacts.add(target);
+                    //If detector is part of a C3 network, share the contact
+                    if (detector.hasNavalC3()) {
+                        for (Entity c3NetMate : game.getEntitiesVector()) {
+                            if (c3NetMate != detector && c3NetMate.onSameC3NetworkAs(detector)) {
+                                c3NetMate.sensorContacts.add(target);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        //Now, try to establish firing solutions on detected units
+        ArrayList<Entity> detectedUnits = new ArrayList<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (Compute.isSensorContact(game, target)) {
+                detectedUnits.add(target);
+            }
+        }
+        
+        // If no one is detected, there's nothing more to do
+        if (detectedUnits.size() < 1) {
+            return;
+        }
+        
+        //Now, run the detection rolls
+        for (Entity detector : game.getEntitiesVector()) {
+            for (Entity target : detectedUnits) {
+                //if we already have a firing solution, no need to process a new one
+                if (Compute.hasFiringSolution(game, detector, target)) {
+                    continue;
+                }
+                //Don't process for units with no position
+                if ((detector.getPosition() == null) || (target.getPosition() == null)) {
+                    continue;
+                }
+                // Only process for enemy units
+                if (!detector.isEnemyOf(target)) {
+                    continue;
+                }
+                //If we successfully lock up the enemy, add it to the appropriate detector's firing solutions list
+                if (Compute.calcFiringSolution(game, detector, target)) {
+                    detector.firingSolutions.add(target);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Called at the end of movement. Determines if an entity
+     * has moved beyond sensor range 
+     */
+    private void updateSpacecraftDetection() {
+        // Don't bother if we're not in space or if the game option isn't on
+        if (!game.getBoard().inSpace()
+                || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+            return;
+        }
+        //Run through our list of units and remove any entities from the plotting board that have moved out of range
+        for (Entity detector : game.getEntitiesVector()) {
+            Compute.removeFiringSolution(detector);
+            Compute.removeSensorContact(detector);
+        }
+    }
 
     /**
      * Checks to see if any units can detected hidden units.
@@ -18965,9 +19082,7 @@ public class Server implements Runnable {
                     r.choose(true);
                     reports.addElement(r);
                     if (ae instanceof LandAirMech) {
-                        MoveStep step = new MoveStep(null, MoveStepType.FORWARDS);
-                        step.setFromEntity(ae, game);
-                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance, step));
+                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance));
                     }
                 }
                 addReport(reports);
@@ -20704,7 +20819,7 @@ public class Server implements Runnable {
                 addReport(r);
                 // if not already out of control, this may lead to
                 // elevation decline
-                if (!a.isOutControl() && !game.getBoard().inSpace()
+                if (!a.isOutControl() && !a.isSpaceborne()
                     && a.isAirborne()) {
                     int loss = Compute.d6(1);
                     r = new Report(9366);
@@ -22024,7 +22139,7 @@ public class Server implements Runnable {
                                 // if on the atmospheric map, then lose altitude
                                 // and check
                                 // for crash
-                                if (!game.getBoard().inSpace()
+                                if (!a.isSpaceborne()
                                         && a.isAirborne()) {
                                     int loss = Compute.d6(1);
                                     r = new Report(9366);
@@ -26982,7 +27097,7 @@ public class Server implements Runnable {
      * @param distance  the distance the unit moved in the turn prior to landing
      */
     private Vector<Report> landAirMech(LandAirMech lam, Coords pos, int elevation,
-            int distance, MoveStep lastStep) {
+            int distance) {
         Vector<Report> vDesc = new Vector<>();
         
         lam.setPosition(pos);

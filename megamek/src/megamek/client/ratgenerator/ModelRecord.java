@@ -26,6 +26,8 @@ import megamek.common.MechSummary;
 import megamek.common.MiscType;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
@@ -66,6 +68,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean apWeapons; //used to determine suitability for anti-infantry role
 	
 	private boolean mechanizedBA;
+	private boolean magClamp;
 
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
@@ -96,6 +99,14 @@ public class ModelRecord extends AbstractUnitRecord {
     	double ammoBV = 0.0;
     	boolean losTech = false;
     	for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+    	    //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
+    	    //is that there is a null equipment name.
+    	    if (null == ms.getEquipmentNames().get(i)) {
+                DefaultMmLogger.getInstance().log(getClass(), "<init>(MechSummary)",
+                        LogLevel.ERROR, "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
+    	                + ms.getName() + ", index " + i);
+    	        continue;
+    	    }
     		EquipmentType eq = EquipmentType.get(ms.getEquipmentNames().get(i));
     		if (eq == null) {
     			continue;
@@ -150,16 +161,20 @@ public class ModelRecord extends AbstractUnitRecord {
    						networkMask |= NETWORK_COMPANY_COMMAND;
     				}        			
         		}
-    		} else if (eq.hasFlag(MiscType.F_UMU)){
+    		} else if (eq instanceof MiscType) {
+    		    if (eq.hasFlag(MiscType.F_UMU)) {
    				movementMode = EntityMovementMode.BIPED_SWIM;
-    		} else if (eq.hasFlag(MiscType.F_C3S)) {
-    			networkMask |= NETWORK_C3_SLAVE;
-    		} else if (eq.hasFlag(MiscType.F_C3I)) {
-    			networkMask |= NETWORK_C3I;
-    		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
-    			networkMask |= NETWORK_BOOSTED_SLAVE;
-    		} else if (eq.hasFlag(MiscType.F_NOVA)) {
-    			networkMask |= NETWORK_NOVA;
+        		} else if (eq.hasFlag(MiscType.F_C3S)) {
+        			networkMask |= NETWORK_C3_SLAVE;
+        		} else if (eq.hasFlag(MiscType.F_C3I)) {
+        			networkMask |= NETWORK_C3I;
+        		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
+        			networkMask |= NETWORK_BOOSTED_SLAVE;
+        		} else if (eq.hasFlag(MiscType.F_NOVA)) {
+        			networkMask |= NETWORK_NOVA;
+        		} else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+        		    magClamp = true;
+        		}
     		}
     	}
 		if (totalBV > 0 &&
@@ -277,7 +292,8 @@ public class ModelRecord extends AbstractUnitRecord {
 			if (mr != null) {
 				roles.add(mr);
 			} else {
-				System.err.println("Could not parse mission role for "
+                DefaultMmLogger.getInstance().log(getClass(), "addRoles(String)",
+                        LogLevel.ERROR, "Could not parse mission role for "
 						+ getChassis() + " " + getModel() + ": " + role);
 			}
 		}
@@ -325,6 +341,14 @@ public class ModelRecord extends AbstractUnitRecord {
 	
 	public void setMechanizedBA(boolean mech) {
 		mechanizedBA = mech;
+	}
+	
+	public boolean hasMagClamp() {
+	    return magClamp;
+	}
+	
+	public void setMagClamp(boolean magClamp) {
+	    this.magClamp = magClamp;
 	}
 }
 

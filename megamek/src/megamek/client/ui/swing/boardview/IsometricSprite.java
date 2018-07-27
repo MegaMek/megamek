@@ -209,8 +209,9 @@ class IsometricSprite extends Sprite {
      * @return
      */
     private boolean onlyDetectedBySensors() {
-        boolean sensors = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensors = (bv.game.getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(

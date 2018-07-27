@@ -64,7 +64,7 @@ public class GameReports implements Serializable {
         }
         Exception badRound = new RuntimeException(
                 "ERROR: GameReports.get() was asked for reports of a round [" + round + "] which it does not posses.");
-        DefaultMmLogger.getInstance().log(getClass(), "get(int)", badRound);
+        DefaultMmLogger.getInstance().error(getClass(), "get(int)", badRound);
         return null;
     }
 

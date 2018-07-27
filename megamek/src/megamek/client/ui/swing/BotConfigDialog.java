@@ -544,7 +544,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
     private void handleError(String method, Throwable t) {
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        DefaultMmLogger.getInstance().log(getClass(), method, t);
+        DefaultMmLogger.getInstance().error(getClass(), method, t);
     }
 
     private void savePrincessProperties() {

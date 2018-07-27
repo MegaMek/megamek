@@ -223,6 +223,7 @@ public class OptionsConstants {
     public static final String UNOFF_ALLWEATHER = "allweather"; // $NON-NLS$
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter"; // $NON-NLS$
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek"; // $NON-NLS$
+    public static final String UNOFF_SMALL_PILOT = "small_pilot"; // $NON-NLS$
 
     
       //EDGE 

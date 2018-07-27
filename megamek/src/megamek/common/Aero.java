@@ -2594,7 +2594,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (vmod > 0) {
+        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
@@ -2642,7 +2642,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "cramped cockpit");
         }
 

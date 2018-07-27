@@ -5183,7 +5183,8 @@ public class Server implements Runnable {
         Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovePath md = (MovePath) packet.getObject(1);
-        md.setGame(game);
+        md.setGame(getGame());
+        md.setEntity(entity);
 
         // is this the right phase?
         if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
@@ -6781,15 +6782,16 @@ public class Server implements Runnable {
     /**
      * Process any flee movement actions, including flying off the map
      *
-     * @param entity     the entity fleeing
+     * @param movePath   The move path which resulted in an entity leaving the map.
      * @param flewOff    whether this fleeing is a result of accidently flying off the
      *                   map
      * @param returnable the number of rounds until the unit can return to the map (-1
      *                   if it can't return)
-     * @return
+     * @return Vector of turn reports.
      */
-    private Vector<Report> processLeaveMap(Entity entity, int facing,
+    private Vector<Report> processLeaveMap(MovePath movePath,
                                            boolean flewOff, int returnable) {
+        Entity entity = movePath.getEntity();        
         Vector<Report> vReport = new Vector<Report>();
         Report r;
         // Unit has fled the battlefield.
@@ -6800,11 +6802,11 @@ public class Server implements Runnable {
         r.addDesc(entity);
         addReport(r);
         OffBoardDirection fleeDirection;
-        if (facing == 0) {
+        if (movePath.getFinalCoords().getY() <= 0) {
             fleeDirection = OffBoardDirection.NORTH;
-        } else if (facing == 3) {
+        } else if (movePath.getFinalCoords().getY() >= (getGame().getBoard().getHeight() - 1)) {
             fleeDirection = OffBoardDirection.SOUTH;
-        } else if (facing > 3) {
+        } else if (movePath.getFinalCoords().getX() <= 0) {
             fleeDirection = OffBoardDirection.WEST;
         } else {
             fleeDirection = OffBoardDirection.EAST;
@@ -6937,7 +6939,7 @@ public class Server implements Runnable {
 
         // check for fleeing
         if (md.contains(MoveStepType.FLEE)) {
-            addReport(processLeaveMap(entity, entity.getFacing(), false, -1));
+            addReport(processLeaveMap(md, false, -1));
             return;
         }
 
@@ -7261,7 +7263,7 @@ public class Server implements Runnable {
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     if (entity instanceof LandAirMech) {
                         addReport(landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
-                                distance, prevStep));
+                                distance));
                     } else if (entity instanceof Protomech) {
                         addReport(landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
                                 distance));
@@ -7436,7 +7438,7 @@ public class Server implements Runnable {
                 if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
-                    processLeaveMap(entity, curFacing, true,
+                    processLeaveMap(md, true,
                             Compute.roundsUntilReturn(game, entity));
                     return;
                 }
@@ -7444,7 +7446,7 @@ public class Server implements Runnable {
                 if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
-                    processLeaveMap(entity, curFacing, true, -1);
+                    processLeaveMap(md, true, -1);
                     return;
                 }
 
@@ -7474,7 +7476,7 @@ public class Server implements Runnable {
                             // make sure it didn't fly off the map
                             if (!game.getBoard().contains(curPos)) {
                                 a.setCurrentVelocity(md.getFinalVelocity());
-                                processLeaveMap(entity, curFacing, true, Compute
+                                processLeaveMap(md, true, Compute
                                         .roundsUntilReturn(game, entity));
                                 return;
                                 // make sure it didn't crash
@@ -9743,12 +9745,22 @@ public class Server implements Runnable {
         } else {
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 IHex hex = game.getBoard().getHex(curPos);
-                if (md.automaticWiGELanding()) {
-                    // try to land safely
-                    r = new Report(2123);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    vPhaseReport.add(r);
+                if (md.automaticWiGELanding(false)) {
+                    // try to land safely; LAMs require a psr when landing with gyro or leg actuator
+                    // damage and protomechs always require a roll
+                    int elevation = (null == prevStep)? entity.getElevation() : prevStep.getElevation();
+                    if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+                        addReport(landAirMech((LandAirMech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        vPhaseReport.addAll(landGliderPM((Protomech) entity, entity.getPosition(), elevation,
+                                entity.delta_distance));
+                    } else {
+                        r = new Report(2123);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                    }
     
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
@@ -9794,15 +9806,18 @@ public class Server implements Runnable {
                                     violation instanceof Mech));
                         }
                     }
-                } else if (!((entity instanceof LandAirMech)
-                        || (entity instanceof Protomech))) {
+                } else if (!entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)
+                        && !entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    entity.setElevation(1 + hex.maxTerrainFeatureElevation(
-                            game.getBoard().inAtmosphere()));
+                    
+                    entity.setElevation(Math.min(entity.getElevation(),
+                            1 + hex.maxTerrainFeatureElevation(
+                            game.getBoard().inAtmosphere())));
                 }
             }
             
@@ -13491,9 +13506,21 @@ public class Server implements Runnable {
          */
         if (entity.isAero() && game.useVectorMove()) {
             IAero a = (IAero) entity;
-            if (a.getCurrentVelocityActual() > 0) {
-                int[] v = {0, 0, 0, 0, 0, 0};
-                v[nFacing] = a.getCurrentVelocityActual();
+            int[] v = {0, 0, 0, 0, 0, 0};
+            
+            // if this is the entity's first time deploying, we want to respect the "velocity" setting from the lobby
+            if(entity.wasNeverDeployed()) {
+                if (a.getCurrentVelocityActual() > 0) {
+                    v[nFacing] = a.getCurrentVelocityActual();
+                    entity.setVectors(v);
+                }
+            // this means the entity is coming back from off board, so we'll rotate the velocity vector by 180
+            // and set it to 1/2 the magnitude
+            } else {
+                for(int x = 0; x < 6; x++) {
+                    v[(x + 3) % 6] = entity.getVector(x) / 2;
+                }
+                
                 entity.setVectors(v);
             }
         }
@@ -19055,9 +19082,7 @@ public class Server implements Runnable {
                     r.choose(true);
                     reports.addElement(r);
                     if (ae instanceof LandAirMech) {
-                        MoveStep step = new MoveStep(null, MoveStepType.FORWARDS);
-                        step.setFromEntity(ae, game);
-                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance, step));
+                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance));
                     }
                 }
                 addReport(reports);
@@ -27072,7 +27097,7 @@ public class Server implements Runnable {
      * @param distance  the distance the unit moved in the turn prior to landing
      */
     private Vector<Report> landAirMech(LandAirMech lam, Coords pos, int elevation,
-            int distance, MoveStep lastStep) {
+            int distance) {
         Vector<Report> vDesc = new Vector<>();
         
         lam.setPosition(pos);

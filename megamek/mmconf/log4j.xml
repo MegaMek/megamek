@@ -25,6 +25,16 @@
     <!--</layout>-->
     <!--</appender>-->
 
+    <!-- Set up a separate appender for ForceGenerator to log to a separate file. -->
+    <!--<appender name="forcegen" class="org.apache.log4j.RollingFileAppender">-->
+    <!--<param name="file" value="logs/forcegen.log"/>-->
+    <!--<param name="MaxFileSize" value="10MB"/>-->
+    <!--<param name="MaxBackupIndex" value="3"/>-->
+    <!--<layout class="org.apache.log4j.PatternLayout">-->
+    <!--<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %p [%c] {%t} %m%n"/>-->
+    <!--</layout>-->
+    <!--</appender>-->
+
     <!-- Setup the Root category -->
     <root>
         <level value="INFO"/>
@@ -45,5 +55,11 @@
     <!--<logger name="megamek.client.bot.princess" additivity="false">-->
     <!--<level value="INFO"/>-->
     <!--<appender-ref ref="princess"/>-->
+    <!--</logger>-->
+
+    <!-- Log ForceGenerator output to a separate file. -->
+    <!--<logger name="megamek.client.ratgenerator" additivity="false">-->
+    <!--<level value="DEBUG"/>-->
+    <!--<appender-ref ref="forcegen"/>-->
     <!--</logger>-->
 </log4j:configuration> 

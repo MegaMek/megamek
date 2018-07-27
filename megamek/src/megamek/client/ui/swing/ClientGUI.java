@@ -603,7 +603,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
                     JOptionPane.ERROR_MESSAGE);
-            DefaultMmLogger.getInstance().log(getClass(), "showSkinningHowTo", e);
+            DefaultMmLogger.getInstance().error(getClass(), "showSkinningHowTo", e);
         }
     }
 

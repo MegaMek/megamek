@@ -720,7 +720,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             roll.addModifier(1, "Small Cockpit");
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 
@@ -735,9 +735,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (moved == EntityMovementType.MOVE_OVER_THRUST) {
                 roll.addModifier(+1, "Used more than safe thrust");
             }
+            
             int vel = getCurrentVelocity();
             int vmod = vel - (2 * getWalkMP());
-            if (vmod > 0) {
+            if (!getGame().getBoard().inSpace() && (vmod > 0)) {
                 roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
             }
 

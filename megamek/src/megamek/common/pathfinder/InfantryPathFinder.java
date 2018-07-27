@@ -117,7 +117,7 @@ public class InfantryPathFinder {
             
             getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
         } catch(Exception e) {
-            getLogger().log(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
         }
     }
     

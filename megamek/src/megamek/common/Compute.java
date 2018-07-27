@@ -4520,6 +4520,11 @@ public class Compute {
     
     public static boolean inSensorRange(IGame game, LosEffects los, Entity ae, 
             Targetable target, List<ECMInfo> allECMInfo) {
+        // This is not applicable to objects on the same team. 
+        if(!target.isEnemyOf(ae)) {
+            return false;
+        }
+        
         //For Space games with this option, return something different
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && target.getTargetType() == Targetable.TYPE_ENTITY

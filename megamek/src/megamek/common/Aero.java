@@ -4224,19 +4224,39 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public void updateSensorOptions() {
+        //Prevent adding duplicates
+        boolean hasSpacecraftThermal = false;
+        boolean hasAeroThermal = false;
+        boolean hasESM = false;
+        for (Sensor sensor : getSensors()) {
+            if (sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                hasSpacecraftThermal = true;
+            }
+            if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                hasAeroThermal = true;
+            }
+            if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+                hasESM = true;
+            }
+        }
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
             Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 for (Sensor sensor : getSensors()) {
-                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM
-                            || sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+                        hasESM = false;
                         sensorsToRemove.add(sensor);
-                    } 
+                    }
+                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                        hasSpacecraftThermal = false;
+                        sensorsToRemove.add(sensor);
+                    }
                 }
             } else if (hasETypeFlag(Entity.ETYPE_AERO)) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                        hasAeroThermal = false;
                         sensorsToRemove.add(sensor);
                     }
                 }
@@ -4253,20 +4273,27 @@ public class Aero extends Entity implements IAero, IBomber {
                     || hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                     || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
                 //Large craft get thermal/optical sensors
-                getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+                if (!hasSpacecraftThermal) {
+                    getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+                    hasSpacecraftThermal = true;
+                }
                 //Only military craft get ESM, which detects active radar
                 //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
                 if (getDesignType() == Aero.MILITARY 
                         || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
                         || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-                    getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+                    if (!hasESM) {
+                        getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+                        hasESM = true;
+                    }
                 }
-                setNextSensor(getSensors().firstElement());
             } else if (hasETypeFlag(Entity.ETYPE_AERO) 
                         || hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
                 //ASFs and small craft get thermal/optical sensors
-                getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
-                setNextSensor(getSensors().firstElement());
+                if (!hasAeroThermal) {
+                    getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
+                    hasAeroThermal = true;
+                }
             }
         }
     }

@@ -17,7 +17,9 @@ package megamek.common.verifier;
 
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,12 +35,14 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
+import megamek.common.UnitType;
 
 /**
  * Performs verification of the validity of different types of 
@@ -124,8 +128,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             }
         } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             testEntity = new TestSmallCraft((SmallCraft) entity, aeroOption, fileString);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            testEntity = new TestAdvancedAerospace((Jumpship) entity, aeroOption, fileString);
         } else if (entity.hasETypeFlag(Entity.ETYPE_AERO)
-                && !entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 && !entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
             testEntity = new TestAero((Aero)entity, aeroOption, fileString);
         } else if (entity instanceof BattleArmor){
@@ -203,19 +208,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(infOption.printOptions());
 
         int failures = 0;
-        int failedMek, failedTank, failedAero,  failedConvFighter, failedSmallCraft, failedDropship,
-            failedBA, failedInfantry;
-        failedMek = failedTank = failedAero  = failedConvFighter = failedSmallCraft = failedDropship
-                = failedBA = failedInfantry = 0;
+        Map<Integer,Integer> failedByType = new HashMap<>();
         for (int i = 0; i < ms.length; i++) {
-            if (ms[i].getUnitType().equals("Mek")
-                    || ms[i].getUnitType().equals("Tank")
-                    || ms[i].getUnitType().equals("Aero")
-                    || ms[i].getUnitType().equals("Small Craft")
-                    || ms[i].getUnitType().equals("Dropship")
-                    || ms[i].getUnitType().equals("Conventional Fighter")
-                    || ms[i].getUnitType().equals("BattleArmor")
-            		|| ms[i].getUnitType().equals("Infantry")) {
+            int unitType = UnitType.determineUnitTypeCode(ms[i].getUnitType());
+            if ((unitType != UnitType.PROTOMEK)
+                    && (unitType != UnitType.GUN_EMPLACEMENT)) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
@@ -227,35 +224,24 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
                         loadingVerbosity,entity.getTechLevel(),failsOnly)) {
                     failures++;
-                    if (ms[i].getUnitType().equals("Mek")) {
-                        failedMek++;
-                    } else if (ms[i].getUnitType().equals("Tank")) {
-                        failedTank++;
-                    } else if (ms[i].getUnitType().equals("Aero")) {
-                        failedAero++;
-                    } else if (ms[i].getUnitType().equals("Conventional Fighter")) {
-                        failedConvFighter++;
-                    } else if (ms[i].getUnitType().equals("Small Craft")) {
-                        failedSmallCraft++;
-                    } else if (ms[i].getUnitType().equals("Dropship")) {
-                        failedDropship++;
-                    } else if (ms[i].getUnitType().equals("BattleArmor")) {
-                        failedBA++;
-                    } else if (ms[i].getUnitType().equals("Infantry")) {
-                        failedInfantry++;
-                    }
+                    failedByType.merge(unitType, 1, Integer::sum);
                 }
             }
         }
         System.out.println("Total Failures: " + failures);
-        System.out.println("\t Failed Meks: " + failedMek);
-        System.out.println("\t Failed Tanks: " + failedTank);
-        System.out.println("\t Failed ASFs: " + failedAero);
-        System.out.println("\t Failed CFs: " + failedConvFighter);
-        System.out.println("\t Failed Small Craft: " + failedSmallCraft);
-        System.out.println("\t Failed Dropships: " + failedDropship);
-        System.out.println("\t Failed BA: " + failedBA);
-        System.out.println("\t Failed Infantry: " + failedInfantry);
+        System.out.println("\t Failed Meks: " + failedByType.getOrDefault(UnitType.MEK, 0));
+        System.out.println("\t Failed Tanks: " + failedByType.getOrDefault(UnitType.TANK, 0));
+        System.out.println("\t Failed VTOLs: " + failedByType.getOrDefault(UnitType.VTOL, 0));
+        System.out.println("\t Failed Naval: " + failedByType.getOrDefault(UnitType.NAVAL, 0));
+        System.out.println("\t Failed ASFs: " + failedByType.getOrDefault(UnitType.AERO, 0));
+        System.out.println("\t Failed CFs: " + failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0));
+        System.out.println("\t Failed Small Craft: " + failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0));
+        System.out.println("\t Failed Dropships: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
+        System.out.println("\t Failed Jumpships: " + failedByType.getOrDefault(UnitType.JUMPSHIP, 0));
+        System.out.println("\t Failed Warships: " + failedByType.getOrDefault(UnitType.WARSHIP, 0));
+        System.out.println("\t Failed Space Stations: " + failedByType.getOrDefault(UnitType.SPACE_STATION, 0));
+        System.out.println("\t Failed BA: " + failedByType.getOrDefault(UnitType.BATTLE_ARMOR, 0));
+        System.out.println("\t Failed Infantry: " + failedByType.getOrDefault(UnitType.INFANTRY, 0));
     }
 
     public static void main(String[] args) {

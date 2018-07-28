@@ -969,7 +969,7 @@ public class TestAdvancedAerospace extends TestAero {
         }
         int maxSize = Jumpship.GRAV_DECK_LARGE_MAX;
         if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
-            maxSize = 1500;
+            maxSize = Jumpship.GRAV_DECK_HUGE_MAX;
         }
         for (Integer dia : vessel.getGravDecks()) {
             if (dia > maxSize) {

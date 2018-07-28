@@ -42,6 +42,7 @@ public class Jumpship extends Aero {
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
+    public static final int GRAV_DECK_HUGE_MAX = 1500;
     
     public static final int DRIVE_CORE_STANDARD    = 0;
     public static final int DRIVE_CORE_COMPACT     = 1;

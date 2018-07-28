@@ -147,7 +147,7 @@ public class Jumpship extends Aero {
      * Tech advancement data for lithium fusion batteries
      */
     public static TechAdvancement getLFBatteryTA() {
-        return new TechAdvancement(TECH_BASE_IS)
+        return new TechAdvancement(TECH_BASE_ALL)
                 .setISAdvancement(2520, 2529, DATE_NONE, 2819, 3043)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS)

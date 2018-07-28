@@ -120,8 +120,8 @@ public class PrincessTest {
         Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenReturn(false);
 
         Mockito.when(mockPathRanker
-                             .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class),
-                                                     Mockito.any(IGame.class)))
+                             .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.nullable(Coords.class),
+                                                     Mockito.nullable(IGame.class)))
                .thenReturn(10.0);
 
         // Test a 6/9/6 regular mech.

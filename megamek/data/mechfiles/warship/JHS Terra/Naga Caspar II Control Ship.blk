@@ -2,8 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
 
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,30 +16,39 @@ Warship
 Naga Destroyer
 </Name>
 
-<model>
+<Model>
 (Caspar II Control Ship)
-</model>
+</Model>
 
-<Tonnage>
-540000
-</Tonnage>
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:36.0:3:1
+smallcraftbay:6.0:1:2
+navalrepairpressurized:82500.0:9:3:f0
+1stclassquarters:510.0:0
+2ndclassquarters:252.0:0
+crewquarters:2275.0:0
+cargobay:51513.5:1:4
+</transporters>
 
 <SafeThrust>
 2
 </SafeThrust>
-
-<Armor>
-28
-32
-32
-32
-32
-28
-</Armor>
-
-<structural_integrity>
-68
-</structural_integrity>
 
 <heatsinks>
 1300
@@ -50,294 +59,316 @@ Naga Destroyer
 </sink_type>
 
 <fuel>
-2500
+5000
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3065
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+42
+</armor_type>
 
-<transporters>
-asfbay:36:3
-SmallcraftBay:6:1
-CargoBay:80817:1
-</transporters>
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+28
+32
+32
+32
+28
+32
+</armor>
 
 <Nose Equipment>
-NAC10
-NAC10
-NAC10
-NAC10 Ammo:45
-SCL1
-SCL1
-SCL1
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:45
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-Screen Launcher
-ScreenLauncher Ammo:40
-ISMobileHPG
+ISArtemisIV
+ISArtemisIV
+(B) Screen Launcher
+Ammo Screen:40
 ISLargeNavalCommScannerSuite
 </Nose Equipment>
 
-<Front Left Side Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-SCL2
-SCL2
-SCL2
-White Shark
-White Shark Ammo:20
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-</Front Left Side Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Left Front Side Equipment>
 
-<Front Right Side Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-SCL2
-SCL2
-SCL2
-White Shark
-White Shark Ammo:20
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-</Front Right Side Equipment>
+ISArtemisIV
+ISArtemisIV
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Right Front Side Equipment>
 
-<Left Broadside Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-NL35
-NL35
-NL35
-LightNPPC
-LightNPPC
-SCL3
-SCL3
-SCL3
-SCL3
-SCL3
-SCL3
+<Aft Equipment>
+ISMobileHPG
+(B) Capital Missile Launcher (Barracuda)
+Ammo Barracuda:10
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-ISAMS
-ISAMS
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
 ISAMS Ammo:72
-Screen Launcher
-ScreenLauncher Ammo:10
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-NL35
-NL35
-NL35
-LightNPPC
-LightNPPC
-SCL3
-SCL3
-SCL3
-SCL3
-SCL3
-SCL3
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISMML9
-ISArtemisIV
-ISMML9
-ISArtemisIV
-ISMML9
-ISArtemisIV
-ISMML9
-ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-ISAMS
-ISAMS
-ISAMS Ammo:72
-Screen Launcher
-ScreenLauncher Ammo:10
-</Right Broadside Equipment>
+(B) Screen Launcher
+Ammo Screen:20
+CasparIIDroneControlSystem
+</Aft Equipment>
 
 <Aft Left Side Equipment>
-NL55
-NL55
-NL55
-LightNPPC
-LightNPPC
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Light)
+Naval PPC (Light)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-SCL2
-SCL2
+ISArtemisIV
+ISArtemisIV
+(B) Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
 </Aft Left Side Equipment>
 
 <Aft Right Side Equipment>
-NL55
-NL55
-NL55
-LightNPPC
-LightNPPC
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Light)
+Naval PPC (Light)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-SCL2
-SCL2
+ISArtemisIV
+ISArtemisIV
+(B) Sub-Capital Laser (SCL/2)
+Sub-Capital Laser (SCL/2)
 </Aft Right Side Equipment>
 
-<Aft Equipment>
-Barracuda
-Barracuda Ammo:10
-SCL1
-SCL1
-SCL1
-SCL1
-SCL1
-SCL1
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) Naval PPC (Light)
+Naval PPC (Light)
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
 ISLargeVSPLaser
-ISLargeVSPLaser
+(B) ISMML9
 ISMML9
-ISArtemisIV
 ISMML9
-ISArtemisIV
 ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
 ISArtemisIV
-ISMML9
 ISArtemisIV
-ISMML9 LRM Ammo Artemis-Capable:208
-ISMML9 SRM Ammo Artemis-Capable:176
-ISAMS
-ISAMS
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
 ISAMS Ammo:72
-Screen Launcher
-ScreenLauncher Ammo:20
-</Aft Equipment>
+(B) Screen Launcher
+Ammo Screen:10
+</Left Broadsides Equipment>
 
-<docking_collar>
-0
-</docking_collar>
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Naval Laser 35
+Naval Laser 35
+Naval Laser 35
+(B) Naval PPC (Light)
+Naval PPC (Light)
+(B) Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+Sub-Capital Laser (SCL/3)
+(B) ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+(B) ISMML9
+ISMML9
+ISMML9
+ISMML9
+IS Ammo MML-9 LRM Artemis-capable:208
+IS Ammo MML-9 SRM Artemis-capable:176
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+ISArtemisIV
+(B) ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:72
+(B) Screen Launcher
+Ammo Screen:10
+</Right Broadsides Equipment>
 
-<grav_deck>
+<structural_integrity>
+68
+</structural_integrity>
+
+<source>
+JHSTerra - Civil War
+</source>
+
+<tonnage>
+540000.0
+</tonnage>
+
+<kf_core>
 1
-</grav_deck>
+</kf_core>
 
-<escape_pod>
-10
-</escape_pod>
+<sail>
+1
+</sail>
 
-<life_boat>
-22
-</life_boat>
+<grav_decks>
+55
+</grav_decks>
 
 <crew>
-470
+478
 </crew>
+
+<officers>
+51
+</officers>
+
+<gunners>
+75
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
 
 <battlearmor>
 36
 </battlearmor>
 
-<passengers>
-</passengers>
+<life_boat>
+22
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
 
 <history>
-Has 3 Pressurized Repair Bays each with 75,000 Capacity and 1 Pressurized Repair Bay with a 7500 Ton capacity.  Lastly none of the Special CASPAR II equipment is coded in MM unit included for completeness
+A fair amount of issues with this ship in the TRO. Warships can only mount one repair bay, so I've merged them into one big bay. Also the ship was very overweight with the repair bays, removed Cargo space to make them fit.
 </history>
+

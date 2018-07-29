@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,120 +20,31 @@ M5 Capital Drone
 (Caspar)
 </Model>
 
-<Tonnage>
-680000
-</Tonnage>
+<year>
+2710
+</year>
+
+<originalBuildYear>
+2710
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:1840.5:1:1
+1stclassquarters:390.0:0
+crewquarters:1330.0:0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-48
-48
-48
-48
-48
-48
-</Armor>
-
-<Nose Equipment>
-NL55
-NL55
-NL55
-NL55
-HeavyNPPC
-HeavyNPPC
-KillerWhale
-KillerWhale Ammo:20
-</Nose Equipment>
-
-<Front Left Side Equipment>
-NL55
-NL55
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:300
-AR10
-KillerWhale Ammo:10
-Barracuda Ammo:20
-</Front Left Side Equipment>
-
-<Front Right Side Equipment>
-NL55
-NL55
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:300
-AR10
-KillerWhale Ammo:10
-Barracuda Ammo:20
-</Front Right Side Equipment>
-
-<Left Broadside Equipment>
-NL55
-(B) NAC25
-NAC25
-NAC25 Ammo:200
-(B) NAC25
-NAC25
-NAC25 Ammo:200
-AR10
-AR10
-KillerWhale Ammo:20
-Barracuda Ammo:40
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-NL55
-(B) NAC25
-NAC25
-NAC25 Ammo:200
-(B) NAC25
-NAC25
-NAC25 Ammo:200
-AR10
-AR10
-KillerWhale Ammo:20
-Barracuda Ammo:40
-</Right Broadside Equipment>
-
-<Aft Left Side Equipment>
-NL55
-NL55
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:300
-</Aft Left Side Equipment>
-
-<Aft Right Side Equipment>
-NL55
-NL55
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:300
-</Aft Right Side Equipment>
-
-<Aft Equipment> 
-SDSSelfDestructSystem
-CasparDroneControlSystem
-NL45
-NL45
-NL45
-Barracuda
-Barracuda
-Barracuda Ammo:40
-</Aft Equipment>
-
-
-
-<structural_integrity>
-50
-</structural_integrity>
 
 <heatsinks>
 1250
@@ -146,55 +58,168 @@ Barracuda Ammo:40
 2500
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-2710
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+1
+</engine_type>
 
 <armor_type>
 11
 </armor_type>
 
-<engine_type>
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+48
+48
+48
+48
+48
+48
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:20
+Ammo AR10 Killer Whale:10
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:20
+Ammo AR10 Killer Whale:10
+</Right Front Side Equipment>
+
+<Aft Equipment>
+SDSSelfDestructSystem
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+ImprovedCasparDroneControlSystem
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+</Aft Right Side Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 55
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:40
+Ammo AR10 Killer Whale:20
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 55
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:40
+Ammo AR10 Killer Whale:20
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<source>
+LofT Vol 1 - Star League
+</source>
+
+<tonnage>
+680000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<crew>
+229
+</crew>
+
+<officers>
+39
+</officers>
+
+<gunners>
+48
+</gunners>
+
+<passengers>
 0
-</engine_type>
+</passengers>
 
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-CargoBay:1840.5:1
-CargoBay:34000:0
-</transporters>
-
-<docking_collar>
+<marines>
 0
-</docking_collar>
+</marines>
 
-<grav_deck>
+<battlearmor>
 0
-</grav_deck>
-
-<escape_pod>
-0
-</escape_pod>
+</battlearmor>
 
 <life_boat>
 0
 </life_boat>
 
-<crew>
+<escape_pod>
 0
-</crew>
+</escape_pod>
 
-<passengers>
-0
-</passengers>

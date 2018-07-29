@@ -50,7 +50,6 @@ public class MassDriverMedium extends MassDriverWeapon {
         this.longAV = 100;
         this.maxRange = RANGE_LONG;
         rulesRefs = "323,TO";
-        rulesRefs = "323,TO";
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
             .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)

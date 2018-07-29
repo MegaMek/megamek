@@ -4541,16 +4541,14 @@ public class Compute {
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
+        
+        // If we have no sensors then return false
+        if (ae.getActiveSensor() == null) {
+            return false;
+        }
 
         int bracket = Compute.getSensorRangeBracket(ae, target, allECMInfo);
         int range = Compute.getSensorRangeByBracket(game, ae, target, los);
-        
-        //A bit of a hack here. "Spacecraft Sensors" return the ground range, because Sensor doesn't know about Game or Entity
-        //to do otherwise. We need to use the ground range instead.
-        if ((ae.getActiveSensor() != null) &&
-                ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-            range = Sensor.LC_RADAR_GROUND_RANGE;
-        }
 
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);

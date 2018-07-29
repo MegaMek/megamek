@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import java.text.DecimalFormat;
+
 /**
  * Reinforced naval repair facility allows ship to expend thrust with docked unit. Only available
  * unpressurized. See TacOps 334-5 for rules.
@@ -68,6 +70,13 @@ public class ReinforcedRepairFacility extends NavalRepairFacility {
                 + FACING_PREFIX + getFacing();
     }
     
+    @Override
+    public String getUnusedString(boolean showrecovery) {
+        StringBuilder sb = new StringBuilder("Reinforced Naval Repair Facility: ");
+        sb.append(DecimalFormat.getInstance().format(totalSpace)).append(" tons");
+        return sb.toString();
+    }
+
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_IS).setAdvancement(2750, DATE_NONE, DATE_NONE, 2766, 3065)
                 .setISApproximate(true, false, false, false, false)

@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.text.DecimalFormat;
+
 /**
  * Standard naval repair facilities for space stations (jumpships and warships can also carry a single facility).
  * See TacOps 334-5 for rules.
@@ -115,6 +117,19 @@ public class NavalRepairFacility extends Bay {
                 + doors + FIELD_SEPARATOR
                 + bayNumber + FIELD_SEPARATOR
                 + FACING_PREFIX + getFacing();
+    }
+    
+    @Override
+    public String getUnusedString(boolean showrecovery) {
+        StringBuilder sb = new StringBuilder("Standard ");
+        if (pressurized) {
+            sb.append("Pressurized");
+        } else {
+            sb.append("Unpressurized");
+        }
+        sb.append(" Naval Repair Facility: ");
+        sb.append(DecimalFormat.getInstance().format(totalSpace)).append(" tons");
+        return sb.toString();
     }
     
     @Override

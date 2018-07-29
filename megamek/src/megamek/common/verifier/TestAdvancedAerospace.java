@@ -528,7 +528,7 @@ public class TestAdvancedAerospace extends TestAero {
 
             AmmoType mt = (AmmoType) m.getType();
             int slots = (int)Math.ceil(m.getBaseShotsLeft() / mt.getShots());
-            weight += mt.getTonnage(getEntity()) * slots;
+            weight += ceil(mt.getTonnage(getEntity()) * slots, Ceil.HALFTON);
         }
         return weight;
     }

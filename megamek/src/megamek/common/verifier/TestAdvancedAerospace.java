@@ -868,7 +868,8 @@ public class TestAdvancedAerospace extends TestAero {
                     buff.append("Cannot mount " + m.getType().getName() + "\n");
                     illegal = true;
                 }
-                if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                if ((m.getType().hasFlag(WeaponType.F_MASS_DRIVER)
+                        && !(m.getType() instanceof BayWeapon))) {
                     massDriversPerArc.merge(m.getLocation(), 1, Integer::sum);
                     int at = ((WeaponType) m.getType()).getAmmoType();
                     if ((at == AmmoType.T_HMASS) && vessel.getWeight() < 2000000) {

@@ -27,7 +27,6 @@ package megamek.common.loaders;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -250,15 +249,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
 
         addTransports(a);
 
-        // get docking collars
-        if (!dataFile.exists("docking_collar")) {
-            throw new EntityLoadingException("Could not find docking collar block.");
-        }
-        int docks = dataFile.getDataAsInt("docking_collar")[0];
-        while (docks > 0) {
-            a.addTransporter(new DockingCollar(1));
-            docks--;
-        }
         a.setArmorTonnage(a.getArmorWeight());
         return a;
     }

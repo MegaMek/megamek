@@ -135,12 +135,6 @@ public class TestSmallCraft extends TestAero {
         return retVal;
     }
     
-    /**
-     * Defines how many spaces each arc has for weapons. More can be added by increasing weight
-     * of master fire control systems.
-     */
-    public static int SLOTS_PER_ARC = 12;
-    
     public static int maxArmorPoints(SmallCraft sc) {
         AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
                 TechConstants.isClan(sc.getArmorTechLevel(0)));
@@ -197,7 +191,7 @@ public class TestSmallCraft extends TestAero {
         }
         double retVal[] = new double[arcs];
         for (int arc = 0; arc < arcs; arc++) {
-            int excess = (weaponsPerArc[arc] - 1) / SLOTS_PER_ARC;
+            int excess = (weaponsPerArc[arc] - 1) / slotsPerArc(sc);
             if (excess > 0) {
                 retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
             }

@@ -169,6 +169,21 @@ public class TestAero extends TestEntity {
     }
     
     /**
+     * Defines how many spaces each arc has for weapons. Large units can add more by increasing weight
+     * of master fire control systems.
+     */
+    public static int slotsPerArc(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            return 20;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                || aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return 12;
+        } else {
+            return 5;
+        }
+    }
+    
+    /**
      * @param aero A large craft
      * @return     The maximum number of bay doors. Aerospace units that are not large craft have
      *             a maximum of zero.
@@ -242,11 +257,6 @@ public class TestAero extends TestEntity {
     public static int MAX_ENGINE_RATING = 400;
     
     /**
-     * Defines how many spaces each arc has for weapons.
-     */
-    public static int SLOTS_PER_ARC = 5;
-    
-    /**
      *  Computes the maximum number of armor points for a given Aero
      *  at the given tonnage.
      *   
@@ -279,8 +289,9 @@ public class TestAero extends TestEntity {
      */
     public static int[] availableSpace(Aero a){
         // Keep track of the max space we have in each arc
+        int slots = slotsPerArc(a);
         int availSpace[] = 
-            {SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC};
+            { slots, slots, slots, slots };
         
         // Get the armor type, to determine how much space it uses
         AeroArmor armor = 

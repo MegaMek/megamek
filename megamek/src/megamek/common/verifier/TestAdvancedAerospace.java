@@ -763,7 +763,7 @@ public class TestAdvancedAerospace extends TestAero {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = false;
         
-        // For dropships, make sure all bays have at least one weapon and that there are at least
+        // Make sure all bays have at least one weapon and that there are at least
         // ten shots of ammo for each ammo-using weapon in the bay.
         for (Mounted bay : vessel.getWeaponBayList()) {
             if (bay.getBayWeapons().size() == 0) {
@@ -823,6 +823,7 @@ public class TestAdvancedAerospace extends TestAero {
         Map<EquipmentType,Integer> rightFwd = new HashMap<>();
         Map<EquipmentType,Integer> rightAft = new HashMap<>();
         Map<EquipmentType,Integer> rightBroad = new HashMap<>();
+        Map<Integer,Integer> massDriversPerArc = new HashMap<>();
         
         BigInteger typeFlag = MiscType.F_JS_EQUIPMENT;
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
@@ -837,6 +838,12 @@ public class TestAdvancedAerospace extends TestAero {
                     illegal = true;
                 }
             } else if (m.getType() instanceof WeaponType) {
+                if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)
+                        && !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
+                        && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+                    buff.append("A mass driver may not be mounted on a Jumpship.\n");
+                    illegal = true;
+                }
                 switch (m.getLocation()) {
                     case Jumpship.LOC_FLS:
                         leftFwd.merge(m.getType(), 1, Integer::sum);
@@ -860,6 +867,23 @@ public class TestAdvancedAerospace extends TestAero {
                 if (!isAeroWeapon(m.getType(), vessel)) {
                     buff.append("Cannot mount " + m.getType().getName() + "\n");
                     illegal = true;
+                }
+                if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                    massDriversPerArc.merge(m.getLocation(), 1, Integer::sum);
+                    int at = ((WeaponType) m.getType()).getAmmoType();
+                    if ((at == AmmoType.T_HMASS) && vessel.getWeight() < 2000000) {
+                        buff.append("Minimum vessel tonnage for ")
+                            .append(m.getType().getName()).append(" is 2,000,000 tons\n");
+                        illegal = true;
+                    } else if ((at == AmmoType.T_MMASS) && vessel.getWeight() < 1500000) {
+                        buff.append("Minimum vessel tonnage for ")
+                            .append(m.getType().getName()).append(" is 1,500,000 tons\n");
+                        illegal = true;
+                    } else if((at == AmmoType.T_LMASS) && vessel.getWeight() < 750000) {
+                        buff.append("Minimum vessel tonnage for ")
+                            .append(m.getType().getName()).append(" is 750,000 tons\n");
+                        illegal = true;
+                    }
                 }
             }
         }
@@ -918,6 +942,18 @@ public class TestAdvancedAerospace extends TestAero {
         if (!lateralMatch) {
             buff.append("Left and right side weapon loads do not match.\n");
             illegal = true;
+        }
+        
+        for (Map.Entry<Integer, Integer> entry : massDriversPerArc.entrySet()) {
+            if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
+                    && (entry.getKey() != Warship.LOC_NOSE)
+                    && (entry.getValue() > 0)) {
+                buff.append("A warship may only mount a mass driver in the nose firing arc.\n");
+                illegal = true;
+            } else if (entry.getValue() > 1) {
+                buff.append("A ship may not mount more than one mass driver in a firing arc.\n");
+                illegal = true;
+            }
         }
         
         int bayDoors = vessel.getTransportBays().stream().mapToInt(Bay::getDoors).sum();

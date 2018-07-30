@@ -872,11 +872,8 @@ public class BLKFile {
                 transporter = transporter.toLowerCase();
             	boolean isPod = transporter.endsWith(":omni");
             	transporter = transporter.replace(":omni", "");
-                // for bays, we have to save the baynumber in each bay, because
-                // one conceptual bay can contain several different ones
-                // we default to bay 1
-                int bayNumber = 1;
-                // TroopSpace:
+
+            	// TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
                     Double fsize = new Double(transporter.substring(11));
@@ -1035,6 +1032,8 @@ public class BLKFile {
                     isComstarBay = true;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("jump")) {
                     platoonType = InfantryBay.PlatoonType.JUMP;
+                } else if (potentialBayTypeIndicator.equalsIgnoreCase("foot")) {
+                    platoonType = InfantryBay.PlatoonType.FOOT;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("motorized")) {
                     platoonType = InfantryBay.PlatoonType.MOTORIZED;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("mechanized")) {

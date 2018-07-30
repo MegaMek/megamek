@@ -51,8 +51,9 @@ public class TestAdvancedAerospace extends TestAero {
     private final Jumpship vessel;
 
     public static enum CapitalArmor{
-        STANDARD(EquipmentType.T_ARMOR_STANDARD_CAPITAL, false),   
-        CLAN_STANDARD(EquipmentType.T_ARMOR_STANDARD_CAPITAL, true),
+        PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false),   
+        STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
+        CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
         IS_IMP_FERRO_ALUM(EquipmentType.T_ARMOR_LC_FERRO_IMP, false),
         CLAN_IMP_FERRO_ALUM(EquipmentType.T_ARMOR_LC_FERRO_IMP, true),
         IS_FERRO_CARBIDE(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, false),
@@ -124,7 +125,12 @@ public class TestAdvancedAerospace extends TestAero {
                 ppt += 0.2;
             }
             // Deal with potential rounding errors
-            return Math.round(ppt * 10.0) / 10.0;
+            ppt = Math.round(ppt * 10.0) / 10.0;
+            if (!vessel.isPrimitive()) {
+                return ppt;
+            } else {
+                return ppt * EquipmentType.armorPointMultipliers[type];
+            }
         }
         
         /**
@@ -156,11 +162,17 @@ public class TestAdvancedAerospace extends TestAero {
     public static int maxArmorPoints(Jumpship vessel) {
         CapitalArmor a = CapitalArmor.getArmor(vessel.getArmorType(0),
                 TechConstants.isClan(vessel.getArmorTechLevel(0)));
-        if (null != a) {
+        if (null == a) {
+            return 0;
+        }
+        if (!vessel.isPrimitive()) {
             return (int)(Math.floor(a.pointsPerTon(vessel) * maxArmorWeight(vessel))
                     + Math.round(vessel.get0SI() / 10.0) * 6);
         } else {
-            return 0;
+            // The ppt and the extra armor for SI are added together before the 0.66 primitive
+            // multiplier is applied.
+            return (int) (0.66 * (Math.floor(CapitalArmor.STANDARD.pointsPerTon(vessel) * maxArmorWeight(vessel))
+                    + Math.round(vessel.get0SI() / 10.0) * 6));
         }
     }
     

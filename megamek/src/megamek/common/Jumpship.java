@@ -1153,7 +1153,11 @@ public class Jumpship extends Aero {
     public double getArmorWeight(int locCount) {
         double armorPoints = getTotalOArmor();
 
-        armorPoints -= Math.round(get0SI() / 10.0) * locCount;
+        if (!isPrimitive()) {
+            armorPoints -= Math.round(get0SI() / 10.0) * locCount;
+        } else {
+            armorPoints -= Math.round(get0SI() / 10.0) * locCount * 0.66;
+        }
 
         // now I need to determine base armor points by type and weight
         double baseArmor = 0.8;
@@ -1179,14 +1183,12 @@ public class Jumpship extends Aero {
             baseArmor += 0.4;
         } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
+        } else if (armorType[0] == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
+            baseArmor *= 0.66;
         }
 
-        double armorPerTon = baseArmor;
-        double armWeight = 0.0;
-        for (; (armWeight * armorPerTon) < armorPoints; armWeight += .5) {
-            // add armor in discrete batches
-        }
-        return armWeight;
+        double armWeight = armorPoints / baseArmor;
+        return Math.ceil(armWeight * 2.0) / 2.0;
     }
 
     @Override

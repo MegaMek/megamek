@@ -1798,8 +1798,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createPrimitiveLCAerospaceArmor());
         EquipmentType.addType(MiscType.createISAeroSpaceArmor());
         EquipmentType.addType(MiscType.createClanAeroSpaceArmor());
-        EquipmentType.addType(MiscType.createISCapitalArmor());
-        EquipmentType.addType(MiscType.createClanCapitalArmor());
         EquipmentType.addType(MiscType.createISFerroCarbideArmor());
         EquipmentType.addType(MiscType.createClanFerroCarbideArmor());
         EquipmentType.addType(MiscType.createISLamellorFerroCarbideArmor());
@@ -3035,7 +3033,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
+        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
+                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "205,TM";
@@ -3056,7 +3055,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
+        misc.flags = misc.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
+                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "205,TM";
@@ -3064,49 +3064,6 @@ public class MiscType extends EquipmentType {
             .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setClanAdvancement(DATE_NONE, DATE_NONE, 2470)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-        return misc;
-    }
-    
-    // Standard capital scale armor must be different than standard scale aerospace because it is available
-    // on the earliest jumpships over two centuries before standard aerospace is available.
-    public static MiscType createISCapitalArmor() {
-        MiscType misc = new MiscType();
-
-        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD_CAPITAL);
-        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD_CAPITAL, false));
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.hittable = false;
-        misc.spreadable = true;
-        misc.flags = misc.flags.or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        misc.omniFixedOnly = true;
-        misc.bv = 0;
-        misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
-            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-            .setISAdvancement(2100, 2200).setISApproximate(true, false)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-        return misc;
-    }
-    
-    public static MiscType createClanCapitalArmor() {
-        MiscType misc = new MiscType();
-
-        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD_CAPITAL);
-        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD_CAPITAL, true));
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.hittable = false;
-        misc.spreadable = true;
-        misc.flags = misc.flags.or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
-        misc.omniFixedOnly = true;
-        misc.bv = 0;
-        misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_D)
-            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-            .setClanAdvancement(DATE_NONE, 2300)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
     

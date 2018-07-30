@@ -218,7 +218,12 @@ public class TestAdvancedAerospace extends TestAero {
                 if (arc < 0) {
                     continue;
                 }
-                weaponsPerArc[arc]++;
+                if ((m.getType() instanceof WeaponType)
+                        && m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                    weaponsPerArc[arc] += 10;
+                } else {
+                    weaponsPerArc[arc]++;
+                }
                 weaponTonnage[arc] += m.getType().getTonnage(vessel);
             }
         }
@@ -376,7 +381,9 @@ public class TestAdvancedAerospace extends TestAero {
                     || (((WeaponType)m.getType()).getLongRange() <= 1)) {
                 continue;
             }
-            if (((WeaponType)m.getType()).isCapital()
+            if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                capitalWeapons += 10;
+            } else if (((WeaponType)m.getType()).isCapital()
                     || (m.getType() instanceof ScreenLauncherWeapon)) {
                 capitalWeapons++;
             } else {

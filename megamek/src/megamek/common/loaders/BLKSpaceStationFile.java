@@ -25,7 +25,6 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -225,12 +224,9 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKJumpshipFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKJumpshipFile.FLS], Jumpship.LOC_FLS);
-        a.initializeArmor(armor[BLKJumpshipFile.FRS], Jumpship.LOC_FRS);
-        a.initializeArmor(armor[BLKJumpshipFile.ALS], Jumpship.LOC_ALS);
-        a.initializeArmor(armor[BLKJumpshipFile.ARS], Jumpship.LOC_ARS);
-        a.initializeArmor(armor[BLKJumpshipFile.AFT], Aero.LOC_AFT);
+        for (int i = 0; i < armor.length; i++) {
+            a.initializeArmor(armor[i], i);
+        }
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();

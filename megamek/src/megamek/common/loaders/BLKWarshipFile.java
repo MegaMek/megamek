@@ -25,14 +25,12 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
-import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
@@ -41,16 +39,6 @@ import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKWarshipFile extends BLKFile implements IMechLoader {
-
-    // armor locatioms
-    public static final int NOSE = 0;
-    public static final int FLS = 1;
-    public static final int FRS = 2;
-    public static final int ALS = 3;
-    public static final int ARS = 4;
-    public static final int AFT = 5;
-    public static final int LBS = 6;
-    public static final int RBS = 7;
 
     public BLKWarshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -259,12 +247,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKWarshipFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKWarshipFile.FLS], Jumpship.LOC_FLS);
-        a.initializeArmor(armor[BLKWarshipFile.FRS], Jumpship.LOC_FRS);
-        a.initializeArmor(armor[BLKWarshipFile.ALS], Jumpship.LOC_ALS);
-        a.initializeArmor(armor[BLKWarshipFile.ARS], Jumpship.LOC_ARS);
-        a.initializeArmor(armor[BLKWarshipFile.AFT], Aero.LOC_AFT);
+        for (int i = 0; i < armor.length; i++) {
+            a.initializeArmor(armor[i], i);
+        }
         a.initializeArmor(0, Warship.LOC_LBS);
         a.initializeArmor(0, Warship.LOC_RBS);
 

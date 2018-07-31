@@ -173,7 +173,8 @@ public class TestAero extends TestEntity {
      * of master fire control systems.
      */
     public static int slotsPerArc(Aero aero) {
-        if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+        if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)
+                || aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return 20;
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {

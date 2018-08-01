@@ -293,8 +293,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
 
         //Setup Weapons Table
-        scrTableWeapons.setMinimumSize(new Dimension(850, 170));
-        scrTableWeapons.setPreferredSize(new Dimension(850, 170));
+        scrTableWeapons.setMinimumSize(new Dimension(850, 150));
+        scrTableWeapons.setPreferredSize(new Dimension(850, 150));
         weaponsModel = new WeaponsTableModel();
         tblWeapons = new MegamekTable(weaponsModel,WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
@@ -335,8 +335,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         scrTableWeapons.setViewportView(tblWeapons);
 
         //Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 170));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 170));
+        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
+        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -397,7 +397,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
-        Dimension size = new Dimension(325,75);
+        Dimension size = new Dimension(325,50);
         txtEqExp.setPreferredSize(size);
         expScroller.setPreferredSize(size);
         expScroller.setMaximumSize(size);
@@ -474,7 +474,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
         c.anchor = GridBagConstraints.CENTER;
 
-        c.insets = new Insets(20,0,0,0);
+        c.insets = new Insets(16,0,0,0);
         c.gridx = 0; c.gridy++;
         this.add(lblTableFilters,c);
         c.insets = new Insets(0,0,0,0);
@@ -503,7 +503,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
 
         c.gridwidth = 1;
-        c.insets = new Insets(20,0,0,0);
+        c.insets = new Insets(16,0,0,0);
         c.gridx = 0; c.gridy++;
         this.add(lblEquipment,c);
 
@@ -567,7 +567,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         });
 
         pack();
-        setResizable(false);
         int x = Math.max(0,
                 (frame.getLocation().x + (frame.getSize().width / 2)) -
                 (getSize().width / 2));

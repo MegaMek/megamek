@@ -643,8 +643,8 @@ public class TestAdvancedAerospace extends TestAero {
             }
             for (Integer aNum : m.getBayAmmo()) {
                 final Mounted a = getEntity().getEquipment(aNum);
-                double weight = a.getType().getTonnage(getEntity())
-                        * a.getBaseShotsLeft() / ((AmmoType)a.getType()).getShots();
+                double weight = ceil(a.getType().getTonnage(getEntity())
+                        * a.getBaseShotsLeft() / ((AmmoType)a.getType()).getShots(), Ceil.HALFTON);
                 buffer.append("   ").append(StringUtil.makeLength(a.getName(),
                         getPrintSize() - 25)).append(weight).append("\n");
             }

@@ -19,10 +19,6 @@ sourceSets {
     }
 }
 
-repositories {
-    jcenter() 
-}
-
 dependencies {
 	implementation 'com.thoughtworks.xstream:xstream:1.4.10'
 	implementation 'log4j:log4j:1.2.17'

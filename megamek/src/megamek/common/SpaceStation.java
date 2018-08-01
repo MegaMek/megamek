@@ -61,6 +61,7 @@ public class SpaceStation extends Jumpship {
     
     public SpaceStation() {
         super();
+        setDesignType(Aero.CIVILIAN); // Affects number of facing changes allowed in a turn
         setDriveCoreType(DRIVE_CORE_NONE);
         setSail(false);
     }

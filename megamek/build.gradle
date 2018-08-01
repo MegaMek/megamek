@@ -1,4 +1,7 @@
-apply plugin: 'application'
+plugins {
+	id 'application'
+	id 'maven-publish'
+}
 
 sourceSets {
     main {
@@ -33,3 +36,42 @@ dependencies {
 }
 
 mainClassName = 'megamek.MegaMek'
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        publishMMLibrary(MavenPublication) {
+            artifactId = 'megamek'
+            from components.java
+            artifact sourcesJar
+// Javadoc is full of errors
+//            artifact javadocJar
+
+/* Requires incubating features
+            pom {
+                name = "MegaMek"
+                description = "MegaMek library"
+                url = "http://megamek.org"
+                licenses {
+                    license {
+                        name = "GNU General Public License, version 2"
+                        url = "https://www.gnu.org/licenses/gpl-2.0.html"
+                    }
+                }
+            }
+*/
+        }
+	}
+	repositories {
+		mavenLocal()
+	}
+}

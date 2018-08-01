@@ -10,5 +10,6 @@ allprojects {
 }
 
 subprojects {
+	group = 'org.megamek'
 	version = '0.45.0-SNAPSHOT'
 }

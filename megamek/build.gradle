@@ -1,6 +1,7 @@
 plugins {
 	id 'application'
 	id 'maven-publish'
+	id 'edu.sc.seis.launch4j' version '2.4.4'
 }
 
 sourceSets {
@@ -56,6 +57,7 @@ task copyFiles(type: Copy) {
 	include "${dataDir}/**"
 	include "${confDir}/**"
 	include "${docDir}/**"
+	exclude "**/*.psd"
 	exclude { it.file.isDirectory() && (it.file in file(unitFilesDir).listFiles()) }
 	exclude "${ratDir}/**"
 	
@@ -117,6 +119,12 @@ distributions {
 			from fileStagingDir
 		}
 	}
+	windows {
+		contents {
+			from "${buildDir}/launch4j"
+			with project.distributions.main.getContents()
+		}
+	}
 }
 
 distZip {
@@ -126,6 +134,15 @@ distZip {
 distTar {
 	dependsOn stageFiles
 	compression = Compression.GZIP 	
+}
+
+createExe {
+	mainClassName = project.mainClassName
+	icon = "${projectDir}/data/images/misc/megamek.ico"
+}
+
+windowsDistZip {
+	dependsOn createExe
 }
 
 task cloneRepo (type: Exec) {

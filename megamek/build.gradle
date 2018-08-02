@@ -37,6 +37,94 @@ dependencies {
 
 mainClassName = 'megamek.MegaMek'
 
+ext {
+	dataDir = "data"
+	confDir = "mmconf"
+	logDir = "logs"
+	docDir = "docs"
+	fileStagingDir = "${buildDir}/files"
+	atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+	unitFilesDir = "${dataDir}/mechfiles"
+	ratDir = "${dataDir}/rat"
+}
+
+task copyFiles(type: Copy) {
+	from projectDir
+	
+	include "${dataDir}/**"
+	include "${confDir}/**"
+	include "${docDir}/**"
+	exclude { it.file.isDirectory() && (it.file in file(unitFilesDir).listFiles()) }
+	exclude "${ratDir}/**"
+	
+	into fileStagingDir
+}
+
+task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = "megamek.utils.CreateImageAtlases"
+	workingDir = file(fileStagingDir)
+}
+
+task deleteAtlasedImages(dependsOn: createImageAtlases) {
+	doLast {
+		ant.delete dir: fileStagingDir, includesfile: atlasedImages
+		ant.delete file: atlasedImages
+	}
+}
+
+task unitFilesZip (dependsOn: copyFiles) {
+	file(unitFilesDir).eachDir {subDir ->
+		dependsOn tasks.create("${name}${subDir.name}", Zip) {
+			from subDir
+			archiveName "${subDir.name}.zip"
+			destinationDir file("${fileStagingDir}/${unitFilesDir}")
+		}
+	}
+}
+
+task ensureRatDir (dependsOn: copyFiles) {
+	doLast {
+		mkdir "${fileStagingDir}/${ratDir}"
+	}
+}
+
+task ratZip (type: Zip, dependsOn: ensureRatDir) {
+	from ratDir
+	archiveName "rat_default.zip"
+	destinationDir file("${fileStagingDir}/${ratDir}")
+}
+
+task createLogDir (dependsOn: copyFiles) {
+	doLast {
+		mkdir "${fileStagingDir}/${logDir}"
+		ant.touch(file: "${fileStagingDir}/${logDir}/timestamp")
+	}
+}
+
+task stageFiles {
+	dependsOn unitFilesZip
+	dependsOn ratZip
+	dependsOn deleteAtlasedImages
+	dependsOn createLogDir
+}
+
+distributions {
+	main {
+		contents {
+			from fileStagingDir
+		}
+	}
+}
+
+distZip {
+	dependsOn stageFiles
+}
+
+distTar {
+	dependsOn stageFiles
+}
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     classifier = 'sources'

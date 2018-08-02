@@ -29,6 +29,8 @@ v0.45.0-git
 	force can be added to the forces in the lounge or exported to a MUL.
 	See documentation: docs/RAT Stuff/force-generator.txt
 + PR #1070: Makes the advanced search dialog smaller by default and resizable.
++ PR #1071 - Mech Sprites
++ Data - New Sprites
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

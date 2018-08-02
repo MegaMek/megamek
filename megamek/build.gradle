@@ -185,7 +185,6 @@ publishing {
 // Javadoc is full of errors
 //            artifact javadocJar
 
-/* Requires incubating features
             pom {
                 name = "MegaMek"
                 description = "MegaMek library"
@@ -197,7 +196,6 @@ publishing {
                     }
                 }
             }
-*/
         }
 	}
 	repositories {

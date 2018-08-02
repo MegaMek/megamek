@@ -1,3 +1,5 @@
 rootProject.name = 'MegaMek'
 
 include 'megamek'
+
+enableFeaturePreview('STABLE_PUBLISHING')

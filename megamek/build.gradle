@@ -38,6 +38,8 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
+	gitRoot = 'https://github.com/MegaMek/megamek.git'
+
 	dataDir = "data"
 	confDir = "mmconf"
 	logDir = "logs"
@@ -123,6 +125,28 @@ distZip {
 
 distTar {
 	dependsOn stageFiles
+	compression = Compression.GZIP 	
+}
+
+task cloneRepo (type: Exec) {
+	commandLine "git"
+	args "clone", "--branch", "gradle", "--single-branch", gitRoot, "repo"
+	workingDir buildDir
+}
+
+task buildFromRepo (type: Exec) {
+	dependsOn cloneRepo
+	
+	commandLine "${buildDir}/repo/gradlew"
+	workingDir "${buildDir}/repo"
+	args ":megamek:assembleDist"
+}
+
+task release (type: Copy) {
+	dependsOn buildFromRepo
+	
+	from "${buildDir}/repo/${buildDir}/distributions"
+	into "${buildDir}/distributions"
 }
 
 task sourcesJar(type: Jar) {

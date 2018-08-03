@@ -14311,6 +14311,10 @@ public class Server implements Runnable {
     private void manuallyAssignAMSTarget(Entity e,
             Vector<WeaponHandler> vAttacks) {
         final String METHOD_NAME = "manuallyAssignAMSTarget(Entity,Vector<WeaponHandler>)";
+        //Fix for bug #1051 - don't send the targeting nag for a shutdown unit
+        if (e.isShutDown()) {
+            return;
+        }
         // Current AMS targets: each attack can only be targeted once
         HashSet<WeaponAttackAction> amsTargets =
                 new HashSet<WeaponAttackAction>();

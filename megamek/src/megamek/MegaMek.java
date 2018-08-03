@@ -75,7 +75,7 @@ public class MegaMek {
 
     private static final MMLogger logger = DefaultMmLogger.getInstance();
 
-    public static String VERSION = "0.45.0-git"; //$NON-NLS-1$
+    public static String VERSION = "0.45.0"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator

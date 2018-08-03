@@ -80,8 +80,8 @@ crewquarters:1582.0:0
 91
 101
 101
-91
 101
+91
 101
 </armor>
 
@@ -206,6 +206,10 @@ Ammo Barracuda:10
 <structural_integrity>
 75
 </structural_integrity>
+
+<source>
+TRO3057R - Star League
+</source>
 
 <tonnage>
 750000.0

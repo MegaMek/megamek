@@ -43,7 +43,7 @@ dockingcollar
 crewquarters:854.0:0
 smallcraftbay:2.0:2:3
 smallcraftbay:2.0:2:4
-cargobay:68905.0:1:5
+cargobay:68904.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -67,7 +67,7 @@ cargobay:68905.0:1:5
 </engine_type>
 
 <armor_type>
-42
+41
 </armor_type>
 
 <armor_tech>
@@ -291,8 +291,4 @@ TRO3067 - Late Succession War - LosTech
 <escape_pod>
 4
 </escape_pod>
-
-<history>
-The ship as built in the TRO is 373 tons underweight. Increasing Cargo space to use all available weight.
-</history
 

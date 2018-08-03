@@ -25,7 +25,7 @@ Monsoon Battleship (LF)
 </year>
 
 <originalBuildYear>
-2368
+2574
 </originalBuildYear>
 
 <type>
@@ -47,7 +47,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:1020.0:0
 crewquarters:3325.0:0
-cargobay:282505.5:2:3
+cargobay:282505.5:2:5
 </transporters>
 
 <SafeThrust>
@@ -71,7 +71,7 @@ cargobay:282505.5:2:3
 </engine_type>
 
 <armor_type>
-42
+41
 </armor_type>
 
 <armor_tech>
@@ -82,8 +82,8 @@ cargobay:282505.5:2:3
 187
 160
 160
-170
 160
+170
 160
 </armor>
 
@@ -174,7 +174,7 @@ Ammo NAC/35:40
 </structural_integrity>
 
 <source>
-TRO3057U - Age of War
+TRO3057R - Age of War
 </source>
 
 <tonnage>

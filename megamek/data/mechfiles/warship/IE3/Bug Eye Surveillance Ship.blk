@@ -21,11 +21,11 @@ Bug-Eye Surveillance Ship
 </Model>
 
 <year>
-0
+2620
 </year>
 
 <originalBuildYear>
-0
+2620
 </originalBuildYear>
 
 <type>
@@ -37,8 +37,10 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:102.0:1:1
-steeragequarters:300.0:0
+steeragequarters:60.0:0
+1stclassquarters:80.0:0
+crewquarters:280.0:0
+cargobay:270.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -105,7 +107,6 @@ IS Ammo AC/20:30
 
 <Left Broadsides Equipment>
 (B) Large Laser
-Large Laser
 </Left Broadsides Equipment>
 
 <Right Broadsides Equipment>

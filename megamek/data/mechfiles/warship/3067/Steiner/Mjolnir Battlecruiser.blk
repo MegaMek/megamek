@@ -46,7 +46,7 @@ asfbay:18.0:4:2
 1stclassquarters:650.0:0
 crewquarters:2219.0:0
 2ndclassquarters:280.0:0
-cargobay:30916.0:1:3
+cargobay:30914.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -369,8 +369,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 35
 </escape_pod>
-
-<history>
-The ship as built in the TRO is underweight. Increasing Cargo space to use all available weight.
-</history>
 

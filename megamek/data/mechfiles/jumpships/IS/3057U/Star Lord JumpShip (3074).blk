@@ -1,0 +1,200 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Jumpship
+</UnitType>
+
+<Name>
+Star Lord JumpShip
+</Name>
+
+<Model>
+(3074)
+</Model>
+
+<year>
+3074
+</year>
+
+<originalBuildYear>
+3074
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:4.0:2:1
+megamek.common.DockingCollar@6e290b1a
+megamek.common.DockingCollar@5af68d4a
+megamek.common.DockingCollar@43d3144a
+megamek.common.DockingCollar@5b4552b1
+megamek.common.DockingCollar@7d92e318
+1stclassquarters:50.0:0
+steeragequarters:230.0:0
+crewquarters:175.0:0
+cargobay:195.0:1:2
+</transporters>
+
+<SafeThrust>
+0
+</SafeThrust>
+
+<heatsinks>
+130
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+6
+6
+6
+4
+5
+5
+</armor>
+
+<Nose Equipment>
+(B) Screen Launcher
+Ammo Screen:10
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:20
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:20
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Right Side Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<source>
+TRO 3057U - Jihad
+</source>
+
+<tonnage>
+274000.0
+</tonnage>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+110
+</grav_decks>
+
+<docking_collar>
+5
+</docking_collar>
+
+<crew>
+50
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+5
+</gunners>
+
+<passengers>
+46
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+10
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

@@ -42,8 +42,7 @@ dockingcollar
 asfbay:36.0:6:1
 1stclassquarters:500.0:0
 crewquarters:1645.0:0
-steeragequarters:150.0:0
-cargobay:18438.0:1:2
+cargobay:18635.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -78,8 +77,8 @@ cargobay:18438.0:1:2
 180
 150
 150
-120
 139
+120
 139
 </armor>
 
@@ -229,7 +228,7 @@ XTRO Gunslingers - Star League
 </passengers>
 
 <marines>
-30
+0
 </marines>
 
 <battlearmor>

@@ -44,7 +44,7 @@ navalrepairpressurized:20000.0:1:2:f0
 liquidcargobay:5000.0:1:6
 dockingcollar
 crewquarters:315.0:0
-cargobay:36448.5:1:7
+cargobay:36430.0:1:7
 </transporters>
 
 <SafeThrust>
@@ -153,8 +153,4 @@ TRO3057r - Age of War
 <escape_pod>
 45
 </escape_pod>
-
-<history>
-These stations have been remade to better reflect the actual ships they build.  They are not to be considered canon.
-</history>
 

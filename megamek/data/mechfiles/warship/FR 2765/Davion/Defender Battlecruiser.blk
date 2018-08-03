@@ -38,13 +38,13 @@ Aerodyne
 
 <transporters>
 smallcraftbay:20.0:10:1
-dropshuttlebay:2.0:0:1:f2
-dropshuttlebay:2.0:0:1:f1
-dropshuttlebay:2.0:0:1:f4
-dropshuttlebay:2.0:0:1:f5
+cargobay:67892.0:2:2
+dropshuttlebay:2.0:1:3:f1
+dropshuttlebay:2.0:1:4:f2
+dropshuttlebay:2.0:1:5:f4
+dropshuttlebay:2.0:1:6:f5
 1stclassquarters:600.0:0
 crewquarters:1890.0:0
-cargobay:67892.0:2:2
 </transporters>
 
 <SafeThrust>
@@ -68,7 +68,7 @@ cargobay:67892.0:2:2
 </engine_type>
 
 <armor_type>
-42
+41
 </armor_type>
 
 <armor_tech>
@@ -101,10 +101,6 @@ Autocannon/5
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:80
-(B) Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:400
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -126,10 +122,6 @@ IS Ammo AC/5:60
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:60
-(B) Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:300
 </Left Front Side Equipment>
 
 <Right Front Side Equipment>
@@ -151,10 +143,6 @@ IS Ammo AC/5:60
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:60
-(B) Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:300
 </Right Front Side Equipment>
 
 <Aft Equipment>
@@ -180,17 +168,6 @@ Autocannon/5
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:200
-(B) Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:1000
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -216,17 +193,6 @@ Autocannon/5
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:200
-(B) Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:1000
 </Aft Left Side Equipment>
 
 <Aft Right Side Equipment>
@@ -252,17 +218,6 @@ Autocannon/5
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:200
-(B) Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:1000
 </Aft Right Side Equipment>
 
 <Left Broadsides Equipment>
@@ -282,11 +237,6 @@ Autocannon/5
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:80
-(B) Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:400
 </Left Broadsides Equipment>
 
 <Right Broadsides Equipment>
@@ -306,11 +256,6 @@ Autocannon/5
 Autocannon/5
 Autocannon/5
 IS Ammo AC/5:80
-(B) Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full:400
 </Right Broadsides Equipment>
 
 <structural_integrity>

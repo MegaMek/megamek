@@ -1,0 +1,168 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Jumpship
+</UnitType>
+
+<Name>
+Monolith Jumpship
+</Name>
+
+<Model>
+(2839)
+</Model>
+
+<year>
+2839
+</year>
+
+<originalBuildYear>
+2839
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:6.0:2:1
+cargobay:673.5:1:2
+cargobay:673.5:1:3
+megamek.common.DockingCollar@93227d3
+megamek.common.DockingCollar@494f88d5
+megamek.common.DockingCollar@4f7d2f4e
+megamek.common.DockingCollar@4e0803fa
+megamek.common.DockingCollar@561ca957
+megamek.common.DockingCollar@63209a61
+megamek.common.DockingCollar@4581de14
+megamek.common.DockingCollar@4b18128d
+megamek.common.DockingCollar@787d4ca8
+1stclassquarters:60.0:0
+crewquarters:224.0:0
+</transporters>
+
+<SafeThrust>
+0
+</SafeThrust>
+
+<heatsinks>
+148
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+170
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+11
+10
+10
+8
+11
+11
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Front Side Equipment>
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+</Right Front Side Equipment>
+
+<Aft Equipment>
+ISMobileHPG
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<source>
+TRO 3057U - Early Succession War
+</source>
+
+<tonnage>
+430000.0
+</tonnage>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+105
+105
+</grav_decks>
+
+<docking_collar>
+9
+</docking_collar>
+
+<crew>
+68
+</crew>
+
+<officers>
+7
+</officers>
+
+<gunners>
+0
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+

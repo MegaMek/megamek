@@ -1,0 +1,175 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Jumpship
+</UnitType>
+
+<Name>
+Merchant Jumpship
+</Name>
+
+<Model>
+(2800)(Pirate)
+</Model>
+
+<year>
+2800
+</year>
+
+<originalBuildYear>
+2800
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:1:1
+megamek.common.DockingCollar@aac692f
+megamek.common.DockingCollar@45ba82fb
+1stclassquarters:40.0:0
+crewquarters:133.0:0
+infantrybay:2.0:1:4:Jump
+cargobay:328.5:1:2
+cargobay:237.0:1:3
+</transporters>
+
+<SafeThrust>
+0
+</SafeThrust>
+
+<heatsinks>
+99
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+425
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+4
+5
+5
+4
+4
+4
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/2
+Autocannon/2
+IS Ammo AC/2:45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Autocannon/2
+Autocannon/2
+IS Ammo AC/2:45
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Autocannon/2
+Autocannon/2
+IS Ammo AC/2:45
+</Right Front Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Autocannon/2
+Autocannon/2
+IS Ammo AC/2:45
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Autocannon/2
+Autocannon/2
+IS Ammo AC/2:45
+</Aft Right Side Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<source>
+TRO 3057U - Early Succession War
+</source>
+
+<tonnage>
+120000.0
+</tonnage>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+50
+</grav_decks>
+
+<docking_collar>
+2
+</docking_collar>
+
+<crew>
+75
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+2
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+4
+</escape_pod>
+

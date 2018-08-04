@@ -50,6 +50,7 @@ ext {
 	atlasedImages = "${fileStagingDir}/atlasedImages.txt"
 	unitFilesDir = "${dataDir}/mechfiles"
 	ratDir = "${dataDir}/rat"
+	scriptTemplate = "startScriptTemplate.txt"
 }
 
 task rootDirJar(type: Jar) {
@@ -134,6 +135,22 @@ task stageFiles {
 	dependsOn createLogDir
 }
 
+task unixStartScript (type: CreateStartScripts) {
+	applicationName = startScripts.applicationName
+	mainClassName = project.mainClassName
+	outputDir = startScripts.outputDir
+	classpath = rootDirJar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
+	    	.filter { it.name.endsWith(".jar") }
+	// The default template assumes the start script is in a subdirectory and always
+	// sets APP_HOME to the parent directory of the one containing the script.
+	// So we provide a modified template.
+	unixStartScriptGenerator.template = resources.text.fromFile(scriptTemplate)
+	doLast {
+		// The start script assumes all the files on the classpath will be in the lib directory.
+		unixScript.text = unixScript.text.replace("lib/${rootProject.name}", rootProject.name)
+	}
+}
+
 distributions {
 	main {
 		contents {
@@ -155,6 +172,7 @@ distributions {
 	unix {
 		contents {
 			from fileStagingDir
+			from(unixStartScript.unixScript)
 			from(rootDirJar)
 			from (project.sourceSets.main.runtimeClasspath.files
     				.findAll { it.name.endsWith(".jar") }) {
@@ -184,11 +202,8 @@ windowsDistZip {
 
 unixDistTar {
 	dependsOn stageFiles
+	dependsOn unixStartScript
 	compression = Compression.GZIP
-}
-
-startScripts {
-	executableDir = "."
 }
 
 task cloneRepo (type: Exec) {
@@ -248,4 +263,3 @@ publishing {
 		mavenLocal()
 	}
 }
-

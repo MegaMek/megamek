@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.45.1-git
+
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.
 + Issue #1008: When adding units through Add A Combat Unit dialog adds two instead of one when using enter key

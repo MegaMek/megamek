@@ -119,10 +119,10 @@ public class RulesetNode {
 				break;
 			case "ifName":
 				if (property.startsWith("!")) {
-					if (fd.getName() == null || fd.getName().equals(property.replace("!", ""))) {
+					if ((fd.getName() != null) && matches(fd.getName(), property.replace("!", ""))) {
 						return false;
 					}
-				} else if (fd.getName() != null && !fd.getName().equals(property)) {
+				} else if ((fd.getName() == null) || !matches(fd.getName(), property)) {
 					return false;
 				}
 				break;

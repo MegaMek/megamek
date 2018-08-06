@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.45.1-git
++ PR #1053 - Gradient & Difference Clouds Camos
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

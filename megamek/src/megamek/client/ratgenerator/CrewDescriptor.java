@@ -36,9 +36,6 @@ public class CrewDescriptor {
 	public static final int SKILL_ELITE = 5;
 	public static final int SKILL_HEROIC = 6;
 	public static final int SKILL_LEGENDARY = 7;
-//	public static final String[] skillLevelNames = {
-//		"Legendary", "Heroic", "Elite", "Veteran", "Regular", "Green", "Really Green", "Wet Behind the Ears"
-//	};
 	
 	private String name;
 	private String bloodname;
@@ -85,16 +82,30 @@ public class CrewDescriptor {
 		return RandomNameGenerator.getInstance().generate();
 	}
 	
+	/**
+	 * Uses the skill rating system in StratOps, p. 320-1
+	 */
 	private void setSkills() {
 		boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
-		int bonus = assignment.getExperience() - 1;
 		
-		int gExp = randomExperienceLevel(Compute.d6() + bonus);
-		int pExp = randomExperienceLevel(Compute.d6() + bonus);
-			
+        int experience = randomExperienceLevel(Compute.d6(2) + assignment.getExperience() - 1);
+        
+		int bonus = 0;
 		int ratingLevel = assignment.getRatingLevel();
+        // StratOps gives a +1 for A and -1 for F. There are a few IS factions that don't have
+        // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is only one.
+		// The Clan ratings give +1 for FL and -1 for Solahma, which have been moved to Keshik
+		// and garrison because the FL forces were better than they ought to be.
+        int levels = assignment.getFactionRec().getRatingLevels().size();
+        if (levels > 1) {
+            if (ratingLevel == 0) {
+                bonus--;
+            }
+            if (ratingLevel ==  levels - 1) {
+                bonus++;
+            }
+        }
 		if (clan) {
-			bonus += ratingLevel >= 0?assignment.getRatingLevel() - 1:0;
 			if (assignment.getUnitType() != null) {
 				switch (assignment.getUnitType()) {
 				case UnitType.MEK:
@@ -114,12 +125,6 @@ public class CrewDescriptor {
 				bonus--;
 			}
 		} else {
-			if (ratingLevel == 0) {
-				bonus--;
-			}
-			if (ratingLevel >= 5) {
-				bonus++;
-			}
 			if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
 				bonus--;
 			}
@@ -128,12 +133,12 @@ public class CrewDescriptor {
 			}
 		}
 		
-		gunnery = randomSkillRating(gExp, bonus);
+		gunnery = randomSkillRating(experience, bonus);
 		if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
 				&& !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
 			piloting = 8;
 		} else {
-			piloting = randomSkillRating(pExp, bonus);
+			piloting = randomSkillRating(experience, bonus);
 		}
 	}
 	
@@ -141,8 +146,8 @@ public class CrewDescriptor {
 		final int [] table = {
 				SKILL_WB, SKILL_RG, SKILL_GREEN, SKILL_GREEN,
 				SKILL_REGULAR, SKILL_REGULAR, SKILL_VETERAN,
-				SKILL_VETERAN, SKILL_ELITE, SKILL_LEGENDARY,
-				SKILL_HEROIC
+				SKILL_VETERAN, SKILL_ELITE, SKILL_HEROIC,
+				SKILL_LEGENDARY
 		};
 		if (roll < 2) {
 			return SKILL_WB;
@@ -153,22 +158,21 @@ public class CrewDescriptor {
 		return table[roll - 2];
 	}
 	
+	/**
+	 * See table, StratOps p. 320
+	 * @param baseRating The overall experience rating of the force
+	 * @param mod        The modifier from the force skill modifiers table, StratOps p. 321
+	 * @return           The skill rating
+	 */
 	private int randomSkillRating(int baseRating, int mod) {
-		final int[] table = {7, 7, 6, 5, 4, 4, 3, 2, 1, 0, 0, 0};
-		int roll = Compute.d6(2) + mod;
-		if (roll < 1) {
-			return table[baseRating];
+		final int[] table = {7, 7, 6, 5, 4, 4, 3, 2, 1, 0};
+		int roll = Compute.d6();
+		int index = baseRating + (roll + mod + 1) / 2;
+		if (index < 0) {
+		    return table[0];
+		} else {
+		    return table[Math.min(index, table.length - 1)];
 		}
-		if (roll < 3) {
-			return table[baseRating + 1];
-		}
-		if (roll < 5) {
-			return table[baseRating + 2];
-		}
-		if (roll < 7) {
-			return table[baseRating + 3];
-		}
-		return table[baseRating + 4];
 	}
 
 	/*

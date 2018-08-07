@@ -199,7 +199,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        homeEdgeCombo.setSelectedIndex(princessBehavior.getHomeEdge().getIndex());
+        homeEdgeCombo.setSelectedIndex(princessBehavior.getDestinationEdge().getIndex());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         targetsListModel.clear();
@@ -559,7 +559,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
         tempBehavior.setGoHome(goHomeCheck.isSelected());
-        tempBehavior.setHomeEdge(homeEdgeCombo.getSelectedIndex());
+        tempBehavior.setDestinationEdge(homeEdgeCombo.getSelectedIndex());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());

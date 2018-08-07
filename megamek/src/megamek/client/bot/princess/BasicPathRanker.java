@@ -809,7 +809,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * @return The distance to the unit's home edge.
      */
     @Override
-    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 

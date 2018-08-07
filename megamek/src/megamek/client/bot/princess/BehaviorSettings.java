@@ -103,7 +103,8 @@ public class BehaviorSettings {
     private int selfPreservationIndex = 5; // How worried about enemy damage am I?
     private int fallShameIndex = 5; // How much do I want to avoid failed Piloting Rolls?
     private int hyperAggressionIndex = 5; // How close to I want to get to my enemies?
-    private HomeEdge homeEdge = HomeEdge.NORTH; // In which direction will I flee?
+    private CardinalEdge destinationEdge = CardinalEdge.NEAREST_OR_NONE; // Which edge am I trying to reach?
+    private CardinalEdge retreatEdge = CardinalEdge.NEAREST_OR_NONE; // To which edge will my units flee when crippled?
     private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to
     // blow up?
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
@@ -133,7 +134,7 @@ public class BehaviorSettings {
 
     public BehaviorSettings getCopy() throws PrincessException {
         final BehaviorSettings copy = new BehaviorSettings();
-        copy.setHomeEdge(getHomeEdge());
+        copy.setDestinationEdge(getDestinationEdge());
         copy.setForcedWithdrawal(isForcedWithdrawal());
         copy.setAutoFlee(shouldAutoFlee());
         copy.setDescription(getDescription());
@@ -476,43 +477,86 @@ public class BehaviorSettings {
     /**
      * Princess's home edge.
      *
-     * @return The {@link HomeEdge} princess will flee to.
+     * @return The {@link CardinalEdge} princess will flee to.
      */
-    public HomeEdge getHomeEdge() {
-        return homeEdge;
+    public CardinalEdge getDestinationEdge() {
+        return destinationEdge;
     }
 
     /**
      * Princess's home edge.
      *
-     * @param homeEdge The {@link HomeEdge} princess should flee to.
+     * @param destinationEdge The {@link CardinalEdge} princess should flee to.
      */
-    public void setHomeEdge(final HomeEdge homeEdge) {
-        if (null == homeEdge)
+    public void setDestinationEdge(final CardinalEdge destinationEdge) {
+        if (null == destinationEdge)
             return;
 
-        this.homeEdge = homeEdge;
+        this.destinationEdge = destinationEdge;
     }
 
     /**
      * Princess's home edge.
      *
-     * @param homeEdge the index of the {@link HomeEdge} princess should flee to.  See {@link HomeEdge#getIndex()}
+     * @param destinationEdge the index of the {@link CardinalEdge} princess should flee to.  See {@link CardinalEdge#getIndex()}
      */
-    public void setHomeEdge(final int homeEdge) {
-        setHomeEdge(HomeEdge.getHomeEdge(homeEdge));
+    public void setDestinationEdge(final int destinationEdge) {
+        setDestinationEdge(CardinalEdge.getCardinalEdge(destinationEdge));
     }
 
     /**
      * Princess's home edge.
      *
-     * @param homeEdge the index of the {@link HomeEdge} princess should flee to.  See {@link HomeEdge#getIndex()}
+     * @param destinationEdge the index of the {@link CardinalEdge} princess should flee to.  See {@link CardinalEdge#getIndex()}
      */
-    public void setHomeEdge(final String homeEdge) throws PrincessException {
+    public void setDestinationEdge(final String destinationEdge) throws PrincessException {
         try {
-            setHomeEdge(Integer.parseInt(homeEdge.trim()));
+            setDestinationEdge(Integer.parseInt(destinationEdge.trim()));
         } catch (final NumberFormatException e) {
-            throw new PrincessException("Invalid homeEdge value.", e);
+            throw new PrincessException("Invalid destinationEdge value.", e);
+        }
+    }
+    
+    /**
+     * Princess's home edge.
+     *
+     * @return The {@link CardinalEdge} princess will flee to.
+     */
+    public CardinalEdge getRetreatEdge() {
+        return retreatEdge;
+    }
+
+    /**
+     * Princess's home edge.
+     *
+     * @param retreatEdge The {@link CardinalEdge} princess should flee to.
+     */
+    public void setRetreatEdge(final CardinalEdge retreatEdge) {
+        if (null == retreatEdge)
+            return;
+
+        this.retreatEdge = retreatEdge;
+    }
+
+    /**
+     * Princess's home edge.
+     *
+     * @param retreatEdge the index of the {@link CardinalEdge} princess should flee to.  See {@link CardinalEdge#getIndex()}
+     */
+    public void setRetreatEdge(final int retreatEdge) {
+        setRetreatEdge(CardinalEdge.getCardinalEdge(retreatEdge));
+    }
+
+    /**
+     * Princess's home edge.
+     *
+     * @param retreatEdge the index of the {@link CardinalEdge} princess should flee to.  See {@link CardinalEdge#getIndex()}
+     */
+    public void setRetreatEdge(final String retreatEdge) throws PrincessException {
+        try {
+            setRetreatEdge(Integer.parseInt(retreatEdge.trim()));
+        } catch (final NumberFormatException e) {
+            throw new PrincessException("Invalid retreatEdge value.", e);
         }
     }
 
@@ -646,8 +690,10 @@ public class BehaviorSettings {
                 setHyperAggressionIndex(child.getTextContent());
             } else if ("selfPreservationIndex".equalsIgnoreCase(child.getNodeName())) {
                 setSelfPreservationIndex(child.getTextContent());
-            } else if ("homeEdge".equalsIgnoreCase(child.getNodeName())) {
-                setHomeEdge(child.getTextContent());
+            } else if ("destinationEdge".equalsIgnoreCase(child.getNodeName())) {
+                setDestinationEdge(child.getTextContent());
+            } else if ("retreatEdge".equalsIgnoreCase(child.getNodeName())) {
+                setRetreatEdge(child.getTextContent());
             } else if ("herdMentalityIndex".equalsIgnoreCase(child.getNodeName())) {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
@@ -693,9 +739,13 @@ public class BehaviorSettings {
             nameNode.setTextContent(StringUtil.makeXmlSafe(getDescription()));
             behavior.appendChild(nameNode);
 
-            final Element homeEdgeNode = doc.createElement("homeEdge");
-            homeEdgeNode.setTextContent("" + getHomeEdge().getIndex());
-            behavior.appendChild(homeEdgeNode);
+            final Element destinationEdgeNode = doc.createElement("destinationEdge");
+            destinationEdgeNode.setTextContent("" + getDestinationEdge().getIndex());
+            behavior.appendChild(destinationEdgeNode);
+            
+            final Element retreatEdgeNode = doc.createElement("retreatEdge");
+            retreatEdgeNode.setTextContent("" + getRetreatEdge().getIndex());
+            behavior.appendChild(retreatEdgeNode);
 
             final Element forcedWithdrawalNode = doc.createElement("forcedWithdrawal");
             forcedWithdrawalNode.setTextContent("" + isForcedWithdrawal());
@@ -762,7 +812,8 @@ public class BehaviorSettings {
      */
     public String toLog() {
         final StringBuilder out = new StringBuilder("Princess Behavior: ").append(getDescription());
-        out.append("\n\tHome Edge: ").append(getHomeEdge());
+        out.append("\n\tDestination Edge: ").append(getDestinationEdge());
+        out.append("\n\tRetreat Edge: ").append(getRetreatEdge());
         out.append("\n\tForced Withdrawal: ").append(isForcedWithdrawal());
         out.append("\n\tSelf Preservation: ").append(getSelfPreservationIndex());
         out.append("\n\tHyper Aggression: ").append(getHyperAggressionIndex());
@@ -798,7 +849,8 @@ public class BehaviorSettings {
         if (hyperAggressionIndex != that.hyperAggressionIndex) return false;
         if (selfPreservationIndex != that.selfPreservationIndex) return false;
         if (!description.equals(that.description)) return false;
-        if (homeEdge != that.homeEdge) return false;
+        if (destinationEdge != that.destinationEdge) return false;
+        if (retreatEdge != that.retreatEdge) return false;
         if (null != strategicBuildingTargets ? !strategicBuildingTargets.equals(that.strategicBuildingTargets) : null != that
                 .strategicBuildingTargets) {
             return false;
@@ -821,7 +873,8 @@ public class BehaviorSettings {
         result = 31 * result + selfPreservationIndex;
         result = 31 * result + fallShameIndex;
         result = 31 * result + hyperAggressionIndex;
-        result = 31 * result + homeEdge.hashCode();
+        result = 31 * result + destinationEdge.hashCode();
+        result = 31 * result + retreatEdge.hashCode();
         result = 31 * result + (null != strategicBuildingTargets ? strategicBuildingTargets.hashCode() : 0);
         result = 31 * result + (null != priorityUnitTargets ? priorityUnitTargets.hashCode() : 0);
         result = 31 * result + herdMentalityIndex;

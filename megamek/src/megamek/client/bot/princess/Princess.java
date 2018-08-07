@@ -1226,7 +1226,7 @@ public class Princess extends BotClient {
                     getBehaviorSettings().getFallShameIndex() / 10d;
             final int startingHomeDistance = getPathRanker(entity).distanceToHomeEdge(
                     entity.getPosition(),
-                    getBehaviorSettings().getHomeEdge(),
+                    getBehaviorSettings().getDestinationEdge(),
                     getGame());
                        
             final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
@@ -1645,8 +1645,8 @@ public class Princess extends BotClient {
         log(callingClass, methodName, LogLevel.DEBUG, "method end");
     }
 
-    HomeEdge getHomeEdge() {
-        return getBehaviorSettings().getHomeEdge();
+    CardinalEdge getHomeEdge() {
+        return getBehaviorSettings().getDestinationEdge();
     }
 
     public int calculateAdjustment(final String ticks) {

@@ -2,7 +2,8 @@
 <princessBehaviors>
   <behavior>
     <name>COWARDLY</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -15,7 +16,8 @@
   </behavior>
   <behavior>
     <name>BERSERK</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>false</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -28,7 +30,8 @@
   </behavior>
   <behavior>
     <name>ESCAPE</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>true</goHome>
     <autoFlee>true</autoFlee>
@@ -41,7 +44,8 @@
   </behavior>
   <behavior>
     <name>DEFAULT</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -54,7 +58,8 @@
   </behavior>
   <behavior>
     <name>Scout (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -67,7 +72,8 @@
   </behavior>
   <behavior>
     <name>Striker (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -80,7 +86,8 @@
   </behavior>
   <behavior>
     <name>Juggernaut (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -93,7 +100,8 @@
   </behavior>
   <behavior>
     <name>Sniper (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -106,7 +114,8 @@
   </behavior>
   <behavior>
     <name>Brawler (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -119,7 +128,8 @@
   </behavior>
   <behavior>
     <name>Missile Boat (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -132,7 +142,8 @@
   </behavior>
   <behavior>
     <name>Skirmisher (pPT)</name>
-    <homeEdge>0</homeEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>

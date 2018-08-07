@@ -224,7 +224,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         OffBoardDirection offBoardDirection = calculateOffBoardDirection(path.getEntity(), path.getFinalCoords(), path.getFinalVectors());
         
         // if we want to flee the board from the edge in question, we're ok
-        if(getOwner().getHomeEdge() == HomeEdge.getHomeEdge(offBoardDirection.getValue()) &&
+        if(getOwner().getHomeEdge() == CardinalEdge.getCardinalEdge(offBoardDirection.getValue()) &&
                 getOwner().isFallingBack(path.getEntity())) {
             return 0.0;
         }

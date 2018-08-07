@@ -73,7 +73,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JCheckBox forcedWithdrawalCheck;
     private JCheckBox goHomeCheck;
     private JCheckBox autoFleeCheck;
-    private JComboBox<String> homeEdgeCombo; //The board edge to be used in a forced withdrawal.
+    private JComboBox<String> destinationEdgeCombo; // The board edge to to which the bot will attempt to move.
+    private JComboBox<String> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
     private JSlider aggressionSlidebar;
     private JSlider fallShameSlidebar;
     private JSlider herdingSlidebar;
@@ -199,7 +200,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        homeEdgeCombo.setSelectedIndex(princessBehavior.getDestinationEdge().getIndex());
+        destinationEdgeCombo.setSelectedIndex(princessBehavior.getDestinationEdge().getIndex());
+        retreatEdgeCombo.setSelectedIndex(princessBehavior.getRetreatEdge().getIndex());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         targetsListModel.clear();
@@ -400,13 +402,32 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         //Row 4 Column 2.
         constraints.gridx++;
-        homeEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
+        destinationEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
                                                            Messages.getString("BotConfigDialog.southEdge"),
                                                            Messages.getString("BotConfigDialog.westEdge"),
-                                                           Messages.getString("BotConfigDialog.eastEdge")});
-        homeEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
-        homeEdgeCombo.setSelectedIndex(0);
-        panel.add(homeEdgeCombo, constraints);
+                                                           Messages.getString("BotConfigDialog.eastEdge"),
+                                                           Messages.getString("BotConfigDialog.noEdge")});
+        destinationEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
+        destinationEdgeCombo.setSelectedIndex(0);
+        panel.add(destinationEdgeCombo, constraints);
+        
+        //Row 4.1 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+        JLabel retreatEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
+        layout.setConstraints(retreatEdgeLabel, constraints);
+        panel.add(retreatEdgeLabel);
+
+        //Row 4 Column 2.
+        constraints.gridx++;
+        retreatEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
+                                                           Messages.getString("BotConfigDialog.southEdge"),
+                                                           Messages.getString("BotConfigDialog.westEdge"),
+                                                           Messages.getString("BotConfigDialog.eastEdge"),
+                                                           Messages.getString("BotConfigDialog.nearestEdge")});
+        retreatEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.retreatEdgeTooltip"));
+        retreatEdgeCombo.setSelectedIndex(0);
+        panel.add(retreatEdgeCombo, constraints);
 
         //Row 5.
         constraints.gridx = 0;
@@ -559,7 +580,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
         tempBehavior.setGoHome(goHomeCheck.isSelected());
-        tempBehavior.setDestinationEdge(homeEdgeCombo.getSelectedIndex());
+        tempBehavior.setDestinationEdge(destinationEdgeCombo.getSelectedIndex());
+        tempBehavior.setRetreatEdge(retreatEdgeCombo.getSelectedIndex());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());

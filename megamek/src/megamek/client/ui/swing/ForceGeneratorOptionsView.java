@@ -491,6 +491,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		fd.setSizeMod(forceDesc.getSizeMod());
 		fd.getFlags().addAll(forceDesc.getFlags());
 		fd.setRating(forceDesc.getRating());
+		fd.setExperience(forceDesc.getExperience());
 		fd.setWeightClass(forceDesc.getWeightClass());
 		fd.setAttachments(chkAttachments.isSelected());
 		if (forceDesc.getUnitType() != null) {
@@ -893,6 +894,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		} else if (ev.getSource() == cbRating) {
 			forceDesc.setRating((String)cbRating.getSelectedItem());
 			refreshFlags();
+        } else if (ev.getSource() == cbExperience) {
+            if (cbExperience.getSelectedIndex() == 0) {
+                forceDesc.setExperience(null);
+            } else {
+                forceDesc.setExperience(cbExperience.getSelectedIndex() - 1);
+            }
+            refreshFlags();
 		} else if (ev.getSource() == cbFlags) {
 			forceDesc.getFlags().clear();
 			if (cbFlags.getSelectedItem() != null) {

@@ -21,7 +21,6 @@ import java.util.TreeMap;
 import org.w3c.dom.Node;
 
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 
 /**
  * Stores data about factions used for building RATs, including
@@ -283,7 +282,7 @@ public class FactionRecord {
 						retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
 					}					
 				} else {
-		            DefaultMmLogger.getInstance().log(getClass(), "getSalvage(int)", LogLevel.DEBUG,
+		            DefaultMmLogger.getInstance().debug(getClass(), "getSalvage(int)",
 		                    "RATGenerator: could not locate salvage faction " + pKey
 							+ " for " + key);
 				}
@@ -358,7 +357,7 @@ public class FactionRecord {
 				try {
 					list.add(Integer.parseInt(pct));
 				} catch (NumberFormatException ex) {
-		            DefaultMmLogger.getInstance().log(getClass(), "setPctTech(TechCategory, int, String)", LogLevel.ERROR,
+		            DefaultMmLogger.getInstance().error(getClass(), "setPctTech(TechCategory, int, String)",
 		                    "While loading faction data for " + key);
 				}
 			}
@@ -467,7 +466,7 @@ public class FactionRecord {
 				try {
 					retVal.setYears(wn.getTextContent());
 				} catch (ParseException ex) {
-		            DefaultMmLogger.getInstance().log(FactionRecord.class, "createFromXml(Node)", ex);
+		            DefaultMmLogger.getInstance().error(FactionRecord.class, "createFromXml(Node)", ex);
 				}
 			} else if (wn.getNodeName().equalsIgnoreCase("ratingLevels")) {
 				retVal.setRatings(wn.getTextContent());
@@ -540,7 +539,7 @@ public class FactionRecord {
 					int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
 					setWeightDistribution(era, unitType, wn.getTextContent());
 				} catch (Exception ex) {
-		            DefaultMmLogger.getInstance().log(getClass(), "loadEra(Node, int)", LogLevel.ERROR,
+		            DefaultMmLogger.getInstance().error(getClass(), "loadEra(Node, int)",
 		                    "RATGenerator: error parsing weight distributions for " + key
 							+ ", " + era);
 				}

@@ -840,7 +840,7 @@ public class ForceDescriptor {
                     DefaultMmLogger.getInstance().log(getClass(),
                             "loadEntities(Ruleset#ProgressListener, double)", LogLevel.ERROR,
                             "Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
-                    DefaultMmLogger.getInstance().log(getClass(),
+                    DefaultMmLogger.getInstance().error(getClass(),
                             "loadEntities(Ruleset#ProgressListener, double)", ex);
                 }
             }

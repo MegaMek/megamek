@@ -35,7 +35,6 @@ import org.w3c.dom.NodeList;
 
 import megamek.client.RandomNameGenerator;
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 
 /**
  * Container for all the rule nodes for a faction. Has methods for processing the rules to
@@ -210,7 +209,7 @@ public class Ruleset {
 				}				
 			} else {
 				applied = fn.apply(fd);
-		        DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.DEBUG,
+		        DefaultMmLogger.getInstance().debug(getClass(), METHOD_NAME,
 		                "Selecting force node " + fn.show() //$NON-NLS-1$
 		                + " from ruleset " + rs.getFaction()); //$NON-NLS-1$
 			}
@@ -358,14 +357,14 @@ public class Ruleset {
         			try {
         				constants.put(fields[0], fields[1]);
         			} catch (NumberFormatException e) {
-                        DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                        DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
                                 "Malformed line in force generator constants file: " + line); //$NON-NLS-1$
         			}
 	        	}
 	        }
 	        reader.close();
 		} catch (IOException e) {
-            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, e); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME, e); //$NON-NLS-1$
 		}
 	}
 	
@@ -377,7 +376,7 @@ public class Ruleset {
 		
 		File dir = new File(directory);
 		if (!dir.exists()) {
-            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
                     "Could not locate force generator faction rules."); //$NON-NLS-1$
 			initializing = false;
 			return;
@@ -404,7 +403,7 @@ public class Ruleset {
 					rulesets.put(rs.getFaction(), rs);
 				}
 			} catch (IllegalArgumentException ex) {
-                DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+                DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
                         "While parsing file " + f.toString() + ": " + ex.getMessage());
 			}
 		}
@@ -425,7 +424,7 @@ public class Ruleset {
 			xmlDoc = db.parse(fis);
 			fis.close();
 		} catch (Exception e) {
-            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
                     "While loading force template from file " + f.getName() + ": " //$NON-NLS-1$
                             + e.getMessage());
 			return null;
@@ -435,14 +434,14 @@ public class Ruleset {
 		
 		Element elem = xmlDoc.getDocumentElement();
 		if (!elem.getNodeName().equals("ruleset")) {
-            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
                     "Could not find ruleset element in file " + f.getName()); //$NON-NLS-1$
 			return null;
 		}
 		if (elem.getAttribute("faction").length() > 0) {
 			retVal.faction = elem.getAttribute("faction");
 		} else {
-            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
                     "Faction is not declared in ruleset file " + f.getName()); //$NON-NLS-1$
 			return null;
 		}
@@ -521,7 +520,7 @@ public class Ruleset {
 				try {
 					fn = ForceNode.createFromXml(wn);
 				} catch (IllegalArgumentException ex) {
-		            DefaultMmLogger.getInstance().log(Ruleset.class, METHOD_NAME, LogLevel.ERROR,
+		            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
 		                    "In file " + f.getName() + " while processing force node" + //$NON-NLS-1$
 							((wn.getAttributes().getNamedItem("eschName") == null)?"": //$NON-NLS-1$
 								" " + wn.getAttributes().getNamedItem("eschName")) + //$NON-NLS-1$

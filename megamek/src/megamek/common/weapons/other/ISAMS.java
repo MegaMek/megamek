@@ -50,7 +50,7 @@ public class ISAMS extends AmmoWeapon {
         bv = 32;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
-        setModes(new String[] { "On", "Off", "Manual" });
+        setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
         atClass = CLASS_AMS;

@@ -942,7 +942,7 @@ public class BLKFile {
                 } else if (transporter.startsWith("dropshuttlebay:")) {
                     String numbers = transporter.substring("dropshuttlebay:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new DropshuttleBay(pbi.getFacing(), pbi.getDoors(), pbi.getBayNumber()));
+                    e.addTransporter(new DropshuttleBay(pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()));
                 } else if (transporter.startsWith("navalrepairpressurized:")) {
                     String numbers = transporter.substring("navalrepairpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);

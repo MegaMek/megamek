@@ -42,8 +42,12 @@ public class ISAPDS extends AmmoWeapon {
         ammoType = AmmoType.T_APDS;
         tonnage = 3;
         criticals = 2;
-        shortRange = 1; // for manual operation
+        minimumRange = 0; 
+        shortRange = 1;
+        mediumRange = 2;
         longRange = 3;
+        extremeRange = 3;
+        maxRange = RANGE_LONG;
         bv = 64;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON)
                 .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);

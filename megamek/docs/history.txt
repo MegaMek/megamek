@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.45.1-git
 + PR #1053 - Gradient & Difference Clouds Camos
++ Issue #1081 - Narc Explosive ammo type no longer missing the letter "E" in reports
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

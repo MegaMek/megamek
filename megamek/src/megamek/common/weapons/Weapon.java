@@ -52,7 +52,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     
     public static final String Mode_AMS_On = "On";
     public static final String Mode_AMS_Off = "Off";
-    public static final String Mode_AMS_Manual = "Manual";
+    public static final String Mode_AMS_Manual = "Use as Weapon";
     
     public static final String Mode_CapLaser_AAA = "AAA";
     

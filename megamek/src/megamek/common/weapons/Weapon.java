@@ -190,6 +190,9 @@ public abstract class Weapon extends WeaponType implements Serializable {
         }
 
         if (hasFlag(WeaponType.F_AMS)) {
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+                addMode(Weapon.Mode_AMS_Manual);
+            }
             if (gOp.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 removeMode("Automatic");
             } else {

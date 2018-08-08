@@ -75,6 +75,7 @@ import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 
@@ -1075,7 +1076,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.Mode_AMS_Manual))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$

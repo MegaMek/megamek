@@ -363,6 +363,7 @@ public class OptionsConstants {
     public static final String ADVANCED_ALTERNATE_PILOT_BV_MOD= "alternate_pilot_bv_mod";  //$NON-NLS$
 
     public static final String ADVCOMBAT_TACOPS_AMS= "tacops_ams";  //$NON-NLS$
+    public static final String ADVCOMBAT_TACOPS_MANUAL_AMS= "tacops__manual_ams";  //$NON-NLS$
     public static final String ADVCOMBAT_FLOATING_CRITS= "floating_crits";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_CRIT_ROLL= "tacops_crit_roll";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS= "tacops_engine_explosions";  //$NON-NLS$

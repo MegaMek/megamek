@@ -148,6 +148,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false); // $NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false); // $NON-NLS-1$

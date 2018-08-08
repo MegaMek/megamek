@@ -41,7 +41,8 @@ public class ISAMS extends AmmoWeapon {
         addLookupName("ISAMS");
         heat = 1;
         rackSize = 2;
-        damage = 1; // # of d6 of missiles affected
+        damage = 2; // for manual operation
+        shortRange = 1; // for manual operation
         shortAV = 3;
         ammoType = AmmoType.T_AMS;
         tonnage = 0.5f;
@@ -49,7 +50,7 @@ public class ISAMS extends AmmoWeapon {
         bv = 32;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
-        setModes(new String[] { "On", "Off" });
+        setModes(new String[] { "On", "Off", "Manual" });
         setInstantModeSwitch(false);
         cost = 100000;
         atClass = CLASS_AMS;

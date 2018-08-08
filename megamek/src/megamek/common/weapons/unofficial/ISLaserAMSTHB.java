@@ -40,7 +40,8 @@ public class ISLaserAMSTHB extends LaserWeapon {
         addLookupName("IS Laser AMS (THB)");
         heat = 3;
         rackSize = 2;
-        damage = 2; // # of d6 of missiles affected
+        damage = 3; // for manual operation
+        shortRange = 1; // for manual operation
         shortAV = 3;
         ammoType = AmmoType.T_NA;
         tonnage = 1.5f;
@@ -52,7 +53,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_AUTO_TARGET).or(F_HEATASDICE).or(F_AMS).or(F_ENERGY)
                 .and(F_DIRECT_FIRE.not());
-        setModes(new String[] { "On", "Off" });
+        setModes(new String[] { "On", "Off", "Manual" });
         setInstantModeSwitch(false);
         cost = 300000;
         //Since this are the Tactical Handbook Weapons I'm using the TM Stats.

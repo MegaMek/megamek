@@ -38,15 +38,16 @@ public class ISAPDS extends AmmoWeapon {
         setInternalName("ISAPDS");
         heat = 2;
         rackSize = 2;
-        damage = 1; // # of d6 of missiles affected
+        damage = 2; // for manual operation
         ammoType = AmmoType.T_APDS;
         tonnage = 3;
         criticals = 2;
+        shortRange = 1; // for manual operation
         longRange = 3;
         bv = 64;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON)
                 .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
-        setModes(new String[] { "On", "Off" });
+        setModes(new String[] { "On", "Off", "Manual" });
         setInstantModeSwitch(false);
         cost = 200000;
         rulesRefs = "91, IO";

@@ -135,10 +135,10 @@ public class BehaviorSettings {
     public BehaviorSettings getCopy() throws PrincessException {
         final BehaviorSettings copy = new BehaviorSettings();
         copy.setDestinationEdge(getDestinationEdge());
+        copy.setRetreatEdge(getRetreatEdge());
         copy.setForcedWithdrawal(isForcedWithdrawal());
         copy.setAutoFlee(shouldAutoFlee());
         copy.setDescription(getDescription());
-        copy.setGoHome(shouldGoHome());
         copy.setFallShameIndex(getFallShameIndex());
         copy.setBraveryIndex(getBraveryIndex());
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
@@ -172,15 +172,9 @@ public class BehaviorSettings {
      * @return TRUE if I should immediately proceed to my home board edge.
      */
     public boolean shouldGoHome() {
-        return goHome;
+        return destinationEdge != CardinalEdge.NEAREST_OR_NONE;
     }
 
-    /**
-     * @param goHome Set TRUE if I should immediately proceed to my home board edge.
-     */
-    public void setGoHome(final boolean goHome) {
-        this.goHome = goHome;
-    }
 
     /**
      * @return TRUE if I should flee off the board even if I am not crippled or Forced Withdrawal is not in effect.
@@ -680,8 +674,6 @@ public class BehaviorSettings {
                 setDescription(child.getTextContent());
             } else if ("forcedWithdrawal".equalsIgnoreCase(child.getNodeName())) {
                 setForcedWithdrawal(child.getTextContent());
-            } else if ("goHome".equalsIgnoreCase(child.getNodeName())) {
-                setGoHome("true".equalsIgnoreCase(child.getTextContent()));
             } else if ("autoFlee".equalsIgnoreCase(child.getNodeName())) {
                 setAutoFlee("true".equalsIgnoreCase(child.getTextContent()));
             } else if ("fallShameIndex".equalsIgnoreCase(child.getNodeName())) {

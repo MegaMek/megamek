@@ -35,6 +35,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
@@ -71,7 +72,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JList<String> targetsList;
     private DefaultListModel<String> targetsListModel = new DefaultListModel<>();
     private JCheckBox forcedWithdrawalCheck;
-    private JCheckBox goHomeCheck;
     private JCheckBox autoFleeCheck;
     private JComboBox<String> destinationEdgeCombo; // The board edge to to which the bot will attempt to move.
     private JComboBox<String> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
@@ -195,7 +195,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         }
         verbosityCombo.setSelectedIndex(0);
         forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
-        goHomeCheck.setSelected(princessBehavior.shouldGoHome());
         autoFleeCheck.setSelected(princessBehavior.shouldAutoFlee());
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
@@ -378,13 +377,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         forcedWithdrawalCheck.setToolTipText(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip"));
         panel.add(forcedWithdrawalCheck, constraints);
 
-        //Row 3 Column 2.
-        constraints.gridx++;
-        goHomeCheck = new JCheckBox(Messages.getString("BotConfigDialog.goHomeCheck"));
-        goHomeCheck.setToolTipText(Messages.getString("BotConfigDialog.goHomeTooltip"));
-        goHomeCheck.addActionListener(this);
-        panel.add(goHomeCheck, constraints);
-
         //Row 3 Column 3.
         constraints.gridx++;
         autoFleeCheck = new JCheckBox(Messages.getString("BotConfigDialog.autoFleeCheck"));
@@ -409,6 +401,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
                                                            Messages.getString("BotConfigDialog.noEdge")});
         destinationEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
         destinationEdgeCombo.setSelectedIndex(0);
+        destinationEdgeCombo.addActionListener(this);
         panel.add(destinationEdgeCombo, constraints);
         
         //Row 4.1 Column 1.
@@ -553,11 +546,12 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         } else if (princessBehaviorNames.equals(e.getSource())) {
             setPrincessFields();
 
-        } else if (goHomeCheck.equals(e.getSource())) {
-            if (!goHomeCheck.isSelected()) {
-                autoFleeCheck.setSelected(false);
+        } else if (destinationEdgeCombo.equals(e.getSource())) {
+            if (CardinalEdge.getCardinalEdge(destinationEdgeCombo.getSelectedIndex()) == CardinalEdge.NEAREST_OR_NONE) {
+                autoFleeCheck.setEnabled(false);
+            } else {
+                autoFleeCheck.setEnabled(true);
             }
-            autoFleeCheck.setEnabled(goHomeCheck.isSelected());
         } else if (princessHelpButton.equals(e.getSource())) {
             launchPrincessHelp();
         }
@@ -579,7 +573,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
-        tempBehavior.setGoHome(goHomeCheck.isSelected());
         tempBehavior.setDestinationEdge(destinationEdgeCombo.getSelectedIndex());
         tempBehavior.setRetreatEdge(retreatEdgeCombo.getSelectedIndex());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());

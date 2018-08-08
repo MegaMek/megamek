@@ -492,7 +492,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                 StringBuilder formula) {
         if (getOwner().getFallBack() || movingUnit.isCrippled()) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(),
-                                                       getOwner().getHomeEdge(),
+                                                       getOwner().getHomeEdge(movingUnit),
                                                        game);
             double selfPreservation = getOwner().getBehaviorSettings()
                                                 .getSelfPreservationValue();

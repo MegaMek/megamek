@@ -279,7 +279,6 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
             berserkBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             berserkBehavior.setForcedWithdrawal(false);
-            berserkBehavior.setGoHome(false);
             berserkBehavior.setAutoFlee(false);
             berserkBehavior.setFallShameIndex(2);
             berserkBehavior.setHyperAggressionIndex(10);
@@ -317,7 +316,6 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
             cowardlyBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             cowardlyBehavior.setForcedWithdrawal(true);
-            cowardlyBehavior.setGoHome(false);
             cowardlyBehavior.setAutoFlee(false);
             cowardlyBehavior.setFallShameIndex(8);
             cowardlyBehavior.setHyperAggressionIndex(1);
@@ -358,7 +356,6 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
             escapeBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             escapeBehavior.setForcedWithdrawal(true);
-            escapeBehavior.setGoHome(true);
             escapeBehavior.setAutoFlee(true);
             escapeBehavior.setFallShameIndex(7);
             escapeBehavior.setHyperAggressionIndex(3);
@@ -396,7 +393,6 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
             defaultBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             defaultBehavior.setForcedWithdrawal(true);
-            defaultBehavior.setGoHome(false);
             defaultBehavior.setAutoFlee(false);
             defaultBehavior.setFallShameIndex(5);
             defaultBehavior.setHyperAggressionIndex(5);

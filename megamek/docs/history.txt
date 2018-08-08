@@ -1,10 +1,14 @@
 VERSION HISTORY:
 ----------------
-v0.45.0-git
+v0.45.1-git
++ PR #1053 - Gradient & Difference Clouds Camos
++ Issue #1081 - Narc Explosive ammo type no longer missing the letter "E" in reports
+
+v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.
 + Issue #1008: When adding units through Add A Combat Unit dialog adds two instead of one when using enter key
 + PR #989: Errata - Range Master SPA no longer applicable to LOS range
-+ PR #1001: Prototype improvements to infantry pathfinding allowing Princess to make significantly better use of infantry than previously.
++ PR #1001: [Feature] Prototype improvements to infantry pathfinding allowing Princess to make significantly better use of infantry than previously.
 + PR #1013: Defer calculating initial BV when adding multiple entities to game.
         Fixes bug that disconnects C3 networks when loading from MUL of any unit loaded before the C3 master.
 + Issue #1027: Off-board Infantry Field Artillery "Target Out of Arc"
@@ -28,6 +32,11 @@ v0.45.0-git
 	(larger for some factions) with optional support combat and transport forces. Some or all of the
 	force can be added to the forces in the lounge or exported to a MUL.
 	See documentation: docs/RAT Stuff/force-generator.txt
++ PR #1070: Makes the advanced search dialog smaller by default and resizable.
++ PR #1071 - Mech Sprites
++ Data - New Sprites
++ Issue #1073: Princess will no longer be able to move out-of-control aeros on ground and atmospheric maps
++ PR #1064: Fixes targeting and landing issues with glider protomechs
 
 v0.44.0 (2018-06-24 1900 UTC)
 + Data: Dropship infantry bay fixes.

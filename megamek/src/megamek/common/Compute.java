@@ -2357,10 +2357,11 @@ public class Compute {
         ToHitData toHit = Compute
                 .getTargetMovementModifier(
                         entity.delta_distance,
-                        ((entity.moved == EntityMovementType.MOVE_JUMP)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)),
+                        (entity.getMovementMode() != EntityMovementMode.WIGE)
+                        && ((entity.moved == EntityMovementType.MOVE_JUMP)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                                || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)),
                         
                         (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
@@ -2384,11 +2385,7 @@ public class Compute {
         }
         if ((entity.getElevation() > 0)
             && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-            if (entity instanceof Protomech) {
-                toHit.addModifier(3, "target is a gliding protomech");
-            } else {
-                toHit.addModifier(1, "target is a flying WiGE");
-            }
+                toHit.addModifier(1, "target is airborne");
         }
 
         // did the target sprint?
@@ -4541,16 +4538,14 @@ public class Compute {
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
+        
+        // If we have no sensors then return false
+        if (ae.getActiveSensor() == null) {
+            return false;
+        }
 
         int bracket = Compute.getSensorRangeBracket(ae, target, allECMInfo);
         int range = Compute.getSensorRangeByBracket(game, ae, target, los);
-        
-        //A bit of a hack here. "Spacecraft Sensors" return the ground range, because Sensor doesn't know about Game or Entity
-        //to do otherwise. We need to use the ground range instead.
-        if ((ae.getActiveSensor() != null) &&
-                ae.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-            range = Sensor.LC_RADAR_GROUND_RANGE;
-        }
 
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);

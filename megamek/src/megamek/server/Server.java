@@ -7261,11 +7261,13 @@ public class Server implements Runnable {
                     entity.setWigeLiftoffHover(true);
                     entity.setAssaultDropInProgress(false);
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
+                    // If this is the first step, use the Entity's starting elevation
+                    int elevation = (prevStep == null)? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMech) {
                         addReport(landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
                                 distance));
                     } else if (entity instanceof Protomech) {
-                        addReport(landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
+                        addReport(landGliderPM((Protomech)entity, step.getPosition(), elevation,
                                 distance));
                     }
                     // landing always ends movement whether successful or not
@@ -27167,7 +27169,8 @@ public class Server implements Runnable {
             en.setElevation(0);
         }
         PilotingRollData psr = en.checkGliderLanding();
-        if (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false)) {
+        if ((psr.getValue() != TargetRoll.CHECK_FALSE)
+                && (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false))) {
             for (int i = 0; i < en.getNumberOfCriticals(Protomech.LOC_LEG); i++) {
                 en.getCritical(Protomech.LOC_LEG, i).setHit(true);
             }

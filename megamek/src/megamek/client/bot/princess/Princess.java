@@ -836,6 +836,13 @@ public class Princess extends BotClient {
                 movingEntity = entity;
                 break;
             }
+            
+            // can't do anything with out-of-control aeros, so use them as init sinks
+            if(entity.isAero() && ((IAero) entity).isOutControlTotal()) {
+                msg.append("is out-of-control aero.");
+                movingEntity = entity;
+                break;
+            }
 
             // If I only have 1 unit, no need to calculate an index.
             if (1 == myEntities.size()) {
@@ -1195,7 +1202,7 @@ public class Princess extends BotClient {
             if (null == paths) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
                     "No valid paths found.");
-                return new MovePath(game, entity);
+                return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
             final double thisTimeEstimate =
@@ -1242,7 +1249,7 @@ public class Princess extends BotClient {
             moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
             
             if (0 == rankedpaths.size()) {
-                return new MovePath(game, entity);
+                return performPathPostProcessing(new MovePath(game, entity), 0);
             }
             
             log(getClass(), METHOD_NAME,
@@ -1254,9 +1261,7 @@ public class Princess extends BotClient {
                 "Best Path: " + bestpath.getPath() + "  Rank: "
                 + bestpath.getRank());
             
-            performPathPostProcessing(bestpath);
-            
-            return bestpath.getPath();
+            return performPathPostProcessing(bestpath);
         } finally {
             precognition.unPause();
             methodEnd(getClass(), METHOD_NAME);
@@ -1765,25 +1770,39 @@ public class Princess extends BotClient {
     /**
      * Helper function to perform some modifications to a given path.
      * Intended to happen after we pick the best path. 
-     * @param path The path to process
+     * @param path The ranked path to process
+     * @return Altered move path
      */
-    private void performPathPostProcessing(final RankedPath path) {
-        evadeIfNotFiring(path);
-        unloadTransportedInfantry(path);
+    private MovePath performPathPostProcessing(final RankedPath path) {
+        return performPathPostProcessing(path.getPath(), path.getExpectedDamage());
+    }
+    
+    /**
+     * Helper function to perform some modifications to a given path.
+     * @param path The move path to process
+     * @param expectedDamage The damage expected to be done by the unit as a result of the path
+     * @return Altered move path
+     */
+    private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
+        MovePath retval = path;
+        evadeIfNotFiring(retval, 0 >= expectedDamage);
+        unloadTransportedInfantry(retval);
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
-        if(path.getPath().getEntity().isAero()) {
-            SharedUtility.moveAero(path.getPath(), null);
+        if(path.getEntity().isAero()) {
+            retval = SharedUtility.moveAero(retval, null);
         }
+        
+        return retval;
     }
     
     /**
      * Helper function that insinuates an "evade" step for aircraft that will not be shooting.
      * @param path The path to process
      */
-    private void evadeIfNotFiring(final RankedPath path) {
-        Entity pathEntity = path.getPath().getEntity();
+    private void evadeIfNotFiring(MovePath path, boolean possibleToInflictDamage) {
+        Entity pathEntity = path.getEntity();
         
         // we cannot evade if we are out of control
         if(pathEntity.isAero() && pathEntity.isAirborne() && ((IAero) pathEntity).isOutControlTotal()) {
@@ -1795,10 +1814,9 @@ public class Princess extends BotClient {
         // and we can do so without causing a PSR
         // then evade
         if(pathEntity.isAirborne() &&
-           (0 >= path.getExpectedDamage()) &&
-           (path.getPath().getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getPath()
-                                                                                                  .getEntity()) - 2)) {
-            path.getPath().addStep(MoveStepType.EVADE);
+           !possibleToInflictDamage &&
+           (path.getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+            path.addStep(MoveStepType.EVADE);
         }
     }
     
@@ -1810,15 +1828,15 @@ public class Princess extends BotClient {
      * so we handle it separately.
      * @param path The path to modify
      */
-    private void unloadTransportedInfantry(final RankedPath path) {
+    private void unloadTransportedInfantry(MovePath path) {
         // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
         // behind. They're not that good at screening against high speed pursuit anyway.
         if(getBehaviorSettings().shouldGoHome()) {
             return;
         }
         
-        Entity movingEntity = path.getPath().getEntity();
-        Coords pathEndpoint = path.getPath().getFinalCoords();
+        Entity movingEntity = path.getEntity();
+        Coords pathEndpoint = path.getFinalCoords();
         Entity closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame());
 
         // if there are no enemies on the board, then we're not unloading anything.
@@ -1850,7 +1868,7 @@ public class Princess extends BotClient {
                 boolean inEngagementRange = loadedEntity.getWalkMP() + loadedEntity.getMaxWeaponRange() >= distanceToClosestEnemy;
                 
                 if(!unloadFatal && !unloadIllegal && inEngagementRange) {
-                    path.getPath().addStep(MoveStepType.UNLOAD, loadedEntity, pathEndpoint);
+                    path.addStep(MoveStepType.UNLOAD, loadedEntity, pathEndpoint);
                     return; // we can only unload one infantry unit per hex per turn, so once we've unloaded, we're done. 
                 }
             }

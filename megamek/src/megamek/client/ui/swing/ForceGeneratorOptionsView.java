@@ -850,6 +850,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 	
 	private TOCNode findTOCNode() {
 		Ruleset rs = Ruleset.findRuleset(forceDesc);
+		if (null == rs) {
+		    return null;
+		}
 		TOCNode toc = null;
 		do {
 			toc = rs.getTOCNode();

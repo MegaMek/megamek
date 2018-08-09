@@ -107,7 +107,7 @@ public class BasicPathRankerTest {
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
-        Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
+        Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         Mockito.when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
@@ -376,7 +376,7 @@ public class BasicPathRankerTest {
                .distanceToClosestEdge(Mockito.any(Coords.class), Mockito.any(IGame.class));
         Mockito.doReturn(20)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         Mockito.doReturn(12.0)
                .when(testRanker)
                .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
@@ -835,7 +835,7 @@ public class BasicPathRankerTest {
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(10)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         expected = new RankedPath(-201.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -864,7 +864,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(30)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         expected = new RankedPath(-501.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -893,7 +893,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(20)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
         Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(false);
         Mockito.when(mockMover.isCrippled()).thenReturn(false);
 

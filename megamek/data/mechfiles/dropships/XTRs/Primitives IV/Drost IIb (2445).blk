@@ -39,9 +39,10 @@ Aerodyne
 <transporters>
 smallcraftbay:2.0:2:1
 smallcraftbay:6.0:2:2
-2ndclassquarters:70.0:0
 1stclassquarters:50.0:0
-crewquarters:217.0:0
+2ndclassquarters:70.0:0
+steeragequarters:105.0:0
+cargobay:97.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -61,7 +62,7 @@ crewquarters:217.0:0
 </sink_type>
 
 <fuel>
-6819
+9545
 </fuel>
 
 <engine_type>
@@ -198,3 +199,6 @@ XTRO Primitives IV - Age of War
 1
 </escape_pod>
 
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>

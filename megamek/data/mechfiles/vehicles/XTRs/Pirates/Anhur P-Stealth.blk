@@ -2,66 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Anhur
 </Name>
+
 <Model>
 (P-Stealth)
 </Model>
-<Tonnage>
-30
-</Tonnage>
+
+<year>
+3074
+</year>
+
+<originalBuildYear>
+3074
+</originalBuildYear>
+
+<type>
+Mixed (Clan Chassis) Experimental
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+cargobay:5.5:1:1
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
 12
 12
 12
 10
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+IS Vehicular Stealth
+</Body Equipment>
+
 <Front Equipment>
 CLLRM15
 CLLRM15
-CLLRM15 Ammo
+Clan Ammo LRM-15
 </Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
 <Rear Equipment>
 CLMediumPulseLaser
 </Rear Equipment>
 
-<transporters>
-cargobay:5.5:1
-</transporters>
+<Rotor Equipment>
+</Rotor Equipment>
 
-<Body Equipment>
-ISGuardianECM
-</Body Equipment>
-<type>
-Mixed (Clan Chassis) Experimental
-</type>
-<year>
-3074
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-22
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
 <source>
-XTR Pirates
+XTR Pirates - Jihad
 </source>
+
+<tonnage>
+30.0
+</tonnage>
+

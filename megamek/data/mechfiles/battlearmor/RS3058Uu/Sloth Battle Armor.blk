@@ -24,13 +24,20 @@ Sloth Battle Armor
 3050
 </year>
 
+<originalBuildYear>
+3050
+</originalBuildYear>
+
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -45,8 +52,8 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-ISBASmall Laser:Body
-ISBASmall Laser:Body
+ISBASmallLaser:Body
+ISBASmallLaser:Body
 BAMineLauncher:Body
 </Squad Equipment>
 

@@ -21,8 +21,12 @@ Karnov UR Transport
 </Model>
 
 <year>
-3081				
+3081
 </year>
+
+<originalBuildYear>
+3081
+</originalBuildYear>
 
 <type>
 IS Level 4
@@ -32,6 +36,12 @@ IS Level 4
 VTOL
 </motion_type>
 
+<transporters>
+infantrybay:4.0:1:2:Foot
+troopspace:4.0
+cargobay:14.0:1:3
+</transporters>
+
 <cruiseMP>
 6
 </cruiseMP>
@@ -39,6 +49,14 @@ VTOL
 <engine_type>
 2
 </engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
 
 <armor>
 20
@@ -48,17 +66,13 @@ VTOL
 2
 </armor>
 
-<armor_type>
-22
-</armor_type>
-
-
 <Body Equipment>
+IS Vehicular Stealth
 ISVTOLJetBooster
 ISAngelECMSuite
 ISSponsonTurret
-ISMG (ST)
-ISMG (ST)
+Machine Gun(ST)
+Machine Gun(ST)
 IS Machine Gun Ammo - Half
 </Body Equipment>
 
@@ -74,16 +88,14 @@ IS Machine Gun Ammo - Half
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:14:1
-InfantryBay:4:1
-</transporters>
-
-<tonnage>
-45.0
-</tonnage>
+<Rotor Equipment>
+</Rotor Equipment>
 
 <source>
 XTRO Most Wanted - Jihad
 </source>
+
+<tonnage>
+45.0
+</tonnage>
 

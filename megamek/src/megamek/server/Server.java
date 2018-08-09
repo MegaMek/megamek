@@ -26416,6 +26416,25 @@ public class Server implements Runnable {
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
                         && !(aero instanceof FighterSquadron)
                         && (weapon.getType() instanceof WeaponType)) {
+                        //Bay Weapons
+                        if (aero.usesWeaponBays()) {
+                            //Pick a random weapon in the bay and get the stats
+                            int wId = Compute.randomInt(weapon.getBayWeapons().size());
+                            Mounted bayW = aero.getEquipment(wId);
+                            Mounted bayWAmmo = bayW.getLinked();
+                            if (bayWAmmo != null) {
+                                int ammoroll = Compute.d6(2);
+                                if (ammoroll >= 10) {
+                                    r = new Report(9151);
+                                    r.subject = aero.getId();
+                                    r.add(bayWAmmo.getName());
+                                    r.newlines = 0;
+                                    reports.add(r);
+                                    reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                    break;
+                                }
+                            }
+                        }
                         // does it use Ammo?
                         WeaponType wtype = (WeaponType) weapon.getType();
                         if (wtype.getAmmoType() != AmmoType.T_NA) {

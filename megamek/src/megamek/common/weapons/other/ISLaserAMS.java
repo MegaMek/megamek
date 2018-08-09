@@ -37,7 +37,13 @@ public class ISLaserAMS extends LaserWeapon {
         addLookupName("ISLaserAMS");
         heat = 7;
         rackSize = 2;
-        damage = 2; // # of d6 of missiles affected
+        damage = 3; // for manual operation
+        minimumRange = 0; 
+        shortRange = 1;
+        mediumRange = 1;
+        longRange = 1;
+        extremeRange = 1;
+        maxRange = RANGE_SHORT;
         shortAV = 3;
         ammoType = AmmoType.T_NA;
         tonnage = 1.5f;

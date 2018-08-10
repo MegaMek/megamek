@@ -5,6 +5,7 @@ v0.45.1-git
 + Issue #1081 - Narc Explosive ammo type no longer missing the letter "E" in reports
 + Issue #378 - [Feature] Implements Tac Ops "Use AMS as Weapon" rule
 + Issue #1051 - AMS no longer nags player when a shutdown mech is attacked
++ Data: New Sprites and data fixes.
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

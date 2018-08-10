@@ -164,7 +164,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("jump_range")) {
-            a.setDriveCoreType(dataFile.getDataAsInt("jump_range")[0]);
+            a.setJumpRange(dataFile.getDataAsInt("jump_range")[0]);
         }
 
         if (dataFile.exists("lithium-fusion")) {

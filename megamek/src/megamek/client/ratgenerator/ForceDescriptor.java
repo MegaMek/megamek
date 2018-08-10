@@ -1446,7 +1446,7 @@ public class ForceDescriptor {
     public void setRating(String rating) {
         this.rating = rating;
     }
-    
+
     /**
      * Translates between the rating codes used by the force generator and those used by the
      * RAT Generator. The force generator uses abbreviations to make the formation rules more

@@ -23818,7 +23818,6 @@ public class Server implements Runnable {
                         r.subject = te_n;
                         r.indent(2);
                         r.add(damage);
-                        vDesc.add(r);
                         int loc = hit.getLocation();
                         //Roll for broadside weapons so fore/aft side armor facing takes the damage
                         if (loc == Warship.LOC_LBS) {
@@ -23837,6 +23836,8 @@ public class Server implements Runnable {
                                 loc = Jumpship.LOC_ARS;
                             }
                         }
+                        r.add(te.getLocationAbbr(loc));
+                        vDesc.add(r);
                         if (damage > te.getArmor(loc)) {
                             te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
                             r = new Report(6090);
@@ -23910,8 +23911,6 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     if (!ammoExplosion) {
                         r.messageId = 9005;
-                    } else {
-                        r.messageId = 9006;
                     }
                     r.add(damage);
                     r.add(Math.max(a.getSI(), 0));
@@ -26459,22 +26458,55 @@ public class Server implements Runnable {
                         && (weapon.getType() instanceof WeaponType)) {
                         //Bay Weapons
                         if (aero.usesWeaponBays()) {
+                            //Finish reporting(9150) a hit on the bay
+                            r.add(weapon.getName());
+                            reports.add(r);
                             //Pick a random weapon in the bay and get the stats
                             int wId = weapon.getBayWeapons().get(Compute.randomInt(weapon.getBayWeapons().size()));
                             Mounted bayW = aero.getEquipment(wId);
                             Mounted bayWAmmo = bayW.getLinked();
                             if (bayWAmmo != null) {
-                                int ammoroll = Compute.d6(2);
-                                if (ammoroll >= 10) {
-                                    r = new Report(9151);
-                                    r.subject = aero.getId();
-                                    r.add(bayWAmmo.getName());
-                                    r.newlines = 0;
+                                r = new Report(9156);
+                                r.subject = aero.getId();
+                                r.newlines = 1;
+                                r.indent(2);
+                                //On a roll of 10+, the ammo bin explodes
+                                int ammoRoll = Compute.d6(2);
+                                boomTarget = 10;
+                                r.choose(ammoRoll >= boomTarget);
+                                if (ammoRoll >= boomTarget) {
+                                    r.choose(true);
                                     reports.add(r);
                                     reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
-                                    break;
+                                } else {
+                                    r.choose(false);
+                                    reports.add(r);
                                 }
                             }
+                            //Hit the weapon then also hit all the other weapons in the bay
+                            weapon.setHit(true);
+                            for(int next : weapon.getBayWeapons()) {
+                                Mounted bayWeap = aero.getEquipment(next);
+                                if(null != bayWeap) {
+                                    bayWeap.setHit(true);
+                                    //Taharqa: We should also damage the critical slot, or
+                                    //MM and MHQ won't remember that this weapon is damaged on the MUL
+                                    //file
+                                    for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                        CriticalSlot slot1 = aero.getCritical(loc, i);
+                                        if ((slot1 == null) ||
+                                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                            continue;
+                                        }
+                                        Mounted mounted = slot1.getMount();
+                                        if (mounted.equals(bayWeap)) {
+                                            aero.hitAllCriticals(loc, i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                         }
                         // does it use Ammo?
                         WeaponType wtype = (WeaponType) weapon.getType();

@@ -9,27 +9,27 @@ MAM0
 </Version>
 
 <UnitType>
-ConvFighter
+Aero
 </UnitType>
 
 <Name>
-Katya Ground Assault Craft
+Vendetta Medium Fighter
 </Name>
 
 <Model>
-C-905(RL20)
+(Standard)
 </Model>
 
 <year>
-3067
+2328
 </year>
 
 <originalBuildYear>
-3067
+2328
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -40,15 +40,15 @@ Aerodyne
 </transporters>
 
 <SafeThrust>
-7
+5
 </SafeThrust>
 
 <cockpit_type>
-0
+3
 </cockpit_type>
 
 <heatsinks>
-0
+15
 </heatsinks>
 
 <sink_type>
@@ -56,44 +56,48 @@ Aerodyne
 </sink_type>
 
 <fuel>
-320
+400
 </fuel>
 
 <engine_type>
-1
+0
 </engine_type>
 
 <armor>
+15
+15
+15
 10
-5
-5
-4
 </armor>
 
 <Nose Equipment>
-Light Machine Gun
-Light Machine Gun
-IS Light Machine Gun Ammo - Half
-RL10
-RL10
+Large Laser
+Small Laser
+Advanced Fire Control
 </Nose Equipment>
 
 <Left Wing Equipment>
-RL20
+Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-RL20
+Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
 </Aft Equipment>
 
 <source>
-HB:House Liao - Civil War
+XTRO Prim III - Age of War
 </source>
 
 <tonnage>
-30.0
+60.0
 </tonnage>
 

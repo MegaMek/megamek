@@ -24,13 +24,20 @@ Shen Long Battle Armor
 3092
 </year>
 
+<originalBuildYear>
+3092
+</originalBuildYear>
+
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4

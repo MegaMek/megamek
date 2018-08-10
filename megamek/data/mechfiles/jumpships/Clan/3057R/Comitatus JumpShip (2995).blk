@@ -39,13 +39,13 @@ Aerodyne
 <transporters>
 battlearmorbay:5.0:1:1
 smallcraftbay:5.0:1:2
-cargobay:737.5:0:3
-megamek.common.DockingCollar@3fb0756c
-megamek.common.DockingCollar@51810213
-megamek.common.DockingCollar@51b16ed1
-megamek.common.DockingCollar@16bbb76d
 1stclassquarters:80.0:0
 crewquarters:259.0:0
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+cargobay:737.0:0:3
 </transporters>
 
 <SafeThrust>
@@ -215,10 +215,6 @@ TRO 3057R - Late Succession War - Lostech
 <grav_decks>
 95
 </grav_decks>
-
-<docking_collar>
-4
-</docking_collar>
 
 <crew>
 100

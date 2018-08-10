@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-VTOL			
+VTOL
 </UnitType>
 
 <Name>
@@ -24,6 +24,10 @@ Hawk Moth Gunship
 3081
 </year>
 
+<originalBuildYear>
+3081
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -32,6 +36,9 @@ IS Level 4
 VTOL
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
@@ -39,6 +46,14 @@ VTOL
 <engine_type>
 6
 </engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
 
 <armor>
 11
@@ -49,13 +64,9 @@ VTOL
 11
 </armor>
 
-<armor_type>
-6
-</armor_type>
-
 <Body Equipment>
-ISRAC5 Ammo
-ISRAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
 IS Machine Gun Ammo - Half
 </Body Equipment>
 
@@ -71,15 +82,19 @@ IS Machine Gun Ammo - Half
 <Rear Equipment>
 </Rear Equipment>
 
-<Turret Equipment>
-ISRAC5
-ISMG
-</Turret Equipment>
+<Rotor Equipment>
+</Rotor Equipment>
 
-<tonnage>
-20.0
-</tonnage>
+<Turret Equipment>
+ISRotaryAC5
+Machine Gun
+</Turret Equipment>
 
 <source>
 XTRO Most Wanted - Jihad
 </source>
+
+<tonnage>
+25.0
+</tonnage>
+

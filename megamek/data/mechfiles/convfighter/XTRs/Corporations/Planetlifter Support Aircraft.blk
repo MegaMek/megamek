@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,63 @@ Planetlifter Support Aircraft
 (Standard)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
 22
 7
 7
 12
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISAngelECMSuite
@@ -48,51 +91,17 @@ ISTankCockpitCommandConsole
 </Right Wing Equipment>
 
 <Aft Equipment>
-IS Arrow IV System
-IS Arrow IV Ammo
-IS Arrow IV Ammo
+IS Vehicular Stealth
+ISArrowIV
+ISArrowIVAmmo
+ISArrowIVAmmo
 </Aft Equipment>
 
-<heatsinks>
-10
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-320
-</fuel>
-
-<type>
-IS Level 4
-</type>
-
-<year>
-3072
-</year>
-
 <source>
-Jihad
+XTRCorps - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-22
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<vstol>
-1
-</vstol>

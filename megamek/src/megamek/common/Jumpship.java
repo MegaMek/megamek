@@ -157,6 +157,15 @@ public class Jumpship extends Aero {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    public static TechAdvancement getJumpSailTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(2200, 2300, 2325)
+                .setPrototypeFactions(F_TA).setProductionFactions(F_TA)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }

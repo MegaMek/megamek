@@ -23809,6 +23809,47 @@ public class Server implements Runnable {
                 // further processing
                 if (te instanceof Aero) {
                     Aero a = (Aero) te;
+                    
+                    // check for ammo explosions here: damage vented through armor, excess
+                    // dissipating, much like Tank CASE.
+                    if (ammoExplosion) {
+                        te.damageThisPhase += damage;
+                        r = new Report(6128);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(damage);
+                        vDesc.add(r);
+                        int loc = hit.getLocation();
+                        //Roll for broadside weapons so fore/aft side armor facing takes the damage
+                        if (loc == Warship.LOC_LBS) {
+                            int locRoll = Compute.d6();
+                            if (locRoll < 4) {
+                                loc = Jumpship.LOC_FLS;
+                            } else {
+                                loc = Jumpship.LOC_ALS;
+                            }
+                        }
+                        if (loc == Warship.LOC_RBS) {
+                            int locRoll = Compute.d6();
+                            if (locRoll < 4) {
+                                loc = Jumpship.LOC_FRS;
+                            } else {
+                                loc = Jumpship.LOC_ARS;
+                            }
+                        }
+                        if (damage > te.getArmor(loc)) {
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
+                            r = new Report(6090);
+                        } else {
+                            te.setArmor(te.getArmor(loc) - damage, loc);
+                            r = new Report(6085);
+                            r.add(te.getArmor(loc));
+                        }
+                        r.subject = te_n;
+                        r.indent(3);
+                        vDesc.add(r);
+                        damage = 0;
+                    }
 
                     // check for overpenetration
                     if (game.getOptions().booleanOption(
@@ -26419,7 +26460,7 @@ public class Server implements Runnable {
                         //Bay Weapons
                         if (aero.usesWeaponBays()) {
                             //Pick a random weapon in the bay and get the stats
-                            int wId = Compute.randomInt(weapon.getBayWeapons().size());
+                            int wId = weapon.getBayWeapons().get(Compute.randomInt(weapon.getBayWeapons().size()));
                             Mounted bayW = aero.getEquipment(wId);
                             Mounted bayWAmmo = bayW.getLinked();
                             if (bayWAmmo != null) {

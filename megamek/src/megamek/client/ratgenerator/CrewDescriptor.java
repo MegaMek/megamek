@@ -28,14 +28,10 @@ import megamek.common.UnitType;
  *
  */
 public class CrewDescriptor {
-	public static final int SKILL_WB = 0;
-	public static final int SKILL_RG = 1;
-	public static final int SKILL_GREEN = 2;
-	public static final int SKILL_REGULAR = 3;
-	public static final int SKILL_VETERAN = 4;
-	public static final int SKILL_ELITE = 5;
-	public static final int SKILL_HEROIC = 6;
-	public static final int SKILL_LEGENDARY = 7;
+	public static final int SKILL_GREEN = 0;
+	public static final int SKILL_REGULAR = 1;
+	public static final int SKILL_VETERAN = 2;
+	public static final int SKILL_ELITE = 3;
 	
 	private String name;
 	private String bloodname;
@@ -83,21 +79,29 @@ public class CrewDescriptor {
 	}
 	
 	/**
-	 * Uses the skill rating system in StratOps, p. 320-1
+	 * Assigns skills based on the tables in TW, p. 271-3, with supplemental mods based on the
+	 * BattleForce rules, StratOps, p. 320-1
 	 */
 	private void setSkills() {
 		boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
 		
-        int experience = randomExperienceLevel(Compute.d6(2) + assignment.getExperience() - 1);
+		int experience;
+		if (null == assignment.getExperience()) {
+		    experience = randomExperienceLevel();
+		} else {
+		    experience = SKILL_GREEN + assignment.getExperience();
+		}
         
 		int bonus = 0;
 		int ratingLevel = assignment.getRatingLevel();
         // StratOps gives a +1 for A and -1 for F. There are a few IS factions that don't have
         // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is only one.
-		// The Clan ratings give +1 for FL and -1 for Solahma, which have been moved to Keshik
-		// and garrison because the FL forces were better than they ought to be.
+		// For Clan units we give a +/-1 for each rating level above or below second line. This
+		// is an expansion of the StratOps table which only included FL, SL, and Solahma.
         int levels = assignment.getFactionRec().getRatingLevels().size();
-        if (levels > 1) {
+        if (clan) {
+            bonus = ratingLevel - levels / 2;
+        } else if (levels > 1) {
             if (ratingLevel == 0) {
                 bonus--;
             }
@@ -133,45 +137,65 @@ public class CrewDescriptor {
 			}
 		}
 		
-		gunnery = randomSkillRating(experience, bonus);
+		gunnery = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
 		if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
 				&& !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
 			piloting = 8;
 		} else {
-			piloting = randomSkillRating(experience, bonus);
+			piloting = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
 		}
-	}
-	
-	private int randomExperienceLevel(int roll) {
-		final int [] table = {
-				SKILL_WB, SKILL_RG, SKILL_GREEN, SKILL_GREEN,
-				SKILL_REGULAR, SKILL_REGULAR, SKILL_VETERAN,
-				SKILL_VETERAN, SKILL_ELITE, SKILL_HEROIC,
-				SKILL_LEGENDARY
-		};
-		if (roll < 2) {
-			return SKILL_WB;
-		}
-		if (roll > 12) {
-			return SKILL_HEROIC;
-		}
-		return table[roll - 2];
 	}
 	
 	/**
-	 * See table, StratOps p. 320
-	 * @param baseRating The overall experience rating of the force
-	 * @param mod        The modifier from the force skill modifiers table, StratOps p. 321
+	 * Determines random experience level using the table on TW p. 273.
+	 * 
+	 * @return The experience rating index, starting at green as zero.
+	 */
+	public static int randomExperienceLevel() {
+	    int roll = Compute.d6(2);
+	    if (roll < 6) {
+	        return SKILL_GREEN;
+	    } else if (roll < 10) {
+	        return SKILL_REGULAR;
+	    } else if (roll < 12) {
+	        return SKILL_VETERAN;
+	    } else {
+	        return SKILL_ELITE;
+	    }
+	}
+	
+    private final static int[][] PILOTING_SKILL_TABLE = {
+            {7, 7, 6, 6, 6, 6, 5, 5, 4},
+            {6, 6, 6, 5, 5, 4, 4, 3, 3},
+            {6, 5, 5, 4, 4, 3, 3, 2, 2},
+            {5, 4, 4, 3, 3, 2, 2, 1, 1}
+            
+    };
+    
+    private final static int[][] GUNNERY_SKILL_TABLE = {
+            {7, 6, 5, 5, 4, 4, 4, 4, 3},
+            {5, 4, 4, 4, 4, 3, 3, 2, 2},
+            {4, 4, 4, 3, 3, 2, 2, 1, 1},
+            {4, 3, 3, 2, 2, 1, 1, 0, 0}
+            
+    };
+    
+	/**
+	 * Selects the piloting or gunnery skill rating based on overall unit experience level and
+	 * modifiers.
+	 * 
+	 * @param table      Either the piloting or the gunnery skill table
+	 * @param experience The overall experience rating of the force
+	 * @param mod        Situational modifiers to the skill roll
 	 * @return           The skill rating
 	 */
-	private int randomSkillRating(int baseRating, int mod) {
-		final int[] table = {7, 7, 6, 5, 4, 4, 3, 2, 1, 0};
-		int roll = Compute.d6();
-		int index = baseRating + (roll + mod + 1) / 2;
-		if (index < 0) {
-		    return table[0];
+	private int randomSkillRating(int[][] table, int experience, int mod) {
+		int column = Math.max(0, Math.min(experience, table.length - 1));
+		int roll = Compute.d6() + mod;
+		if (roll < 0) {
+		    return table[column][0];
 		} else {
-		    return table[Math.min(index, table.length - 1)];
+		    return table[column][Math.min(roll, table[column].length - 1)];
 		}
 	}
 

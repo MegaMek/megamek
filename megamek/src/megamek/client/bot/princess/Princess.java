@@ -36,6 +36,7 @@ import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
@@ -43,6 +44,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -69,6 +71,7 @@ import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
+import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -1040,7 +1043,7 @@ public class Princess extends BotClient {
             return false;
         }
         if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(),
-                                                   getHomeEdge(), getGame())) {
+                                                   getHomeEdge(entity), getGame())) {
             return false;
         }
         //noinspection RedundantIfStatement
@@ -1226,7 +1229,7 @@ public class Princess extends BotClient {
                     getBehaviorSettings().getFallShameIndex() / 10d;
             final int startingHomeDistance = getPathRanker(entity).distanceToHomeEdge(
                     entity.getPosition(),
-                    getBehaviorSettings().getHomeEdge(),
+                    getBehaviorSettings().getDestinationEdge(),
                     getGame());
                        
             final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
@@ -1645,8 +1648,18 @@ public class Princess extends BotClient {
         log(callingClass, methodName, LogLevel.DEBUG, "method end");
     }
 
-    HomeEdge getHomeEdge() {
-        return getBehaviorSettings().getHomeEdge();
+    CardinalEdge getHomeEdge(Entity entity) {
+        // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge        
+        if(entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
+            if(getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST_OR_NONE) {
+                return BoardUtilities.getClosestEdge(entity);                
+            } else {
+                return getBehaviorSettings().getRetreatEdge();
+            }
+        }
+        
+        // otherwise, return the destination edge
+        return getBehaviorSettings().getDestinationEdge();
     }
 
     public int calculateAdjustment(final String ticks) {

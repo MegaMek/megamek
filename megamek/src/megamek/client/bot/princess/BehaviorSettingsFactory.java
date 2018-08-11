@@ -254,7 +254,8 @@ public class BehaviorSettingsFactory {
     // DEFAULT BEHAVIORS
     //******************
     /**
-     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
      * Forced Withdrawal: False <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -275,9 +276,9 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings berserkBehavior = new BehaviorSettings();
             berserkBehavior.setDescription(BERSERK_BEHAVIOR_DESCRIPTION);
-            berserkBehavior.setHomeEdge(HomeEdge.NORTH);
+            berserkBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
+            berserkBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             berserkBehavior.setForcedWithdrawal(false);
-            berserkBehavior.setGoHome(false);
             berserkBehavior.setAutoFlee(false);
             berserkBehavior.setFallShameIndex(2);
             berserkBehavior.setHyperAggressionIndex(10);
@@ -293,7 +294,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -311,9 +313,9 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings cowardlyBehavior = new BehaviorSettings();
             cowardlyBehavior.setDescription(COWARDLY_BEHAVIOR_DESCRIPTION);
-            cowardlyBehavior.setHomeEdge(HomeEdge.NORTH);
+            cowardlyBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
+            cowardlyBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             cowardlyBehavior.setForcedWithdrawal(true);
-            cowardlyBehavior.setGoHome(false);
             cowardlyBehavior.setAutoFlee(false);
             cowardlyBehavior.setFallShameIndex(8);
             cowardlyBehavior.setHyperAggressionIndex(1);
@@ -329,7 +331,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
      * Forced Withdrawal: True <br>
      * Go Home: True <br>
      * Auto Flee: True <br>
@@ -350,9 +353,9 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings escapeBehavior = new BehaviorSettings();
             escapeBehavior.setDescription(ESCAPE_BEHAVIOR_DESCRIPTION);
-            escapeBehavior.setHomeEdge(HomeEdge.NORTH);
+            escapeBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
+            escapeBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             escapeBehavior.setForcedWithdrawal(true);
-            escapeBehavior.setGoHome(true);
             escapeBehavior.setAutoFlee(true);
             escapeBehavior.setFallShameIndex(7);
             escapeBehavior.setHyperAggressionIndex(3);
@@ -368,7 +371,8 @@ public class BehaviorSettingsFactory {
     }
 
     /**
-     * Home Edge: {@link HomeEdge#NORTH} <br>
+     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -386,9 +390,9 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings defaultBehavior = new BehaviorSettings();
             defaultBehavior.setDescription(DEFAULT_BEHAVIOR_DESCRIPTION);
-            defaultBehavior.setHomeEdge(HomeEdge.NORTH);
+            defaultBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
+            defaultBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
             defaultBehavior.setForcedWithdrawal(true);
-            defaultBehavior.setGoHome(false);
             defaultBehavior.setAutoFlee(false);
             defaultBehavior.setFallShameIndex(5);
             defaultBehavior.setHyperAggressionIndex(5);

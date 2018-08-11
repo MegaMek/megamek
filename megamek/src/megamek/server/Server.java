@@ -26478,13 +26478,9 @@ public class Server implements Runnable {
                                 int ammoRoll = Compute.d6(2);
                                 boomTarget = 10;
                                 r.choose(ammoRoll >= boomTarget);
+                                reports.add(r);
                                 if (ammoRoll >= boomTarget) {
-                                    r.choose(true);
-                                    reports.add(r);
                                     reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
-                                } else {
-                                    r.choose(false);
-                                    reports.add(r);
                                 }
                             }
                             //Hit the weapon then also hit all the other weapons in the bay

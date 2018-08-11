@@ -23810,9 +23810,9 @@ public class Server implements Runnable {
                 if (te instanceof Aero) {
                     Aero a = (Aero) te;
                     
-                    // check for ammo explosions here: damage vented through armor, excess
+                    // check for large craft ammo explosions here: damage vented through armor, excess
                     // dissipating, much like Tank CASE.
-                    if (ammoExplosion) {
+                    if (ammoExplosion && te.isLargeCraft()) {
                         te.damageThisPhase += damage;
                         r = new Report(6128);
                         r.subject = te_n;
@@ -23911,6 +23911,10 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     if (!ammoExplosion) {
                         r.messageId = 9005;
+                    }
+                    //Only for fighters
+                    if (ammoExplosion && !a.isLargeCraft()) {
+                        r.messageId = 9006;
                     }
                     r.add(damage);
                     r.add(Math.max(a.getSI(), 0));

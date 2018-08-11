@@ -22375,8 +22375,8 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        // no consciousness roll for capital fighter pilots
-        if (e.isCapitalFighter()) {
+        // no consciousness roll for capital fighter pilots or large craft crews
+        if (e.isCapitalFighter() || e.isLargeCraft()) {
             return vDesc;
         }
 

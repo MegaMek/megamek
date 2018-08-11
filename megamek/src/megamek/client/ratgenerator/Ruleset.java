@@ -26,7 +26,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,6 +35,7 @@ import org.w3c.dom.NodeList;
 import megamek.client.RandomNameGenerator;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Container for all the rule nodes for a faction. Has methods for processing the rules to
@@ -415,13 +415,12 @@ public class Ruleset {
 	private static Ruleset createFromFile(File f) {
 	    final String METHOD_NAME = "createFromFile(File)"; //$NON-NLS-1$
 	    
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		Document xmlDoc = null;
 		
 		DocumentBuilder db;
 		try {
 			FileInputStream fis = new FileInputStream(f);
-			db = dbf.newDocumentBuilder();
+			db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 			fis.close();
 		} catch (Exception e) {

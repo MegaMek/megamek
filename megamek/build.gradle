@@ -46,6 +46,7 @@ ext {
 	logDir = "logs"
 	docDir = "docs"
 	libDir = "lib"
+	distributionDir = "${buildDir}/distributions"
 	fileStagingDir = "${buildDir}/files"
 	atlasedImages = "${fileStagingDir}/atlasedImages.txt"
 	unitFilesDir = "${dataDir}/mechfiles"
@@ -171,22 +172,6 @@ distributions {
 			}
 		}
 	}
-	source {
-		contents {
-			from fileStagingDir
-			from "build.gradle"
-			from scriptTemplate
-			from (sourceSets.main.allJava) {
-				into 'src'
-			}
-			from (sourceSets.main.resources) {
-				into 'i18n'
-			}
-			from (sourceSets.test.allJava) {
-				into 'unittests'
-			}
-		}
-	}
 }
 
 distZip {
@@ -213,19 +198,36 @@ unixDistTar {
 	compression = Compression.GZIP
 }
 
-sourceDistZip {
-	dependsOn stageFiles
-}
-
-sourceDistTar {
-	dependsOn stageFiles
-	commpression = Compression.GZIP
-}
-
 task cloneRepo (type: Exec) {
 	commandLine "git"
 	args "clone", "--branch", "gradle", "--single-branch", gitRoot, "repo"
 	workingDir buildDir
+}
+
+task sourceZip (type: Zip) {
+	from (rootDir) {
+		exclude "**/build/**"
+		exclude "**/.*"
+	}
+	archiveName "${rootProject.name.toLowerCase()}-${version}-source.zip"
+	destinationDir file("${buildDir}/${distributionDir}")
+}
+
+task sourceTar (type: Tar) {
+	from (rootDir) {
+		exclude "**/build/**"
+		exclude "**/.*"
+	}
+	archiveName "${rootProject.name.toLowerCase()}-${version}-source.tar.gz"
+	compression = Compression.GZIP
+	destinationDir file("${buildDir}/${distributionDir}")
+}
+
+task assembleDist(overwrite: true) {
+	dependsOn unixDistTar
+	dependsOn windowsDistZip
+	dependsOn sourceZip
+	dependsOn sourceTar
 }
 
 task buildFromRepo (type: Exec) {
@@ -233,7 +235,7 @@ task buildFromRepo (type: Exec) {
 	
 	commandLine "${buildDir}/repo/gradlew"
 	workingDir "${buildDir}/repo"
-	args ":megamek:assembleDist"
+	args ":assembleDist"
 }
 
 task release (type: Copy) {

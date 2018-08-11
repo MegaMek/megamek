@@ -1043,14 +1043,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (type.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 rackSize = 1;
             }
-
-            long mType = atype.getMunitionType();
+            
             //Screen launchers need a racksize. Damage is 15 per TW p251
-            if (mType == AmmoType.T_SCREEN_LAUNCHER) {
+            if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
                 rackSize = 1;
                 damagePerShot = 15;
             }
             
+            long mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
             // Dead-Fire LRM's do 2 points of damage per shot when critted.

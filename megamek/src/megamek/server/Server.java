@@ -26469,7 +26469,7 @@ public class Server implements Runnable {
                             int wId = weapon.getBayWeapons().get(Compute.randomInt(weapon.getBayWeapons().size()));
                             Mounted bayW = aero.getEquipment(wId);
                             Mounted bayWAmmo = bayW.getLinked();
-                            if (bayWAmmo != null) {
+                            if (bayWAmmo != null && bayWAmmo.getType().isExplosive(bayWAmmo)) {
                                 r = new Report(9156);
                                 r.subject = aero.getId();
                                 r.newlines = 1;

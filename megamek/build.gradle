@@ -171,6 +171,22 @@ distributions {
 			}
 		}
 	}
+	source {
+		contents {
+			from fileStagingDir
+			from "build.gradle"
+			from scriptTemplate
+			from (sourceSets.main.allJava) {
+				into 'src'
+			}
+			from (sourceSets.main.resources) {
+				into 'i18n'
+			}
+			from (sourceSets.test.allJava) {
+				into 'unittests'
+			}
+		}
+	}
 }
 
 distZip {
@@ -195,6 +211,15 @@ unixDistTar {
 	dependsOn stageFiles
 	dependsOn unixStartScript
 	compression = Compression.GZIP
+}
+
+sourceDistZip {
+	dependsOn stageFiles
+}
+
+sourceDistTar {
+	dependsOn stageFiles
+	commpression = Compression.GZIP
 }
 
 task cloneRepo (type: Exec) {

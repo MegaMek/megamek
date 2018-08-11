@@ -37,9 +37,8 @@ VTOL
 </motion_type>
 
 <transporters>
-infantrybay:4.0:1:2:Foot
 troopspace:4.0
-cargobay:14.0:1:3
+cargobay:14.0:1:1
 </transporters>
 
 <cruiseMP>
@@ -67,6 +66,7 @@ cargobay:14.0:1:3
 </armor>
 
 <Body Equipment>
+IS Vehicular Stealth
 IS Vehicular Stealth
 ISVTOLJetBooster
 ISAngelECMSuite

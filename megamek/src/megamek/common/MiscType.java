@@ -662,6 +662,9 @@ public class MiscType extends EquipmentType {
 
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return Math.ceil((entity.getWeight() * entity.getOriginalJumpMP()) / 10.0f) / 2.0;
+        } else if (hasFlag(F_JET_BOOSTER)) {
+            Engine e = entity.getEngine();
+            return Math.ceil((e.getWeightEngine(entity) *.1 ) * 2.0f) / 2.0;
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) || hasFlag(F_TALON)) {
             return Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
@@ -2217,7 +2220,8 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
         misc.subType |= S_JETBOOSTER;
-
+        misc.criticals = 1;
+        misc.omniFixedOnly = true;
         misc.rulesRefs = "350,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL)
             .setISAdvancement(3009, 3078, DATE_NONE, DATE_NONE, DATE_NONE)

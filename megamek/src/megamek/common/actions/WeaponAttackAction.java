@@ -3871,7 +3871,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             if (!networkFiringSolution) {
-                if (!Compute.hasFiringSolution(game, ae, te)) {
+                //If we don't check for target type here, we can't fire screens and missiles at hexes...
+                if (!Compute.hasFiringSolution(game, ae, te) && target.getTargetType() == Targetable.TYPE_ENTITY) {
                     return "no firing solution to target";
                 }
             }

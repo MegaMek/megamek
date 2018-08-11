@@ -6,6 +6,7 @@ v0.45.1-git
 + Issue #378 - [Feature] Implements Tac Ops "Use AMS as Weapon" rule
 + Issue #1051 - AMS no longer nags player when a shutdown mech is attacked
 + Data: New Sprites and data fixes.
++ PR #1084 - [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") and retreat edges (for when the bot is trying to "forced withdraw" crippled units)
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

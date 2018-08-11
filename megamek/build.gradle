@@ -63,7 +63,13 @@ jar {
 	}
 }
 
-task copyFiles(type: Copy) {
+task officialUnitList(type: JavaExec, dependsOn: jar) {
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'megamek.MegaMek'
+	args '-oul'
+}
+
+task copyFiles(type: Copy, dependsOn: officialUnitList) {
 	from projectDir
 	
 	include "${dataDir}/**"

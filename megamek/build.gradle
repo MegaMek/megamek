@@ -53,24 +53,13 @@ ext {
 	scriptTemplate = "startScriptTemplate.txt"
 }
 
-task rootDirJar(type: Jar) {
+jar {
 	archiveName = "${rootProject.name}.${extension}"
 	manifest {
 	    attributes "Main-Class": mainClassName
 	    attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
 	    	.findAll { it.name.endsWith(".jar") }.collect { "${libDir}/${it.name}" }.join(' ')
 	}
-	with jar
-}
-
-task libDirJar(type: Jar) {
-	archiveName = "${rootProject.name}.${extension}"
-	manifest {
-	    attributes "Main-Class": mainClassName
-	    attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
-	    	.findAll { it.name.endsWith(".jar") }.collect { it.name }.join(' ')
-	}
-	with jar
 }
 
 task copyFiles(type: Copy) {
@@ -139,7 +128,7 @@ task unixStartScript (type: CreateStartScripts) {
 	applicationName = startScripts.applicationName
 	mainClassName = project.mainClassName
 	outputDir = startScripts.outputDir
-	classpath = rootDirJar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
+	classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
 	    	.filter { it.name.endsWith(".jar") }
 	// The default template assumes the start script is in a subdirectory and always
 	// sets APP_HOME to the parent directory of the one containing the script.
@@ -159,7 +148,9 @@ distributions {
 	}
 	windows {
 		contents {
-			from "${buildDir}/launch4j"
+			from ("${buildDir}/launch4j") {
+				include '*.exe'
+			}
 			contents {
 				from fileStagingDir
 				from (project.sourceSets.main.runtimeClasspath.files
@@ -173,7 +164,7 @@ distributions {
 		contents {
 			from fileStagingDir
 			from(unixStartScript.unixScript)
-			from(rootDirJar)
+			from(jar)
 			from (project.sourceSets.main.runtimeClasspath.files
     				.findAll { it.name.endsWith(".jar") }) {
     			into "${libDir}"

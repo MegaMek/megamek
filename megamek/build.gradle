@@ -105,9 +105,7 @@ task unitFilesZip (dependsOn: copyFiles) {
 
 task ensureRatDir (dependsOn: copyFiles) {
 	doLast {
-		if (!file(fileStagingDir, ratDir).exists) {
-			mkdir "${fileStagingDir}/${ratDir}"
-		}
+		mkdir "${fileStagingDir}/${ratDir}"
 	}
 }
 

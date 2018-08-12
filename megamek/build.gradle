@@ -39,8 +39,6 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-	gitRoot = 'https://github.com/MegaMek/megamek.git'
-
 	dataDir = "data"
 	confDir = "mmconf"
 	logDir = "logs"
@@ -107,7 +105,9 @@ task unitFilesZip (dependsOn: copyFiles) {
 
 task ensureRatDir (dependsOn: copyFiles) {
 	doLast {
-		mkdir "${fileStagingDir}/${ratDir}"
+		if (!file(fileStagingDir, ratDir).exists) {
+			mkdir "${fileStagingDir}/${ratDir}"
+		}
 	}
 }
 
@@ -204,10 +204,13 @@ unixDistTar {
 	compression = Compression.GZIP
 }
 
-task cloneRepo (type: Exec) {
+task deleteRepoDir (type: Delete) {
+	delete = "${buildDir}/repo"
+}
+
+task cloneRepo (type: Exec, dependsOn: deleteRepoDir) {
 	commandLine "git"
-	args "clone", "--branch", "gradle", "--single-branch", gitRoot, "repo"
-	workingDir buildDir
+	args "clone", "--branch", "gradle", "--single-branch", gitRoot, "${buildDir}/repo"
 }
 
 task sourceZip (type: Zip) {
@@ -236,12 +239,11 @@ task assembleDist(overwrite: true) {
 	dependsOn sourceTar
 }
 
-task buildFromRepo (type: Exec) {
+task buildFromRepo (type: GradleBuild) {
 	dependsOn cloneRepo
 	
-	commandLine "${buildDir}/repo/gradlew"
-	workingDir "${buildDir}/repo"
-	args ":assembleDist"
+	buildFile = "${buildDir}/repo/build.gradle"
+	tasks = [ ':megamek:assembleDist' ]
 }
 
 task release (type: Copy) {

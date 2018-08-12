@@ -6,3 +6,5 @@
 /logs/
 .DS_Store
 Thumbs.db
+/.gradle/
+/settings_local.gradle

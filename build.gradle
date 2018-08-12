@@ -13,3 +13,15 @@ subprojects {
 	group = 'org.megamek'
 	version = '0.45.0-SNAPSHOT'
 }
+
+rootProject.ext.gitRoot = 'https://github.com/MegaMek/megamek.git'
+
+// A settings_local.gradle file can be used to override any of the above options. For instance,
+// rootProject.ext.gitRoot = 'file:///path/to/local/repo' will cause the release target to clone a
+// local copy of the repository rather than downloading it.
+
+def localSettings = file('settings_local.gradle')
+if (localSettings.exists()) {
+	apply from: localSettings
+}
+

@@ -15,6 +15,9 @@
 package megamek.common.options;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -27,8 +30,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import megamek.common.TechConstants;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Contains the options determining play in the current game.
@@ -326,12 +333,13 @@ public class GameOptions extends AbstractOptions {
             JAXBContext jc = JAXBContext.newInstance(GameOptionsXML.class, Option.class, BasicOption.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(file);
+            InputStream is = new FileInputStream(file);
+            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
 
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print));
             }
-        } catch (JAXBException ex) {
+        } catch (IOException | JAXBException | SAXException | ParserConfigurationException ex) {
             System.err.println("Error loading XML for game options: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }

@@ -24,11 +24,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.util.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,9 +65,8 @@ public class KeyBindParser {
         }
 
         // Build the XML document.
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             System.out.println("Parsing " + file.getName());
             Document doc = builder.parse(file);
             System.out.println("Parsing finished.");

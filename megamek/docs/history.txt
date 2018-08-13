@@ -10,7 +10,8 @@ v0.45.1-git
 + PR #1084 - [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") 
          and retreat edges (for when the bot is trying to "forced withdraw" crippled units)
 + Issue #181 - Should fix issue with Silver Bullet Gauss Ammo not appearing.
-+ Data - Moving old and out of date Read.me file. 
++ Data - Moving old and out of date Read.me file.
++ PR #1092: Fixes for force generator (some unit rating mismatches, skill calculations, a few faction rule fixes)
 
 
 v0.45.0 (2018-08-02 0200 UTC)

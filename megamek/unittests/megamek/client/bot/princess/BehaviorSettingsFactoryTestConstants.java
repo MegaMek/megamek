@@ -24,7 +24,7 @@ public class BehaviorSettingsFactoryTestConstants {
 
     public static final String NM_RECKLESS = "reckless";
     /**
-     * Home Edge: {@link megamek.client.bot.princess.HomeEdge#NORTH} <br>
+     * Home Edge: {@link megamek.client.bot.princess.CardinalEdge#NORTH} <br>
      * Forced Withdrawal: False <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -38,9 +38,9 @@ public class BehaviorSettingsFactoryTestConstants {
     public static final String RECKLESS =
             "    <behavior>\n" +
                     "        <name>" + NM_RECKLESS + "</name>\n" +
-                    "        <homeEdge>0</homeEdge>\n" +
+                    "        <retreatEdge>0</retreatEdge>\n" +
+                    "        <destinationEdge>0</destinationEdge>\n" +
                     "        <forcedWithdrawal>false</forcedWithdrawal>\n" +
-                    "        <goHome>false</goHome>\n" +
                     "        <autoFlee>false</autoFlee>\n" +
                     "        <fallShameIndex>2</fallShameIndex>\n" +
                     "        <hyperAggressionIndex>10</hyperAggressionIndex>\n" +
@@ -52,7 +52,7 @@ public class BehaviorSettingsFactoryTestConstants {
 
     public static final String NM_COWARDLY = BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION;
     /**
-     * Home Edge: {@link megamek.client.bot.princess.HomeEdge#NORTH} <br>
+     * Home Edge: {@link megamek.client.bot.princess.CardinalEdge#NORTH} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -66,9 +66,9 @@ public class BehaviorSettingsFactoryTestConstants {
     public static final String COWARDLY =
             "    <behavior>\n" +
                     "        <name>" + NM_COWARDLY + "</name>\n" +
-                    "        <homeEdge>0</homeEdge>\n" +
+                    "        <retreatEdge>0</retreatEdge>\n" +
+                    "        <destinationEdge>4</destinationEdge>\n" +
                     "        <forcedWithdrawal>true</forcedWithdrawal>\n" +
-                    "        <goHome>false</goHome>\n" +
                     "        <autoFlee>false</autoFlee>\n" +
                     "        <fallShameIndex>8</fallShameIndex>\n" +
                     "        <hyperAggressionIndex>1</hyperAggressionIndex>\n" +
@@ -80,7 +80,7 @@ public class BehaviorSettingsFactoryTestConstants {
 
     public static final String NM_ESCAPE = BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION;
     /**
-     * Home Edge: {@link megamek.client.bot.princess.HomeEdge#NORTH} <br>
+     * Home Edge: {@link megamek.client.bot.princess.CardinalEdge#NORTH} <br>
      * Forced Withdrawal: True <br>
      * Go Home: True <br>
      * Auto Flee: True <br>
@@ -94,9 +94,9 @@ public class BehaviorSettingsFactoryTestConstants {
     public static final String ESCAPE =
             "    <behavior>\n" +
                     "        <name>" + NM_ESCAPE + "</name>\n" +
-                    "        <homeEdge>0</homeEdge>\n" +
+                    "        <retreatEdge>0</retreatEdge>\n" +
+                    "        <destinationEdge>0</destinationEdge>\n" +
                     "        <forcedWithdrawal>true</forcedWithdrawal>\n" +
-                    "        <goHome>true</goHome>\n" +
                     "        <autoFlee>true</autoFlee>\n" +
                     "        <fallShameIndex>7</fallShameIndex>\n" +
                     "        <hyperAggressionIndex>1</hyperAggressionIndex>\n" +
@@ -122,9 +122,9 @@ public class BehaviorSettingsFactoryTestConstants {
     public static final String DEFAULT =
             "    <behavior>\n" +
                     "        <name>" + NM_DEFAULT + "</name>\n" +
-                    "        <homeEdge>0</homeEdge>\n" +
+                    "        <retreatEdge>0</retreatEdge>\n" +
+                    "        <destinationEdge>4</destinationEdge>\n" +
                     "        <forcedWithdrawal>true</forcedWithdrawal>\n" +
-                    "        <goHome>false</goHome>\n" +
                     "        <autoFlee>false</autoFlee>\n" +
                     "        <fallShameIndex>5</fallShameIndex>\n" +
                     "        <hyperAggressionIndex>5</hyperAggressionIndex>\n" +

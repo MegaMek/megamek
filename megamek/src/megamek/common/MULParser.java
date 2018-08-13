@@ -9,7 +9,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import megamek.common.loaders.EntityLoadingException;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Class for reading in and parsing MUL XML files.  The MUL xsl is defined in 
@@ -264,12 +264,12 @@ public class MULParser {
         devastated.removeAllElements();
         pilots.removeAllElements();
         kills.clear();
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
         Document xmlDoc = null;
 
         try {
             // Using factory get an instance of document builder
-            DocumentBuilder db = dbf.newDocumentBuilder();
+            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 
             // Parse using builder to get DOM representation of the XML file
             xmlDoc = db.parse(fin);

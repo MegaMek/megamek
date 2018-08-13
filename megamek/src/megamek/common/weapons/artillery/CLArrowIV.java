@@ -18,6 +18,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -58,7 +59,8 @@ public class CLArrowIV extends ArtilleryWeapon {
             .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
             .setClanAdvancement(DATE_NONE, 2844, 2850, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH);
+            .setPrototypeFactions(F_CHH)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }

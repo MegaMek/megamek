@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,6 +42,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
@@ -780,11 +780,10 @@ public class RATGenerator {
 			return;
 		}
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		Document xmlDoc = null;
 
 		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
 			DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);
@@ -833,11 +832,10 @@ public class RATGenerator {
 		    }
 		}
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		Document xmlDoc = null;
 
 		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
 			xmlDoc = db.parse(fis);
 		} catch (Exception ex) {
             DefaultMmLogger.getInstance().error(getClass(), METHOD_NAME, ex);

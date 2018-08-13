@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
@@ -39,6 +38,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
+import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -238,10 +238,9 @@ public class QuirksHandler {
         }
 
         // Build the XML document.
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         StringBuilder log = new StringBuilder();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             log.append("Parsing ").append(path);
             Document doc = builder.parse(file);
             log.append("\n...Parsing finished.");

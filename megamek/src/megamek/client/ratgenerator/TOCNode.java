@@ -25,102 +25,102 @@ import org.w3c.dom.NodeList;
  *
  */
 public class TOCNode extends RulesetNode {
-	protected ArrayList<ValueNode> unitTypeNodes;
-	protected ArrayList<ValueNode> eschelonNodes;
-	protected ArrayList<ValueNode> ratingNodes;
-	protected ArrayList<ValueNode> flagNodes;
-	
-	protected TOCNode() {
-		unitTypeNodes = new ArrayList<ValueNode>();
-		eschelonNodes = new ArrayList<ValueNode>();
-		ratingNodes = new ArrayList<ValueNode>();
-		flagNodes = new ArrayList<ValueNode>();
-	}
-	
-	public ValueNode findUnitTypes(ForceDescriptor fd) {
-		for (ValueNode n : unitTypeNodes) {
-			if (n.matches(fd)) {
-				return n;
-			}
-		}
-		return null;
-	}
-	
-	public ValueNode findEschelons(ForceDescriptor fd) {
-		for (ValueNode n : eschelonNodes) {
-			if (n.matches(fd)) {
-				return n;
-			}
-		}
-		return null;
-	}
-	
-	public ValueNode findRatings(ForceDescriptor fd) {	
-		for (ValueNode n : ratingNodes) {
-			if (n.matches(fd)) {
-				return n;
-			}
-		}
-		return null;
-	}
+    protected ArrayList<ValueNode> unitTypeNodes;
+    protected ArrayList<ValueNode> eschelonNodes;
+    protected ArrayList<ValueNode> ratingNodes;
+    protected ArrayList<ValueNode> flagNodes;
 
-	public ValueNode findFlags(ForceDescriptor fd) {	
-		for (ValueNode n : flagNodes) {
-			if (n.matches(fd)) {
-				return n;
-			}
-		}
-		return null;
-	}
-	
-	public static TOCNode createFromXml(Node node) {
-		TOCNode retVal = new TOCNode();
-		retVal.loadFromXml(node);
-		return retVal;
-	}
-	
-	@Override
-	protected void loadFromXml(Node node) {
-		super.loadFromXml(node);
-		
-		NodeList nl = node.getChildNodes();
-		for (int x = 0; x < nl.getLength(); x++) {
-			Node wn = nl.item(x);
-			
-			switch (wn.getNodeName()) {
-			case "unitType":
-				for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
-					Node wn2 = wn.getChildNodes().item(y);
-					if (wn2.getNodeName().equals("option")) {
-						unitTypeNodes.add(ValueNode.createFromXml(wn2));						
-					}
-				}
-				break;
-			case "eschelon":
-				for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
-					Node wn2 = wn.getChildNodes().item(y);
-					if (wn2.getNodeName().equals("option")) {
-						eschelonNodes.add(ValueNode.createFromXml(wn2));
-					}
-				}
-				break;
-			case "rating":
-				for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
-					Node wn2 = wn.getChildNodes().item(y);
-					if (wn2.getNodeName().equals("option")) {
-						ratingNodes.add(ValueNode.createFromXml(wn2));
-					}
-				}
-				break;
-			case "flags":
-				for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
-					Node wn2 = wn.getChildNodes().item(y);
-					if (wn2.getNodeName().equals("option")) {
-						flagNodes.add(ValueNode.createFromXml(wn2));
-					}
-				}
-				break;
-			}
-		}
-	}
+    protected TOCNode() {
+        unitTypeNodes = new ArrayList<ValueNode>();
+        eschelonNodes = new ArrayList<ValueNode>();
+        ratingNodes = new ArrayList<ValueNode>();
+        flagNodes = new ArrayList<ValueNode>();
+    }
+
+    public ValueNode findUnitTypes(ForceDescriptor fd) {
+        for (ValueNode n : unitTypeNodes) {
+            if (n.matches(fd)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public ValueNode findEschelons(ForceDescriptor fd) {
+        for (ValueNode n : eschelonNodes) {
+            if (n.matches(fd)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public ValueNode findRatings(ForceDescriptor fd) {	
+        for (ValueNode n : ratingNodes) {
+            if (n.matches(fd)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public ValueNode findFlags(ForceDescriptor fd) {	
+        for (ValueNode n : flagNodes) {
+            if (n.matches(fd)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public static TOCNode createFromXml(Node node) {
+        TOCNode retVal = new TOCNode();
+        retVal.loadFromXml(node);
+        return retVal;
+    }
+
+    @Override
+    protected void loadFromXml(Node node) {
+        super.loadFromXml(node);
+
+        NodeList nl = node.getChildNodes();
+        for (int x = 0; x < nl.getLength(); x++) {
+            Node wn = nl.item(x);
+
+            switch (wn.getNodeName()) {
+                case "unitType":
+                    for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
+                        Node wn2 = wn.getChildNodes().item(y);
+                        if (wn2.getNodeName().equals("option")) {
+                            unitTypeNodes.add(ValueNode.createFromXml(wn2));						
+                        }
+                    }
+                    break;
+                case "eschelon":
+                    for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
+                        Node wn2 = wn.getChildNodes().item(y);
+                        if (wn2.getNodeName().equals("option")) {
+                            eschelonNodes.add(ValueNode.createFromXml(wn2));
+                        }
+                    }
+                    break;
+                case "rating":
+                    for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
+                        Node wn2 = wn.getChildNodes().item(y);
+                        if (wn2.getNodeName().equals("option")) {
+                            ratingNodes.add(ValueNode.createFromXml(wn2));
+                        }
+                    }
+                    break;
+                case "flags":
+                    for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
+                        Node wn2 = wn.getChildNodes().item(y);
+                        if (wn2.getNodeName().equals("option")) {
+                            flagNodes.add(ValueNode.createFromXml(wn2));
+                        }
+                    }
+                    break;
+            }
+        }
+    }
 }

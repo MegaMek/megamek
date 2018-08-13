@@ -55,7 +55,7 @@
 			<subforce name="Epsilon Galaxy" rating="FL"
 				ifDateBetween="3090,">%GALAXY%</subforce>			
 
-			<subforce name="Epsilon Galaxy" rating="SL"
+			<subforce name="Epsilon Galaxy" rating="SL" flags="+epsilon"
 				ifDateBetween="3010,3057">%GALAXY%</subforce>			
 			<subforce name="Theta Galaxy" rating="SL">%GALAXY%</subforce>
 			<subforce name="Iota Galaxy" rating="SL">%GALAXY%</subforce>
@@ -141,9 +141,8 @@
 		</subforces>
 	</force>
 
-	<force eschelon="%GALAXY%" eschName="Galaxy" ifName="Epsilon Galaxy"
-			ifDateBetween="3020,3057">
-		<name>{greek} Galaxy</name>
+	<force eschelon="%GALAXY%" eschName="Galaxy" ifFlags="epsilon">
+		<name>Epsilon Galaxy</name>
 		<co>%GALAXY_CMDR%</co>
 		
 		<subforces>

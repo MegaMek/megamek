@@ -23,72 +23,72 @@ import org.w3c.dom.Node;
  *
  */
 public class ValueNode extends RulesetNode {
-	
-	protected Integer weight;
-	protected Integer num;
-	protected String content;
 
-	protected ValueNode() {
-		weight = 1;
-		num = 1;
-		content = null;
-	}
-	
-	public void apply(ForceDescriptor fd) {
-		apply(fd, 0);
-	}
-	
-	public Integer getWeight() {
-		return weight;
-	}
+    protected Integer weight;
+    protected Integer num;
+    protected String content;
 
-	public void setWeight(Integer weight) {
-		this.weight = weight;
-	}
+    protected ValueNode() {
+        weight = 1;
+        num = 1;
+        content = null;
+    }
 
-	public Integer getNum() {
-		return num;
-	}
+    public void apply(ForceDescriptor fd) {
+        apply(fd, 0);
+    }
 
-	public void setNum(Integer num) {
-		this.num = num;
-	}
-	
-	public String getContent() {
-		return content;
-	}
+    public Integer getWeight() {
+        return weight;
+    }
 
-	public static ValueNode createFromXml(Node node) {
-		ValueNode retVal = new ValueNode();
-		retVal.loadFromXml(node);
-		return retVal;
-	}
-	
-	@Override
-	protected void loadFromXml(Node node) {
-		super.loadFromXml(node);
-		if (assertions.containsKey("weight")) {
-			weight = Integer.valueOf(assertions.getProperty("weight"));
-			assertions.remove("weight");
-		}
-		if (assertions.containsKey("weightClass") && assertions.getProperty("weightClass").length() > 0) {
-			num = assertions.getProperty("weightClass").split(",").length;
-			if (assertions.containsKey("num")) {
-				if (Integer.valueOf(assertions.getProperty("num")).equals(num)) {
-					assertions.remove("num");
-				} else {
-					throw new IllegalArgumentException("Value of attribute num='"
-							+ assertions.getProperty("num")
-							+ "' conflicts with value of attribute weightClass='"
-							+ assertions.getProperty("weightClass"));
-				}
-			}
-		} else if (assertions.containsKey("num")) {
-			num = Integer.valueOf(assertions.getProperty("num"));
-			assertions.remove("num");
-		}
-		content = node.getTextContent().trim().length() == 0?
-				null : Ruleset.substituteConstants(node.getTextContent().trim());
-	}
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public static ValueNode createFromXml(Node node) {
+        ValueNode retVal = new ValueNode();
+        retVal.loadFromXml(node);
+        return retVal;
+    }
+
+    @Override
+    protected void loadFromXml(Node node) {
+        super.loadFromXml(node);
+        if (assertions.containsKey("weight")) {
+            weight = Integer.valueOf(assertions.getProperty("weight"));
+            assertions.remove("weight");
+        }
+        if (assertions.containsKey("weightClass") && assertions.getProperty("weightClass").length() > 0) {
+            num = assertions.getProperty("weightClass").split(",").length;
+            if (assertions.containsKey("num")) {
+                if (Integer.valueOf(assertions.getProperty("num")).equals(num)) {
+                    assertions.remove("num");
+                } else {
+                    throw new IllegalArgumentException("Value of attribute num='"
+                            + assertions.getProperty("num")
+                            + "' conflicts with value of attribute weightClass='"
+                            + assertions.getProperty("weightClass"));
+                }
+            }
+        } else if (assertions.containsKey("num")) {
+            num = Integer.valueOf(assertions.getProperty("num"));
+            assertions.remove("num");
+        }
+        content = node.getTextContent().trim().length() == 0?
+                null : Ruleset.substituteConstants(node.getTextContent().trim());
+    }
 }
 

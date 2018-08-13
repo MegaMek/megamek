@@ -39,6 +39,7 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
+	jvmOptions = ['-Xmx1024m']
 	dataDir = "data"
 	confDir = "mmconf"
 	logDir = "logs"
@@ -131,11 +132,12 @@ task stageFiles {
 }
 
 task unixStartScript (type: CreateStartScripts) {
-	applicationName = startScripts.applicationName
+	applicationName = 'startup'
 	mainClassName = project.mainClassName
 	outputDir = startScripts.outputDir
 	classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
 	    	.filter { it.name.endsWith(".jar") }
+	defaultJvmOpts = project.ext.jvmOptions
 	// The default template assumes the start script is in a subdirectory and always
 	// sets APP_HOME to the parent directory of the one containing the script.
 	// So we provide a modified template.
@@ -191,6 +193,7 @@ distTar {
 createExe {
 	mainClassName = project.mainClassName
 	icon = "${projectDir}/data/images/misc/megamek.ico"
+	jvmOptions = project.ext.jvmOptions
 }
 
 windowsDistZip {

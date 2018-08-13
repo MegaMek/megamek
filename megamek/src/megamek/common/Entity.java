@@ -41,11 +41,13 @@ import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.DisplacementAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
@@ -624,6 +626,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * double blind play.
      */
     private Vector<IPlayer> entityDetectedBy = new Vector<IPlayer>();
+    
+    /**
+     * Contains all entities that have been detected by this entity's sensors.
+     * Used for double-blind on space maps - SO p117
+     * 
+     * Entities need only be cleared from this when they move out of range
+     */
+    public Vector<Entity> sensorContacts = new Vector<Entity>();
+    
+    /**
+     * Contains all entities that this entity has established a firing solution on.
+     * Used for double-blind on space maps - SO p117
+     * 
+     * Entities need only be cleared from this when they move out of range
+     */
+    public Vector<Entity> firingSolutions = new Vector<Entity>();
 
     /**
      * Whether this entity is captured or not.
@@ -3630,7 +3648,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                          .getPhase() != IGame.Phase.PHASE_OFFBOARD))
                 || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
                                                                              .getPhase() == IGame.Phase.PHASE_OFFBOARD))
-                || mounted.getType().hasFlag(WeaponType.F_AMS)) {
+                //No AMS, unless it's in 'weapon' mode
+                || (mounted.getType().hasFlag(WeaponType.F_AMS) && !mounted.curMode().equals(Weapon.Mode_AMS_Manual))) {
                 continue;
             }
 
@@ -3678,7 +3697,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Start reached, now we can attempt to pick a weapon.
         if ((mounted != null)
             && (mounted.isReady())
-            && (!mounted.getType().hasFlag(WeaponType.F_AMS))
+            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.Mode_AMS_On)))
+            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.Mode_AMS_Off)))
             && (!mounted.getType().hasFlag(WeaponType.F_AMSBAY))
             && (!(mounted.getType().hasModes() && mounted.curMode().equals("Point Defense")))
             && ((mounted.getLinked() == null)
@@ -5886,7 +5906,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return false;
                 }
                 //Naval C3 only works in space
-                if (!game.getBoard().inSpace()) {
+                if (!isSpaceborne()) {
                     return false;
                 }
             } 
@@ -6076,6 +6096,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        
         // change the active sensor, if requested
         if (null != nextSensor) {
             activeSensor = nextSensor;
@@ -6257,7 +6278,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Make sure the AMS is good to go
             if (!weapon.isReady() || weapon.isMissing()
-                || weapon.curMode().equals("Off")) {
+                || !weapon.curMode().equals(Weapon.Mode_AMS_On)) {
                 continue;
             }
 
@@ -6288,6 +6309,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             ams.add(weapon);
         }
         return ams;
+    }
+    
+    /**
+     * Assign AMS systems to incoming telemissile attacks. This
+     * allows AMS bays to work against these modified physical attacks
+     */
+    public void assignTMAMS(Vector<AttackAction> vTMAttacks) {
+        HashSet<AttackAction> targets = new HashSet<AttackAction>();
+        for (Mounted ams : getActiveAMS()) {
+         // make a new vector of only incoming attacks in arc
+            Vector<TeleMissileAttackAction> vTMAttacksInArc = new Vector<TeleMissileAttackAction>(
+                    vTMAttacks.size());
+            
+            for (AttackAction aa : vTMAttacks) {
+                //We already made sure these are all telemissile attacks in Server
+                TeleMissileAttackAction taa = (TeleMissileAttackAction) aa;
+                if (!targets.contains(taa)
+                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                game.getEntity(taa.getEntityId()))) {
+                    vTMAttacksInArc.addElement(taa);
+                }
+            }
+            //AMS Bays can fire at all incoming attacks each round
+            //Point defense bays are added too. If they haven't fired
+            //at something else already, they can attack now. 
+            if (ams.getType().hasFlag(WeaponType.F_AMSBAY)
+                    || (ams.getType().hasFlag(WeaponType.F_PDBAY)
+                            && !ams.isUsedThisRound())) {
+                for (TeleMissileAttackAction taa : vTMAttacksInArc) {
+                    if (taa != null) {
+                        taa.addCounterEquipment(ams);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -9280,8 +9336,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (getOwner().getTeam() == spotter.getTeam() 
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
         
-        boolean sensors = game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensors = (game.getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(
@@ -10093,9 +10150,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
             mod = 6;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
-            mod = 8;
-        }
         if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
@@ -10167,9 +10221,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LOS)) {
-            mod = 0;
-        }
+
         return mod;
     }
 
@@ -11763,6 +11815,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getSensorCheck() {
         return sensorCheck;
     }
+    
+    /**
+     * A method to determine if an aero has suffered 3 sensor hits. 
+     * When double-blind is on, this affects both standard visibility and sensor rolls
+     */
+    public boolean isAeroSensorDestroyed() {
+        return false;
+    }
 
     public boolean hasModularArmor() {
         return hasModularArmor(-1);
@@ -12599,6 +12659,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "none";
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
+        if (isSpaceborne()) {
+            bracket = Compute.getSensorBracket(7);
+        }
         int range = getActiveSensor().getRangeByBracket();
         int groundRange = 0;
         if (getActiveSensor().isBAP()) {
@@ -12606,6 +12669,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else {
             groundRange = 1;
         }
+        
+        //ASF sensors change range when in space, so we do that here
+        if (isSpaceborne()) {
+            if (getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                range = Sensor.ASF_RADAR_MAX_RANGE;
+            }
+        
+            //If Aero/Spacecraft sensors are destroyed while in space, the range is 0.
+            if (isAeroSensorDestroyed()) {
+                range = 0;
+            }
+        }
+        
+        //Dropships using radar in an atmosphere need a range that's a bit more sensible
+        if (hasETypeFlag(Entity.ETYPE_DROPSHIP) && !isSpaceborne()) {
+            if (getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+                range = Sensor.LC_RADAR_GROUND_RANGE;
+            }
+        }
+        
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;
@@ -12614,6 +12697,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             minSensorRange = 0;
             minGroundSensorRange = 0;
         }
+        
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                     + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"

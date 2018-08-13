@@ -22,9 +22,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.IBoard;
 import megamek.common.IHex;
@@ -1556,6 +1558,30 @@ public class BoardUtilities {
                 .randomInt(factor)) - 3 * (factor - 1)) / 32;
     }
 
+    /**
+     * Figures out the "opposite" edge for the given entity on the entity's game board
+     * @param entity Entity to evaluate
+     * @return the Board.START_ constant representing the "opposite" edge
+     */
+    public static CardinalEdge getClosestEdge(Entity entity) {        
+        int distanceToWest = entity.getPosition().getX();
+        int distanceToEast = entity.getGame().getBoard().getWidth() - entity.getPosition().getX();
+        int distanceToNorth = entity.getPosition().getY();
+        int distanceToSouth = entity.getGame().getBoard().getHeight() - entity.getPosition().getY();
+        
+        boolean closerWestThanEast = distanceToWest < distanceToEast;
+        boolean closerNorthThanSouth = distanceToNorth < distanceToSouth;
+        
+        int horizontalDistance = Math.min(distanceToWest, distanceToEast);
+        int verticalDistance = Math.min(distanceToNorth, distanceToSouth);
+        
+        if(horizontalDistance < verticalDistance) {
+            return closerWestThanEast ? CardinalEdge.WEST : CardinalEdge.EAST;
+        } else {
+            return closerNorthThanSouth ? CardinalEdge.NORTH : CardinalEdge.SOUTH;
+        }
+    }
+    
     protected static class Point {
 
         public int x;

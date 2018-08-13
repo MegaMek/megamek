@@ -39,8 +39,9 @@ public class EntityVisibilityUtils {
      * @return
      */
     public static boolean onlyDetectedBySensors(IPlayer localPlayer, Entity entity) {
-        boolean sensors = entity.getGame().getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensors = (entity.getGame().getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = entity.getGame().getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = entity.getGame().getOptions().booleanOption(

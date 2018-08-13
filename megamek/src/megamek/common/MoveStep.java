@@ -379,6 +379,10 @@ public class MoveStep implements Serializable {
                 return "Tow";
             case DISCONNECT:
                 return "Disconnect";
+            case THRUST:
+                return "Thrust";
+            case YAW:
+                return "Yaw";
             default:
                 return "???";
         }

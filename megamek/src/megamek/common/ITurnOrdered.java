@@ -49,6 +49,8 @@ public interface ITurnOrdered extends Serializable {
     int getDropshipTurns();
 
     int getSmallCraftTurns();
+    
+    int getTeleMissileTurns();
 
     int getAeroTurns();
 
@@ -67,6 +69,8 @@ public interface ITurnOrdered extends Serializable {
     void incrementDropshipTurns();
 
     void incrementSmallCraftTurns();
+    
+    void incrementTeleMissileTurns();
 
     void incrementAeroTurns();
 
@@ -85,6 +89,8 @@ public interface ITurnOrdered extends Serializable {
     void resetDropshipTurns();
 
     void resetSmallCraftTurns();
+    
+    void resetTeleMissileTurns();
 
     void resetAeroTurns();
 

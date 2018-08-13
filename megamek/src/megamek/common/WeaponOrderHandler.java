@@ -26,11 +26,11 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -188,10 +188,9 @@ public class WeaponOrderHandler {
         }
 
         // Build the XML document.
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         StringBuilder log = new StringBuilder();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             log.append("Parsing ").append(path);
             Document doc = builder.parse(file);
             log.append("\n...Parsing finished.");

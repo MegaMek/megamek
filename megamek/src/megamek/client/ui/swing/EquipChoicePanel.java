@@ -637,8 +637,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     continue;
                 }
                 SimpleTechLevel legalLevel = SimpleTechLevel.getGameTechLevel(game);
-                boolean bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
-                        entity.isMixedTech());
+                boolean bTechMatch = false;
+                if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
+                    bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
+                            entity.isMixedTech());
+                } else {
+                    bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
+                }
 
                 // If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo.

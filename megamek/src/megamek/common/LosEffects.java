@@ -1568,6 +1568,10 @@ public class LosEffects {
 
     public void setCoverLocSecondary(Coords coverLocSecondary) {
         this.coverLocSecondary = coverLocSecondary;
-    }    
+    }
+    
+    public boolean infantryProtected() {
+        return infProtected;
+    }
 }
 

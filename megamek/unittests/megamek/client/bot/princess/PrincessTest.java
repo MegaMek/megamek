@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
@@ -64,7 +65,8 @@ public class PrincessTest {
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
-        Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
         Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
@@ -423,14 +425,14 @@ public class PrincessTest {
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = Mockito.mock(BasicPathRanker.class);
-        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
+        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class),
                                                    Mockito.any(IGame.class))).thenReturn(0);
-        Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockRanker);
+        Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
         Coords mockCoords = Mockito.mock(Coords.class);
         Mockito.when(mockMech.getPosition()).thenReturn(mockCoords);
-        Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
+        Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         IGame mockGame = Mockito.mock(IGame.class);
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
@@ -464,7 +466,7 @@ public class PrincessTest {
 
         // The unit can flee, but is no longer on the board edge.
         Mockito.when(mockMech.canFlee()).thenReturn(true);
-        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
+        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class),
                                                    Mockito.any(IGame.class))).thenReturn(1);
         Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
     }

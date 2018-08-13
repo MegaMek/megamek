@@ -468,19 +468,20 @@ public class AmmoType extends EquipmentType {
      */
     public boolean canAeroUse() {
         switch (ammoType) {
-        case T_AC_LBX:
-            return munitionType == M_CLUSTER;
-        case T_ATM:
-        case T_IATM:
-            return (munitionType == M_STANDARD)
-                    || (munitionType == M_HIGH_EXPLOSIVE)
-                    || (munitionType == M_EXTENDED_RANGE);
-        case T_AR10:
-            return true;
-        default:
-            return (munitionType == M_STANDARD)
-                    || (munitionType == M_ARTEMIS_CAPABLE)
-                    || (munitionType == M_ARTEMIS_V_CAPABLE);
+            case T_AC_LBX:
+            case T_SBGAUSS:
+                return munitionType == M_CLUSTER;
+            case T_ATM:
+            case T_IATM:
+                return (munitionType == M_STANDARD)
+                        || (munitionType == M_HIGH_EXPLOSIVE)
+                        || (munitionType == M_EXTENDED_RANGE);
+            case T_AR10:
+                return true;
+            default:
+                return (munitionType == M_STANDARD)
+                        || (munitionType == M_ARTEMIS_CAPABLE)
+                        || (munitionType == M_ARTEMIS_V_CAPABLE);
         }
     }
 
@@ -5497,7 +5498,7 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "314,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3051, 3080, 3090, DATE_NONE, DATE_NONE).setPrototypeFactions(F_FS,F_LC)
+            .setISAdvancement(3051, 3080, 3090).setPrototypeFactions(F_FS,F_LC)
             .setProductionFactions(F_FC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return ammo;
     }

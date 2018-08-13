@@ -64,18 +64,21 @@ jar {
 }
 
 task officialUnitList(type: JavaExec, dependsOn: jar) {
+	description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'megamek.MegaMek'
 	args '-oul'
 }
 
 task copyFiles(type: Copy, dependsOn: officialUnitList) {
+	description = 'Stages files that are to be copied into the distribution.'
 	from projectDir
 	
 	include "${dataDir}/**"
 	include "${confDir}/**"
 	include "${docDir}/**"
 	exclude "**/*.psd"
+	// No need to copy the files that are going to be zipped
 	exclude { it.file.isDirectory() && (it.file in file(unitFilesDir).listFiles()) }
 	exclude "${ratDir}/**"
 	
@@ -83,12 +86,14 @@ task copyFiles(type: Copy, dependsOn: officialUnitList) {
 }
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
+	description = 'Combines individual image files into a set of image atlases.'
 	classpath = sourceSets.main.runtimeClasspath
 	main = "megamek.utils.CreateImageAtlases"
 	workingDir = file(fileStagingDir)
 }
 
 task deleteAtlasedImages(dependsOn: createImageAtlases) {
+	description = 'Removes images from the staging directory that have been incorporated into atlases.'
 	doLast {
 		ant.delete dir: fileStagingDir, includesfile: atlasedImages
 		ant.delete file: atlasedImages
@@ -96,6 +101,7 @@ task deleteAtlasedImages(dependsOn: createImageAtlases) {
 }
 
 task unitFilesZip (dependsOn: copyFiles) {
+	description = 'Creates zip archives of all the unit file folders.'
 	file(unitFilesDir).eachDir {subDir ->
 		dependsOn tasks.create("${name}${subDir.name}", Zip) {
 			from subDir
@@ -112,12 +118,14 @@ task ensureRatDir (dependsOn: copyFiles) {
 }
 
 task ratZip (type: Zip, dependsOn: ensureRatDir) {
+	description = 'Creates a zip archive of all the random assignment tables.'
 	from ratDir
 	archiveName "rat_default.zip"
 	destinationDir file("${fileStagingDir}/${ratDir}")
 }
 
 task createLogDir (dependsOn: copyFiles) {
+	description 'Creates the log directory and the timestamp file.'
 	doLast {
 		mkdir "${fileStagingDir}/${logDir}"
 		ant.touch(file: "${fileStagingDir}/${logDir}/timestamp")
@@ -125,6 +133,8 @@ task createLogDir (dependsOn: copyFiles) {
 }
 
 task stageFiles {
+	description = 'Process data files to be included in distribution'
+	group = 'distribution'
 	dependsOn unitFilesZip
 	dependsOn ratZip
 	dependsOn deleteAtlasedImages
@@ -132,6 +142,7 @@ task stageFiles {
 }
 
 task unixStartScript (type: CreateStartScripts) {
+	description = 'Create shell script for *nix distribution.'
 	applicationName = 'startup'
 	mainClassName = project.mainClassName
 	outputDir = startScripts.outputDir
@@ -149,6 +160,7 @@ task unixStartScript (type: CreateStartScripts) {
 }
 
 distributions {
+	// Creates tasks which package distribution with MM jar and startup script in root directory
 	unix {
 		baseName = rootProject.name.toLowerCase()
 		contents {
@@ -161,6 +173,7 @@ distributions {
 			}
 		}
 	}
+	// Creates tasks which package distribution with MM jar wrapped in Windows executable
 	windows {
 		contents {
 			from ("${buildDir}/launch4j") {
@@ -177,41 +190,41 @@ distributions {
 	}
 }
 
-distZip {
-	dependsOn stageFiles
-}
-
-distTar {
-	dependsOn stageFiles
-	compression = Compression.GZIP 	
-}
-
 createExe {
+	description = 'Create Windows executable that wraps MM jar'
 	mainClassName = project.mainClassName
 	icon = "${projectDir}/data/images/misc/megamek.ico"
 	jvmOptions = project.ext.jvmOptions
 }
 
 windowsDistZip {
+	description = 'Creates Windows distribution packaged as a zip archive'
 	dependsOn createExe
 }
 
 unixDistTar {
+	description = 'Creates *nix distribution packaged as a tar ball'
 	dependsOn stageFiles
 	dependsOn unixStartScript
 	compression = Compression.GZIP
 }
 
+// The repository can only be cloned into an empty directory so we need to delete anything left over
+// from a previous build
 task deleteRepoDir (type: Delete) {
 	delete = "${repoDir}"
 }
 
 task cloneRepo (type: Exec, dependsOn: deleteRepoDir) {
+	description = 'Clones the repository to ensure we are working with a clean directory tree'
+	group = 'distribution'
 	commandLine "git"
-	args "clone", "--branch", "gradle", "--single-branch", gitRoot, "${buildDir}/repo"
+	args "clone", "--branch", mmBranch, "--single-branch", gitRoot, "${buildDir}/repo"
 }
 
 task sourceZip (type: Zip) {
+	description 'Creates a zip archive of the source'
+	group = 'distribution'
 	from (rootDir) {
 		exclude "**/build/**"
 		exclude "**/.*"
@@ -221,6 +234,7 @@ task sourceZip (type: Zip) {
 }
 
 task sourceTar (type: Tar) {
+	description 'Creates a compressed tar archive of the source'
 	from (rootDir) {
 		exclude "**/build/**"
 		exclude "**/.*"
@@ -230,7 +244,10 @@ task sourceTar (type: Tar) {
 	destinationDir file(distributionDir)
 }
 
+// Replace the assembleDist task created by the distributions plugin to create the packages we want to
 task assembleDist(overwrite: true) {
+	description = 'Build unix, Windows, and source packages'
+	group = 'distribution'
 	dependsOn unixDistTar
 	dependsOn windowsDistZip
 	dependsOn sourceZip
@@ -238,6 +255,8 @@ task assembleDist(overwrite: true) {
 }
 
 task buildFromRepo (type: GradleBuild) {
+	description = 'Assembles the distribution packages in the clean repository copy'
+	group = 'distribution'
 	dependsOn cloneRepo
 	
 	buildFile = "${repoDir}/build.gradle"
@@ -246,6 +265,8 @@ task buildFromRepo (type: GradleBuild) {
 }
 
 task release (type: Copy) {
+	description = 'Builds the release packages from the repository and copies them into the project build directory'
+	group = 'distribution'
 	dependsOn buildFromRepo
 	
 	from "${repoDir}/megamek/build/distributions"
@@ -253,11 +274,13 @@ task release (type: Copy) {
 }
 
 task sourcesJar(type: Jar) {
+	description = 'Creates a source archive for publication to a maven repository'
     from sourceSets.main.allJava
     classifier = 'sources'
 }
 
 task javadocJar(type: Jar) {
+	description = 'Creates a documentation archive for publication to a maven repository'
     from javadoc
     classifier = 'javadoc'
 }

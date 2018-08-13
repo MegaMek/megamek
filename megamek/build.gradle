@@ -46,6 +46,7 @@ ext {
 	libDir = "lib"
 	distributionDir = "${buildDir}/distributions"
 	fileStagingDir = "${buildDir}/files"
+	repoDir = "${buildDir}/repo"
 	atlasedImages = "${fileStagingDir}/atlasedImages.txt"
 	unitFilesDir = "${dataDir}/mechfiles"
 	ratDir = "${dataDir}/rat"
@@ -203,7 +204,7 @@ unixDistTar {
 }
 
 task deleteRepoDir (type: Delete) {
-	delete = "${buildDir}/repo"
+	delete = "${repoDir}"
 }
 
 task cloneRepo (type: Exec, dependsOn: deleteRepoDir) {
@@ -240,16 +241,16 @@ task assembleDist(overwrite: true) {
 task buildFromRepo (type: GradleBuild) {
 	dependsOn cloneRepo
 	
-	buildFile = "${buildDir}/repo/build.gradle"
-	dir = "${buildDir}/repo"
+	buildFile = "${repoDir}/build.gradle"
+	dir = "${repoDir}"
 	tasks = [ ':megamek:assembleDist' ]
 }
 
 task release (type: Copy) {
 	dependsOn buildFromRepo
 	
-	from "${buildDir}/repo/megamek/${buildDir}/distributions"
-	into "${buildDir}/distributions"
+	from "${repoDir}/megamek/build/distributions"
+	into "${distributionDir}"
 }
 
 task sourcesJar(type: Jar) {

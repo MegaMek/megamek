@@ -1,3 +1,7 @@
+plugins {
+	id 'org.ajoberstar.grgit' version '2.3.0'
+}
+
 allprojects {
 	apply plugin: 'java'
 	
@@ -14,7 +18,11 @@ subprojects {
 	version = '0.45.0-SNAPSHOT'
 }
 
-rootProject.ext.gitRoot = 'https://github.com/MegaMek/megamek.git'
+ext {
+	gitRoot = 'https://github.com/MegaMek/megamek.git'
+	mmBranch = grgit.branch.current.name
+	mmBranchTag = mmBranch.equals('master')? '' : '-' + mmBranch
+}
 
 // A settings_local.gradle file can be used to override any of the above options. For instance,
 // rootProject.ext.gitRoot = 'file:///path/to/local/repo' will cause the release target to clone a

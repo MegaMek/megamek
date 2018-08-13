@@ -149,9 +149,16 @@ task unixStartScript (type: CreateStartScripts) {
 }
 
 distributions {
-	main {
+	unix {
+		baseName = rootProject.name.toLowerCase()
 		contents {
 			from fileStagingDir
+			from(unixStartScript.unixScript)
+			from(jar)
+			from (project.sourceSets.main.runtimeClasspath.files
+    				.findAll { it.name.endsWith(".jar") }) {
+    			into "${libDir}"
+			}
 		}
 	}
 	windows {
@@ -165,17 +172,6 @@ distributions {
 	    				.findAll { it.name.endsWith(".jar") }) {
 	    			into "${libDir}"
 				}
-			}
-		}
-	}
-	unix {
-		contents {
-			from fileStagingDir
-			from(unixStartScript.unixScript)
-			from(jar)
-			from (project.sourceSets.main.runtimeClasspath.files
-    				.findAll { it.name.endsWith(".jar") }) {
-    			into "${libDir}"
 			}
 		}
 	}
@@ -269,7 +265,7 @@ task javadocJar(type: Jar) {
 publishing {
     publications {
         publishMMLibrary(MavenPublication) {
-            artifactId = 'megamek'
+            artifactId = "megamek${mmBranchTag}"
             from components.java
             artifact sourcesJar
 // Javadoc is full of errors
@@ -277,7 +273,7 @@ publishing {
 
             pom {
                 name = "MegaMek"
-                description = "MegaMek library"
+                description = "MegaMek"
                 url = "http://megamek.org"
                 licenses {
                     license {

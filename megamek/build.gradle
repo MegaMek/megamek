@@ -217,7 +217,7 @@ task sourceZip (type: Zip) {
 		exclude "**/.*"
 	}
 	archiveName "${rootProject.name.toLowerCase()}-${version}-source.zip"
-	destinationDir file("${buildDir}/${distributionDir}")
+	destinationDir file(distributionDir)
 }
 
 task sourceTar (type: Tar) {
@@ -227,7 +227,7 @@ task sourceTar (type: Tar) {
 	}
 	archiveName "${rootProject.name.toLowerCase()}-${version}-source.tar.gz"
 	compression = Compression.GZIP
-	destinationDir file("${buildDir}/${distributionDir}")
+	destinationDir file(distributionDir)
 }
 
 task assembleDist(overwrite: true) {
@@ -241,13 +241,14 @@ task buildFromRepo (type: GradleBuild) {
 	dependsOn cloneRepo
 	
 	buildFile = "${buildDir}/repo/build.gradle"
+	dir = "${buildDir}/repo"
 	tasks = [ ':megamek:assembleDist' ]
 }
 
 task release (type: Copy) {
 	dependsOn buildFromRepo
 	
-	from "${buildDir}/repo/${buildDir}/distributions"
+	from "${buildDir}/repo/megamek/${buildDir}/distributions"
 	into "${buildDir}/distributions"
 }
 

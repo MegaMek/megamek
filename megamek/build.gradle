@@ -65,13 +65,26 @@ jar {
 
 task officialUnitList(type: JavaExec, dependsOn: jar) {
 	description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
+	group = 'build'
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'megamek.MegaMek'
 	args '-oul'
 }
 
-task copyFiles(type: Copy, dependsOn: officialUnitList) {
+task equipmentList(type: JavaExec, dependsOn: jar) {
+	description = 'Generate current equipment.txt'
+	group = 'build'
+	classpath = sourceSets.main.runtimeClasspath
+	main = 'megamek.MegaMek'
+	args = [ '-eqdb', 'docs/equipment.txt' ]
+}
+
+task copyFiles(type: Copy) {
 	description = 'Stages files that are to be copied into the distribution.'
+	
+	dependsOn officialUnitList
+	dependsOn equipmentList
+	
 	from projectDir
 	
 	include "${dataDir}/**"

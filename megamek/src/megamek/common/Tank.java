@@ -4056,14 +4056,30 @@ public class Tank extends Entity {
     //Specific road/rail train rules
     
     /**
-     * Used to determine if this vehicle can tow trailers
-     * 
-     * @return
+     * Determines if this vehicle is currently able to tow designated trailer. 
+     * Can't tow enemies or if the hitch is occupied, or if the trailer's at a 
+     * different elevation.
+     *
+     * @param trailer - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the trailer can be towed, <code>false</code>
+     * otherwise.
      */
-    public boolean canTowTrailers() {
-        if (hasWorkingMisc(MiscType.F_HITCH)) {
-            return true;
+    public boolean canTow(Entity trailer) {
+        //Can't tow without a hitch!
+        if (!hasWorkingMisc(MiscType.F_HITCH)) {
+            return false;
         }
+        // one can only tow one's own team's units!
+        if (!trailer.isEnemyOf(this)) {
+            //if Trailer is not already being towed, tractor is not already towing
+            //and tractor/trailer are at the same elevation, we can tow it
+            if (!trailer.getTowed() 
+                    && getConnectedUnits() == null
+                    && (trailer.getElevation() == getElevation())) {
+                    return true;
+            }
+        }
+        // If we got here, something is preventing us from towing.
         return false;
     }
     
@@ -4086,32 +4102,10 @@ public class Tank extends Entity {
      * @return
      */
     public boolean isTractor() {
-        if (canTowTrailers() && !isTrailer()) {
+        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
             return true;
         }
         return false;
     }
     
-    /**
-     * Used to determine if this entity is currently being towed by another
-     */
-    private boolean isTowed = false;
-
-    /**
-     * Returns the towed status of this entity
-     * 
-     * @return
-     */
-    public boolean getTowed() {
-        return isTowed;
-    }
-    
-    /**
-     * Change the towed status of this entity
-     * 
-     * @param b - is the entity being towed or not?
-     */
-    public void setTowed(boolean b) {
-        isTowed = b;
-    }
 }

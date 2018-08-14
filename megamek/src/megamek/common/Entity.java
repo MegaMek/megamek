@@ -14980,6 +14980,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     //Tractors and trailers, tugs, etc
     
     /**
+     * Used to determine if this entity is currently being towed by another
+     */
+    private boolean isTowed = false;
+
+    /**
+     * Returns the towed status of this entity
+     * 
+     * @return
+     */
+    public boolean getTowed() {
+        return isTowed;
+    }
+    
+    /**
+     * Change the towed status of this entity
+     * 
+     * @param b - is the entity being towed or not?
+     */
+    public void setTowed(boolean b) {
+        isTowed = b;
+    }
+    
+    /**
      * A list of entities being towed directly by this entity, if present
      */
     private Vector<Entity> connectedUnits;

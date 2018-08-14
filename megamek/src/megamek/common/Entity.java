@@ -14980,29 +14980,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     //Tractors and trailers, tugs, etc
     
     /**
-     * Used to determine if this entity is currently being towed by another
-     */
-    private boolean isTowed = false;
-
-    /**
-     * Returns the towed status of this entity
-     * 
-     * @return
-     */
-    public boolean getTowed() {
-        return isTowed;
-    }
-    
-    /**
-     * Change the towed status of this entity
-     * 
-     * @param b - is the entity being towed or not?
-     */
-    public void setTowed(boolean b) {
-        isTowed = b;
-    }
-    
-    /**
      * Determines if this vehicle is currently able to tow designated trailer. 
      * Can't tow enemies or if the hitch is occupied, or if the trailer's at a 
      * different elevation.
@@ -15030,13 +15007,89 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
     
+    
     /**
-     * A list of entities being towed directly by this entity, if present
+     * Used to determine if this entity is currently being towed by another
+     */
+    private boolean isTowed = false;
+
+    /**
+     * Returns the towed status of this entity
+     * 
+     * @return
+     */
+    public boolean getTowed() {
+        return isTowed;
+    }
+    
+    /**
+     * Change the towed status of this entity
+     * 
+     * @param b - is the entity being towed or not?
+     */
+    public void setTowed(boolean b) {
+        isTowed = b;
+    }
+    
+    /**
+     * The powered tractor towing the whole train
+     * this entity is part of. This will often be the same
+     * entity as towedBy
+     */
+    private Entity tractor;
+
+    /**
+     * Returns the tractor towing the train this entity is part of
+     * 
+     * @return
+     */
+    public Entity getTractor() {
+        return tractor;
+    }
+    
+    /**
+     * Sets the tractor towing the train this entity is part of
+     * 
+     * @param t - the tractor towing this train
+     */
+    public void setTractor(Entity t) {
+        tractor = t;
+    }
+    
+    /**
+     * The entity directly towing this one, powered or unpowered. 
+     * This will often be the same entity as tractor
+     */
+    private Entity towedBy;
+
+    /**
+     * Returns the Entity that is directly towing this one
+     * 
+     * @return
+     */
+    public Entity getTowedBy() {
+        return towedBy;
+    }
+    
+    /**
+     * Sets the Entity that is directly towing this one
+     * 
+     * @param e - the Entity towing this trailer
+     */
+    public void setTowedBy(Entity e) {
+        towedBy = e;
+    }
+    
+    /**
+     * A list of entities being towed behind this entity, if present
+     * 
+     * Used to ensure all following trailers are disconnected if the train
+     * is broken at this entity. 
      */
     private Vector<Entity> connectedUnits;
     
     /**
-     * Returns the towed entities connected directly to this entity
+     * Returns the entities towed behind this entity
      * 
      * @return
      */
@@ -15045,21 +15098,32 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
-     * Attaches a trailer directly to this entity's towing mechanism
+     * Attaches a trailer to this train
      * 
-     * @param e - the entity to be towed
+     * @param e - the entity to be added to this train
      */
     public void towUnit(Entity e) {
         connectedUnits.add(e);
+        e.setTowedBy(this);
+        e.setTractor(this.getTractor());
+        tractor.addTowedUnit(e);
     }
     
     /**
      * Detaches an entity from this entity's towing mechanism
+     * also detaches all trailers behind this one from the whole
+     * train
      *
-     * @param e - the entity to be towed
+     * @param e - the entity to be detached
      */
     public void disconnectUnit(Entity e) {
         connectedUnits.remove(e);
+        e.setTowedBy(null);
+        for (Entity trailer : e.getConnectedUnits()) {
+            trailer.setTractor(null);
+            tractor.removeTowedUnit(trailer);
+        }
+        e.setTractor(null);
     }
     
     /**
@@ -15068,19 +15132,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * Use this for the tractor/engine/tug
      */
-    private Vector<Entity> allTowedUnits;
+    private Vector<Entity> isTractorFor;
     
     /**
-     * Adds an entity to this train
+     * Returns a list of all entities towed behind this tractor.
+     * 
+     * @return
      */
-    public void addTowedUnit(Entity e) {
-        allTowedUnits.add(e);
+    public Vector<Entity> getAllTowedUnits() {
+        return isTractorFor;
     }
     
     /**
-     * Removes an entity from this train
+     * Adds an entity to this tractor's train
+     */
+    public void addTowedUnit(Entity e) {
+        isTractorFor.add(e);
+    }
+    
+    /**
+     * Removes an entity from this tractor's train
      */
     public void removeTowedUnit(Entity e) {
-        allTowedUnits.remove(e);
+        isTractorFor.remove(e);
     }
 }

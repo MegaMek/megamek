@@ -3015,6 +3015,91 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Return the chosen unit.
         return choice;
     }
+    
+    /**
+     * Get the unit (trailer) that the player wants to connect. This method will add the
+     * trailer to our local copy of loaded units.
+     *
+     * @return The <code>Entity</code> that the player wants to tow. This
+     * value may be null if there are no eligible targets
+     */
+    private Entity getTowedUnit() {
+        final IGame game = clientgui.getClient().getGame();
+        Entity choice = null;
+
+        Vector<Entity> choices = new Vector<Entity>();
+        for (Entity other : game.getEntitiesVector(ce().getPosition())) {
+            if (other.isLoadableThisTurn() && (ce() != null)
+                && ce().canTow(other)
+                && other != ce()) {
+                choices.addElement(other);
+            }
+        }
+
+        // Handle error condition.
+        if (choices.size() == 0) {
+            System.err
+                    .println("MovementDisplay#getTowedUnit() called without towable units."); //$NON-NLS-1$
+            return null;
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        if (choices.size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(clientgui,
+                                     Messages.getString(
+                                             "DeploymentDisplay.loadUnitDialog.message",
+                                             new Object[]{ce().getShortName(),
+                                                          ce().getUnusedString()}), //$NON-NLS-1$
+                                     Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(choices), null);
+            choice = (Entity) SharedUtility.getTargetPicked(choices, input);
+        } // End have-choices
+
+        // Only one choice.
+        else {
+            choice = choices.get(0);
+        }
+
+        if (!(choice instanceof Infantry)) {
+            Vector<Integer> bayChoices = new Vector<Integer>();
+            for (Transporter t : ce().getTransports()) {
+                if (t.canLoad(choice) && (t instanceof Bay)) {
+                    bayChoices.add(((Bay) t).getBayNumber());
+                }
+            }
+            String[] retVal = new String[bayChoices.size()];
+            int i = 0;
+            for (Integer bn : bayChoices) {
+                retVal[i++] = bn.toString() + " (Free Slots: "
+                              + (int) ce().getBayById(bn).getUnused() + ")";
+            }
+            if (bayChoices.size() > 1) {
+                String bayString = (String) JOptionPane
+                        .showInputDialog(
+                                clientgui,
+                                Messages.getString(
+                                        "MovementDisplay.loadUnitBayNumberDialog.message",
+                                        new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                                Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+                                JOptionPane.QUESTION_MESSAGE, null, retVal,
+                                null);
+                choice.setTargetBay(Integer.parseInt(bayString.substring(0,
+                                                                         bayString.indexOf(" "))));
+                // We need to update the entity here so that the server knows
+                // about our target bay
+                clientgui.getClient().sendUpdateEntity(choice);
+            } else {
+                choice.setTargetBay(-1); // Safety set!
+            }
+        } else {
+            choice.setTargetBay(-1); // Safety set!
+        }
+
+        // Return the chosen unit.
+        return choice;
+    }
 
     /**
      * Get the unit that the player wants to unload. This method will remove the
@@ -4507,6 +4592,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.LOAD);
                 clientgui.bv.drawMovementData(ce(), cmd);
                 gear = MovementDisplay.GEAR_LAND;
+            } // else - didn't find a unit to load
+        } else if (actionCmd.equals(MoveCommand.MOVE_TOW.getCmd())) {
+            // Find the other friendly unit in our hex, add it
+            // to our local list of loaded units, and then stop.
+            Entity other = getLoadedUnit();
+            if (other != null) {
+                cmd.addStep(MoveStepType.TOW);
+                clientgui.bv.drawMovementData(ce(), cmd);
             } // else - didn't find a unit to load
         } else if (actionCmd.equals(MoveCommand.MOVE_MOUNT.getCmd())) {
             Entity other = getMountedUnit();

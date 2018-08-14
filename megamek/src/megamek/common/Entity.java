@@ -14982,14 +14982,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * A list of entities being towed directly by this entity, if present
      */
-    private ArrayList<Entity> connectedUnits;
+    private Vector<Entity> connectedUnits;
     
     /**
      * Returns the towed entities connected directly to this entity
      * 
      * @return
      */
-    public ArrayList<Entity> getConnectedUnits() {
+    public Vector<Entity> getConnectedUnits() {
         return connectedUnits;
     }
     
@@ -15017,19 +15017,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * Use this for the tractor/engine/tug
      */
-    private ArrayList<Entity> towedUnits;
+    private Vector<Entity> allTowedUnits;
     
     /**
      * Adds an entity to this train
      */
     public void addTowedUnit(Entity e) {
-        towedUnits.add(e);
+        allTowedUnits.add(e);
     }
     
     /**
      * Removes an entity from this train
      */
     public void removeTowedUnit(Entity e) {
-        towedUnits.remove(e);
+        allTowedUnits.remove(e);
     }
 }

@@ -4056,34 +4056,6 @@ public class Tank extends Entity {
     //Specific road/rail train rules
     
     /**
-     * Determines if this vehicle is currently able to tow designated trailer. 
-     * Can't tow enemies or if the hitch is occupied, or if the trailer's at a 
-     * different elevation.
-     *
-     * @param trailer - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the trailer can be towed, <code>false</code>
-     * otherwise.
-     */
-    public boolean canTow(Entity trailer) {
-        //Can't tow without a hitch!
-        if (!hasWorkingMisc(MiscType.F_HITCH)) {
-            return false;
-        }
-        // one can only tow one's own team's units!
-        if (!trailer.isEnemyOf(this)) {
-            //if Trailer is not already being towed, tractor is not already towing
-            //and tractor/trailer are at the same elevation, we can tow it
-            if (!trailer.getTowed() 
-                    && getConnectedUnits() == null
-                    && (trailer.getElevation() == getElevation())) {
-                    return true;
-            }
-        }
-        // If we got here, something is preventing us from towing.
-        return false;
-    }
-    
-    /**
      * Used to determine if this vehicle can be towed by a tractor
      * 
      * @return

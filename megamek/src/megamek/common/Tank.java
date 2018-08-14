@@ -4061,7 +4061,7 @@ public class Tank extends Entity {
      * @return
      */
     public boolean canTowTrailers() {
-        if (hasMisc(MiscType.F_TRACTOR_MODIFICATION) && hasWorkingMisc(MiscType.F_HITCH)) {
+        if (hasWorkingMisc(MiscType.F_HITCH)) {
             return true;
         }
         return false;

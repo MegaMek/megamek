@@ -314,7 +314,7 @@ public class ForceGeneratorViewUi {
 		if (null != fd) {
     		lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null? "" : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
     		lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
-    		lblRating.setText(RandomSkillsGenerator.getLevelDisplayableName(fd.getExperience()) + "/"
+    		lblRating.setText(RandomSkillsGenerator.getLevelDisplayableName(fd.getExperience())
     				+ ((fd.getRating() == null)?"":"/" + fd.getRating()));
 		} else {
             lblOrganization.setText("");

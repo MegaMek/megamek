@@ -41,7 +41,13 @@ public class ISAMS extends AmmoWeapon {
         addLookupName("ISAMS");
         heat = 1;
         rackSize = 2;
-        damage = 1; // # of d6 of missiles affected
+        damage = 2; // for manual operation
+        minimumRange = 0; 
+        shortRange = 1;
+        mediumRange = 1;
+        longRange = 1;
+        extremeRange = 1;
+        maxRange = RANGE_SHORT;
         shortAV = 3;
         ammoType = AmmoType.T_AMS;
         tonnage = 0.5f;

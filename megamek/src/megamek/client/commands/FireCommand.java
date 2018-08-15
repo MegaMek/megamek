@@ -36,6 +36,7 @@ import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 
 /**
  * @author dirk
@@ -291,7 +292,7 @@ public class FireCommand extends ClientCommand {
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.Mode_AMS_Manual))
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");

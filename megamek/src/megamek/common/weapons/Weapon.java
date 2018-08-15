@@ -50,6 +50,10 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String Mode_Flamer_Damage = "Damage";
     public static final String Mode_Flamer_Heat = "Heat";
     
+    public static final String Mode_AMS_On = "On";
+    public static final String Mode_AMS_Off = "Off";
+    public static final String Mode_AMS_Manual = "Use as Weapon";
+    
     public static final String Mode_CapLaser_AAA = "AAA";
     
     public static final String Mode_Capital_Bracket_80 = "Bracket 80%";
@@ -186,6 +190,9 @@ public abstract class Weapon extends WeaponType implements Serializable {
         }
 
         if (hasFlag(WeaponType.F_AMS)) {
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+                addMode(Weapon.Mode_AMS_Manual);
+            }
             if (gOp.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 removeMode("Automatic");
             } else {

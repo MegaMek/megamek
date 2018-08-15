@@ -71,7 +71,7 @@
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Warship">%GALAXY%</subforce>
+			<subforce unitType="Warship">%CLUSTER%</subforce>
 		</attachedForces>
 	</force>
 	

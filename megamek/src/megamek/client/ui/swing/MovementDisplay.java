@@ -1088,7 +1088,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
+        setTowEnabled(false);
         setUnloadEnabled(false);
+        setDisconnectEnabled(false);
         setClearEnabled(false);
         setHullDownEnabled(false);
         setSwimEnabled(false);
@@ -5179,10 +5181,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         getBtn(MoveCommand.MOVE_MOUNT).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveMountEnabled(enabled);
     }
+    
+    private void setTowEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_TOW).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveTowEnabled(enabled);
+    }
 
     private void setUnloadEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNLOAD).setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnloadEnabled(enabled);
+    }
+    
+    private void setDisconnectEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_DISCONNECT).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveDisconnectEnabled(enabled);
     }
 
     private void setJumpEnabled(boolean enabled) {

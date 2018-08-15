@@ -3048,10 +3048,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String input = (String) JOptionPane
                     .showInputDialog(clientgui,
                                      Messages.getString(
-                                             "DeploymentDisplay.loadUnitDialog.message",
-                                             new Object[]{ce().getShortName(),
-                                                          ce().getUnusedString()}), //$NON-NLS-1$
-                                     Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                                             "DeploymentDisplay.towUnitDialog.message",
+                                             new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                                     Messages.getString("DeploymentDisplay.towUnitDialog.title"), //$NON-NLS-1$
                                      JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(choices), null);
             choice = (Entity) SharedUtility.getTargetPicked(choices, input);
@@ -3062,40 +3061,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             choice = choices.get(0);
         }
 
-        if (!(choice instanceof Infantry)) {
-            Vector<Integer> bayChoices = new Vector<Integer>();
-            for (Transporter t : ce().getTransports()) {
-                if (t.canLoad(choice) && (t instanceof Bay)) {
-                    bayChoices.add(((Bay) t).getBayNumber());
-                }
-            }
-            String[] retVal = new String[bayChoices.size()];
-            int i = 0;
-            for (Integer bn : bayChoices) {
-                retVal[i++] = bn.toString() + " (Free Slots: "
-                              + (int) ce().getBayById(bn).getUnused() + ")";
-            }
-            if (bayChoices.size() > 1) {
-                String bayString = (String) JOptionPane
-                        .showInputDialog(
-                                clientgui,
-                                Messages.getString(
-                                        "MovementDisplay.loadUnitBayNumberDialog.message",
-                                        new Object[]{ce().getShortName()}), //$NON-NLS-1$
-                                Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
-                                JOptionPane.QUESTION_MESSAGE, null, retVal,
-                                null);
-                choice.setTargetBay(Integer.parseInt(bayString.substring(0,
-                                                                         bayString.indexOf(" "))));
-                // We need to update the entity here so that the server knows
-                // about our target bay
-                clientgui.getClient().sendUpdateEntity(choice);
-            } else {
-                choice.setTargetBay(-1); // Safety set!
-            }
-        } else {
-            choice.setTargetBay(-1); // Safety set!
-        }
+        // We need to update the entity here so that the server knows
+        // about our changes
+        //clientgui.getClient().sendUpdateEntity(choice);
+        //choice.setTargetBay(-1); // Safety set!
 
         // Return the chosen unit.
         return choice;
@@ -4596,7 +4565,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_TOW.getCmd())) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
-            Entity other = getLoadedUnit();
+            Entity other = getTowedUnit();
             if (other != null) {
                 cmd.addStep(MoveStepType.TOW);
                 clientgui.bv.drawMovementData(ce(), cmd);

@@ -1585,6 +1585,11 @@ public class Princess extends BotClient {
      * whichever is the more recent.
      */
     public void refreshCrippledUnits() {
+        // if we're not following 'forced withdrawal' rules, there's no need for this
+        if(!getForcedWithdrawal()) {
+            return;
+        }
+        
         // this approach is a little bit inefficient, but the running time is only O(n) where n is the number
         // of princess owned units, so it shouldn't be a big deal. 
         crippledUnits.clear();

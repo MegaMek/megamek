@@ -1573,7 +1573,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isLoadableThisTurn() {
         return (delta_distance == 0) && (conveyance == Entity.NONE)
-               && !unloadedThisTurn && !isClearingMinefield();
+               && !unloadedThisTurn && !isClearingMinefield() && getTowedBy() == null;
     }
 
     /**

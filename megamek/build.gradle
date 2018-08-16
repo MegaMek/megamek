@@ -55,7 +55,7 @@ ext {
 }
 
 jar {
-	archiveName = "${rootProject.name}.${extension}"
+	archiveName = 'MegaMek.jar'
 	manifest {
 	    attributes "Main-Class": mainClassName
 	    attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
@@ -168,14 +168,14 @@ task unixStartScript (type: CreateStartScripts) {
 	unixStartScriptGenerator.template = resources.text.fromFile(scriptTemplate)
 	doLast {
 		// The start script assumes all the files on the classpath will be in the lib directory.
-		unixScript.text = unixScript.text.replace("lib/${rootProject.name}", rootProject.name)
+		unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
 	}
 }
 
 distributions {
 	// Creates tasks which package distribution with MM jar and startup script in root directory
 	unix {
-		baseName = rootProject.name.toLowerCase()
+		baseName = 'megamek'
 		contents {
 			from fileStagingDir
 			from(unixStartScript.unixScript)
@@ -242,7 +242,7 @@ task sourceZip (type: Zip) {
 		exclude "**/build/**"
 		exclude "**/.*"
 	}
-	archiveName "${rootProject.name.toLowerCase()}-${version}-source.zip"
+	archiveName "megamek-${version}-source.zip"
 	destinationDir file(distributionDir)
 }
 
@@ -252,7 +252,7 @@ task sourceTar (type: Tar) {
 		exclude "**/build/**"
 		exclude "**/.*"
 	}
-	archiveName "${rootProject.name.toLowerCase()}-${version}-source.tar.gz"
+	archiveName "megamek-${version}-source.tar.gz"
 	compression = Compression.GZIP
 	destinationDir file(distributionDir)
 }

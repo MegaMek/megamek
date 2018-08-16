@@ -91,6 +91,9 @@ import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
@@ -104,6 +107,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      *
      */
     private static final long serialVersionUID = -7246715124042905688L;
+    
+    //L4J Support
+    private MMLogger logger = null;
 
     // Defines for the different flags
     public static final int CMD_NONE = 0;
@@ -3026,6 +3032,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * value may be null if there are no eligible targets
      */
     private Entity getTowedUnit() {
+        final String METHOD_NAME = "getTowedUnit()";
         final IGame game = clientgui.getClient().getGame();
         Entity choice = null;
 
@@ -3040,8 +3047,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Handle error condition.
         if (choices.size() == 0) {
-            System.err
-                    .println("MovementDisplay#getTowedUnit() called without towable units."); //$NON-NLS-1$
+            logDebug(METHOD_NAME, "Method called without towable units.");
             return null;
         }
 

@@ -206,6 +206,7 @@ distributions {
 createExe {
 	description = 'Create Windows executable that wraps MM jar'
 	mainClassName = project.mainClassName
+	outfile = 'MegaMek.exe'
 	icon = "${projectDir}/data/images/misc/megamek.ico"
 	jvmOptions = project.ext.jvmOptions
 }

@@ -1261,6 +1261,11 @@ public abstract class TestEntity implements TestEntityOption {
             illegal = true;
         }
         
+        if (getEntity().hasStealth() && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
+            buff.append("Stealth armor requires an ECM generator.\n");
+            illegal = true;
+        }
+        
         if (getEntity().isOmni()) {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {

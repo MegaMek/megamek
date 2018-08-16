@@ -285,6 +285,9 @@ public class TestTank extends TestEntity {
                 heat += 12;
             }
         }
+        if (tank.hasStealth()) {
+            heat += 10;
+        }
         return heat;
     }
 
@@ -296,8 +299,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public int getCountHeatSinks() {
-        float heat = getTankCountHeatLaserWeapons();
-        return Math.round(heat);
+        return getTankCountHeatLaserWeapons();
     }
 
     @Override

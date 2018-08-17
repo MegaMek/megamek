@@ -13,23 +13,23 @@ Jumpship
 </UnitType>
 
 <Name>
-Hunter Jumpship
+Explorer JumpShip
 </Name>
 
 <Model>
-(2948) (LF)
+(HPG)
 </Model>
 
 <year>
-2948
+2780
 </year>
 
 <originalBuildYear>
-2948
+2780
 </originalBuildYear>
 
 <type>
-Clan Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -37,12 +37,11 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:113.5:1:1
-cargobay:113.5:1:2
-cargobay:113.5:1:3
-megamek.common.DockingCollar@537d5b87
-1stclassquarters:40.0:0
-crewquarters:140.0:0
+smallcraftbay:4.0:2:1
+2ndclassquarters:35.0:0
+1stclassquarters:90.0:0
+crewquarters:105.0:0
+cargobay:149.0:1:2
 </transporters>
 
 <SafeThrust>
@@ -50,15 +49,15 @@ crewquarters:140.0:0
 </SafeThrust>
 
 <heatsinks>
-97
+79
 </heatsinks>
 
 <sink_type>
-1
+0
 </sink_type>
 
 <fuel>
-2000
+750
 </fuel>
 
 <engine_type>
@@ -66,55 +65,38 @@ crewquarters:140.0:0
 </engine_type>
 
 <armor_type>
-12
+41
 </armor_type>
 
 <armor_tech>
-2
+1
 </armor_tech>
 
 <armor>
-8
-6
-6
-8
-6
-6
+7
+3
+3
+3
+3
+3
 </armor>
 
 <Nose Equipment>
-(B) CLLargePulseLaser
-(B) CLStreakSRM4
-Clan Streak SRM 4 Ammo:25
-(B) CLAntiMissileSystem
-CLAntiMissileSystem
-CLAMS Ammo:96
 </Nose Equipment>
 
 <Left Front Side Equipment>
-(B) CLLargePulseLaser
-CLLargePulseLaser
 </Left Front Side Equipment>
 
 <Right Front Side Equipment>
-(B) CLLargePulseLaser
-CLLargePulseLaser
 </Right Front Side Equipment>
 
 <Aft Equipment>
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
-(B) CLStreakSRM4
-CLStreakSRM4
-Clan Streak SRM 4 Ammo:50
 </Aft Left Side Equipment>
 
 <Aft Right Side Equipment>
-(B) CLStreakSRM4
-CLStreakSRM4
-Clan Streak SRM 4 Ammo:50
 </Aft Right Side Equipment>
 
 <structural_integrity>
@@ -122,27 +104,23 @@ Clan Streak SRM 4 Ammo:50
 </structural_integrity>
 
 <source>
-TRO 3057U - Late Succession War - Lostech
+TRO 3075 - Star League
 </source>
 
 <tonnage>
-113000.0
+50000.0
 </tonnage>
-
-<lithium-fusion>
-1
-</lithium-fusion>
 
 <sail>
 1
 </sail>
 
-<docking_collar>
-1
-</docking_collar>
+<grav_decks>
+80
+</grav_decks>
 
 <crew>
-24
+39
 </crew>
 
 <officers>
@@ -150,11 +128,11 @@ TRO 3057U - Late Succession War - Lostech
 </officers>
 
 <gunners>
-2
+0
 </gunners>
 
 <passengers>
-0
+10
 </passengers>
 
 <marines>
@@ -166,10 +144,10 @@ TRO 3057U - Late Succession War - Lostech
 </battlearmor>
 
 <life_boat>
-4
+0
 </life_boat>
 
 <escape_pod>
-0
+3
 </escape_pod>
 

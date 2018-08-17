@@ -2,6 +2,7 @@ plugins {
 	id 'application'
 	id 'maven-publish'
 	id 'edu.sc.seis.launch4j' version '2.4.4'
+	id "edu.sc.seis.macAppBundle" version "2.2.2"
 }
 
 sourceSets {
@@ -173,6 +174,12 @@ task unixStartScript (type: CreateStartScripts) {
 	}
 }
 
+macAppBundle {
+	appName = 'MegaMek'
+	mainClassName = project.mainClassName
+	icon = "${projectDir}/data/images/misc/megamek.icns"
+}
+
 distributions {
 	// Creates tasks which package distribution with MM jar and startup script in root directory
 	unix {
@@ -193,12 +200,20 @@ distributions {
 			from ("${buildDir}/launch4j") {
 				include '*.exe'
 			}
-			contents {
-				from fileStagingDir
-				from (project.sourceSets.main.runtimeClasspath.files
-	    				.findAll { it.name.endsWith(".jar") }) {
-	    			into "${libDir}"
-				}
+			from fileStagingDir
+			from (project.sourceSets.main.runtimeClasspath.files
+    				.findAll { it.name.endsWith(".jar") }) {
+    			into "${libDir}"
+			}
+		}
+	}
+	mac {
+		contents {
+			from "${buildDir}/macApp"
+			from fileStagingDir
+			from (project.sourceSets.main.runtimeClasspath.files
+    				.findAll { it.name.endsWith(".jar") }) {
+    			into "${macAppBundle.appName}.app/Contents/${macAppBundle.jarSubdir}/${libDir}" 
 			}
 		}
 	}
@@ -222,6 +237,13 @@ unixDistTar {
 	dependsOn stageFiles
 	dependsOn unixStartScript
 	compression = Compression.GZIP
+}
+
+macDistTar {
+	description = 'Creates mac OSX distribution'
+	dependsOn stageFiles
+	dependsOn createApp
+	compression = Compression.BZIP2
 }
 
 // The repository can only be cloned into an empty directory so we need to delete anything left over
@@ -265,6 +287,7 @@ task assembleDist(overwrite: true) {
 	group = 'distribution'
 	dependsOn unixDistTar
 	dependsOn windowsDistZip
+	dependsOn macDistTar
 	dependsOn sourceZip
 	dependsOn sourceTar
 }

@@ -3,6 +3,7 @@ package megamek.common.building;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import megamek.common.Coords;
 
@@ -14,37 +15,21 @@ import megamek.common.Coords;
  * @author coelocanth
  */
 public class BuildingTemplate implements Serializable {
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -911419490135815472L;
 
-    public static final int BASEMENT_RANDOM = -1;
-
-    private ArrayList<Coords> coordsList = new ArrayList<Coords>();
-    private int type = Building.LIGHT;
-    private int CF = 15;
-    private int height = 2;
-    private int basement = BASEMENT_RANDOM;
-
-    public BuildingTemplate(int type, ArrayList<Coords> coords) {
-        this.type = type;
-        coordsList = coords;
-        CF = Building.getDefaultCF(type);
-    }
-
-    public BuildingTemplate(int type, ArrayList<Coords> coords, int CF,
-            int height, int basement) {
+    public BuildingTemplate(int type, ArrayList<Coords> coords, int cf, int height) {
         this.type = type;
         this.coordsList = coords;
-        this.CF = CF;
+        this.cf = cf;
         this.height = height;
-        this.basement = basement;
     }
 
-    /**
-     * @return vector containing Coords of all hexes the building covers
-     */
+    private List<Coords> coordsList;
+    private int type;
+    private int cf;
+    private int height;
+
     public Iterator<Coords> getCoords() {
         return coordsList.iterator();
     }
@@ -60,7 +45,7 @@ public class BuildingTemplate implements Serializable {
      * @return construction factor, used to initialise BLDG_CF
      */
     public int getCF() {
-        return CF;
+        return cf;
     }
 
     /**
@@ -70,14 +55,8 @@ public class BuildingTemplate implements Serializable {
         return height;
     }
 
-    /**
-     * @return basement settings - basements arent implemented yet
-     */
-    public int getBasement() {
-        return basement;
-    }
-
     public boolean containsCoords(Coords c) {
         return coordsList.contains(c);
     }
+
 }

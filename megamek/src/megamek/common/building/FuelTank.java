@@ -18,34 +18,23 @@ import megamek.common.Coords;
 import megamek.common.IBoard;
 
 /**
- * This class represents a single, possibly multi-hex fuel tank on the board.
+ * Represents a single, possibly multi-hex fuel tank on the board.
  *
  * @author fastsammy@sourceforge.net (Robin D. Toll)
  */
 public class FuelTank extends Building {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 5275543640680231747L;
-    private int _magnitude;
 
-    public FuelTank(Coords coords, IBoard board, int structureType,
-            int magnitude) {
+    private static final long serialVersionUID = 5275543640680231747L;
+
+    public FuelTank(Coords coords, IBoard board, int structureType, int magnitude) {
         super(coords, board, structureType, BasementType.NONE);
-        _magnitude = magnitude;
+        this.magnitude = magnitude;
     }
+
+    private int magnitude;
 
     public int getMagnitude() {
-        return _magnitude;
+        return magnitude;
     }
 
-    /*
-     * public String toString() { // Assemble the string in pieces. StringBuffer
-     * buf = new StringBuffer(); // Add the building type to the buffer. switch
-     * (this.getType()) { case Building.LIGHT: buf.append( "Light " ); break;
-     * case Building.MEDIUM: buf.append( "Medium " ); break; case
-     * Building.HEAVY: buf.append( "Heavy " ); break; case Building.HARDENED:
-     * buf.append( "Hardened " ); break; } // Add the building's name.
-     * buf.append(this.name); // Return the string. return buf.toString(); }
-     */
 }

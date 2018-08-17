@@ -160,7 +160,7 @@ public class CityBuilder {
                 int type = getBuildingTypeByCF(totalCF);
 
                 buildingList.add(new BuildingTemplate(type, coordList, totalCF,
-                        floors, -1));
+                        floors));
             }
         }
 

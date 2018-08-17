@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Board;
-import megamek.common.Building;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.ECMInfo;
@@ -58,6 +57,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;

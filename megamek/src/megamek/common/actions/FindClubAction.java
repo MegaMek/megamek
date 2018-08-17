@@ -21,13 +21,13 @@
 package megamek.common.actions;
 
 import megamek.common.BipedMech;
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 
 /**

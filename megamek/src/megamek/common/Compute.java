@@ -42,6 +42,7 @@ import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.building.BasementType;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;

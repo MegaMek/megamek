@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common;
+package megamek.common.building;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,9 +22,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
 
-import megamek.common.building.BasementType;
-import megamek.common.building.ConstructionType;
-import megamek.common.building.DemolitionCharge;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.IBoard;
+import megamek.common.IHex;
+import megamek.common.Report;
+import megamek.common.Terrains;
 
 // LATER see to move Building into megamek.common.building
 

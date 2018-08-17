@@ -17,6 +17,8 @@ package megamek.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.building.Building;
+
 /**
  * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexes.

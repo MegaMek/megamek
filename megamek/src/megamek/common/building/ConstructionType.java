@@ -20,8 +20,6 @@ package megamek.common.building;
 
 import java.util.Optional;
 
-import megamek.common.Building;
-
 public enum ConstructionType {
 
     // LATER Double-check that WALL really was intended as a construction type

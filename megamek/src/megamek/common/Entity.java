@@ -50,6 +50,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.building.BasementType;
+import megamek.common.building.Building;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;

@@ -19,7 +19,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IBoard;
@@ -28,6 +27,8 @@ import megamek.common.ITerrain;
 import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
 import megamek.common.Terrains;
+import megamek.common.building.Building;
+import megamek.common.building.BuildingTemplate;
 
 /**
  * @author Torren + Coelocanth

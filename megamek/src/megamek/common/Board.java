@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.building.BasementType;
+import megamek.common.building.Building;
+import megamek.common.building.FuelTank;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.MegaMekFile;

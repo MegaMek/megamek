@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.ConvFighter;
 import megamek.common.Engine;
@@ -35,6 +34,7 @@ import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.Server;
 

@@ -24,7 +24,6 @@ import java.util.List;
 
 import megamek.client.ui.SharedUtility;
 import megamek.common.BombType;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -34,6 +33,7 @@ import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
+import megamek.common.building.Building;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;

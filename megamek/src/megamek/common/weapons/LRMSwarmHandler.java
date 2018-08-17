@@ -16,7 +16,6 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Entity;
@@ -29,6 +28,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 

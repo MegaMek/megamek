@@ -12,9 +12,10 @@
  *  for more details.
  */
 
-package megamek.common;
+package megamek.common.building;
 
-import megamek.common.building.BasementType;
+import megamek.common.Coords;
+import megamek.common.IBoard;
 
 /**
  * This class represents a single, possibly multi-hex fuel tank on the board.

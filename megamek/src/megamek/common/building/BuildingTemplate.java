@@ -1,10 +1,9 @@
-package megamek.common.util;
+package megamek.common.building;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import megamek.common.Building;
 import megamek.common.Coords;
 
 /**

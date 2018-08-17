@@ -27,239 +27,15 @@ import java.util.Vector;
  * Represents a single, possibly multi-hex building on the board.
  *
  * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $Revision$
  */
 public class Building implements Serializable {
 
     private static final long serialVersionUID = -8236017592012683793L;
 
     /**
-     * The ID of this building.
-     */
-    private int id = Building.UNKNOWN;
-
-    /**
-     * The coordinates of every hex of this building.
-     */
-    private Vector<Coords> coordinates = new Vector<>();
-
-    /**
-     * The construction type of the building.
-     */
-    private int type = Building.UNKNOWN;
-
-    /**
-     * The Basement type of the building.
-     */
-    private Map<Coords,BasementType> basement = new HashMap<>();
-    /**
-     * the class of the building
-     */
-    private int bldgClass = Building.STANDARD;
-
-    private int collapsedHexes = 0;
-
-    private int originalHexes = 0;
-
-    /**
-     * The current construction factor of the building hexes. Any damage
-     * immediately updates this value.
-     */
-    private Map<Coords, Integer> currentCF = new HashMap<>();
-    /**
-     * The construction factor of the building hexes at the start of this attack
-     * phase. Damage that is received during the phase is applied at the end of
-     * the phase.
-     */
-    private Map<Coords, Integer> phaseCF = new HashMap<>();
-    /**
-     * The current armor of the building hexes.
-     */
-    private Map<Coords, Integer> armor = new HashMap<>();
-
-    /**
-     * The current state of the basement.
-     */
-    private Map<Coords, Boolean> basementCollapsed = new HashMap<>();
-
-    /**
-     * The name of the building.
-     */
-    private String name = null;
-
-    /**
-     * Flag that indicates whether this building is burning
-     */
-    private Map<Coords, Boolean> burning = new HashMap<>();
-
-    public class DemolitionCharge implements Serializable {
-
-        private static final long serialVersionUID = -6655782801564155668L;
-
-        public int damage;
-        public int playerId;
-        public Coords pos;
-
-        /**
-         * A UUID to keep track of the identify of this demolition charge.
-         * Since we could have multiple charges in the same building hex, we
-         * can't track identity based upon owner and damage.  Additionally,
-         * since we pass objects across the network, we need a mechanism to
-         * track identify other than memory address.
-         */
-        public UUID uuid = UUID.randomUUID();
-
-        public DemolitionCharge(int playerId, int damage, Coords p) {
-            this.damage = damage;
-            this.playerId = playerId;
-            pos = p;
-        }
-
-        @Override
-        public int hashCode() {
-            return uuid.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof DemolitionCharge) {
-                return uuid.equals(((DemolitionCharge)o).uuid);
-            }
-            return false;
-        }
-     }
-
-    private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
-
-    // Public and Protected constants, constructors, and methods.
-
-    /**
-     * Update this building to include the new hex (and all hexes off the new
-     * hex, which aren't already included).
-     *
-     * @param coords
-     *            - the <code>Coords</code> of the new hex.
-     * @param board
-     *            - the game's <code>IBoard</code> object.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CF.
-     */
-    protected void include(Coords coords, IBoard board, int structureType) {
-
-        // If the hex is already in the building, we've covered it before.
-        if (isIn(coords)) {
-            return;
-        }
-
-        // Get the nextHex hex.
-        IHex nextHex = board.getHex(coords);
-        if ((null == nextHex) || !(nextHex.containsTerrain(structureType))) {
-            return;
-        }
-
-        if (structureType == Terrains.BUILDING) {
-            // Error off if the building type, or CF is off.
-            if (type != nextHex.terrainLevel(Terrains.BUILDING)) {
-                throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
-                        + coords.getBoardNum()
-                        + ", should contain the same type of building as " //$NON-NLS-1$
-                        + coordinates.elementAt(0).getBoardNum());
-            }
-            if (bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
-                throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
-                        + coords.getBoardNum()
-                        + ", should contain the same class of building as " //$NON-NLS-1$
-                        + coordinates.elementAt(0).getBoardNum());
-            }
-
-        }
-        // We passed our tests, add the next hex to this building.
-        coordinates.addElement(coords);
-        originalHexes++;
-        currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
-        phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
-        basement.put(coords, BasementType.getType(nextHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
-        basementCollapsed.put(coords, nextHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
-        if (structureType == Terrains.BRIDGE) {
-            currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
-            phaseCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
-        }
-        if (structureType == Terrains.FUEL_TANK) {
-            currentCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
-            phaseCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
-        }
-        if (nextHex.containsTerrain(Terrains.BLDG_ARMOR)) {
-            armor.put(coords, nextHex.terrainLevel(Terrains.BLDG_ARMOR));
-        } else {
-            armor.put(coords, 0);
-        }
-
-        burning.put(coords, false);
-
-        // Walk through the exit directions and
-        // identify all hexes in this building.
-        for (int dir = 0; dir < 6; dir++) {
-
-            // Does the building exit in this direction?
-            if (nextHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board, structureType);
-            }
-
-        }
-
-    } // End void protected include( Coords, Board )
-
-    /**
      * Generic flag for uninitialized values.
      */
     protected static final int UNKNOWN = -1;
-
-    /**
-     * Basement handlers
-     */
-    public enum BasementType {
-        UNKNOWN(0,0, Messages.getString("Building.BasementUnknown")), //$NON-NLS-1$
-        NONE(1,0, Messages.getString("Building.BasementNone")), //$NON-NLS-1$
-        TWO_DEEP_FEET(2,2,Messages.getString("Building.BasementTwoDeepFeet")), //$NON-NLS-1$
-        ONE_DEEP_FEET(3,1,Messages.getString("Building.BasementOneDeepFeet")), //$NON-NLS-1$
-        ONE_DEEP_NORMAL(4,1,Messages.getString("Building.BasementOneDeepNormal")), //$NON-NLS-1$
-        ONE_DEEP_NORMALINFONLY(5,1,Messages.getString("Building.BasementOneDeepNormalInfOnly")), //$NON-NLS-1$
-        ONE_DEEP_HEAD(6,1,Messages.getString("Building.BasementOneDeepHead")), //$NON-NLS-1$
-        TWO_DEEP_HEAD(7,2,Messages.getString("Building.BasementTwoDeepHead")); //$NON-NLS-1$
-
-        private int value;
-        private int depth;
-        private String desc;
-
-        BasementType(int type, int depth, String desc) {
-            value = type;
-            this.depth = depth;
-            this.desc = desc;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public int getDepth() {
-            return depth;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public static BasementType getType(int value) {
-            for (BasementType type : BasementType.values()) {
-                if (type.getValue() == value) {
-                    return type;
-                }
-            }
-            return UNKNOWN;
-        }
-    }
 
     /**
      * Various construction types.
@@ -277,10 +53,6 @@ public class Building implements Serializable {
     public static final int HANGAR = 1;
     public static final int FORTRESS = 2;
     public static final int GUN_EMPLACEMENT = 3;
-
-    // TODO: leaving out Castles Brian until issues with damage scaling are
-    // resolved
-    // public static final int CASTLE_BRIAN = 3;
 
     /**
      * Construct a building for the given coordinates from the board's
@@ -422,6 +194,73 @@ public class Building implements Serializable {
             basementCollapsed.put(coord, false);
         }
     }
+
+    /**
+     * The ID of this building.
+     */
+    private int id = Building.UNKNOWN;
+
+    /**
+     * The coordinates of every hex of this building.
+     */
+    private Vector<Coords> coordinates = new Vector<>();
+
+    /**
+     * The construction type of the building.
+     */
+    private int type = Building.UNKNOWN;
+
+    /**
+     * The Basement type of the building.
+     */
+    private Map<Coords,BasementType> basement = new HashMap<>();
+    /**
+     * the class of the building
+     */
+    private int bldgClass = Building.STANDARD;
+
+    private int collapsedHexes = 0;
+
+    private int originalHexes = 0;
+
+    /**
+     * The current construction factor of the building hexes. Any damage
+     * immediately updates this value.
+     */
+    private Map<Coords, Integer> currentCF = new HashMap<>();
+    /**
+     * The construction factor of the building hexes at the start of this attack
+     * phase. Damage that is received during the phase is applied at the end of
+     * the phase.
+     */
+    private Map<Coords, Integer> phaseCF = new HashMap<>();
+    /**
+     * The current armor of the building hexes.
+     */
+    private Map<Coords, Integer> armor = new HashMap<>();
+
+    /**
+     * The current state of the basement.
+     */
+    private Map<Coords, Boolean> basementCollapsed = new HashMap<>();
+
+    /**
+     * The name of the building.
+     */
+    private String name = null;
+
+    /**
+     * Flag that indicates whether this building is burning
+     */
+    private Map<Coords, Boolean> burning = new HashMap<>();
+
+    private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
+
+    // Public and Protected constants, constructors, and methods.
+
+    // TODO: leaving out Castles Brian until issues with damage scaling are
+    // resolved
+    // public static final int CASTLE_BRIAN = 3;
 
     /**
      * Get the ID of this building. The same ID applies to all hexes.
@@ -932,6 +771,164 @@ public class Building implements Serializable {
         basementCollapsed.put(coords, collapsed);
     }
 
+    /**
+     * Update this building to include the new hex (and all hexes off the new
+     * hex, which aren't already included).
+     *
+     * @param coords
+     *            - the <code>Coords</code> of the new hex.
+     * @param board
+     *            - the game's <code>IBoard</code> object.
+     * @exception an
+     *                <code>IllegalArgumentException</code> will be thrown if
+     *                the given coordinates do not contain a building, or if the
+     *                building covers multiple hexes with different CF.
+     */
+    private void include(Coords coords, IBoard board, int structureType) {
 
+        // If the hex is already in the building, we've covered it before.
+        if (isIn(coords)) {
+            return;
+        }
 
-} // End public class Building implements Serializable
+        // Get the nextHex hex.
+        IHex nextHex = board.getHex(coords);
+        if ((null == nextHex) || !(nextHex.containsTerrain(structureType))) {
+            return;
+        }
+
+        if (structureType == Terrains.BUILDING) {
+            // Error off if the building type, or CF is off.
+            if (type != nextHex.terrainLevel(Terrains.BUILDING)) {
+                throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
+                        + coords.getBoardNum()
+                        + ", should contain the same type of building as " //$NON-NLS-1$
+                        + coordinates.elementAt(0).getBoardNum());
+            }
+            if (bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
+                throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
+                        + coords.getBoardNum()
+                        + ", should contain the same class of building as " //$NON-NLS-1$
+                        + coordinates.elementAt(0).getBoardNum());
+            }
+
+        }
+        // We passed our tests, add the next hex to this building.
+        coordinates.addElement(coords);
+        originalHexes++;
+        currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
+        phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
+        basement.put(coords, BasementType.getType(nextHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+        basementCollapsed.put(coords, nextHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
+        if (structureType == Terrains.BRIDGE) {
+            currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
+            phaseCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
+        }
+        if (structureType == Terrains.FUEL_TANK) {
+            currentCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
+            phaseCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
+        }
+        if (nextHex.containsTerrain(Terrains.BLDG_ARMOR)) {
+            armor.put(coords, nextHex.terrainLevel(Terrains.BLDG_ARMOR));
+        } else {
+            armor.put(coords, 0);
+        }
+
+        burning.put(coords, false);
+
+        // Walk through the exit directions and
+        // identify all hexes in this building.
+        for (int dir = 0; dir < 6; dir++) {
+
+            // Does the building exit in this direction?
+            if (nextHex.containsTerrainExit(structureType, dir)) {
+                include(coords.translated(dir), board, structureType);
+            }
+
+        }
+
+    } // End void protected include( Coords, Board )
+
+    public class DemolitionCharge implements Serializable {
+
+        private static final long serialVersionUID = -6655782801564155668L;
+
+        public int damage;
+        public int playerId;
+        public Coords pos;
+
+        /**
+         * A UUID to keep track of the identify of this demolition charge.
+         * Since we could have multiple charges in the same building hex, we
+         * can't track identity based upon owner and damage.  Additionally,
+         * since we pass objects across the network, we need a mechanism to
+         * track identify other than memory address.
+         */
+        public UUID uuid = UUID.randomUUID();
+
+        public DemolitionCharge(int playerId, int damage, Coords p) {
+            this.damage = damage;
+            this.playerId = playerId;
+            pos = p;
+        }
+
+        @Override
+        public int hashCode() {
+            return uuid.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DemolitionCharge) {
+                return uuid.equals(((DemolitionCharge)o).uuid);
+            }
+            return false;
+        }
+     }
+
+    /**
+     * Basement handlers
+     */
+    public enum BasementType {
+        UNKNOWN(0,0, Messages.getString("Building.BasementUnknown")), //$NON-NLS-1$
+        NONE(1,0, Messages.getString("Building.BasementNone")), //$NON-NLS-1$
+        TWO_DEEP_FEET(2,2,Messages.getString("Building.BasementTwoDeepFeet")), //$NON-NLS-1$
+        ONE_DEEP_FEET(3,1,Messages.getString("Building.BasementOneDeepFeet")), //$NON-NLS-1$
+        ONE_DEEP_NORMAL(4,1,Messages.getString("Building.BasementOneDeepNormal")), //$NON-NLS-1$
+        ONE_DEEP_NORMALINFONLY(5,1,Messages.getString("Building.BasementOneDeepNormalInfOnly")), //$NON-NLS-1$
+        ONE_DEEP_HEAD(6,1,Messages.getString("Building.BasementOneDeepHead")), //$NON-NLS-1$
+        TWO_DEEP_HEAD(7,2,Messages.getString("Building.BasementTwoDeepHead")); //$NON-NLS-1$
+
+        private int value;
+        private int depth;
+        private String desc;
+
+        BasementType(int type, int depth, String desc) {
+            value = type;
+            this.depth = depth;
+            this.desc = desc;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public int getDepth() {
+            return depth;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static BasementType getType(int value) {
+            for (BasementType type : BasementType.values()) {
+                if (type.getValue() == value) {
+                    return type;
+                }
+            }
+            return UNKNOWN;
+        }
+    }
+
+}

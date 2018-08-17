@@ -26,7 +26,7 @@ public class FuelTank extends Building {
 
     private static final long serialVersionUID = 5275543640680231747L;
 
-    public FuelTank(Coords coords, IBoard board, int structureType, int magnitude) {
+    FuelTank(Coords coords, IBoard board, int structureType, int magnitude) {
         super(coords, board, structureType, BasementType.NONE);
         this.magnitude = magnitude;
     }

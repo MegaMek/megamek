@@ -347,8 +347,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BUILDING,
-                                    BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+                            Building bldg = Building.newBuildingAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -377,8 +376,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
-                            FuelTank bldg = new FuelTank(coords, this, Terrains.FUEL_TANK, magnitude);
+                            Building bldg = Building.newFuelTankAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -408,7 +406,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BRIDGE, BasementType.NONE);
+                            Building bldg = Building.newBridgeAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.

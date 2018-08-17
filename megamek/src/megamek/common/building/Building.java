@@ -58,6 +58,31 @@ public class Building implements Serializable {
     public static final int GUN_EMPLACEMENT = 3;
 
     /**
+     * Constructs a new building at the given coordinates, fetching info from the given board 
+     */
+    public static Building newBuildingAt(Coords coords, IBoard board) {
+        IHex curHex = board.getHex(coords);
+        BasementType basementType = BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
+        return new Building(coords, board, Terrains.BUILDING, basementType);
+    }
+
+    /**
+     * Constructs a new bridge at the given coordinates, fetching info from the given board 
+     */
+    public static Building newBridgeAt(Coords coords, IBoard board) {
+        return new Building(coords, board, Terrains.BRIDGE, BasementType.NONE);
+    }
+
+    /**
+     * Constructs a new fuel tank at the given coordinates, fetching info from the given board 
+     */
+    public static FuelTank newFuelTankAt(Coords coords, IBoard board) {
+        IHex curHex = board.getHex(coords);
+        int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
+        return new FuelTank(coords, board, Terrains.FUEL_TANK, magnitude);
+    }
+
+    /**
      * Construct a building for the given coordinates from the board's
      * information. If the building covers multiple hexes, every hex will be
      * included in the building.
@@ -73,7 +98,7 @@ public class Building implements Serializable {
      *        if the given coordinates do not contain a building, or if the
      *        building covers multiple hexes with different CFs.
      */
-    public Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
+    protected Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
 
         // The ID of the building will be the hashcode of the coords.
         // ASSUMPTION: this will be unique ID across ALL the building's

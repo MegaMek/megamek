@@ -11,7 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -20,8 +19,13 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.Vector;
+
+import megamek.common.building.ConstructionType;
+
+// LATER see to move Building into megamek.common.building
 
 /**
  * Represents a single, possibly multi-hex building on the board.
@@ -32,19 +36,14 @@ public class Building implements Serializable {
 
     private static final long serialVersionUID = -8236017592012683793L;
 
-    /**
-     * Generic flag for uninitialized values.
-     */
-    protected static final int UNKNOWN = -1;
+    /** @deprecated magic values shall be removed */
+    @Deprecated private static final int UNKNOWN = -1;
 
-    /**
-     * Various construction types.
-     */
-    public static final int LIGHT = 1;
-    public static final int MEDIUM = 2;
-    public static final int HEAVY = 3;
-    public static final int HARDENED = 4;
-    public static final int WALL = 5;
+    /** @deprecated use {@link ConstructionType#LIGHT}    instead */ @Deprecated public static final int LIGHT = 1;
+    /** @deprecated use {@link ConstructionType#MEDIUM}   instead */ @Deprecated public static final int MEDIUM = 2;
+    /** @deprecated use {@link ConstructionType#HEAVY}    instead */ @Deprecated public static final int HEAVY = 3;
+    /** @deprecated use {@link ConstructionType#HARDENED} instead */ @Deprecated public static final int HARDENED = 4;
+    /** @deprecated use {@link ConstructionType#WALL}     instead */ @Deprecated public static final int WALL = 5;
 
     /**
      * Various building types
@@ -60,15 +59,15 @@ public class Building implements Serializable {
      * included in the building.
      *
      * @param coords
-     *            - the <code>Coords</code> of a hex of the building. If the
-     *            building covers multiple hexes, this constructor will include
-     *            them all in this building automatically.
+     *        the <code>Coords</code> of a hex of the building. If the
+     *        building covers multiple hexes, this constructor will include
+     *        them all in this building automatically.
      * @param board
-     *            - the game's <code>Board</code> object.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CFs.
+     *        the game's <code>Board</code> object.
+     *
+     * @throws IllegalArgumentException
+     *        if the given coordinates do not contain a building, or if the
+     *        building covers multiple hexes with different CFs.
      */
     public Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
 
@@ -160,19 +159,19 @@ public class Building implements Serializable {
      * The construction factors for the building will be based on the type.
      *
      * @param type
-     *            The <code>int</code> type of the building.
+     *        The <code>int</code> type of the building.
      * @param id
-     *            The <code>int</code> ID of this building.
+     *        The <code>int</code> ID of this building.
      * @param name
-     *            The <code>String</code> name of this building.
+     *        The <code>String</code> name of this building.
      * @param coords
-     *            The <code>Vector</code> of <code>Coords<code>
-     *                  for this building.  This object is used directly
-     *                  without being copied.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CFs.
+     *        The <code>Vector</code> of <code>Coords<code>
+     *        for this building.  This object is used directly
+     *        without being copied.
+     *
+     * @throws IllegalArgumentException
+     *         if the given coordinates do not contain a building, or if the
+     *         building covers multiple hexes with different CFs.
      */
     public Building(int bldgClass, int type, int id, String name,
             Vector<Coords> coords) {
@@ -205,10 +204,8 @@ public class Building implements Serializable {
      */
     private Vector<Coords> coordinates = new Vector<>();
 
-    /**
-     * The construction type of the building.
-     */
-    private int type = Building.UNKNOWN;
+    /** @deprecated this is being refactored out and  the int replaced with a ConstructionType */
+    @Deprecated private int type = Building.UNKNOWN;
 
     /**
      * The Basement type of the building.
@@ -255,8 +252,6 @@ public class Building implements Serializable {
     private Map<Coords, Boolean> burning = new HashMap<>();
 
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
-
-    // Public and Protected constants, constructors, and methods.
 
     // TODO: leaving out Castles Brian until issues with damage scaling are
     // resolved
@@ -306,15 +301,12 @@ public class Building implements Serializable {
         return coordinates.elements();
     }
 
-    /**
-     * Get the construction type of the building. This value will be one of the
-     * constants, LIGHT, MEDIUM, HEAVY, or HARDENED.
-     *
-     * @return the <code>int</code> code of the building's construction type.
-     */
-    public int getType() {
-        return type;
-    }
+    public Optional<ConstructionType> getConstructionType() {
+        return ConstructionType.ofId(getType());
+    } 
+
+    /** @deprecated use {@link #getConstructionType()} instead */
+    @Deprecated public int getType() { return type; }
 
     /**
      * Get the building class, per TacOps rules.
@@ -445,14 +437,14 @@ public class Building implements Serializable {
      * immediately when the building sustains any damage.
      *
      * @param coords
-     *            - the <code>Coords> of the hex in question
+     *        the <code>Coords> of the hex in question
      * @param cf
-     *            - the <code>int</code> value of the building hex's current
-     *            construction factor. This value must be greater than or equal
-     *            to zero.
-     * @exception If
-     *                the passed value is less than zero, an
-     *                <code>IllegalArgumentException</code> is thrown.
+     *        the <code>int</code> value of the building hex's current
+     *        construction factor. This value must be greater than or equal
+     *        to zero.
+     * @throws IllegalArgumentException
+     *         if the passed value is less than zero, an
+     *          <code>IllegalArgumentException</code> is thrown.
      */
     public void setCurrentCF(int cf, Coords coords) {
         if (cf < 0) {
@@ -469,14 +461,15 @@ public class Building implements Serializable {
      * by the building during the phase.
      *
      * @param coords
-     *            - the <code>Coords> of the hex in question
+     *        the <code>Coords> of the hex in question
      * @param cf
-     *            - the <code>int</code> value of the building's current
-     *            construction factor. This value must be greater than or equal
-     *            to zero.
-     * @exception If
-     *                the passed value is less than zero, an
-     *                <code>IllegalArgumentException</code> is thrown.
+     *        the <code>int</code> value of the building's current
+     *        construction factor. This value must be greater than or equal
+     *        to zero.
+     *
+     * @throws IllegalArgumentException
+     *         if the passed value is less than zero, an
+     *         <code>IllegalArgumentException</code> is thrown.
      */
     public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {
@@ -512,45 +505,30 @@ public class Building implements Serializable {
      * @return the <code>int</code> default construction factor for that type of
      *         building. If a bad type value is passed, the constant
      *         <code>Building.UNKNOWN</code> will be returned instead.
+     *
+     * @deprecated use {@link ConstructionType} instead
      */
-    public static int getDefaultCF(int type) {
-        int retval = Building.UNKNOWN;
-        switch (type) {
-            case Building.LIGHT:
-                retval = 15;
-                break;
-            case Building.MEDIUM:
-                retval = 40;
-                break;
-            case Building.HEAVY:
-                retval = 90;
-                break;
-            case Building.HARDENED:
-            case Building.WALL:
-                retval = 120;
-                break;
-        }
-        return retval;
+    @Deprecated public static int getDefaultCF(int type) {
+        return ConstructionType.ofId(type).map(ConstructionType::getDefaultCF)
+                                          .orElse(Building.UNKNOWN);
     }
 
-    /**
-     * Override <code>Object#equals(Object)</code>.
-     *
-     * @param other
-     *            - the other <code>Object</code> to compare to this
-     *            <code>Building</code>.
-     * @return <code>true</code> if the other object is the same as this
-     *         <code>Building</code>. The value <code>false</code> will be
-     *         returned if the other object is <code>null</code>, is not a
-     *         <code>Buildig</code>, or if it is not the same as this
-     *         <code>Building</code>.
-     */
+    // LATER fix equals/hashCode
+    //
+    // Basing equality on id equality does not make sense on a mutable class.
+    // This will need to be addressed, but to do so one must check all places
+    // where equality is used (eg: calls to equals() and use in collections).
+    //
+    // Also note the comment "True until we're talking about more than one
+    // Board per Game" below, which seems to imply that building ids are not
+    // necessarily unique in multi-board setups.
+
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         // True until we're talking about more than one Board per Game.
@@ -563,33 +541,20 @@ public class Building implements Serializable {
         return id;
     }
 
-    /**
-     * Get a String for this building.
-     */
     @Override
     public String toString() {
-
-        // Assemble the string in pieces.
         StringBuffer buf = new StringBuffer();
 
-        // Add the building type to the buffer.
-        switch (getType()) {
-            case Building.LIGHT:
-                buf.append("Light ");
-                break;
-            case Building.MEDIUM:
-                buf.append("Medium ");
-                break;
-            case Building.HEAVY:
-                buf.append("Heavy ");
-                break;
-            case Building.HARDENED:
-                buf.append("Hardened ");
-                break;
-            case Building.WALL:
-                buf.append("");
-                break;
-        }
+        getConstructionType().ifPresent(ct -> {
+            switch (ct) {
+            case LIGHT:    buf.append("Light ");    break;
+            case MEDIUM:   buf.append("Medium ");   break;
+            case HEAVY:    buf.append("Heavy ");    break;
+            case HARDENED: buf.append("Hardened "); break;
+            case WALL:  // fall-through
+            default:    // do nothing
+            }
+        });
 
         switch (getBldgClass()) {
             case Building.HANGAR:
@@ -724,39 +689,23 @@ public class Building implements Serializable {
      * Returns the percentage of damage done to the building for attacks against
      * infantry in the building from other units within the building.  TW pg175.
      *
-     * @param pos
-     * @return
+     * @deprecated use {@link #getConstructionType()} instead
      */
-    public double getInfDmgFromInside() {
-         switch (getType()) {
-            case Building.LIGHT:
-            case Building.MEDIUM:
-                return 0.0;
-            case Building.HEAVY:
-                return 0.5;
-            case Building.HARDENED:
-                return 0.75;
-            default:
-                return 0;
-        }
+    @Deprecated public double getInfDmgFromInside() {
+        return getConstructionType().map(ConstructionType::getDamageReductionFromInside)
+                                    .orElse(0f);
     }
 
     /**
      * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that
      * passes through to infantry inside the building.
      * @return Damage fraction.
+     * 
+     * @deprecated use {@link #getConstructionType()} instead
      */
-    public float getDamageReductionFromOutside() {
-        switch (getType()) {
-            case Building.LIGHT:
-                return 0.75f;
-            case Building.MEDIUM:
-                return 0.5f;
-            case Building.HEAVY:
-                return 0.25f;
-            default:
-                return 0f;
-        }
+    @Deprecated public float getDamageReductionFromOutside() {
+        return getConstructionType().map(ConstructionType::getDamageReductionFromOutside)
+                                    .orElse(0f);
     }
 
     public BasementType getBasement(Coords coords) {
@@ -847,7 +796,7 @@ public class Building implements Serializable {
 
         }
 
-    } // End void protected include( Coords, Board )
+    }
 
     public class DemolitionCharge implements Serializable {
 

@@ -40,7 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Building.BasementType;
+import megamek.common.building.BasementType;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.MegaMekFile;

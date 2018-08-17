@@ -20,10 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.Vector;
 
+import megamek.common.building.BasementType;
 import megamek.common.building.ConstructionType;
+import megamek.common.building.DemolitionCharge;
 
 // LATER see to move Building into megamek.common.building
 
@@ -337,7 +338,7 @@ public class Building implements Serializable {
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             }
-            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).desc);
+            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
             vPhaseReport.add(r);
             return true;
         }
@@ -742,88 +743,6 @@ public class Building implements Serializable {
 
         // Return the string.
         return buf.toString();
-    }
-
-    public class DemolitionCharge implements Serializable {
-
-        private static final long serialVersionUID = -6655782801564155668L;
-
-        public int damage;
-        public int playerId;
-        public Coords pos;
-
-        /**
-         * A UUID to keep track of the identify of this demolition charge.
-         * Since we could have multiple charges in the same building hex, we
-         * can't track identity based upon owner and damage.  Additionally,
-         * since we pass objects across the network, we need a mechanism to
-         * track identify other than memory address.
-         */
-        public UUID uuid = UUID.randomUUID();
-
-        public DemolitionCharge(int playerId, int damage, Coords p) {
-            this.damage = damage;
-            this.playerId = playerId;
-            pos = p;
-        }
-
-        @Override
-        public int hashCode() {
-            return uuid.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof DemolitionCharge) {
-                return uuid.equals(((DemolitionCharge)o).uuid);
-            }
-            return false;
-        }
-     }
-
-    /**
-     * Basement handlers
-     */
-    public enum BasementType {
-        UNKNOWN(0,0, Messages.getString("Building.BasementUnknown")), //$NON-NLS-1$
-        NONE(1,0, Messages.getString("Building.BasementNone")), //$NON-NLS-1$
-        TWO_DEEP_FEET(2,2,Messages.getString("Building.BasementTwoDeepFeet")), //$NON-NLS-1$
-        ONE_DEEP_FEET(3,1,Messages.getString("Building.BasementOneDeepFeet")), //$NON-NLS-1$
-        ONE_DEEP_NORMAL(4,1,Messages.getString("Building.BasementOneDeepNormal")), //$NON-NLS-1$
-        ONE_DEEP_NORMALINFONLY(5,1,Messages.getString("Building.BasementOneDeepNormalInfOnly")), //$NON-NLS-1$
-        ONE_DEEP_HEAD(6,1,Messages.getString("Building.BasementOneDeepHead")), //$NON-NLS-1$
-        TWO_DEEP_HEAD(7,2,Messages.getString("Building.BasementTwoDeepHead")); //$NON-NLS-1$
-
-        private int value;
-        private int depth;
-        private String desc;
-
-        BasementType(int type, int depth, String desc) {
-            value = type;
-            this.depth = depth;
-            this.desc = desc;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public int getDepth() {
-            return depth;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-
-        public static BasementType getType(int value) {
-            for (BasementType type : BasementType.values()) {
-                if (type.getValue() == value) {
-                    return type;
-                }
-            }
-            return UNKNOWN;
-        }
     }
 
 }

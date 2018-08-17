@@ -39,6 +39,8 @@ import java.util.zip.GZIPInputStream;
 
 import javax.swing.SwingUtilities;
 
+import com.thoughtworks.xstream.XStream;
+
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.commands.AddBotCommand;
@@ -55,9 +57,7 @@ import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Building;
-import megamek.common.Building.DemolitionCharge;
 import megamek.common.Coords;
-import megamek.common.QuirksHandler;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.FighterSquadron;
@@ -76,6 +76,7 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.PlanetaryConditions;
+import megamek.common.QuirksHandler;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
@@ -89,6 +90,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.DemolitionCharge;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;
@@ -108,8 +110,6 @@ import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * This class is instanciated for each client and for each bot running on that

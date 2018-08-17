@@ -37,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
@@ -50,6 +49,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.building.BasementType;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;

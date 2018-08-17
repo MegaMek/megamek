@@ -15,12 +15,13 @@ package megamek.common.building;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -106,7 +107,7 @@ public class Building implements Serializable {
         id = coords.hashCode();
 
         // The building occupies the given coords, at least.
-        coordinates.addElement(coords);
+        coordinates.add(coords);
         originalHexes++;
 
         burning.put(coords, false);
@@ -178,64 +179,24 @@ public class Building implements Serializable {
 
     }
 
-    /**
-     * The ID of this building.
-     */
-    private int id = Building.UNKNOWN;
-
-    /**
-     * The coordinates of every hex of this building.
-     */
-    private Vector<Coords> coordinates = new Vector<>();
-
+    private final int id;
     /** @deprecated this is being refactored out and  the int replaced with a ConstructionType */
-    @Deprecated private int type = Building.UNKNOWN;
-
-    /**
-     * The Basement type of the building.
-     */
-    private Map<Coords,BasementType> basement = new HashMap<>();
-    /**
-     * the class of the building
-     */
-    private int bldgClass = Building.STANDARD;
-
+    @Deprecated private final int type;
+    private final int bldgClass;
+    private final String name;
+    
     private int collapsedHexes = 0;
-
     private int originalHexes = 0;
+    private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
-    /**
-     * The current construction factor of the building hexes. Any damage
-     * immediately updates this value.
-     */
-    private Map<Coords, Integer> currentCF = new HashMap<>();
-    /**
-     * The construction factor of the building hexes at the start of this attack
-     * phase. Damage that is received during the phase is applied at the end of
-     * the phase.
-     */
-    private Map<Coords, Integer> phaseCF = new HashMap<>();
-    /**
-     * The current armor of the building hexes.
-     */
+    private List<Coords> coordinates = new ArrayList<>();
+    private final Map<Coords,BasementType> basement = new HashMap<>();
+    private Map<Coords, Integer> currentCF = new HashMap<>(); // any damage immediately updates this value
+    private Map<Coords, Integer> phaseCF = new HashMap<>(); // cf at start of phase - damage is applied at the end of the phase it was received in
     private Map<Coords, Integer> armor = new HashMap<>();
-
-    /**
-     * The current state of the basement.
-     */
     private Map<Coords, Boolean> basementCollapsed = new HashMap<>();
-
-    /**
-     * The name of the building.
-     */
-    private String name = null;
-
-    /**
-     * Flag that indicates whether this building is burning
-     */
     private Map<Coords, Boolean> burning = new HashMap<>();
 
-    private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
     // TODO: leaving out Castles Brian until issues with damage scaling are
     // resolved
@@ -267,13 +228,13 @@ public class Building implements Serializable {
 
     }
 
-    /**
-     * Get the coordinates that the building occupies.
-     *
-     * @return an <code>Enumeration</code> of the <code>Coord</code> objects.
-     */
-    public Enumeration<Coords> getCoords() {
-        return coordinates.elements();
+    /** @deprecated use {@link #iterateCoords()} instead */
+    @Deprecated public Enumeration<Coords> getCoords() {
+        return Collections.enumeration(coordinates);
+    }
+
+    public Iterator<Coords> iterateCoords() {
+        return Collections.unmodifiableList(coordinates).iterator();
     }
 
     public Optional<ConstructionType> getConstructionType() {
@@ -301,8 +262,7 @@ public class Building implements Serializable {
         return basementCollapsed.get(coords);
     }
 
-    public void collapseBasement(Coords coords, IBoard board,
-            Vector<Report> vPhaseReport) {
+    public void collapseBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
         if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
             System.err.println("hex has no basement to collapse"); //$NON-NLS-1$
             return;
@@ -329,7 +289,7 @@ public class Building implements Serializable {
      * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
      * @return a <code>boolean</code> indicating wether the hex and building was changed or not
      */
-    public boolean rollBasement(Coords coords, IBoard board, Vector<Report> vPhaseReport) {
+    public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
         if (basement.get(coords) == BasementType.UNKNOWN) {
             IHex hex = board.getHex(coords);
             Report r = new Report(2111, Report.PUBLIC);
@@ -660,18 +620,18 @@ public class Building implements Serializable {
                 throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
                         + coords.getBoardNum()
                         + ", should contain the same type of building as " //$NON-NLS-1$
-                        + coordinates.elementAt(0).getBoardNum());
+                        + coordinates.get(0).getBoardNum());
             }
             if (bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
                 throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
                         + coords.getBoardNum()
                         + ", should contain the same class of building as " //$NON-NLS-1$
-                        + coordinates.elementAt(0).getBoardNum());
+                        + coordinates.get(0).getBoardNum());
             }
 
         }
         // We passed our tests, add the next hex to this building.
-        coordinates.addElement(coords);
+        coordinates.add(coords);
         originalHexes++;
         currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
         phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));

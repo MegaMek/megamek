@@ -30,8 +30,6 @@ import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.Terrains;
 
-// LATER see to move Building into megamek.common.building
-
 /**
  * Represents a single, possibly multi-hex building on the board.
  *
@@ -50,13 +48,10 @@ public class Building implements Serializable {
     /** @deprecated use {@link ConstructionType#HARDENED} instead */ @Deprecated public static final int HARDENED = 4;
     /** @deprecated use {@link ConstructionType#WALL}     instead */ @Deprecated public static final int WALL = 5;
 
-    /**
-     * Various building types
-     */
-    public static final int STANDARD = 0;
-    public static final int HANGAR = 1;
-    public static final int FORTRESS = 2;
-    public static final int GUN_EMPLACEMENT = 3;
+    /** @deprecated use {@link BuildingClass#STANDARD}        instead */ @Deprecated public static final int STANDARD = 0;
+    /** @deprecated use {@link BuildingClass#HANGAR}          instead */ @Deprecated public static final int HANGAR = 1;
+    /** @deprecated use {@link BuildingClass#FORTRESS}        instead */ @Deprecated public static final int FORTRESS = 2;
+    /** @deprecated use {@link BuildingClass#GUN_EMPLACEMENT} instead */ @Deprecated public static final int GUN_EMPLACEMENT = 3;
 
     /**
      * Constructs a new building at the given coordinates, fetching info from the given board 
@@ -101,9 +96,8 @@ public class Building implements Serializable {
      */
     protected Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
 
-        // The ID of the building will be the hashcode of the coords.
-        // ASSUMPTION: this will be unique ID across ALL the building's
-        // hexes for ALL the clients of this board.
+        // FIXME This is an unlucky idea, especially considering that id is used
+        //       as the only factor to check for equality
         id = coords.hashCode();
 
         // The building occupies the given coords, at least.
@@ -244,14 +238,12 @@ public class Building implements Serializable {
     /** @deprecated use {@link #getConstructionType()} instead */
     @Deprecated public int getType() { return type; }
 
-    /**
-     * Get the building class, per TacOps rules.
-     *
-     * @return the <code>int</code> code of the building's classification.
-     */
-    public int getBldgClass() {
-        return bldgClass;
-    }
+    public Optional<BuildingClass> getBuildingClass() {
+        return BuildingClass.ofId(getBldgClass());
+    } 
+
+    /** @deprecated use {@link #getBuildingClass()} instead */
+    @Deprecated public int getBldgClass() { return bldgClass; }
 
     /**
      * Get the building basement, per TacOps rules.

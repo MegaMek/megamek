@@ -37,7 +37,7 @@ public class Building implements Serializable {
     private static final long serialVersionUID = -8236017592012683793L;
 
     /** @deprecated magic values shall be removed */
-    @Deprecated private static final int UNKNOWN = -1;
+    @Deprecated public static final int UNKNOWN = -1;
 
     /** @deprecated use {@link ConstructionType#LIGHT}    instead */ @Deprecated public static final int LIGHT = 1;
     /** @deprecated use {@link ConstructionType#MEDIUM}   instead */ @Deprecated public static final int MEDIUM = 2;
@@ -94,11 +94,7 @@ public class Building implements Serializable {
         bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
 
         // Insure that we've got a good type (and initialize our CF).
-        currentCF.put(coords, getDefaultCF(type));
-        if (currentCF.get(coords) == Building.UNKNOWN) {
-            throw new IllegalArgumentException("Unknown construction type: " //$NON-NLS-1$
-                    + type + ".  The board is invalid."); //$NON-NLS-1$
-        }
+        currentCF.put(coords, ConstructionType.ofRequiredId(type).getDefaultCF());
 
         // Now read the *real* CF, if the board specifies one.
         if ((structureType == Terrains.BUILDING)
@@ -151,47 +147,6 @@ public class Building implements Serializable {
         buffer.append(id);
         name = buffer.toString();
 
-    } // End public Building( Coords, Board )
-
-    /**
-     * Creates a new building of the specified type, name, ID, and coordinates.
-     * Do *not* use this method unless you have carefully examined this class.
-     * The construction factors for the building will be based on the type.
-     *
-     * @param type
-     *        The <code>int</code> type of the building.
-     * @param id
-     *        The <code>int</code> ID of this building.
-     * @param name
-     *        The <code>String</code> name of this building.
-     * @param coords
-     *        The <code>Vector</code> of <code>Coords<code>
-     *        for this building.  This object is used directly
-     *        without being copied.
-     *
-     * @throws IllegalArgumentException
-     *         if the given coordinates do not contain a building, or if the
-     *         building covers multiple hexes with different CFs.
-     */
-    public Building(int bldgClass, int type, int id, String name,
-            Vector<Coords> coords) {
-        this.bldgClass = bldgClass;
-        this.type = type;
-        this.id = id;
-        this.name = name;
-        coordinates = coords;
-        // Insure that we've got a good type (and initialize our CF).
-        for (Coords coord : coordinates) {
-            currentCF.put(coord, getDefaultCF(this.type));
-            phaseCF.putAll(currentCF);
-            armor.put(coord, 0);
-            if (getDefaultCF(this.type) == Building.UNKNOWN) {
-                throw new IllegalArgumentException(
-                        "Invalid construction type: " + this.type + "."); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            basement.put(coord, BasementType.UNKNOWN);
-            basementCollapsed.put(coord, false);
-        }
     }
 
     /**
@@ -256,15 +211,6 @@ public class Building implements Serializable {
     // TODO: leaving out Castles Brian until issues with damage scaling are
     // resolved
     // public static final int CASTLE_BRIAN = 3;
-
-    /**
-     * Get the ID of this building. The same ID applies to all hexes.
-     *
-     * @return the <code>int</code> ID of the building.
-     */
-    public int getId() {
-        return id;
-    }
 
     /**
      * Determine if the building occupies given coordinates. Multi-hex buildings
@@ -513,73 +459,6 @@ public class Building implements Serializable {
                                           .orElse(Building.UNKNOWN);
     }
 
-    // LATER fix equals/hashCode
-    //
-    // Basing equality on id equality does not make sense on a mutable class.
-    // This will need to be addressed, but to do so one must check all places
-    // where equality is used (eg: calls to equals() and use in collections).
-    //
-    // Also note the comment "True until we're talking about more than one
-    // Board per Game" below, which seems to imply that building ids are not
-    // necessarily unique in multi-board setups.
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if ((null == obj) || (getClass() != obj.getClass())) {
-            return false;
-        }
-        // True until we're talking about more than one Board per Game.
-        final Building other = (Building) obj;
-        return (id == other.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer buf = new StringBuffer();
-
-        getConstructionType().ifPresent(ct -> {
-            switch (ct) {
-            case LIGHT:    buf.append("Light ");    break;
-            case MEDIUM:   buf.append("Medium ");   break;
-            case HEAVY:    buf.append("Heavy ");    break;
-            case HARDENED: buf.append("Hardened "); break;
-            case WALL:  // fall-through
-            default:    // do nothing
-            }
-        });
-
-        switch (getBldgClass()) {
-            case Building.HANGAR:
-                buf.append("Hangar ");
-                break;
-            case Building.FORTRESS:
-                buf.append("Fortress ");
-                break;
-            case Building.GUN_EMPLACEMENT:
-                buf.append("Gun Emplacement");
-                break;
-            // case Building.CASTLE_BRIAN:
-            // buf.append("Castle Brian ");
-            // break;
-            default:
-                buf.append("Standard ");
-        }
-
-        // Add the building's name.
-        buf.append(name);
-
-        // Return the string.
-        return buf.toString();
-    }
-
     /**
      * Determine if this building is on fire.
      *
@@ -796,6 +675,73 @@ public class Building implements Serializable {
 
         }
 
+    }
+
+    // LATER fix equals/hashCode
+    //
+    // Basing equality on id equality does not make sense on a mutable class.
+    // This will need to be addressed, but to do so one must check all places
+    // where equality is used (eg: calls to equals() and use in collections).
+    //
+    // Also note the comment "True until we're talking about more than one
+    // Board per Game" below, which seems to imply that building ids are not
+    // necessarily unique in multi-board setups.
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        // True until we're talking about more than one Board per Game.
+        final Building other = (Building) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+
+        getConstructionType().ifPresent(ct -> {
+            switch (ct) {
+            case LIGHT:    buf.append("Light ");    break;
+            case MEDIUM:   buf.append("Medium ");   break;
+            case HEAVY:    buf.append("Heavy ");    break;
+            case HARDENED: buf.append("Hardened "); break;
+            case WALL:  // fall-through
+            default:    // do nothing
+            }
+        });
+
+        switch (getBldgClass()) {
+            case Building.HANGAR:
+                buf.append("Hangar ");
+                break;
+            case Building.FORTRESS:
+                buf.append("Fortress ");
+                break;
+            case Building.GUN_EMPLACEMENT:
+                buf.append("Gun Emplacement");
+                break;
+            // case Building.CASTLE_BRIAN:
+            // buf.append("Castle Brian ");
+            // break;
+            default:
+                buf.append("Standard ");
+        }
+
+        // Add the building's name.
+        buf.append(name);
+
+        // Return the string.
+        return buf.toString();
     }
 
     public class DemolitionCharge implements Serializable {

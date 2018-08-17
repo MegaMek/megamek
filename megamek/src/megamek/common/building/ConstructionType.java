@@ -57,11 +57,18 @@ public enum ConstructionType {
      *         
      * @see #getId()
      */
-    public static Optional<ConstructionType> ofId(int id) throws IllegalArgumentException {
+    public static Optional<ConstructionType> ofId(int id) {
         for (ConstructionType v : values()) {
             if (id == v.id) return Optional.of(v);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Same as {@link #ofId(int)}, but throws an exception on invalid ids
+     */
+    public static ConstructionType ofRequiredId(int id) throws IllegalArgumentException {
+        return ofId(id).orElseThrow(() -> new IllegalArgumentException(Integer.toString(id)));
     }
 
     private ConstructionType( int id,

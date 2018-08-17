@@ -52,6 +52,7 @@ ext {
 	unitFilesDir = "${dataDir}/mechfiles"
 	ratDir = "${dataDir}/rat"
 	scriptTemplate = "startScriptTemplate.txt"
+	mavenPublishDir = "${buildDir}/mavenrepo"
 }
 
 jar {
@@ -322,6 +323,15 @@ publishing {
         }
 	}
 	repositories {
-		mavenLocal()
+		maven {
+			url uri(mavenPublishDir)
+		}
 	}
 }
+
+task cleanPublishingDir (type: Delete) {
+	delete = mavenPublishDir
+}
+
+publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
+

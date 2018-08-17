@@ -3226,6 +3226,37 @@ public class MoveStep implements Serializable {
             }
 
         } // End STEP_LOAD-checks
+        
+        // The entity is trying to tow. Check for a valid move.
+        if (type == MoveStepType.TOW) {
+
+            // Vehicles can't tow after the first step.
+            if (!firstStep) {
+                return false;
+            }
+
+            // Find the unit being towed.
+            for (Entity other : game.getEntitiesVector(src)) {
+
+                // Is the other unit friendly and not the current entity?
+                if (!entity.isEnemyOf(other)
+                        && !entity.equals(other)) {
+
+                    // The moving unit should be able to tow the other unit.
+                    if (!entity.canTow(other)) {
+                        return false;
+                    }
+
+                    // The other unit should be able to have a turn.
+                    if (!other.isLoadableThisTurn()) {
+                        return false;
+                    }
+
+                    // We can stop looking.
+                    break;
+                }
+            } // Check the next entity in this position.
+        } // End STEP_TOW-checks
 
         // mechs dumping ammo can't run
         boolean bDumping = false;

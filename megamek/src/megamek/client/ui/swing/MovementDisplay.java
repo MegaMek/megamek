@@ -91,9 +91,6 @@ import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
@@ -108,9 +105,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private static final long serialVersionUID = -7246715124042905688L;
     
-    //L4J Support
-    private MMLogger logger = null;
-
     // Defines for the different flags
     public static final int CMD_NONE = 0;
     public static final int CMD_MECH = 1;
@@ -2829,6 +2823,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 break;
             }
         }
+        //TODO: Trailer Disconnect
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
         if (!legalGear || (loadedUnits.size() == 0) || (cen == Entity.NONE)
@@ -2837,9 +2832,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             setUnloadEnabled(true);
         }
-        // If the current entity has moved, disable "Load" button.
+        // If the current entity has moved, disable "Load" and "Tow" buttons.
         if ((cmd.length() > 0) || (cen == Entity.NONE)) {
             setLoadEnabled(false);
+            setTowEnabled(false);
         } else {
             // Check the other entities in the current hex for friendly units.
             boolean isGood = false;
@@ -2856,11 +2852,41 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // We can stop looking.
                     break;
                 }
+                //Same thing for towing
+                if ((ce.getWalkMP() > 0) && ce.canTow(other)
+                    && other.isLoadableThisTurn()) {
+                    setTowEnabled(true);
+                    isGood = true;
+
+                    // We can stop looking.
+                    break;
+                }
                 // Nope. Discard it.
                 other = null;
             } // Check the next entity in this position.
             if (!isGood) {
                 setLoadEnabled(false);
+            }
+            //Now check the hex for towable trailers
+            isGood = false;
+            for (Entity other : game.getEntitiesVector(ce.getPosition())) {
+                // If the other unit is friendly and not the current entity
+                // and the current entity has at least 1 MP, if it can
+                // tow the other unit, and if the other hasn't moved
+                // then enable the "Tow" button.
+                if ((ce.getWalkMP() > 0) && ce.canTow(other)
+                    && other.isLoadableThisTurn()) {
+                    setTowEnabled(true);
+                    isGood = true;
+
+                    // We can stop looking.
+                    break;
+                }
+                // Nope. Discard it.
+                other = null;
+            } // Check the next entity in this position.
+            if (!isGood) {
+                setTowEnabled(false);
             }
         } // End ce-hasn't-moved
     } // private void updateLoadButtons

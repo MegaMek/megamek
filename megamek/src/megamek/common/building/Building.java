@@ -31,7 +31,6 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Report;
 import megamek.common.Terrains;
-import megamek.common.logging.DefaultMmLogger;
 
 /**
  * Represents a single, possibly multi-hex building on the board.
@@ -232,49 +231,25 @@ public class Building implements Serializable {
      * @return a <code>boolean</code> indicating wether the hex and building was changed or not
      */
     public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
-        // XXX rewrite
+        // XXX move out of here
         BuildingSection bs = sectionAt(coords).get();
-        if (bs.getBasementType() == BasementType.UNKNOWN) {
-            IHex hex = board.getHex(coords);
-            Report r = new Report(2111, Report.PUBLIC);
-            r.add(getName());
-            r.add(coords.getBoardNum());
-            int basementRoll = Compute.d6(2);
-            r.add(basementRoll);
-            if (basementRoll == 2) {
-                bs.setBasementType(BasementType.TWO_DEEP_FEET);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            } else if (basementRoll == 3) {
-                bs.setBasementType(BasementType.ONE_DEEP_FEET);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            } else if (basementRoll == 4) {
-                bs.setBasementType(BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            } else if (basementRoll == 10) {
-                bs.setBasementType(BasementType.ONE_DEEP_NORMAL);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            } else if (basementRoll == 11) {
-                bs.setBasementType(BasementType.ONE_DEEP_HEAD);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            } else if (basementRoll == 12) {
-                bs.setBasementType(BasementType.TWO_DEEP_HEAD);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            } else {
-                bs.setBasementType(BasementType.NONE);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
-            }
-            r.add(BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
-            vPhaseReport.add(r);
-            return true;
-        }
-        return false;
+        if (bs.getBasementType() != BasementType.UNKNOWN) return false;
+
+        IHex hex = board.getHex(coords);
+        Report r = new Report(2111, Report.PUBLIC);
+        r.add(getName());
+        r.add(coords.getBoardNum());
+
+        int basementRoll = Compute.d6(2);
+        r.add(basementRoll);
+
+        BasementType newType = BasementType.basementsTable(basementRoll);
+        bs.setBasementType(newType);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.BLDG_BASEMENT_TYPE, newType.getId()));
+        r.add(newType.getDesc());
+
+        vPhaseReport.add(r);
+        return true;
     }
 
     /**

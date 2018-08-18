@@ -5817,8 +5817,7 @@ public class Compute {
         int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
         int basement = 0;
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
-            basement = BasementType.getType(
-                    curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+            basement = BasementType.ofRequiredId(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                    .getDepth();
         }
 

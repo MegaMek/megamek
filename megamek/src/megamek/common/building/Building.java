@@ -62,7 +62,7 @@ public class Building implements Serializable {
     public static Building newBuildingAt(Coords coords, IBoard board) {
         IHex curHex = board.getHex(coords);
         requirePresent(curHex, Terrains.BUILDING);
-        BasementType basementType = BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
+        BasementType basementType = BasementType.ofRequiredId(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
         return new Building(buildingIdFromCoordinates(coords), coords, board, Terrains.BUILDING, basementType);
     }
 
@@ -244,33 +244,33 @@ public class Building implements Serializable {
             if (basementRoll == 2) {
                 bs.setBasementType(BasementType.TWO_DEEP_FEET);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             } else if (basementRoll == 3) {
                 bs.setBasementType(BasementType.ONE_DEEP_FEET);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             } else if (basementRoll == 4) {
                 bs.setBasementType(BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             } else if (basementRoll == 10) {
                 bs.setBasementType(BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             } else if (basementRoll == 11) {
                 bs.setBasementType(BasementType.ONE_DEEP_HEAD);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             } else if (basementRoll == 12) {
                 bs.setBasementType(BasementType.TWO_DEEP_HEAD);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             } else {
                 bs.setBasementType(BasementType.NONE);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getId()));
             }
-            r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
+            r.add(BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
             vPhaseReport.add(r);
             return true;
         }

@@ -31,7 +31,7 @@ public enum ConstructionType {
     //
     // which seems to imply that WALL is not a valid value for a Building's type?
     //
-    // But then, WALL clearly was intented as a construction type constant... 
+    // But then, WALL clearly was intended as a construction type constant...
     //
     //    /**
     //     * Various construction types.
@@ -112,23 +112,24 @@ public enum ConstructionType {
     }
 
     /**
-     *      * Returns the percentage of damage done to the building for attacks against
-     * infantry in the building from other units within the building.  TW pg175.
-     * @return
+     * Per page 175 of Total Warfare, this is how much damage the building
+     * absorbs when combat occurs inside the building.
+     *
+     * @returns the fraction of damage absorbed by the building
      */
     public float getDamageReductionFromInside() {
         return damageReductionFromInside;
     }
 
     /**
-     *      * Per page 172 of Total Warfare, this is the fraction of a weapon's damage that
-     * passes through to infantry inside the building.
-     * @return Damage fraction.
-     * @return
+     * Per page 172 of Total Warfare, this is the fraction of a weapon's
+     * damage that passes through to infantry inside the building when a
+     * building is hit.
+     *
+     * @return the fraction of damaged applied to infantry
      */
     public float getDamageReductionFromOutside() {
         return damageReductionFromOutside;
     }
 
-    
 }

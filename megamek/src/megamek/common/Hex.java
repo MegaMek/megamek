@@ -319,7 +319,7 @@ public class Hex implements IHex, Serializable {
         }
         if (basement != null) {
             if (hidden) {
-                depth += BasementType.getType(basement.getLevel()).getDepth();
+                depth += BasementType.ofRequiredId(basement.getLevel()).getDepth();
             }
         }
 

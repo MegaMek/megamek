@@ -1919,10 +1919,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         retVal = bldnex + next.surface();
                     // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0)
-                            && (nextBasement > BasementType.NONE.getValue())
+                            && (nextBasement > BasementType.NONE.getId())
                             && (collapsedBasement > 0)) {
-                        retVal -= BasementType.getType(
-                                next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                        retVal -= BasementType.ofRequiredId(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                               .getDepth();
                     } else {
                         retVal += current.surface();
@@ -1933,13 +1932,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         retVal = bldnex + next.surface();
                     } else if ((current
                                         .terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE
-                                        .getValue())
-                               && (assumedElevation == -BasementType
-                            .getType(
-                                    current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                        .getId())
+                               && (assumedElevation == -BasementType.ofRequiredId(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                             .getDepth())) {
-                        retVal = -BasementType.getType(
-                                next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                        retVal = -BasementType.ofRequiredId(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                               .getDepth();
                     } else {
                         retVal += current.surface();
@@ -2026,8 +2022,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case INF_MOTORIZED:
                 minAlt -= Math.max(
                         0,
-                        BasementType.getType(
-                                hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                        BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                     .getDepth());
                 break;
             case WIGE:
@@ -2081,9 +2076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (this instanceof Protomech) {
                     minAlt -= Math
                             .max(0,
-                                 BasementType
-                                         .getType(
-                                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                 BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                          .getDepth());
                 } else {
                     return false;

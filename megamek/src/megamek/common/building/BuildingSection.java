@@ -47,7 +47,7 @@ public class BuildingSection implements Serializable {
 
 
         BasementType basementType = structureType == Terrains.BUILDING
-                                  ? BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                  ? BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                   : defaultBasementType;
 
         int cf;

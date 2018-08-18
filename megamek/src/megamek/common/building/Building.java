@@ -41,9 +41,6 @@ public class Building implements Serializable {
 
     private static final long serialVersionUID = -8236017592012683793L;
 
-    /** @deprecated magic values shall be removed */
-    @Deprecated public static final int UNKNOWN = -1;
-
     /** @deprecated use {@link ConstructionType#LIGHT}    instead */ @Deprecated public static final int LIGHT = 1;
     /** @deprecated use {@link ConstructionType#MEDIUM}   instead */ @Deprecated public static final int MEDIUM = 2;
     /** @deprecated use {@link ConstructionType#HEAVY}    instead */ @Deprecated public static final int HEAVY = 3;
@@ -117,7 +114,6 @@ public class Building implements Serializable {
     }
 
     private final int id;
-
     private final int structureType;
     /** @deprecated this is being refactored out and  the int replaced with ConstructionType */
     @Deprecated private final int type;
@@ -129,7 +125,6 @@ public class Building implements Serializable {
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
     private final Map<Coords, BuildingSection> sections = new LinkedHashMap<>(); // not actually sure we need to preserve ordering
-
 
     public Optional<BuildingSection> sectionAt(Coords coordinates) {
         return Optional.ofNullable(sections.get(coordinates));
@@ -149,14 +144,9 @@ public class Building implements Serializable {
     }
 
     /**
-     * Determins if the coord exist in the currentCF has.
-     *
-     * @param coords
-     *            - the <code>Coords</code> being examined.
-     * @return <code>true</code> if the building has CF at the coordinates.
-     *         <code>false</code> otherwise.
+     * @deprecated use {@link #isIn(Coords)} instead
      */
-    public boolean hasCFIn(Coords coords) {
+    @Deprecated public boolean hasCFIn(Coords coords) {
         // This method baffles me... the original implementation was
         //    return currentCF.containsKey(coords);
         // but I see no way how this is different from isIn(coords),
@@ -355,22 +345,6 @@ public class Building implements Serializable {
     }
 
     /**
-     * Get the default construction factor for the given type of building.
-     *
-     * @param type
-     *            - the <code>int</code> construction type of the building.
-     * @return the <code>int</code> default construction factor for that type of
-     *         building. If a bad type value is passed, the constant
-     *         <code>Building.UNKNOWN</code> will be returned instead.
-     *
-     * @deprecated use {@link ConstructionType} instead
-     */
-    @Deprecated public static int getDefaultCF(int type) {
-        return ConstructionType.ofId(type).map(ConstructionType::getDefaultCF)
-                                          .orElse(Building.UNKNOWN);
-    }
-
-    /**
      * Determine if this building is on fire.
      *
      * @return <code>true</code> if the building is on fire.
@@ -383,8 +357,8 @@ public class Building implements Serializable {
      * Set the flag that indicates that this building is on fire.
      *
      * @param onFire
-     *            - a <code>boolean</code> value that indicates whether this
-     *            building is on fire.
+     *        a <code>boolean</code> value that indicates whether this
+     *        building is on fire.
      */
     public void setBurning(boolean onFire, Coords coords) {
         sectionAt(coords).get().setBurning(onFire);
@@ -411,7 +385,7 @@ public class Building implements Serializable {
      * Remove one building hex from the building
      *
      * @param coords
-     *            - the <code>Coords</code> of the hex to be removed
+     *        the <code>Coords</code> of the hex to be removed
      */
     public void removeHex(Coords coords) {
         sections.remove(coords);

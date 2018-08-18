@@ -19,10 +19,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -110,127 +110,11 @@ public class Building implements Serializable {
         this.type          = initialHex.terrainLevel(structureType);
         this.bldgClass     = initialHex.getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE); // this is actually optional
 
-        {
-            String msg = String.format("Building at: %s, structureType: %s, type: %s, bldgClass: %s,", coords.getBoardNum(), structureType, type, bldgClass); //$NON-NLS-1$
-            DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-        }
+        getSpannedHexes(initialHex, board, structureType).values().forEach(hex -> {
+            sections.put(hex.getCoords(), BuildingSection.at(hex, structureType, basementType));
+        });
 
-        // The building occupies the given coords, at least.
-        coordinates.add(coords);
-        originalHexes++;
-
-        burning.put(coords, false);
-
-
-        // Insure that we've got a good type (and initialize our CF).
-        currentCF.put(coords, ConstructionType.ofRequiredId(type).getDefaultCF());
-
-        // Now read the *real* CF, if the board specifies one.
-        if ((structureType == Terrains.BUILDING)
-                && initialHex.containsTerrain(Terrains.BLDG_CF)) {
-            currentCF.put(coords, initialHex.terrainLevel(Terrains.BLDG_CF));
-        }
-        if ((structureType == Terrains.BRIDGE)
-                && initialHex.containsTerrain(Terrains.BRIDGE_CF)) {
-            currentCF.put(coords, initialHex.terrainLevel(Terrains.BRIDGE_CF));
-        }
-        if ((structureType == Terrains.FUEL_TANK)
-                && initialHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
-            currentCF.put(coords, initialHex.terrainLevel(Terrains.FUEL_TANK_CF));
-        }
-        if (initialHex.containsTerrain(Terrains.BLDG_ARMOR)) {
-            armor.put(coords, initialHex.terrainLevel(Terrains.BLDG_ARMOR));
-        } else {
-            armor.put(coords, 0);
-        }
-
-        phaseCF.putAll(currentCF);
-
-        basement.put(coords, basementType);
-        basementCollapsed.put(coords, initialHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
-
-        // Walk through the exit directions and
-        // identify all hexes in this building.
-        for (int dir = 0; dir < 6; dir++) {
-
-            // Does the building exit in this direction?
-            if (initialHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board);
-            }
-
-        }
-
-        // sanity checks temporary logging
-
-        DefaultMmLogger.getInstance().info(getClass(), "<init>", "coords: " + coordinates.stream().map(Coords::getBoardNum).collect(Collectors.joining(", ")));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-
-        if (originalHexes != coordinates.size()) {
-            String msg = String.format("originalHexes %s, coordinates.size()", originalHexes, coordinates.size()); //$NON-NLS-1$
-            DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-        }
-
-        {
-            Map<Coords, IHex> spannedHexes = getSpannedHexes(initialHex, board, structureType);
-            if (originalHexes != spannedHexes.size()) {
-                String msg = String.format("originalHexes %s, spannedHexes.size()", originalHexes, spannedHexes.size()); //$NON-NLS-1$
-                DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-            }
-    
-            for (Coords c : coordinates) {
-                if (spannedHexes.remove(c) == null) {
-                    String msg = String.format("hex %s missed by spannedHexes", c); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-            }
-    
-            if (!spannedHexes.isEmpty()) for (Coords c :spannedHexes.keySet()) {
-                String msg = String.format("extra hex %s present in spannedHexes", c); //$NON-NLS-1$
-                DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-            }
-        }
-
-        List<BuildingSection> sections = getSpannedHexes(initialHex, board, structureType).values().stream().map((IHex hex) -> {
-            return BuildingSection.at(hex, structureType, basementType);
-        }).collect(Collectors.toList());
-
-        if (sections.size() != coordinates.size()) {
-            String msg = String.format("XXX sections: %s, coords: %s", sections.size(), coordinates.size()); //$NON-NLS-1$
-            DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-        }
-
-        for (BuildingSection bs : sections) {
-            if (!coordinates.contains(bs.getCoordinates())) {
-                String msg = String.format("section at %s: no coords", bs.getCoordinates()); //$NON-NLS-1$
-                DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-            } else {
-                Coords c = bs.getCoordinates();
-                if (bs.getBasementType() != basement.get(c)) {
-                    String msg = String.format("section %s: basement set to %s but should be %s", c, bs.getBasementType(), basement.get(c)); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-                if (bs.getCurrentCF() != currentCF.get(c)) {
-                    String msg = String.format("section %s: current CF set to %s but should be %s", c, bs.getCurrentCF(), currentCF.get(c)); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-                if (bs.getPhaseCF() != phaseCF.get(c)) {
-                    String msg = String.format("section %s: phase CF set to %s but should be %s", c, bs.getPhaseCF(), phaseCF.get(c)); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-                if (bs.getArmor() != armor.get(c)) {
-                    String msg = String.format("section %s: armor set to %s but should be %s", c, bs.getArmor(), armor.get(c)); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-                if (bs.isBurning() != burning.get(c)) {
-                    String msg = String.format("section %s: burning set to %s but should be %s", c, bs.isBurning(), burning.get(c)); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-                if (bs.isBasementCollapsed() != basementCollapsed.get(c)) {
-                    String msg = String.format("section %s: collapsed set to %s but should be %s", c, bs.isBasementCollapsed(), basementCollapsed.get(c)); //$NON-NLS-1$
-                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
-                }
-            }
-        }
-
+        originalHexes = sections.size();
     }
 
     private final int id;
@@ -241,22 +125,16 @@ public class Building implements Serializable {
     /** @deprecated this is being refactored out and  the int replaced with BuildingClass */
     @Deprecated private final int bldgClass;
 
-    private int collapsedHexes = 0;
     private int originalHexes = 0;
+
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
-    private List<Coords> coordinates = new ArrayList<>();
-    private final Map<Coords,BasementType> basement = new HashMap<>();
-    private Map<Coords, Integer> currentCF = new HashMap<>(); // any damage immediately updates this value
-    private Map<Coords, Integer> phaseCF = new HashMap<>(); // cf at start of phase - damage is applied at the end of the phase it was received in
-    private Map<Coords, Integer> armor = new HashMap<>();
-    private Map<Coords, Boolean> basementCollapsed = new HashMap<>();
-    private Map<Coords, Boolean> burning = new HashMap<>();
+    private final Map<Coords, BuildingSection> sections = new LinkedHashMap<>(); // not actually sure we need to preserve ordering
 
 
-    // TODO: leaving out Castles Brian until issues with damage scaling are
-    // resolved
-    // public static final int CASTLE_BRIAN = 3;
+    public Optional<BuildingSection> sectionAt(Coords coordinates) {
+        return Optional.ofNullable(sections.get(coordinates));
+    }
 
     /**
      * Determine if the building occupies given coordinates. Multi-hex buildings
@@ -268,7 +146,7 @@ public class Building implements Serializable {
      *         <code>false</code> otherwise.
      */
     public boolean isIn(Coords coords) {
-        return coordinates.contains(coords);
+        return sectionAt(coords).isPresent();
     }
 
     /**
@@ -280,24 +158,28 @@ public class Building implements Serializable {
      *         <code>false</code> otherwise.
      */
     public boolean hasCFIn(Coords coords) {
-        return currentCF.containsKey(coords);
-
+        // This method baffles me... the original implementation was
+        //    return currentCF.containsKey(coords);
+        // but I see no way how this is different from isIn(coords),
+        // whose implementation was
+        //    return coordinates.contains(coords);
+        return isIn(coords);
     }
 
     /** @deprecated use {@link #iterateCoords()} instead */
     @Deprecated public Enumeration<Coords> getCoords() {
-        return Collections.enumeration(coordinates);
+        return Collections.enumeration(sections.keySet());
     }
 
     public Iterator<Coords> iterateCoords() {
-        return Collections.unmodifiableList(coordinates).iterator();
+        return Collections.unmodifiableCollection(sections.keySet()).iterator();
     }
 
     /**
      * @return the structure type of this building
      *         ({@linkplain Terrains#BUILDING},
-     *         {@linkplain Terrains#FUEL_TANK} or
-     *         {@linkplain Terrains#BRIDGE})
+     *          {@linkplain Terrains#FUEL_TANK} or
+     *          {@linkplain Terrains#BRIDGE})
      */
     public int getStructureType() {
         return structureType;
@@ -317,21 +199,18 @@ public class Building implements Serializable {
     /** @deprecated use {@link #getBuildingClass()} instead */
     @Deprecated public int getBldgClass() { return bldgClass; }
 
-    /**
-     * Get the building basement, per TacOps rules.
-     *
-     * @return the <code>int</code> code of the buildingbasement type.
-     */
     public boolean getBasementCollapsed(Coords coords) {
-        return basementCollapsed.get(coords);
+        return sectionAt(coords).get().isBasementCollapsed();
     }
 
     public void collapseBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
-        if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
+        BuildingSection bs = sectionAt(coords).get();
+        
+        if (bs.getBasementType() == BasementType.NONE || bs.getBasementType() == BasementType.ONE_DEEP_NORMALINFONLY) {
             System.err.println("hex has no basement to collapse"); //$NON-NLS-1$
             return;
         }
-        if (basementCollapsed.get(coords)) {
+        if (getBasementCollapsed(coords)) {
             System.err.println("hex has basement that already collapsed"); //$NON-NLS-1$
             return;
         }
@@ -339,12 +218,11 @@ public class Building implements Serializable {
         r.add(getName());
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
-        System.err.println("basement " + basement + "is collapsing, hex:" //$NON-NLS-1$ //$NON-NLS-2$
+        System.err.println("basement " + bs.getBasementType() + "is collapsing, hex:" //$NON-NLS-1$ //$NON-NLS-2$
                 + coords.toString() + " set terrain!"); //$NON-NLS-1$
         board.getHex(coords).addTerrain(Terrains.getTerrainFactory().createTerrain(
                 Terrains.BLDG_BASE_COLLAPSED, 1));
-        basementCollapsed.put(coords, true);
-
+        setBasementCollapsed(coords, true);
     }
 
     /**
@@ -354,7 +232,9 @@ public class Building implements Serializable {
      * @return a <code>boolean</code> indicating wether the hex and building was changed or not
      */
     public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
-        if (basement.get(coords) == BasementType.UNKNOWN) {
+        // XXX rewrite
+        BuildingSection bs = sectionAt(coords).get();
+        if (bs.getBasementType() == BasementType.UNKNOWN) {
             IHex hex = board.getHex(coords);
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
@@ -362,33 +242,33 @@ public class Building implements Serializable {
             int basementRoll = Compute.d6(2);
             r.add(basementRoll);
             if (basementRoll == 2) {
-                basement.put(coords, BasementType.TWO_DEEP_FEET);
+                bs.setBasementType(BasementType.TWO_DEEP_FEET);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             } else if (basementRoll == 3) {
-                basement.put(coords, BasementType.ONE_DEEP_FEET);
+                bs.setBasementType(BasementType.ONE_DEEP_FEET);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             } else if (basementRoll == 4) {
-                basement.put(coords, BasementType.ONE_DEEP_NORMAL);
+                bs.setBasementType(BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             } else if (basementRoll == 10) {
-                basement.put(coords, BasementType.ONE_DEEP_NORMAL);
+                bs.setBasementType(BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             } else if (basementRoll == 11) {
-                basement.put(coords, BasementType.ONE_DEEP_HEAD);
+                bs.setBasementType(BasementType.ONE_DEEP_HEAD);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             } else if (basementRoll == 12) {
-                basement.put(coords, BasementType.TWO_DEEP_HEAD);
+                bs.setBasementType(BasementType.TWO_DEEP_HEAD);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             } else {
-                basement.put(coords, BasementType.NONE);
+                bs.setBasementType(BasementType.NONE);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
+                        Terrains.BLDG_BASEMENT_TYPE, bs.getBasementType().getValue()));
             }
             r.add(BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDesc());
             vPhaseReport.add(r);
@@ -409,7 +289,7 @@ public class Building implements Serializable {
      *         zero.
      */
     public int getCurrentCF(Coords coords) {
-        return currentCF.get(coords);
+        return sectionAt(coords).get().getCurrentCF();
     }
 
     /**
@@ -424,11 +304,11 @@ public class Building implements Serializable {
      *         equal to zero.
      */
     public int getPhaseCF(Coords coords) {
-        return phaseCF.get(coords);
+        return sectionAt(coords).get().getPhaseCF();
     }
 
     public int getArmor(Coords coords) {
-        return armor.get(coords);
+        return sectionAt(coords).get().getArmor();
     }
 
     /**
@@ -447,11 +327,9 @@ public class Building implements Serializable {
      */
     public void setCurrentCF(int cf, Coords coords) {
         if (cf < 0) {
-            throw new IllegalArgumentException(
-                    "Invalid value for Construction Factor: " + cf); //$NON-NLS-1$
+            throw new IllegalArgumentException("Invalid CF value: " + cf); //$NON-NLS-1$
         }
-
-        currentCF.put(coords, cf);
+        sectionAt(coords).get().setCurrentCF(cf);
     }
 
     /**
@@ -472,19 +350,16 @@ public class Building implements Serializable {
      */
     public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {
-            throw new IllegalArgumentException(
-                    "Invalid value for Construction Factor: " + cf); //$NON-NLS-1$
+            throw new IllegalArgumentException("Invalid CF value: " + cf); //$NON-NLS-1$
         }
-
-        phaseCF.put(coords, cf);
+        sectionAt(coords).get().setPhaseCF(cf);
     }
 
     public void setArmor(int a, Coords coords) {
         if (a < 0) {
-            throw new IllegalArgumentException("Invalid value for armor: " + a); //$NON-NLS-1$
+            throw new IllegalArgumentException("Invalid armor value: " + a); //$NON-NLS-1$
         }
-
-        armor.put(coords, a);
+        sectionAt(coords).get().setArmor(a);
     }
 
     public String getName() {
@@ -526,7 +401,7 @@ public class Building implements Serializable {
      * @return <code>true</code> if the building is on fire.
      */
     public boolean isBurning(Coords coords) {
-        return burning.get(coords);
+        return sectionAt(coords).get().isBurning();
     }
 
     /**
@@ -537,7 +412,7 @@ public class Building implements Serializable {
      *            building is on fire.
      */
     public void setBurning(boolean onFire, Coords coords) {
-        burning.put(coords, onFire);
+        sectionAt(coords).get().setBurning(onFire);
     }
 
     public void addDemolitionCharge(int playerId, int damage, Coords pos) {
@@ -564,10 +439,7 @@ public class Building implements Serializable {
      *            - the <code>Coords</code> of the hex to be removed
      */
     public void removeHex(Coords coords) {
-        coordinates.remove(coords);
-        currentCF.remove(coords);
-        phaseCF.remove(coords);
-        collapsedHexes++;
+        sections.remove(coords);
     }
 
     public int getOriginalHexCount() {
@@ -575,7 +447,7 @@ public class Building implements Serializable {
     }
 
     public int getCollapsedHexCount() {
-        return collapsedHexes;
+        return originalHexes - sections.size();
     }
 
     /**
@@ -635,112 +507,15 @@ public class Building implements Serializable {
     }
 
     public BasementType getBasement(Coords coords) {
-        return basement.get(coords);
+        return sectionAt(coords).get().getBasementType();
     }
 
     public void setBasement(Coords coords, BasementType basement) {
-        this.basement.put(coords, basement);
+        sectionAt(coords).get().setBasementType(basement);
     }
 
     public void setBasementCollapsed(Coords coords, boolean collapsed) {
-        basementCollapsed.put(coords, collapsed);
-    }
-
-    /**
-     * Update this building to include the new hex (and all hexes off the new
-     * hex, which aren't already included).
-     *
-     * @param coords
-     *            - the <code>Coords</code> of the new hex.
-     * @param board
-     *            - the game's <code>IBoard</code> object.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CF.
-     */
-    private void include(Coords coords, IBoard board) {
-
-        // If the hex is already in the building, we've covered it before.
-        if (isIn(coords)) {
-            return;
-        }
-
-        // Get the nextHex hex.
-        IHex nextHex = board.getHex(coords);
-        if ((null == nextHex) || !(nextHex.containsTerrain(structureType))) {
-            return;
-        }
-
-        if (structureType == Terrains.BUILDING) {
-
-            Optional<ConstructionType> ct = nextHex.getConstructionType(structureType);
-            if (!ct.isPresent() || ct.get().getId() != type) {
-                String msg = String.format( "Unexpected construction type at %s: expected %s (%s), got %s (%s)", //$NON-NLS-1$
-                                            coords.getBoardNum(),
-                                            getConstructionType().map(ConstructionType::name).orElse("null"), //$NON-NLS-1$
-                                            type,
-                                            ct.map(ConstructionType::name).orElse("null"), //$NON-NLS-1$
-                                            ct.map(v -> Integer.toString(v.getId())).orElse("?")); //$NON-NLS-1$
-                throw new IllegalArgumentException(msg);
-            }
-
-            Optional<BuildingClass> bc = nextHex.getBuildingClass();
-            if (bc.map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE) != bldgClass) {
-                String msg = String.format( "Unexpected building class at %s: expected %s (%s), got %s (%s)", //$NON-NLS-1$
-                                            coords.getBoardNum(),
-                                            getBuildingClass().map(BuildingClass::name).orElse("null"), //$NON-NLS-1$
-                                            bldgClass,
-                                            bc.map(BuildingClass::name).orElse("null"), //$NON-NLS-1$
-                                            bc.map(v -> Integer.toString(v.getId())).orElse("?")); //$NON-NLS-1$
-                throw new IllegalArgumentException(msg);
-            }
-
-        }
-        // We passed our tests, add the next hex to this building.
-        coordinates.add(coords);
-        originalHexes++;
-        currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
-        phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
-
-        // Note this really only applies to buildings, as they are the only
-        // structure that can span multiple hexes.
-        // All in all, buildings get whatever basement type is passed into the
-        // constructor for the first hex and this basement type in other hexes;
-        // while bridges and tanks get only the ctor basemet type.
-        // For buildings, the ctor basement type is 
-        // fistHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE), for tanks and
-        // bridges it's hardcoded to NONE
-        basement.put(coords, BasementType.getType(nextHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
-
-        basementCollapsed.put(coords, nextHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
-        if (structureType == Terrains.BRIDGE) {
-            currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
-            phaseCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
-        }
-        if (structureType == Terrains.FUEL_TANK) {
-            currentCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
-            phaseCF.put(coords, nextHex.terrainLevel(Terrains.FUEL_TANK_CF));
-        }
-        if (nextHex.containsTerrain(Terrains.BLDG_ARMOR)) {
-            armor.put(coords, nextHex.terrainLevel(Terrains.BLDG_ARMOR));
-        } else {
-            armor.put(coords, 0);
-        }
-
-        burning.put(coords, false);
-
-        // Walk through the exit directions and
-        // identify all hexes in this building.
-        for (int dir = 0; dir < 6; dir++) {
-
-            // Does the building exit in this direction?
-            if (nextHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board);
-            }
-
-        }
-
+        sectionAt(coords).get().setBasementCollapsed(collapsed);
     }
 
     // LATER fix equals/hashCode

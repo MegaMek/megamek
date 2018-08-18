@@ -30,7 +30,12 @@ public enum BuildingClass {
     GUN_EMPLACEMENT (   2,    0.5  );
     // CASTLE_BRIAN    (  10,   0.1  );
 
-    // LATER Investigate why Castle Brian was originally left out
+    // LATER Investigate why Castle Brian was originally left out and see to
+    //       add support for it
+    //
+    // A comment originally in Building.java stated:
+    //
+    // leaving out Castles Brian until issues with damage scaling are resolved
 
     /**
      * Retrieves the {@linkplain BuildingClass} corresponding to the given

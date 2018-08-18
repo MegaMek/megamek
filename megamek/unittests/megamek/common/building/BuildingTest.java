@@ -16,6 +16,7 @@ import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
+import megamek.test.TestUtilities;
 
 public class BuildingTest {
 
@@ -152,6 +153,7 @@ public class BuildingTest {
         assertNotNull(b);
         Assert.assertEquals(structureType, b.getStructureType());
         Assert.assertEquals(hexCount, b.getOriginalHexCount());
+        TestUtilities.checkSerializable(b);
     }
 
 }

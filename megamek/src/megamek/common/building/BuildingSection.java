@@ -18,6 +18,7 @@
  */
 package megamek.common.building;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -28,9 +29,10 @@ import megamek.common.logging.DefaultMmLogger;
 
 /**
  * Represents one hex worth of building
- *
  */
-public class BuildingSection {
+public class BuildingSection implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static BuildingSection at(IHex hex, int structureType, BasementType defaultBasementType) {
 
@@ -43,8 +45,6 @@ public class BuildingSection {
             return new IllegalArgumentException("No building at " + hex.getCoords()); //$NON-NLS-1$
         };
 
-        // ConstructionType ct = hex.getConstructionType(structureType).orElseThrow(noBuilding);
-        // BuildingClass    bc = hex.getBuildingClass().orElseThrow(noBuilding); // can be missing
 
         BasementType basementType = structureType == Terrains.BUILDING
                                   ? BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
@@ -60,6 +60,13 @@ public class BuildingSection {
             DefaultMmLogger.getInstance().warning(BuildingSection.class, "at", msg); //$NON-NLS-1$
             cf = hex.terrainLevel(Terrains.BLDG_CF);
         }
+        
+        ConstructionType ct = hex.getConstructionType(structureType).orElseThrow(noBuilding);
+        if (cf < 0) {
+            cf = ct.getId();
+        }
+
+        // BuildingClass bc = hex.getBuildingClass().orElseThrow(noBuilding); // can actually be missing
 
         boolean collapsed = hex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1;
 
@@ -76,13 +83,13 @@ public class BuildingSection {
                                     false ); // burning?
     }
 
-    public BuildingSection( Coords coordinates,
-                            BasementType basementType,
-                            int currentCF,
-                            int phaseCF,
-                            int armor,
-                            boolean basementCollapsed,
-                            boolean burning ) {
+    BuildingSection( Coords coordinates,
+                     BasementType basementType,
+                     int currentCF,
+                     int phaseCF,
+                     int armor,
+                     boolean basementCollapsed,
+                     boolean burning ) {
         this.coordinates  = Objects.requireNonNull(coordinates);
         this.basementType = Objects.requireNonNull(basementType);
         // XXX add validation - must determine what it should be first  :)
@@ -151,6 +158,31 @@ public class BuildingSection {
 
     public void setBurning(boolean burning) {
         this.burning = burning;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( coordinates,
+                             basementType,
+                             currentCF,
+                             phaseCF,
+                             armor,
+                             basementCollapsed,
+                             burning );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        BuildingSection other = (BuildingSection) obj;
+        return coordinates.equals(other.coordinates)
+            && armor == other.armor
+            && currentCF == other.currentCF
+            && phaseCF == other.phaseCF
+            && burning == other.burning
+            && basementCollapsed == other.basementCollapsed;
     }
 
 }

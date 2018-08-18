@@ -607,14 +607,17 @@ public class Building implements Serializable {
         }
 
         if (structureType == Terrains.BUILDING) {
-            // Error off if the building type, or CF is off.
-            if (type != nextHex.terrainLevel(Terrains.BUILDING)) {
+
+            Optional<ConstructionType> ct = nextHex.getConstructionType();
+            if (!ct.isPresent() || ct.get().getId() != type) {
                 throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
                         + coords.getBoardNum()
                         + ", should contain the same type of building as " //$NON-NLS-1$
                         + coordinates.get(0).getBoardNum());
             }
-            if (bldgClass != nextHex.terrainLevel(Terrains.BLDG_CLASS)) {
+
+            Optional<BuildingClass> bc = nextHex.getBuildingClass();
+            if (!bc.isPresent() || bc.get().getId() != bldgClass) {
                 throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
                         + coords.getBoardNum()
                         + ", should contain the same class of building as " //$NON-NLS-1$
@@ -696,32 +699,23 @@ public class Building implements Serializable {
             case MEDIUM:   buf.append("Medium ");   break;
             case HEAVY:    buf.append("Heavy ");    break;
             case HARDENED: buf.append("Hardened "); break;
-            case WALL:  // fall-through
-            default:    // do nothing
+            case WALL:     // fall-through
+            default:       // do nothing
             }
         });
 
-        switch (getBldgClass()) {
-            case Building.HANGAR:
-                buf.append("Hangar ");
-                break;
-            case Building.FORTRESS:
-                buf.append("Fortress ");
-                break;
-            case Building.GUN_EMPLACEMENT:
-                buf.append("Gun Emplacement");
-                break;
-            // case Building.CASTLE_BRIAN:
-            // buf.append("Castle Brian ");
-            // break;
-            default:
-                buf.append("Standard ");
-        }
+        getBuildingClass().ifPresent(bc -> {
+            switch (bc) {
+            case HANGAR:          buf.append("Hangar "); break;
+            case FORTRESS:        buf.append("Fortress "); break;
+            case GUN_EMPLACEMENT: buf.append("Gun Emplacement"); break;
+            case STANDARD:        // fall-through
+            default:              buf.append("Standard ");
+            }
+        });
 
-        // Add the building's name.
         buf.append(name);
 
-        // Return the string.
         return buf.toString();
     }
 

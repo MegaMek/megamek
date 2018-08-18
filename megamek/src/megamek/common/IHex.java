@@ -14,7 +14,12 @@
 
 package megamek.common;
 
+import java.util.Optional;
+
 import megamek.common.annotations.Nullable;
+import megamek.common.building.BuildingClass;
+import megamek.common.building.ConstructionType;
+import megamek.common.logging.DefaultMmLogger;
 
 /**
  * IHex represents a single hex on the board.
@@ -49,7 +54,7 @@ public interface IHex extends Cloneable {
      *
      * @param theme
      *            theme name
-     * @see getTheme
+     * @see #getTheme()
      */
     public abstract void setTheme(String theme);
 
@@ -222,6 +227,32 @@ public interface IHex extends Cloneable {
      */
     public abstract int terrainLevel(int type);
 
+    public default Optional<ConstructionType> getConstructionType() {
+        // TODO use this in place of terrainLevel() whenever possible
+        //      eg: grep -r 'terrainLevel(Terrains.BUILDING)' src/
+        int id = terrainLevel(Terrains.BUILDING);
+        if (id == ITerrain.LEVEL_NONE) return Optional.empty();
+        Optional<ConstructionType> ct = ConstructionType.ofId(id);
+        if (!ct.isPresent()) {
+            String msg =  String.format("Board contains an invalid construction type: %s", id); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().warning(IHex.class, "getConstructionType", msg); //$NON-NLS-1$
+        }
+        return ct;
+    }
+
+    public default Optional<BuildingClass> getBuildingClass() {
+        // TODO use this in place of terrainLevel() whenever possible
+        //      eg: grep -r 'terrainLevel(Terrains.BLDG_CLASS)' src/
+        int id = terrainLevel(Terrains.BLDG_CLASS);
+        if (id == ITerrain.LEVEL_NONE) return Optional.empty();
+        Optional<BuildingClass> bc = BuildingClass.ofId(id);
+        if (!bc.isPresent()) {
+            String msg =  String.format("Board contains an invalid building class: %s", id); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().warning(IHex.class, "getBuildingClass", msg); //$NON-NLS-1$
+        }
+        return bc;
+    }
+
     /**
      * @param type
      * @return the terrain of the specified type, or <code>null</code> if the
@@ -272,9 +303,6 @@ public interface IHex extends Cloneable {
      */
     public abstract IHex duplicate();
 
-    /**
-     * @return modifier to PSRs made in the hex
-     */
     public abstract void terrainPilotingModifier(EntityMovementMode moveType, PilotingRollData roll,
             boolean enteringRubble);
 

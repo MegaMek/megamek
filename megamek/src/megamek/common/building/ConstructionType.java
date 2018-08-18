@@ -72,7 +72,7 @@ public enum ConstructionType {
     private ConstructionType( int id,
                               int defaultCF,
                               float damageReductionFromInside,
-                              float damageReductionFromOutside) {
+                              float damageReductionFromOutside ) {
         this.id = id;
         this.defaultCF = defaultCF;
         this.damageReductionFromInside = damageReductionFromInside;

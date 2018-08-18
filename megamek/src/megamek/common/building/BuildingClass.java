@@ -20,7 +20,6 @@ package megamek.common.building;
 
 import java.util.Optional;
 
-
 public enum BuildingClass {
 
     //                  dmgFr dmgTo
@@ -36,6 +35,16 @@ public enum BuildingClass {
     // A comment originally in Building.java stated:
     //
     // leaving out Castles Brian until issues with damage scaling are resolved
+    //
+    // Also, this comment inside an old method Building.getAbsorbtion seems
+    // relevant:
+    //
+    //    public int getAbsorbtion(Coords pos) {
+    //        // if(getBldgClass() == Building.CASTLE_BRIAN) {
+    //        // return (int) Math.ceil(getPhaseCF(pos));
+    //        // }
+    //        return (int) Math.ceil(getPhaseCF(pos) / 10.0);
+    //    }
 
     /**
      * Retrieves the {@linkplain BuildingClass} corresponding to the given

@@ -34,7 +34,7 @@ public class BuildingSection implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public static BuildingSection at(IHex hex, int structureType, BasementType defaultBasementType) {
+    public static BuildingSection at(IHex hex, int structureType) {
 
         if (!hex.getConstructionType(structureType).isPresent()) {
             String msg = String.format("No construction type at: %s", hex.getCoords()); //$NON-NLS-1$
@@ -47,8 +47,8 @@ public class BuildingSection implements Serializable {
 
 
         BasementType basementType = structureType == Terrains.BUILDING
-                                  ? BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                  : defaultBasementType;
+                                  ? BasementType.ofId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).orElse(BasementType.UNKNOWN)
+                                  : BasementType.NONE;
 
         int cf;
         switch (structureType) {
@@ -111,6 +111,13 @@ public class BuildingSection implements Serializable {
     public Coords getCoordinates() {
         return coordinates;
     }
+
+   /**
+    * @return the amount of damage the building absorbs
+    */
+   public int getAbsorbtion() {
+       return (int) Math.ceil(phaseCF / 10.0);
+   }
 
     public BasementType getBasementType() {
         return basementType;

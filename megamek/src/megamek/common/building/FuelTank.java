@@ -14,6 +14,8 @@
 
 package megamek.common.building;
 
+import java.util.OptionalInt;
+
 import megamek.common.Coords;
 import megamek.common.IBoard;
 
@@ -26,15 +28,8 @@ public class FuelTank extends Building {
 
     private static final long serialVersionUID = 5275543640680231747L;
 
-    FuelTank(int id, Coords coords, IBoard board, int structureType, int magnitude) {
-        super(id, coords, board, structureType, BasementType.NONE);
-        this.magnitude = magnitude;
-    }
-
-    private int magnitude;
-
-    public int getMagnitude() {
-        return magnitude;
+    public FuelTank(Coords coords, IBoard board, int id, int structureType, OptionalInt explosionMagnitude) {
+        super(coords, board, id, structureType, explosionMagnitude);
     }
 
 }

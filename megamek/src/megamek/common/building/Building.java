@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -58,8 +59,7 @@ public class Building implements Serializable {
     public static Building newBuildingAt(Coords coords, IBoard board) {
         IHex curHex = board.getHex(coords);
         requirePresent(curHex, Terrains.BUILDING);
-        BasementType basementType = BasementType.ofRequiredId(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
-        return new Building(buildingIdFromCoordinates(coords), coords, board, Terrains.BUILDING, basementType);
+        return new Building(coords, board, buildingIdFromCoordinates(coords), Terrains.BUILDING, OptionalInt.empty());
     }
 
     /**
@@ -68,7 +68,7 @@ public class Building implements Serializable {
     public static Building newBridgeAt(Coords coords, IBoard board) {
         IHex curHex = board.getHex(coords);
         requirePresent(curHex, Terrains.BRIDGE);
-        return new Building(buildingIdFromCoordinates(coords), coords, board, Terrains.BRIDGE, BasementType.NONE);
+        return new Building(coords, board, buildingIdFromCoordinates(coords), Terrains.BRIDGE, OptionalInt.empty());
     }
 
     /**
@@ -78,7 +78,7 @@ public class Building implements Serializable {
         IHex curHex = board.getHex(coords);
         requirePresent(curHex, Terrains.FUEL_TANK);
         int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
-        return new FuelTank(buildingIdFromCoordinates(coords), coords, board, Terrains.FUEL_TANK, magnitude);
+        return new FuelTank(coords, board, buildingIdFromCoordinates(coords), Terrains.FUEL_TANK, OptionalInt.of(magnitude));
     }
 
     /**
@@ -97,17 +97,18 @@ public class Building implements Serializable {
      *        if the given coordinates do not contain a building, or if the
      *        building covers multiple hexes with different CFs.
      */
-    protected Building(int id, Coords coords, IBoard board, int structureType, BasementType basementType) {
+    protected Building(Coords coords, IBoard board, int id, int structureType, OptionalInt explosionMagnitude) {
 
         IHex initialHex = board.getHex(coords);
 
-        this.id            = id;
-        this.structureType = structureType;
-        this.type          = initialHex.terrainLevel(structureType);
-        this.bldgClass     = initialHex.getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE); // this is actually optional
+        this.id                 = id;
+        this.structureType      = structureType;
+        this.constructionType   = initialHex.getConstructionType(structureType).orElseThrow(IllegalArgumentException::new);
+        this.buildingClass      = initialHex.getBuildingClass().orElse(null);
+        this.explosionMagnitude = explosionMagnitude.isPresent() ? explosionMagnitude.getAsInt() : null;
 
         getSpannedHexes(initialHex, board, structureType).values().forEach(hex -> {
-            sections.put(hex.getCoords(), BuildingSection.at(hex, structureType, basementType));
+            sections.put(hex.getCoords(), BuildingSection.at(hex, structureType));
         });
 
         originalHexes = sections.size();
@@ -115,10 +116,9 @@ public class Building implements Serializable {
 
     private final int id;
     private final int structureType;
-    /** @deprecated this is being refactored out and  the int replaced with ConstructionType */
-    @Deprecated private final int type;
-    /** @deprecated this is being refactored out and  the int replaced with BuildingClass */
-    @Deprecated private final int bldgClass;
+    private final ConstructionType constructionType;
+    private final BuildingClass buildingClass; // nullable - can't use Optional    as it's not Serializable
+    private final Integer explosionMagnitude;  // nullable - can't use OptionalInt as it's not Serializable
 
     private int originalHexes = 0;
 
@@ -174,19 +174,28 @@ public class Building implements Serializable {
         return structureType;
     }
 
-    public Optional<ConstructionType> getConstructionType() {
-        return ConstructionType.ofId(getType());
+    public ConstructionType getConstructionType() {
+        return constructionType;
     } 
 
     /** @deprecated use {@link #getConstructionType()} instead */
-    @Deprecated public int getType() { return type; }
+    @Deprecated public int getType() { return constructionType.getId(); }
 
     public Optional<BuildingClass> getBuildingClass() {
-        return BuildingClass.ofId(getBldgClass());
+        return Optional.ofNullable(buildingClass);
     } 
 
     /** @deprecated use {@link #getBuildingClass()} instead */
-    @Deprecated public int getBldgClass() { return bldgClass; }
+    @Deprecated public int getBldgClass() { return getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE); }
+
+    public OptionalInt getExplosionMagnitude() {
+        return explosionMagnitude != null ? OptionalInt.of(explosionMagnitude) : OptionalInt.empty();
+    }
+
+    /** @deprecated use {@link #getExplosionMagnitude()} instead */
+    @Deprecated public int getMagnitude() {
+        return getExplosionMagnitude().getAsInt();
+    }
 
     public boolean getBasementCollapsed(Coords coords) {
         return sectionAt(coords).get().isBasementCollapsed();
@@ -422,14 +431,10 @@ public class Building implements Serializable {
     }
 
     /**
-     *
      * @return the amount of damage the building absorbs
      */
     public int getAbsorbtion(Coords pos) {
-        // if(getBldgClass() == Building.CASTLE_BRIAN) {
-        // return (int) Math.ceil(getPhaseCF(pos));
-        // }
-        return (int) Math.ceil(getPhaseCF(pos) / 10.0);
+        return sectionAt(pos).get().getAbsorbtion();
     }
 
     /**
@@ -439,8 +444,7 @@ public class Building implements Serializable {
      * @deprecated use {@link #getConstructionType()} and {@link ConstructionType#getDamageReductionFromInside()} instead
      */
     @Deprecated public double getInfDmgFromInside() {
-        return getConstructionType().map(ConstructionType::getDamageReductionFromInside)
-                                    .orElse(0f);
+        return constructionType.getDamageReductionFromInside();
     }
 
     /**
@@ -451,8 +455,7 @@ public class Building implements Serializable {
      * @deprecated use {@link #getConstructionType()} and {@link ConstructionType#getDamageReductionFromOutside()} instead
      */
     @Deprecated public float getDamageReductionFromOutside() {
-        return getConstructionType().map(ConstructionType::getDamageReductionFromOutside)
-                                    .orElse(0f);
+        return constructionType.getDamageReductionFromOutside();
     }
 
     public BasementType getBasement(Coords coords) {
@@ -499,16 +502,14 @@ public class Building implements Serializable {
     public String toString() {
         StringBuffer buf = new StringBuffer();
 
-        getConstructionType().ifPresent(ct -> {
-            switch (ct) {
+        switch (constructionType) {
             case LIGHT:    buf.append("Light ");    break;
             case MEDIUM:   buf.append("Medium ");   break;
             case HEAVY:    buf.append("Heavy ");    break;
             case HARDENED: buf.append("Hardened "); break;
             case WALL:     // fall-through
             default:       // do nothing
-            }
-        });
+        }
 
         getBuildingClass().ifPresent(bc -> {
             switch (bc) {

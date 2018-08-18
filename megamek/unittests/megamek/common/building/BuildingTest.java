@@ -108,7 +108,7 @@ public class BuildingTest {
             assertEquals(ITerrain.LEVEL_NONE, ft.getBldgClass());
             assertFalse(ft.getBuildingClass().isPresent());
             assertEquals(0, ft.getCollapsedHexCount());
-            assertEquals(ConstructionType.LIGHT, ft.getConstructionType().get());
+            assertEquals(ConstructionType.LIGHT, ft.getConstructionType());
             assertEquals(1, Collections.list(ft.getCoords()).size());
             assertTrue(Collections.list(ft.getCoords()).contains(c));
             assertEquals(1, ft.getCurrentCF(c));
@@ -138,7 +138,7 @@ public class BuildingTest {
             assertEquals(ITerrain.LEVEL_NONE, sb.getBldgClass());
             assertFalse(sb.getBuildingClass().isPresent());
             assertEquals(0, sb.getCollapsedHexCount());
-            assertEquals(ConstructionType.HEAVY, sb.getConstructionType().get());
+            assertEquals(ConstructionType.HEAVY, sb.getConstructionType());
             assertEquals(1, Collections.list(sb.getCoords()).size());
             assertTrue(Collections.list(sb.getCoords()).contains(c));
             assertEquals(15, sb.getCurrentCF(c));

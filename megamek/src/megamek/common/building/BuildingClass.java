@@ -23,11 +23,14 @@ import java.util.Optional;
 
 public enum BuildingClass {
 
-    STANDARD        (),
-    HANGAR          (),
-    FORTRESS        (),
-    GUN_EMPLACEMENT ();
-    // LATER refer back to TacOps and see to add Castle-Brian class buildings
+    //                  dmgFr dmgTo
+    STANDARD        (   0.5,  1    ),
+    HANGAR          (   1,    1    ),
+    FORTRESS        (   2,    0.5  ),
+    GUN_EMPLACEMENT (   2,    0.5  );
+    // CASTLE_BRIAN    (  10,   0.1  );
+
+    // LATER Investigate why Castle Brian was originally left out
 
     /**
      * Retrieves the {@linkplain BuildingClass} corresponding to the given
@@ -54,9 +57,13 @@ public enum BuildingClass {
         }
     }
 
-    private BuildingClass() {
+    private BuildingClass(double damageFromScaleMultiplier, double damageToScaleMultiplier) {
+        this.damageFromScaleMultiplier = damageFromScaleMultiplier;
+        this.damageToScaleMultiplier   = damageToScaleMultiplier;
     }
 
+    private final double damageFromScaleMultiplier;
+    private final double damageToScaleMultiplier;
 
     /**
      * Retrieves the identifier corresponding to this building class.
@@ -74,6 +81,22 @@ public enum BuildingClass {
      */
     public int getId() {
         return ordinal();
+    }
+
+    /**
+     * @return the damage scale multiplier for units passing through this
+     *         building
+     */
+    public double getDamageFromScaleMultiplier() {
+        return damageFromScaleMultiplier;
+    }
+
+    /**
+     * @return the damage scale multiplier for damage applied to this building
+     *         (and occupants)
+     */
+    public double getDamageToScaleMultiplier() {
+        return damageToScaleMultiplier;
     }
 
 }

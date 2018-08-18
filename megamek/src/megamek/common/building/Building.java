@@ -97,8 +97,11 @@ public class Building implements Serializable {
     protected Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
 
         // FIXME This is an unlucky idea, especially considering that id is used
-        //       as the only factor to check for equality
+        //       as the only factor to check for equality and that (apparently?)
+        //       coords can repeat in multi-map setups
         id = coords.hashCode();
+
+        this.structureType = structureType;
 
         // The building occupies the given coords, at least.
         coordinates.add(coords);
@@ -150,35 +153,20 @@ public class Building implements Serializable {
 
             // Does the building exit in this direction?
             if (startHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board, structureType);
+                include(coords.translated(dir), board);
             }
 
         }
 
-        // Set the building's name.
-        StringBuffer buffer = new StringBuffer();
-        if (structureType == Terrains.FUEL_TANK) {
-            buffer.append("Fuel Tank #");
-        } else if (getType() == Building.WALL) {
-            buffer.append("Wall #");
-        } else if (structureType == Terrains.BUILDING) {
-            buffer.append("Building #");
-        } else if (structureType == Terrains.BRIDGE) {
-            buffer.append("Bridge #");
-        } else {
-            buffer.append("Structure #");
-        }
-        buffer.append(id);
-        name = buffer.toString();
-
     }
 
     private final int id;
+
+    private final int structureType;
     /** @deprecated this is being refactored out and  the int replaced with a ConstructionType */
     @Deprecated private final int type;
     private final int bldgClass;
-    private final String name;
-    
+
     private int collapsedHexes = 0;
     private int originalHexes = 0;
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
@@ -415,13 +403,21 @@ public class Building implements Serializable {
         armor.put(coords, a);
     }
 
-    /**
-     * Get the name of this building.
-     *
-     * @return the <code>String</code> name of this building.
-     */
     public String getName() {
-        return name;
+        StringBuffer buffer = new StringBuffer();
+        if (structureType == Terrains.FUEL_TANK) {
+            buffer.append("Fuel Tank #");
+        } else if (getType() == Building.WALL) {
+            buffer.append("Wall #");
+        } else if (structureType == Terrains.BUILDING) {
+            buffer.append("Building #");
+        } else if (structureType == Terrains.BRIDGE) {
+            buffer.append("Bridge #");
+        } else {
+            buffer.append("Structure #");
+        }
+        buffer.append(id);
+        return buffer.toString();
     }
 
     /**
@@ -499,39 +495,25 @@ public class Building implements Serializable {
     }
 
     /**
-     *
      * @return the damage scale multiplier for units passing through this
      *         building
+     *
+     * @deprecated use {@link #getBldgClass()} and {@link BuildingClass#getDamageFromScaleMultiplier()} instead
      */
-    public double getDamageFromScale() {
-        switch (getBldgClass()) {
-            case Building.HANGAR:
-                return 0.5;
-            case Building.FORTRESS:
-            case Building.GUN_EMPLACEMENT:
-                return 2.0;
-                // case Building.CASTLE_BRIAN:
-                // return 10.0;
-            default:
-                return 1.0;
-        }
+    @Deprecated public double getDamageFromScale() {
+        return getBuildingClass().map(BuildingClass::getDamageFromScaleMultiplier)
+                                 .orElse(1.0);
     }
 
     /**
-     *
      * @return the damage scale multiplier for damage applied to this building
      *         (and occupants)
+     *
+     * @deprecated use {@link #getBldgClass()} and {@link BuildingClass#getDamageToScaleMultiplier()} instead
      */
-    public double getDamageToScale() {
-        switch (getBldgClass()) {
-            case Building.FORTRESS:
-            case Building.GUN_EMPLACEMENT:
-                return 0.5;
-                // case Building.CASTLE_BRIAN:
-                // return 0.1;
-            default:
-                return 1.0;
-        }
+    @Deprecated public double getDamageToScale() {
+        return getBuildingClass().map(BuildingClass::getDamageToScaleMultiplier)
+                .orElse(1.0);
     }
 
     /**
@@ -549,7 +531,7 @@ public class Building implements Serializable {
      * Returns the percentage of damage done to the building for attacks against
      * infantry in the building from other units within the building.  TW pg175.
      *
-     * @deprecated use {@link #getConstructionType()} instead
+     * @deprecated use {@link #getConstructionType()} and {@link ConstructionType#getDamageReductionFromInside()} instead
      */
     @Deprecated public double getInfDmgFromInside() {
         return getConstructionType().map(ConstructionType::getDamageReductionFromInside)
@@ -561,7 +543,7 @@ public class Building implements Serializable {
      * passes through to infantry inside the building.
      * @return Damage fraction.
      * 
-     * @deprecated use {@link #getConstructionType()} instead
+     * @deprecated use {@link #getConstructionType()} and {@link ConstructionType#getDamageReductionFromOutside()} instead
      */
     @Deprecated public float getDamageReductionFromOutside() {
         return getConstructionType().map(ConstructionType::getDamageReductionFromOutside)
@@ -593,7 +575,7 @@ public class Building implements Serializable {
      *                the given coordinates do not contain a building, or if the
      *                building covers multiple hexes with different CF.
      */
-    private void include(Coords coords, IBoard board, int structureType) {
+    private void include(Coords coords, IBoard board) {
 
         // If the hex is already in the building, we've covered it before.
         if (isIn(coords)) {
@@ -654,7 +636,7 @@ public class Building implements Serializable {
 
             // Does the building exit in this direction?
             if (nextHex.containsTerrainExit(structureType, dir)) {
-                include(coords.translated(dir), board, structureType);
+                include(coords.translated(dir), board);
             }
 
         }
@@ -714,9 +696,40 @@ public class Building implements Serializable {
             }
         });
 
-        buf.append(name);
+        buf.append(getName());
 
         return buf.toString();
+    }
+
+    public static Map<Coords,IHex> getSpannedHexes(IHex hex , IBoard board, int structureType) {
+
+        if (!(hex.containsTerrain(structureType))) {
+            String msg = String.format("Hex %s does not contain structure %s", hex.getCoords(), structureType); //$NON-NLS-1$
+            throw new IllegalArgumentException(msg);
+        }
+
+        Map<Coords,IHex> receptacle = new HashMap<>();
+        getSpannedHexesRecurse(hex, board, structureType, receptacle);
+        return receptacle;
+
+    }
+
+    private static void getSpannedHexesRecurse(IHex hex , IBoard board, int structureType, Map<Coords,IHex> receptacle) {
+
+        receptacle.put(hex.getCoords(), hex);
+
+        for (int dir = 0; dir < 6; dir++) {
+            if (hex.containsTerrainExit(structureType, dir)) {
+                Coords nextCoords = hex.getCoords().translated(dir);
+                if (!receptacle.containsKey(nextCoords)) {
+                    IHex nextHex = board.getHex(nextCoords);
+                    if (nextHex.containsTerrain(structureType)) {
+                        getSpannedHexesRecurse(nextHex, board, structureType, receptacle);
+                    }
+                }
+            }
+        }
+
     }
 
 }

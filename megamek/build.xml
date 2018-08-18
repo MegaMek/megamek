@@ -184,7 +184,7 @@
         </javac>
         <copy todir="${dir.build.test}" encoding="UTF-8">
             <fileset dir="${dir.test.src}">
-                <include name="**/*.xml"/>
+                <exclude name="**/*.java" />
             </fileset>
         </copy>
     </target>

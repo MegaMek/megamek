@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -30,6 +31,7 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Report;
 import megamek.common.Terrains;
+import megamek.common.logging.DefaultMmLogger;
 
 /**
  * Represents a single, possibly multi-hex building on the board.
@@ -106,7 +108,12 @@ public class Building implements Serializable {
         this.id            = id;
         this.structureType = structureType;
         this.type          = initialHex.terrainLevel(structureType);
-        this.bldgClass     = initialHex.getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE);
+        this.bldgClass     = initialHex.getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE); // this is actually optional
+
+        {
+            String msg = String.format("Building at: %s, structureType: %s, type: %s, bldgClass: %s,", coords.getBoardNum(), structureType, type, bldgClass); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+        }
 
         // The building occupies the given coords, at least.
         coordinates.add(coords);
@@ -151,6 +158,77 @@ public class Building implements Serializable {
                 include(coords.translated(dir), board);
             }
 
+        }
+
+        // sanity checks temporary logging
+
+        DefaultMmLogger.getInstance().info(getClass(), "<init>", "coords: " + coordinates.stream().map(Coords::getBoardNum).collect(Collectors.joining(", ")));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+
+        if (originalHexes != coordinates.size()) {
+            String msg = String.format("originalHexes %s, coordinates.size()", originalHexes, coordinates.size()); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+        }
+
+        {
+            Map<Coords, IHex> spannedHexes = getSpannedHexes(initialHex, board, structureType);
+            if (originalHexes != spannedHexes.size()) {
+                String msg = String.format("originalHexes %s, spannedHexes.size()", originalHexes, spannedHexes.size()); //$NON-NLS-1$
+                DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+            }
+    
+            for (Coords c : coordinates) {
+                if (spannedHexes.remove(c) == null) {
+                    String msg = String.format("hex %s missed by spannedHexes", c); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+            }
+    
+            if (!spannedHexes.isEmpty()) for (Coords c :spannedHexes.keySet()) {
+                String msg = String.format("extra hex %s present in spannedHexes", c); //$NON-NLS-1$
+                DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+            }
+        }
+
+        List<BuildingSection> sections = getSpannedHexes(initialHex, board, structureType).values().stream().map((IHex hex) -> {
+            return BuildingSection.at(hex, structureType, basementType);
+        }).collect(Collectors.toList());
+
+        if (sections.size() != coordinates.size()) {
+            String msg = String.format("XXX sections: %s, coords: %s", sections.size(), coordinates.size()); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+        }
+
+        for (BuildingSection bs : sections) {
+            if (!coordinates.contains(bs.getCoordinates())) {
+                String msg = String.format("section at %s: no coords", bs.getCoordinates()); //$NON-NLS-1$
+                DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+            } else {
+                Coords c = bs.getCoordinates();
+                if (bs.getBasementType() != basement.get(c)) {
+                    String msg = String.format("section %s: basement set to %s but should be %s", c, bs.getBasementType(), basement.get(c)); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+                if (bs.getCurrentCF() != currentCF.get(c)) {
+                    String msg = String.format("section %s: current CF set to %s but should be %s", c, bs.getCurrentCF(), currentCF.get(c)); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+                if (bs.getPhaseCF() != phaseCF.get(c)) {
+                    String msg = String.format("section %s: phase CF set to %s but should be %s", c, bs.getPhaseCF(), phaseCF.get(c)); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+                if (bs.getArmor() != armor.get(c)) {
+                    String msg = String.format("section %s: armor set to %s but should be %s", c, bs.getArmor(), armor.get(c)); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+                if (bs.isBurning() != burning.get(c)) {
+                    String msg = String.format("section %s: burning set to %s but should be %s", c, bs.isBurning(), burning.get(c)); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+                if (bs.isBasementCollapsed() != basementCollapsed.get(c)) {
+                    String msg = String.format("section %s: collapsed set to %s but should be %s", c, bs.isBasementCollapsed(), basementCollapsed.get(c)); //$NON-NLS-1$
+                    DefaultMmLogger.getInstance().info(getClass(), "<init>", msg); //$NON-NLS-1$
+                }
+            }
         }
 
     }
@@ -213,6 +291,16 @@ public class Building implements Serializable {
 
     public Iterator<Coords> iterateCoords() {
         return Collections.unmodifiableList(coordinates).iterator();
+    }
+
+    /**
+     * @return the structure type of this building
+     *         ({@linkplain Terrains#BUILDING},
+     *         {@linkplain Terrains#FUEL_TANK} or
+     *         {@linkplain Terrains#BRIDGE})
+     */
+    public int getStructureType() {
+        return structureType;
     }
 
     public Optional<ConstructionType> getConstructionType() {
@@ -586,20 +674,26 @@ public class Building implements Serializable {
 
         if (structureType == Terrains.BUILDING) {
 
-            Optional<ConstructionType> ct = nextHex.getConstructionType();
+            Optional<ConstructionType> ct = nextHex.getConstructionType(structureType);
             if (!ct.isPresent() || ct.get().getId() != type) {
-                throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
-                        + coords.getBoardNum()
-                        + ", should contain the same type of building as " //$NON-NLS-1$
-                        + coordinates.get(0).getBoardNum());
+                String msg = String.format( "Unexpected construction type at %s: expected %s (%s), got %s (%s)", //$NON-NLS-1$
+                                            coords.getBoardNum(),
+                                            getConstructionType().map(ConstructionType::name).orElse("null"), //$NON-NLS-1$
+                                            type,
+                                            ct.map(ConstructionType::name).orElse("null"), //$NON-NLS-1$
+                                            ct.map(v -> Integer.toString(v.getId())).orElse("?")); //$NON-NLS-1$
+                throw new IllegalArgumentException(msg);
             }
 
             Optional<BuildingClass> bc = nextHex.getBuildingClass();
-            if (!bc.isPresent() || bc.get().getId() != bldgClass) {
-                throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
-                        + coords.getBoardNum()
-                        + ", should contain the same class of building as " //$NON-NLS-1$
-                        + coordinates.get(0).getBoardNum());
+            if (bc.map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE) != bldgClass) {
+                String msg = String.format( "Unexpected building class at %s: expected %s (%s), got %s (%s)", //$NON-NLS-1$
+                                            coords.getBoardNum(),
+                                            getBuildingClass().map(BuildingClass::name).orElse("null"), //$NON-NLS-1$
+                                            bldgClass,
+                                            bc.map(BuildingClass::name).orElse("null"), //$NON-NLS-1$
+                                            bc.map(v -> Integer.toString(v.getId())).orElse("?")); //$NON-NLS-1$
+                throw new IllegalArgumentException(msg);
             }
 
         }
@@ -608,7 +702,17 @@ public class Building implements Serializable {
         originalHexes++;
         currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
         phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
+
+        // Note this really only applies to buildings, as they are the only
+        // structure that can span multiple hexes.
+        // All in all, buildings get whatever basement type is passed into the
+        // constructor for the first hex and this basement type in other hexes;
+        // while bridges and tanks get only the ctor basemet type.
+        // For buildings, the ctor basement type is 
+        // fistHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE), for tanks and
+        // bridges it's hardcoded to NONE
         basement.put(coords, BasementType.getType(nextHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+
         basementCollapsed.put(coords, nextHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
         if (structureType == Terrains.BRIDGE) {
             currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));

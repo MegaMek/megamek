@@ -27,6 +27,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IHex;
+import megamek.common.ITerrain;
 import megamek.common.Report;
 import megamek.common.Terrains;
 
@@ -58,15 +59,18 @@ public class Building implements Serializable {
      */
     public static Building newBuildingAt(Coords coords, IBoard board) {
         IHex curHex = board.getHex(coords);
+        requirePresent(curHex, Terrains.BUILDING);
         BasementType basementType = BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE));
-        return new Building(coords, board, Terrains.BUILDING, basementType);
+        return new Building(buildingIdFromCoordinates(coords), coords, board, Terrains.BUILDING, basementType);
     }
 
     /**
      * Constructs a new bridge at the given coordinates, fetching info from the given board 
      */
     public static Building newBridgeAt(Coords coords, IBoard board) {
-        return new Building(coords, board, Terrains.BRIDGE, BasementType.NONE);
+        IHex curHex = board.getHex(coords);
+        requirePresent(curHex, Terrains.BRIDGE);
+        return new Building(buildingIdFromCoordinates(coords), coords, board, Terrains.BRIDGE, BasementType.NONE);
     }
 
     /**
@@ -74,8 +78,9 @@ public class Building implements Serializable {
      */
     public static FuelTank newFuelTankAt(Coords coords, IBoard board) {
         IHex curHex = board.getHex(coords);
+        requirePresent(curHex, Terrains.FUEL_TANK);
         int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
-        return new FuelTank(coords, board, Terrains.FUEL_TANK, magnitude);
+        return new FuelTank(buildingIdFromCoordinates(coords), coords, board, Terrains.FUEL_TANK, magnitude);
     }
 
     /**
@@ -94,14 +99,14 @@ public class Building implements Serializable {
      *        if the given coordinates do not contain a building, or if the
      *        building covers multiple hexes with different CFs.
      */
-    protected Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
+    protected Building(int id, Coords coords, IBoard board, int structureType, BasementType basementType) {
 
-        // FIXME This is an unlucky idea, especially considering that id is used
-        //       as the only factor to check for equality and that (apparently?)
-        //       coords can repeat in multi-map setups
-        id = coords.hashCode();
+        IHex initialHex = board.getHex(coords);
 
+        this.id            = id;
         this.structureType = structureType;
+        this.type          = initialHex.terrainLevel(structureType);
+        this.bldgClass     = initialHex.getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE);
 
         // The building occupies the given coords, at least.
         coordinates.add(coords);
@@ -109,35 +114,25 @@ public class Building implements Serializable {
 
         burning.put(coords, false);
 
-        // Get the Hex for those coords.
-        IHex startHex = board.getHex(coords);
-
-        // Read our construction type from the hex.
-        if (!startHex.containsTerrain(structureType)) {
-            throw new IllegalArgumentException("The coordinates, " //$NON-NLS-1$
-                    + coords.getBoardNum() + ", do not contain a building."); //$NON-NLS-1$
-        }
-        type = startHex.terrainLevel(structureType);
-        bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
 
         // Insure that we've got a good type (and initialize our CF).
         currentCF.put(coords, ConstructionType.ofRequiredId(type).getDefaultCF());
 
         // Now read the *real* CF, if the board specifies one.
         if ((structureType == Terrains.BUILDING)
-                && startHex.containsTerrain(Terrains.BLDG_CF)) {
-            currentCF.put(coords, startHex.terrainLevel(Terrains.BLDG_CF));
+                && initialHex.containsTerrain(Terrains.BLDG_CF)) {
+            currentCF.put(coords, initialHex.terrainLevel(Terrains.BLDG_CF));
         }
         if ((structureType == Terrains.BRIDGE)
-                && startHex.containsTerrain(Terrains.BRIDGE_CF)) {
-            currentCF.put(coords, startHex.terrainLevel(Terrains.BRIDGE_CF));
+                && initialHex.containsTerrain(Terrains.BRIDGE_CF)) {
+            currentCF.put(coords, initialHex.terrainLevel(Terrains.BRIDGE_CF));
         }
         if ((structureType == Terrains.FUEL_TANK)
-                && startHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
-            currentCF.put(coords, startHex.terrainLevel(Terrains.FUEL_TANK_CF));
+                && initialHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
+            currentCF.put(coords, initialHex.terrainLevel(Terrains.FUEL_TANK_CF));
         }
-        if (startHex.containsTerrain(Terrains.BLDG_ARMOR)) {
-            armor.put(coords, startHex.terrainLevel(Terrains.BLDG_ARMOR));
+        if (initialHex.containsTerrain(Terrains.BLDG_ARMOR)) {
+            armor.put(coords, initialHex.terrainLevel(Terrains.BLDG_ARMOR));
         } else {
             armor.put(coords, 0);
         }
@@ -145,14 +140,14 @@ public class Building implements Serializable {
         phaseCF.putAll(currentCF);
 
         basement.put(coords, basementType);
-        basementCollapsed.put(coords, startHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
+        basementCollapsed.put(coords, initialHex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1);
 
         // Walk through the exit directions and
         // identify all hexes in this building.
         for (int dir = 0; dir < 6; dir++) {
 
             // Does the building exit in this direction?
-            if (startHex.containsTerrainExit(structureType, dir)) {
+            if (initialHex.containsTerrainExit(structureType, dir)) {
                 include(coords.translated(dir), board);
             }
 
@@ -163,9 +158,10 @@ public class Building implements Serializable {
     private final int id;
 
     private final int structureType;
-    /** @deprecated this is being refactored out and  the int replaced with a ConstructionType */
+    /** @deprecated this is being refactored out and  the int replaced with ConstructionType */
     @Deprecated private final int type;
-    private final int bldgClass;
+    /** @deprecated this is being refactored out and  the int replaced with BuildingClass */
+    @Deprecated private final int bldgClass;
 
     private int collapsedHexes = 0;
     private int originalHexes = 0;
@@ -730,6 +726,21 @@ public class Building implements Serializable {
             }
         }
 
+    }
+
+    /** @deprecated this will be removed in a future refactoring */
+    @Deprecated protected static int buildingIdFromCoordinates(Coords coordinates) {
+        // FIXME This is an unlucky idea, especially considering that id is used
+        //       as the only factor to check for equality and that (apparently?)
+        //       coords can repeat in multi-map setups
+        return coordinates.hashCode();
+    }
+
+    private static void requirePresent(IHex hex, int structureType) {
+        if (!hex.containsTerrain(structureType)) {
+            String msg = String.format("Structure type %s expected at %s", structureType, hex.getCoords().getBoardNum()); //$NON-NLS-1$
+            throw new IllegalArgumentException(msg);
+        }
     }
 
 }

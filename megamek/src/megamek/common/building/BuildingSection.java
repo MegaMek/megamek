@@ -37,9 +37,8 @@ public class BuildingSection implements Serializable {
                      int armor,
                      boolean basementCollapsed,
                      boolean burning ) {
-        this.coordinates  = Objects.requireNonNull(coordinates);
-        this.basementType = Objects.requireNonNull(basementType);
-        // XXX add validation - must determine what it should be first  :)
+        this.coordinates  = coordinates;
+        this.basementType = basementType;
         this.currentCF    = currentCF;
         this.phaseCF      = phaseCF;
         this.armor        = armor;

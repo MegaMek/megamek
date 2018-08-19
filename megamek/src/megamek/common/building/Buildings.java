@@ -117,6 +117,10 @@ public class Buildings {
                   ? hex.terrainLevel(Terrains.BLDG_ARMOR)
                   : 0;
 
+        if (armor < 0) {
+            throw new IllegalArgumentException("Invalid armor value: " + armor); //$NON-NLS-1$
+        }
+
         return new BuildingSection( hex.getCoords(),
                                     basementType,
                                     cf,      // current CF

@@ -97,8 +97,8 @@ public enum BasementType {
             // but it may also be that returning this value causes some issue
             // elsewhere.
             //
-            // LATER investigate why this wasn't used
-            //
+            // LATER investigate why this wasn't used (see #1103)
+            // 
             // case 9:  return ONE_DEEP_NORMALINFONLY;
 
             case 10: return ONE_DEEP_NORMAL;

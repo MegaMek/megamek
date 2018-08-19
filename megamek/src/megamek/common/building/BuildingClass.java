@@ -29,8 +29,7 @@ public enum BuildingClass {
     GUN_EMPLACEMENT (   2,    0.5  );
     // CASTLE_BRIAN    (  10,   0.1  );
 
-    // LATER Investigate why Castle Brian was originally left out and see to
-    //       add support for it
+    // LATER Investigate why Castle Brian was originally left out and see to add support for it (see #1102)
     //
     // A comment originally in Building.java stated:
     //

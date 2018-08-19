@@ -132,6 +132,9 @@ public class BuildingSection implements Serializable {
     }
 
     public void setCurrentCF(int currentCF) {
+        if (currentCF < 0) {
+            throw new IllegalArgumentException("Invalid CF value: " + currentCF); //$NON-NLS-1$
+        }
         this.currentCF = currentCF;
     }
 
@@ -140,6 +143,9 @@ public class BuildingSection implements Serializable {
     }
 
     public void setPhaseCF(int phaseCF) {
+        if (phaseCF < 0) {
+            throw new IllegalArgumentException("Invalid CF value: " + phaseCF); //$NON-NLS-1$
+        }
         this.phaseCF = phaseCF;
     }
 
@@ -148,6 +154,9 @@ public class BuildingSection implements Serializable {
     }
 
     public void setArmor(int armor) {
+        if (armor < 0) {
+            throw new IllegalArgumentException("Invalid armor value: " + armor); //$NON-NLS-1$
+        }
         this.armor = armor;
     }
 

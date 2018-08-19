@@ -210,7 +210,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.building.BasementType;
 import megamek.common.building.Building;
 import megamek.common.building.DemolitionCharge;
-import megamek.common.building.FuelTank;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -33634,7 +33633,7 @@ public class Server implements Runnable {
 
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
-                    if (bldg instanceof FuelTank) {
+                    if (bldg.getExplosionMagnitude().isPresent()) {
                         // If this is a fuel tank, we'll give it its own
                         // message.
                         r = new Report(3441);
@@ -33648,7 +33647,7 @@ public class Server implements Runnable {
                         r.newlines = 1;
                         vPhaseReport.add(r);
                         Vector<Report> vRep = new Vector<Report>();
-                        doExplosion(((FuelTank) bldg).getMagnitude(), 10,
+                        doExplosion(bldg.getExplosionMagnitude().getAsInt(), 10,
                                 false, bldg.getCoords().nextElement(), true,
                                 vRep, null, -1);
                         Report.indentAll(vRep, 2);
@@ -33817,7 +33816,7 @@ public class Server implements Runnable {
             vDesc.add(r);
             // If the CF is zero, the building should fall.
             if ((curCF == 0) && (bldg.getPhaseCF(coords) != 0)) {
-                if (bldg instanceof FuelTank) {
+                if (bldg.getExplosionMagnitude().isPresent()) {
                     // If this is a fuel tank, we'll give it its own
                     // message.
                     r = new Report(3441);
@@ -33831,7 +33830,7 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     vDesc.add(r);
                     Vector<Report> vRep = new Vector<Report>();
-                    doExplosion(((FuelTank) bldg).getMagnitude(), 10, false,
+                    doExplosion(bldg.getExplosionMagnitude().getAsInt(), 10, false,
                                 bldg.getCoords().nextElement(), true, vRep, null,
                                 -1);
                     Report.indentAll(vRep, 2);

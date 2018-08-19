@@ -74,11 +74,11 @@ public class Building implements Serializable {
     /**
      * Constructs a new fuel tank at the given coordinates, fetching info from the given board 
      */
-    public static FuelTank newFuelTankAt(Coords coords, IBoard board) {
+    public static Building newFuelTankAt(Coords coords, IBoard board) {
         IHex curHex = board.getHex(coords);
         requirePresent(curHex, Terrains.FUEL_TANK);
         int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
-        return new FuelTank(coords, board, buildingIdFromCoordinates(coords), Terrains.FUEL_TANK, OptionalInt.of(magnitude));
+        return new Building(coords, board, buildingIdFromCoordinates(coords), Terrains.FUEL_TANK, OptionalInt.of(magnitude));
     }
 
     /**

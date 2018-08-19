@@ -20,12 +20,8 @@ package megamek.common.building;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import megamek.common.Coords;
-import megamek.common.IHex;
-import megamek.common.Terrains;
-import megamek.common.logging.DefaultMmLogger;
 
 /**
  * Represents one hex worth of building
@@ -33,55 +29,6 @@ import megamek.common.logging.DefaultMmLogger;
 public class BuildingSection implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    public static BuildingSection at(IHex hex, int structureType) {
-
-        if (!hex.getConstructionType(structureType).isPresent()) {
-            String msg = String.format("No construction type at: %s", hex.getCoords()); //$NON-NLS-1$
-            DefaultMmLogger.getInstance().warning(BuildingSection.class, "at", msg); //$NON-NLS-1$
-        }
-
-        Supplier<IllegalArgumentException> noBuilding = () -> {
-            return new IllegalArgumentException("No building at " + hex.getCoords()); //$NON-NLS-1$
-        };
-
-
-        BasementType basementType = structureType == Terrains.BUILDING
-                                  ? BasementType.ofId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).orElse(BasementType.UNKNOWN)
-                                  : BasementType.NONE;
-
-        int cf;
-        switch (structureType) {
-        case Terrains.BUILDING:  cf = hex.terrainLevel(Terrains.BLDG_CF);      break;
-        case Terrains.BRIDGE:    cf = hex.terrainLevel(Terrains.BRIDGE_CF);    break;
-        case Terrains.FUEL_TANK: cf = hex.terrainLevel(Terrains.FUEL_TANK_CF); break;
-        default:
-            String msg = String.format("Hex %s has an unnexpected structure type of %s - assuming Terrains.BUILDING (%s) instead", hex.getCoords().getBoardNum(), structureType, Terrains.BUILDING); //$NON-NLS-1$
-            DefaultMmLogger.getInstance().warning(BuildingSection.class, "at", msg); //$NON-NLS-1$
-            cf = hex.terrainLevel(Terrains.BLDG_CF);
-        }
-        
-        ConstructionType ct = hex.getConstructionType(structureType).orElseThrow(noBuilding);
-        if (cf < 0) {
-            cf = ct.getDefaultCF(); // THINKME shouldn't we throw instead?
-        }
-
-        // BuildingClass bc = hex.getBuildingClass().orElseThrow(noBuilding); // can actually be missing
-
-        boolean collapsed = hex.terrainLevel(Terrains.BLDG_BASE_COLLAPSED) == 1;
-
-        int armor = hex.containsTerrain(Terrains.BLDG_ARMOR)
-                  ? hex.terrainLevel(Terrains.BLDG_ARMOR)
-                  : 0;
-
-        return new BuildingSection( hex.getCoords(),
-                                    basementType,
-                                    cf,      // current CF
-                                    cf,      // phase CF
-                                    armor,
-                                    collapsed,
-                                    false ); // burning?
-    }
 
     BuildingSection( Coords coordinates,
                      BasementType basementType,

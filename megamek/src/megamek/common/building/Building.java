@@ -36,7 +36,7 @@ import megamek.common.Terrains;
  */
 public class Building implements Serializable {
 
-    private static final long serialVersionUID = -8236017592012683793L;
+    private static final long serialVersionUID = 1L;
 
     Building( int id,
               int structureType,
@@ -252,32 +252,27 @@ public class Building implements Serializable {
     }
 
     /** @deprecated use {@link #getConstructionType()} instead */
-    @Deprecated
-    public int getType() {
+    @Deprecated public int getType() {
         return constructionType.getId();
     }
 
     /** @deprecated use {@link #getBuildingClass()} instead */
-    @Deprecated
-    public int getBldgClass() {
+    @Deprecated public int getBldgClass() {
         return getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE);
     }
 
     /** @deprecated use {@link #sectionAt(Coords)} and {@link BuildingSection#isBasementCollapsed()} instead */
-    @Deprecated
-    public boolean getBasementCollapsed(Coords coords) {
+    @Deprecated public boolean getBasementCollapsed(Coords coords) {
         return sectionAt(coords).get().isBasementCollapsed();
     }
 
     /** @deprecated use {@link BuildingServerHelper#collapseBasement(Building, Coords, IBoard, List)} instead */
-    @Deprecated
-    public void collapseBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
+    @SuppressWarnings("deprecation") @Deprecated public void collapseBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
         BuildingServerHelper.collapseBasement(this, coords, board, vPhaseReport);
     }
 
     /** @deprecated use {@link BuildingServerHelper#rollBasement(Building, Coords, IBoard, List)} instead */
-    @Deprecated
-    public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
+    @SuppressWarnings("deprecation") @Deprecated public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
         return BuildingServerHelper.rollBasement(this, coords, board, vPhaseReport);
     }
 
@@ -361,6 +356,11 @@ public class Building implements Serializable {
     /** @deprecated use {@link #sectionAt(Coords)} and {@link BuildingSection#setBasementCollapsed(boolean)} instead */
     @Deprecated public void setBasementCollapsed(Coords coords, boolean collapsed) {
         sectionAt(coords).get().setBasementCollapsed(collapsed);
+    }
+
+    /** @deprecated use {@link ConstructionType} instead */
+    @Deprecated public static int getDefaultCF(int type) {
+        return ConstructionType.ofId(type).map(ConstructionType::getDefaultCF).orElse(-1);
     }
 
 }

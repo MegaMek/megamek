@@ -35,7 +35,6 @@ import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Terrains;
-import megamek.common.building.BuildingTemplate;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
 

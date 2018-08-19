@@ -25,7 +25,7 @@ import megamek.common.Coords;
 
 public class DemolitionCharge implements Serializable {
 
-    private static final long serialVersionUID = -6655782801564155668L;
+    private static final long serialVersionUID = -1;
 
     public int damage;
     public int playerId;

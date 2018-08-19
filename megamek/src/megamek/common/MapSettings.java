@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import megamek.common.building.BuildingTemplate;
+import megamek.common.util.BuildingTemplate;
 import megamek.utils.MegaMekXmlUtil;
 
 /**

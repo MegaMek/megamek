@@ -28,7 +28,6 @@ import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
 import megamek.common.Terrains;
 import megamek.common.building.Building;
-import megamek.common.building.BuildingTemplate;
 
 /**
  * @author Torren + Coelocanth
@@ -160,7 +159,7 @@ public class CityBuilder {
                 int type = getBuildingTypeByCF(totalCF);
 
                 buildingList.add(new BuildingTemplate(type, coordList, totalCF,
-                        floors));
+                        floors, -1));
             }
         }
 

@@ -7,6 +7,11 @@ import java.util.List;
 
 import megamek.common.Coords;
 
+// LEGAL (giorgiga) I'm not sure the above copyright is the correct one
+//
+// This file was originally in megamek.common.util, and didn't include a
+// license header.
+
 /**
  * Building template, for placing on the map during map generation. Currently
  * used by mekwars to place objective buildings. Could also be used by an RMG

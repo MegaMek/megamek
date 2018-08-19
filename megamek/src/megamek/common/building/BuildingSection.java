@@ -63,7 +63,7 @@ public class BuildingSection implements Serializable {
         
         ConstructionType ct = hex.getConstructionType(structureType).orElseThrow(noBuilding);
         if (cf < 0) {
-            cf = ct.getId();
+            cf = ct.getDefaultCF(); // THINKME shouldn't we throw instead?
         }
 
         // BuildingClass bc = hex.getBuildingClass().orElseThrow(noBuilding); // can actually be missing

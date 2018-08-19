@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import megamek.common.building.BasementType;
 import megamek.common.building.Building;
+import megamek.common.building.Buildings;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.MegaMekFile;
@@ -346,7 +347,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = Building.newBuildingAt(coords, this);
+                            Building bldg = Buildings.newBuildingAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -375,7 +376,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = Building.newFuelTankAt(coords, this);
+                            Building bldg = Buildings.newFuelTankAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -405,7 +406,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = Building.newBridgeAt(coords, this);
+                            Building bldg = Buildings.newBridgeAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.

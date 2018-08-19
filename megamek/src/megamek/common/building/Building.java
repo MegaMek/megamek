@@ -17,18 +17,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IBoard;
-import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Report;
 import megamek.common.Terrains;
@@ -53,65 +49,24 @@ public class Building implements Serializable {
     /** @deprecated use {@link BuildingClass#FORTRESS}        instead */ @Deprecated public static final int FORTRESS = 2;
     /** @deprecated use {@link BuildingClass#GUN_EMPLACEMENT} instead */ @Deprecated public static final int GUN_EMPLACEMENT = 3;
 
-    /**
-     * Constructs a new building at the given coordinates, fetching info from the given board 
-     */
-    public static Building newBuildingAt(Coords coords, IBoard board) {
-        IHex curHex = board.getHex(coords);
-        requirePresent(curHex, Terrains.BUILDING);
-        return new Building(coords, board, buildingIdFromCoordinates(coords), Terrains.BUILDING, OptionalInt.empty());
-    }
-
-    /**
-     * Constructs a new bridge at the given coordinates, fetching info from the given board 
-     */
-    public static Building newBridgeAt(Coords coords, IBoard board) {
-        IHex curHex = board.getHex(coords);
-        requirePresent(curHex, Terrains.BRIDGE);
-        return new Building(coords, board, buildingIdFromCoordinates(coords), Terrains.BRIDGE, OptionalInt.empty());
-    }
-
-    /**
-     * Constructs a new fuel tank at the given coordinates, fetching info from the given board 
-     */
-    public static Building newFuelTankAt(Coords coords, IBoard board) {
-        IHex curHex = board.getHex(coords);
-        requirePresent(curHex, Terrains.FUEL_TANK);
-        int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
-        return new Building(coords, board, buildingIdFromCoordinates(coords), Terrains.FUEL_TANK, OptionalInt.of(magnitude));
-    }
-
-    /**
-     * Construct a building for the given coordinates from the board's
-     * information. If the building covers multiple hexes, every hex will be
-     * included in the building.
-     *
-     * @param coords
-     *        the <code>Coords</code> of a hex of the building. If the
-     *        building covers multiple hexes, this constructor will include
-     *        them all in this building automatically.
-     * @param board
-     *        the game's <code>Board</code> object.
-     *
-     * @throws IllegalArgumentException
-     *        if the given coordinates do not contain a building, or if the
-     *        building covers multiple hexes with different CFs.
-     */
-    protected Building(Coords coords, IBoard board, int id, int structureType, OptionalInt explosionMagnitude) {
-
-        IHex initialHex = board.getHex(coords);
-
-        this.id                 = id;
-        this.structureType      = structureType;
-        this.constructionType   = initialHex.getConstructionType(structureType).orElseThrow(IllegalArgumentException::new);
-        this.buildingClass      = initialHex.getBuildingClass().orElse(null);
-        this.explosionMagnitude = explosionMagnitude.isPresent() ? explosionMagnitude.getAsInt() : null;
-
-        getSpannedHexes(initialHex, board, structureType).values().forEach(hex -> {
-            sections.put(hex.getCoords(), BuildingSection.at(hex, structureType));
-        });
-
-        originalHexes = sections.size();
+    Building( int id,
+              int structureType,
+              ConstructionType constructionType,
+              BuildingClass buildingClass,
+              OptionalInt explosionMagnitude,
+              Map<Coords, BuildingSection> sections,
+              int originalHexes,
+              List<DemolitionCharge> demolitionCharges ) {
+        this.id = id;
+        this.structureType = structureType;
+        this.constructionType = constructionType;
+        this.buildingClass = buildingClass;
+        this.explosionMagnitude = explosionMagnitude.isPresent()
+                                ? explosionMagnitude.getAsInt()
+                                : null;
+        this.sections = sections;
+        this.originalHexes = originalHexes;
+        this.demolitionCharges = demolitionCharges;
     }
 
     private final int id;
@@ -120,11 +75,10 @@ public class Building implements Serializable {
     private final BuildingClass buildingClass; // nullable - can't use Optional    as it's not Serializable
     private final Integer explosionMagnitude;  // nullable - can't use OptionalInt as it's not Serializable
 
-    private int originalHexes = 0;
+    private final Map<Coords, BuildingSection> sections;
+    private final int originalHexes;
 
     private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
-
-    private final Map<Coords, BuildingSection> sections = new LinkedHashMap<>(); // not actually sure we need to preserve ordering
 
     public Optional<BuildingSection> sectionAt(Coords coordinates) {
         return Optional.ofNullable(sections.get(coordinates));
@@ -188,7 +142,16 @@ public class Building implements Serializable {
     /** @deprecated use {@link #getBuildingClass()} instead */
     @Deprecated public int getBldgClass() { return getBuildingClass().map(BuildingClass::getId).orElse(ITerrain.LEVEL_NONE); }
 
+    /**
+     * returns the magnitude of the explosion this building does when destroyed
+     */
     public OptionalInt getExplosionMagnitude() {
+        // This is currently an OptionalInt, in order to distinguish
+        // fuel tanks from other buildings (reminiscent of how FuelTank
+        // was a subclass of Building); there seem to be, however, no hard
+        // reason why one couldn't say that all buildings can explode and those
+        // that don't have an explosion magnitude of zero.
+        // LATER see if using a regular integer is ok (ie: that magnitude=0 isn't use as a magic value somewhere)
         return explosionMagnitude != null ? OptionalInt.of(explosionMagnitude) : OptionalInt.empty();
     }
 
@@ -201,54 +164,14 @@ public class Building implements Serializable {
         return sectionAt(coords).get().isBasementCollapsed();
     }
 
-    public void collapseBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
-        BuildingSection bs = sectionAt(coords).get();
-        
-        if (bs.getBasementType() == BasementType.NONE || bs.getBasementType() == BasementType.ONE_DEEP_NORMALINFONLY) {
-            System.err.println("hex has no basement to collapse"); //$NON-NLS-1$
-            return;
-        }
-        if (getBasementCollapsed(coords)) {
-            System.err.println("hex has basement that already collapsed"); //$NON-NLS-1$
-            return;
-        }
-        Report r = new Report(2112, Report.PUBLIC);
-        r.add(getName());
-        r.add(coords.getBoardNum());
-        vPhaseReport.add(r);
-        System.err.println("basement " + bs.getBasementType() + "is collapsing, hex:" //$NON-NLS-1$ //$NON-NLS-2$
-                + coords.toString() + " set terrain!"); //$NON-NLS-1$
-        board.getHex(coords).addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.BLDG_BASE_COLLAPSED, 1));
-        setBasementCollapsed(coords, true);
+    /** @deprecated use {@link BuildingServerHelper#collapseBasement(Building, Coords, IBoard, List)} instead */
+    @Deprecated public void collapseBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
+        BuildingServerHelper.collapseBasement(this, coords, board, vPhaseReport);
     }
 
-    /**
-     * Roll what kind of basement this building has
-     * @param coords the <code>Coords</code> of theb building to roll for
-     * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
-     * @return a <code>boolean</code> indicating wether the hex and building was changed or not
-     */
-    public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
-        // XXX move out of here
-        BuildingSection bs = sectionAt(coords).get();
-        if (bs.getBasementType() != BasementType.UNKNOWN) return false;
-
-        IHex hex = board.getHex(coords);
-        Report r = new Report(2111, Report.PUBLIC);
-        r.add(getName());
-        r.add(coords.getBoardNum());
-
-        int basementRoll = Compute.d6(2);
-        r.add(basementRoll);
-
-        BasementType newType = BasementType.basementsTable(basementRoll);
-        bs.setBasementType(newType);
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.BLDG_BASEMENT_TYPE, newType.getId()));
-        r.add(newType.getDesc());
-
-        vPhaseReport.add(r);
-        return true;
+    /** @deprecated use {@link BuildingServerHelper#rollBasement(Building, Coords, IBoard, List)} instead */
+    @Deprecated public boolean rollBasement(Coords coords, IBoard board, List<Report> vPhaseReport) {
+        return BuildingServerHelper.rollBasement(this, coords, board, vPhaseReport);
     }
 
     /**
@@ -500,6 +423,12 @@ public class Building implements Serializable {
 
     @Override
     public String toString() {
+        
+        // Not sure of what impact (if any) changing this will have, but
+        // it would be nice if it included at least some sort of human-readable
+        // information to identify the building (eg: the hexes it covers?)
+        // LATER investigate and -if possible- edit
+        
         StringBuffer buf = new StringBuffer();
 
         switch (constructionType) {
@@ -524,52 +453,6 @@ public class Building implements Serializable {
         buf.append(getName());
 
         return buf.toString();
-    }
-
-    public static Map<Coords,IHex> getSpannedHexes(IHex hex , IBoard board, int structureType) {
-
-        if (!(hex.containsTerrain(structureType))) {
-            String msg = String.format("Hex %s does not contain structure %s", hex.getCoords(), structureType); //$NON-NLS-1$
-            throw new IllegalArgumentException(msg);
-        }
-
-        Map<Coords,IHex> receptacle = new HashMap<>();
-        getSpannedHexesRecurse(hex, board, structureType, receptacle);
-        return receptacle;
-
-    }
-
-    private static void getSpannedHexesRecurse(IHex hex , IBoard board, int structureType, Map<Coords,IHex> receptacle) {
-
-        receptacle.put(hex.getCoords(), hex);
-
-        for (int dir = 0; dir < 6; dir++) {
-            if (hex.containsTerrainExit(structureType, dir)) {
-                Coords nextCoords = hex.getCoords().translated(dir);
-                if (!receptacle.containsKey(nextCoords)) {
-                    IHex nextHex = board.getHex(nextCoords);
-                    if (nextHex.containsTerrain(structureType)) {
-                        getSpannedHexesRecurse(nextHex, board, structureType, receptacle);
-                    }
-                }
-            }
-        }
-
-    }
-
-    /** @deprecated this will be removed in a future refactoring */
-    @Deprecated protected static int buildingIdFromCoordinates(Coords coordinates) {
-        // FIXME This is an unlucky idea, especially considering that id is used
-        //       as the only factor to check for equality and that (apparently?)
-        //       coords can repeat in multi-map setups
-        return coordinates.hashCode();
-    }
-
-    private static void requirePresent(IHex hex, int structureType) {
-        if (!hex.containsTerrain(structureType)) {
-            String msg = String.format("Structure type %s expected at %s", structureType, hex.getCoords().getBoardNum()); //$NON-NLS-1$
-            throw new IllegalArgumentException(msg);
-        }
     }
 
 }

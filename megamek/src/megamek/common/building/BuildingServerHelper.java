@@ -62,7 +62,7 @@ public class BuildingServerHelper {
             String msg = String.format("Basement at %s is collapsing (basement type: %s)", hex.getCoords().getBoardNum(), bs.getBasementType()); //$NON-NLS-1$
             DefaultMmLogger.getInstance().info(BuildingServerHelper.class, "collapseBasement", msg); //$NON-NLS-1$
 
-            disseminator.accept((newHexCollapsedReport(b, bs)));
+            disseminator.accept(newHexCollapsedReport(b, bs));
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.BLDG_BASE_COLLAPSED, 1));
             bs.setBasementCollapsed(true);
 

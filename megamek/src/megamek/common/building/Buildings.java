@@ -61,7 +61,7 @@ public class Buildings {
 
         IHex initialHex = board.getHex(coords);
 
-        int id = buildingIdFromCoordinates(coords);
+        int id = coords.hashCode();
         ConstructionType constructionType = initialHex.getConstructionType(structureType).orElseThrow(IllegalArgumentException::new);
         BuildingClass    buildingClass    = initialHex.getBuildingClass().orElse(null);
 
@@ -166,14 +166,6 @@ public class Buildings {
             }
         }
 
-    }
-
-    /** @deprecated this will be removed in a future refactoring */
-    @Deprecated private static int buildingIdFromCoordinates(Coords coordinates) {
-        // FIXME This is an unlucky idea, especially considering that id is used
-        //       as the only factor to check for equality and that (apparently?)
-        //       coords can repeat in multi-map setups
-        return coordinates.hashCode();
     }
 
 }

@@ -126,7 +126,7 @@ public class Building implements Serializable {
         } else {
             buffer.append("Structure #");
         }
-        buffer.append(id);
+        buffer.append(id); // LATER a better name that "Building #1231312" would be desirable
         return buffer.toString();
     }
 
@@ -162,10 +162,6 @@ public class Building implements Serializable {
     // Basing equality on id equality does not make sense on a mutable class.
     // This will need to be addressed, but to do so one must check all places
     // where equality is used (eg: calls to equals() and use in collections).
-    //
-    // Also note the comment "True until we're talking about more than one
-    // Board per Game" below, which seems to imply that building ids are not
-    // necessarily unique in multi-board setups.
 
     @Override
     public boolean equals(Object obj) {
@@ -175,7 +171,6 @@ public class Building implements Serializable {
         if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        // True until we're talking about more than one Board per Game.
         final Building other = (Building) obj;
         return (id == other.id);
     }

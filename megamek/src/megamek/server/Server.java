@@ -4543,6 +4543,35 @@ public class Server implements Runnable {
         // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
+    
+    /**
+     * Have the loader tow the indicated unit. The unit being towed loses its
+     * turn.
+     *
+     * @param loader - the <code>Entity</code> that is towing the unit.
+     * @param unit   - the <code>Entity</code> being towed.
+     */
+    private void towUnit(Entity loader, Entity unit) {
+
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+            // Remove the *last* friendly turn (removing the *first* penalizes
+            // the opponent too much, and re-calculating moves is too hard).
+            game.removeTurnFor(unit);
+            send(createTurnVectorPacket());
+        }
+        
+        loader.towUnit(unit);
+
+        // Remove the towed unit from the screen.
+        //unit.setPosition(null);
+
+        // set deployment round of the loadee to equal that of the loader
+        unit.setDeployRound(loader.getDeployRound());
+
+        // Update the loader and towed units.
+        entityUpdate(unit.getId());
+        entityUpdate(loader.getId());
+    }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
                                Coords pos, int facing, int elevation) {
@@ -8759,6 +8788,54 @@ public class Server implements Runnable {
                 }
 
             } // End STEP_LOAD
+            
+         // Handle towing units.
+            if (step.getType() == MoveStepType.TOW) {
+
+                // Find the unit being loaded.
+                Entity loaded = null;
+                Iterator<Entity> entities = game.getEntities(curPos);
+                while (entities.hasNext()) {
+
+                    // Is the other unit friendly and not the current entity?
+                    loaded = entities.next();
+
+                    // This should never ever happen, but just in case...
+                    if (loaded.equals(null)) {
+                        continue;
+                    }
+
+                    if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
+
+                        // The moving unit should be able to tow the other
+                        // unit and the other should be able to have a turn.
+                        if (!entity.canTow(loaded)
+                                || !loaded.isLoadableThisTurn()) {
+                            // Something is fishy in Denmark.
+                            logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
+                            loaded = null;
+                        } else {
+                            // Have the deployed unit load the indicated unit.
+                            towUnit(entity, loaded);
+
+                            // Stop looking.
+                            break;
+                        }
+
+                    } else {
+                        // Nope. Discard it.
+                        loaded = null;
+                    }
+
+                } // Handle the next entity in this hex.
+
+                // We were supposed to find someone to load.
+                if (loaded == null) {
+                    logError(METHOD_NAME,
+                            "Could not find unit for " + entity.getShortName() + " to tow in " + curPos);
+                }
+
+            } // End STEP_TOW
 
             // Handle mounting units to small craft/dropship
             if (step.getType() == MoveStepType.MOUNT) {

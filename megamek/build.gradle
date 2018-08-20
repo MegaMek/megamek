@@ -276,6 +276,7 @@ unixDistTar {
 	description = 'Creates *nix distribution packaged as a tar ball'
 	dependsOn stageFiles
 	dependsOn createStartScripts
+	extension = 'tar.gz'
 	compression = Compression.GZIP
 }
 
@@ -283,6 +284,7 @@ macDistTar {
 	description = 'Creates mac OSX distribution'
 	dependsOn stageFiles
 	dependsOn createOSXBundle
+	extension = 'tar.bz2'
 	compression = Compression.BZIP2
 }
 

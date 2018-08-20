@@ -15086,14 +15086,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Used to ensure all following trailers are disconnected if the train
      * is broken at this entity. 
      */
-    private Vector<Entity> connectedUnits;
+    private ArrayList<Entity> connectedUnits;
     
     /**
      * Returns the entities towed behind this entity
      * 
      * @return
      */
-    public Vector<Entity> getConnectedUnits() {
+    public ArrayList<Entity> getConnectedUnits() {
         return connectedUnits;
     }
     

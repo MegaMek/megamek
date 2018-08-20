@@ -424,9 +424,9 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(Color.YELLOW, "T", SMALL));
             }
             
-            if ((entity.getAllTowedUnits()).size() > 0) {
-                stStr.add(new Status(Color.CYAN, "TOWING"));
-            }
+            //if ((entity.getAllTowedUnits()).size() > 0) {
+            //    stStr.add(new Status(Color.CYAN, "TOWING"));
+            //}
 
             // Hidden, Unseen Unit
             if (trackThisEntitiesVisibilityInfo(entity)) {

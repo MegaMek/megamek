@@ -1375,8 +1375,7 @@ public class Board implements Serializable, IBoard {
                 bldg.setCurrentCF(other.getCurrentCF(coords), coords);
                 bldg.setPhaseCF(other.getPhaseCF(coords), coords);
                 bldg.setArmor(other.getArmor(coords), coords);
-                bldg.setBasement(coords,
-                        BasementType.ofRequiredId(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+                bldg.setBasement(coords, BasementType.ofId(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).orElse(BasementType.UNKNOWN));
                 bldg.setBasementCollapsed(coords, other.getBasementCollapsed(coords));
                 bldg.setDemolitionCharges(other.getDemolitionCharges());
             }

@@ -1921,8 +1921,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     } else if ((assumedElevation == 0)
                             && (nextBasement > BasementType.NONE.getId())
                             && (collapsedBasement > 0)) {
-                        retVal -= BasementType.ofRequiredId(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                              .getDepth();
+                        retVal -= BasementType.ofId(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                              .map(BasementType::getDepth)
+                                              .orElse(0);
                     } else {
                         retVal += current.surface();
                         retVal -= next.surface();
@@ -1930,13 +1931,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 } else if (elevation == -(current.depth(true))) {
                     if (climb || isJumpingNow) {
                         retVal = bldnex + next.surface();
-                    } else if ((current
-                                        .terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE
-                                        .getId())
-                               && (assumedElevation == -BasementType.ofRequiredId(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                            .getDepth())) {
-                        retVal = -BasementType.ofRequiredId(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                              .getDepth();
+                    } else if (    (current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE.getId())
+                                && (assumedElevation == -BasementType.ofId(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).map(BasementType::getDepth).orElse(0))) {
+                        retVal = -BasementType.ofId(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                .map(BasementType::getDepth).orElse(0);
                     } else {
                         retVal += current.surface();
                         retVal -= next.surface();
@@ -2022,8 +2020,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case INF_MOTORIZED:
                 minAlt -= Math.max(
                         0,
-                        BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                    .getDepth());
+                        BasementType.ofId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                    .map(BasementType::getDepth)
+                                    .orElse(0));
                 break;
             case WIGE:
                 // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
@@ -2076,8 +2075,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (this instanceof Protomech) {
                     minAlt -= Math
                             .max(0,
-                                 BasementType.ofRequiredId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                         .getDepth());
+                                 BasementType.ofId(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                             .map(BasementType::getDepth)
+                                             .orElse(0));
                 } else {
                     return false;
                 }

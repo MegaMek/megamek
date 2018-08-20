@@ -5817,8 +5817,9 @@ public class Compute {
         int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
         int basement = 0;
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
-            basement = BasementType.ofRequiredId(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                   .getDepth();
+            basement = BasementType.ofId(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                   .map(BasementType::getDepth)
+                                   .orElse(0);
         }
 
         // Return true if the entity is in the range of building elevations.

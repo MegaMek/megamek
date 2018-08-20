@@ -164,8 +164,8 @@ task stageFiles {
 	dependsOn createLogDir
 }
 
-task unixStartScript (type: CreateStartScripts) {
-	description = 'Create shell script for *nix distribution.'
+task createStartScripts (type: CreateStartScripts) {
+	description = 'Create shell script for generic distribution.'
 	applicationName = 'startup'
 	mainClassName = project.mainClassName
 	outputDir = startScripts.outputDir
@@ -179,6 +179,10 @@ task unixStartScript (type: CreateStartScripts) {
 	doLast {
 		// The start script assumes all the files on the classpath will be in the lib directory.
 		unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
+		windowsScript.text = windowsScript.text.replace('lib/MegaMek', 'MegaMek')
+		// The Windows script just has a single line that needs to be changed to put the script in the root,
+		// so we'll do a simple replace
+		windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')
 	}
 }
 
@@ -220,7 +224,9 @@ distributions {
 		baseName = 'megamek'
 		contents {
 			from fileStagingDir
-			from(unixStartScript.unixScript)
+			from(createStartScripts.outputs.files) {
+				include "startup*"
+			}
 			from(jar)
 			from (project.sourceSets.main.runtimeClasspath.files
     				.findAll { it.name.endsWith(".jar") }) {
@@ -269,7 +275,7 @@ windowsDistZip {
 unixDistTar {
 	description = 'Creates *nix distribution packaged as a tar ball'
 	dependsOn stageFiles
-	dependsOn unixStartScript
+	dependsOn createStartScripts
 	compression = Compression.GZIP
 }
 

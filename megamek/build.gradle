@@ -46,17 +46,17 @@ mainClassName = 'megamek.MegaMek'
 
 ext {
 	jvmOptions = ['-Xmx1024m']
-	dataDir = "data"
-	confDir = "mmconf"
-	logDir = "logs"
-	docDir = "docs"
-	libDir = "lib"
+	data = "data"
+	conf = "mmconf"
+	log = "logs"
+	docs = "docs"
+	lib = "lib"
 	distributionDir = "${buildDir}/distributions"
 	fileStagingDir = "${buildDir}/files"
 	repoDir = "${buildDir}/repo"
 	atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-	unitFilesDir = "${dataDir}/mechfiles"
-	ratDir = "${dataDir}/rat"
+	unitFiles = "${data}/mechfiles"
+	rats = "${data}/rat"
 	mavenPublishDir = "${buildDir}/mavenrepo"
 	scriptsDir = "${projectDir}/scripts"
 	scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
@@ -69,7 +69,7 @@ jar {
 	manifest {
 	    attributes "Main-Class": mainClassName
 	    attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
-	    	.findAll { it.name.endsWith(".jar") }.collect { "${libDir}/${it.name}" }.join(' ')
+	    	.findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
 	}
 }
 
@@ -97,13 +97,13 @@ task copyFiles(type: Copy) {
 	
 	from projectDir
 	
-	include "${dataDir}/**"
-	include "${confDir}/**"
-	include "${docDir}/**"
+	include "${data}/**"
+	include "${conf}/**"
+	include "${docs}/**"
 	exclude "**/*.psd"
 	// No need to copy the files that are going to be zipped
-	exclude { it.file.isDirectory() && (it.file in file(unitFilesDir).listFiles()) }
-	exclude "${ratDir}/**"
+	exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
+	exclude "${rats}/**"
 	
 	into fileStagingDir
 }
@@ -125,33 +125,33 @@ task deleteAtlasedImages(dependsOn: createImageAtlases) {
 
 task unitFilesZip (dependsOn: copyFiles) {
 	description = 'Creates zip archives of all the unit file folders.'
-	file(unitFilesDir).eachDir {subDir ->
+	file(unitFiles).eachDir {subDir ->
 		dependsOn tasks.create("${name}${subDir.name}", Zip) {
 			from subDir
 			archiveName "${subDir.name}.zip"
-			destinationDir file("${fileStagingDir}/${unitFilesDir}")
+			destinationDir file("${fileStagingDir}/${unitFiles}")
 		}
 	}
 }
 
 task ensureRatDir (dependsOn: copyFiles) {
 	doLast {
-		mkdir "${fileStagingDir}/${ratDir}"
+		mkdir "${fileStagingDir}/${rats}"
 	}
 }
 
 task ratZip (type: Zip, dependsOn: ensureRatDir) {
 	description = 'Creates a zip archive of all the random assignment tables.'
-	from ratDir
+	from rats
 	archiveName "rat_default.zip"
-	destinationDir file("${fileStagingDir}/${ratDir}")
+	destinationDir file("${fileStagingDir}/${rats}")
 }
 
 task createLogDir (dependsOn: copyFiles) {
 	description 'Creates the log directory and the timestamp file.'
 	doLast {
-		mkdir "${fileStagingDir}/${logDir}"
-		ant.touch(file: "${fileStagingDir}/${logDir}/timestamp")
+		mkdir "${fileStagingDir}/${log}"
+		ant.touch(file: "${fileStagingDir}/${log}/timestamp")
 	}
 }
 
@@ -202,7 +202,7 @@ task createOSXBundle (dependsOn: jar) {
 				dir: osxBundleDir,
 				jar: "${jar.destinationDir}/${jar.archiveName}",
 				jvmversion: '1.8+',
-				icon: "${projectDir}/${dataDir}/images/misc/megamek.icns",
+				icon: "${projectDir}/${data}/images/misc/megamek.icns",
 				useJavaXKey: 'true',
 				workingdirectory: '$APP_PACKAGE/../',
 				extraclasspath: files(project.sourceSets.main.runtimeClasspath.files)
@@ -224,7 +224,7 @@ distributions {
 			from(jar)
 			from (project.sourceSets.main.runtimeClasspath.files
     				.findAll { it.name.endsWith(".jar") }) {
-    			into "${libDir}"
+    			into "${lib}"
 			}
 		}
 	}
@@ -237,7 +237,7 @@ distributions {
 			from fileStagingDir
 			from (project.sourceSets.main.runtimeClasspath.files
     				.findAll { it.name.endsWith(".jar") }) {
-    			into "${libDir}"
+    			into "${lib}"
 			}
 		}
 	}
@@ -247,7 +247,7 @@ distributions {
 			from fileStagingDir
 			from (project.sourceSets.main.runtimeClasspath.files
     				.findAll { it.name.endsWith(".jar") }) {
-    			into "${createOSXBundle.jarSubdir}/${libDir}" 
+    			into "${createOSXBundle.jarSubdir}/${lib}" 
 			}
 		}
 	}

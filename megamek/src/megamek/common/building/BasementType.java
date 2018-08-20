@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ *                     (C) 2018 The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -16,11 +17,6 @@ package megamek.common.building;
 import java.util.Optional;
 
 import megamek.common.Messages;
-
-// LEGAL (giorgiga) I'm not sure the above copyright is the correct one
-//
-// The code in this file was originally in Building.java, so I copied the
-// license header from that file.
 
 public enum BasementType {
 

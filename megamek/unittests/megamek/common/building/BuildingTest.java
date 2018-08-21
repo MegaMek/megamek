@@ -171,7 +171,7 @@ public class BuildingTest {
         assertNotNull(b);
         Assert.assertEquals(structureType, b.getStructureType());
         Assert.assertEquals(hexCount, b.getOriginalHexCount());
-        TestUtilities.checkSerializable(b);
+        TestUtilities.assertEqualsASerializedClone(b);
     }
 
 }

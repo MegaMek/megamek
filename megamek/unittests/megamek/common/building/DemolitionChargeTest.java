@@ -16,7 +16,7 @@ public class DemolitionChargeTest {
         // each must have its identity...
         Assert.assertNotEquals(dc1, dc2);
         // ...which must not be the object identity
-        TestUtilities.checkSerializable(dc1);
+        TestUtilities.assertEqualsASerializedClone(dc1);
     }
 
 }

@@ -32,8 +32,8 @@ public class TestUtilities {
         // no instances
     }
 
-    public static void checkSerializable(Object o) {
-
+    @SuppressWarnings("unchecked")
+    public static <T> T cloneViaSerialization(T o) {
         byte[] serialized;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
@@ -52,8 +52,12 @@ public class TestUtilities {
         } catch (ClassNotFoundException | IOException e) {
             throw new AssertionError("Deserialization failed", e); //$NON-NLS-1$
         }
+        
+        return (T) clone;
+    }
 
-        Assert.assertEquals(o, clone);
+    public static void assertEqualsASerializedClone(Object o) {
+        Assert.assertEquals(o, cloneViaSerialization(o));
     }
 
 }

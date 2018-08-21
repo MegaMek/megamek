@@ -19,9 +19,8 @@
 package megamek.common.building;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -35,13 +34,29 @@ public class BuildingSection implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    BuildingSection( Coords coordinates,
-                     BasementType basementType,
-                     int currentCF,
-                     int phaseCF,
-                     int armor,
-                     boolean basementCollapsed,
-                     boolean burning ) {
+    public static BuildingSection of( Coords coordinates,
+                                      BasementType basementType,
+                                      int currentCF,
+                                      int phaseCF,
+                                      int armor,
+                                      boolean basementCollapsed,
+                                      boolean burning ) {
+        return new BuildingSection( Objects.requireNonNull(coordinates),
+                                    Objects.requireNonNull(basementType),
+                                    requireValidCF(currentCF),
+                                    requireValidCF(phaseCF),
+                                    requireValidArmor(armor),
+                                    basementCollapsed,
+                                    burning );
+    }
+
+    private BuildingSection( Coords coordinates,
+                             BasementType basementType,
+                             int currentCF,
+                             int phaseCF,
+                             int armor,
+                             boolean basementCollapsed,
+                             boolean burning ) {
         this.coordinates  = coordinates;
         this.basementType = basementType;
         this.currentCF    = currentCF;
@@ -51,14 +66,15 @@ public class BuildingSection implements Serializable {
         this.burning           = burning;
     }
 
-    private final Coords coordinates;
-    private BasementType basementType;
-    private int currentCF; // any damage immediately updates this value
-    private int phaseCF ; // cf at start of phase - damage is applied at the end of the phase it was received in
-    private int armor;
+    private final Coords coordinates; // != null
+    private final Set<DemolitionCharge> demolitionCharges = new LinkedHashSet<>();
+
+    private BasementType basementType; // != null
+    private int currentCF; // >= 0 // any damage immediately updates this value
+    private int phaseCF;   // >= 0 // cf at start of phase - damage is applied at the end of the phase it was received in
+    private int armor;     // >= 0
     private boolean basementCollapsed;
     private boolean burning;
-    private Set<DemolitionCharge> demolitionCharges = new LinkedHashSet<>();
 
     public Coords getCoordinates() {
         return coordinates;
@@ -79,26 +95,26 @@ public class BuildingSection implements Serializable {
         this.basementType = Objects.requireNonNull(basementType);
     }
 
+    /**
+     * The current CF of this building (ie: with any damage applied immediately)
+     */
     public int getCurrentCF() {
         return currentCF;
     }
 
     public void setCurrentCF(int currentCF) {
-        if (currentCF < 0) {
-            throw new IllegalArgumentException("Invalid CF value: " + currentCF); //$NON-NLS-1$
-        }
-        this.currentCF = currentCF;
+        this.currentCF = requireValidCF(currentCF);
     }
 
+    /**
+     * The CF this building had at the start of this phase
+     */
     public int getPhaseCF() {
         return phaseCF;
     }
 
     public void setPhaseCF(int phaseCF) {
-        if (phaseCF < 0) {
-            throw new IllegalArgumentException("Invalid CF value: " + phaseCF); //$NON-NLS-1$
-        }
-        this.phaseCF = phaseCF;
+        this.phaseCF = requireValidCF(phaseCF);
     }
 
     public int getArmor() {
@@ -106,10 +122,7 @@ public class BuildingSection implements Serializable {
     }
 
     public void setArmor(int armor) {
-        if (armor < 0) {
-            throw new IllegalArgumentException("Invalid armor value: " + armor); //$NON-NLS-1$
-        }
-        this.armor = armor;
+        this.armor = requireValidArmor(armor);
     }
 
     public boolean isBasementCollapsed() {
@@ -132,13 +145,19 @@ public class BuildingSection implements Serializable {
         return demolitionCharges.stream();
     }
 
-    public void setDemolitionCharges(List<DemolitionCharge> charges) {
+    public void setDemolitionCharges(Collection<DemolitionCharge> charges) {
+        for (DemolitionCharge charge : charges) {
+            if (!charge.getPos().equals(getCoordinates())) {
+                String msg = String.format("Charge coordinates %s don't match building seciton coordinates %s", charge.getPos(), coordinates); //$NON-NLS-1$
+                throw new IllegalArgumentException(msg);
+            }
+        }
         demolitionCharges.clear();
         demolitionCharges.addAll(charges);
     }
 
     public void addDemolitionCharge(int playerId, int damage) {
-        demolitionCharges.add(new DemolitionCharge(playerId, damage, null));
+        demolitionCharges.add(new DemolitionCharge(playerId, damage, getCoordinates()));
     }
 
     public boolean removeDemolitionCharge(DemolitionCharge charge) {
@@ -168,6 +187,36 @@ public class BuildingSection implements Serializable {
             && phaseCF == other.phaseCF
             && burning == other.burning
             && basementCollapsed == other.basementCollapsed;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(getClass().getSimpleName());
+        sb.append(String.format("[hex:%s", coordinates.getBoardNum()));                                       //$NON-NLS-1$
+        sb.append(String.format(",CF:%s", currentCF));                                                        //$NON-NLS-1$
+
+        if (phaseCF != currentCF)         sb.append(String.format(",phaseCF:%s", phaseCF));                   //$NON-NLS-1$
+        if (armor > 0)                    sb.append(String.format(",armor:%s", armor));                       //$NON-NLS-1$
+        if (!demolitionCharges.isEmpty()) sb.append(String.format(",#charges:%s", demolitionCharges.size())); //$NON-NLS-1$
+        if (basementCollapsed)            sb.append(",basementCollapsed");                                    //$NON-NLS-1$
+        if (burning)                      sb.append(",burning");                                              //$NON-NLS-1$
+
+        sb.append("]");                                                                                       //$NON-NLS-1$
+        return sb.toString();
+    }
+
+    private static int requireValidCF(int cf) {
+        if (cf < 0) {
+            throw new IllegalArgumentException("Invalid CF value: " + cf); //$NON-NLS-1$
+        }
+        return cf;
+    }
+
+    private static int requireValidArmor(int armor) {
+        if (armor < 0) {
+            throw new IllegalArgumentException("Invalid armor value: " + armor); //$NON-NLS-1$
+        }
+        return armor;
     }
 
 }

@@ -115,17 +115,13 @@ public class Buildings {
                   ? hex.terrainLevel(Terrains.BLDG_ARMOR)
                   : 0;
 
-        if (armor < 0) {
-            throw new IllegalArgumentException("Invalid armor value: " + armor); //$NON-NLS-1$
-        }
-
-        return new BuildingSection( hex.getCoords(),
-                                    basementType,
-                                    cf,      // current CF
-                                    cf,      // phase CF
-                                    armor,
-                                    collapsed,
-                                    false ); // burning?
+        return BuildingSection.of( hex.getCoords(),
+                                   basementType,
+                                   cf,      // current CF
+                                   cf,      // phase CF
+                                   armor,
+                                   collapsed,
+                                   false ); // burning?
     }
 
     private static Supplier<RuntimeException> structureNotFoundException(IHex hex, int structureType) {

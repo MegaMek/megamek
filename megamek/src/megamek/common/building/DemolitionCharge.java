@@ -15,6 +15,7 @@
 package megamek.common.building;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 import megamek.common.Coords;
@@ -23,9 +24,14 @@ public class DemolitionCharge implements Serializable {
 
     private static final long serialVersionUID = -1;
 
-    public int damage;
-    public int playerId;
-    public Coords pos;
+    public DemolitionCharge(int playerId, int damage, Coords pos) {
+        if (damage < 1) {
+            throw new IllegalArgumentException("damage must be > 0: " + damage); //$NON-NLS-1$
+        }
+        this.damage = damage;
+        this.playerId = playerId;
+        this.pos = Objects.requireNonNull(pos);
+    }
 
     /**
      * A UUID to keep track of the identify of this demolition charge.
@@ -34,12 +40,25 @@ public class DemolitionCharge implements Serializable {
      * since we pass objects across the network, we need a mechanism to
      * track identify other than memory address.
      */
-    public UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
+    private final int damage;
+    private final int playerId;
+    private final Coords pos;
 
-    public DemolitionCharge(int playerId, int damage, Coords p) {
-        this.damage = damage;
-        this.playerId = playerId;
-        pos = p;
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public Coords getPos() {
+        return pos;
     }
 
     @Override
@@ -48,10 +67,12 @@ public class DemolitionCharge implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof DemolitionCharge) {
-            return uuid.equals(((DemolitionCharge)o).uuid);
-        }
-        return false;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        DemolitionCharge other = (DemolitionCharge) obj;
+        return uuid.equals(other.uuid);
     }
- }
+
+}

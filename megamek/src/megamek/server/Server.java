@@ -19137,7 +19137,7 @@ public class Server implements Runnable {
         // Check for touched-off explosives
         Vector<Building> updatedBuildings = new Vector<>();
         for (DemolitionCharge charge : explodingCharges) {
-            Building bldg = game.getBoard().getBuildingAt(charge.pos);
+            Building bldg = game.getBoard().getBuildingAt(charge.getPos());
             if (bldg == null) { // Shouldn't happen...
                 continue;
             }
@@ -19146,8 +19146,8 @@ public class Server implements Runnable {
             Report r = new Report(4272, Report.PUBLIC);
             r.add(bldg.getName());
             addReport(r);
-            Vector<Report> dmgReports = damageBuilding(bldg, charge.damage,
-                    " explodes for ", charge.pos);
+            Vector<Report> dmgReports = damageBuilding(bldg, charge.getDamage(),
+                    " explodes for ", charge.getPos());
             for (Report rep : dmgReports) {
                 rep.indent();
                 addReport(rep);
@@ -32203,7 +32203,7 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_BLDG_EXPLODE:
                 DemolitionCharge charge = (DemolitionCharge)packet.getData()[0];
-                if (charge.playerId == connId) {
+                if (charge.getPlayerId() == connId) {
                     if (!explodingCharges.contains(charge)) {
                         explodingCharges.add(charge);
                         IPlayer p = game.getPlayer(connId);

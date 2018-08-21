@@ -411,9 +411,9 @@ public class MapMenu extends JPopupMenu {
         Building bldg = client.getBoard().getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
-                if (charge.playerId == client.getLocalPlayer().getId()
-                        && coords.equals(charge.pos)) {
-                    JMenuItem item = new JMenuItem(charge.damage + " Damage");
+                if (charge.getPlayerId() == client.getLocalPlayer().getId()
+                        && coords.equals(charge.getPos())) {
+                    JMenuItem item = new JMenuItem(charge.getDamage() + " Damage");
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             client.sendExplodeBuilding(charge);

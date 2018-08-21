@@ -156,7 +156,7 @@ public class Buildings {
                 Coords nextCoords = hex.getCoords().translated(dir);
                 if (!receptacle.containsKey(nextCoords)) {
                     IHex nextHex = board.getHex(nextCoords);
-                    if (nextHex != null && nextHex.containsTerrain(structureType)) {
+                    if ((nextHex != null) && nextHex.containsTerrain(structureType)) {
                         getSpannedHexesRecurse(nextHex, board, structureType, receptacle);
                     }
                 }

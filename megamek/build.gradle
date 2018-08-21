@@ -131,8 +131,10 @@ task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
 task deleteAtlasedImages(dependsOn: createImageAtlases) {
 	description = 'Removes images from the staging directory that have been incorporated into atlases.'
 	doLast {
-		ant.delete dir: fileStagingDir, includesfile: atlasedImages
-		ant.delete file: atlasedImages
+		if (file("${fileStagingDir}/${atlasedImages}").exists()) {
+			ant.delete dir: fileStagingDir, includesfile: atlasedImages
+			ant.delete file: atlasedImages
+		}
 	}
 }
 

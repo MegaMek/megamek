@@ -72,7 +72,9 @@ public class DemolitionCharge implements Serializable {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         DemolitionCharge other = (DemolitionCharge) obj;
-        return uuid.equals(other.uuid);
+        return uuid.equals(other.uuid)
+            && damage == other.damage
+            && playerId == other.playerId;
     }
 
 }

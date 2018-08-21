@@ -100,6 +100,7 @@ task copyFiles(type: Copy) {
 	include "${data}/**"
 	include "${conf}/**"
 	include "${docs}/**"
+	include "${rootDir}/license.txt"
 	exclude "**/*.psd"
 	// No need to copy the files that are going to be zipped
 	exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }

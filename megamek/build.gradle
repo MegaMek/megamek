@@ -79,6 +79,8 @@ task officialUnitList(type: JavaExec, dependsOn: jar) {
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'megamek.MegaMek'
 	args '-oul'
+	inputs.dir "${projectDir}/${unitFiles}"
+	outputs.file "${fileStagingDir}/docs/OfficialUnitList.txt"
 }
 
 task equipmentList(type: JavaExec, dependsOn: jar) {
@@ -87,6 +89,8 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
 	classpath = sourceSets.main.runtimeClasspath
 	main = 'megamek.MegaMek'
 	args = [ '-eqdb', 'docs/equipment.txt' ]
+	inputs.files sourceSets.main.allJava
+	outputs.file "${fileStagingDir}/docs/equipment.txt"
 }
 
 task copyFiles(type: Copy) {
@@ -107,6 +111,12 @@ task copyFiles(type: Copy) {
 	exclude "${rats}/**"
 	
 	into fileStagingDir
+	
+	inputs.dir "${data}"
+	inputs.dir "${conf}"
+	inputs.dir "${docs}"
+	inputs.file "${rootDir}/license.txt"
+	outputs.dir fileStagingDir
 }
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
@@ -114,6 +124,8 @@ task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
 	classpath = sourceSets.main.runtimeClasspath
 	main = "megamek.utils.CreateImageAtlases"
 	workingDir = file(fileStagingDir)
+	inputs.dir "${projectDir}/${data}/images/units"
+	outputs.dir "${fileStagingDir}/${data}/images/units"
 }
 
 task deleteAtlasedImages(dependsOn: createImageAtlases) {
@@ -133,6 +145,8 @@ task unitFilesZip (dependsOn: copyFiles) {
 			destinationDir file("${fileStagingDir}/${unitFiles}")
 		}
 	}
+	inputs.dir "${projectDir}/${unitFiles}"
+	outputs.dir "${fileStagingDir}/${unitFiles}"
 }
 
 task ratZip (type: Zip) {
@@ -143,6 +157,8 @@ task ratZip (type: Zip) {
 	doFirst {
 		mkdir "${fileStagingDir}/${rats}"
 	}
+	inputs.dir "${projectDir}/${rats}"
+	outputs.dir "${fileStagingDir}/${rats}"
 }
 
 task stageFiles {
@@ -259,8 +275,12 @@ createExe {
 	mainClassName = project.mainClassName
 	outfile = 'MegaMek.exe'
 	icon = "${projectDir}/data/images/misc/megamek.ico"
+	def inifile = outfile.replace('.exe', '.l4j.ini')
+	inputs.file  jar
+	outputs.file "${buildDir}/launch4j/${outfile}"
+	outputs.file "${buildDir}/launch4j/${inifile}"
 	doLast {
-        new File("${buildDir}/${outputDir}/MegaMek.l4j.ini").text = """# Launch4j runtime config
+        new File("${buildDir}/${outputDir}/${inifile}").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
 ${project.ext.jvmOptions.join('\n')}
 """		
@@ -330,7 +350,6 @@ task assembleDist(overwrite: true) {
 	dependsOn unixDistTar
 	dependsOn windowsDistZip
 	dependsOn macDistTar
-	dependsOn sourceZip
 	dependsOn sourceTar
 }
 
@@ -349,7 +368,7 @@ task release (type: Copy) {
 	group = 'distribution'
 	dependsOn buildFromRepo
 	
-	from "${repoDir}/megamek/build/distributions"
+	from (buildFromRepo)
 	into "${distributionDir}"
 }
 

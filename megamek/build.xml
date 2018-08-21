@@ -75,6 +75,17 @@
         </java>
     </target>
 
+    <!-- Run boards validator -->
+    <target name="boardsValidator" depends="compile" description="Run the board validator">
+        <java classname="megamek.utils.BoardsValidator" fork="true">
+            <classpath>
+                <pathelement path="${builddir}" />
+                <fileset dir="${libdir}" includes="*.jar" />
+                <pathelement path="${propdir}" />
+            </classpath>
+        </java>
+    </target>
+
 
     <!-- initializes system before build -->
     <target name="init">

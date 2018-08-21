@@ -15,7 +15,6 @@
 package megamek.common.building;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -23,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import megamek.common.Coords;
 import megamek.common.IBoard;
@@ -45,8 +46,7 @@ public class Building implements Serializable {
               BuildingClass buildingClass,
               OptionalInt explosionMagnitude,
               Map<Coords, BuildingSection> sections,
-              int originalHexes,
-              List<DemolitionCharge> demolitionCharges ) {
+              int originalHexes ) {
         this.id = id;
         this.structureType = structureType;
         this.constructionType = constructionType;
@@ -56,7 +56,6 @@ public class Building implements Serializable {
                                 : null;
         this.sections = sections;
         this.originalHexes = originalHexes;
-        this.demolitionCharges = demolitionCharges;
     }
 
     private final int id;
@@ -68,10 +67,16 @@ public class Building implements Serializable {
     private final Map<Coords, BuildingSection> sections;
     private final int originalHexes;
 
-    private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
+    public Stream<BuildingSection> streamSections() {
+        return sections.values().stream();
+    }
 
     public Optional<BuildingSection> sectionAt(Coords coordinates) {
         return Optional.ofNullable(sections.get(coordinates));
+    }
+
+    public BuildingSection requireSectionAt(Coords coordinates) {
+        return sectionAt(coordinates).orElseThrow( () -> new IllegalArgumentException(String.format("Building %s has no section at %s" )) );
     }
 
     public boolean removeSectionAt(Coords coords) {
@@ -128,25 +133,6 @@ public class Building implements Serializable {
         }
         buffer.append(id); // LATER a better name that "Building #1231312" would be desirable
         return buffer.toString();
-    }
-
-    // LATER demolition charge stuff should go into BuildingSection
-
-    public List<DemolitionCharge> getDemolitionCharges() {
-        return demolitionCharges;
-    }
-
-    public void setDemolitionCharges(List<DemolitionCharge> charges) {
-        demolitionCharges = charges;
-    }
-
-    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
-        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
-        demolitionCharges.add(charge);
-    }
-
-    public void removeDemolitionCharge(DemolitionCharge charge) {
-        demolitionCharges.remove(charge);
     }
 
     public int getOriginalHexCount() {
@@ -357,6 +343,35 @@ public class Building implements Serializable {
     /** @deprecated use {@link ConstructionType} instead */
     @Deprecated public static int getDefaultCF(int type) {
         return ConstructionType.ofId(type).map(ConstructionType::getDefaultCF).orElse(-1);
+    }
+
+    /** @deprecated use {@code streamSections().flatMap(BuildingSection::streamDemolitionCharges)} instead */
+    @Deprecated public List<DemolitionCharge> getDemolitionCharges() {
+        return streamSections().flatMap(BuildingSection::streamDemolitionCharges)
+                               .collect(Collectors.toList());
+    }
+
+    /** @deprecated with no direct replacement (see implementation) */
+    @Deprecated public void setDemolitionCharges(List<DemolitionCharge> charges) {
+        sections.values().forEach(section -> {
+            section.setDemolitionCharges(Collections.emptyList());
+        });
+        charges.stream().collect(Collectors.groupingBy(DemolitionCharge::getPos))
+                        .forEach( (pos, poscharges) -> requireSectionAt(pos).setDemolitionCharges(poscharges) );
+    }
+
+    /** @deprecated use {@code requireSectionAt(pos).addDemolitionCharge(playerId, damage)} instead */
+    @Deprecated public void addDemolitionCharge(int playerId, int damage, Coords pos) {
+        requireSectionAt(pos).addDemolitionCharge(playerId, damage);
+    }
+
+    /** @deprecated with no direct replacement (see implementation) */
+    @Deprecated public boolean removeDemolitionCharge(DemolitionCharge charge) {
+        for (BuildingSection section : sections.values()) {
+            if (section.removeDemolitionCharge(charge))
+                return true;
+        }
+        return false;
     }
 
 }

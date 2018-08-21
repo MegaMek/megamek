@@ -18,7 +18,6 @@
  */
 package megamek.common.building;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -80,8 +79,7 @@ public class Buildings {
                              buildingClass,
                              explosionMagnitude,
                              sections,
-                             sections.size(),
-                             new ArrayList<>() /* demolitionCharges */ );
+                             sections.size() );
     }
 
     public static BuildingSection sectionAt(IHex hex, int structureType) {

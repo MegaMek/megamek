@@ -19,7 +19,12 @@
 package megamek.common.building;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import megamek.common.Coords;
 
@@ -53,6 +58,7 @@ public class BuildingSection implements Serializable {
     private int armor;
     private boolean basementCollapsed;
     private boolean burning;
+    private Set<DemolitionCharge> demolitionCharges = new LinkedHashSet<>();
 
     public Coords getCoordinates() {
         return coordinates;
@@ -120,6 +126,23 @@ public class BuildingSection implements Serializable {
 
     public void setBurning(boolean burning) {
         this.burning = burning;
+    }
+
+    public Stream<DemolitionCharge> streamDemolitionCharges() {
+        return demolitionCharges.stream();
+    }
+
+    public void setDemolitionCharges(List<DemolitionCharge> charges) {
+        demolitionCharges.clear();
+        demolitionCharges.addAll(charges);
+    }
+
+    public void addDemolitionCharge(int playerId, int damage) {
+        demolitionCharges.add(new DemolitionCharge(playerId, damage, null));
+    }
+
+    public boolean removeDemolitionCharge(DemolitionCharge charge) {
+        return demolitionCharges.remove(charge);
     }
 
     @Override

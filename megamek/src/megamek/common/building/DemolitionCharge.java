@@ -24,6 +24,9 @@ public class DemolitionCharge implements Serializable {
 
     private static final long serialVersionUID = -1;
 
+    /**
+     * Constructs a demolition charge 
+     */
     public DemolitionCharge(int playerId, int damage, Coords pos) {
         if (damage < 1) {
             throw new IllegalArgumentException("damage must be > 0: " + damage); //$NON-NLS-1$
@@ -45,18 +48,30 @@ public class DemolitionCharge implements Serializable {
     private final int playerId;
     private final Coords pos;
 
+    /**
+     * @return the UUID of this charge
+     */
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * @return the damage of this charge
+     */
     public int getDamage() {
         return damage;
     }
 
+    /**
+     * @return the id of the player owning this charge
+     */
     public int getPlayerId() {
         return playerId;
     }
 
+    /**
+     * @return the position of this charge
+     */
     public Coords getPos() {
         return pos;
     }
@@ -68,13 +83,19 @@ public class DemolitionCharge implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         DemolitionCharge other = (DemolitionCharge) obj;
         return uuid.equals(other.uuid)
-            && damage == other.damage
-            && playerId == other.playerId;
+            && (damage == other.damage)
+            && (playerId == other.playerId);
     }
 
 }

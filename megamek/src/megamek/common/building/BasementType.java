@@ -18,34 +18,72 @@ import java.util.Optional;
 
 import megamek.common.Messages;
 
+/**
+ * Represents a type of basement, as per the Basements Table at p. 179 of Total Warfare
+ */
 public enum BasementType {
 
     // LATER UNKNOWN is a magic value and not really a basement type - see if it can be removed
 
-    UNKNOWN               (0,0, "Building.BasementUnknown"             ), //$NON-NLS-1$
-    NONE                  (1,0, "Building.BasementNone"                ), //$NON-NLS-1$
-    TWO_DEEP_FEET         (2,2, "Building.BasementTwoDeepFeet"         ), //$NON-NLS-1$
-    ONE_DEEP_FEET         (3,1, "Building.BasementOneDeepFeet"         ), //$NON-NLS-1$
-    ONE_DEEP_NORMAL       (4,1, "Building.BasementOneDeepNormal"       ), //$NON-NLS-1$
-    ONE_DEEP_NORMALINFONLY(5,1, "Building.BasementOneDeepNormalInfOnly"), //$NON-NLS-1$
-    ONE_DEEP_HEAD         (6,1, "Building.BasementOneDeepHead"         ), //$NON-NLS-1$
-    TWO_DEEP_HEAD         (7,2, "Building.BasementTwoDeepHead"         ); //$NON-NLS-1$
+    /**
+     * Magic value for basements whose type have not been determined yet
+     */
+    UNKNOWN(0, 0, "Building.BasementUnknown"), //$NON-NLS-1$
 
     /**
-     * Retrieves the {@linkplain BasementType} corresponding to the given
+     * Value for "No basement" basements (roll of 5-8 on the Basements Table)
+     */
+    NONE(1, 0, "Building.BasementNone"), //$NON-NLS-1$
+
+    /**
+     * Value for two-story basements where mechs fall feet-first (roll of 2 on the Basements Table)
+     */
+    TWO_DEEP_FEET(2, 2, "Building.BasementTwoDeepFeet"), //$NON-NLS-1$
+    
+    /**
+     * Value for one-story basements where mechs fall feet-first (roll of 3 on the
+     * Basements Table)
+     */
+    ONE_DEEP_FEET(3, 1, "Building.BasementOneDeepFeet"), //$NON-NLS-1$
+
+    /**
+     * Value for one-story basements where mechs fall according to the Front/Rear
+     * column of the Hit Location Table (rolls of 4 or 10 on the Basements Table)
+     */
+    ONE_DEEP_NORMAL(4, 1, "Building.BasementOneDeepNormal"), //$NON-NLS-1$
+
+    /**
+     * Value for small basements where mech don't fall (roll of 9 on the Basements Table)
+     */
+    ONE_DEEP_NORMALINFONLY(5, 1, "Building.BasementOneDeepNormalInfOnly"), //$NON-NLS-1$
+
+    /**
+     * One-story basement where mechs fall head-first (roll of 11 on the Basements Table)
+     */
+    ONE_DEEP_HEAD(6, 1, "Building.BasementOneDeepHead"), //$NON-NLS-1$
+
+    /**
+     * Two-story basement where mechs fall head-first (roll of 12 on the Basements Table)
+     */
+    TWO_DEEP_HEAD(7, 2, "Building.BasementTwoDeepHead"); //$NON-NLS-1$
+
+    /**
+     * @return the {@linkplain BasementType} corresponding to the given
      * integer id, if it's valid (ie: in [0,7]).
      *
      * @see #getId()
      */
     public static Optional<BasementType> ofId(int id) {
         for (BasementType v : values()) {
-            if (id == v.id) return Optional.of(v);
+            if (id == v.id) {
+                return Optional.of(v);
+            }
         }
         return Optional.empty();
     }
 
     /**
-     * Same as {@link #ofId(int)}, but throws an exception on invalid ids
+     * Same as {@link #ofId(int)}, but throws an exception on invalid ids.
      */
     public static BasementType ofRequiredId(int id) throws IllegalArgumentException {
         return ofId(id).orElseThrow(() -> new IllegalArgumentException(Integer.toString(id)));
@@ -59,17 +97,25 @@ public enum BasementType {
 
     private final int id;
     private final int depth;
-
     private final String desc;
 
+    /**
+     * @return the id of this basement type
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * @return the depth of this basement type
+     */
     public int getDepth() {
         return depth;
     }
 
+    /**
+     * @return a description of this basement type
+     */
     public String getDesc() {
         return desc;
     }
@@ -77,9 +123,12 @@ public enum BasementType {
     /**
      * Per page 179 of Total Warfare, this is the table used to determine
      * building's basement.
+     * 
+     * @throws IllegalArgumentException
+     *         if called with a value outside of [2,12]
      */
     public static BasementType basementsTable(int roll2d6) {
-        if (2 > roll2d6 || roll2d6 > 12) {
+        if ((2 > roll2d6) || (roll2d6 > 12)) {
             throw new IllegalArgumentException("roll2d6 must be in [2,12]"); //$NON-NLS-1$
         }
         switch (roll2d6) {
@@ -94,7 +143,7 @@ public enum BasementType {
             // elsewhere.
             //
             // LATER investigate why this wasn't used (see #1103)
-            // 
+            //
             // case 9:  return ONE_DEEP_NORMALINFONLY;
 
             case 10: return ONE_DEEP_NORMAL;

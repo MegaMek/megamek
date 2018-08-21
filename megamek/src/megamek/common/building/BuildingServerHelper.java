@@ -44,10 +44,13 @@ public class BuildingServerHelper {
         collapseBasement(b, board.getHex(coords), vPhaseReport::add);
     }
 
-    public static void collapseBasement(Building b, IHex hex, Consumer<Report> disseminator) {
+    /**
+     * Collapses the basement at the given hex of the given building, posting any reports to the given disseminator
+     */
+    @Deprecated public static void collapseBasement(Building b, IHex hex, Consumer<Report> disseminator) {
         BuildingSection bs = b.sectionAt(hex.getCoords()).get();
 
-        if (bs.getBasementType() == BasementType.NONE || bs.getBasementType() == BasementType.ONE_DEEP_NORMALINFONLY) {
+        if ((bs.getBasementType() == BasementType.NONE) || (bs.getBasementType() == BasementType.ONE_DEEP_NORMALINFONLY)) {
 
             String msg = String.format("Basement at %s cannot collapse (basement typet: %s)", hex.getCoords().getBoardNum(), bs.getBasementType()); //$NON-NLS-1$
             DefaultMmLogger.getInstance().warning(BuildingServerHelper.class, "collapseBasement", msg); //$NON-NLS-1$
@@ -70,18 +73,22 @@ public class BuildingServerHelper {
     }
 
     /**
-     * Roll what kind of basement this building has
-     * @param coords the <code>Coords</code> of theb building to roll for
-     * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
-     * @return a <code>boolean</code> indicating wether the hex and building was changed or not
+     * Rolls a basement to replace that at the given coordinates, appending any reports to the given list
      * 
+     * @return whether the basement was actually changed
+     *
      * @deprecated use {@link #rollBasement(Building, IHex, Consumer)} instead
      */
     @Deprecated public static boolean rollBasement(Building b, Coords coords, IBoard board, List<Report> vPhaseReport) {
         return rollBasement(b, board.getHex(coords), vPhaseReport::add);
     }
 
-    public static boolean rollBasement(Building b, IHex hex, Consumer<Report> disseminator) {
+    /**
+     * Rolls a basement to replace that at the given coordinates, posting any reports to the given disseminator
+     * 
+     * @return whether the basement was actually changed
+     */
+    @Deprecated public static boolean rollBasement(Building b, IHex hex, Consumer<Report> disseminator) {
         BuildingSection bs = b.sectionAt(hex.getCoords()).get();
         if (bs.getBasementType() != BasementType.UNKNOWN) {
             return false;

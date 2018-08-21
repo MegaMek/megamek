@@ -20,6 +20,9 @@ package megamek.common.building;
 
 import java.util.Optional;
 
+/**
+ * Represents a type of construction
+ */
 public enum ConstructionType {
 
     // LATER Double-check that WALL really was intended as a construction type
@@ -42,22 +45,42 @@ public enum ConstructionType {
     //    public static final int HARDENED = 4;
     //    public static final int WALL = 5;
 
-    //         id    CF   DR/in  DR/out
-    LIGHT    (  1,   15,  0,      0.75f  ),
-    MEDIUM   (  2,   40,  0,      0.5f   ),
-    HEAVY    (  3,   90,  0.5f,   0.25f  ),
-    HARDENED (  4,  120,  0.75f,  0      ),
-    WALL     (  5,  120,  0,      0      );
+    /**
+     * Value for light constructions
+     */
+    LIGHT(1, 15, 0, 0.75f),
+
+    /**
+     * Value for medium constructions
+     */
+    MEDIUM(2, 40, 0, 0.5f),
+
+    /**
+     * Value for heavy constructions
+     */
+    HEAVY(3, 90, 0.5f, 0.25f),
+
+    /**
+     * Value for hardened constructions
+     */
+    HARDENED(4, 120, 0.75f, 0),
+
+    /**
+     * Value for walls
+     */
+    WALL(5, 120, 0, 0);
 
     /**
      * Retrieves the {@linkplain ConstructionType} corresponding to the given
      * integer id, if it's valid (ie: in [1,5]).
-     *         
+     *
      * @see #getId()
      */
     public static Optional<ConstructionType> ofId(int id) {
         for (ConstructionType v : values()) {
-            if (id == v.id) return Optional.of(v);
+            if (id == v.id) {
+                return Optional.of(v);
+            }
         }
         return Optional.empty();
     }
@@ -86,10 +109,10 @@ public enum ConstructionType {
 
     /**
      * Retrieves the identifier corresponding to this construction type.
-     * 
+     *
      * Please note this is <em>not</em> the same as {@link #ordinal()} and
      * values are instead the same as the "old" constants in {@link Building}:
-     * 
+     *
      * <pre>
      * public static final int LIGHT = 1;
      * public static final int MEDIUM = 2;
@@ -97,7 +120,7 @@ public enum ConstructionType {
      * public static final int HARDENED = 4;
      * public static final int WALL = 5;
      * </pre>
-     * 
+     *
      * @return the id corresponding to this construction type
      */
     public int getId() {

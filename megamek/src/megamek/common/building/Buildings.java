@@ -29,6 +29,9 @@ import megamek.common.IBoard;
 import megamek.common.IHex;
 import megamek.common.Terrains;
 
+/**
+ * Utility class for instantiating buildings from an {@link IBoard} 
+ */
 public class Buildings {
 
     private Buildings() {
@@ -36,27 +39,27 @@ public class Buildings {
     }
 
     /**
-     * Constructs a new building at the given coordinates, fetching info from the given board 
+     * Constructs a new building at the given coordinates, fetching info from the given board
      */
     public static Building newBuildingAt(Coords coords, IBoard board) {
         return Buildings.buildingAt(board, coords, Terrains.BUILDING);
     }
 
     /**
-     * Constructs a new bridge at the given coordinates, fetching info from the given board 
+     * Constructs a new bridge at the given coordinates, fetching info from the given board
      */
     public static Building newBridgeAt(Coords coords, IBoard board) {
         return Buildings.buildingAt(board, coords, Terrains.BRIDGE);
     }
 
     /**
-     * Constructs a new fuel tank at the given coordinates, fetching info from the given board 
+     * Constructs a new fuel tank at the given coordinates, fetching info from the given board
      */
     public static Building newFuelTankAt(Coords coords, IBoard board) {
         return Buildings.buildingAt(board, coords, Terrains.FUEL_TANK);
     }
 
-    public static Building buildingAt(IBoard board, Coords coords, int structureType) {
+    private static Building buildingAt(IBoard board, Coords coords, int structureType) {
 
         IHex initialHex = board.getHex(coords);
 
@@ -82,9 +85,9 @@ public class Buildings {
                              sections.size() );
     }
 
-    public static BuildingSection sectionAt(IHex hex, int structureType) {
+    private static BuildingSection sectionAt(IHex hex, int structureType) {
 
-        if (structureType != Terrains.BUILDING && structureType != Terrains.BRIDGE && structureType != Terrains.FUEL_TANK) {
+        if ((structureType != Terrains.BUILDING) && (structureType != Terrains.BRIDGE) && (structureType != Terrains.FUEL_TANK)) {
             throw new IllegalArgumentException("Unexpected structure type: " + structureType); //$NON-NLS-1$
         }
 
@@ -131,7 +134,7 @@ public class Buildings {
         };
     }
 
-    public static Map<Coords,IHex> getSpannedHexes(IHex hex , IBoard board, int structureType) {
+    private static Map<Coords,IHex> getSpannedHexes(IHex hex , IBoard board, int structureType) {
 
         if (!(hex.containsTerrain(structureType))) {
             String msg = String.format("Hex %s does not contain structure %s", hex.getCoords(), structureType); //$NON-NLS-1$

@@ -20,14 +20,32 @@ package megamek.common.building;
 
 import java.util.Optional;
 
+/**
+ * Represents a building class
+ */
 public enum BuildingClass {
 
-    //                  dmgFr dmgTo
-    STANDARD        (   0.5,  1    ),
-    HANGAR          (   1,    1    ),
-    FORTRESS        (   2,    0.5  ),
-    GUN_EMPLACEMENT (   2,    0.5  );
-    // CASTLE_BRIAN    (  10,   0.1  );
+    /**
+     * Value for standard buildings
+     */
+    STANDARD(0.5, 1),
+
+    /**
+     * Value for hangars
+     */
+    HANGAR(1, 1),
+
+    /**
+     * Value for fortresses
+     */
+    FORTRESS(2, 0.5),
+
+    /**
+     * Value for gun emplacements
+     */
+    GUN_EMPLACEMENT(2, 0.5);
+
+    // CASTLE_BRIAN(10, 0.1);
 
     // LATER Investigate why Castle Brian was originally left out and see to add support for it (see #1102)
     //
@@ -48,7 +66,7 @@ public enum BuildingClass {
     /**
      * Retrieves the {@linkplain BuildingClass} corresponding to the given
      * integer id, if it's valid (ie: in [0,3]).
-     *         
+     *
      * @see #getId()
      */
     public static Optional<BuildingClass> ofId(int id) {
@@ -80,16 +98,16 @@ public enum BuildingClass {
 
     /**
      * Retrieves the identifier corresponding to this building class.
-     * 
+     *
      * Values are the same as the "old" constants in {@link Building}:
-     * 
+     *
      * <pre>
      *    public static final int STANDARD = 0;
      *    public static final int HANGAR = 1;
      *    public static final int FORTRESS = 2;
      *    public static final int GUN_EMPLACEMENT = 3;
      * </pre>
-     * 
+     *
      * @return the id corresponding to this construction type
      */
     public int getId() {

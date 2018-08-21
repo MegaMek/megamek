@@ -17,7 +17,6 @@ package megamek.common.building;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,24 +66,37 @@ public class Building implements Serializable {
     private final Map<Coords, BuildingSection> sections;
     private final int originalHexes;
 
+    /**
+     * @return an {@linkplain Stream} of this building's sections
+     */
     public Stream<BuildingSection> streamSections() {
         return sections.values().stream();
     }
 
+    /**
+     * @return the section at the given coordinates, if present
+     */
     public Optional<BuildingSection> sectionAt(Coords coordinates) {
         return Optional.ofNullable(sections.get(coordinates));
     }
 
+    /**
+     * @return the section at the given coordinates
+     * 
+     * @throws IllegalArgumentException if none is present
+     */
     public BuildingSection requireSectionAt(Coords coordinates) {
-        return sectionAt(coordinates).orElseThrow( () -> new IllegalArgumentException(String.format("Building %s has no section at %s" )) );
+        return sectionAt(coordinates).orElseThrow( () -> new IllegalArgumentException(String.format("Building %s has no section at %s" )) ); //$NON-NLS-1$
     }
 
+    /**
+     * Removes the section at the given coordinates.
+     * 
+     * @return whether this building's sections have changed as a result of
+     *         this call
+     */
     public boolean removeSectionAt(Coords coords) {
         return sections.remove(coords) != null;
-    }
-
-    public Iterator<Coords> iterateCoords() {
-        return Collections.unmodifiableCollection(sections.keySet()).iterator();
     }
 
     /**
@@ -97,16 +109,22 @@ public class Building implements Serializable {
         return structureType;
     }
 
+    /**
+     * @return the construction type of this building
+     */
     public ConstructionType getConstructionType() {
         return constructionType;
-    } 
-
-    public Optional<BuildingClass> getBuildingClass() {
-        return Optional.ofNullable(buildingClass);
-    } 
+    }
 
     /**
-     * returns the magnitude of the explosion this building causes when destroyed
+     * @return the building class of this building, if any
+     */
+    public Optional<BuildingClass> getBuildingClass() {
+        return Optional.ofNullable(buildingClass);
+    }
+
+    /**
+     * @returns the magnitude of the explosion this building causes when destroyed, if any
      */
     public OptionalInt getExplosionMagnitude() {
         // This is currently an OptionalInt, in order to distinguish
@@ -118,6 +136,9 @@ public class Building implements Serializable {
         return explosionMagnitude != null ? OptionalInt.of(explosionMagnitude) : OptionalInt.empty();
     }
 
+    /**
+     * @return the name of this building
+     */
     public String getName() {
         StringBuffer buffer = new StringBuffer();
         if (structureType == Terrains.FUEL_TANK) {
@@ -135,10 +156,16 @@ public class Building implements Serializable {
         return buffer.toString();
     }
 
+    /**
+     * @return the number of hexes this building originally spanned
+     */
     public int getOriginalHexCount() {
         return originalHexes;
     }
 
+    /**
+     * @return the number of hexes this building currently spans
+     */
     public int getCollapsedHexCount() {
         return originalHexes - sections.size();
     }
@@ -168,12 +195,12 @@ public class Building implements Serializable {
 
     @Override
     public String toString() {
-        
+
         // Not sure of what impact (if any) changing this will have, but
         // it would be nice if it included at least some sort of human-readable
         // information to identify the building (eg: the hexes it covers?)
         // LATER investigate and -if possible- edit
-        
+
         StringBuffer buf = new StringBuffer();
 
         switch (constructionType) {
@@ -368,8 +395,9 @@ public class Building implements Serializable {
     /** @deprecated with no direct replacement (see implementation) */
     @Deprecated public boolean removeDemolitionCharge(DemolitionCharge charge) {
         for (BuildingSection section : sections.values()) {
-            if (section.removeDemolitionCharge(charge))
+            if (section.removeDemolitionCharge(charge)) {
                 return true;
+            }
         }
         return false;
     }

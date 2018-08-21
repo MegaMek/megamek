@@ -4060,6 +4060,7 @@ public class Tank extends Entity {
      * 
      * @return
      */
+    @Override
     public boolean isTrailer() {
         if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
             return true;
@@ -4073,6 +4074,7 @@ public class Tank extends Entity {
      * 
      * @return
      */
+    @Override
     public boolean isTractor() {
         if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
             return true;

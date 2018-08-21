@@ -45,7 +45,7 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-	jvmOptions = ['-Xmx1024m']
+	jvmOptions = ['-Xmx1024m', '--add-modules java.se.ee']
 	data = "data"
 	conf = "mmconf"
 	log = "logs"
@@ -134,24 +134,13 @@ task unitFilesZip (dependsOn: copyFiles) {
 	}
 }
 
-task ensureRatDir (dependsOn: copyFiles) {
-	doLast {
-		mkdir "${fileStagingDir}/${rats}"
-	}
-}
-
-task ratZip (type: Zip, dependsOn: ensureRatDir) {
+task ratZip (type: Zip) {
 	description = 'Creates a zip archive of all the random assignment tables.'
 	from rats
 	archiveName "rat_default.zip"
 	destinationDir file("${fileStagingDir}/${rats}")
-}
-
-task createLogDir (dependsOn: copyFiles) {
-	description 'Creates the log directory and the timestamp file.'
-	doLast {
-		mkdir "${fileStagingDir}/${log}"
-		ant.touch(file: "${fileStagingDir}/${log}/timestamp")
+	doFirst {
+		mkdir "${fileStagingDir}/${rats}"
 	}
 }
 
@@ -161,7 +150,11 @@ task stageFiles {
 	dependsOn unitFilesZip
 	dependsOn ratZip
 	dependsOn deleteAtlasedImages
-	dependsOn createLogDir
+	
+	doLast {
+		mkdir "${fileStagingDir}/${log}"
+		ant.touch(file: "${fileStagingDir}/${log}/timestamp")
+	}
 }
 
 task createStartScripts (type: CreateStartScripts) {
@@ -179,7 +172,7 @@ task createStartScripts (type: CreateStartScripts) {
 	doLast {
 		// The start script assumes all the files on the classpath will be in the lib directory.
 		unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
-		windowsScript.text = windowsScript.text.replace('lib/MegaMek', 'MegaMek')
+		windowsScript.text = windowsScript.text.replace('lib\\MegaMek', 'MegaMek')
 		// The Windows script just has a single line that needs to be changed to put the script in the root,
 		// so we'll do a simple replace
 		windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')

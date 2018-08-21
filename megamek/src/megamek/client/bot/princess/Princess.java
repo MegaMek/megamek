@@ -36,14 +36,12 @@ import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.Board;
 import megamek.common.BuildingTarget;
-import megamek.common.Coords;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
-import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -53,7 +51,6 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.EntityAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
@@ -61,12 +58,13 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.WeaponType;
+import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.building.Building;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
@@ -109,7 +107,7 @@ public class Princess extends BotClient {
     private boolean fleeBoard = false;
     private final IMoralUtil moralUtil = new MoralUtil(getLogger());
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
-    private final Set<Integer> myFleeingEntities = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
 
     /**
@@ -1031,8 +1029,14 @@ public class Princess extends BotClient {
         return moralUtil;
     }
 
+    /**
+     * Logic to determine if this entity is "falling back" for any reason
+     * @param entity The entity to check.
+     * @return Whether or not the entity is falling back.
+     */
     boolean isFallingBack(final Entity entity) {
-        return getMyFleeingEntities().contains(entity.getId());
+        return (getBehaviorSettings().getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) ||
+                (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true));
     }
 
     boolean mustFleeBoard(final Entity entity) {
@@ -1361,8 +1365,9 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                // Is my unit trying to withdraw?
-                final boolean fleeing = getMyFleeingEntities().contains(mine.getId());
+                // Is my unit trying to withdraw as per forced withdrawal rules?
+                // shortcut: we already check for forced withdrawal above, so need to do that here
+                final boolean fleeing = crippledUnits.contains(mine.getId()); 
 
                 for (final int id : attackedBy) {
                     final Entity entity = getGame().getEntity(id);
@@ -1503,6 +1508,8 @@ public class Princess extends BotClient {
                 return; // no need to initialize twice
             }
 
+            refreshCrippledUnits();
+            
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
@@ -1571,6 +1578,27 @@ public class Princess extends BotClient {
         newtonianAerospacePathRanker.setFireControl(fireControls.get(FireControlType.Basic));
         newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
+    }
+    
+    /**
+     * Load the list of units considered crippled at the time the bot was loaded or the beginning of the turn,
+     * whichever is the more recent.
+     */
+    public void refreshCrippledUnits() {
+        // if we're not following 'forced withdrawal' rules, there's no need for this
+        if(!getForcedWithdrawal()) {
+            return;
+        }
+        
+        // this approach is a little bit inefficient, but the running time is only O(n) where n is the number
+        // of princess owned units, so it shouldn't be a big deal. 
+        crippledUnits.clear();
+        
+        for(Entity e : this.getEntitiesOwned()) {
+            if(e.isCrippled(true)) {
+                crippledUnits.add(e.getId());
+            }
+        }
     }
     
     private boolean isEnemyGunEmplacement(final Entity entity,
@@ -1700,41 +1728,11 @@ public class Princess extends BotClient {
     public void endOfTurnProcessing() {
         getLogger().methodBegin(getClass(), "endOfTurnProcessing()");
         checkForDishonoredEnemies();
-        updateMyFleeingEntities();
         checkForBrokenEnemies();
+        // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishoneredEnemies
+        // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
+        refreshCrippledUnits();
         getLogger().methodEnd(getClass(), "endOfTurnProcessing()");
-    }
-
-    Set<Integer> getMyFleeingEntities() {
-        return myFleeingEntities;
-    }
-
-    private void updateMyFleeingEntities() {
-        final String METHOD_NAME = "updateMyFleeingEntities()";
-
-        final StringBuilder msg =
-                new StringBuilder("Updating my list of falling back units.");
-
-        try {
-            // If the Forced Withdrawal rule is not turned on, then it's a 
-            // fight to the death anyway.
-            if (!getForcedWithdrawal()) {
-                msg.append("\n\tForced withdrawal turned off.");
-                return;
-            }
-
-            for (final Entity mine : getEntitiesOwned()) {
-                if (myFleeingEntities.contains(mine.getId())) {
-                    continue;
-                }
-                if (wantsToFallBack(mine)) {
-                    msg.append("\n\tAdding ").append(mine.getDisplayName());
-                    myFleeingEntities.add(mine.getId());
-                }
-            }
-        } finally {
-            log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
-        }
     }
 
     protected void handlePacket(final Packet c) {

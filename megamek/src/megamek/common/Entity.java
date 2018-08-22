@@ -14999,6 +14999,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * If this unit has a trailer hitch, return its location
+     * At present, this does not account for entities with two hitches 
+     * 
+     * @return
+     */
+    public int getHitchLocation() {
+        int loc = LOC_NONE;
+        for (Mounted mount : getMisc()) {
+            EquipmentType equip = mount.getType();
+            if (equip.hasFlag(MiscType.F_HITCH)) {
+                loc = mount.getLocation();
+                break;
+            }
+        }
+        return loc;
+    }
+    
+    /**
      * Determines if this vehicle is currently able to tow designated trailer. 
      * Can't tow enemies or if the hitch is occupied, or if the trailer's at a 
      * different elevation.

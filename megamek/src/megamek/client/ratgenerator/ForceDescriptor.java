@@ -1458,7 +1458,8 @@ public class ForceDescriptor {
     public String ratGeneratorRating() {
         FactionRecord fRec = getFactionRec();
         if ((null != fRec)
-                && !fRec.getRatingLevels().contains(rating)) {
+                && !fRec.getRatingLevels().contains(rating)
+                && (getRatingLevel() >= 0)) {
             return fRec.getRatingLevels().get(Math.min(getRatingLevel(), fRec.getRatingLevels().size() - 1));
         }
         return rating;

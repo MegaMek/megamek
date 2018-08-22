@@ -16,10 +16,8 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import megamek.common.options.OptionsConstants;
@@ -1087,6 +1085,15 @@ public class Jumpship extends Aero {
                 continue;
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
+            String key2 = atype.getName() + ";" + key;
+            // MML needs special casing so they don't count double
+            if (atype.getAmmoType() == AmmoType.T_MML) {
+                key2 = "MML " + atype.getRackSize() + " Ammo;" + key;
+            }
+            // same for the different AR10 ammos
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                key2 = "AR10 Ammo;" + key;
+            }
             double ammoWeight = mounted.getType().getTonnage(this);
             if (atype.isCapital()) {
                 ammoWeight = mounted.getUsableShotsLeft() * atype.getAmmoRatio();
@@ -1096,8 +1103,8 @@ public class Jumpship extends Aero {
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 ammoWeight = mounted.getUsableShotsLeft();
             }
-            if (!keys.contains(key)) {
-                keys.add(key);
+            if (!keys.contains(key2)) {
+                keys.add(key2);
             }
             if (!ammo.containsKey(key)) {
                 ammo.put(key, ammoWeight * atype.getBV(this));
@@ -1109,17 +1116,31 @@ public class Jumpship extends Aero {
         // Excessive ammo rule:
         // Only count BV for ammo for a weapontype until the BV of all weapons
         // in that arc is reached
-        for (String key : keys) {
+        for (String fullkey : keys) {
             double ammoBV = 0.0;
-            int arc = Integer.parseInt(key.split(";")[1]);
+            String[] k = fullkey.split(";");
+            String key = k[1] + ";" + k[2];
+            int arc = Integer.parseInt(k[2]);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(k[0]);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
             // get the arc
             if (weaponsForExcessiveAmmo.get(key) != null) {
                 if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
+                    bvText.append("+" + weaponsForExcessiveAmmo.get(key) + "*");
                     ammoBV += weaponsForExcessiveAmmo.get(key);
                 } else {
+                    bvText.append("+" + ammo.get(key));
                     ammoBV += ammo.get(key);
                 }
             }
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("");
+            bvText.append(endColumn);
+            bvText.append(endRow);
             double currentArcBV = 0.0;
             if (null != arcBVs.get(arc)) {
                 currentArcBV = arcBVs.get(arc);
@@ -1324,9 +1345,9 @@ public class Jumpship extends Aero {
         } else {
             bvText.append("Offensive BV + Defensive BV");
             finalBV = dbv + obv;
-            bvText.append(dbv);
-            bvText.append(" + ");
             bvText.append(obv);
+            bvText.append(" + ");
+            bvText.append(dbv);
         }
 
         bvText.append(endColumn);

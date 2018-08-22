@@ -424,9 +424,9 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(Color.YELLOW, "T", SMALL));
             }
             
-            //if ((entity.getAllTowedUnits()).size() > 0) {
-            //    stStr.add(new Status(Color.CYAN, "TOWING"));
-            //}
+            if ((entity.getAllTowedUnits()).size() > 0) {
+                stStr.add(new Status(Color.YELLOW, "TOWING"));
+            }
 
             // Hidden, Unseen Unit
             if (trackThisEntitiesVisibilityInfo(entity)) {
@@ -1027,6 +1027,19 @@ class EntitySprite extends Sprite {
         if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             addToTT("Sensors", BR, entity.getSensorDesc());
+        }
+        
+        // Towing
+        if (entity.getAllTowedUnits().size() > 0) {
+            StringBuffer unitList = new StringBuffer();
+            for (Entity towed : entity.getAllTowedUnits()) {
+                unitList.append(towed.getDisplayName());
+                unitList.append(", ");
+            }
+            if (unitList.length() > 1) {
+                unitList.delete(unitList.length() - 2, unitList.length());
+                addToTT("Towing", BR, unitList.toString());
+            }
         }
 
         // Weapon List

@@ -45,7 +45,7 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-	jvmOptions = ['-Xmx1024m', '--add-modules java.se.ee']
+	jvmOptions = ['-Xmx1024m']
 	data = "data"
 	conf = "mmconf"
 	log = "logs"
@@ -131,7 +131,7 @@ task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
 task deleteAtlasedImages(dependsOn: createImageAtlases) {
 	description = 'Removes images from the staging directory that have been incorporated into atlases.'
 	doLast {
-		if (file("${fileStagingDir}/${atlasedImages}").exists()) {
+		if (file(atlasedImages).exists()) {
 			ant.delete dir: fileStagingDir, includesfile: atlasedImages
 			ant.delete file: atlasedImages
 		}

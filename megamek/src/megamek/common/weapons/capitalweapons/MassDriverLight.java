@@ -44,7 +44,7 @@ public class MassDriverLight extends MassDriverWeapon {
         this.mediumRange = 24;
         this.longRange = 40;
         this.tonnage = 30000;
-        this.bv = 0;
+        this.bv = 7056;
         this.cost = 150000000;
         this.shortAV = 60;
         this.medAV = 60;

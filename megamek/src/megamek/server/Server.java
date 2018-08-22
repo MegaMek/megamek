@@ -22375,8 +22375,8 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        // no consciousness roll for capital fighter pilots
-        if (e.isCapitalFighter()) {
+        // no consciousness roll for capital fighter pilots or large craft crews
+        if (e.isCapitalFighter() || e.isLargeCraft()) {
             return vDesc;
         }
 
@@ -23809,6 +23809,48 @@ public class Server implements Runnable {
                 // further processing
                 if (te instanceof Aero) {
                     Aero a = (Aero) te;
+                    
+                    // check for large craft ammo explosions here: damage vented through armor, excess
+                    // dissipating, much like Tank CASE.
+                    if (ammoExplosion && te.isLargeCraft()) {
+                        te.damageThisPhase += damage;
+                        r = new Report(6128);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(damage);
+                        int loc = hit.getLocation();
+                        //Roll for broadside weapons so fore/aft side armor facing takes the damage
+                        if (loc == Warship.LOC_LBS) {
+                            int locRoll = Compute.d6();
+                            if (locRoll < 4) {
+                                loc = Jumpship.LOC_FLS;
+                            } else {
+                                loc = Jumpship.LOC_ALS;
+                            }
+                        }
+                        if (loc == Warship.LOC_RBS) {
+                            int locRoll = Compute.d6();
+                            if (locRoll < 4) {
+                                loc = Jumpship.LOC_FRS;
+                            } else {
+                                loc = Jumpship.LOC_ARS;
+                            }
+                        }
+                        r.add(te.getLocationAbbr(loc));
+                        vDesc.add(r);
+                        if (damage > te.getArmor(loc)) {
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
+                            r = new Report(6090);
+                        } else {
+                            te.setArmor(te.getArmor(loc) - damage, loc);
+                            r = new Report(6085);
+                            r.add(te.getArmor(loc));
+                        }
+                        r.subject = te_n;
+                        r.indent(3);
+                        vDesc.add(r);
+                        damage = 0;
+                    }
 
                     // check for overpenetration
                     if (game.getOptions().booleanOption(
@@ -23869,7 +23911,9 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     if (!ammoExplosion) {
                         r.messageId = 9005;
-                    } else {
+                    }
+                    //Only for fighters
+                    if (ammoExplosion && !a.isLargeCraft()) {
                         r.messageId = 9006;
                     }
                     r.add(damage);
@@ -26416,6 +26460,54 @@ public class Server implements Runnable {
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
                         && !(aero instanceof FighterSquadron)
                         && (weapon.getType() instanceof WeaponType)) {
+                        //Bay Weapons
+                        if (aero.usesWeaponBays()) {
+                            //Finish reporting(9150) a hit on the bay
+                            r.add(weapon.getName());
+                            reports.add(r);
+                            //Pick a random weapon in the bay and get the stats
+                            int wId = weapon.getBayWeapons().get(Compute.randomInt(weapon.getBayWeapons().size()));
+                            Mounted bayW = aero.getEquipment(wId);
+                            Mounted bayWAmmo = bayW.getLinked();
+                            if (bayWAmmo != null && bayWAmmo.getType().isExplosive(bayWAmmo)) {
+                                r = new Report(9156);
+                                r.subject = aero.getId();
+                                r.newlines = 1;
+                                r.indent(2);
+                                //On a roll of 10+, the ammo bin explodes
+                                int ammoRoll = Compute.d6(2);
+                                boomTarget = 10;
+                                r.choose(ammoRoll >= boomTarget);
+                                reports.add(r);
+                                if (ammoRoll >= boomTarget) {
+                                    reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                }
+                            }
+                            //Hit the weapon then also hit all the other weapons in the bay
+                            weapon.setHit(true);
+                            for(int next : weapon.getBayWeapons()) {
+                                Mounted bayWeap = aero.getEquipment(next);
+                                if(null != bayWeap) {
+                                    bayWeap.setHit(true);
+                                    //Taharqa: We should also damage the critical slot, or
+                                    //MM and MHQ won't remember that this weapon is damaged on the MUL
+                                    //file
+                                    for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                        CriticalSlot slot1 = aero.getCritical(loc, i);
+                                        if ((slot1 == null) ||
+                                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                            continue;
+                                        }
+                                        Mounted mounted = slot1.getMount();
+                                        if (mounted.equals(bayWeap)) {
+                                            aero.hitAllCriticals(loc, i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
                         // does it use Ammo?
                         WeaponType wtype = (WeaponType) weapon.getType();
                         if (wtype.getAmmoType() != AmmoType.T_NA) {

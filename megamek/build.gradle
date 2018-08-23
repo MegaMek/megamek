@@ -352,7 +352,6 @@ task assembleDist(overwrite: true) {
 	dependsOn unixDistTar
 	dependsOn windowsDistZip
 	dependsOn macDistTar
-	dependsOn sourceTar
 }
 
 task buildFromRepo (type: GradleBuild) {

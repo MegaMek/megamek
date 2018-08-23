@@ -10880,7 +10880,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 60;
                 ammo.ammoType = AmmoType.T_LMASS;
                 ammo.shots = 1;
-                ammo.bv = 0;
+                ammo.bv = 882;
                 ammo.cost = 150000;
                 ammo.ammoRatio = 30;
                 ammo.capital = true;
@@ -10907,7 +10907,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 100;
                 ammo.ammoType = AmmoType.T_MMASS;
                 ammo.shots = 1;
-                ammo.bv = 0;
+                ammo.bv = 1470;
                 ammo.cost = 300000;
                 ammo.ammoRatio = 30;
                 ammo.capital = true;
@@ -10934,7 +10934,7 @@ public class AmmoType extends EquipmentType {
                 ammo.damagePerShot = 140;
                 ammo.ammoType = AmmoType.T_HMASS;
                 ammo.shots = 1;
-                ammo.bv = 0;
+                ammo.bv = 2058;
                 ammo.cost = 600000;
                 ammo.ammoRatio = 30;
                 ammo.capital = true;

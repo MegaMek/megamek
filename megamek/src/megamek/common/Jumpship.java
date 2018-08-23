@@ -824,30 +824,243 @@ public class Jumpship extends Aero {
             }
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                amsAmmoBV += etype.getBV(this);
+                // we need to deal with cases where ammo is loaded in multi-ton
+                // increments
+                // (on dropships and jumpships) - lets take the ratio of shots
+                // to shots left
+                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
+
+                // if the ratio is less than one, we will treat as a full ton
+                // since
+                // we don't make that adjustment elsewhere
+                if (ratio < 1.0) {
+                    ratio = 1.0;
+                }
+                amsAmmoBV += ratio * etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(ratio * etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType)
                     && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
-                screenAmmoBV += etype.getBV(this);
+                // we need to deal with cases where ammo is loaded in multi-ton
+                // increments
+                // (on dropships and jumpships) - lets take the ratio of shots
+                // to shots left
+                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
+
+                // if the ratio is less than one, we will treat as a full ton
+                // since
+                // we don't make that adjustment elsewhere
+                if (ratio < 1.0) {
+                    ratio = 1.0;
+                }
+                screenAmmoBV += ratio * etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(ratio * etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof WeaponType)
                     && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
                 defEqBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
-        dbv += amsBV;
-        dbv += screenBV;
-        dbv += Math.min(amsBV, amsAmmoBV);
-        dbv += Math.min(screenBV, screenAmmoBV);
-        dbv += defEqBV;
+        if (amsBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(amsBV);
+            dbv += amsBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (screenBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(screenBV);
+            dbv += screenBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (amsAmmoBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(amsBV, amsAmmoBV));
+            dbv += Math.min(amsBV, amsAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (screenAmmoBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(screenBV, screenAmmoBV));
+            dbv += Math.min(screenBV, screenAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (defEqBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total misc defensive equipment BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(defEqBV);
+            dbv += defEqBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // unit type multiplier
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Multiply by Unit type Modifier");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getBVTypeModifier());
         dbv *= getBVTypeModifier();
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("x" + getBVTypeModifier());
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // calculate heat efficiency
         int aeroHeatEfficiency = getHeatCapacity();
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Base Heat Efficiency ");
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(aeroHeatEfficiency);
+
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // get arc BV and heat
         // and add up BVs for ammo-using weapon types for excessive ammo rule
@@ -1041,20 +1254,16 @@ public class Jumpship extends Aero {
                     adjArcMult = 0.5;
                 }
                 heatUsed += adjArcCWHeat;
-                oppArc = adjArcCCW;
-                if ((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
-                    oppArcMult = 0.25;
-                }
             } else {
                 adjArc = adjArcCCW;
                 if ((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
                     adjArcMult = 0.5;
                 }
                 heatUsed += adjArcCCWHeat;
-                oppArc = adjArcCW;
-                if ((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
-                    oppArcMult = 0.25;
-                }
+            }
+            oppArc = getOppositeArc(highArc);
+            if ((heatUsed + arcHeat.get(oppArc)) > aeroHeatEfficiency) {
+                oppArcMult = 0.25;
             }
         }
         // According to an email with Welshman, ammo should be now added into
@@ -1815,6 +2024,35 @@ public class Jumpship extends Aero {
             return Compute.ARC_RIGHTSIDEA_SPHERE;
         default:
             return Integer.MIN_VALUE;
+        }
+    }
+
+    /**
+     * Finds the arc on the opposite side of the ship. Used in BV calculations.
+     * 
+     * @param arc A firing arc constant from <code>Compute</code>
+     * @return    The arc on the opposite side of the ship.
+     */
+    public int getOppositeArc(int arc) {
+        switch (arc) {
+            case Compute.ARC_NOSE:
+                return Compute.ARC_AFT;
+            case Compute.ARC_LEFTSIDE_SPHERE:
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            case Compute.ARC_RIGHTSIDE_SPHERE:
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            case Compute.ARC_LEFTSIDEA_SPHERE:
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            case Compute.ARC_RIGHTSIDEA_SPHERE:
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            case Compute.ARC_LEFT_BROADSIDE:
+                return Compute.ARC_RIGHT_BROADSIDE;
+            case Compute.ARC_RIGHT_BROADSIDE:
+                return Compute.ARC_LEFT_BROADSIDE;
+            case Compute.ARC_AFT:
+                return Compute.ARC_NOSE;
+            default:
+                return Integer.MIN_VALUE;
         }
     }
 

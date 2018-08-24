@@ -9944,6 +9944,14 @@ public class Server implements Runnable {
             }
             entityUpdate(swarmerId);
         }
+        
+        //If the entity is towing trailers, update the position of those trailers
+        if (entity.getAllTowedUnits().size() > 0) {
+            for (Entity trailer : entity.getAllTowedUnits()) {
+                processTrailerMovement(entity, trailer, md);
+                entityUpdate(trailer.getId());
+            }
+        }
 
         // Update the entitiy's position,
         // unless it is off the game map.
@@ -10032,6 +10040,30 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+    
+    /**
+     * Updates the position of any towed trailers.
+     *
+     * @param tractor    The Entity that is moving
+     * @param trailer    The current trailer being updated
+     * @param md         The MovePath that defines how the towing Entity moves
+     */
+    private void processTrailerMovement(Entity tractor, Entity trailer, MovePath md) {
+        int trailerNumber = 0;
+        Coords trailerPos = null;
+        int trailerFacing = 0;
+        trailerNumber = (tractor.getAllTowedUnits().indexOf(trailer) + 1); //Offset by 1 so we can get the right step
+        //Place large trailers in their own hexes behind the tractor
+        if (trailer.getWeight() > 100) {
+            trailerPos = md.getStep(md.length() - trailerNumber).getPosition();
+            trailer.setPosition(trailerPos);
+        } else {
+        //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
+            trailerPos = md.getStep(md.length() - (trailerNumber / 2)).getPosition();
+            trailer.setPosition(trailerPos);
+        }
+        //Remember that trailers might be in positions 'behind' the entire MovePath...
     }
 
     /**

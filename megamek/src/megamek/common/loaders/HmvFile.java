@@ -1199,7 +1199,7 @@ public class HmvFile implements IMechLoader {
 
         String ammoName = null;
         try {
-            ammoName = AMMO.get(techType).get(equipment);
+            ammoName = AMMO.get(techType).get(ammo);
         } catch (NullPointerException e) {
             // is handeled by the if below.
         }

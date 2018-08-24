@@ -15097,7 +15097,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * The ID of the entity directly towing this one, powered or unpowered. 
      * This will often be the same entity as tractor
      */
-    private int towedBy = -1;
+    private int towedBy = Entity.NONE;
 
     /**
      * Returns the Entity that is directly towing this one
@@ -15168,7 +15168,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void disconnectUnit(Entity e) {
         connectedUnits.remove(e);
-        e.setTowedBy(-1);
+        e.setTowedBy(Entity.NONE);
         for (Entity trailer : e.getConnectedUnits()) {
             trailer.setTractor(null);
             tractor.removeTowedUnit(trailer);

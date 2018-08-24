@@ -16,7 +16,6 @@ package megamek.common.loaders;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -26,7 +25,6 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
-import megamek.common.BayType;
 import megamek.common.CargoBay;
 import megamek.common.ConvFighter;
 import megamek.common.CrewQuartersCargoBay;

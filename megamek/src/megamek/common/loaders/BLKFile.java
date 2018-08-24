@@ -16,7 +16,6 @@ package megamek.common.loaders;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -26,7 +25,6 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
-import megamek.common.BayType;
 import megamek.common.CargoBay;
 import megamek.common.ConvFighter;
 import megamek.common.CrewQuartersCargoBay;
@@ -835,10 +833,6 @@ public class BLKFile {
                 transporter = transporter.toLowerCase();
             	boolean isPod = transporter.endsWith(":omni");
             	transporter = transporter.replace(":omni", "");
-                // for bays, we have to save the baynumber in each bay, because
-                // one conceptual bay can contain several different ones
-                // we default to bay 1
-                int bayNumber = 1;
                 // TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.

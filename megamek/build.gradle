@@ -1,7 +1,7 @@
 plugins {
-	id 'application'
-	id 'maven-publish'
-	id 'edu.sc.seis.launch4j' version '2.4.4'
+    id 'application'
+    id 'maven-publish'
+    id 'edu.sc.seis.launch4j' version '2.4.4'
 }
 
 sourceSets {
@@ -24,363 +24,363 @@ sourceSets {
 }
 
 configurations {
-	jarbundler
+    jarbundler
 }
 
 dependencies {
-	implementation 'com.thoughtworks.xstream:xstream:1.4.10'
-	implementation 'log4j:log4j:1.2.17'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.10'
+    implementation 'log4j:log4j:1.2.17'
 
-	implementation 'javax.xml.bind:jaxb-api:2.3.0'
-	runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
-	runtimeOnly 'org.glassfish.jaxb:jaxb-core:2.3.0'
-	runtimeOnly 'com.sun.activation:javax.activation:1.2.0'
-	
-	jarbundler 'com.ultramixer.jarbundler:jarbundler-core:3.3.0'
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-core:2.3.0'
+    runtimeOnly 'com.sun.activation:javax.activation:1.2.0'
+    
+    jarbundler 'com.ultramixer.jarbundler:jarbundler-core:3.3.0'
 
     testImplementation 'junit:junit:4.12' 
-	testImplementation 'org.mockito:mockito-core:2.20.1'
+    testImplementation 'org.mockito:mockito-core:2.20.1'
 }
 
 mainClassName = 'megamek.MegaMek'
 
 ext {
-	jvmOptions = ['-Xmx1024m']
-	data = "data"
-	conf = "mmconf"
-	log = "logs"
-	docs = "docs"
-	lib = "lib"
-	distributionDir = "${buildDir}/distributions"
-	fileStagingDir = "${buildDir}/files"
-	repoDir = "${buildDir}/repo"
-	atlasedImages = "${fileStagingDir}/atlasedImages.txt"
-	unitFiles = "${data}/mechfiles"
-	rats = "${data}/rat"
-	mavenPublishDir = "${buildDir}/mavenrepo"
-	scriptsDir = "${projectDir}/scripts"
-	scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
-	osxApplicationStub = "${scriptsDir}/universalJavaApplicationStub"
-	osxBundleDir = "${buildDir}/osxBundle"
+    jvmOptions = ['-Xmx1024m']
+    data = "data"
+    conf = "mmconf"
+    log = "logs"
+    docs = "docs"
+    lib = "lib"
+    distributionDir = "${buildDir}/distributions"
+    fileStagingDir = "${buildDir}/files"
+    repoDir = "${buildDir}/repo"
+    atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+    unitFiles = "${data}/mechfiles"
+    rats = "${data}/rat"
+    mavenPublishDir = "${buildDir}/mavenrepo"
+    scriptsDir = "${projectDir}/scripts"
+    scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
+    osxApplicationStub = "${scriptsDir}/universalJavaApplicationStub"
+    osxBundleDir = "${buildDir}/osxBundle"
 }
 
 jar {
-	archiveName = 'MegaMek.jar'
-	manifest {
-	    attributes "Main-Class": mainClassName
-	    attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
-	    	.findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
-	}
+    archiveName = 'MegaMek.jar'
+    manifest {
+        attributes "Main-Class": mainClassName
+        attributes 'Class-Path' : project.sourceSets.main.runtimeClasspath.files
+            .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
+    }
 }
 
 task officialUnitList(type: JavaExec, dependsOn: jar) {
-	description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
-	group = 'build'
-	classpath = sourceSets.main.runtimeClasspath
-	main = 'megamek.MegaMek'
-	args '-oul'
-	inputs.dir "${projectDir}/${unitFiles}"
-	outputs.file "${fileStagingDir}/docs/OfficialUnitList.txt"
+    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
+    group = 'build'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'megamek.MegaMek'
+    args '-oul'
+    inputs.dir "${projectDir}/${unitFiles}"
+    outputs.file "${fileStagingDir}/docs/OfficialUnitList.txt"
 }
 
 task equipmentList(type: JavaExec, dependsOn: jar) {
-	description = 'Generate current equipment.txt'
-	group = 'build'
-	classpath = sourceSets.main.runtimeClasspath
-	main = 'megamek.MegaMek'
-	args = [ '-eqdb', 'docs/equipment.txt' ]
-	inputs.files sourceSets.main.allJava
-	outputs.file "${fileStagingDir}/docs/equipment.txt"
+    description = 'Generate current equipment.txt'
+    group = 'build'
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'megamek.MegaMek'
+    args = [ '-eqdb', 'docs/equipment.txt' ]
+    inputs.files sourceSets.main.allJava
+    outputs.file "${fileStagingDir}/docs/equipment.txt"
 }
 
 task copyFiles(type: Copy) {
-	description = 'Stages files that are to be copied into the distribution.'
-	
-	dependsOn officialUnitList
-	dependsOn equipmentList
-	
-	from projectDir
-	
-	include "${data}/**"
-	include "${conf}/**"
-	include "${docs}/**"
-	include "${rootDir}/license.txt"
-	exclude "**/*.psd"
-	// No need to copy the files that are going to be zipped
-	exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
-	exclude "${rats}/**"
-	
-	into fileStagingDir
-	
-	inputs.dir "${data}"
-	inputs.dir "${conf}"
-	inputs.dir "${docs}"
-	inputs.file "${rootDir}/license.txt"
-	outputs.dir fileStagingDir
+    description = 'Stages files that are to be copied into the distribution.'
+    
+    dependsOn officialUnitList
+    dependsOn equipmentList
+    
+    from projectDir
+    
+    include "${data}/**"
+    include "${conf}/**"
+    include "${docs}/**"
+    include "${rootDir}/license.txt"
+    exclude "**/*.psd"
+    // No need to copy the files that are going to be zipped
+    exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
+    exclude "${rats}/**"
+    
+    into fileStagingDir
+    
+    inputs.dir "${data}"
+    inputs.dir "${conf}"
+    inputs.dir "${docs}"
+    inputs.file "${rootDir}/license.txt"
+    outputs.dir fileStagingDir
 }
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
-	description = 'Combines individual image files into a set of image atlases.'
-	classpath = sourceSets.main.runtimeClasspath
-	main = "megamek.utils.CreateImageAtlases"
-	workingDir = file(fileStagingDir)
-	inputs.dir "${projectDir}/${data}/images/units"
-	outputs.dir "${fileStagingDir}/${data}/images/units"
+    description = 'Combines individual image files into a set of image atlases.'
+    classpath = sourceSets.main.runtimeClasspath
+    main = "megamek.utils.CreateImageAtlases"
+    workingDir = file(fileStagingDir)
+    inputs.dir "${projectDir}/${data}/images/units"
+    outputs.dir "${fileStagingDir}/${data}/images/units"
 }
 
 task deleteAtlasedImages(dependsOn: createImageAtlases) {
-	description = 'Removes images from the staging directory that have been incorporated into atlases.'
-	doLast {
-		if (file(atlasedImages).exists()) {
-			ant.delete dir: fileStagingDir, includesfile: atlasedImages
-			ant.delete file: atlasedImages
-		}
-	}
+    description = 'Removes images from the staging directory that have been incorporated into atlases.'
+    doLast {
+        if (file(atlasedImages).exists()) {
+            ant.delete dir: fileStagingDir, includesfile: atlasedImages
+            ant.delete file: atlasedImages
+        }
+    }
 }
 
 task unitFilesZip (dependsOn: copyFiles) {
-	description = 'Creates zip archives of all the unit file folders.'
-	file(unitFiles).eachDir {subDir ->
-		dependsOn tasks.create("${name}${subDir.name}", Zip) {
-			from subDir
-			archiveName "${subDir.name}.zip"
-			destinationDir file("${fileStagingDir}/${unitFiles}")
-		}
-	}
-	inputs.dir "${projectDir}/${unitFiles}"
-	outputs.dir "${fileStagingDir}/${unitFiles}"
+    description = 'Creates zip archives of all the unit file folders.'
+    file(unitFiles).eachDir {subDir ->
+        dependsOn tasks.create("${name}${subDir.name}", Zip) {
+            from subDir
+            archiveName "${subDir.name}.zip"
+            destinationDir file("${fileStagingDir}/${unitFiles}")
+        }
+    }
+    inputs.dir "${projectDir}/${unitFiles}"
+    outputs.dir "${fileStagingDir}/${unitFiles}"
 }
 
 task ratZip (type: Zip) {
-	description = 'Creates a zip archive of all the random assignment tables.'
-	from rats
-	archiveName "rat_default.zip"
-	destinationDir file("${fileStagingDir}/${rats}")
-	doFirst {
-		mkdir "${fileStagingDir}/${rats}"
-	}
-	inputs.dir "${projectDir}/${rats}"
-	outputs.dir "${fileStagingDir}/${rats}"
+    description = 'Creates a zip archive of all the random assignment tables.'
+    from rats
+    archiveName "rat_default.zip"
+    destinationDir file("${fileStagingDir}/${rats}")
+    doFirst {
+        mkdir "${fileStagingDir}/${rats}"
+    }
+    inputs.dir "${projectDir}/${rats}"
+    outputs.dir "${fileStagingDir}/${rats}"
 }
 
 task stageFiles {
-	description = 'Process data files to be included in distribution'
-	group = 'distribution'
-	dependsOn unitFilesZip
-	dependsOn ratZip
-	dependsOn deleteAtlasedImages
-	
-	doLast {
-		mkdir "${fileStagingDir}/${log}"
-		ant.touch(file: "${fileStagingDir}/${log}/timestamp")
-	}
+    description = 'Process data files to be included in distribution'
+    group = 'distribution'
+    dependsOn unitFilesZip
+    dependsOn ratZip
+    dependsOn deleteAtlasedImages
+    
+    doLast {
+        mkdir "${fileStagingDir}/${log}"
+        ant.touch(file: "${fileStagingDir}/${log}/timestamp")
+    }
 }
 
 task createStartScripts (type: CreateStartScripts) {
-	description = 'Create shell script for generic distribution.'
-	applicationName = 'startup'
-	mainClassName = project.mainClassName
-	outputDir = startScripts.outputDir
-	classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
-	    	.filter { it.name.endsWith(".jar") }
-	defaultJvmOpts = project.ext.jvmOptions
-	// The default template assumes the start script is in a subdirectory and always
-	// sets APP_HOME to the parent directory of the one containing the script.
-	// So we provide a modified template.
-	unixStartScriptGenerator.template = resources.text.fromFile(scriptTemplate)
-	doLast {
-		// The start script assumes all the files on the classpath will be in the lib directory.
-		unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
-		windowsScript.text = windowsScript.text.replace('lib\\MegaMek', 'MegaMek')
-		// The Windows script just has a single line that needs to be changed to put the script in the root,
-		// so we'll do a simple replace
-		windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')
-	}
+    description = 'Create shell script for generic distribution.'
+    applicationName = 'startup'
+    mainClassName = project.mainClassName
+    outputDir = startScripts.outputDir
+    classpath = jar.outputs.files + files(project.sourceSets.main.runtimeClasspath.files)
+            .filter { it.name.endsWith(".jar") }
+    defaultJvmOpts = project.ext.jvmOptions
+    // The default template assumes the start script is in a subdirectory and always
+    // sets APP_HOME to the parent directory of the one containing the script.
+    // So we provide a modified template.
+    unixStartScriptGenerator.template = resources.text.fromFile(scriptTemplate)
+    doLast {
+        // The start script assumes all the files on the classpath will be in the lib directory.
+        unixScript.text = unixScript.text.replace('lib/MegaMek', 'MegaMek')
+        windowsScript.text = windowsScript.text.replace('lib\\MegaMek', 'MegaMek')
+        // The Windows script just has a single line that needs to be changed to put the script in the root,
+        // so we'll do a simple replace
+        windowsScript.text = windowsScript.text.replace('set APP_HOME=%DIRNAME%..', '')
+    }
 }
 
 task createOSXBundle (dependsOn: jar) {
-	ext.appName = 'MegaMek'
-	// The jar directory is hard coded into jarbundler and has no public accessor
-	ext.jarSubdir = "${appName}.app/Contents/Resources/Java"
-	doLast {
-		mkdir osxBundleDir
-		ant.taskdef(name: 'jarbundler',
-			classname: 'com.ultramixer.jarbundler.JarBundler',
-			classpath: configurations.jarbundler.asPath)
-		ant.jarbundler (
-				name: ext.appName,
-				shortName: 'MegaMek',
-				build: rootProject.version,
-				version: rootProject.version.replace('-SNAPSHOT', ''),
-				bundleid: 'org.megamek.MegaMek',
-				mainClass: project.mainClassName,
-				stubfile: osxApplicationStub,
-				dir: osxBundleDir,
-				jar: "${jar.destinationDir}/${jar.archiveName}",
-				jvmversion: '1.8+',
-				icon: "${projectDir}/${data}/images/misc/megamek.icns",
-				useJavaXKey: 'true',
-				workingdirectory: '$APP_PACKAGE/../',
-				extraclasspath: files(project.sourceSets.main.runtimeClasspath.files)
-	    			.filter { it.name.endsWith(".jar") }.collect { '$JAVAROOT/lib/' + it.name}.join(","),
-				vmoptions: '-Xmx1024m') {
-			javaproperty (name: 'apple.awt.brushMetal', value: 'true')
-			javaproperty (name: 'apple.laf.useScreenMenuBar', value: 'true')
-		}
-	}
+    ext.appName = 'MegaMek'
+    // The jar directory is hard coded into jarbundler and has no public accessor
+    ext.jarSubdir = "${appName}.app/Contents/Resources/Java"
+    doLast {
+        mkdir osxBundleDir
+        ant.taskdef(name: 'jarbundler',
+            classname: 'com.ultramixer.jarbundler.JarBundler',
+            classpath: configurations.jarbundler.asPath)
+        ant.jarbundler (
+                name: ext.appName,
+                shortName: 'MegaMek',
+                build: rootProject.version,
+                version: rootProject.version.replace('-SNAPSHOT', ''),
+                bundleid: 'org.megamek.MegaMek',
+                mainClass: project.mainClassName,
+                stubfile: osxApplicationStub,
+                dir: osxBundleDir,
+                jar: "${jar.destinationDir}/${jar.archiveName}",
+                jvmversion: '1.8+',
+                icon: "${projectDir}/${data}/images/misc/megamek.icns",
+                useJavaXKey: 'true',
+                workingdirectory: '$APP_PACKAGE/../',
+                extraclasspath: files(project.sourceSets.main.runtimeClasspath.files)
+                    .filter { it.name.endsWith(".jar") }.collect { '$JAVAROOT/lib/' + it.name}.join(","),
+                vmoptions: '-Xmx1024m') {
+            javaproperty (name: 'apple.awt.brushMetal', value: 'true')
+            javaproperty (name: 'apple.laf.useScreenMenuBar', value: 'true')
+        }
+    }
 }
 
 distributions {
-	// Creates tasks which package distribution with MM jar and startup script in root directory
-	unix {
-		baseName = 'megamek'
-		contents {
-			from fileStagingDir
-			from(createStartScripts.outputs.files) {
-				include "startup*"
-			}
-			from(jar)
-			from (project.sourceSets.main.runtimeClasspath.files
-    				.findAll { it.name.endsWith(".jar") }) {
-    			into "${lib}"
-			}
-		}
-	}
-	// Creates tasks which package distribution with MM jar wrapped in Windows executable
-	windows {
-		contents {
-			from ("${buildDir}/launch4j") {
-				include '*.exe'
-				include '*.ini'
-			}
-			from fileStagingDir
-			from (project.sourceSets.main.runtimeClasspath.files
-    				.findAll { it.name.endsWith(".jar") }) {
-    			into "${lib}"
-			}
-		}
-	}
-	mac {
-		contents {
-			from osxBundleDir
-			from fileStagingDir
-			from (project.sourceSets.main.runtimeClasspath.files
-    				.findAll { it.name.endsWith(".jar") }) {
-    			into "${createOSXBundle.jarSubdir}/${lib}" 
-			}
-		}
-	}
+    // Creates tasks which package distribution with MM jar and startup script in root directory
+    unix {
+        baseName = 'megamek'
+        contents {
+            from fileStagingDir
+            from(createStartScripts.outputs.files) {
+                include "startup*"
+            }
+            from(jar)
+            from (project.sourceSets.main.runtimeClasspath.files
+                    .findAll { it.name.endsWith(".jar") }) {
+                into "${lib}"
+            }
+        }
+    }
+    // Creates tasks which package distribution with MM jar wrapped in Windows executable
+    windows {
+        contents {
+            from ("${buildDir}/launch4j") {
+                include '*.exe'
+                include '*.ini'
+            }
+            from fileStagingDir
+            from (project.sourceSets.main.runtimeClasspath.files
+                    .findAll { it.name.endsWith(".jar") }) {
+                into "${lib}"
+            }
+        }
+    }
+    mac {
+        contents {
+            from osxBundleDir
+            from fileStagingDir
+            from (project.sourceSets.main.runtimeClasspath.files
+                    .findAll { it.name.endsWith(".jar") }) {
+                into "${createOSXBundle.jarSubdir}/${lib}" 
+            }
+        }
+    }
 }
 
 createExe {
-	description = 'Create Windows executable that wraps MM jar'
-	mainClassName = project.mainClassName
-	outfile = 'MegaMek.exe'
-	icon = "${projectDir}/data/images/misc/megamek.ico"
-	def inifile = outfile.replace('.exe', '.l4j.ini')
-	inputs.file  jar
-	outputs.file "${buildDir}/launch4j/${outfile}"
-	outputs.file "${buildDir}/launch4j/${inifile}"
-	doLast {
+    description = 'Create Windows executable that wraps MM jar'
+    mainClassName = project.mainClassName
+    outfile = 'MegaMek.exe'
+    icon = "${projectDir}/data/images/misc/megamek.ico"
+    def inifile = outfile.replace('.exe', '.l4j.ini')
+    inputs.file  jar
+    outputs.file "${buildDir}/launch4j/${outfile}"
+    outputs.file "${buildDir}/launch4j/${inifile}"
+    doLast {
         new File("${buildDir}/${outputDir}/${inifile}").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
 ${project.ext.jvmOptions.join('\n')}
-"""		
-	}
+"""        
+    }
 }
 
 windowsDistZip {
-	description = 'Creates Windows distribution packaged as a zip archive'
-	dependsOn createExe
+    description = 'Creates Windows distribution packaged as a zip archive'
+    dependsOn createExe
 }
 
 unixDistTar {
-	description = 'Creates *nix distribution packaged as a tar ball'
-	dependsOn stageFiles
-	dependsOn createStartScripts
-	extension = 'tar.gz'
-	compression = Compression.GZIP
+    description = 'Creates *nix distribution packaged as a tar ball'
+    dependsOn stageFiles
+    dependsOn createStartScripts
+    extension = 'tar.gz'
+    compression = Compression.GZIP
 }
 
 macDistTar {
-	description = 'Creates mac OSX distribution'
-	dependsOn stageFiles
-	dependsOn createOSXBundle
-	extension = 'tar.bz2'
-	compression = Compression.BZIP2
+    description = 'Creates mac OSX distribution'
+    dependsOn stageFiles
+    dependsOn createOSXBundle
+    extension = 'tar.bz2'
+    compression = Compression.BZIP2
 }
 
 // The repository can only be cloned into an empty directory so we need to delete anything left over
 // from a previous build
 task deleteRepoDir (type: Delete) {
-	delete = "${repoDir}"
+    delete = "${repoDir}"
 }
 
 task cloneRepo (type: Exec, dependsOn: deleteRepoDir) {
-	description = 'Clones the repository to ensure we are working with a clean directory tree'
-	group = 'distribution'
-	commandLine "git"
-	args "clone", "--branch", mmBranch, "--single-branch", mmGitRoot, "${buildDir}/repo"
+    description = 'Clones the repository to ensure we are working with a clean directory tree'
+    group = 'distribution'
+    commandLine "git"
+    args "clone", "--branch", mmBranch, "--single-branch", mmGitRoot, "${buildDir}/repo"
 }
 
 task sourceZip (type: Zip) {
-	description 'Creates a zip archive of the source'
-	group = 'distribution'
-	from (rootDir) {
-		exclude "**/build/**"
-		exclude "**/.*"
-	}
-	archiveName "megamek-${version}-source.zip"
-	destinationDir file(distributionDir)
+    description 'Creates a zip archive of the source'
+    group = 'distribution'
+    from (rootDir) {
+        exclude "**/build/**"
+        exclude "**/.*"
+    }
+    archiveName "megamek-${version}-source.zip"
+    destinationDir file(distributionDir)
 }
 
 task sourceTar (type: Tar) {
-	description 'Creates a compressed tar archive of the source'
-	from (rootDir) {
-		exclude "**/build/**"
-		exclude "**/.*"
-	}
-	archiveName "megamek-${version}-source.tar.gz"
-	compression = Compression.GZIP
-	destinationDir file(distributionDir)
+    description 'Creates a compressed tar archive of the source'
+    from (rootDir) {
+        exclude "**/build/**"
+        exclude "**/.*"
+    }
+    archiveName "megamek-${version}-source.tar.gz"
+    compression = Compression.GZIP
+    destinationDir file(distributionDir)
 }
 
 // Replace the assembleDist task created by the distributions plugin to create the packages we want to
 task assembleDist(overwrite: true) {
-	description = 'Build unix, Windows, and source packages'
-	group = 'distribution'
-	dependsOn unixDistTar
-	dependsOn windowsDistZip
-	dependsOn macDistTar
+    description = 'Build unix, Windows, and source packages'
+    group = 'distribution'
+    dependsOn unixDistTar
+    dependsOn windowsDistZip
+    dependsOn macDistTar
 }
 
 task buildFromRepo (type: GradleBuild) {
-	description = 'Assembles the distribution packages in the clean repository copy'
-	group = 'distribution'
-	dependsOn cloneRepo
-	
-	buildFile = "${repoDir}/build.gradle"
-	dir = "${repoDir}"
-	tasks = [ ':megamek:assembleDist' ]
+    description = 'Assembles the distribution packages in the clean repository copy'
+    group = 'distribution'
+    dependsOn cloneRepo
+    
+    buildFile = "${repoDir}/build.gradle"
+    dir = "${repoDir}"
+    tasks = [ ':megamek:assembleDist' ]
 }
 
 task release (type: Copy) {
-	description = 'Builds the release packages from the repository and copies them into the project build directory'
-	group = 'distribution'
-	dependsOn buildFromRepo
-	
-	from (buildFromRepo)
-	into "${distributionDir}"
+    description = 'Builds the release packages from the repository and copies them into the project build directory'
+    group = 'distribution'
+    dependsOn buildFromRepo
+    
+    from (buildFromRepo)
+    into "${distributionDir}"
 }
 
 task sourcesJar(type: Jar) {
-	description = 'Creates a source archive for publication to a maven repository'
+    description = 'Creates a source archive for publication to a maven repository'
     from sourceSets.main.allJava
     classifier = 'sources'
 }
 
 task javadocJar(type: Jar) {
-	description = 'Creates a documentation archive for publication to a maven repository'
+    description = 'Creates a documentation archive for publication to a maven repository'
     from javadoc
     classifier = 'javadoc'
 }
@@ -406,16 +406,16 @@ publishing {
                 }
             }
         }
-	}
-	repositories {
-		maven {
-			url uri(mavenPublishDir)
-		}
-	}
+    }
+    repositories {
+        maven {
+            url uri(mavenPublishDir)
+        }
+    }
 }
 
 task cleanPublishingDir (type: Delete) {
-	delete = mavenPublishDir
+    delete = mavenPublishDir
 }
 
 publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir

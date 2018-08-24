@@ -833,10 +833,6 @@ public class BLKFile {
                 transporter = transporter.toLowerCase();
             	boolean isPod = transporter.endsWith(":omni");
             	transporter = transporter.replace(":omni", "");
-                // for bays, we have to save the baynumber in each bay, because
-                // one conceptual bay can contain several different ones
-                // we default to bay 1
-                int bayNumber = 1;
                 // TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.

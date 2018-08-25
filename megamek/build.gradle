@@ -345,6 +345,12 @@ task sourceTar (type: Tar) {
     destinationDir file(distributionDir)
 }
 
+// The distribution plugin adds the distro packages to the assemble task, which causes the build task
+// to run all the packaging tasks.
+task assemble(overwrite: true) {
+    dependsOn jar
+}
+
 // Replace the assembleDist task created by the distributions plugin to create the packages we want to
 task assembleDist(overwrite: true) {
     description = 'Build unix, Windows, and source packages'

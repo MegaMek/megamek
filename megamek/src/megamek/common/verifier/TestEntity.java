@@ -1303,12 +1303,17 @@ public abstract class TestEntity implements TestEntityOption {
     public double getWeightCarryingSpace() {
         double carryingSpace = getEntity().getTroopCarryingSpace();
         double cargoWeight = 0;
+        Ceil rounding = Ceil.HALFTON;
+        if (getEntity().isSupportVehicle()
+                && (getEntity().getWeight() < 5.0)) {
+            rounding = Ceil.KILO;
+        }
         for (Bay bay : getEntity().getTransportBays()) {
             if (!bay.isQuarters()) {
-                cargoWeight += ceil(bay.getWeight(), Ceil.HALFTON);
+                cargoWeight += bay.getWeight();
             }
         }
-        return carryingSpace + cargoWeight;
+        return ceil(carryingSpace + cargoWeight, rounding);
     }
 
     public String printWeightCarryingSpace() {

@@ -10051,17 +10051,29 @@ public class Server implements Runnable {
      */
     private void processTrailerMovement(Entity tractor, Entity trailer, MovePath md) {
         int trailerNumber = 0;
-        Coords trailerPos = null;
+        int stepNumber = 0;
         int trailerFacing = 0;
-        trailerNumber = (tractor.getAllTowedUnits().indexOf(trailer) + 1); //Offset by 1 so we can get the right step
+        Coords trailerPos = null;
+        Vector<Coords> trailerPath = null;
+        trailerNumber = (tractor.getAllTowedUnits().indexOf(trailer) + 1); //Offset by 1 so we don't wind up with trailer 0
+        trailerPath = tractor.getPassedThrough();
         //Place large trailers in their own hexes behind the tractor
         if (trailer.getWeight() > 100) {
-            trailerPos = md.getStep(md.length() - trailerNumber).getPosition();
+            stepNumber = (trailerPath.size() - trailerNumber);
+            trailerPos = trailerPath.elementAt(stepNumber);
             trailer.setPosition(trailerPos);
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
-            trailerPos = md.getStep(md.length() - (trailerNumber / 2)).getPosition();
-            trailer.setPosition(trailerPos);
+            trailerNumber /= 2;
+            if (trailerNumber == 0) {
+                trailer.setPosition(tractor.getPosition());
+                trailer.setFacing(tractor.getFacing());
+            } else {
+                stepNumber = (trailerPath.size() - trailerNumber);
+                trailerPos = trailerPath.elementAt(stepNumber);
+                trailer.setPosition(trailerPos);
+                trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
+            }
         }
         //Remember that trailers might be in positions 'behind' the entire MovePath...
     }

@@ -84,12 +84,14 @@ public class Ruleset {
     private HashMap<Integer,String> customRanks;
     private ArrayList<ForceNode> forceNodes;
     private String parent;
-
+    
     private Ruleset() {
         faction = "IS";
         ratingSystem = RatingSystem.IS;
-        forceNodes = new ArrayList<>();
+        defaults = new DefaultsNode();
+        toc = new TOCNode();
         customRanks = new HashMap<>();
+        forceNodes = new ArrayList<>();
         parent = null;
     }
 
@@ -133,7 +135,8 @@ public class Ruleset {
                 }
             }
         }
-        return null;
+        // This shouldn't happen unless the data is missing. Throw out a default ruleset to prevent barfing.
+        return new Ruleset();
     }
 
     public int getCustomRankBase() {

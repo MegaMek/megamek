@@ -1014,8 +1014,22 @@ public class MiscType extends EquipmentType {
                 default:
                     costValue = 50000;
                 }
+            } else if (hasFlag(F_BASIC_FIRECONTROL)) {
+                // 5% of weapon cost
+                double weaponCost = 0;
+                for (Mounted mount : entity.getWeaponList()) {
+                    weaponCost += mount.getType().getCost(entity, mount.isArmored(), mount.getLocation());
+                }
+                return weaponCost * 0.05;
+            } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
+                // 10% of weapon cost
+                double weaponCost = 0;
+                for (Mounted mount : entity.getWeaponList()) {
+                    weaponCost += mount.getType().getCost(entity, mount.isArmored(), mount.getLocation());
+                }
+                return weaponCost * 0.1;
             }
-
+            
             if (isArmored) {
                 double armoredCost = costValue;
 
@@ -6399,6 +6413,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
                 .or(MiscType.F_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
@@ -6420,6 +6435,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL)
                 .or(MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
         misc.omniFixedOnly = true;

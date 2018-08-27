@@ -1404,6 +1404,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Warning: very slow when rendering the bounding hex for really fast units.
      * @param g Graphics object on which to draw.
      */
+    @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
         if(selectedEntity != null) {
             Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);

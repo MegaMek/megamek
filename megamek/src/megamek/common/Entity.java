@@ -10401,6 +10401,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        if (isSupportVehicle()) {
+            for (Transporter t : getTransports()) {
+                int seatCost = 0;
+                if (t instanceof PillionSeatCargoBay) {
+                    seatCost += 10;
+                } else if (t instanceof StandardSeatCargoBay) {
+                    seatCost += 100;
+                }
+                if (seatCost > 0) {
+                    bvText.append(startColumn);
+                    bvText.append("Seating");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append(commafy.format(seatCost));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
+            }
+        }
         return cost;
     }
     

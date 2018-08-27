@@ -9948,7 +9948,7 @@ public class Server implements Runnable {
         //If the entity is towing trailers, update the position of those trailers
         if (entity.getAllTowedUnits().size() > 0) {
             for (Entity trailer : entity.getAllTowedUnits()) {
-                processTrailerMovement(entity, trailer, md);
+                processTrailerMovement(entity, trailer);
                 entityUpdate(trailer.getId());
             }
         }
@@ -10049,33 +10049,53 @@ public class Server implements Runnable {
      * @param trailer    The current trailer being updated
      * @param md         The MovePath that defines how the towing Entity moves
      */
-    private void processTrailerMovement(Entity tractor, Entity trailer, MovePath md) {
-        int trailerNumber = 0;
+    private void processTrailerMovement(Entity tractor, Entity trailer) {
+        int trailerPositionOffset = 0;
         int stepNumber = 0;
-        int trailerFacing = 0;
         Coords trailerPos = null;
-        Vector<Coords> trailerPath = null;
-        trailerNumber = (tractor.getAllTowedUnits().indexOf(trailer) + 1); //Offset by 1 so we don't wind up with trailer 0
-        trailerPath = tractor.getPassedThrough();
+        ArrayList<Coords> trailerPath = null;
+        trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer) + 2); //Offset so we get the right position index
+        trailerPath = initializeTrailerCoordinates(tractor, tractor.getAllTowedUnits());
         //Place large trailers in their own hexes behind the tractor
         if (trailer.getWeight() > 100) {
-            stepNumber = (trailerPath.size() - trailerNumber);
-            trailerPos = trailerPath.elementAt(stepNumber);
+            stepNumber = (trailerPath.size() - trailerPositionOffset);
+            trailerPos = trailerPath.get(stepNumber);
             trailer.setPosition(trailerPos);
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
-            trailerNumber /= 2;
-            if (trailerNumber == 0) {
+            trailerPositionOffset /= 2;
+            if (trailerPositionOffset == 1) {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
             } else {
-                stepNumber = (trailerPath.size() - trailerNumber);
-                trailerPos = trailerPath.elementAt(stepNumber);
+                stepNumber = (trailerPath.size() - trailerPositionOffset);
+                trailerPos = trailerPath.get(stepNumber);
                 trailer.setPosition(trailerPos);
                 trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
             }
         }
-        //Remember that trailers might be in positions 'behind' the entire MovePath...
+    }
+    
+    /**
+     * Flips the order of a tractor's towed trailers list by index and
+     * adds their starting coordinates to a list of hexes the tractor passed through 
+     * 
+     * @return  Returns the properly sorted list of all train coordinates
+     */
+    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, ArrayList<Entity> allTowedTrailers) {
+        ArrayList<Coords> trainCoords = new ArrayList<Coords>();
+        Coords position = null;
+        Collections.sort(allTowedTrailers, Collections.reverseOrder());
+        for (Entity trailer : allTowedTrailers) {
+            position = trailer.getPosition();
+            if (!trainCoords.contains(position)) {
+                trainCoords.add(position);
+            }
+        }
+        for (Coords c : tractor.getPassedThrough() ) {
+            trainCoords.add(c);
+        }
+        return trainCoords;    
     }
 
     /**

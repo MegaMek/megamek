@@ -138,7 +138,7 @@ public enum ConstructionType {
      * Per page 175 of Total Warfare, this is how much damage the building
      * absorbs when combat occurs inside the building.
      *
-     * @returns the fraction of damage absorbed by the building
+     * @return the fraction of damage absorbed by the building
      */
     public float getDamageReductionFromInside() {
         return damageReductionFromInside;

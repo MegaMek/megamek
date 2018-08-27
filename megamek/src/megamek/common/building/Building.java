@@ -124,7 +124,7 @@ public class Building implements Serializable {
     }
 
     /**
-     * @returns the magnitude of the explosion this building causes when destroyed, if any
+     * @return the magnitude of the explosion this building causes when destroyed, if any
      */
     public OptionalInt getExplosionMagnitude() {
         // This is currently an OptionalInt, in order to distinguish
@@ -143,7 +143,7 @@ public class Building implements Serializable {
         StringBuffer buffer = new StringBuffer();
         if (structureType == Terrains.FUEL_TANK) {
             buffer.append("Fuel Tank #");
-        } else if (getType() == Building.WALL) {
+        } else if (constructionType == ConstructionType.WALL) {
             buffer.append("Wall #");
         } else if (structureType == Terrains.BUILDING) {
             buffer.append("Building #");
@@ -214,11 +214,11 @@ public class Building implements Serializable {
 
         getBuildingClass().ifPresent(bc -> {
             switch (bc) {
-            case HANGAR:          buf.append("Hangar "); break;
-            case FORTRESS:        buf.append("Fortress "); break;
-            case GUN_EMPLACEMENT: buf.append("Gun Emplacement"); break;
-            case STANDARD:        // fall-through
-            default:              buf.append("Standard ");
+                case HANGAR:          buf.append("Hangar "); break;
+                case FORTRESS:        buf.append("Fortress "); break;
+                case GUN_EMPLACEMENT: buf.append("Gun Emplacement"); break;
+                case STANDARD:        // fall-through
+                default:              buf.append("Standard ");
             }
         });
 
@@ -250,7 +250,7 @@ public class Building implements Serializable {
         return sectionAt(coords).isPresent();
     }
 
-    /** @deprecated use {@link #iterateCoords()} instead */
+    /** @deprecated use {@code streamSections().map(BuildingSection::getCoordinates)} instead */
     @Deprecated public Enumeration<Coords> getCoords() {
         return Collections.enumeration(sections.keySet());
     }

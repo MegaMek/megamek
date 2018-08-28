@@ -646,6 +646,12 @@ public class Tank extends Entity {
     @Override
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
+        //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && getTractor() != null && getTractor().hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank Tractor = (Tank) getTractor();
+            m_bImmobile = Tractor.m_bImmobile;
+            m_bImmobileHit= Tractor.m_bImmobileHit;
+        }
         super.applyDamage();
     }
 

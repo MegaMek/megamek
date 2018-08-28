@@ -10074,6 +10074,9 @@ public class Server implements Runnable {
                 trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
             }
         }
+        //trailers are immobile by default. Match the tractor's movement here
+        trailer.delta_distance = tractor.delta_distance;
+        trailer.moved = tractor.moved;
     }
     
     /**

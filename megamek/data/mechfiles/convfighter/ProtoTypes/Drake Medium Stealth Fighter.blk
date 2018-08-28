@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,30 +20,71 @@ Drake Medium Stealth Fighter
 (Standard)
 </Model>
 
-<Tonnage>
-35
-</Tonnage>
+<year>
+3087
+</year>
+
+<originalBuildYear>
+3087
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+560
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
 10
 8
 8
 6
-</Armor>
+</armor>
 
 <Nose Equipment>
 Light Auto Cannon/5
-Light AC/5 Ammo
+IS Ammo LAC/5
 ISMML3
-IS MML-3 LRM Ammo
-IS MML-3 SRM Ammo
+IS Ammo MML-3 LRM
 ISMML3
-IS MML-3 LRM Ammo
-IS MML-3 SRM Ammo
+IS Ammo MML-3 LRM
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -53,46 +94,15 @@ IS MML-3 SRM Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
+IS Vehicular Stealth
 ISGuardianECMSuite
 </Aft Equipment>
-
-<heatsinks>
-0
-</heatsinks>
-
-<sink_type>
-10
-</sink_type>
-
-<fuel>
-560
-</fuel>
-
-<type>
-IS Level 4
-</type>
-
-<year>
-3087
-</year>
 
 <source>
 TRO Prototypes - Early Republic
 </source>
 
-<internal_type>
-0				
-</internal_type>
-
-<armor_type>
-22
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-Aerodyne
-</motion_type>
+<tonnage>
+35.0
+</tonnage>
 

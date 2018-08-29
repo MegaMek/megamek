@@ -684,7 +684,7 @@ public class MovePath implements Cloneable, Serializable {
      * if the target moves.
      * @return Whether or not this flight path takes us over an enemy unit
      */
-    private boolean getFliesOverEnemy() {
+    public boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
     }
     

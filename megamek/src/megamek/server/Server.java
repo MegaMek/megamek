@@ -10047,7 +10047,6 @@ public class Server implements Runnable {
      *
      * @param tractor    The Entity that is moving
      * @param trailer    The current trailer being updated
-     * @param md         The MovePath that defines how the towing Entity moves
      */
     private void processTrailerMovement(Entity tractor, Entity trailer) {
         int trailerPositionOffset = 0;

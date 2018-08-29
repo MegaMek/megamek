@@ -456,6 +456,10 @@ public class Tank extends Entity {
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile();
         }
+        //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && getTractor() != null) {
+            return getTractor().isImmobile();
+        }
         return super.isImmobile() || m_bImmobile;
     }
     

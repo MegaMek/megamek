@@ -67,6 +67,9 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
@@ -110,7 +113,6 @@ WindowListener, TreeSelectionListener {
     private JComboBox<String> m_chType = new JComboBox<String>();
 
     private JTree m_treeRAT = new JTree();
-    //private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
@@ -547,6 +549,8 @@ WindowListener, TreeSelectionListener {
         validate();
         pack();
         setLocationRelativeTo(cl.frame);
+        
+        m_client.getGame().addGameListener(gameListener);
     }
 
     public void valueChanged(TreeSelectionEvent ev) {
@@ -883,6 +887,14 @@ WindowListener, TreeSelectionListener {
             m_treeRAT.setSelectionPath(path);
         }
     }
+    
+    private void updateRATYear() {
+        int gameYear = m_clientgui.getClient().getGame().getOptions().intOption("year");
+        
+        m_pRATGenOptions.setYear(gameYear);
+        m_pFormationOptions.setYear(gameYear);
+        m_pForceGen.setYear(gameYear);
+    }
 
     private void createRatTreeNodes(DefaultMutableTreeNode parentNode, RandomUnitGenerator.RatTreeNode ratTreeNode) {
         for (RandomUnitGenerator.RatTreeNode child : ratTreeNode.children) {
@@ -977,6 +989,19 @@ WindowListener, TreeSelectionListener {
         }
     }
 
+    /**
+     * This class now listens for game settings changes and updates the RAT year whenever
+     * the game year changes. Well, whenever any game settings changes.
+     */
+    private GameListener gameListener = new GameListenerAdapter() {
+        @Override
+        public void gameSettingsChange(GameSettingsChangeEvent e) {
+            if(!e.isMapSettingsOnlyChange()) {
+                updateRATYear();
+            }
+        }
+    };
+    
     /**
      * A table model for displaying units
      */

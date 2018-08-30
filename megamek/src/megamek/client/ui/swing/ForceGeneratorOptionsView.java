@@ -1014,6 +1014,21 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		}
 	}		
 
+	public void setCurrentYear(int year) {
+	    currentYear = year;
+	    yearUpdated();	    
+	}
+	
+	/**
+	 * Worker function that updates various things that need to be updated when the year is changed.
+	 */
+	private void yearUpdated() {
+	    txtYear.setText(String.valueOf(currentYear));
+        RATGenerator.getInstance().loadYear(currentYear);
+        forceDesc.setYear(currentYear);
+        refreshFactions();
+	}
+	
 	@Override
 	public void focusGained(FocusEvent arg0) {
 		//Do nothing
@@ -1031,10 +1046,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		} catch (NumberFormatException ex) {
 			//ignore and restore to previous value
 		}
-		txtYear.setText(String.valueOf(currentYear));
-		RATGenerator.getInstance().loadYear(currentYear);
-		forceDesc.setYear(currentYear);
-		refreshFactions();
+		yearUpdated();
 	}
 
 	static class CBRenderer<T> extends DefaultListCellRenderer {

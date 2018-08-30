@@ -1,3 +1,4 @@
+
 VERSION HISTORY:
 ----------------
 v0.45.1-git
@@ -14,6 +15,7 @@ v0.45.1-git
 + PR #1100: Changed a long-standing bot behavior where a bot with "immediate withdrawal" 
 		on would ignore "forced withdrawal" rules and keep firing with its crippled units.
 + Data: New Sprites and some unit fixes.
++ PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

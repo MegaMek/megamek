@@ -292,14 +292,14 @@ import java.util.Vector;
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
 
         // Only check if we are carrying troopers.
-        if (null != game.getEntity(troopers)) {
+        if (null != game.getEntity(towed)) {
 
             // See if troopers cover that location.
             // Stop after the first match.
             int[] locs = getExteriorLocs(isRear);
             for (int loop = 0; loop < locs.length; loop++) {
                 if (loc == locs[loop]) {
-                    return game.getEntity(troopers);
+                    return game.getEntity(towed);
                 }
             }
 

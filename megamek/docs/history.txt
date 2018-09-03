@@ -17,6 +17,7 @@ v0.45.1-git
 + Data: New Sprites and some unit fixes.
 + PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
 + Issue #612: [Feature] Year setting in various random unit generation mechanisms now gets set to the game year whenever that changes.
++ PR #1068: Advanced Aerospace construction data and unit fixes.
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

@@ -1,7 +1,7 @@
 
 VERSION HISTORY:
 ----------------
-v0.45.1-git
+v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers
 + PR #1053: Gradient & Difference Clouds Camos
 + Issue #1081: Narc Explosive ammo type no longer missing the letter "E" in reports

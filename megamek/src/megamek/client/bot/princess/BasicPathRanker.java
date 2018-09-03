@@ -544,7 +544,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // look at all of my enemies          
             FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
             
-            int alpha = 1;
             double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                              movingUnit,
                                                              game);

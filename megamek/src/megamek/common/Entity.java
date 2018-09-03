@@ -3648,7 +3648,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                          .getPhase() != IGame.Phase.PHASE_OFFBOARD))
                 || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
                                                                              .getPhase() == IGame.Phase.PHASE_OFFBOARD))
-                || mounted.getType().hasFlag(WeaponType.F_AMS)) {
+                //No AMS, unless it's in 'weapon' mode
+                || (mounted.getType().hasFlag(WeaponType.F_AMS) && !mounted.curMode().equals(Weapon.Mode_AMS_Manual))) {
                 continue;
             }
 
@@ -3696,7 +3697,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Start reached, now we can attempt to pick a weapon.
         if ((mounted != null)
             && (mounted.isReady())
-            && (!mounted.getType().hasFlag(WeaponType.F_AMS))
+            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.Mode_AMS_On)))
+            && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.Mode_AMS_Off)))
             && (!mounted.getType().hasFlag(WeaponType.F_AMSBAY))
             && (!(mounted.getType().hasModes() && mounted.curMode().equals("Point Defense")))
             && ((mounted.getLinked() == null)
@@ -6276,7 +6278,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Make sure the AMS is good to go
             if (!weapon.isReady() || weapon.isMissing()
-                || weapon.curMode().equals("Off")) {
+                || !weapon.curMode().equals(Weapon.Mode_AMS_On)) {
                 continue;
             }
 

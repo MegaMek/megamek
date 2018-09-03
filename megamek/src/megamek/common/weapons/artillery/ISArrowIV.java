@@ -18,6 +18,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -59,7 +60,8 @@ public class ISArrowIV extends ArtilleryWeapon {
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_CC);	
+            .setReintroductionFactions(F_CC)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }

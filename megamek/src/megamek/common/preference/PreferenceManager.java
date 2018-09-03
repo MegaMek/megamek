@@ -37,9 +37,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import megamek.common.Configuration;
 import megamek.common.util.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {
 
@@ -102,7 +106,7 @@ public class PreferenceManager {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            Settings opts = (Settings) um.unmarshal(is);
+            Settings opts = (Settings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
 
             for (Store store : opts.stores) {
                 if (CLIENT_SETTINGS_STORE_NAME.equals(store.name)) {
@@ -116,7 +120,7 @@ public class PreferenceManager {
                     }
                 }
             }
-        } catch (JAXBException ex) {
+        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
             System.err.println("Error loading XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }

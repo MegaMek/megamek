@@ -39,20 +39,20 @@ public class TransportCalculator {
     // operation we will cache the results.
     private static final Map<MechSummary, Map<Integer, Integer>> bayTypeCache = new HashMap<>();
     private static final Map<MechSummary, Integer> hardpointCache = new HashMap<>();
-    
+
     public static void dispose() {
         bayTypeCache.clear();
         hardpointCache.clear();
     }
-    
+
     private ForceDescriptor fd;
     private Map<Integer, Integer> unitCounts;
-    
+
     public TransportCalculator(ForceDescriptor fd) {
         this.fd = fd;
         this.unitCounts = getUnitTypeCounts();
     }
-    
+
     /**
      * Determines number of each type of unit based on transport requirements.
      * 
@@ -92,7 +92,7 @@ public class TransportCalculator {
         }
         return unitCounts;
     }
-    
+
     /**
      * Generates dropships to provide enough capacity to transport the given ratio of the formation.
      * 
@@ -118,14 +118,14 @@ public class TransportCalculator {
                     break; // Could not find any transport for the unit type; skip
                 }
                 bayTypeCache.get(dropship).forEach((k, v) -> {
-                   currentCapacity.merge(k, v, Integer::sum); 
+                    currentCapacity.merge(k, v, Integer::sum); 
                 });
                 retVal.add(dropship);
             }
         }
         return retVal;
     }
-    
+
     /**
      * Generates jumpships to provide enough docking collars to transport the given ratio of dropships.
      * 
@@ -154,7 +154,7 @@ public class TransportCalculator {
         }
         return retVal;
     }
-    
+
     /**
      * Determines whether a potential transport has capacity for the type of unit.
      * 
@@ -174,14 +174,14 @@ public class TransportCalculator {
         }
         return false;
     }
-    
+
     private int getBayCount(MechSummary ms, int unitType) {
         if (bayTypeCache.containsKey(ms) || countBays(ms)) {
             return bayTypeCache.get(ms).getOrDefault(unitType, 0);
         }
         return 0;
     }
-    
+
     /**
      * Loads the entity, counts the unit type transport capacity, and adds to the cache.
      * 
@@ -197,7 +197,7 @@ public class TransportCalculator {
             return false;
         }
     }
-    
+
     /**
      * Counts the unit type transport capacity, and adds to the cache.
      * 
@@ -229,7 +229,7 @@ public class TransportCalculator {
         }
         return bayCount;
     }
-    
+
     /**
      * Loads the Entity and counts the number of docking hardpoints.
      * 

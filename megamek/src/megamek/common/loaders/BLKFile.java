@@ -96,7 +96,7 @@ public class BLKFile {
     public static final int BATTERY = 11;
     public static final int SOLAR = 12;
     
-    public static final String COMSTAR_BAY = "c*";
+    private static final String COMSTAR_BAY = "c*";
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
             throws EntityLoadingException {

@@ -53,7 +53,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -69,6 +68,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -839,9 +839,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 if (dir.isDirectory()) {
                     return true;
                 } else if (dir.getName().endsWith(".xml")) {
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     try {
-                        DocumentBuilder builder = dbf.newDocumentBuilder();
+                        DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
                         Document doc = builder.parse(dir);
                         NodeList listOfComponents = doc.getElementsByTagName("options");
                         if (listOfComponents.getLength() > 0) {

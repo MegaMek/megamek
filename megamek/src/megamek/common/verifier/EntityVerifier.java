@@ -16,6 +16,9 @@
 package megamek.common.verifier;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,6 +31,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
@@ -43,6 +49,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.UnitType;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Performs verification of the validity of different types of 
@@ -91,8 +98,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            ev = (EntityVerifier) um.unmarshal(config);
-        } catch (JAXBException ex) {
+            InputStream is = new FileInputStream(config);
+            ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+        } catch (IOException | JAXBException | SAXException | ParserConfigurationException ex) {
             System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
             

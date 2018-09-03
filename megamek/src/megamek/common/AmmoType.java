@@ -468,19 +468,20 @@ public class AmmoType extends EquipmentType {
      */
     public boolean canAeroUse() {
         switch (ammoType) {
-        case T_AC_LBX:
-            return munitionType == M_CLUSTER;
-        case T_ATM:
-        case T_IATM:
-            return (munitionType == M_STANDARD)
-                    || (munitionType == M_HIGH_EXPLOSIVE)
-                    || (munitionType == M_EXTENDED_RANGE);
-        case T_AR10:
-            return true;
-        default:
-            return (munitionType == M_STANDARD)
-                    || (munitionType == M_ARTEMIS_CAPABLE)
-                    || (munitionType == M_ARTEMIS_V_CAPABLE);
+            case T_AC_LBX:
+            case T_SBGAUSS:
+                return munitionType == M_CLUSTER;
+            case T_ATM:
+            case T_IATM:
+                return (munitionType == M_STANDARD)
+                        || (munitionType == M_HIGH_EXPLOSIVE)
+                        || (munitionType == M_EXTENDED_RANGE);
+            case T_AR10:
+                return true;
+            default:
+                return (munitionType == M_STANDARD)
+                        || (munitionType == M_ARTEMIS_CAPABLE)
+                        || (munitionType == M_ARTEMIS_V_CAPABLE);
         }
     }
 

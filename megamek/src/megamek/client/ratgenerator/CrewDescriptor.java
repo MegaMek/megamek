@@ -28,150 +28,178 @@ import megamek.common.UnitType;
  *
  */
 public class CrewDescriptor {
-	public static final int SKILL_WB = 0;
-	public static final int SKILL_RG = 1;
-	public static final int SKILL_GREEN = 2;
-	public static final int SKILL_REGULAR = 3;
-	public static final int SKILL_VETERAN = 4;
-	public static final int SKILL_ELITE = 5;
-	public static final int SKILL_HEROIC = 6;
-	public static final int SKILL_LEGENDARY = 7;
-//	public static final String[] skillLevelNames = {
-//		"Legendary", "Heroic", "Elite", "Veteran", "Regular", "Green", "Really Green", "Wet Behind the Ears"
-//	};
-	
-	private String name;
-	private String bloodname;
-	private int rank;
-	private ForceDescriptor assignment;
-	private int gunnery;
-	private int piloting;
-	private String title;
-	
-	public CrewDescriptor(ForceDescriptor assignment) {
-		this.assignment = assignment;
-		name = generateName();
-		rank = assignment.getCoRank() == null?0:assignment.getCoRank();
-		title = null;
-		setSkills();
-	}
-	
-	private String generateName() {
-		if (assignment.getFactionRec().isClan()) {
-			RandomNameGenerator.getInstance().setChosenFaction("Clan");
-			return RandomNameGenerator.getInstance().generate();
-		} else if (!assignment.getFaction().contains(".")) {
-			// Try to match our faction to one of the rng settings.
-			for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
-				final String f = iter.next();
-				if (assignment.getFaction().equalsIgnoreCase(f)) {
-					RandomNameGenerator.getInstance().setChosenFaction(f);
-					return RandomNameGenerator.getInstance().generate();
-				}
-			}
-		}
-		// Go up one parent level and try again
-		for (String parent : assignment.getFactionRec().getParentFactions()) {
-			for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
-				final String f = iter.next();
-				if (parent.equalsIgnoreCase(f)) {
-					RandomNameGenerator.getInstance().setChosenFaction(f);
-					return RandomNameGenerator.getInstance().generate();
-				}
-			}
-		}
-		//Give up and use general
-		RandomNameGenerator.getInstance().setChosenFaction("General");
-		return RandomNameGenerator.getInstance().generate();
-	}
-	
-	private void setSkills() {
-		boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
-		int bonus = assignment.getExperience() - 1;
-		
-		int gExp = randomExperienceLevel(Compute.d6() + bonus);
-		int pExp = randomExperienceLevel(Compute.d6() + bonus);
-			
-		int ratingLevel = assignment.getRatingLevel();
-		if (clan) {
-			bonus += ratingLevel >= 0?assignment.getRatingLevel() - 1:0;
-			if (assignment.getUnitType() != null) {
-				switch (assignment.getUnitType()) {
-				case UnitType.MEK:
-				case UnitType.BATTLE_ARMOR:
-					bonus += 2;
-					break;
-				case UnitType.TANK:
-				case UnitType.VTOL:
-				case UnitType.NAVAL:
-				case UnitType.INFANTRY:
-				case UnitType.CONV_FIGHTER:
-					bonus--;
-					break;
-				}
-			}
-			if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
-				bonus--;
-			}
-		} else {
-			if (ratingLevel == 0) {
-				bonus--;
-			}
-			if (ratingLevel >= 5) {
-				bonus++;
-			}
-			if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
-				bonus--;
-			}
-			if (assignment.getFaction().equals("WOB.SD")) {
-				bonus++;
-			}
-		}
-		
-		gunnery = randomSkillRating(gExp, bonus);
-		if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
-				&& !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
-			piloting = 8;
-		} else {
-			piloting = randomSkillRating(pExp, bonus);
-		}
-	}
-	
-	private int randomExperienceLevel(int roll) {
-		final int [] table = {
-				SKILL_WB, SKILL_RG, SKILL_GREEN, SKILL_GREEN,
-				SKILL_REGULAR, SKILL_REGULAR, SKILL_VETERAN,
-				SKILL_VETERAN, SKILL_ELITE, SKILL_LEGENDARY,
-				SKILL_HEROIC
-		};
-		if (roll < 2) {
-			return SKILL_WB;
-		}
-		if (roll > 12) {
-			return SKILL_HEROIC;
-		}
-		return table[roll - 2];
-	}
-	
-	private int randomSkillRating(int baseRating, int mod) {
-		final int[] table = {7, 7, 6, 5, 4, 4, 3, 2, 1, 0, 0, 0};
-		int roll = Compute.d6(2) + mod;
-		if (roll < 1) {
-			return table[baseRating];
-		}
-		if (roll < 3) {
-			return table[baseRating + 1];
-		}
-		if (roll < 5) {
-			return table[baseRating + 2];
-		}
-		if (roll < 7) {
-			return table[baseRating + 3];
-		}
-		return table[baseRating + 4];
-	}
+    public static final int SKILL_GREEN = 0;
+    public static final int SKILL_REGULAR = 1;
+    public static final int SKILL_VETERAN = 2;
+    public static final int SKILL_ELITE = 3;
 
-	/*
+    private String name;
+    private String bloodname;
+    private int rank;
+    private ForceDescriptor assignment;
+    private int gunnery;
+    private int piloting;
+    private String title;
+
+    public CrewDescriptor(ForceDescriptor assignment) {
+        this.assignment = assignment;
+        name = generateName();
+        rank = assignment.getCoRank() == null?0:assignment.getCoRank();
+        title = null;
+        setSkills();
+    }
+
+    private String generateName() {
+        if (assignment.getFactionRec().isClan()) {
+            RandomNameGenerator.getInstance().setChosenFaction("Clan");
+            return RandomNameGenerator.getInstance().generate();
+        } else if (!assignment.getFaction().contains(".")) {
+            // Try to match our faction to one of the rng settings.
+            for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
+                final String f = iter.next();
+                if (assignment.getFaction().equalsIgnoreCase(f)) {
+                    RandomNameGenerator.getInstance().setChosenFaction(f);
+                    return RandomNameGenerator.getInstance().generate();
+                }
+            }
+        }
+        // Go up one parent level and try again
+        for (String parent : assignment.getFactionRec().getParentFactions()) {
+            for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
+                final String f = iter.next();
+                if (parent.equalsIgnoreCase(f)) {
+                    RandomNameGenerator.getInstance().setChosenFaction(f);
+                    return RandomNameGenerator.getInstance().generate();
+                }
+            }
+        }
+        //Give up and use general
+        RandomNameGenerator.getInstance().setChosenFaction("General");
+        return RandomNameGenerator.getInstance().generate();
+    }
+
+    /**
+     * Assigns skills based on the tables in TW, p. 271-3, with supplemental mods based on the
+     * BattleForce rules, StratOps, p. 320-1
+     */
+    private void setSkills() {
+        boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
+
+        int experience;
+        if (null == assignment.getExperience()) {
+            experience = randomExperienceLevel();
+        } else {
+            experience = SKILL_GREEN + assignment.getExperience();
+        }
+
+        int bonus = 0;
+        int ratingLevel = assignment.getRatingLevel();
+        // StratOps gives a +1 for A and -1 for F. There are a few IS factions that don't have
+        // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is only one.
+        // For Clan units we give a +/-1 for each rating level above or below second line. This
+        // is an expansion of the StratOps table which only included FL, SL, and Solahma.
+        int levels = assignment.getFactionRec().getRatingLevels().size();
+        if (clan) {
+            bonus = ratingLevel - levels / 2;
+        } else if (levels > 1) {
+            if (ratingLevel == 0) {
+                bonus--;
+            }
+            if (ratingLevel ==  levels - 1) {
+                bonus++;
+            }
+        }
+        if (clan) {
+            if (assignment.getUnitType() != null) {
+                switch (assignment.getUnitType()) {
+                    case UnitType.MEK:
+                    case UnitType.BATTLE_ARMOR:
+                        bonus += 2;
+                        break;
+                    case UnitType.TANK:
+                    case UnitType.VTOL:
+                    case UnitType.NAVAL:
+                    case UnitType.INFANTRY:
+                    case UnitType.CONV_FIGHTER:
+                        bonus--;
+                        break;
+                }
+            }
+            if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
+                bonus--;
+            }
+        } else {
+            if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
+                bonus--;
+            }
+            if (assignment.getFaction().equals("WOB.SD")) {
+                bonus++;
+            }
+        }
+
+        gunnery = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
+        if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
+                && !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
+            piloting = 8;
+        } else {
+            piloting = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
+        }
+    }
+
+    /**
+     * Determines random experience level using the table on TW p. 273.
+     * 
+     * @return The experience rating index, starting at green as zero.
+     */
+    public static int randomExperienceLevel() {
+        int roll = Compute.d6(2);
+        if (roll < 6) {
+            return SKILL_GREEN;
+        } else if (roll < 10) {
+            return SKILL_REGULAR;
+        } else if (roll < 12) {
+            return SKILL_VETERAN;
+        } else {
+            return SKILL_ELITE;
+        }
+    }
+
+    private final static int[][] PILOTING_SKILL_TABLE = {
+            {7, 7, 6, 6, 6, 6, 5, 5, 4},
+            {6, 6, 6, 5, 5, 4, 4, 3, 3},
+            {6, 5, 5, 4, 4, 3, 3, 2, 2},
+            {5, 4, 4, 3, 3, 2, 2, 1, 1}
+
+    };
+
+    private final static int[][] GUNNERY_SKILL_TABLE = {
+            {7, 6, 5, 5, 4, 4, 4, 4, 3},
+            {5, 4, 4, 4, 4, 3, 3, 2, 2},
+            {4, 4, 4, 3, 3, 2, 2, 1, 1},
+            {4, 3, 3, 2, 2, 1, 1, 0, 0}
+
+    };
+
+    /**
+     * Selects the piloting or gunnery skill rating based on overall unit experience level and
+     * modifiers.
+     * 
+     * @param table      Either the piloting or the gunnery skill table
+     * @param experience The overall experience rating of the force
+     * @param mod        Situational modifiers to the skill roll
+     * @return           The skill rating
+     */
+    private int randomSkillRating(int[][] table, int experience, int mod) {
+        int column = Math.max(0, Math.min(experience, table.length - 1));
+        int roll = Compute.d6() + mod;
+        if (roll < 0) {
+            return table[column][0];
+        } else {
+            return table[column][Math.min(roll, table[column].length - 1)];
+        }
+    }
+
+    /*
 	public void assignBloodname() {
 		final int[] ratingMods = {-3, -2, -1, 1, 4};
 		int mod = 0;
@@ -234,66 +262,66 @@ public class CrewDescriptor {
 					type, assignment.getYear()));
 		}
 	}
-	*/
-	public String getName() {
-		return name;
-	}
+     */
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getBloodname() {
-		return bloodname;
-	}
+    public String getBloodname() {
+        return bloodname;
+    }
 
-	public void setBloodname(String bloodname) {
-		this.bloodname = bloodname;
-	}
+    public void setBloodname(String bloodname) {
+        this.bloodname = bloodname;
+    }
 
-	public int getRank() {
-		return rank;
-	}
+    public int getRank() {
+        return rank;
+    }
 
-	public void setRank(int rank) {
-		if (rank > this.rank) { 
-			this.rank = rank;
-		}
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setRank(int rank) {
+        if (rank > this.rank) { 
+            this.rank = rank;
+        }
+    }
 
-	public ForceDescriptor getAssignment() {
-		return assignment;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setAssignment(ForceDescriptor assignment) {
-		this.assignment = assignment;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public int getGunnery() {
-		return gunnery;
-	}
+    public ForceDescriptor getAssignment() {
+        return assignment;
+    }
 
-	public void setGunnery(int gunnery) {
-		this.gunnery = gunnery;
-	}
+    public void setAssignment(ForceDescriptor assignment) {
+        this.assignment = assignment;
+    }
 
-	public int getPiloting() {
-		return piloting;
-	}
+    public int getGunnery() {
+        return gunnery;
+    }
 
-	public void setPiloting(int piloting) {
-		this.piloting = piloting;
-	}
+    public void setGunnery(int gunnery) {
+        this.gunnery = gunnery;
+    }
 
-	public Crew createCrew(CrewType crewType) {
-		return new Crew(crewType, name, 1, gunnery, piloting);
-	}
+    public int getPiloting() {
+        return piloting;
+    }
+
+    public void setPiloting(int piloting) {
+        this.piloting = piloting;
+    }
+
+    public Crew createCrew(CrewType crewType) {
+        return new Crew(crewType, name, 1, gunnery, piloting);
+    }
 }

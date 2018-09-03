@@ -67,7 +67,7 @@ public abstract class PathRanker implements IPathRanker {
     RankedPath rankPath(MovePath path, IGame game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(), game);
+        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(me), game);
         int maxWeaponRange = me.getMaxWeaponRange();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
@@ -142,7 +142,7 @@ public abstract class PathRanker implements IPathRanker {
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
-        HomeEdge homeEdge = getOwner().getHomeEdge();
+        CardinalEdge homeEdge = getOwner().getHomeEdge(mover);
         boolean fleeing = getOwner().isFallingBack(mover);
         
         boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
@@ -338,7 +338,7 @@ public abstract class PathRanker implements IPathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -347,16 +347,16 @@ public abstract class PathRanker implements IPathRanker {
             int boardHeight = game.getBoard().getHeight();
             int boardWidth = game.getBoard().getWidth();
             StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-            if (HomeEdge.NORTH.equals(homeEdge)) {
+            if (CardinalEdge.NORTH.equals(homeEdge)) {
                 msg.append("North");
                 edgeCoords = new Coords(position.getX(), 0);
-            } else if (HomeEdge.SOUTH.equals(homeEdge)) {
+            } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
                 msg.append("South");
                 edgeCoords = new Coords(position.getX(), boardHeight);
-            } else if (HomeEdge.WEST.equals(homeEdge)) {
+            } else if (CardinalEdge.WEST.equals(homeEdge)) {
                 msg.append("West");
                 edgeCoords = new Coords(0, position.getY());
-            } else if (HomeEdge.EAST.equals(homeEdge)) {
+            } else if (CardinalEdge.EAST.equals(homeEdge)) {
                 msg.append("East");
                 edgeCoords = new Coords(boardWidth, position.getY());
             } else {

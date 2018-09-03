@@ -1266,6 +1266,7 @@ public class MovePath implements Cloneable, Serializable {
     @SuppressWarnings("unused")
     private void notSoLazyPathfinder(final Coords dest, final MoveStepType type,
                                      final int timeLimit) {
+        final int MAX_CANDIDATES = 100;
         final long endTime = System.currentTimeMillis() + timeLimit;
 
         MoveStepType step = type;
@@ -1319,12 +1320,11 @@ public class MovePath implements Cloneable, Serializable {
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
                     }
-                    candidates.add(expandedPath);
-                    discovered.put(expandedPath.getKey(), expandedPath);
                     // Make sure the candidate list doesn't get too big
-                    if (candidates.size() > 100) {
-                        candidates.remove(candidates.size() - 1);
+                    if (candidates.size() <= MAX_CANDIDATES) {
+                        candidates.add(expandedPath);
                     }
+                    discovered.put(expandedPath.getKey(), expandedPath);
                 }
             }
             // If we're doing a special movement, like charging or DFA, we will
@@ -1341,12 +1341,11 @@ public class MovePath implements Cloneable, Serializable {
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
                     }
-                    candidates.add(expandedPath);
-                    discovered.put(expandedPath.getKey(), expandedPath);
                     // Make sure the candidate list doesn't get too big
-                    if (candidates.size() > 100) {
-                        candidates.remove(candidates.size() - 1);
+                    if (candidates.size() <= MAX_CANDIDATES) {
+                        candidates.add(expandedPath);
                     }
+                    discovered.put(expandedPath.getKey(), expandedPath);
                 }
             }
 

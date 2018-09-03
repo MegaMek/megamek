@@ -3494,7 +3494,7 @@ public class Tank extends Entity {
                 case EquipmentType.T_ARMOR_HARDENED:
                     usedSlots++;
                     break;
-                case EquipmentType.T_ARMOR_STEALTH:
+                case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
                     usedSlots += 2;
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:

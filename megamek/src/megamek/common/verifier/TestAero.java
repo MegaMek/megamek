@@ -668,7 +668,7 @@ public class TestAero extends TestEntity {
                 heat += 12;
             }
         }
-        if (aero.getArmorType(1) == EquipmentType.T_ARMOR_STEALTH_VEHICLE) {
+        if (aero.hasStealth()) {
             heat += 10;
         }
         return heat;
@@ -685,7 +685,7 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            int required = countHeatEnergyWeapons();
+            int required = getConventionalCountHeatLaserWeapons();
             return Math.max(0, required - engine.getWeightFreeEngineHeatSinks());
         } else {
             return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);
@@ -729,46 +729,6 @@ public class TestAero extends TestEntity {
 
     public Aero getAero() {
         return aero;
-    }
-
-    private int countHeatEnergyWeapons() {
-        int heat = 0;
-        for (Mounted m : aero.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) 
-                    && (wt.getAmmoType() == AmmoType.T_NA))
-                        || wt.hasFlag(WeaponType.F_PPC)
-                        || wt.hasFlag(WeaponType.F_PLASMA)
-                        || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                        || (wt.hasFlag(WeaponType.F_FLAMER) 
-                                && (wt.getAmmoType() == AmmoType.T_NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            Mounted linkedBy = m.getLinkedBy();
-            if (wt.hasFlag(WeaponType.F_LASER) && (linkedBy != null)
-                    && !linkedBy.isInoperable()
-                    && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            if ((linkedBy != null) && 
-                    (linkedBy.getType() instanceof MiscType) && 
-                    linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                heat += 5;
-            }
-        }
-        for (Mounted m : aero.getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-        }
-        return heat;
     }
 
     public String printArmorLocProp(int loc, int wert) {

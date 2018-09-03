@@ -20,15 +20,17 @@ package megamek.client.bot.princess;
  * @version $Id$
  * @since : 8/17/13 10:37 PM
  */
-public enum HomeEdge {
+public enum CardinalEdge {
     NORTH(0),
     SOUTH(1),
     WEST(2),
-    EAST(3);
+    EAST(3),
+    // this signals special logic. In the context of a retreat edge, it's the nearest edge, so a bot unit will look for the nearest edge
+    NEAREST_OR_NONE(4);  
 
     private int index;
 
-    HomeEdge(int index) {
+    CardinalEdge(int index) {
         this.index = index;
     }
 
@@ -36,8 +38,8 @@ public enum HomeEdge {
         return index;
     }
 
-    public static HomeEdge getHomeEdge(int index) {
-        for (HomeEdge he : values()) {
+    public static CardinalEdge getCardinalEdge(int index) {
+        for (CardinalEdge he : values()) {
             if (he.getIndex() == index) {
                 return he;
             }

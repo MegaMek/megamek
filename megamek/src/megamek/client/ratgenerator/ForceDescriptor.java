@@ -347,7 +347,7 @@ public class ForceDescriptor {
         Map<UnitTable.Parameters, Integer> paramCount = new HashMap<>();
         for (ForceDescriptor sub : subs) {
             paramCount.merge(new UnitTable.Parameters(sub.getFactionRec(),
-                    sub.getUnitType(), sub.getYear(), sub.getRating(), null, networkMask,
+                    sub.getUnitType(), sub.getYear(), sub.ratGeneratorRating(), null, networkMask,
                     sub.getMovementModes(), sub.getRoles(), 0, sub.getFactionRec()), 1, Integer::sum);
         }
 
@@ -793,12 +793,7 @@ public class ForceDescriptor {
                 if (useWeightClass() && null != fd.getWeightClass() && fd.getWeightClass() >= 0) {
                     wcs.add(fd.getWeightClass());
                 }
-                String ratGenRating = null;
-                int ratingLevel = getRatingLevel();
-                if (ratingLevel >= 0) {
-                    List<String> ratings = getFactionRec().getRatingLevelSystem();
-                    ratGenRating = ratings.get(Math.min(ratingLevel, ratings.size() - 1));
-                }
+                String ratGenRating = ratGeneratorRating();
                 UnitTable table = UnitTable.findTable(fd.getFactionRec(), fd.getUnitType(),
                         fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,
                         fd.getMovementModes(), fd.getRoles(), roleStrictness);
@@ -845,7 +840,7 @@ public class ForceDescriptor {
                     DefaultMmLogger.getInstance().log(getClass(),
                             "loadEntities(Ruleset#ProgressListener, double)", LogLevel.ERROR,
                             "Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
-                    DefaultMmLogger.getInstance().log(getClass(),
+                    DefaultMmLogger.getInstance().error(getClass(),
                             "loadEntities(Ruleset#ProgressListener, double)", ex);
                 }
             }
@@ -1450,6 +1445,24 @@ public class ForceDescriptor {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    /**
+     * Translates between the rating codes used by the force generator and those used by the
+     * RAT Generator. The force generator uses abbreviations to make the formation rules more
+     * concise.
+     * 
+     * @return The RATGenerator rating code corresponding to the same index as the force generator
+     *         rating code.
+     */
+    public String ratGeneratorRating() {
+        FactionRecord fRec = getFactionRec();
+        if ((null != fRec)
+                && !fRec.getRatingLevels().contains(rating)
+                && (getRatingLevel() >= 0)) {
+            return fRec.getRatingLevels().get(Math.min(getRatingLevel(), fRec.getRatingLevels().size() - 1));
+        }
+        return rating;
     }
 
     public int getRatingLevel() {

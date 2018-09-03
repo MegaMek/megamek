@@ -1232,7 +1232,7 @@ public class Jumpship extends Aero {
         }
         // now lets identify the adjacent and opposite arcs
         if (highArc > Integer.MIN_VALUE) {
-            heatUsed += arcHeat.get(highArc);
+            heatUsed += arcHeat.getOrDefault(highArc, 0.0);
             // now get the BV and heat for the two adjacent arcs
             int adjArcCW = getAdjacentArcCW(highArc);
             int adjArcCCW = getAdjacentArcCCW(highArc);
@@ -1240,13 +1240,13 @@ public class Jumpship extends Aero {
             double adjArcCWHeat = 0.0;
             if ((adjArcCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCW))) {
                 adjArcCWBV = arcBVs.get(adjArcCW);
-                adjArcCWHeat = arcHeat.get(adjArcCW);
+                adjArcCWHeat = arcHeat.getOrDefault(adjArcCW, 0.0);
             }
             double adjArcCCWBV = 0.0;
             double adjArcCCWHeat = 0.0;
             if ((adjArcCCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCCW))) {
                 adjArcCCWBV = arcBVs.get(adjArcCCW);
-                adjArcCCWHeat = arcHeat.get(adjArcCCW);
+                adjArcCCWHeat = arcHeat.getOrDefault(adjArcCCW, 0.0);
             }
             if (adjArcCWBV > adjArcCCWBV) {
                 adjArc = adjArcCW;
@@ -1262,7 +1262,7 @@ public class Jumpship extends Aero {
                 heatUsed += adjArcCCWHeat;
             }
             oppArc = getOppositeArc(highArc);
-            if ((heatUsed + arcHeat.get(oppArc)) > aeroHeatEfficiency) {
+            if ((heatUsed + arcHeat.getOrDefault(oppArc, 0.0)) > aeroHeatEfficiency) {
                 oppArcMult = 0.25;
             }
         }
@@ -1369,7 +1369,7 @@ public class Jumpship extends Aero {
             bvText.append(endColumn);
             bvText.append(endRow);
             bvText.append(startColumn);
-            double totalHeat = arcHeat.get(highArc);
+            double totalHeat = arcHeat.getOrDefault(highArc, 0.0);
             bvText.append("Total Heat: " + totalHeat);
             bvText.append(endColumn);
             bvText.append(endRow);
@@ -1387,7 +1387,7 @@ public class Jumpship extends Aero {
                 bvText.append(endRow);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                totalHeat += arcHeat.get(adjArc);
+                totalHeat += arcHeat.getOrDefault(adjArc, 0.0);
                 String over = "";
                 if (totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
@@ -1410,7 +1410,7 @@ public class Jumpship extends Aero {
                 bvText.append(endRow);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                totalHeat += arcHeat.get(oppArc);
+                totalHeat += arcHeat.getOrDefault(oppArc, 0.0);
                 String over = "";
                 if (totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";

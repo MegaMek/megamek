@@ -41,6 +41,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.ratgenerator.AbstractUnitRecord;
+import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.ForceNode;
@@ -491,6 +492,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		fd.setSizeMod(forceDesc.getSizeMod());
 		fd.getFlags().addAll(forceDesc.getFlags());
 		fd.setRating(forceDesc.getRating());
+		if (forceDesc.getExperience() != null) {
+	        fd.setExperience(forceDesc.getExperience());
+		} else {
+		    fd.setExperience(CrewDescriptor.randomExperienceLevel());
+		}
 		fd.setWeightClass(forceDesc.getWeightClass());
 		fd.setAttachments(chkAttachments.isSelected());
 		if (forceDesc.getUnitType() != null) {
@@ -893,6 +899,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 		} else if (ev.getSource() == cbRating) {
 			forceDesc.setRating((String)cbRating.getSelectedItem());
 			refreshFlags();
+        } else if (ev.getSource() == cbExperience) {
+            if (cbExperience.getSelectedIndex() == 0) {
+                forceDesc.setExperience(null);
+            } else {
+                forceDesc.setExperience(cbExperience.getSelectedIndex() - 1);
+            }
+            refreshFlags();
 		} else if (ev.getSource() == cbFlags) {
 			forceDesc.getFlags().clear();
 			if (cbFlags.getSelectedItem() != null) {

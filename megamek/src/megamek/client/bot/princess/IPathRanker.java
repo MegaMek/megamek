@@ -31,7 +31,7 @@ public interface IPathRanker {
      * @param game     The {@link IGame} currently in play.
      * @return The distance, in hexes to the unit's home edge.
      */
-    int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game);
+    int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game);
     
     /**
      * Returns the best path of a list of ranked paths.

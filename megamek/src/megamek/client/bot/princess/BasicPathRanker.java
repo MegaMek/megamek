@@ -544,6 +544,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             // look at all of my enemies          
             FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
             
+            int alpha = 1;
             double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                              movingUnit,
                                                              game);
@@ -918,7 +919,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                               Terrains.MAGMA,
                                               Terrains.ICE,
                                               Terrains.WATER,
-                                              Terrains.BUILDING));
+                                              Terrains.BUILDING,
+                                              Terrains.BRIDGE));
 
         int[] terrainTypes = hex.getTerrainTypes();
         Set<Integer> hazards = new HashSet<>();
@@ -956,8 +958,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     }
                     break;
                 case Terrains.BUILDING:
-                    hazardValue += calcBuildingHazard(step, movingUnit,
-                                                      movePath, board, logMsg);
+                    hazardValue += calcBuildingHazard(step, movingUnit, jumpLanding, board, logMsg);
+                    break;
+                case Terrains.BRIDGE:
+                    hazardValue += calcBridgeHazard(movingUnit, hex, step, jumpLanding, board, logMsg);
                     break;
             }
         }
@@ -969,7 +973,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
     // Building collapse and basements are handled in PathRanker.validatePaths.
     private double calcBuildingHazard(MoveStep step, Entity movingUnit,
-                                      MovePath movePath, IBoard board,
+                                      boolean jumpLanding, IBoard board,
                                       StringBuilder logMsg) {
         logMsg.append("\n\tCalculating building hazard:  ");
 
@@ -980,7 +984,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         // Jumping onto a building is handled in PathRanker validatePaths.
-        if (movePath.isJumping()) {
+        if (jumpLanding) {
             return 0;
         }
 
@@ -1000,6 +1004,20 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         logMsg.append("\n\t\tHazard value (")
               .append(LOG_DECIMAL.format(hazard)).append(").");
         return hazard;
+    }
+    
+    private double calcBridgeHazard(Entity movingUnit, IHex hex, MoveStep step, boolean jumpLanding, IBoard board, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating bridge hazard:  ");
+        
+        // if we are going to BWONGGG into a bridge from below, then it's treated as a building.
+        // Otherwise, bridge collapse checks have already been handled in validatePaths
+        int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        if ((bridgeElevation > step.getElevation()) &&
+                (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
+            return calcBuildingHazard(step, movingUnit, jumpLanding, board, logMsg);
+        }
+        
+        return 0;
     }
 
     private double calcIceHazard(Entity movingUnit, IHex hex, MoveStep step,
@@ -1045,8 +1063,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
         // Hover units are above the surface.
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above water (0).");
+            EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
+            EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering or swimming above water (0).");
             return 0;
         }
 
@@ -1057,6 +1076,17 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
+        // if we are crossing a bridge, then we'll be fine. Trust me.
+        // 1. Determine bridge elevation
+        // 2. If unit elevation is equal to bridge elevation, skip.
+        if(hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+            int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+            if(bridgeElevation == step.getElevation()) {
+                logMsg.append("Unit (0) crossing bridge.");
+                return 0;
+            }
+        }
+        
         // Most other units are automatically destroyed.
         if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech ||
               movingUnit instanceof BattleArmor)) {

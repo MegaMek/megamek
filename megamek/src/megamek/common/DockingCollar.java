@@ -291,6 +291,10 @@ public class DockingCollar implements Transporter {
     public void setDamaged(boolean b) {
         damaged = b;
     }
+    
+    public int hardpointCost() {
+        return 1;
+    }
 
     public void setGame(IGame game) {
         this.game = game;
@@ -299,6 +303,11 @@ public class DockingCollar implements Transporter {
     public void resetTransporter() {
         troops = new Vector<Integer>();
         currentSpace = totalSpace;
+    }
+    
+    @Override
+    public String toString() {
+        return "dockingcollar";
     }
     
 } // End package class TroopSpace implements Transporter

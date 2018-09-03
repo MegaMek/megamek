@@ -37,11 +37,11 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:65.0:2:1
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
+cargobay:57.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -73,9 +73,9 @@ steeragequarters:20.0:0
 </armor_tech>
 
 <armor>
-74
-74
-74
+76
+75
+75
 55
 </armor>
 
@@ -114,7 +114,7 @@ XTRO Primitives II - Age of War
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>
@@ -152,4 +152,8 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>
 

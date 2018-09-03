@@ -39,9 +39,8 @@ Spheroid
 <transporters>
 2ndclassquarters:0.0:0
 1stclassquarters:20.0:0
-crewquarters:77.0:0
-steeragequarters:85.0:0
-cargobay:273.5:1:1
+steeragequarters:140.0:0
+cargobay:29.0:2:5
 </transporters>
 
 <SafeThrust>
@@ -53,7 +52,7 @@ cargobay:273.5:1:1
 </collartype>
 
 <heatsinks>
-28
+29
 </heatsinks>
 
 <sink_type>
@@ -188,4 +187,8 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>
 

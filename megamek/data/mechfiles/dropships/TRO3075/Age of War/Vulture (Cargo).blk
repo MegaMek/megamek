@@ -37,10 +37,10 @@ Spheroid
 </motion_type>
 
 <transporters>
-cargobay:1730.5:4:1
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:77.0:0
+cargobay:1639.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -48,7 +48,7 @@ crewquarters:77.0:0
 </SafeThrust>
 
 <heatsinks>
-78
+82
 </heatsinks>
 
 <sink_type>
@@ -127,6 +127,10 @@ TRO 3075 - Age of War
 3500.0
 </tonnage>
 
+<designtype>
+1
+</designtype>
+
 <crew>
 11
 </crew>
@@ -163,3 +167,6 @@ TRO 3075 - Age of War
 20
 </escape_pod>
 
+<history>
+The TRO has the ship constucted not using the current IO Primitive rules. Ship has been rebuild to those rules, loss of cargo space to become valid.
+</history>

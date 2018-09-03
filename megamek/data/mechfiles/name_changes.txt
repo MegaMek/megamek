@@ -46,9 +46,38 @@ Union C|Union C (2829)
 Vampire II|Vampire II (Standard)
 Vengeance Danai Centrella|Vengeance (Danai Centrella)
 
+#Jumpships
+M9 Pavise SDS Battle Station |M9 SDS Battle Station 'Pavise'
+Large Habitat (Standard)|Habitat - Large (2500)
+Large Pressurized Yard (Standard)|Pressurized Yard - Large (2400)
+Large Unpressurized Yard (Standard)|Unpressurized Yard - Large (2300)
+Medium-Large Factory (Standard)|Factory - Medium/Large (2400)
+Small Factory (Standard)|Factory - Small (2300)
+Small Habitat (Standard)|Habitat - Small (2400)
+Small Pressurized Yard (Standard)|Pressurized Yard - Small (2200)
+Small Unpressurized Yard (Standard)|Unpressurized Yard - Small (2100)
+
 #Mechs
 Jagermech JM6-DG|JagerMech JM6-DG
+
+#Space Stations
+M9 Pavise SDS Battle Station |M9 SDS Battle Station 'Pavise'
+Large Habitat (Standard)|Habitat - Large (2500)
+Large Pressurized Yard (Standard)|Pressurized Yard - Large (2400)
+Large Unpressurized Yard (Standard)|Unpressurized Yard - Large (2300)
+Medium-Large Factory (Standard)|Factory - Medium/Large (2400)
+Small Factory (Standard)|Factory - Small (2300)
+Small Habitat (Standard)|Habitat - Small (2400)
+Small Pressurized Yard (Standard)|Pressurized Yard - Small (2200)
+Small Unpressurized Yard (Standard)|Unpressurized Yard - Small (2100)
 
 #Tanks
 Nuberu Anti Aircraft Tank 2 'Numantia'|Nuberu Anti Aircraft Tank 2 'Numantia'
 SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
+
+#Warships
+Black Lion Battlecruiser (Clan)|Black Lion II Battlecruiser (2843)
+Essex Destroyer (Clan)|Essex II Destroyer (2862)
+Black Lion I-Battlecruiser |Black Lion I Battlecruiser
+Black Lion Battlecruiser (2691)|Black Lion II Battlecruiser (2691)
+Essex Destroyer (2711)|Essex II Destroyer (2711)

@@ -38,13 +38,13 @@ Aerodyne
 
 <transporters>
 smallcraftbay:2.0:2:1
+infantrybay:5.0:1:3:Foot
+infantrybay:5.0:1:5:Foot
+1stclassquarters:20.0:0
+crewquarters:56.0:0
 2ndclassquarters:70.0:0
-infantrybay:5.0:1:3
-infantrybay:5.0:1:5
-1stclassquarters:50.0:0
-crewquarters:217.0:0
-cargobay:1020.0:1:2
-cargobay:1000.0:1:4
+cargobay:1019.0:1:7
+cargobay:1019.5:1:8
 </transporters>
 
 <SafeThrust>
@@ -52,7 +52,7 @@ cargobay:1000.0:1:4
 </SafeThrust>
 
 <heatsinks>
-86
+94
 </heatsinks>
 
 <sink_type>
@@ -126,15 +126,15 @@ XTRO Primitives IV - Age of War
 </designtype>
 
 <crew>
-316
+300
 </crew>
 
 <officers>
-5
+2
 </officers>
 
 <gunners>
-12
+2
 </gunners>
 
 <passengers>
@@ -161,3 +161,6 @@ XTRO Primitives IV - Age of War
 1
 </escape_pod>
 
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>

@@ -25,7 +25,6 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
@@ -40,14 +39,6 @@ import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKJumpshipFile extends BLKFile implements IMechLoader {
-
-    // armor locatioms
-    public static final int NOSE = 0;
-    public static final int FLS = 1;
-    public static final int FRS = 2;
-    public static final int ALS = 3;
-    public static final int ARS = 4;
-    public static final int AFT = 5;
 
     public BLKJumpshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -108,6 +99,14 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         }
         a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
+        if (dataFile.exists("officers")) {
+            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+        }
+
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+        }
+
         // Other Passengers
         if (!dataFile.exists("other_crew")) {
             //throw new EntityLoadingException("Could not find other_crew block.");
@@ -162,6 +161,10 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("hpg")) {
             a.setHPG(true);
         }
+        
+        if (dataFile.exists("sail")) {
+            a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
+        }
 
         // Grav Decks - two approaches
         // First, the old method, where a number of grav decks for each category is specified
@@ -212,12 +215,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKJumpshipFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKJumpshipFile.FLS], Jumpship.LOC_FLS);
-        a.initializeArmor(armor[BLKJumpshipFile.FRS], Jumpship.LOC_FRS);
-        a.initializeArmor(armor[BLKJumpshipFile.ALS], Jumpship.LOC_ALS);
-        a.initializeArmor(armor[BLKJumpshipFile.ARS], Jumpship.LOC_ARS);
-        a.initializeArmor(armor[BLKJumpshipFile.AFT], Aero.LOC_AFT);
+        for (int i = 0; i < armor.length; i++) {
+            a.initializeArmor(armor[i], i);
+        }
 
         a.autoSetInternal();
         a.autoSetThresh();
@@ -225,19 +225,17 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         a.initializeSailIntegrity();
         a.recalculateTechAdvancement();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
+
+        // legacy
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
         loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
-        loadEquipment(a, "Aft Left Side", Jumpship.LOC_ALS);
-        loadEquipment(a, "Aft Right Side", Jumpship.LOC_ARS);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
 
         addTransports(a);
 
         // get docking collars
-        if (!dataFile.exists("docking_collar")) {
-            throw new EntityLoadingException("Could not find docking collar block.");
-        }
         int docks = dataFile.getDataAsInt("docking_collar")[0];
         while (docks > 0) {
             a.addTransporter(new DockingCollar(1));

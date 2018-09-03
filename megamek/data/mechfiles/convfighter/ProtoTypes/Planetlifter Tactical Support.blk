@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,38 +20,32 @@ Planetlifter Tactical Support
 (Standard)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3082
+</year>
+
+<originalBuildYear>
+3082
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-22
-7
-7
-12
-</Armor>
-
-<Nose Equipment>
-ISAngelECM
-ISLookDownRadar
-ISTankCockpitCommandConsole
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISArrowIVSystem
-ISArrowIV Ammo
-ISArrowIV Ammo
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -65,33 +59,49 @@ ISArrowIV Ammo
 320
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3082
-</year>
-
-<source>
-TRO Prototypes - Jihad
-</source>
-
-<internal_type>
-0				
-</internal_type>
+<engine_type>
+0
+</engine_type>
 
 <armor_type>
 22
 </armor_type>
 
-<engine_type>				
-0
-</engine_type>
+<armor_tech>
+5
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+22
+7
+7
+12
+</armor>
 
+<Nose Equipment>
+ISAngelECMSuite
+ISLookDownRadar
+ISTankCockpitCommandConsole
+</Nose Equipment>
 
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+IS Vehicular Stealth
+ISArrowIV
+ISArrowIVAmmo
+ISArrowIVAmmo
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
 

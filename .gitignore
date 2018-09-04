@@ -8,3 +8,5 @@
 Thumbs.db
 /.gradle/
 /settings_local.gradle
+/.classpath
+/.project

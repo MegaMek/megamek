@@ -43,6 +43,12 @@
     <showFailedEquip>
     true
     </showFailedEquip>
+    <showIncorrectIntroYear>
+    true
+    </showIncorrectIntroYear>
+    <introYearMargin>
+    5
+    </introYearMargin>
   </mech>
   <tank>
     <ceilWeight>
@@ -73,5 +79,11 @@
     <skip>
     false
     </skip>
+    <showIncorrectIntroYear>
+    true
+    </showIncorrectIntroYear>
+    <introYearMargin>
+    5
+    </introYearMargin>
   </tank>
 </entityverifier>

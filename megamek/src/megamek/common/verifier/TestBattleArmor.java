@@ -469,7 +469,7 @@ public class TestBattleArmor extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
         return false;
     }
 

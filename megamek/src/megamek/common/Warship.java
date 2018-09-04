@@ -83,6 +83,10 @@ public class Warship extends Jumpship {
     
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
+        // Primitives don't distinguish between jumpships and warships.
+        if (isPrimitive()) {
+            return super.getConstructionTechAdvancement();
+        }
         return TA_WARSHIP;
     }
 
@@ -129,7 +133,7 @@ public class Warship extends Jumpship {
 
     @Override
     public void initializeKFIntegrity() {
-        int integrity = (int) Math.ceil(2 + 0.4525 * weight / 25000.0);
+        int integrity = (int) Math.ceil(2 + getJumpDriveWeight() / 25000.0);
         setKFIntegrity(integrity);
     }
 
@@ -138,12 +142,6 @@ public class Warship extends Jumpship {
         return kf_integrity > 0;
     }
     
-    @Override
-    public double getJumpDriveWeight() {
-        double pct = 0.45; //TODO: compact
-        return Math.ceil(getWeight() * pct); 
-    }
-
     // broadside weapon arcs
     @Override
     public int getWeaponArc(int wn) {
@@ -214,66 +212,10 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public double getArmorWeight(int loc) {
-        // first I need to subtract SI bonus from total armor
-        double armorPoints = getTotalOArmor();
-
-        armorPoints -= Math.round((get0SI() * loc) / 10.0);
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
-
-        double baseArmor = 0.8;
-        if (isClan()) {
-            baseArmor = 1.0;
-        }
-
-        if (weight >= 250000) {
-            baseArmor = 0.4;
-            if (isClan()) {
-                baseArmor = 0.5;
-            }
-        } else if (weight >= 150000) {
-            baseArmor = 0.6;
-            if (isClan()) {
-                baseArmor = 0.7;
-            }
-        }
-
-        if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
-            baseArmor += 0.2;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_CARBIDE) {
-            baseArmor += 0.4;
-        } else if (armorType[0] == EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE) {
-            baseArmor += 0.6;
-        }
-
-        double armorPerTon = baseArmor;
-        double armWeight = 0.0;
-        for (; (armWeight * armorPerTon) < armorPoints; armWeight += .5) {
-            // add armor in discrete batches
-        }
-        return armWeight;
+    public double getArmorWeight() {
+        return getArmorWeight(locations() - 2);
     }
     
-    @Override
-    //Jumpships and Space Stations use 10% of the fuel Warships do...
-    public double getStrategicFuelUse() {
-        double fuelUse;
-        if (weight >= 200000) {
-            fuelUse = 39.52;
-        } else if (weight >= 100000) {
-            fuelUse = 19.75;
-        } else {
-            //Per Stratops, this is impossible for Warships, but Primitive Jumpships in IO can be this small
-            fuelUse = 9.77;
-        } 
-        if (isPrimitive()) {
-            return fuelUse * primitiveFuelFactor();
-        }
-        return fuelUse;
-    }
-
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[23];
@@ -344,7 +286,7 @@ public class Warship extends Jumpship {
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());

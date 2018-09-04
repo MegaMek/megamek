@@ -1,17 +1,26 @@
+
 VERSION HISTORY:
 ----------------
-v0.45.1-git
+v0.45.2-SNAPSHOT
++ Switched build system from ant to gradle.
+
+v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers
-+ PR #1053 - Gradient & Difference Clouds Camos
-+ Issue #1081 - Narc Explosive ammo type no longer missing the letter "E" in reports
-+ Issue #378 - [Feature] Implements Tac Ops "Use AMS as Weapon" rule
-+ Issue #1051 - AMS no longer nags player when a shutdown mech is attacked
++ PR #1053: Gradient & Difference Clouds Camos
++ Issue #1081: Narc Explosive ammo type no longer missing the letter "E" in reports
++ Issue #378: [Feature] Implements Tac Ops "Use AMS as Weapon" rule
++ Issue #1051: AMS no longer nags player when a shutdown mech is attacked
 + Data: New Sprites and data fixes.
-+ PR #1084 - [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") 
++ PR #1084: [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") 
          and retreat edges (for when the bot is trying to "forced withdraw" crippled units)
-+ Data - Moving old and out of date Read.me file.
++ Data: Moving old and out of date Read.me file.
 + PR #1092: Fixes for force generator (some unit rating mismatches, skill calculations, a few faction rule fixes)
-+ PR #1100: Changed a long-standing bot behavior where a bot with "immediate withdrawal" on would ignore "forced withdrawal" rules and keep firing with its crippled units.
++ PR #1100: Changed a long-standing bot behavior where a bot with "immediate withdrawal" 
+		on would ignore "forced withdrawal" rules and keep firing with its crippled units.
++ Data: New Sprites and some unit fixes.
++ PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
++ Issue #612: [Feature] Year setting in various random unit generation mechanisms now gets set to the game year whenever that changes.
++ PR #1068: Advanced Aerospace construction data and unit fixes.
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

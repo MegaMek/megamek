@@ -25,9 +25,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -86,6 +84,14 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find crew block.");
         }
         a.setNCrew(dataFile.getDataAsInt("crew")[0]);
+
+        if (dataFile.exists("officers")) {
+            a.setNOfficers(dataFile.getDataAsInt("officers")[0]);
+        }
+
+        if (dataFile.exists("gunners")) {
+            a.setNGunners(dataFile.getDataAsInt("gunners")[0]);
+        }
 
         // Marines
         if (!dataFile.exists("marines")) {
@@ -155,6 +161,15 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("hpg")) {
             a.setHPG(true);
         }
+
+        if (dataFile.exists("sail")) {
+            a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
+        }
+
+        if (dataFile.exists("modular")) {
+            a.setBattleStation(true);
+        }
+
         // BattleStation
         if (dataFile.exists("Battlestation")) {
             a.setBattleStation(true);
@@ -181,7 +196,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             }
         }
 
-        // Switch older files with standard armor to aerospace
+        // Switch older files with standard armor to capital
         int at = EquipmentType.T_ARMOR_AEROSPACE;
         if (dataFile.exists("armor_type")) {
             at = dataFile.getDataAsInt("armor_type")[0];
@@ -209,12 +224,9 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKJumpshipFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKJumpshipFile.FLS], Jumpship.LOC_FLS);
-        a.initializeArmor(armor[BLKJumpshipFile.FRS], Jumpship.LOC_FRS);
-        a.initializeArmor(armor[BLKJumpshipFile.ALS], Jumpship.LOC_ALS);
-        a.initializeArmor(armor[BLKJumpshipFile.ARS], Jumpship.LOC_ARS);
-        a.initializeArmor(armor[BLKJumpshipFile.AFT], Aero.LOC_AFT);
+        for (int i = 0; i < armor.length; i++) {
+            a.initializeArmor(armor[i], i);
+        }
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -223,24 +235,16 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         a.initializeSailIntegrity();
         a.recalculateTechAdvancement();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
+
+        // legacy
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
         loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
-        loadEquipment(a, "Aft Left Side", Jumpship.LOC_ALS);
-        loadEquipment(a, "Aft Right Side", Jumpship.LOC_ARS);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
 
         addTransports(a);
 
-        // get docking collars
-        if (!dataFile.exists("docking_collar")) {
-            throw new EntityLoadingException("Could not find docking collar block.");
-        }
-        int docks = dataFile.getDataAsInt("docking_collar")[0];
-        while (docks > 0) {
-            a.addTransporter(new DockingCollar(1));
-            docks--;
-        }
         a.setArmorTonnage(a.getArmorWeight());
         return a;
     }

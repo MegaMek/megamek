@@ -4127,6 +4127,20 @@ public class Aero extends Entity implements IAero, IBomber {
         return 0;
     }
 
+    /**
+     * @return The number of escape pods carried by the unit
+     */
+    public int getEscapePods() {
+        return 0;
+    }
+
+    /**
+     * @return The number of lifeboats carried by the unit
+     */
+    public int getLifeBoats() {
+        return 0;
+    }
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO;

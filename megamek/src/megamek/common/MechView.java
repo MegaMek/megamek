@@ -638,15 +638,19 @@ public class MechView {
                 renderArmor(a.getSI(), a.get0SI(), html)));
 
         // if it is a jumpship get sail and KF integrity
-        if (isJumpship & !isSpaceStation) {
+        if (isJumpship) {
             Jumpship js = (Jumpship) entity;
 
             // TODO: indicate damage.
-            retVal.add(new LabeledElement(Messages.getString("MechView.SailIntegrity"), //$NON-NLS-1$
-                    String.valueOf(js.getSailIntegrity())));
+            if (js.hasSail()) {
+                retVal.add(new LabeledElement(Messages.getString("MechView.SailIntegrity"), //$NON-NLS-1$
+                        String.valueOf(js.getSailIntegrity())));
+            }
 
-            retVal.add(new LabeledElement(Messages.getString("MechView.KFIntegrity"), //$NON-NLS-1$
-                    String.valueOf(js.getKFIntegrity())));
+            if (js.getDriveCoreType() != Jumpship.DRIVE_CORE_NONE) {
+                retVal.add(new LabeledElement(Messages.getString("MechView.KFIntegrity"), //$NON-NLS-1$
+                        String.valueOf(js.getKFIntegrity())));
+            }
         }
 
         String armor = String.valueOf(entity.isCapitalFighter()? a.getCapArmor() : a.getTotalArmor());

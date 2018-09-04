@@ -21,11 +21,11 @@ Manatee
 </Model>
 
 <year>
-2465
+2403
 </year>
 
 <originalBuildYear>
-2449
+2403
 </originalBuildYear>
 
 <type>
@@ -37,10 +37,9 @@ Spheroid
 </motion_type>
 
 <transporters>
-2ndclassquarters:0.0:0
-crewquarters:35.0:0
+cargobay:1044.0:1:1
 1stclassquarters:10.0:0
-cargobay:1040.0:1:1
+crewquarters:35.0:0
 </transporters>
 
 <SafeThrust>
@@ -48,7 +47,7 @@ cargobay:1040.0:1:1
 </SafeThrust>
 
 <heatsinks>
-129
+107
 </heatsinks>
 
 <sink_type>
@@ -102,6 +101,10 @@ TRO 3075 - Age of War
 1900.0
 </tonnage>
 
+<designtype>
+1
+</designtype>
+
 <crew>
 5
 </crew>
@@ -137,4 +140,8 @@ TRO 3075 - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+<History>
+The unit per the TRO is overweight, and has a massive surplus of Heat Sinks, reduced heat sinks to make it legal.
+<History>
 

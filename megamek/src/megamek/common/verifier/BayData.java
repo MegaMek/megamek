@@ -1,5 +1,15 @@
-/**
- * 
+/*
+ * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 package megamek.common.verifier;
 
@@ -9,6 +19,7 @@ import megamek.common.ASFBay;
 import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.CargoBay;
+import megamek.common.DropshuttleBay;
 import megamek.common.Entity;
 import megamek.common.HeavyVehicleBay;
 import megamek.common.InfantryBay;
@@ -17,8 +28,10 @@ import megamek.common.LightVehicleBay;
 import megamek.common.LiquidCargoBay;
 import megamek.common.LivestockCargoBay;
 import megamek.common.MechBay;
+import megamek.common.NavalRepairFacility;
 import megamek.common.ProtomechBay;
 import megamek.common.RefrigeratedCargoBay;
+import megamek.common.ReinforcedRepairFacility;
 import megamek.common.SmallCraftBay;
 import megamek.common.SuperHeavyVehicleBay;
 import megamek.common.TechAdvancement;
@@ -59,6 +72,14 @@ public enum BayData {
             (size, num) -> new ASFBay(size, 1, num)),
     SMALL_CRAFT ("Small Craft", 200.0, 5, SmallCraftBay.techAdvancement(),
             (size, num) -> new SmallCraftBay(size, 1, num)),
+    DROPSHUTTLE ("Dropshuttle", 11000.0, 0, DropshuttleBay.techAdvancement(),
+            (size, num) -> new DropshuttleBay(1, num, 0)),
+    REPAIR_UNPRESSURIZED ("Standard Repair Facility (Unpressurized)", 0.025, 0, NavalRepairFacility.techAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, 1, num, 0, false)),
+    REPAIR_PRESSURIZED ("Standard Repair Facility (Pressurized)", 0.075, 0, NavalRepairFacility.techAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, 1, num, 0, true)),
+    REPAIR_REINFORCED ("Reinforced Repair Facility", 0.1, 0, ReinforcedRepairFacility.techAdvancement(),
+            (size, num) -> new ReinforcedRepairFacility(size, 1, num, 0)),
     CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
             (size, num) -> new CargoBay(size, 1, num)),
     LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),
@@ -166,6 +187,12 @@ public enum BayData {
             return IS_BATTLE_ARMOR;
         } else if (bay instanceof ASFBay) {
             return FIGHTER;
+        } else if (bay instanceof DropshuttleBay) {
+            return DROPSHUTTLE;
+        } else if (bay instanceof ReinforcedRepairFacility) {
+            return REPAIR_REINFORCED;
+        } else if (bay instanceof NavalRepairFacility) {
+            return ((NavalRepairFacility) bay).isPressurized()? REPAIR_PRESSURIZED : REPAIR_UNPRESSURIZED;
         } else if (bay instanceof SmallCraftBay) {
             return SMALL_CRAFT;
         } else if (bay instanceof LiquidCargoBay) {
@@ -188,8 +215,6 @@ public enum BayData {
      * @return true if the bay is a type of cargo bay rather than a unit transport bay.
      */
     public boolean isCargoBay() {
-        //TODO: Container cargo bays aren't implemented, but when added they can be carried by
-        // industrial but not battlemechs.
         return ordinal() >= CARGO.ordinal();
     }
     
@@ -201,12 +226,36 @@ public enum BayData {
      * @return
      */
     public boolean isLegalFor(Entity en) {
+        //TODO: Container cargo bays aren't implemented, but when added they can be carried by
+        // industrial but not battlemechs.
         if (en.hasETypeFlag(Entity.ETYPE_MECH)) {
             return isCargoBay() && (this != LIVESTOCK_CARGO);
+        } else if ((this == DROPSHUTTLE)
+                || (this == REPAIR_UNPRESSURIZED)
+                || (this == REPAIR_PRESSURIZED)
+                || (this == REPAIR_REINFORCED)) {
+            return en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         } else {
             return en.hasETypeFlag(Entity.ETYPE_TANK)
                     || en.hasETypeFlag(Entity.ETYPE_AERO);
         }
+    }
+
+    /**
+     * @return Whether the bay type requires a designated armor facing.
+     */
+    public boolean requiresFacing() {
+        return (this == DROPSHUTTLE)
+                || (this == REPAIR_UNPRESSURIZED)
+                || (this == REPAIR_PRESSURIZED)
+                || (this == REPAIR_REINFORCED);
+    }
+
+    /**
+     * @return Whether the bay capacity can be changed.
+     */
+    public boolean hasVariableSize() {
+        return this != DROPSHUTTLE;
     }
 }
 

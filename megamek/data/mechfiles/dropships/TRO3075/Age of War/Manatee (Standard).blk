@@ -37,14 +37,13 @@ Spheroid
 </motion_type>
 
 <transporters>
-cargobay:375.0:1:1
 mechbay:1.0:1
 mechbay:1.0:1
 mechbay:1.0:1
 mechbay:1.0:1
-1stclassquarters:20.0:0
 2ndclassquarters:0.0:0
-crewquarters:77.0:0
+steeragequarters:65.0:0
+cargobay:360.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -124,6 +123,10 @@ TRO 3075 - Age of War
 1900.0
 </tonnage>
 
+<designtype>
+1
+</designtype>
+
 <crew>
 19
 </crew>
@@ -159,4 +162,9 @@ TRO 3075 - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>
+
 

@@ -2,177 +2,53 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 Narukami Destroyer
 </Name>
+
 <Model>
 (Block I)
 </Model>
-<Tonnage>
-670000
-</Tonnage>
+
+<year>
+2380
+</year>
+
+<originalBuildYear>
+2380
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:12.0:6:1
+cargobay:53483.0:1:2
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:400.0:0
+crewquarters:1435.0:0
+</transporters>
+
 <SafeThrust>
 5
 </SafeThrust>
-<Armor>
-75
-75
-75
-70
-70
-65
-</Armor>
-<Nose Equipment>
-HeavyNPPC
-HeavyNPPC
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-</Nose Equipment>
-
-<Front Left Side Equipment>
-MediumNPPC
-MediumNPPC
-NAC20
-NAC20
-NAC30
-NAC20 Ammo:100
-NAC30 Ammo:50
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Front Left Side Equipment>
-
-<Front Right Side Equipment>
-MediumNPPC
-MediumNPPC
-NAC20
-NAC20
-NAC30
-NAC20 Ammo:100
-NAC30 Ammo:50
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Front Right Side Equipment>
-
-<Left Broadside Equipment>
-NAC35
-NAC35
-NAC35 Ammo:100
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-NAC35
-NAC35
-NAC35 Ammo:100
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Right Broadside Equipment>
-
-<Aft Left Side Equipment>
-NAC20
-NAC20
-NAC30
-NAC20 Ammo:100
-NAC30 Ammo:50
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Aft Left Side Equipment>
-
-<Aft Right Side Equipment>
-NAC20
-NAC20
-NAC30
-NAC20 Ammo:100
-NAC30 Ammo:50
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Aft Right Side Equipment>
-
-<Aft Equipment>
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-50
-</structural_integrity>
 
 <heatsinks>
 1300
@@ -186,55 +62,226 @@ ISMediumLaser
 10000
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-2380
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-19
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-SmallCraftBay:12:6
-CargoBay:53483:1
-</transporters>
+<armor_tech>
+5
+</armor_tech>
 
-<docking_collar>
-3
-</docking_collar>
+<armor>
+51
+51
+51
+47
+48
+48
+</armor>
 
-<grav_deck>
-2
-</grav_deck>
+<Nose Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+</Nose Equipment>
 
-<escape_pod>
-45
-</escape_pod>
+<Left Front Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Front Side Equipment>
 
-<life_boat>
-0
-</life_boat>
+<Right Front Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/30)
+Ammo NAC/20:100
+Ammo NAC/30:50
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Right Side Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<source>
+FR2765-DCMS - Star League
+</source>
+
+<tonnage>
+670000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+200
+200
+</grav_decks>
 
 <crew>
 305
 </crew>
 
+<officers>
+40
+</officers>
+
+<gunners>
+45
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+45
+</escape_pod>
+
+<history>
+The ship from the TRO is unable to use the advanced armor as written. This is rebuilt with the correct armor type, but results in reduced armor values.
+</history>
+

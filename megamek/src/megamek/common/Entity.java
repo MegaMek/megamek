@@ -8636,6 +8636,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getTransportId() {
         return conveyance;
     }
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 
     /**
      * Determine if this unit has an active and working stealth system.
@@ -10402,6 +10407,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     bvText.append(endColumn);
                     bvText.append(startColumn);
                     bvText.append(commafy.format(itemCost));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
+            }
+        }
+        if (isSupportVehicle()) {
+            for (Transporter t : getTransports()) {
+                int seatCost = 0;
+                if (t instanceof PillionSeatCargoBay) {
+                    seatCost += 10;
+                } else if (t instanceof StandardSeatCargoBay) {
+                    seatCost += 100;
+                }
+                if (seatCost > 0) {
+                    bvText.append(startColumn);
+                    bvText.append("Seating");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append(commafy.format(seatCost));
                     bvText.append(endColumn);
                     bvText.append(endRow);
                 }

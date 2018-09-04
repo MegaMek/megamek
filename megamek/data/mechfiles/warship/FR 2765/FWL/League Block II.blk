@@ -2,152 +2,54 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 League Destroyer
 </Name>
+
 <Model>
 (Block II)
 </Model>
-<Tonnage>
-550000
-</Tonnage>
+
+<year>
+2768
+</year>
+
+<originalBuildYear>
+2768
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:3:1
+smallcraftbay:6.0:1:2
+dockingcollar
+dockingcollar
+steeragequarters:280.0:0
+cargobay:102864.0:1:3
+crewquarters:1386.0:0
+1stclassquarters:350.0:0
+</transporters>
+
 <SafeThrust>
 3
 </SafeThrust>
-<Armor>
-54
-62
-62
-62
-62
-44
-</Armor>
-
-<Nose Equipment>
-MediumNGauss
-MediumNGauss
-MediumNGauss Ammo:40
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Nose Equipment>
-
-<Front Left Side Equipment>
-LightNGauss
-LightNGauss Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Front Left Side Equipment>
-
-<Front Right Side Equipment>
-LightNGauss
-LightNGauss Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Front Right Side Equipment>
-
-<Left Broadside Equipment>
-HeavyNGauss
-HeavyNGauss Ammo:20
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-HeavyNGauss
-HeavyNGauss Ammo:20
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Right Broadside Equipment>
-
-<Aft Left Side Equipment>
-LightNGauss
-LightNGauss Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Left Side Equipment>
-
-<Aft Right Side Equipment>
-LightNGauss
-LightNGauss Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Right Side Equipment>
-
-<Aft Equipment>
-MediumNGauss
-MediumNGauss Ammo:40
-LightNGauss
-LightNGauss Ammo:30
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Equipment>
-
-<structural_integrity>
-48
-</structural_integrity>
 
 <heatsinks>
 490
@@ -161,60 +63,195 @@ ISSmallLaser
 10000
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-2768
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-19
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+13
+</armor_type>
 
-<transporters>
-ASFBay:12:3
-SmallCraftBay:6:1
-CargoBay:102864:1
-</transporters>
+<armor_tech>
+5
+</armor_tech>
 
-<docking_collar>
-2
-</docking_collar>
+<armor>
+54
+62
+62
+62
+44
+62
+</armor>
 
-<grav_deck>
+<Nose Equipment>
+(B) Naval Gauss (Medium)
+Naval Gauss (Medium)
+Ammo Medium N-Gauss:40
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Gauss (Light)
+Ammo Light N-Gauss:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Gauss (Light)
+Ammo Light N-Gauss:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Gauss (Medium)
+Naval Gauss (Light)
+Ammo Medium N-Gauss:40
+Ammo Light N-Gauss:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Gauss (Light)
+Ammo Light N-Gauss:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Gauss (Light)
+Ammo Light N-Gauss:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Right Side Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+48
+</structural_integrity>
+
+<source>
+FR2765-FWLM - Star League
+</source>
+
+<tonnage>
+550000.0
+</tonnage>
+
+<kf_core>
 1
-</grav_deck>
+</kf_core>
 
-<escape_pod>
-12
-</escape_pod>
+<sail>
+1
+</sail>
 
-<life_boat>
-12
-</life_boat>
+<grav_decks>
+75
+</grav_decks>
 
 <crew>
 286
 </crew>
 
-<marines>
-56
-</marines>
+<officers>
+40
+</officers>
+
+<gunners>
+29
+</gunners>
 
 <passengers>
 0
 </passengers>
+
+<marines>
+56
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+12
+</life_boat>
+
+<escape_pod>
+12
+</escape_pod>
+

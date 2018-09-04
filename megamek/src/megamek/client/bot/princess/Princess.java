@@ -1796,7 +1796,7 @@ public class Princess extends BotClient {
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
         MovePath retval = path;
-        evadeIfNotFiring(retval, 0 >= expectedDamage);
+        evadeIfNotFiring(retval, expectedDamage >= 0);
         unloadTransportedInfantry(retval);
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to

@@ -82,7 +82,7 @@ public class AddBotUtilTest {
 
         testAddBotUtil = Mockito.spy(new AddBotUtil());
         Mockito.doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(Mockito.any(IPlayer.class),
-                                                                                  Mockito.any(LogLevel.class),
+                                                                                  Mockito.nullable(LogLevel.class),
                                                                                   Mockito.anyString(),
                                                                                   Mockito.anyInt());
         Mockito.doReturn(mockTestBot).when(testAddBotUtil).makeNewTestBotClient(Mockito.any(IPlayer.class),

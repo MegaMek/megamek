@@ -137,12 +137,12 @@ public class CrewDescriptor {
             }
         }
 
-        gunnery = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
+        gunnery = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
         if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
                 && !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
             piloting = 8;
         } else {
-            piloting = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
+            piloting = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
         }
     }
 

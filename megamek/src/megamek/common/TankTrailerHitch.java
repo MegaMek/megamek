@@ -31,7 +31,7 @@ import java.util.Vector;
     /**
      * 
      */
-    private static final long serialVersionUID = 5178639432798483877L;
+    private static final long serialVersionUID = 1193349063084937973L;
     
     /**
      * The entity being towed by this hitch.
@@ -120,29 +120,17 @@ import java.util.Vector;
      *         otherwise.
      */
     public boolean canLoad(Entity unit) {
-        //Trailer hitches can't load, because the load functionality doesn't keep the transported unit
-        //on the board. See canTow() instead.
-        return false;
+        // Only trailers can be towed.
+        if (!(unit.isTrailer())) {
+            return false;
+        }
+
+        // We must have enough space for the trailer.
+        if (towed != Entity.NONE) {
+            return false;
+        }
+        return true;
     }
-    /*
-        // Only BattleArmor can be carried in BattleArmorHandles.
-        if (!(unit instanceof BattleArmor)) {
-            result = false;
-        }
-
-        // We must have enough space for the new troopers.
-        else if (towed != Entity.NONE) {
-            result = false;
-        }
-
-        // The unit must be capable of doing mechanized BA
-        else {
-            result = ((BattleArmor) unit).canDoMechanizedBA();
-        }
-
-        // Return our result.
-        return result;
-    } */
 
     /**
      * Load the given unit.
@@ -157,11 +145,11 @@ import java.util.Vector;
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMech.");
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this hitch.");
         }
 
         // Assign the unit as our carried troopers.
-        troopers = unit.getId();
+        towed = unit.getId();
     }
 
     /**
@@ -175,8 +163,8 @@ import java.util.Vector;
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
-        if (troopers != Entity.NONE) {
-            units.addElement(game.getEntity(troopers));
+        if (towed != Entity.NONE) {
+            units.addElement(game.getEntity(towed));
         }
         return units;
     }
@@ -191,14 +179,14 @@ import java.util.Vector;
      */
     public final boolean unload(Entity unit) {
         // Are we carrying the unit?
-        Entity trooper = game.getEntity(troopers);
-        if ((trooper == null) || !trooper.equals(unit)) {
+        Entity trailer = game.getEntity(towed);
+        if ((trailer == null) || !trailer.equals(unit)) {
             // Nope.
             return false;
         }
 
         // Remove the troopers.
-        troopers = Entity.NONE;
+        towed = Entity.NONE;
         return true;
     }
 
@@ -247,25 +235,9 @@ import java.util.Vector;
         // The weapon can only be blocked if we are carrying a trailer.
         Entity trailer = game.getEntity(towed);
         if (null != trailer) {
-
-            // Is the relevant trooper alive?
-            int tloc = BattleArmor.LOC_SQUAD;
-            switch (loc) {
-                case Mech.LOC_CT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
-                    break;
-                case Mech.LOC_LT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
-                    break;
-                case Mech.LOC_RT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
-                    break;
-            }
-            if ((trooper.locations() > tloc) && (trooper.getInternal(tloc) > 0)) {
-                result = true;
-            }
-        } // End carrying-troopers
-
+            result = true;
+        }
+        
         // Return our result.
         return result;
     }

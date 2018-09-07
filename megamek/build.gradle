@@ -29,6 +29,7 @@ configurations {
 
 dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.10'
+    implementation 'org.freemarker:freemarker:2.3.28'
     implementation 'log4j:log4j:1.2.17'
 
     implementation 'javax.xml.bind:jaxb-api:2.3.0'

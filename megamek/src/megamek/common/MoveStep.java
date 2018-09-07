@@ -759,7 +759,7 @@ public class MoveStep implements Serializable {
                 break;
             case LOAD:
             case TOW:
-                setMp(1);
+                setMp(0);
                 break;
             case MOUNT:
                 setMp(0);

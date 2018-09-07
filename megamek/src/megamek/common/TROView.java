@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,9 @@ import freemarker.template.TemplateException;
 import megamek.client.ui.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.Quirks;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMech;
@@ -74,6 +78,24 @@ public class TROView {
 		model.put("tonnage", NumberFormat.getInstance().format(entity.getWeight())
 				+ Messages.getString("TROView.tons"));
 		model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
+		
+        StringJoiner quirksList = new StringJoiner(", ");
+        Quirks quirks = entity.getQuirks();
+        for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            IOptionGroup group = optionGroups.nextElement();
+            if (quirks.count(group.getKey()) > 0) {
+                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    IOption option = options.nextElement();
+                    if (option != null && option.booleanValue()) {
+                        quirksList.add(option.getDisplayableNameWithValue());
+                    }
+                }
+            }
+        }
+        if (quirksList.length() > 0) {
+        	model.put("quirks", quirksList.toString());
+        }
+        
 	}
 
 

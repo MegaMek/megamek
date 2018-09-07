@@ -129,5 +129,11 @@
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.slots}</td><td align="center">${eq.tonnage}</td></tr>
 		</#list>
 	</table>
+	
+	<#if quirks??>
+		<p>
+		Features the following design quirks: ${quirks}
+		</p>
+	</#if>
 </body>
 </html>

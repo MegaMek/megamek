@@ -118,13 +118,16 @@ public class TROView {
 	}
 
 	private String formatTechBase(Entity entity) {
+		StringBuilder sb = new StringBuilder();
 		if (entity.isMixedTech()) {
-			return Messages.getString("TROView.Mixed");
+			sb.append(Messages.getString("TROView.Mixed"));
 		} else if (entity.isClan()) {
-			return Messages.getString("TROView.Clan");
+			sb.append(Messages.getString("TROView.Clan"));
 		} else {
-			return Messages.getString("TROView.InnerSphere");
+			sb.append(Messages.getString("TROView.InnerSphere"));
 		}
+		sb.append(" (").append(entity.getStaticTechLevel().toString()).append(")");
+		return sb.toString();
 	}
 	
 	private void addArmorAndStructure(Entity entity) {

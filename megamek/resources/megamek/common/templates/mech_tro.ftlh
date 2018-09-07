@@ -14,10 +14,24 @@
 	<table>
 	<tr><th>Equipment</th><th/><th>Mass</th></tr>
 	<tr><td>Internal Structure</td align="center"><td align="center">${structureName}</td><td align="center">${isMass}</td></tr>
+	<#if lamConversionMass??>
+	<tr><td>LAM Conversion Equipment</td align="center"><td></td><td align="center">${lamConversionMass}</td></tr>
+	<#elseif qvConversionMass??>
+	<tr><td>QuadVee Conversion Equipment</td align="center"><td></td><td align="center">${qvConversionMass}</td></tr>
+	</#if>
 	<tr><td>Engine</td><td align="center">${engineName}</td><td align="center">${engineMass}</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Walking MP:</td><td align="center">${walkMP}</td><td></td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Running MP:</td><td align="center">${runMP}</td><td></td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jumping MP:</td><td align="center">${jumpMP}</td><td></td></tr>
+	<#if airmechCruise??>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AirMech Cruising MP:</td><td align="center">${airmechCruise}</td><td></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AirMech Flanking MP:</td><td align="center">${airmechFlank}</td><td></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Safe Thrust:</td><td align="center">${safeThrust}</td><td></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Max Thrust:</td><td align="center">${maxThrust}</td><td></td></tr>
+	<#elseif qvType??>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${qvType} Cruising MP:</td><td align="center">${qvCruise}</td><td></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${qvType} Flanking MP:</td><td align="center">${qvFlank}</td><td></td></tr>
+	</#if>
 	<tr><td>${hsType}:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
 	<tr><td>${gyroType}:</td><td></td><td align="center">${gyroMass}</td></tr>
 	<tr><td>${cockpitType}:</td><td></td><td align="center">${cockpitMass}</td></tr>

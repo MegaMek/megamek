@@ -115,6 +115,27 @@ public class TROView {
 		if (mech.isOmni()) {
 			addFixedOmni(mech);
 		}
+		if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+			final LandAirMech lam = (LandAirMech) mech;
+			model.put("lamConversionMass", testMech.getWeightMisc());
+			if (lam.getLAMType() == LandAirMech.LAM_STANDARD) {
+				model.put("airmechCruise", lam.getAirMechCruiseMP());
+				model.put("airmechFlank", lam.getAirMechFlankMP());
+			} else {
+				model.put("airmechCruise", "N/A");
+				model.put("airmechFlank", "N/A");
+			}
+			lam.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+			model.put("safeThrust", lam.getWalkMP());
+			model.put("maxThrust", lam.getRunMP());
+		} else if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
+			final QuadVee qv = (QuadVee) mech;
+			qv.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
+			model.put("qvConversionMass", testMech.getWeightMisc());
+			model.put("qvType", qv.getMotiveTypeString());
+			model.put("qvCruise", qv.getWalkMP());
+			model.put("qvFlank", qv.getRunMPasString());
+		}
 	}
 
 	private String formatTechBase(Entity entity) {

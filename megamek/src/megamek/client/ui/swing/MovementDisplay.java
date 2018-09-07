@@ -2852,14 +2852,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // We can stop looking.
                     break;
                 }
-                //Same thing for towing
-                if (ce.canTow(other) && other.isLoadableThisTurn()) {
-                    setTowEnabled(true);
-                    isGood = true;
-
-                    // We can stop looking.
-                    break;
-                }
                 // Nope. Discard it.
                 other = null;
             } // Check the next entity in this position.

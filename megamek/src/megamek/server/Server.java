@@ -748,6 +748,7 @@ public class Server implements Runnable {
             }
             if (ent instanceof Tank) {
                 ((Tank) ent).setBAGrabBars();
+                ((Tank) ent).setTrailerHitches();
             }
         }
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());

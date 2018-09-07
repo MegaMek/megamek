@@ -1280,6 +1280,7 @@ public class Game implements Serializable, IGame {
         }
         if (entity instanceof Tank) {
             ((Tank) entity).setBAGrabBars();
+            ((Tank) entity).setTrailerHitches();
         }
 
         // Add magnetic clamp mounts

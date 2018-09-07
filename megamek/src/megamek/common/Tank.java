@@ -3194,6 +3194,15 @@ public class Tank extends Entity {
             addTransporter(new ClampMountTank());
         }
     }
+    
+    // Add a transporter for each trailer hitch the unit is equipped with
+    public void setTrailerHitches() {
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                addTransporter(new TankTrailerHitch());
+            }
+        }
+    }
 
     /**
      * Tanks can't spot when stunned.
@@ -4073,6 +4082,11 @@ public class Tank extends Entity {
     @Override
     public boolean isTrailer() {
         if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
+            return true;
+        }
+        //Maybe an exploit here if it starts returning true for vehicles that get disabled
+        //but maybe we want to be able to tow those off the field too?
+        if (hasMisc(MiscType.F_HITCH) && getWalkMP() == 0) {
             return true;
         }
         return false;

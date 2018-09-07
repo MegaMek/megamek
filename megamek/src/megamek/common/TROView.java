@@ -110,6 +110,12 @@ public class TROView {
 			model.put("cockpitType", Mech.getCockpitDisplayString(mech.getCockpitType()));
 		}
 		model.put("cockpitMass", NumberFormat.getInstance().format(testMech.getWeightCockpit()));
+		String atName = formatArmorType(mech);
+		if (atName.length() > 0) {
+			model.put("armorType", " (" + atName + ")");
+		} else {
+			model.put("armorType", "");
+		}
 		model.put("armorFactor", mech.getTotalOArmor());
 		model.put("armorMass", NumberFormat.getInstance().format(testMech.getWeightArmor()));
 		if (mech.isOmni()) {
@@ -149,6 +155,19 @@ public class TROView {
 		}
 		sb.append(" (").append(entity.getStaticTechLevel().toString()).append(")");
 		return sb.toString();
+	}
+	
+	private String formatArmorType(Entity entity) {
+		if (entity.hasPatchworkArmor()) {
+			return EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK);
+		}
+		// Some types do not have armor on the first location, and others have only a single location
+		int at = entity.getArmorType(Math.min(1, entity.locations() - 1));
+		if (at == EquipmentType.T_ARMOR_STANDARD) {
+			return "";
+		}
+		String name = EquipmentType.getArmorTypeName(at);
+		return name.replace("-Fibrous", "").replace("-Aluminum", "");
 	}
 	
 	private void addArmorAndStructure(Entity entity) {

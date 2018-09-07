@@ -35,7 +35,7 @@
 	<tr><td>${hsType}:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
 	<tr><td>${gyroType}:</td><td></td><td align="center">${gyroMass}</td></tr>
 	<tr><td>${cockpitType}:</td><td></td><td align="center">${cockpitMass}</td></tr>
-	<tr><td>Armor Factor:</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
+	<tr><td>Armor Factor${armorType}:</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
 	</table>
 
 	<table width="80%">

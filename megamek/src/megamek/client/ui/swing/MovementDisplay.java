@@ -2853,8 +2853,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     break;
                 }
                 //Same thing for towing
-                if ((ce.getWalkMP() > 0) && ce.canTow(other)
-                    && other.isLoadableThisTurn()) {
+                if (ce.canTow(other) && other.isLoadableThisTurn()) {
                     setTowEnabled(true);
                     isGood = true;
 
@@ -2871,11 +2870,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             isGood = false;
             for (Entity other : game.getEntitiesVector(ce.getPosition())) {
                 // If the other unit is friendly and not the current entity
-                // and the current entity has at least 1 MP, if it can
-                // tow the other unit, and if the other hasn't moved
+                // if it can tow the other unit, and if the other hasn't moved
                 // then enable the "Tow" button.
-                if ((ce.getWalkMP() > 0) && ce.canTow(other)
-                    && other.isLoadableThisTurn()) {
+                if (ce.canTow(other) && other.isLoadableThisTurn()) {
                     setTowEnabled(true);
                     isGood = true;
 

@@ -15026,22 +15026,50 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * otherwise.
      */
     public boolean canTow(Entity trailer) {
-        //Can't tow without a hitch!
-        if (!hasWorkingMisc(MiscType.F_HITCH)) {
+        //assume that we can't tow the trailer...
+        boolean result = false;
+        
+        // one can only tow friendly units!
+        if (trailer.isEnemyOf(this)) {
             return false;
         }
-        // one can only tow one's own team's units!
-        if (!trailer.isEnemyOf(this)) {
-            //if Trailer is not already being towed, tractor is not already towing
-            //and tractor/trailer are at the same elevation, we can tow it
-            if (!trailer.getTowed() 
-                    && getConnectedUnits().size() == 0
-                    && (trailer.getElevation() == getElevation())) {
-                    return true;
+        
+        // Can't tow yourself, either.
+        if (trailer.equals(this)) {
+            return false;
+        }
+        
+        //Can't tow if hitch and trailer aren't at the same elevation
+        if (trailer.getElevation() != getElevation()) {
+            return false;
+        }
+        
+        //Next, look for an empty hitch
+        for (Transporter t : getTransports()) {
+            if (t.canLoad(trailer)) {
+                result = true;
+                //stop looking
+                break;
             }
         }
-        // If we got here, something is preventing us from towing.
-        return false;
+        
+        //Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
+        //If you're just connecting a bunch of trailers together with no tractor, this doesn't matter.
+        if (getTractor() != null) {        
+            double tractorWeight = 0;
+            double trailerWeight = 0;
+            tractorWeight = getTractor().getWeight();
+            //Add up what the tractor's already towing
+            for (Entity tr : getTractor().getAllTowedUnits()) {
+                trailerWeight += tr.getWeight();
+            }
+            if ((trailerWeight + trailer.getWeight()) <= tractorWeight) {
+                result = true;
+            } else {
+                result = false;
+            }
+        }
+        return result;
     }
     
     

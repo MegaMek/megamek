@@ -13,10 +13,13 @@
  */
 package megamek.client.bot.princess;
 
-import junit.framework.TestCase;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
-import megamek.utils.MegaMekXmlUtil;
+import java.io.CharArrayReader;
+import java.io.IOException;
+import java.io.Reader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,11 +29,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.CharArrayReader;
-import java.io.IOException;
-import java.io.Reader;
+import junit.framework.TestCase;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,10 +43,8 @@ import java.io.Reader;
 @RunWith(JUnit4.class)
 public class BehaviorSettingsFactoryTest {
 
-    private final MMLogger fakeLogger = new FakeLogger();
-
     private BehaviorSettingsFactory testFactory =
-            BehaviorSettingsFactory.getInstance(fakeLogger);
+            BehaviorSettingsFactory.getInstance(DefaultMmLogger.getInstance());
 
     private static Document buildTestDocument() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilder documentBuilder = MegaMekXmlUtil.newSafeDocumentBuilder();

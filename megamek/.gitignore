@@ -30,3 +30,6 @@ data/images/imgFileAtlasMap.xml
 /Entity Issues.txt
 /build/
 .settings
+
+# local log4j2 configuration override
+/log4j2.xml

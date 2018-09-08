@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration name="test-configuration" status="error">
+
+    <!-- This is the test log4j2 configuration, intended for running unit tests. -->
+
+    <appenders>
+        <console name="console" direct="true">
+            <patternlayout pattern="%6relative [%-20.20thread] %-5level %-20.20logger - %message{nolookups}%n%rThrowable" />
+        </console>
+    </appenders>
+
+    <loggers>
+        <root level="warn">
+            <appenderref ref="console" />
+        </root>
+    </loggers>
+
+</configuration>

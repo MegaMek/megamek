@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ *           Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ *           Copyright (C) 2018 The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -12,27 +13,36 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Vector;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.FormattedMessage;
+import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.message.SimpleMessage;
 
 import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
@@ -51,11 +61,8 @@ import megamek.common.MechSummaryCache;
 import megamek.common.MechView;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogConfig;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import megamek.common.logging.Log4j;
+import megamek.common.logging.Technicalities;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.MegaMekFile;
@@ -69,43 +76,35 @@ import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
 
 /**
- * @author mev This is the class where the execution of the megamek game starts.
+ * This is the class where the execution of the megamek game starts.
+ *
+ * @author mev
  */
 public class MegaMek {
 
-    private static final MMLogger logger = DefaultMmLogger.getInstance();
+    static final Logger log = LogManager.getLogger(MegaMek.class);
 
     public static String VERSION = "0.45.2-SNAPSHOT"; //$NON-NLS-1$
-    public static long TIMESTAMP = new File(PreferenceManager
-            .getClientPreferences().getLogDirectory()
-            + File.separator
-            + "timestamp").lastModified(); //$NON-NLS-1$
+    public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
-    private static final NumberFormat commafy = NumberFormat.getInstance();
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:"; //$NON-NLS-1$
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek [-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)|(-export)|(-eqdb)|(-eqedb) (-oul)] [<args>]"; //$NON-NLS-1$
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:"; //$NON-NLS-1$
     private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:"; //$NON-NLS-1$
-    private static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt"; //$NON-NLS-1$
 
     public static void main(String[] args) {
-
-        String logFileName = DEFAULT_LOG_FILE_NAME;
 
         CommandLineParser cp = new CommandLineParser(args);
 
         try {
             cp.parse();
-            String lf = cp.getLogFilename();
-            if (lf != null) {
-                if (lf.equals("none") || lf.equals("off")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    logFileName = null;
-                } else {
-                    logFileName = lf;
-                }
-            }
 
-            configureLogging(logFileName);
+            Optional<File> logFile = Optional.ofNullable(cp.getLogFilename()) // LATER MegaMek.CommandLineParser should probably validate the log filename
+                                             .filter(fn -> !Arrays.asList("none", "off").contains(fn.toLowerCase())) //$NON-NLS-1$ //$NON-NLS-2$
+                                             .map(File::new)
+                                             .filter(f -> !f.exists() || f.canWrite());
+
+            setupLog4j(MegaMek.class, logFile);
 
             MegaMek.showInfo();
 
@@ -128,65 +127,73 @@ public class MegaMek {
             StringBuilder message = new StringBuilder(INCORRECT_ARGUMENTS_MESSAGE)
                     .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
-            MegaMek.displayMessageAndExit(message.toString(),
-                                          "main(String[])");
+            MegaMek.displayMessageAndExit(message.toString());
         }
-    }
-
-    private static void configureLegacyLogging(@Nullable final String logFileName) {
-        // Redirect output to logfiles, unless turned off.
-        if (logFileName == null) {
-            return;
-        }
-        MegaMek.redirectOutput(logFileName);
-    }
-
-    private static void configureLog4j(@Nullable final String logFileName) {
-        if (null == logFileName) {
-            LogConfig.getInstance().disableAll();
-            return;
-        }
-
-        LogConfig.getInstance().enableSimplifiedLogging();
     }
 
     /**
-     * This needs to be done as we are currently using two different loggers.
-     * Both loggers must be set to append in order to prevent them from over-
-     * writing each other.  So, in order to get a clean log file each run,
-     * the existing log file must be cleared.
-     * <p>
-     * Alternatively, consider rolling the log file over instead.
-     * <p>
-     * If we ever manage to completely get rid of the legacy logger, we can
-     * get rid of this method.
+     * Log4j auto-configures based on xml files in the classpath.
+     * This method is responsible for:
+     * <ol>
+     * <li>overriding the default log4j configuration (<tt>log4j2.xml</tt>) with
+     *     <tt>log4j2-release.xml</tt> if the given class has been loaded from a
+     *     .jar
+     * <li>applying an alternative log4j configuration if a file named
+     *     <tt>log4j2.xml</tt> is present in the current working directory
+     * <li>allowing to override the default log file
+     * <li>redirecting stderr and strout to the log
+     * </ul>
+     * This method is public because it's used from the main classes of MML and
+     * MHQ, who piggyback on MM's logging infrastructure.
      *
-     * @param logFileName The name of the log file to reset.
+     * @param logFileOverride
+     *        if present, log messages will be sent to this file
+     *        instead of the default one
      */
-    public static void resetLogFile(@Nullable final String logFileName) {
-        if (null == logFileName) {
-            return;
-        }
-        File file = new File(logFileName);
-        if (file.exists()) {
-            try {
-                PrintWriter writer = new PrintWriter(file);
-                writer.print("");
-                writer.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+    @SuppressWarnings("nls")
+    public static void setupLog4j(Class<?> mainClass, Optional<File> logFileOverride) {
+        // We are possibly about to load a new log4j configuration: let's
+        // accumulate log messages and print them when we are done.
+        Map<Message,Level> messages = new LinkedHashMap<>();
+
+        File altCfgFile = new File("./log4j2.xml");
+        if (altCfgFile.canRead()) {
+            Log4j.useAlternateConfig(altCfgFile.toURI());
+            String msg = "Logging configuration loaded from file {}";
+            messages.put(new FormattedMessage(msg, altCfgFile.getPath()), Level.INFO);
+        } else if (Technicalities.wasLoadedFromJar(mainClass)) {
+            String resource = "/log4j2-release.xml";
+            URL config = MegaMek.class.getResource(resource);
+            if (config != null) {
+                try {
+                    URI uri = config.toURI();
+                    Log4j.useAlternateConfig(uri);
+                    String msg = "Logging configuration loaded from file {}";
+                    messages.put(new FormattedMessage(msg, uri), Level.INFO);
+                } catch (URISyntaxException e) {
+                    throw new AssertionError(e);
+                }
             }
         }
-    }
 
-    private static void configureLogging(@Nullable final String logFileName) {
-        final String qualifiedLogFilename =
-                PreferenceManager.getClientPreferences().getLogDirectory() +
-                File.separator +
-                logFileName;
-        resetLogFile(qualifiedLogFilename);
-        configureLegacyLogging(logFileName);
-        configureLog4j(logFileName);
+        logFileOverride.ifPresent(file -> {
+            Log4j.overrideMainFileAppender(file);
+            String msg = "Logging should now go to {} "
+                       + "(it may not if logging configuration has been customized)";
+            messages.put(new FormattedMessage(msg, file.getAbsolutePath()), Level.INFO);
+        });
+
+        {
+            Log4j.snatchSytemStreams();
+            String msg = "Standard output and standard error are being"
+                       + "redirected to the logging system";
+            messages.put(new SimpleMessage(msg), Level.INFO);
+        }
+
+        messages.forEach((msg, lvl) -> log.log(lvl, msg));
+
+        // As a temporary measure, also cleanup any old logs
+        LegacyMegamek.deleteLegacyLogFiles();
     }
 
     /**
@@ -195,6 +202,7 @@ public class MegaMek {
      * connecting a new client.
      * @return String representing the SHA-256 hash
      */
+    @SuppressWarnings("nls")
     public static String getMegaMekSHA256() {
         StringBuilder sb = new StringBuilder();
         byte[] buffer = new byte[8192];
@@ -209,7 +217,6 @@ public class MegaMek {
         } else if (new File("MegaMek.app/Contents/Resources/Java/"+filename).exists()) {
             filename = "MegaMek.app/Contents/Resources/Java/"+filename;
         }
-
         // Calculate the digest for the given file.
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -222,10 +229,7 @@ public class MegaMek {
                 sb.append(String.format("%02x", d));
             }
         } catch (IOException | NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            logger.error(MegaMek.class,
-                       "getMegaMekSHA256()",
-                       e);
+            log.error("getMegaMekSHA256()", e);
             return null;
         } finally {
             try {
@@ -233,10 +237,7 @@ public class MegaMek {
                     in.close();
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                logger.error(MegaMek.class,
-                           "getMegaMekSHA256()",
-                           e);
+                log.error("getMegaMekSHA256()", e);
                 return null;
             }
         }
@@ -253,42 +254,9 @@ public class MegaMek {
         long heap = Runtime.getRuntime().totalMemory();
         long free = Runtime.getRuntime().freeMemory();
         long used = (heap - free) / 1024;
-        return commafy.format(used) + " kB"; //$NON-NLS-1$
+        return commafy(used) + " KiB"; //$NON-NLS-1$
     }
 
-    /**
-     * This function redirects the standard error and output streams to the
-     * given File name.
-     *
-     * @param logFileName
-     *            The file name to redirect to.
-     */
-    private static void redirectOutput(String logFileName) {
-        try {
-            System.out.println("Redirecting output to " + logFileName); //$NON-NLS-1$
-            String sLogDir = PreferenceManager.getClientPreferences()
-                    .getLogDirectory();
-            File logDir = new File(sLogDir);
-            if (!logDir.exists()) {
-                logDir.mkdir();
-            }
-            PrintStream ps = new PrintStream(
-                    new BufferedOutputStream(new FileOutputStream(sLogDir
-                                                                  + File.separator + logFileName, true) {
-                        @Override
-                        public void flush() throws IOException {
-                            super.flush();
-                            getFD().sync();
-                        };
-                    }
-                            , 64));
-            System.setOut(ps);
-            System.setErr(ps);
-        } catch (Exception e) {
-            System.err.println("Unable to redirect output to " + logFileName); //$NON-NLS-1$
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Starts a dedicated server with the arguments in args. See
@@ -301,8 +269,7 @@ public class MegaMek {
     private static void startDedicatedServer(String[] args) {
         StringBuffer message = new StringBuffer("Starting Dedicated Server. "); //$NON-NLS-1$
         MegaMek.dumpArgs(message, args);
-        MegaMek.displayMessage(message.toString(),
-                               "startDedicatedServer(String[])");
+        MegaMek.log.info(message.toString());
         DedicatedServer.start(args);
     }
 
@@ -315,28 +282,24 @@ public class MegaMek {
      * @param args
      *            the arguments to be passed onto the GUI.
      */
+    @SuppressWarnings("nls")
     private static void startGUI(String guiName, String[] args) {
-        final String METHOD_NAME = "startGUI(String, String[])";
         if (null == guiName) {
-            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
-                       "guiName must be non-null");
+            log.error("guiName must be non-null");
             return;
         }
         if (null == args) {
-            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
-                       "args must be non-null");
+            log.error("args must be non-null");
             return;
         }
         IMegaMekGUI mainGui = MegaMek.getGui(guiName);
         if (mainGui == null) {
-            MegaMek.displayMessageAndExit(UNKNOWN_GUI_MESSAGE + guiName,
-                                          METHOD_NAME);
+            MegaMek.displayMessageAndExit(UNKNOWN_GUI_MESSAGE + guiName);
         } else {
             StringBuffer message = new StringBuffer("Starting GUI "); //$NON-NLS-1$
             message.append(guiName).append(". "); //$NON-NLS-1$
             MegaMek.dumpArgs(message, args);
-            MegaMek.displayMessage(message.toString(),
-                                   METHOD_NAME);
+            MegaMek.log.info(message.toString());
             mainGui.start(args);
         }
     }
@@ -362,8 +325,8 @@ public class MegaMek {
                     return result;
                 }
             } catch (Exception e) {
-                MegaMek.displayMessage(GUI_CLASS_NOT_FOUND_MESSAGE
-                                       + guiClassName, "getGui(String)");
+                MegaMek.log.info(GUI_CLASS_NOT_FOUND_MESSAGE
+                   + guiClassName);
             }
         }
         return null;
@@ -373,15 +336,14 @@ public class MegaMek {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         Properties p = new Properties();
         String key = "gui." + guiName; //$NON-NLS-1$
-        final String PROPERTIES_FILE = "megamek/MegaMek.properties";
+        final String PROPERTIES_FILE = "megamek/MegaMek.properties"; //$NON-NLS-1$
         try(InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             if (is != null) {
                 p.load(is);
                 return p.getProperty(key);
             }
         } catch (IOException e) {
-            MegaMek.displayMessage("Property file load failed.",
-                                   "getGUIClassName(String)"); //$NON-NLS-1$
+            MegaMek.log.info("Property file load failed."); //$NON-NLS-1$
         }
         return null;
     }
@@ -414,44 +376,27 @@ public class MegaMek {
      * @param message
      *            the message to be displayed.
      */
-    private static void displayMessageAndExit(String message,
-                                              String methodName) {
-        MegaMek.displayMessage(message, methodName);
+    private static void displayMessageAndExit(String message) {
+        MegaMek.log.info(message);
         TimerSingleton.getInstance().killTimer();
         System.exit(1);
-    }
-
-    /**
-     * Prints the message and flushes the output stream.
-     *
-     * @param message
-     */
-    private static void displayMessage(String message, String methodName) {
-        logger.log(MegaMek.class, methodName, LogLevel.INFO, message);
     }
 
     /**
      * Prints some information about MegaMek. Used in logfiles to figure out the
      * JVM and version of MegaMek.
      */
+    @SuppressWarnings("nls")
     private static void showInfo() {
-        final String METHOD_NAME = "showInfo";
-        // echo some useful stuff
-        String msg = "Starting MegaMek v" + VERSION + " ..."; //$NON-NLS-1$ //$NON-NLS-2$
-        msg += "\n\tCompiled on " + new Date(TIMESTAMP).toString(); //$NON-NLS-1$
-        msg += "\n\tToday is " + new Date().toString(); //$NON-NLS-1$
-        msg += "\n\tJava vendor " + System.getProperty("java.vendor"); //$NON-NLS-1$ //$NON-NLS-2$
-        msg += "\n\tJava version " + System.getProperty("java.version"); //$NON-NLS-1$ //$NON-NLS-2$
-        msg += "\n\tPlatform " //$NON-NLS-1$
-               + System.getProperty("os.name") //$NON-NLS-1$
-               + " " //$NON-NLS-1$
-               + System.getProperty("os.version") //$NON-NLS-1$
-               + " (" //$NON-NLS-1$
-               + System.getProperty("os.arch") //$NON-NLS-1$
-               + ")"; //$NON-NLS-1$
-        long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
-        msg += "\n\tTotal memory available to MegaMek: " + MegaMek.commafy.format(maxMemory) + " kB"; //$NON-NLS-1$ //$NON-NLS-2$
-        displayMessage(msg, METHOD_NAME);
+        Arrays.asList(
+            String.format("Starting MegaMek v%s ...", VERSION),
+            String.format("Compiled on %s", Instant.ofEpochMilli(TIMESTAMP)),
+            String.format("Today is %s ", Instant.now()),
+            String.format("Java vendor %s", System.getProperty("java.vendor")),
+            String.format("Java version %s", System.getProperty("java.version")),
+            String.format("Platform %s %s (%s)", System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch")),
+            String.format("Total memory available to MegaMek: %s kB", commafy(Runtime.getRuntime().maxMemory() / 1024))
+        ).forEach(log::info);
     }
 
     /**
@@ -461,6 +406,10 @@ public class MegaMek {
      */
     public static String getVersion() {
         return VERSION;
+    }
+
+    private static final String commafy(long n) {
+        return NumberFormat.getInstance(Locale.ENGLISH).format(n);
     }
 
     /**
@@ -563,7 +512,7 @@ public class MegaMek {
             if ((getToken() == TOK_OPTION)
                     && getTokenValue().equals(OPTION_UNIT_EXPORT)) {
                 nextToken();
-                processUnitExporter();
+                processUnitExporter(false);
             }
 
             if ((getToken() == TOK_OPTION)
@@ -657,8 +606,6 @@ public class MegaMek {
         }
 
         private void processUnitValidator() throws ParseException {
-            final String METHOD_NAME = "processUnitValidator()";
-
             String filename;
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
@@ -680,14 +627,13 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    logger.error(MegaMek.class, METHOD_NAME,
-                               new IOException(filename + " not found.  Try using \"cassis model\" for input."));
+                    log.error(new IOException(filename + " not found.  Try using \"cassis model\" for input."));
                 } else {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(),
                                                            ms.getEntryName()).getEntity();
-                        displayMessage("Validating Entity: " +
-                                       entity.getShortNameRaw(), METHOD_NAME); //$NON-NLS-1$
+                        log.info("Validating Entity: " +
+                           entity.getShortNameRaw());
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new MegaMekFile(Configuration.unitsDir(),
                                                 EntityVerifier.CONFIG_FILENAME).getFile());
@@ -738,7 +684,7 @@ public class MegaMek {
                                 testEntity.correctEntity(sb);
                             }
                         }
-                        displayMessage(sb.toString(), METHOD_NAME);
+                        log.info(sb.toString());
                     } catch (Exception ex) {
                         // ex.printStackTrace();
                         error("\"chassis model\" expected as input"); //$NON-NLS-1$
@@ -778,15 +724,13 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-                        
+
                         BattleForceElement bfe = new BattleForceElement(entity);
                         bfe.writeCsv(w);
                     }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitBattleForceConverter()",
-                               ex);
+                    log.error("processUnitBattleForceConverter()", ex); //$NON-NLS-1$
                 }
             }
 
@@ -821,25 +765,18 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-                        
+
                         AlphaStrikeElement ase = new AlphaStrikeElement(entity);
                         ase.writeCsv(w);
                    }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitAlphaStrikeConverter()",
-                               ex);
+                    log.error("processUnitAlphaStrikeConverter()", ex);
                 }
             }
 
             System.exit(0);
 
-        }
-
-        @SuppressWarnings("nls")
-        private void processUnitExporter() {
-            processUnitExporter(false);
         }
 
         @SuppressWarnings("nls")
@@ -930,9 +867,7 @@ public class MegaMek {
                     }
                     w.close();
                 } catch (Exception ex) {
-                    logger.error(getClass(),
-                               "processUnitExporter(boolean)",
-                               ex);
+                    log.error("processUnitExporter(boolean)", ex);
                 }
             }
 
@@ -941,7 +876,7 @@ public class MegaMek {
         }
 
         private void processRestOfInput() {
-            Vector<String> v = new Vector<String>();
+            Vector<String> v = new Vector<>();
             while (getArgValue() != null) {
                 v.addElement(getArgValue());
                 nextArg();

@@ -29,16 +29,24 @@ configurations {
 
 dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.10'
-    implementation 'log4j:log4j:1.2.17'
+
+    def log4jVersion = '2.11.1'
+    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"        // log4j API
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"       // log4j implementation
+    implementation "org.apache.logging.log4j:log4j-iostreams:${log4jVersion}"  // provides java.io implementations that output to loggers
+    // runtimeOnly    "org.apache.logging.log4j:log4j-jul:${log4jVersion}"        // routes java.util.logging to log4j2
+    // runtimeOnly    "org.apache.logging.log4j:log4j-1.2-api:${log4jVersion}"    // routes log4j 1.2.x to log4j2
+    // runtimeOnly    "org.apache.logging.log4j:log4j-jcl:${log4jVersion}"        // routes commons-logging to log4j2
+    // runtimeOnly    "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}" // routes slf4j to log4j2
 
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.0'
     runtimeOnly 'org.glassfish.jaxb:jaxb-core:2.3.0'
     runtimeOnly 'com.sun.activation:javax.activation:1.2.0'
-    
+
     jarbundler 'com.ultramixer.jarbundler:jarbundler-core:3.3.0'
 
-    testImplementation 'junit:junit:4.12' 
+    testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.20.1'
 }
 
@@ -95,12 +103,12 @@ task equipmentList(type: JavaExec, dependsOn: jar) {
 
 task copyFiles(type: Copy) {
     description = 'Stages files that are to be copied into the distribution.'
-    
+
     dependsOn officialUnitList
     dependsOn equipmentList
-    
+
     from projectDir
-    
+
     include "${data}/**"
     include "${conf}/**"
     include "${docs}/**"
@@ -109,9 +117,9 @@ task copyFiles(type: Copy) {
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
     exclude "${rats}/**"
-    
+
     into fileStagingDir
-    
+
     inputs.dir "${data}"
     inputs.dir "${conf}"
     inputs.dir "${docs}"
@@ -169,7 +177,7 @@ task stageFiles {
     dependsOn unitFilesZip
     dependsOn ratZip
     dependsOn deleteAtlasedImages
-    
+
     doLast {
         mkdir "${fileStagingDir}/${log}"
         ant.touch(file: "${fileStagingDir}/${log}/timestamp")
@@ -266,7 +274,7 @@ distributions {
             from fileStagingDir
             from (project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
-                into "${createOSXBundle.jarSubdir}/${lib}" 
+                into "${createOSXBundle.jarSubdir}/${lib}"
             }
         }
     }
@@ -285,7 +293,7 @@ createExe {
         new File("${buildDir}/${outputDir}/${inifile}").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
 ${project.ext.jvmOptions.join('\n')}
-"""        
+"""
     }
 }
 
@@ -364,7 +372,7 @@ task buildFromRepo (type: GradleBuild) {
     description = 'Assembles the distribution packages in the clean repository copy'
     group = 'distribution'
     dependsOn cloneRepo
-    
+
     buildFile = "${repoDir}/build.gradle"
     dir = "${repoDir}"
     tasks = [ ':megamek:assembleDist' ]
@@ -374,7 +382,7 @@ task release (type: Copy) {
     description = 'Builds the release packages from the repository and copies them into the project build directory'
     group = 'distribution'
     dependsOn buildFromRepo
-    
+
     from (buildFromRepo)
     into "${distributionDir}"
 }
@@ -394,7 +402,7 @@ task javadocJar(type: Jar) {
 publishing {
     publications {
         publishMMLibrary(MavenPublication) {
-            artifactId = "megamek${mmBranchTag}"
+            artifactId = "megamek${mmBranchTag.replaceAll('[^A-Za-z0-9_\\-.]','-')}"
             from components.java
             artifact sourcesJar
 // Javadoc is full of errors
@@ -425,4 +433,3 @@ task cleanPublishingDir (type: Delete) {
 }
 
 publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
-

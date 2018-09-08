@@ -13,6 +13,22 @@
  */
 package megamek.client.bot.princess;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
+
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -47,32 +63,14 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
-import megamek.common.weapons.StopSwarmAttack;
 import megamek.server.SmokeCloud;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -175,9 +173,7 @@ public class FireControlTest {
 
     @Before
     public void setUp() {
-        final MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         final BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);

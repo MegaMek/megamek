@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration name="development-configuration" monitorinterval="5" status="warn">
+
+    <!-- This is the default log4j2 configuration, intended for development. -->
+
+    <properties>
+
+        <!-- This is the same pattern as console.pattern below, but with ANSI colouring:
+                 %d{ABSOLUTE} [%-20.20thread] %highlight{%-5level} %-40.40logger - %highlight{%message{nolookups}}%n%rThrowable
+             To use it from eclipse, search the marketplace for the "ANSI Escape in Console" plugin.
+             Not sure about visualising ANSI in windows... log4j2 documentation says it will work if an extra
+             optional dependency (Jansi) is provided and a system property set -->
+
+        <!-- Add this to a patter to show the class, method, file and line where the loggig call occurred 
+                %class.%method (%file:%line)
+             (that information is fetched from the stack trace, which can be –this is relatively slow) -->
+
+        <!-- If you feel a sense of nostalgia for the old log format, this pattern
+                 %n%d{HH:mm:ss,SSS} %p [%c] {%t} \n%m%n
+             used to be the default one up to v0.45.1 -->
+
+        <!-- See the official documentation at
+                 https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+             for info on the supported pattern parameters -->
+
+        <property name="console.pattern">%d{ABSOLUTE} [%-20.20thread] %-5level %-40.40logger - %message{nolookups}%n%rThrowable</property>
+        <property name="logfile.filename">${sys:megamek.log.file:-./logs/mm.log}</property>
+        <!-- The trailing spaces in header lines are so that people can copy&paste the header into github issues -->
+        <property name="logfile.pattern">%d{ABSOLUTE} [%-30.30thread] %-5level %-40.40logger - %message{nolookups}%n%rThrowable</property>
+    </properties>
+
+    <appenders>
+        <console name="console" direct="true">
+            <patternlayout pattern="${console.pattern}" />
+        </console>
+        <file name="file" fileName="${logfile.filename}" append="false" createondemand="true">
+            <patternlayout pattern="${logfile.pattern}" disableAnsi="true" />
+        </file>
+    </appenders>
+
+    <loggers>
+        <!-- <logger name="megamek.client.bot.princess" level="trace" /> -->
+        <logger name="megamek" level="debug" />
+        <logger name="System"  level="all" />
+        <root level="info">
+            <appenderref ref="console" />
+            <appenderref ref="file" />
+        </root>
+    </loggers>
+
+</configuration>

@@ -13,7 +13,7 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.logging.FakeLogger;
+import megamek.common.logging.DefaultMmLogger;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.junit.Assert;
@@ -46,7 +46,7 @@ public class BehaviorSettingsTest {
     @Test
     public void testSetDescription() throws PrincessException {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
 
         // Test a normal description.
         String description = "Test behavior";
@@ -75,7 +75,7 @@ public class BehaviorSettingsTest {
     @Test
     public void testStrategicBuildingTargets() {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         final String goodHexTarget = "1234";
         final String goodHexTarget2 = "4567";
         Set<String> expectedTargets = new HashSet<String>(2);
@@ -132,7 +132,7 @@ public class BehaviorSettingsTest {
     @Test
     public void testPreferredUnitTargets() {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         final int goodUnitTarget = 1;
         final int goodUnitTarget2 = 4;
         Set<Integer> expectedTargets = new HashSet<>(2);
@@ -200,7 +200,7 @@ public class BehaviorSettingsTest {
         Set<Integer> expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -226,7 +226,7 @@ public class BehaviorSettingsTest {
         expectedTargets = new HashSet<>(0);
         expectedUnits = new HashSet<>(0);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -255,7 +255,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals("null", behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -284,7 +284,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         try {
             behaviorSettings.fromXml(testBehaviorElement);
             Assert.fail("Should have thrown an error!");
@@ -302,7 +302,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         try {
             behaviorSettings.fromXml(testBehaviorElement);
             Assert.fail("Should have thrown an error!");
@@ -320,7 +320,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -348,7 +348,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -378,7 +378,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -408,7 +408,7 @@ public class BehaviorSettingsTest {
         expectedUnits = new HashSet<>(1);
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -435,7 +435,7 @@ public class BehaviorSettingsTest {
         expectedTargets.add("null");
         expectedUnits = new HashSet<>(0);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());
@@ -461,7 +461,7 @@ public class BehaviorSettingsTest {
         expectedTargets = new HashSet<>(0);
         expectedUnits = new HashSet<>(0);
         behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setLogger(new FakeLogger());
+        behaviorSettings.setLogger(DefaultMmLogger.getInstance());
         behaviorSettings.fromXml(testBehaviorElement);
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_NAME, behaviorSettings.getDescription());
         Assert.assertEquals(BehaviorSettingsTestConstants.GOOD_HOME_EDGE, behaviorSettings.getRetreatEdge());

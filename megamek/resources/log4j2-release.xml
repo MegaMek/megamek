@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration name="release-configuration" status="off">
+
+    <!-- This is the release log4j2 configuration, intended for when end users run the app. -->
+
+    <properties>
+        <property name="logfile.filename">${sys:megamek.log.file:-./logs/mm.log}</property>
+        <property name="logfile.pattern">%8relative [%-30.30thread] %-5level %-40.40logger - %message{nolookups}%n%rThrowable</property>
+    </properties>
+
+    <appenders>
+        <file name="file" fileName="${logfile.filename}" append="false" createondemand="true">
+            <patternlayout pattern="${logfile.pattern}" disableAnsi="true" />
+        </file>
+    </appenders>
+
+    <loggers>
+        <logger name="megamek" level="info" />
+        <logger name="System"  level="info" />
+        <root level="warning">
+            <appenderref ref="console" />
+        </root>
+    </loggers>
+
+</configuration>

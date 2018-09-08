@@ -46,6 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -74,6 +75,7 @@ import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.MechView;
+import megamek.common.TROView;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
@@ -127,6 +129,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     private JTable tableUnits;
     JTextField txtFilter;
     private MechViewPanel panelMekView;
+    private MechViewPanel panelTROView;
     private JLabel lblPlayer;
     private JComboBox<String> comboPlayer;
     private JPanel selectionPanel;
@@ -214,9 +217,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         tableUnits.addKeyListener(this);
         tableUnits.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "");
+        JTabbedPane panPreview = new JTabbedPane();
         panelMekView = new MechViewPanel();
         panelMekView.setMinimumSize(new java.awt.Dimension(300, 500));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
+        panPreview.addTab("Summary", panelMekView);
+        
+        panelTROView = new MechViewPanel();
+        panPreview.addTab("TRO", panelTROView);
 
         lstTechLevel = new JList<String>();
         lstTechLevel.setToolTipText(Messages
@@ -475,7 +483,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelOKBtns.add(btnShowBV, new GridBagConstraints());
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                selectionPanel, panelMekView);
+                selectionPanel, panPreview);
         splitPane.setResizeWeight(0);
         c = new GridBagConstraints();
         c.gridx = c.gridy = 0;
@@ -689,8 +697,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         }
 
         MechView mechView = null;
+        TROView troView = null;
         try {
-            mechView = new MechView(selectedUnit, false);
+        	mechView = new MechView(selectedUnit, false);
+        	troView = new TROView(selectedUnit);
         } catch (Exception e) {
             e.printStackTrace();
             // error unit didn't load right. this is bad news.
@@ -698,8 +708,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         }
         if (populateTextFields && (mechView != null)) {
             panelMekView.setMech(selectedUnit, mechView);
+            panelTROView.setMech(selectedUnit, troView);
         } else {
             panelMekView.reset();
+            panelTROView.reset();
         }
 
         if (null != clientgui) {

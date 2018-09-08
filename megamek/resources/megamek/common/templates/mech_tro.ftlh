@@ -3,7 +3,8 @@
   <title>${fullName}</title>
 </head>
 <body>
-  <h1>${fullName}</h1>
+  <div style="font:12pt monospaced">
+  <font size="+1"><b>${fullName}</b></font>
 	<p>
 	Type: ${chassis}<br/>
 	Technology Base: ${techBase}<br/> 
@@ -135,5 +136,6 @@
 		Features the following design quirks: ${quirks}
 		</p>
 	</#if>
+	</div>
 </body>
 </html>

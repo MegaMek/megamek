@@ -185,7 +185,7 @@ public class MegaMek {
 
         {
             Log4j.snatchSytemStreams();
-            String msg = "Standard output and standard error are being"
+            String msg = "Standard output and standard error are being "
                        + "redirected to the logging system";
             messages.put(new SimpleMessage(msg), Level.INFO);
         }

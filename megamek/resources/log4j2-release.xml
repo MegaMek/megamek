@@ -17,8 +17,8 @@
     <loggers>
         <logger name="megamek" level="info" />
         <logger name="System"  level="info" />
-        <root level="warning">
-            <appenderref ref="console" />
+        <root level="warn">
+            <appenderref ref="file" />
         </root>
     </loggers>
 

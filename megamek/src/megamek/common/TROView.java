@@ -14,9 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.BiFunction;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateMethodModelEx;
+import freemarker.template.TemplateModelException;
 import megamek.client.ui.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
@@ -40,13 +43,16 @@ public class TROView {
     private EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
             Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
 
-	public TROView(Entity entity) {
+	public TROView(Entity entity, boolean html) {
 		String templateFileName = null;
 		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-			templateFileName = "mech_tro.ftlh";
+			templateFileName = "mech_tro.ftl";
 			addMechData((Mech) entity);
 		}
 		if (null != templateFileName) {
+			if (html) {
+				templateFileName += "h";
+			}
 			try {
 				template = TemplateConfiguration.getInstance().getTemplate(templateFileName);
 			} catch (IOException e) {
@@ -55,6 +61,12 @@ public class TROView {
 		}
 	}
 	
+	/**
+	 * Uses the template and supplied {@link Entity} to generate a TRO document
+	 * 
+	 * @return The generated document. Returns {@code null} if there was an error that prevented
+	 *         the document from being generated. Check logs for reason.
+	 */
 	@Nullable public String processTemplate() {
 		if (null != template) {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -72,11 +84,12 @@ public class TROView {
 	}
 	
 	private void addBasicData(Entity entity) {
+		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 40, 30, 10},
+				new Justification[] { Justification.LEFT, Justification.LEFT, Justification.RIGHT }));
 		model.put("fullName", entity.getShortNameRaw());
 		model.put("chassis", entity.getChassis());
 		model.put("techBase", formatTechBase(entity));
-		model.put("tonnage", NumberFormat.getInstance().format(entity.getWeight())
-				+ Messages.getString("TROView.tons"));
+		model.put("tonnage", NumberFormat.getInstance().format(entity.getWeight()));
 		model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
 		
         StringJoiner quirksList = new StringJoiner(", ");
@@ -103,6 +116,7 @@ public class TROView {
 		addBasicData(mech);
 		addArmorAndStructure(mech);
 		addEquipment(mech);
+		addMechFluff(mech);
 		model.put("isOmni", mech.isOmni());
 		model.put("isQuad", mech.entityIsQuad());
 		model.put("isTripod", mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH));
@@ -132,7 +146,7 @@ public class TROView {
 			model.put("cockpitType", Mech.getCockpitDisplayString(mech.getCockpitType()));
 		}
 		model.put("cockpitMass", NumberFormat.getInstance().format(testMech.getWeightCockpit()));
-		String atName = formatArmorType(mech);
+		String atName = formatArmorType(mech, true);
 		if (atName.length() > 0) {
 			model.put("armorType", " (" + atName + ")");
 		} else {
@@ -165,6 +179,74 @@ public class TROView {
 			model.put("qvFlank", qv.getRunMPasString());
 		}
 	}
+	
+	private void addEntityFluff(Entity entity) {
+		model.put("year", String.valueOf(entity.getYear()));
+		model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
+		model.put("techRating", entity.getFullRatingName());
+		if (entity.getFluff().getOverview().length() > 0) {
+			model.put("fluffOverview", entity.getFluff().getOverview());
+		}
+		if (entity.getFluff().getCapabilities().length() > 0) {
+			model.put("fluffCapabilities", entity.getFluff().getCapabilities());
+		}
+		if (entity.getFluff().getDeployment().length() > 0) {
+			model.put("fluffDeployment", entity.getFluff().getDeployment());
+		}
+		if (entity.getFluff().getHistory().length() > 0) {
+			model.put("fluffHistory", entity.getFluff().getHistory());
+		}
+	}
+	
+	private void addMechFluff(Mech mech) {
+		addEntityFluff(mech);
+		model.put("massDesc", (int) mech.getWeight()
+				+ Messages.getString("TROView.tons"));
+		// If we had a fluff field for chassis type we would put it here
+		String chassisDesc = EquipmentType.getStructureTypeName(mech.getStructureType());
+		if (mech.isIndustrial()) {
+			chassisDesc += Messages.getString("TROView.chassisIndustrial");
+		}
+		if (mech.isSuperHeavy()) {
+			chassisDesc += Messages.getString("TROView.chassisSuperheavy");
+		}
+		if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
+			chassisDesc += Messages.getString("TROView.chassisQuadVee");
+		} else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH)) {
+			chassisDesc += Messages.getString("TROView.chassisQuad");
+		} else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH)) {
+			chassisDesc += Messages.getString("TROView.chassisTripod");
+		} else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+			chassisDesc += Messages.getString("TROView.chassisLAM");
+		} else {
+			chassisDesc += Messages.getString("TROView.chassisBiped");
+		}
+		model.put("chassisDesc", chassisDesc);
+		// Prefix engine manufacturer
+		model.put("engineDesc", mech.getEngine().getEngineName().replaceAll("\\s?\\(.*\\)", ""));
+		model.put("cruisingSpeed", mech.getWalkMP() * 10.8);
+		model.put("maxSpeed", mech.getRunMP() * 10.8);
+		model.put("jjDesc", formatJJDesc(mech));
+		model.put("jumpCapacity", mech.getJumpMP() * 30);
+		model.put("armorDesc", formatArmorType(mech, false));
+		Map<String, Integer> weaponCount = new HashMap<>();
+		double podSpace = 0.0;
+		for (Mounted m : mech.getEquipment()) {
+			if (m.isOmniPodMounted()) {
+				podSpace += m.getType().getTonnage(mech, m.getLocation());
+			} else if (m.getType() instanceof WeaponType) {
+				weaponCount.merge(m.getDesc(), 1, Integer::sum);
+			}
+		}
+		List<String> armaments = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : weaponCount.entrySet()) {
+			armaments.add(String.format("%d %s", entry.getValue(), entry.getKey()));
+		}
+		if (podSpace > 0) {
+			armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
+		}
+		model.put("armamentList", armaments);
+	}
 
 	private String formatTechBase(Entity entity) {
 		StringBuilder sb = new StringBuilder();
@@ -179,17 +261,20 @@ public class TROView {
 		return sb.toString();
 	}
 	
-	private String formatArmorType(Entity entity) {
+	private String formatArmorType(Entity entity, boolean trim) {
 		if (entity.hasPatchworkArmor()) {
 			return EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK);
 		}
 		// Some types do not have armor on the first location, and others have only a single location
 		int at = entity.getArmorType(Math.min(1, entity.locations() - 1));
-		if (at == EquipmentType.T_ARMOR_STANDARD) {
+		if (trim && (at == EquipmentType.T_ARMOR_STANDARD)) {
 			return "";
 		}
 		String name = EquipmentType.getArmorTypeName(at);
-		return name.replace("-Fibrous", "").replace("-Aluminum", "");
+		if (trim) {
+			name = name.replace("-Fibrous", "").replace("-Aluminum", "");
+		}
+		return name;
 	}
 	
 	private void addArmorAndStructure(Entity entity) {
@@ -379,5 +464,76 @@ public class TROView {
 			}
 		}
 		return "Unknown System";
+	}
+	
+	private String formatJJDesc(Mech mech) {
+		switch (mech.getJumpType()) {
+			case Mech.JUMP_STANDARD:
+				return Messages.getString("TROView.jjStandard");
+			case Mech.JUMP_IMPROVED:
+				return Messages.getString("TROView.jjImproved");
+			case Mech.JUMP_PROTOTYPE:
+				return Messages.getString("TROView.jjPrototype");
+			case Mech.JUMP_PROTOTYPE_IMPROVED:
+				return Messages.getString("TROView.jjImpPrototype");
+			case Mech.JUMP_BOOSTER:
+				return Messages.getString("TROView.jjBooster");
+			default:
+				return Messages.getString("TROView.jjNone");
+		}
+	}
+	
+	enum Justification {
+		LEFT ((str, w) -> String.format("%" + w + "s", str)),
+		CENTER ((str, w) -> {
+			String leftPadded = String.format("%" + (Math.max(0, w - str.length()) / 2) + "s", str);
+			return String.format("%-" + w + "s", leftPadded);
+		}),
+		RIGHT ((str, w) -> String.format("%-" + w + "s", str));
+		
+		final private BiFunction<String, Integer, String> pad;
+		private Justification(BiFunction<String, Integer, String> pad) {
+			this.pad = pad;
+		}
+		
+		public String padString(String str, int fieldWidth) {
+			return pad.apply(str, fieldWidth);
+		}
+	};
+	
+
+	static class FormatTableRowMethod implements TemplateMethodModelEx {
+		final private int[] colWidths;
+		final private Justification[] justification;
+		
+		public FormatTableRowMethod(int[] widths, Justification[] justify) {
+			colWidths = new int[widths.length];
+			justification = new Justification[widths.length];
+			for (int i = 0; i < widths.length; i++) {
+				colWidths[i] = widths[i];
+				if (i < justify.length) {
+					justification[i] = justify[i];
+				} else {
+					justification[i] = Justification.LEFT;
+				}
+			}
+			System.arraycopy(widths, 0, colWidths, 0, widths.length);
+		}
+		
+		@Override
+		public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException {
+			StringBuilder sb = new StringBuilder();
+			int col = 0;
+			for (Object o : arguments) {
+				if (col < colWidths.length) {
+					sb.append(justification[col].padString(o.toString(), colWidths[col]));
+				} else {
+					sb.append(o);
+				}
+				col++;
+			}
+			return sb.toString();
+		}
+		
 	}
 }

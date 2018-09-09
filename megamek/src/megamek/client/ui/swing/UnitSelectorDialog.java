@@ -700,7 +700,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         TROView troView = null;
         try {
         	mechView = new MechView(selectedUnit, false);
-        	troView = new TROView(selectedUnit);
+        	troView = new TROView(selectedUnit, true);
         } catch (Exception e) {
             e.printStackTrace();
             // error unit didn't load right. this is bad news.

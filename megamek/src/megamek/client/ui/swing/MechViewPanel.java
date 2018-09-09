@@ -153,7 +153,7 @@ public class MechViewPanel extends JPanel {
     public void setMech(Entity entity) {
 //        MechView mechView = new MechView(entity, false);
 //        setMech(entity,mechView);
-    	TROView troView = new TROView(entity);
+    	TROView troView = new TROView(entity, true);
     	setMech(entity, troView);
     }
     

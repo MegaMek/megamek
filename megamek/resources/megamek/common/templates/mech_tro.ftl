@@ -12,34 +12,34 @@ Armament:
 <#list armamentList as armament>
      ${armament}
 </#list>
-<#if manufacturerDesc??>Manufacturer: ${manufacturerDesc}</#if>
-<#if factoryDesc??>Primary Factory: ${factoryDesc}</#if>
-<#if communicationDesc??>Communication System: ${communicationDesc}</#if>
-<#if targetingDesc??>Targeting & Tracking System: ${targetingDesc}</#if>
+Manufacturer: <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if>
+     Primary Factory: <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if>
+Communication System: <#if communicationDesc??>${communicationDesc}<#else>Unknown</#if>
+Targeting & Tracking System: <#if targetingDesc??>${targetingDesc}<#else>Unknown</#if>
 Introduction Year: ${year}
 Tech Rating/Availability: ${techRating}
 Cost: ${cost} C-bills
-	
 <#if fluffOverview??>
-	Overview
-	${fluffOverview}
-	
+
+Overview
+${fluffOverview}
 </#if>
 <#if fluffCapabilities??>
-	Capabilities
-	${fluffCapabilities}
-	
+
+Capabilities
+${fluffCapabilities}
 </#if>
 <#if fluffDeployment??>
-	Deployment
-	${fluffDeployment}
-	
+
+Deployment
+${fluffDeployment}
 </#if>
 <#if fluffHistory??>
-	History
-	${fluffHistory}
-	
+
+History
+${fluffHistory}
 </#if>
+
 Type: ${chassis}
 Technology Base: ${techBase} 
 Tonnage: ${tonnage}
@@ -70,99 +70,40 @@ ${formatBasicDataRow(gyroType, "", gyroMass)}
 ${formatBasicDataRow(cockpitType, "", cockpitMass)}
 ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 
-		                     InternalStructure        ArmorValue
-		Head${structureValues.HD}${armorValues.HD}
-		Center Torso${structureValues.CT}${armorValues.CT}
-		Center Torso (rear)${rearArmorValues.CT}
-		
-		R/L Torso
-			${structureValues.RT}
-				<#if structureValues.LT != structureValues.RT>
-					/${structureValues.LT}
-				</#if>
-			${armorValues.RT}
-				<#if armorValues.LT != armorValues.RT>
-					/${armorValues.LT}
-				</#if>
-		R/L Torso (rear)
-			${rearArmorValues.RT}
-				<#if rearArmorValues.LT != rearArmorValues.RT>
-					/${rearArmorValues.LT}
-				</#if>
-				
-		<#if isQuad>
-			FR/L Leg
-				${structureValues.FRL}
-					<#if structureValues.FLL != structureValues.FRL>
-						/${structureValues.FLL}
-					</#if>
-				${armorValues.FRL}
-					<#if armorValues.FLL != armorValues.FRL>
-						/${armorValues.FLL}
-					</#if>
-		<#else>
-			R/L Arm
-				${structureValues.RA}
-					<#if structureValues.LA != structureValues.RA>
-						/${structureValues.LA}
-					</#if>
-				${armorValues.RA}
-					<#if armorValues.LA != armorValues.RA>
-						/${armorValues.LA}
-					</#if>
-		</#if>
-		<#if isQuad>
-			RR/L Leg
-				${structureValues.RRL}
-					<#if structureValues.RLL != structureValues.RRL>
-						/${structureValues.RLL}
-					</#if>
-				${armorValues.RRL}
-					<#if armorValues.RLL != armorValues.RRL>
-						/${armorValues.RLL}
-					</#if>
-		<#elseif isTripod>
-			R/C/L Leg
-				${structureValues.RL}
-					<#if structureValues.LL != structureValues.RL || structureValues.CL != structureValues.RL>
-						/${structureValues.CL}/${structureValues.LL}
-					</#if>
-				${armorValues.RL}
-					<#if armorValues.LL != armorValues.RL || armorValues.CL != armorValues.RL>
-						/${armorValues.CL}/${armorValues.LL}
-					</#if>
-		<#else>
-			R/L Leg
-				${structureValues.RL}
-					<#if structureValues.LL != structureValues.RL>
-						/${structureValues.LL}
-					</#if>
-				${armorValues.RL}
-					<#if armorValues.LL != armorValues.RL>
-						/${armorValues.LL}
-					</#if>
-		</#if>
+     ${formatArmorRow("", "Internal", "Armor")}
+     ${formatArmorRow("", "Structure", "Value")}
+     ${formatArmorRow("Head", structureValues.HD, armorValues.HD)}
+     ${formatArmorRow("Center Torso", structureValues.CT, armorValues.CT)}
+     ${formatArmorRow("Center Torso (rear)", "", rearArmorValues.CT)}
+     ${formatArmorRow("R/L Torso", structureValues.RT, armorValues.RT)}
+     ${formatArmorRow("R/L Torso (rear)", "", rearArmorValues.RT)}
+<#if isQuad>
+     ${formatArmorRow("FR/L Leg", structureValues.FRL, armorValues.RFL)}
+<#else>
+     ${formatArmorRow("R/L Arm", structureValues.RA, armorValues.RA)}
+</#if>
+<#if isQuad>
+     ${formatArmorRow("RR/L Leg", structureValues.RRL, armorValues.RRL)}
+<#elseif isTripod>
+     ${formatArmorRow("R/C/L Leg", structureValues.RL, armorValues.RL)}
+<#else>
+     ${formatArmorRow("R/L Leg", structureValues.RL, armorValues.RL)}
+</#if>
+
+<#if isOmni>
+Weight and Space Allocation
+${formatBasicDataRow("Location", "Fixed", "Space Remaining")}	
+<#list fixedEquipment as row>
+${formatBasicDataRow(row.location, row.equipment, row.remaining)}
+</#list>
+</#if>
+
+Weapons
+${formatEquipmentRow("and Ammo", "Location", "Critical", "Heat", "Tonnage")}	
+<#list equipment as eq>
+${formatEquipmentRow(eq.name, eq.location, eq.slots, eq.heat, eq.tonnage)}
+</#list>
 	
-	
-	<#if isOmni>
-	Weight and Space Allocation
-	
-	<i>Location</i><i>Fixed</i><i>Space Remaining</i>
-	<#list fixedEquipment as row>
-	${row.location}${row.equipment}${row.remaining}
-	</#list>
-	
-	</#if>
-	
-	
-		<th align="left">Weaponsand AmmoLocationCriticalTonnage
-		<#list equipment as eq>
-			${eq.name}${eq.location}${eq.slots}${eq.tonnage}
-		</#list>
-	
-	
-	<#if quirks??>
-		
-		Features the following design quirks: ${quirks}
-		
-	</#if>
+<#if quirks??>
+Features the following design quirks: ${quirks}
+</#if>

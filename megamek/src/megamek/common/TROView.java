@@ -84,7 +84,7 @@ public class TROView {
 	}
 	
 	private void addBasicData(Entity entity) {
-		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 40, 30, 10},
+		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 30, 20, 5},
 				new Justification[] { Justification.LEFT, Justification.LEFT, Justification.RIGHT }));
 		model.put("fullName", entity.getShortNameRaw());
 		model.put("chassis", entity.getChassis());
@@ -111,8 +111,12 @@ public class TROView {
         
 	}
 
-
 	private void addMechData(Mech mech) {
+		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { 30, 12, 8, 10, 8},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+						Justification.CENTER, Justification.CENTER}));
 		addBasicData(mech);
 		addArmorAndStructure(mech);
 		addEquipment(mech);
@@ -235,7 +239,7 @@ public class TROView {
 			if (m.isOmniPodMounted()) {
 				podSpace += m.getType().getTonnage(mech, m.getLocation());
 			} else if (m.getType() instanceof WeaponType) {
-				weaponCount.merge(m.getDesc(), 1, Integer::sum);
+				weaponCount.merge(m.getType().getName(), 1, Integer::sum);
 			}
 		}
 		List<String> armaments = new ArrayList<>();
@@ -484,12 +488,18 @@ public class TROView {
 	}
 	
 	enum Justification {
-		LEFT ((str, w) -> String.format("%" + w + "s", str)),
+		LEFT ((str, w) -> String.format("%-" + w + "s", str)),
 		CENTER ((str, w) -> {
-			String leftPadded = String.format("%" + (Math.max(0, w - str.length()) / 2) + "s", str);
-			return String.format("%-" + w + "s", leftPadded);
+			if (w > str.length()) {
+				int rightPadding = Math.max(0, (w - str.length()) / 2);
+				if (rightPadding > 0) {
+					str = String.format("%-" + (w - rightPadding) + "s", str);
+				}
+				return String.format("%" + w + "s", str);
+			}
+			return str;
 		}),
-		RIGHT ((str, w) -> String.format("%-" + w + "s", str));
+		RIGHT ((str, w) -> String.format("%" + w + "s", str));
 		
 		final private BiFunction<String, Integer, String> pad;
 		private Justification(BiFunction<String, Integer, String> pad) {
@@ -497,7 +507,11 @@ public class TROView {
 		}
 		
 		public String padString(String str, int fieldWidth) {
-			return pad.apply(str, fieldWidth);
+			if (fieldWidth > 0) {
+				return pad.apply(str, fieldWidth);
+			} else {
+				return str;
+			}
 		}
 	};
 	

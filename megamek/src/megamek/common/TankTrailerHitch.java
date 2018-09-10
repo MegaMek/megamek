@@ -24,7 +24,7 @@ import java.util.Vector;
  * @see megamek.common.MechFileParser#postLoadInit
  */
 
-/* package */class TankTrailerHitch implements Transporter {
+public class TankTrailerHitch implements Transporter {
 
     // Private attributes, constants and helper functions.
 

@@ -3052,15 +3052,38 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final IGame game = clientgui.getClient().getGame();
         Entity choice = null;
 
-        Vector<Entity> choices = new Vector<Entity>();
-        for (Entity other : game.getEntitiesVector(ce().getPosition())) {
-            if (other.isLoadableThisTurn() && (ce() != null)
-                && ce().canTow(other)
-                && other != ce()) {
-                choices.addElement(other);
+        ArrayList<Entity> choices = new ArrayList<Entity>();
+        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        ArrayList<Coords> trailerPos = new ArrayList<Coords>();
+        
+        //Some eligible trailers may be in adjacent hexes, or (ugh) in locations
+        //adjacent to trailers already being towed
+        //First, set up the list of all entities in this train
+        thisTrain.add(ce());
+        for (Entity trailer : ce().getAllTowedUnits()) {
+            thisTrain.add(trailer);
+        }
+        //Check each entity in the train for working hitches
+        for (Entity e : thisTrain) {
+            for (Mounted m : e.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
+                    //Add the coords of the unit with the empty hitch and the adjacent hex 
+                    //in the direction of the location that the hitch is mounted to our list
+                    trailerPos.add(e.getPosition());
+                    trailerPos.add(e.getPosition().translated(m.getLocation()));
+                }
             }
         }
-
+        for (Coords pos : trailerPos) {
+            for (Entity other : game.getEntitiesVector(pos)) {
+                if (other.isLoadableThisTurn() && (ce() != null)
+                    && ce().canTow(other)
+                    && other != ce()) {
+                    choices.add(other);
+                }
+            }
+        }
+        
         // Handle error condition.
         if (choices.size() == 0) {
             logDebug(METHOD_NAME, "Method called without towable units.");

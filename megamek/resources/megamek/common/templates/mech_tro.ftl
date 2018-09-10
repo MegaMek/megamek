@@ -78,7 +78,7 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
      ${formatArmorRow("R/L Torso", structureValues.RT, armorValues.RT)}
      ${formatArmorRow("R/L Torso (rear)", "", rearArmorValues.RT)}
 <#if isQuad>
-     ${formatArmorRow("FR/L Leg", structureValues.FRL, armorValues.RFL)}
+     ${formatArmorRow("FR/L Leg", structureValues.FRL, armorValues.FRL)}
 <#else>
      ${formatArmorRow("R/L Arm", structureValues.RA, armorValues.RA)}
 </#if>
@@ -97,7 +97,12 @@ ${formatBasicDataRow("Location", "Fixed", "Space Remaining")}
 ${formatBasicDataRow(row.location, row.equipment, row.remaining)}
 </#list>
 </#if>
+<#if !isQuad>
 
+Right Arm Actuators: ${rightArmActuators}
+Left Arm Actuators: ${leftArmActuators}
+
+</#if>
 Weapons
 ${formatEquipmentRow("and Ammo", "Location", "Critical", "Heat", "Tonnage")}	
 <#list equipment as eq>

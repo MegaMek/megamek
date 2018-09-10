@@ -9,12 +9,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -121,8 +123,9 @@ public class TROView {
 		addArmorAndStructure(mech);
 		addEquipment(mech);
 		addMechFluff(mech);
+		mech.setConversionMode(0);
 		model.put("isOmni", mech.isOmni());
-		model.put("isQuad", mech.entityIsQuad());
+		model.put("isQuad", mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH));
 		model.put("isTripod", mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH));
 		TestMech testMech = new TestMech(mech, verifier.mechOption, null);
 		model.put("structureName", mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD?
@@ -178,10 +181,22 @@ public class TROView {
 			final QuadVee qv = (QuadVee) mech;
 			qv.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
 			model.put("qvConversionMass", testMech.getWeightMisc());
-			model.put("qvType", qv.getMotiveTypeString());
+			model.put("qvType", qv.getMotiveTypeString() + "ed");
 			model.put("qvCruise", qv.getWalkMP());
 			model.put("qvFlank", qv.getRunMPasString());
 		}
+		model.put("rightArmActuators", countArmActuators(mech, Mech.LOC_RARM));
+		model.put("leftArmActuators", countArmActuators(mech, Mech.LOC_LARM));
+	}
+	
+	private String countArmActuators(Mech mech, int location) {
+		StringJoiner sj = new StringJoiner(", ");
+		for (int act = Mech.ACTUATOR_SHOULDER; act <= Mech.ACTUATOR_HAND; act++) {
+			if (mech.hasSystem(act, location)) {
+				sj.add(mech.getRawSystemName(act));
+			}
+		}
+		return sj.toString();
 	}
 	
 	private void addEntityFluff(Entity entity) {
@@ -280,21 +295,70 @@ public class TROView {
 		}
 		return name;
 	}
+	private static final int[][] MECH_ARMOR_LOCS = {
+			{Mech.LOC_HEAD}, {Mech.LOC_CT}, {Mech.LOC_RT, Mech.LOC_LT},
+			{Mech.LOC_RARM, Mech.LOC_LARM}, {Mech.LOC_RLEG, Mech.LOC_CLEG, Mech.LOC_LLEG}
+	};
 	
-	private void addArmorAndStructure(Entity entity) {
-		Map<String, Number> structure = new HashMap<>();
-		Map<String, Number> armor = new HashMap<>();
-		Map<String, Number> rearArmor = new HashMap<>();
-		for (int loc = 0; loc < entity.locations(); loc++) {
-			structure.put(entity.getLocationAbbr(loc), entity.getOInternal(loc));
-			armor.put(entity.getLocationAbbr(loc), entity.getOArmor(loc));
-			if (entity.hasRearArmor(loc)) {
-				rearArmor.put(entity.getLocationAbbr(loc), entity.getOArmor(loc, true));
+	private static final int[][] MECH_ARMOR_LOCS_REAR = {
+			{Mech.LOC_CT}, {Mech.LOC_RT, Mech.LOC_LT}
+	};
+	
+	private void addArmorAndStructure(Mech mech) {
+		model.put("structureValues", addArmorStructureEntries(mech,
+				(en, loc) -> en.getOInternal(loc),
+				MECH_ARMOR_LOCS));
+		model.put("armorValues", addArmorStructureEntries(mech,
+				(en, loc) -> en.getOArmor(loc),
+				MECH_ARMOR_LOCS));
+		model.put("rearArmorValues", addArmorStructureEntries(mech,
+				(en, loc) -> en.getOArmor(loc, true),
+				MECH_ARMOR_LOCS_REAR));
+	}
+	
+	/**
+	 * Convenience method to format armor and structure values, consolidating right/left values into a single
+	 * entry. In most cases the right and left armor values are the same, in which case only a single value
+	 * is used. If the values do not match they are both (or all, in the case of tripod mech legs) given
+	 * separated by slashes.
+	 * 
+	 * @param entity    The entity to collect structure or armor values for
+	 * @param provider  The function that retrieves the armor or structure value for the entity and location
+	 * @param locSets   An two-dimensional array that groups locations that should appear on the same line.
+	 * 					Any location that is not legal for the unit (e.g. center leg on non-tripods) is
+	 *                	ignored. If the first location in a group is illegal, the entire group is skipped.
+	 * @return			A {@link Map} with the armor/structure value mapped to the abbreviation of each
+	 * 					of the location keys.
+	 */
+	private Map<String, String> addArmorStructureEntries(Entity entity,
+			BiFunction<Entity, Integer, Integer> provider, int[][] locSets) {
+		Map<String, String> retVal = new HashMap<>();
+		for (int[] locs : locSets) {
+			if ((locs.length == 0) || (locs[0] >= entity.locations())) {
+				continue;
+			}
+			String val = null;
+			if (locs.length > 1) {
+				for (int i = 1; i < locs.length; i++) {
+					if ((locs[i] < entity.locations())
+							&& (provider.apply(entity,  locs[i]) != provider.apply(entity, locs[0]))) {
+						val = Arrays.stream(locs)
+								.mapToObj(l -> String.valueOf(provider.apply(entity, l)))
+								.collect(Collectors.joining("/"));
+						break;
+					}
+				}
+			}
+			if (null == val) {
+				val = String.valueOf(provider.apply(entity, locs[0]));
+			}
+			for (int loc : locs) {
+				if (loc < entity.locations()) {
+					retVal.put(entity.getLocationAbbr(loc), val);
+				}
 			}
 		}
-		model.put("structureValues", structure);
-		model.put("armorValues", armor);
-		model.put("rearArmorValues", rearArmor);
+		return retVal;
 	}
 	
 	private void addEquipment(Entity entity) {

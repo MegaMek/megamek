@@ -105,62 +105,29 @@
 					/${armorValues.LT}
 				</#if></td></td></tr>
 		<tr><td>R/L Torso (rear)</td><td></td>
-			<td align="center">${rearArmorValues.RT}
-				<#if rearArmorValues.LT != rearArmorValues.RT>
-					/${rearArmorValues.LT}
-				</#if></td></td></tr>
+			<td align="center">${rearArmorValues.RT}</td></tr>
 				
 		<#if isQuad>
 			<tr><td>FR/L Leg</td>
-				<td align="center">${structureValues.FRL}
-					<#if structureValues.FLL != structureValues.FRL>
-						/${structureValues.FLL}
-					</#if></td>
-				<td align="center">${armorValues.FRL}
-					<#if armorValues.FLL != armorValues.FRL>
-						/${armorValues.FLL}
-					</#if></td></td></tr>
+				<td align="center">${structureValues.FRL}</td>
+				<td align="center">${armorValues.FRL}</td></tr>
 		<#else>
 			<tr><td>R/L Arm</td>
-				<td align="center">${structureValues.RA}
-					<#if structureValues.LA != structureValues.RA>
-						/${structureValues.LA}
-					</#if></td>
-				<td align="center">${armorValues.RA}
-					<#if armorValues.LA != armorValues.RA>
-						/${armorValues.LA}
-					</#if></td></td></tr>
+				<td align="center">${structureValues.RA}</td>
+				<td align="center">${armorValues.RA}</td></tr>
 		</#if>
 		<#if isQuad>
 			<tr><td>RR/L Leg</td>
-				<td align="center">${structureValues.RRL}
-					<#if structureValues.RLL != structureValues.RRL>
-						/${structureValues.RLL}
-					</#if></td>
-				<td align="center">${armorValues.RRL}
-					<#if armorValues.RLL != armorValues.RRL>
-						/${armorValues.RLL}
-					</#if></td></td></tr>
+				<td align="center">${structureValues.RRL}</td>
+				<td align="center">${armorValues.RRL}</td></tr>
 		<#elseif isTripod>
 			<tr><td>R/C/L Leg</td>
-				<td align="center">${structureValues.RL}
-					<#if structureValues.LL != structureValues.RL || structureValues.CL != structureValues.RL>
-						/${structureValues.CL}/${structureValues.LL}
-					</#if></td>
-				<td align="center">${armorValues.RL}
-					<#if armorValues.LL != armorValues.RL || armorValues.CL != armorValues.RL>
-						/${armorValues.CL}/${armorValues.LL}
-					</#if></td></td></tr>
+				<td align="center">${structureValues.RL}</td>
+				<td align="center">${armorValues.RL}</td></tr>
 		<#else>
 			<tr><td>R/L Leg</td>
-				<td align="center">${structureValues.RL}
-					<#if structureValues.LL != structureValues.RL>
-						/${structureValues.LL}
-					</#if></td>
-				<td align="center">${armorValues.RL}
-					<#if armorValues.LL != armorValues.RL>
-						/${armorValues.LL}
-					</#if></td></td></tr>
+				<td align="center">${structureValues.RL}</td>
+				<td align="center">${armorValues.RL}</td></tr>
 		</#if>
 	</table>
 	

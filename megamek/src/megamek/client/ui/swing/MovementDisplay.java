@@ -2843,9 +2843,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // If the other unit is friendly and not the current entity
                 // and the current entity has at least 1 MP, if it can
                 // transport the other unit, and if the other hasn't moved
-                // then enable the "Load" button.
+                // then enable the "Load" button. Towing gets handled later,
+                // and we don't want both buttons enabled.
                 if ((ce.getWalkMP() > 0) && ce.canLoad(other)
-                    && other.isLoadableThisTurn()) {
+                    && other.isLoadableThisTurn() && !ce.canTow(other)) {
                     setLoadEnabled(true);
                     isGood = true;
 

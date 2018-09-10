@@ -15025,9 +15025,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>true</code> if the trailer can be towed, <code>false</code>
      * otherwise.
      */
-    public boolean canTow(Entity trailer) {
-        //assume that we can't tow the trailer...
-        boolean result = false;
+    public boolean canTow(Entity trailer) {        
+        //If this entity is in a transport bay, it can't tow another
+        if (this.getTransportId() != Entity.NONE) {
+            return false;
+        }
         
         // one can only tow friendly units!
         if (trailer.isEnemyOf(this)) {
@@ -15043,6 +15045,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (trailer.getElevation() != getElevation()) {
             return false;
         }
+        
+        //If none of the above happen, assume that we can't tow the trailer...
+        boolean result = false;
         
         //Next, look for an empty hitch
         for (Transporter t : getTransports()) {

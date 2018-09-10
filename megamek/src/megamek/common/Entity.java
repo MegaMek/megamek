@@ -15074,17 +15074,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     
     /**
-     * Used to determine if this entity is currently being towed by another
+     * Used to determine if this entity is currently towing others
      */
-    private boolean isTowed = false;
+    private boolean isTowing = false;
 
     /**
      * Returns the towed status of this entity
      * 
      * @return
      */
-    public boolean getTowed() {
-        return isTowed;
+    public boolean getTowing() {
+        return isTowing;
     }
     
     /**
@@ -15092,8 +15092,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @param b - is the entity being towed or not?
      */
-    public void setTowed(boolean b) {
-        isTowed = b;
+    public void setTowing(boolean b) {
+        isTowing = b;
     }
     
     /**
@@ -15146,19 +15146,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
-     * A list of entities being towed behind this entity, if present
+     * A list of entity IDs being towed behind this entity, if present
      * 
      * Used to ensure all following trailers are disconnected if the train
      * is broken at this entity. 
      */
-    private ArrayList<Entity> connectedUnits = new ArrayList<Entity>();
+    private ArrayList<Integer> connectedUnits = new ArrayList<Integer>();
     
     /**
      * Returns the entities towed behind this entity
      * 
      * @return
      */
-    public ArrayList<Entity> getConnectedUnits() {
+    public ArrayList<Integer> getConnectedUnits() {
         return connectedUnits;
     }
     
@@ -15168,9 +15168,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param e - the entity to be added to this train
      */
     public void towUnit(Entity e) {
-        connectedUnits.add(e);
+        connectedUnits.add(e.getId());
         e.setTowedBy(getId());
-        e.setTowed(true);
+        e.setTowing(true);
         if (isTractor()) {
             e.setTractor(this);
         } else {
@@ -15180,7 +15180,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //If not, update the whole train
         if (e.getTractor() != null) {
             e.getTractor().addTowedUnit(e);
-            for (Entity trailer : e.getConnectedUnits()) {
+            for (int i : e.getConnectedUnits()) {
+                Entity trailer = game.getEntity(i);
                 e.getTractor().addTowedUnit(trailer);
                 trailer.setTractor(getTractor());
             }
@@ -15195,9 +15196,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param e - the entity to be detached
      */
     public void disconnectUnit(Entity e) {
-        connectedUnits.remove(e);
+        connectedUnits.remove(e.getId());
         e.setTowedBy(Entity.NONE);
-        for (Entity trailer : e.getConnectedUnits()) {
+        for (int i : e.getConnectedUnits()) {
+            Entity trailer = game.getEntity(i);
             trailer.setTractor(null);
             tractor.removeTowedUnit(trailer);
         }

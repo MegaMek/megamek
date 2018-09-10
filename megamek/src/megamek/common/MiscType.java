@@ -2470,7 +2470,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setIntroLevel(true);
         misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
         return misc;
     }
 

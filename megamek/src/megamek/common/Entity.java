@@ -15027,10 +15027,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     int loc = LOC_NONE;
                     if (m.getLocation() == Tank.LOC_FRONT) {
                         loc = (Tank.LOC_FRONT - 1);
-                    } else if (m.getLocation() == Tank.LOC_REAR) {
+                    } else if (m.getLocation() == Tank.LOC_REAR
+                            || m.getLocation() == SuperHeavyTank.LOC_REAR) {
                         loc = (Tank.LOC_REAR - 1);
                     }
-                    if (!trailerPos.add(e.getPosition().translated(loc))) {
+                    if (!trailerPos.contains(e.getPosition().translated(loc))) {
                         trailerPos.add(e.getPosition().translated(loc));
                     }
                 }
@@ -15091,11 +15092,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             for (Entity tr : getTractor().getAllTowedUnits()) {
                 trailerWeight += tr.getWeight();
             }
-            if ((trailerWeight + trailer.getWeight()) <= tractorWeight) {
-                result = true;
-            } else {
-                result = false;
-            }
+            result = (trailerWeight + trailer.getWeight()) <= tractorWeight;
         }
         return result;
     }

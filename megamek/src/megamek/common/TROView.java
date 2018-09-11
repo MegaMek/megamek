@@ -31,6 +31,7 @@ import megamek.common.options.Quirks;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -50,6 +51,9 @@ public class TROView {
 		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
 			templateFileName = "mech_tro.ftl";
 			addMechData((Mech) entity);
+		} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
+			templateFileName = "vehicle_tro.ftl";
+			addVehicleData((Tank) entity);
 		}
 		if (null != templateFileName) {
 			if (html) {
@@ -131,7 +135,7 @@ public class TROView {
 		model.put("structureName", mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD?
 				"" : EquipmentType.getStructureTypeName(mech.getStructureType()));
 		model.put("isMass", NumberFormat.getInstance().format(testMech.getWeightStructure()));
-		model.put("engineName", mech.getEngine().getEngineName().replaceAll("\\s?\\(.*\\)", ""));
+		model.put("engineName", stripNotes(mech.getEngine().getEngineName()));
 		model.put("engineMass", NumberFormat.getInstance().format(testMech.getWeightEngine()));
 		model.put("walkMP", mech.getWalkMP());
 		model.put("runMP", mech.getRunMPasString());
@@ -181,7 +185,7 @@ public class TROView {
 			final QuadVee qv = (QuadVee) mech;
 			qv.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
 			model.put("qvConversionMass", testMech.getWeightMisc());
-			model.put("qvType", qv.getMotiveTypeString() + "ed");
+			model.put("qvType", Messages.getString("MovementType." + qv.getMovementModeAsString()));
 			model.put("qvCruise", qv.getWalkMP());
 			model.put("qvFlank", qv.getRunMPasString());
 		}
@@ -197,6 +201,52 @@ public class TROView {
 			}
 		}
 		return sj.toString();
+	}
+	
+	private void addVehicleData(Tank tank) {
+		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { 30, 12, 12},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+						Justification.CENTER, Justification.CENTER}));
+		addBasicData(tank);
+		addArmorAndStructure(tank);
+		addEquipment(tank);
+		addVehicleFluff(tank);
+		model.put("isOmni", tank.isOmni());
+		model.put("isVTOL", tank.hasETypeFlag(Entity.ETYPE_VTOL));
+		model.put("isSuperheavy", tank.isSuperHeavy());
+		model.put("isSupport", tank.isSupportVehicle());
+		model.put("hasTurret", !tank.hasNoTurret());
+		model.put("hasTurret2", !tank.hasNoDualTurret());
+		model.put("moveType", Messages.getString("MovementType." + tank.getMovementModeAsString()));
+		TestTank testTank = new TestTank(tank, verifier.mechOption, null);
+		model.put("isMass", NumberFormat.getInstance().format(testTank.getWeightStructure()));
+		model.put("engineName", stripNotes(tank.getEngine().getEngineName()));
+		model.put("engineMass", NumberFormat.getInstance().format(testTank.getWeightEngine()));
+		model.put("walkMP", tank.getWalkMP());
+		model.put("runMP", tank.getRunMPasString());
+		if (tank.getJumpMP() > 0) {
+			model.put("jumpMP", tank.getJumpMP());
+		}
+		model.put("hsCount", testTank.getCountHeatSinks());
+		model.put("hsMass", NumberFormat.getInstance().format(testTank.getWeightHeatSinks()));
+		model.put("controlMass", testTank.getWeightControls());
+		model.put("liftMass", testTank.getTankWeightLifting());
+		model.put("amplifierMass", testTank.getWeightPowerAmp());
+		model.put("turretMass", testTank.getTankWeightTurret());
+		model.put("turretMass2", testTank.getTankWeightDualTurret());
+		String atName = formatArmorType(tank, true);
+		if (atName.length() > 0) {
+			model.put("armorType", " (" + atName + ")");
+		} else {
+			model.put("armorType", "");
+		}
+		model.put("armorFactor", tank.getTotalOArmor());
+		model.put("armorMass", NumberFormat.getInstance().format(testTank.getWeightArmor()));
+		if (tank.isOmni()) {
+			addFixedOmni(tank);
+		}
 	}
 	
 	private void addEntityFluff(Entity entity) {
@@ -217,10 +267,36 @@ public class TROView {
 		}
 	}
 	
-	private void addMechFluff(Mech mech) {
-		addEntityFluff(mech);
-		model.put("massDesc", (int) mech.getWeight()
+	private void addMechVeeAeroFluff(Entity entity) {
+		addEntityFluff(entity);
+		model.put("massDesc", (int) entity.getWeight()
 				+ Messages.getString("TROView.tons"));
+		// Prefix engine manufacturer
+		model.put("engineDesc", stripNotes(entity.getEngine().getEngineName()));
+		model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
+		model.put("maxSpeed", entity.getRunMP() * 10.8);
+		model.put("armorDesc", formatArmorType(entity, false));
+		Map<String, Integer> weaponCount = new HashMap<>();
+		double podSpace = 0.0;
+		for (Mounted m : entity.getEquipment()) {
+			if (m.isOmniPodMounted()) {
+				podSpace += m.getType().getTonnage(entity, m.getLocation());
+			} else if (m.getType() instanceof WeaponType) {
+				weaponCount.merge(m.getType().getName(), 1, Integer::sum);
+			}
+		}
+		List<String> armaments = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : weaponCount.entrySet()) {
+			armaments.add(String.format("%d %s", entry.getValue(), entry.getKey()));
+		}
+		if (podSpace > 0) {
+			armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
+		}
+		model.put("armamentList", armaments);
+	}
+	
+	private void addMechFluff(Mech mech) {
+		addMechVeeAeroFluff(mech);
 		// If we had a fluff field for chassis type we would put it here
 		String chassisDesc = EquipmentType.getStructureTypeName(mech.getStructureType());
 		if (mech.isIndustrial()) {
@@ -241,30 +317,16 @@ public class TROView {
 			chassisDesc += Messages.getString("TROView.chassisBiped");
 		}
 		model.put("chassisDesc", chassisDesc);
-		// Prefix engine manufacturer
-		model.put("engineDesc", mech.getEngine().getEngineName().replaceAll("\\s?\\(.*\\)", ""));
-		model.put("cruisingSpeed", mech.getWalkMP() * 10.8);
-		model.put("maxSpeed", mech.getRunMP() * 10.8);
 		model.put("jjDesc", formatJJDesc(mech));
 		model.put("jumpCapacity", mech.getJumpMP() * 30);
-		model.put("armorDesc", formatArmorType(mech, false));
-		Map<String, Integer> weaponCount = new HashMap<>();
-		double podSpace = 0.0;
-		for (Mounted m : mech.getEquipment()) {
-			if (m.isOmniPodMounted()) {
-				podSpace += m.getType().getTonnage(mech, m.getLocation());
-			} else if (m.getType() instanceof WeaponType) {
-				weaponCount.merge(m.getType().getName(), 1, Integer::sum);
-			}
+	}
+	
+	private void addVehicleFluff(Tank tank) {
+		addMechVeeAeroFluff(tank);
+		if (tank.getJumpMP() > 0) {
+			model.put("jjDesc", Messages.getString("TROView.jjVehicle"));
+			model.put("jumpCapacity", tank.getJumpMP() * 30);
 		}
-		List<String> armaments = new ArrayList<>();
-		for (Map.Entry<String, Integer> entry : weaponCount.entrySet()) {
-			armaments.add(String.format("%d %s", entry.getValue(), entry.getKey()));
-		}
-		if (podSpace > 0) {
-			armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
-		}
-		model.put("armamentList", armaments);
 	}
 
 	private String formatTechBase(Entity entity) {
@@ -304,6 +366,19 @@ public class TROView {
 			{Mech.LOC_CT}, {Mech.LOC_RT, Mech.LOC_LT}
 	};
 	
+	private static final int[][] TANK_ARMOR_LOCS = {
+			{Tank.LOC_FRONT}, {Tank.LOC_RIGHT, Tank.LOC_LEFT}, {Tank.LOC_REAR},
+			{Tank.LOC_TURRET}, {Tank.LOC_TURRET_2}, {VTOL.LOC_ROTOR}
+	};
+	
+	private static final int[][] SH_TANK_ARMOR_LOCS = {
+			{SuperHeavyTank.LOC_FRONT},
+			{SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT},
+			{SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT},
+			{SuperHeavyTank.LOC_REAR},
+			{SuperHeavyTank.LOC_TURRET}, {SuperHeavyTank.LOC_TURRET_2}
+	};
+	
 	private void addArmorAndStructure(Mech mech) {
 		model.put("structureValues", addArmorStructureEntries(mech,
 				(en, loc) -> en.getOInternal(loc),
@@ -314,6 +389,24 @@ public class TROView {
 		model.put("rearArmorValues", addArmorStructureEntries(mech,
 				(en, loc) -> en.getOArmor(loc, true),
 				MECH_ARMOR_LOCS_REAR));
+	}
+	
+	private void addArmorAndStructure(Tank tank) {
+		if (tank.hasETypeFlag(Entity.ETYPE_SUPER_HEAVY_TANK)) {
+			model.put("structureValues", addArmorStructureEntries(tank,
+					(en, loc) -> en.getOInternal(loc),
+					SH_TANK_ARMOR_LOCS));
+			model.put("armorValues", addArmorStructureEntries(tank,
+					(en, loc) -> en.getOArmor(loc),
+					SH_TANK_ARMOR_LOCS));
+		} else {
+			model.put("structureValues", addArmorStructureEntries(tank,
+					(en, loc) -> en.getOInternal(loc),
+					TANK_ARMOR_LOCS));
+			model.put("armorValues", addArmorStructureEntries(tank,
+					(en, loc) -> en.getOArmor(loc),
+					TANK_ARMOR_LOCS));
+		}
 	}
 	
 	/**
@@ -387,7 +480,7 @@ public class TROView {
 			for (Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
 				final EquipmentType eq = entry.getKey();
 				final int count = equipment.get(loc).get(eq);
-				String name = eq.getName().replaceAll("\\s?\\[.*\\]", "");
+				String name = stripNotes(eq.getName());
 				if (eq instanceof AmmoType) {
 					name = String.format("%s (%d)", name,
 							((AmmoType) eq).getShots() * count);
@@ -440,6 +533,7 @@ public class TROView {
 		for (int loc = 0; loc < entity.locations(); loc++) {
 			int remaining = 0;
 			Map<String, Integer> fixedCount = new HashMap<>();
+			Map<String, Double> fixedWeight = new HashMap<>();
 			for (int slot = 0; slot < entity.getNumberOfCriticals(loc); slot++) {
 				CriticalSlot crit = entity.getCritical(loc, slot);
 				if (null == crit) {
@@ -451,8 +545,9 @@ public class TROView {
 					if (crit.getMount().isOmniPodMounted()) {
 						remaining++;
 					} else {
-						fixedCount.merge(crit.getMount().getType().getName().replaceAll("\\[.*\\]", ""),
-								1, Integer::sum);
+						String key = stripNotes(crit.getMount().getType().getName());
+						fixedCount.merge(key, 1, Integer::sum);
+						fixedWeight.merge(key, crit.getMount().getType().getTonnage(entity), Double::sum);
 					}
 				}
 			}
@@ -462,6 +557,7 @@ public class TROView {
 				row.put("location", entity.getLocationName(loc));
 				row.put("equipment", "None");
 				row.put("remaining", remaining);
+				row.put("tonnage", 0.0);
 				fixedList.add(row);
 			} else {
 				boolean firstLine = true;
@@ -480,6 +576,7 @@ public class TROView {
 					} else {
 						row.put("equipment", entry.getKey());
 					}
+					row.put("tonnage", fixedWeight.get(entry.getKey()));
 					fixedList.add(row);
 				}
 			}
@@ -578,7 +675,16 @@ public class TROView {
 			}
 		}
 	};
-	
+
+	/**
+	 * Removes parenthetical and bracketed notes from a String
+	 * @param str The String to process
+	 * @return    The same String with notes removed
+	 */
+	private String stripNotes(String str) {
+		return str.replaceAll("\\s+\\[.*?\\]", "")
+				.replaceAll("\\s+\\(.*?\\)", "");
+	}
 
 	static class FormatTableRowMethod implements TemplateMethodModelEx {
 		final private int[] colWidths;

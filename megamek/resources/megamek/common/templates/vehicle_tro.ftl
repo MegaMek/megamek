@@ -63,8 +63,8 @@ ${formatBasicDataRow("Lift Equipment:", "", liftMass)}
 </#if>
 ${formatBasicDataRow("Power Amplifier:", "", amplifierMass)}
 <#if hasTurret2>
-${formatBasicDataRow("Turret 1:", "", turretMass)}
-${formatBasicDataRow("Turret 2:", "", turretMass2)}
+${formatBasicDataRow("Rear Turret:", "", turretMass)}
+${formatBasicDataRow("Front Turret:", "", turretMass2)}
 <#elseif hasTurret>
 ${formatBasicDataRow("Turret:", "", turretMass)}
 </#if>
@@ -81,8 +81,8 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 </#if>
      ${formatArmorRow("Rear", structureValues.RR, armorValues.RR)}<#if patchworkByLoc??> ${patchworkByLoc.RR}</#if>
 <#if hasTurret2>
-     ${formatArmorRow("Turret 1", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
-     ${formatArmorRow("Turret 2", structureValues.FT, armorValues.FT)}<#if patchworkByLoc??> ${patchworkByLoc.FT}</#if>
+     ${formatArmorRow("Rear Turret", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
+     ${formatArmorRow("Front Turret", structureValues.FT, armorValues.FT)}<#if patchworkByLoc??> ${patchworkByLoc.FT}</#if>
 <#elseif hasTurret>
      ${formatArmorRow("Turret", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
 </#if>
@@ -100,7 +100,6 @@ ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
 	<#else>
 None
 	</#if>
-</#if>
 </#list>
 </#if>
 

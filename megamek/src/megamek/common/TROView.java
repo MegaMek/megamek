@@ -523,7 +523,7 @@ public class TROView {
 	
 	private int addEquipment(Entity entity) {
 		final int structure = entity.getStructureType();
-		final Map<Integer, Map<EquipmentType, Integer>> equipment = new HashMap<>();
+		final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
 		int nameWidth = 30;
 		for (Mounted m : entity.getEquipment()) {
 			if (m.getLocation() < 0) {
@@ -539,12 +539,13 @@ public class TROView {
 				}
 			}
 			if (m.isOmniPodMounted() || !entity.isOmni()) {
-				equipment.putIfAbsent(m.getLocation(), new HashMap<>());
-				equipment.get(m.getLocation()).merge(m.getType(), 1, Integer::sum);
+				String loc = formatLocationTableEntry(entity, m);
+				equipment.putIfAbsent(loc, new HashMap<>());
+				equipment.get(loc).merge(m.getType(), 1, Integer::sum);
 			}
 		}
 		final List<Map<String, Object>> eqList = new ArrayList<>();
-		for (Integer loc : equipment.keySet()) {
+		for (String loc : equipment.keySet()) {
 			for (Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
 				final EquipmentType eq = entry.getKey();
 				final int count = equipment.get(loc).get(eq);
@@ -577,7 +578,7 @@ public class TROView {
 					fields.put("location", locs.toString());
 					fields.put("slots", crits.toString());
 				} else {
-					fields.put("location", entity.getLocationAbbr(loc));
+					fields.put("location", loc);
 					fields.put("slots", eq.getCriticals(entity) * count);
 				}
 				eqList.add(fields);
@@ -704,6 +705,31 @@ public class TROView {
 			}
 		}
 		return "Unknown System";
+	}
+	
+	/**
+	 * Formats displayable location name for use in equipment table. The format of the name can
+	 * vary by unit type due to available space based on number of columns, and in some cases the
+	 * official TROs have different location names than the ones used by MM.
+	 * 
+	 * @param entity   The entity the TRO is created for
+	 * @param mounted  The mounted equipment
+	 * @param rear     Whether the equipment is rear mounted
+	 * @return         The location name to use in the table.
+	 */
+	private String formatLocationTableEntry(Entity entity, Mounted mounted) {
+		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
+			String loc = entity.getLocationAbbr(mounted.getLocation());
+			if (mounted.isRearMounted()) {
+				loc += "(R)";
+			}
+			return loc;
+		}
+		if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
+			return entity.getLocationName(mounted.getLocation());
+		}
+		// Default: location abbreviation
+		return entity.getLocationAbbr(mounted.getLocation());
 	}
 	
 	/**

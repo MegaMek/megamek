@@ -14999,21 +14999,44 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
-     * If this unit has a trailer hitch, return its location
-     * At present, this does not account for entities with two hitches 
+     * Returns a list of Coords that need to be checked for entities that can be towed
+     * This accounts for the hexes occupied by each entity in the 'train', plus hexes
+     * in front of or behind each trailer hitch 
      * 
      * @return
      */
-    public int getHitchLocation() {
-        int loc = LOC_NONE;
-        for (Mounted mount : getMisc()) {
-            EquipmentType equip = mount.getType();
-            if (equip.hasFlag(MiscType.F_HITCH)) {
-                loc = mount.getLocation();
-                break;
+    public ArrayList<Coords> getHitchLocations() {
+        ArrayList<Coords> trailerPos = new ArrayList<Coords>();
+        //First, set up a list of all the entities in this train
+        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        thisTrain.add(this);
+        for (Entity trailer : getAllTowedUnits()) {
+            thisTrain.add(trailer);
+        }
+        //Check each entity in the train for working hitches
+        for (Entity e : thisTrain) {
+            for (Mounted m : e.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
+                    //Add the coords of the unit with the empty hitch, if it isn't already listed
+                    if (!trailerPos.contains(e.getPosition())) {
+                        trailerPos.add(e.getPosition());
+                    }
+                    //Now, check the location of the hitch (which should just be front or rear)
+                    //and add the hex adjacent to the entity in the appropriate direction
+                    //Offset the location value to match the directions in Coords.
+                    int loc = LOC_NONE;
+                    if (m.getLocation() == Tank.LOC_FRONT) {
+                        loc = (Tank.LOC_FRONT - 1);
+                    } else if (m.getLocation() == Tank.LOC_REAR) {
+                        loc = (Tank.LOC_REAR - 1);
+                    }
+                    if (!trailerPos.add(e.getPosition().translated(loc))) {
+                        trailerPos.add(e.getPosition().translated(loc));
+                    }
+                }
             }
         }
-        return loc;
+        return trailerPos;
     }
     
     /**

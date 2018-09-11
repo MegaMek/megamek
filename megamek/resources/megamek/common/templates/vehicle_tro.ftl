@@ -74,8 +74,8 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
      ${formatArmorRow("", "Structure", "Value")}
      ${formatArmorRow("Front", structureValues.FR, armorValues.FR)}<#if patchworkByLoc??> ${patchworkByLoc.FR}</#if>
 <#if isSuperheavy && !isVTOL>
-     ${formatArmorRow("FR/FL Side", structureValues.FRRS, armorValues.FRRS)}<#if patchworkByLoc??> ${patchworkByLoc.FRRS}</#if>
-     ${formatArmorRow("RR/RL Side", structureValues.RRRS, armorValues.RRRS)}<#if patchworkByLoc??> ${patchworkByLoc.RRRS}</#if>
+     ${formatArmorRow("Front R/L Side", structureValues.FRRS, armorValues.FRRS)}<#if patchworkByLoc??> ${patchworkByLoc.FRRS}</#if>
+     ${formatArmorRow("Rear R/L Side", structureValues.RRRS, armorValues.RRRS)}<#if patchworkByLoc??> ${patchworkByLoc.RRRS}</#if>
 <#else>     
      ${formatArmorRow("R/L Side", structureValues.RS, armorValues.RS)}<#if patchworkByLoc??> ${patchworkByLoc.RS}</#if>
 </#if>
@@ -91,11 +91,15 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 </#if>
 
 <#if isOmni>
-Weight and Space Allocation
+Fixed Equipment
+	<if fixedTonnage gt 0>
 ${formatBasicDataRow("Location", "Fixed", "Tonnage")}	
 <#list fixedEquipment as row>
 <#if row.equipment != "None">
 ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
+	<#else>
+None
+	</#if>
 </#if>
 </#list>
 </#if>

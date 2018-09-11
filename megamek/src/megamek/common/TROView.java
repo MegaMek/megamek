@@ -29,6 +29,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.util.MegaMekFile;
+import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
@@ -203,6 +204,7 @@ public class TROView {
 		return sj.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addVehicleData(Tank tank) {
 		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
 				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
@@ -247,6 +249,18 @@ public class TROView {
 		model.put("armorMass", NumberFormat.getInstance().format(testTank.getWeightArmor()));
 		if (tank.isOmni()) {
 			addFixedOmni(tank);
+		}
+		for (Transporter t : tank.getTransports()) {
+			Map<String, Object> row = this.formatTransporter(t, tank.getLocationName(Tank.LOC_BODY));
+			if (null == row) {
+				continue;
+			}
+			if (tank.isOmni() && !tank.isPodMountedTransport(t)) {
+				((List<Map<String, Object>>) model.get("fixedEquipment")).add(row);
+				model.merge("fixedTonnage", row.get("tonnage"), (o1, o2) -> ((double) o1) + ((double) o2));
+			} else {
+				((List<Map<String, Object>>) model.get("equipment")).add(row);
+			}
 		}
 	}
 	
@@ -587,6 +601,7 @@ public class TROView {
 	}
 	
 	private void addFixedOmni(final Entity entity) {
+		double fixedTonnage = 0.0;
 		final List<Map<String, Object>> fixedList = new ArrayList<>();
 		for (int loc = 0; loc < entity.locations(); loc++) {
 			int remaining = 0;
@@ -635,11 +650,13 @@ public class TROView {
 						row.put("equipment", entry.getKey());
 					}
 					row.put("tonnage", fixedWeight.get(entry.getKey()));
+					fixedTonnage += fixedWeight.get(entry.getKey());
 					fixedList.add(row);
 				}
 			}
 		}
 		model.put("fixedEquipment", fixedList);
+		model.put("fixedTonnage", fixedTonnage);
 	}
 	
 	private boolean showFixedSystem(Entity entity, int index, int loc) {
@@ -687,6 +704,34 @@ public class TROView {
 			}
 		}
 		return "Unknown System";
+	}
+	
+	/**
+	 * Formats {@link Transporter} to display as a row in an equipment table. Any other than bays
+	 * and troop space are skipped to avoid showing BA handles and such.
+	 *  
+	 * @param transporter The transporter to show.
+	 * @param loc         The location name to display on the table.
+	 * @return            A map of values used by the equipment tables (omni fixed and pod/non-omni).
+	 * 					  Returns {@code null} for a type of {@link Transporter} that should not be shown.
+	 */
+	private @Nullable Map<String, Object> formatTransporter(Transporter transporter, String loc) {
+		Map<String, Object> retVal = new HashMap<>();
+		if (transporter instanceof TroopSpace) {
+			retVal.put("name", Messages.getString("TROView.TroopSpace"));
+			retVal.put("tonnage", transporter.getUnused());
+		} else if (transporter instanceof Bay) {
+			BayData bayType = BayData.getBayType((Bay) transporter);
+			retVal.put("name", bayType.getDisplayName());
+			retVal.put("tonnage", bayType.getWeight() * transporter.getUnused());
+		} else {
+			return null;
+		}
+		retVal.put("equipment", retVal.get("name"));
+		retVal.put("location", loc);
+		retVal.put("slots", 1);
+		retVal.put("heat", "-");
+		return retVal;
 	}
 	
 	private String formatJJDesc(Mech mech) {

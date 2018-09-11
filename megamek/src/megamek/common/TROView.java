@@ -120,12 +120,12 @@ public class TROView {
 	private void addMechData(Mech mech) {
 		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
 				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { 30, 12, 8, 10, 8},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER, Justification.CENTER}));
 		addBasicData(mech);
 		addArmorAndStructure(mech);
-		addEquipment(mech);
+		int nameWidth = addEquipment(mech);
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 10, 8},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+						Justification.CENTER, Justification.CENTER}));
 		addMechFluff(mech);
 		mech.setConversionMode(0);
 		model.put("isOmni", mech.isOmni());
@@ -206,12 +206,12 @@ public class TROView {
 	private void addVehicleData(Tank tank) {
 		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
 				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { 30, 12, 12},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER, Justification.CENTER}));
 		addBasicData(tank);
 		addArmorAndStructure(tank);
-		addEquipment(tank);
+		int nameWidth = addEquipment(tank);
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 12},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+						Justification.CENTER, Justification.CENTER}));
 		addVehicleFluff(tank);
 		model.put("isOmni", tank.isOmni());
 		model.put("isVTOL", tank.hasETypeFlag(Entity.ETYPE_VTOL));
@@ -454,9 +454,10 @@ public class TROView {
 		return retVal;
 	}
 	
-	private void addEquipment(Entity entity) {
+	private int addEquipment(Entity entity) {
 		final int structure = entity.getStructureType();
 		final Map<Integer, Map<EquipmentType, Integer>> equipment = new HashMap<>();
+		int nameWidth = 30;
 		for (Mounted m : entity.getEquipment()) {
 			if (m.getLocation() < 0) {
 				continue;
@@ -489,6 +490,9 @@ public class TROView {
 				}
 				Map<String, Object> fields = new HashMap<>();
 				fields.put("name", name);
+				if (name.length() >= nameWidth) {
+					nameWidth = name.length() + 1;
+				}
 				fields.put("tonnage", eq.getTonnage(entity) * count);
 				if (eq instanceof WeaponType) {
 					fields.put("heat", ((WeaponType) eq).getHeat() * count);
@@ -513,6 +517,7 @@ public class TROView {
 			}
 		}
 		model.put("equipment", eqList);
+		return nameWidth;
 	}
 	
 	private Map<Integer, Integer> getSpreadableLocations(final Entity entity, final EquipmentType eq) {

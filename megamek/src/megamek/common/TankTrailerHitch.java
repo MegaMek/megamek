@@ -42,14 +42,12 @@ public class TankTrailerHitch implements Transporter {
     /**
      * The front location that loads trailers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_FRONT =
-        { Tank.LOC_FRONT };
+    private static final int EXTERIOR_LOCATIONS_FRONT = Tank.LOC_FRONT;
 
     /**
      * The rear location that loads trailers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_REAR =
-        { Tank.LOC_REAR };
+    private static final int EXTERIOR_LOCATIONS_REAR = Tank.LOC_REAR;
 
     /**
      * The <code>String</code> reported when the hitch is in use.
@@ -74,7 +72,7 @@ public class TankTrailerHitch implements Transporter {
      *            facing.
      * @return an array of <code>int</code> listing the exterior locations.
      */
-    protected int[] getExteriorLocs(boolean isRear) {
+    protected int getExteriorLocs(boolean isRear) {
         if (isRear) {
             return TankTrailerHitch.EXTERIOR_LOCATIONS_REAR;
         }
@@ -262,23 +260,7 @@ public class TankTrailerHitch implements Transporter {
      * @see megamek.common.TankTrailerHitch#getExteriorLocs(boolean)
      */
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
-
-        // Only check if we are carrying troopers.
-        if (null != game.getEntity(towed)) {
-
-            // See if troopers cover that location.
-            // Stop after the first match.
-            int[] locs = getExteriorLocs(isRear);
-            for (int loop = 0; loop < locs.length; loop++) {
-                if (loc == locs[loop]) {
-                    return game.getEntity(towed);
-                }
-            }
-
-        } // End carrying-troopers
-
-        // No troopers at that location.
-        return null;
+        return game.getEntity(towed);
     }
 
     public final List<Entity> getExternalUnits() {

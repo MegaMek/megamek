@@ -229,7 +229,8 @@ public class TROView {
 		if (tank.getJumpMP() > 0) {
 			model.put("jumpMP", tank.getJumpMP());
 		}
-		model.put("hsCount", testTank.getCountHeatSinks());
+		model.put("hsCount", Math.max(testTank.getCountHeatSinks(),
+				tank.getEngine().getWeightFreeEngineHeatSinks()));
 		model.put("hsMass", NumberFormat.getInstance().format(testTank.getWeightHeatSinks()));
 		model.put("controlMass", testTank.getWeightControls());
 		model.put("liftMass", testTank.getTankWeightLifting());
@@ -357,6 +358,19 @@ public class TROView {
 		}
 		return name;
 	}
+
+	private String formatArmorType(int at, boolean trim) {
+		// Some types do not have armor on the first location, and others have only a single location
+		if (trim && (at == EquipmentType.T_ARMOR_STANDARD)) {
+			return "";
+		}
+		String name = EquipmentType.getArmorTypeName(at);
+		if (trim) {
+			name = name.replace("-Fibrous", "").replace("-Aluminum", "");
+		}
+		return name;
+	}
+
 	private static final int[][] MECH_ARMOR_LOCS = {
 			{Mech.LOC_HEAD}, {Mech.LOC_CT}, {Mech.LOC_RT, Mech.LOC_LT},
 			{Mech.LOC_RARM, Mech.LOC_LARM}, {Mech.LOC_RLEG, Mech.LOC_CLEG, Mech.LOC_LLEG}
@@ -389,6 +403,9 @@ public class TROView {
 		model.put("rearArmorValues", addArmorStructureEntries(mech,
 				(en, loc) -> en.getOArmor(loc, true),
 				MECH_ARMOR_LOCS_REAR));
+		if (mech.hasPatchworkArmor()) {
+			model.put("patchworkByLoc", addPatchworkATs(mech, MECH_ARMOR_LOCS));
+		}
 	}
 	
 	private void addArmorAndStructure(Tank tank) {
@@ -399,6 +416,9 @@ public class TROView {
 			model.put("armorValues", addArmorStructureEntries(tank,
 					(en, loc) -> en.getOArmor(loc),
 					SH_TANK_ARMOR_LOCS));
+			if (tank.hasPatchworkArmor()) {
+				model.put("patchworkByLoc", addPatchworkATs(tank, SH_TANK_ARMOR_LOCS));
+			}
 		} else {
 			model.put("structureValues", addArmorStructureEntries(tank,
 					(en, loc) -> en.getOInternal(loc),
@@ -406,6 +426,9 @@ public class TROView {
 			model.put("armorValues", addArmorStructureEntries(tank,
 					(en, loc) -> en.getOArmor(loc),
 					TANK_ARMOR_LOCS));
+			if (tank.hasPatchworkArmor()) {
+				model.put("patchworkByLoc", addPatchworkATs(tank, TANK_ARMOR_LOCS));
+			}
 		}
 	}
 	
@@ -444,6 +467,36 @@ public class TROView {
 			}
 			if (null == val) {
 				val = String.valueOf(provider.apply(entity, locs[0]));
+			}
+			for (int loc : locs) {
+				if (loc < entity.locations()) {
+					retVal.put(entity.getLocationAbbr(loc), val);
+				}
+			}
+		}
+		return retVal;
+	}
+	
+	private Map<String, String> addPatchworkATs(Entity entity, int[][] locSets) {
+		Map<String, String> retVal = new HashMap<>();
+		for (int[] locs : locSets) {
+			if ((locs.length == 0) || (locs[0] >= entity.locations())) {
+				continue;
+			}
+			String val = null;
+			if (locs.length > 1) {
+				for (int i = 1; i < locs.length; i++) {
+					if ((locs[i] < entity.locations())
+							&& entity.getArmorType(locs[i]) != entity.getArmorType(locs[0])) {
+						val = Arrays.stream(locs)
+								.mapToObj(l -> formatArmorType(entity.getArmorType(l), true))
+								.collect(Collectors.joining("/"));
+						break;
+					}
+				}
+			}
+			if (null == val) {
+				val = formatArmorType(entity.getArmorType(locs[0]), true);
 			}
 			for (int loc : locs) {
 				if (loc < entity.locations()) {

@@ -72,22 +72,22 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 
      ${formatArmorRow("", "Internal", "Armor")}
      ${formatArmorRow("", "Structure", "Value")}
-     ${formatArmorRow("Head", structureValues.HD, armorValues.HD)}
-     ${formatArmorRow("Center Torso", structureValues.CT, armorValues.CT)}
+     ${formatArmorRow("Head", structureValues.HD, armorValues.HD)}<#if patchworkByLoc??> ${patchworkByLoc.HD}</#if>
+     ${formatArmorRow("Center Torso", structureValues.CT, armorValues.CT)}<#if patchworkByLoc??> ${patchworkByLoc.CT}</#if>
      ${formatArmorRow("Center Torso (rear)", "", rearArmorValues.CT)}
-     ${formatArmorRow("R/L Torso", structureValues.RT, armorValues.RT)}
+     ${formatArmorRow("R/L Torso", structureValues.RT, armorValues.RT)}<#if patchworkByLoc??> ${patchworkByLoc.RT}</#if>
      ${formatArmorRow("R/L Torso (rear)", "", rearArmorValues.RT)}
 <#if isQuad>
-     ${formatArmorRow("FR/L Leg", structureValues.FRL, armorValues.FRL)}
+     ${formatArmorRow("FR/L Leg", structureValues.FRL, armorValues.FRL)}<#if patchworkByLoc??> ${patchworkByLoc.FRL}</#if>
 <#else>
-     ${formatArmorRow("R/L Arm", structureValues.RA, armorValues.RA)}
+     ${formatArmorRow("R/L Arm", structureValues.RA, armorValues.RA)}<#if patchworkByLoc??> ${patchworkByLoc.RA}</#if>
 </#if>
 <#if isQuad>
-     ${formatArmorRow("RR/L Leg", structureValues.RRL, armorValues.RRL)}
+     ${formatArmorRow("RR/L Leg", structureValues.RRL, armorValues.RRL)}<#if patchworkByLoc??> ${patchworkByLoc.RRL}</#if>
 <#elseif isTripod>
-     ${formatArmorRow("R/C/L Leg", structureValues.RL, armorValues.RL)}
+     ${formatArmorRow("R/C/L Leg", structureValues.RL, armorValues.RL)}<#if patchworkByLoc??> ${patchworkByLoc.RL}</#if>
 <#else>
-     ${formatArmorRow("R/L Leg", structureValues.RL, armorValues.RL)}
+     ${formatArmorRow("R/L Leg", structureValues.RL, armorValues.RL)}<#if patchworkByLoc??> ${patchworkByLoc.RL}</#if>
 </#if>
 
 <#if isOmni>

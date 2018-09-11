@@ -91,43 +91,70 @@
 
 	<table width="80%">
 		<tr><th></th><th>Internal<br/>Structure</th><th>Armor<br/>Value</th></tr>
-		<tr><td>Head</td><td align="center">${structureValues.HD}</td><td align="center">${armorValues.HD}</td></tr>
-		<tr><td>Center Torso</td><td align="center">${structureValues.CT}</td><td align="center">${armorValues.CT}</td></tr>
-		<tr><td>Center Torso (rear)</td><td></td><td align="center">${rearArmorValues.CT}</td></tr>
-		
-		<tr><td>R/L Torso</td>
-			<td align="center">${structureValues.RT}
-				<#if structureValues.LT != structureValues.RT>
-					/${structureValues.LT}
-				</#if></td>
-			<td align="center">${armorValues.RT}
-				<#if armorValues.LT != armorValues.RT>
-					/${armorValues.LT}
-				</#if></td></td></tr>
-		<tr><td>R/L Torso (rear)</td><td></td>
-			<td align="center">${rearArmorValues.RT}</td></tr>
-				
+		<tr>
+			<td>Head</td>
+			<td align="center">${structureValues.HD}</td>
+			<td align="center">${armorValues.HD}</td>
+			<#if patchworkByLoc??><td>${patchworkByLoc.HD}</td></#if>
+		</tr>
+		<tr>
+			<td>Center Torso</td>
+			<td align="center">${structureValues.CT}</td>
+			<td align="center">${armorValues.CT}</td>
+			<#if patchworkByLoc??><td>${patchworkByLoc.CT}</td></#if>
+		</tr>
+		<tr>
+			<td>Center Torso (rear)</td>
+			<td></td>
+			<td align="center">${rearArmorValues.CT}</td>
+		</tr>
+		<tr>
+			<td>R/L Torso</td>
+			<td align="center">${structureValues.RT}</td>
+			<td align="center">${armorValues.RT}</td>
+			<#if patchworkByLoc??><td>${patchworkByLoc.RT}</td></#if>
+		</tr>
+		<tr>
+			<td>R/L Torso (rear)</td>
+			<td></td>
+			<td align="center">${rearArmorValues.RT}</td>
+		</tr>
 		<#if isQuad>
-			<tr><td>FR/L Leg</td>
+			<tr>
+				<td>FR/L Leg</td>
 				<td align="center">${structureValues.FRL}</td>
-				<td align="center">${armorValues.FRL}</td></tr>
+				<td align="center">${armorValues.FRL}</td>
+				<#if patchworkByLoc??><td>${patchworkByLoc.FRL}</td></#if>
+			</tr>
 		<#else>
-			<tr><td>R/L Arm</td>
+			<tr>
+				<td>R/L Arm</td>
 				<td align="center">${structureValues.RA}</td>
-				<td align="center">${armorValues.RA}</td></tr>
+				<td align="center">${armorValues.RA}</td>
+				<#if patchworkByLoc??><td>${patchworkByLoc.RA}</td></#if>
+			</tr>
 		</#if>
 		<#if isQuad>
-			<tr><td>RR/L Leg</td>
+			<tr>
+				<td>RR/L Leg</td>
 				<td align="center">${structureValues.RRL}</td>
-				<td align="center">${armorValues.RRL}</td></tr>
+				<td align="center">${armorValues.RRL}</td>
+				<#if patchworkByLoc??><td>${patchworkByLoc.RRL}</td></#if>
+			</tr>
 		<#elseif isTripod>
-			<tr><td>R/C/L Leg</td>
+			<tr>
+				<td>R/C/L Leg</td>
 				<td align="center">${structureValues.RL}</td>
-				<td align="center">${armorValues.RL}</td></tr>
+				<td align="center">${armorValues.RL}</td>
+				<#if patchworkByLoc??><td>${patchworkByLoc.RL}</td></#if>
+			</tr>
 		<#else>
-			<tr><td>R/L Leg</td>
+			<tr>
+				<td>R/L Leg</td>
 				<td align="center">${structureValues.RL}</td>
-				<td align="center">${armorValues.RL}</td></tr>
+				<td align="center">${armorValues.RL}</td>
+				<#if patchworkByLoc??><td>${patchworkByLoc.RL}</td></#if>
+			</tr>
 		</#if>
 	</table>
 	

@@ -72,22 +72,22 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 
      ${formatArmorRow("", "Internal", "Armor")}
      ${formatArmorRow("", "Structure", "Value")}
-     ${formatArmorRow("Front", structureValues.FR, armorValues.FR)}
+     ${formatArmorRow("Front", structureValues.FR, armorValues.FR)}<#if patchworkByLoc??> ${patchworkByLoc.FR}</#if>
 <#if isSuperheavy && !isVTOL>
-     ${formatArmorRow("FR/FL Side", structureValues.FRRS, armorValues.FRRS)}
-     ${formatArmorRow("RR/RL Side", structureValues.RRRS, armorValues.RRRS)}
+     ${formatArmorRow("FR/FL Side", structureValues.FRRS, armorValues.FRRS)}<#if patchworkByLoc??> ${patchworkByLoc.FRRS}</#if>
+     ${formatArmorRow("RR/RL Side", structureValues.RRRS, armorValues.RRRS)}<#if patchworkByLoc??> ${patchworkByLoc.RRRS}</#if>
 <#else>     
-     ${formatArmorRow("R/L Side", structureValues.RS, armorValues.RS)}
+     ${formatArmorRow("R/L Side", structureValues.RS, armorValues.RS)}<#if patchworkByLoc??> ${patchworkByLoc.RS}</#if>
 </#if>
-     ${formatArmorRow("Rear", structureValues.RR, armorValues.RR)}
+     ${formatArmorRow("Rear", structureValues.RR, armorValues.RR)}<#if patchworkByLoc??> ${patchworkByLoc.RR}</#if>
 <#if hasTurret2>
-     ${formatArmorRow("Turret 1", structureValues.TU, armorValues.TU)}
-     ${formatArmorRow("Turret 2", structureValues.FT, armorValues.FT)}
+     ${formatArmorRow("Turret 1", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
+     ${formatArmorRow("Turret 2", structureValues.FT, armorValues.FT)}<#if patchworkByLoc??> ${patchworkByLoc.FT}</#if>
 <#elseif hasTurret>
-     ${formatArmorRow("Turret", structureValues.TU, armorValues.TU)}
+     ${formatArmorRow("Turret", structureValues.TU, armorValues.TU)}<#if patchworkByLoc??> ${patchworkByLoc.TU}</#if>
 </#if>
 <#if isVTOL>
-     ${formatArmorRow("Rotor", structureValues.RO, armorValues.RO)}
+     ${formatArmorRow("Rotor", structureValues.RO, armorValues.RO)}<#if patchworkByLoc??> ${patchworkByLoc.RO}</#if>
 </#if>
 
 <#if isOmni>

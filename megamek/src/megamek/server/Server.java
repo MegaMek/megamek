@@ -15697,18 +15697,14 @@ public class Server implements Runnable {
         }
     }
 
-    private void applyZweihanderSelfDamage(Entity ae, int locFirstArm, int locSecondArm, boolean missed) {
+    private void applyZweihanderSelfDamage(Entity ae, boolean missed) {
     	Report r = new Report(4022);
     	r.subject = ae.getId();
     	r.indent();
     	r.addDesc(ae);
     	addReport(r);
-    	if(locFirstArm > -1) {
-	    	addReport(criticalEntity(ae, locFirstArm, false, 0, 1));
-	    }
-    	if(locSecondArm > -1) {
-	    	addReport(criticalEntity(ae, locSecondArm, false, 0, 1));
-	    }
+    	addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
+    	addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
     	if(missed) {
     		game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
     	}
@@ -15844,7 +15840,7 @@ public class Server implements Runnable {
             }
             
             if(paa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, armLoc, -1, true);
+            	applyZweihanderSelfDamage(ae, true);
             }
             
             return;
@@ -15868,7 +15864,7 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(paa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, armLoc, -1, false);
+            	applyZweihanderSelfDamage(ae, false);
             }
             
             // And we're done!
@@ -15998,7 +15994,7 @@ public class Server implements Runnable {
         addNewLines();
 
         if(paa.isZweihandering()) {  
-        	applyZweihanderSelfDamage(ae, armLoc, -1, false);
+        	applyZweihanderSelfDamage(ae, false);
         }
         addNewLines();
 
@@ -17263,7 +17259,7 @@ public class Server implements Runnable {
                                                  "missed a flail/wrecking ball attack"));
             }
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, Mech.LOC_LARM, Mech.LOC_RARM, true);
+            	applyZweihanderSelfDamage(ae, true);
             }
             return;
         }
@@ -17296,7 +17292,7 @@ public class Server implements Runnable {
                 addReport(r);
                 damage = 0;
                 if(caa.isZweihandering()) {  
-                	applyZweihanderSelfDamage(ae, Mech.LOC_LARM, Mech.LOC_RARM, true);
+                	applyZweihanderSelfDamage(ae, true);
                 }
                 return;
             }
@@ -17328,7 +17324,7 @@ public class Server implements Runnable {
                 }
             }
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, Mech.LOC_LARM, Mech.LOC_RARM, true);
+            	applyZweihanderSelfDamage(ae, true);
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -17403,7 +17399,7 @@ public class Server implements Runnable {
 
             }
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, Mech.LOC_LARM, Mech.LOC_RARM, true);
+            	applyZweihanderSelfDamage(ae, true);
             }
             return;
         }
@@ -17426,7 +17422,7 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, Mech.LOC_LARM, Mech.LOC_RARM, false);
+            	applyZweihanderSelfDamage(ae, false);
             	if (((MiscType) caa.getClub().getType())
                         .hasSubType(MiscType.S_CLUB)) {
                     // the club breaks
@@ -17654,7 +17650,7 @@ public class Server implements Runnable {
         }
         
         if(caa.isZweihandering()) {  
-        	applyZweihanderSelfDamage(ae, Mech.LOC_LARM, Mech.LOC_RARM, false);
+        	applyZweihanderSelfDamage(ae, false);
         	if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_CLUB)) {
                 // the club breaks

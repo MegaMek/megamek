@@ -423,15 +423,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 && en.getCrew()
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean canZweihander = null != en
+        		&& (en instanceof BipedMech) 
+        		&& ((BipedMech)en).canZweihander();
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ZWEIHANDER)
-                && (en instanceof BipedMech) 
-                && en.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-                && en.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM);
         
-        
+              
         final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, PunchAttackAction.LEFT, false);
         final ToHitData rightArm = PunchAttackAction.toHit(clientgui
@@ -499,34 +497,52 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
             
             boolean zweihandering = false;
+            int armChosenZwei = PunchAttackAction.RIGHT;
         	if(canZweihander) {
+        		
+        		//need to choose a primary arm. Do it based on highest predicted damage     		
         		ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient()
                         .getGame(), cen, target, PunchAttackAction.LEFT, true);
                 ToHitData rightArmZwei = PunchAttackAction.toHit(clientgui
                         .getClient().getGame(), cen, target, PunchAttackAction.RIGHT, true);
+                int damageRightZwei = PunchAttackAction.getDamageFor(en,
+                        PunchAttackAction.RIGHT, (target instanceof Infantry)
+                                && !(target instanceof BattleArmor), true);
+                int damageLeftZwei = PunchAttackAction.getDamageFor(en,
+                        PunchAttackAction.LEFT, (target instanceof Infantry)
+                                && !(target instanceof BattleArmor), true);
+                double oddsLeft = Compute.oddsAbove(leftArmZwei.getValue(), isAptPiloting);
+                double oddsRight = Compute.oddsAbove(rightArmZwei.getValue(), isAptPiloting);
+                ToHitData toHitZwei = rightArmZwei;
+                int damageZwei = damageRightZwei;
+                double oddsZwei = oddsRight;
+                if ((oddsLeft * damageLeftZwei) > (oddsRight * damageRightZwei)) {
+                	toHitZwei = leftArmZwei;
+                	damageZwei = damageLeftZwei;
+                	oddsZwei = oddsLeft;
+                	armChosenZwei = PunchAttackAction.LEFT;
+                } 
+                              
         		zweihandering = clientgui.doYesNoDialog(Messages
 	                    .getString("PhysicalDisplay.ZweihanderPunchDialog.title"),
 	                    Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.message",
 	                            new Object[] { 
-	                            		rightArmZwei.getValueAsString(),
-	                            		Compute.oddsAbove(rightArmZwei.getValue(),
-	                                            isAptPiloting),
-	                                    rightArmZwei.getDesc(),
-	                                    PunchAttackAction.getDamageFor(en,
-	                                            PunchAttackAction.RIGHT, (target instanceof Infantry)
-	                                                    && !(target instanceof BattleArmor), true),
-	                                    rightArmZwei.getTableDesc(),
-	                                    leftArmZwei.getValueAsString(),
-	                                    Compute.oddsAbove(leftArmZwei.getValue(),
-	                                            isAptPiloting),
-	                                    leftArmZwei.getDesc(),
-	                                    PunchAttackAction.getDamageFor(en,
-	                                            PunchAttackAction.LEFT, (target instanceof Infantry)
-	                                                    && !(target instanceof BattleArmor), true),
-	                                    leftArmZwei.getTableDesc() }));
-	        	
+	                            		toHitZwei.getValueAsString(),
+	                            		oddsZwei,
+	                                    toHitZwei.getDesc(),
+	                                    damageZwei,
+	                                    toHitZwei.getTableDesc()}));
         	}
             
+        	if(zweihandering) {
+        		if(armChosenZwei==PunchAttackAction.LEFT) {
+        			leftArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
+        		} else {
+        			rightArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
+        		}
+        	}
+        	
+        	
             disableButtons();
             // declare searchlight, if possible
             if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
@@ -539,7 +555,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.BOTH, leftBladeExtend,
                         rightBladeExtend, zweihandering));
-                if (isMeleeMaster) {
+                if (isMeleeMaster && !zweihandering) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
                             .getTargetType(), target.getTargetId(),
@@ -551,7 +567,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.LEFT, leftBladeExtend,
                         rightBladeExtend, zweihandering));
-                if (isMeleeMaster) {
+                if (isMeleeMaster  && !zweihandering) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
                             .getTargetType(), target.getTargetId(),
@@ -563,7 +579,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.RIGHT, leftBladeExtend,
                         rightBladeExtend, zweihandering));
-                if (isMeleeMaster) {
+                if (isMeleeMaster && !zweihandering) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
                             .getTargetType(), target.getTargetId(),
@@ -1025,11 +1041,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ZWEIHANDER)
-                && (en instanceof BipedMech) 
-                && en.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-                && en.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM);
+        final boolean canZweihander = null != en
+        		&& (en instanceof BipedMech) 
+        		&& ((BipedMech)en).canZweihander();
         
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable(), false);

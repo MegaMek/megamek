@@ -836,5 +836,13 @@ public class BipedMech extends Mech {
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
     }
+    
+    public boolean canZweihander() {
+    	return (getCrew() != null)
+    			&& getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ZWEIHANDER)
+    			&& hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+    			&& hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)
+    			&& !isProne();
+    }
 
 }

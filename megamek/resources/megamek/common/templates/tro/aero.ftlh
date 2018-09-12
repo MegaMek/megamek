@@ -5,6 +5,9 @@
 <body>
   <div style="font:12pt monospaced">
   <font size="+1"><b>${fullName}</b></font>
+<#if includeFluff>
+<#include "fluff.ftlh">
+</#if>
   	<p>
   	<b>Mass: </b>${massDesc}<br/>
 <#if frameDesc??>  	

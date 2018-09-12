@@ -1,43 +1,7 @@
 ${fullName}
 
-Mass: ${massDesc}
-<#if frameDesc??>
-Frame: ${frameDesc}
-<#else>
-Frame: Unknown
-</#if>
-Power Plant: ${engineDesc}
-Armor: ${armorDesc}
-Armament:
-<#list armamentList as armament>
-     ${armament}
-</#list>
-Manufacturer: <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if>
-     Primary Factory: <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if>
-Communication System: <#if communicationDesc??>${communicationDesc}<#else>Unknown</#if>
-Targeting & Tracking System: <#if targetingDesc??>${targetingDesc}<#else>Unknown</#if>
-Introduction Year: ${year}
-Tech Rating/Availability: ${techRating}
-Cost: ${cost} C-bills
-<#if fluffOverview??>
-
-Overview
-${fluffOverview}
-</#if>
-<#if fluffCapabilities??>
-
-Capabilities
-${fluffCapabilities}
-</#if>
-<#if fluffDeployment??>
-
-Deployment
-${fluffDeployment}
-</#if>
-<#if fluffHistory??>
-
-History
-${fluffHistory}
+<#if includeFluff>
+<#include "fluff.ftl">
 </#if>
 
 Type: ${chassis}

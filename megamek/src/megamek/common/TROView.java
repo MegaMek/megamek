@@ -51,16 +51,17 @@ public class TROView {
 	public TROView(Entity entity, boolean html) {
 		String templateFileName = null;
 		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-			templateFileName = "mech_tro.ftl";
+			templateFileName = "mech";
 			addMechData((Mech) entity);
 		} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
-			templateFileName = "vehicle_tro.ftl";
+			templateFileName = "vehicle";
 			addVehicleData((Tank) entity);
 		} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
-			templateFileName = "aero_tro.ftl";
+			templateFileName = "aero";
 			addAeroData((Aero) entity);
 		}
 		if (null != templateFileName) {
+			templateFileName = "tro/" + templateFileName + ".ftl";
 			if (html) {
 				templateFileName += "h";
 			}

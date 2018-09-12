@@ -31,6 +31,7 @@ import megamek.common.options.Quirks;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 
@@ -55,6 +56,9 @@ public class TROView {
 		} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
 			templateFileName = "vehicle_tro.ftl";
 			addVehicleData((Tank) entity);
+		} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
+			templateFileName = "aero_tro.ftl";
+			addAeroData((Aero) entity);
 		}
 		if (null != templateFileName) {
 			if (html) {
@@ -264,6 +268,48 @@ public class TROView {
 		}
 	}
 	
+	private void addAeroData(Aero aero) {
+		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10},
+				new Justification[] { Justification.LEFT, Justification.CENTER }));
+		addBasicData(aero);
+		addArmorAndStructure(aero);
+		int nameWidth = addEquipment(aero);
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 8},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+						Justification.CENTER}));
+		addAeroFluff(aero);
+		model.put("isOmni", aero.isOmni());
+		model.put("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
+		TestAero testAero = new TestAero(aero, verifier.mechOption, null);
+		model.put("engineName", stripNotes(aero.getEngine().getEngineName()));
+		model.put("engineMass", NumberFormat.getInstance().format(testAero.getWeightEngine()));
+		model.put("safeThrust", aero.getWalkMP());
+		model.put("maxThrust", aero.getRunMP());
+		model.put("si", aero.get0SI());
+		model.put("hsCount", aero.getHeatType() == Aero.HEAT_DOUBLE?
+				aero.getOHeatSinks() + " [" + (aero.getOHeatSinks() * 2) + "]" : aero.getOHeatSinks());
+		model.put("fuelPoints", aero.getFuel());
+		model.put("fuelMass", aero.getFuelTonnage());
+		model.put("hsMass", NumberFormat.getInstance().format(testAero.getWeightHeatSinks()));
+		if (aero.getCockpitType() == Aero.COCKPIT_STANDARD) {
+			model.put("cockpitType", "Cockpit");
+		} else {
+			model.put("cockpitType", Aero.getCockpitTypeString(aero.getCockpitType()));
+		}
+		model.put("cockpitMass", NumberFormat.getInstance().format(testAero.getWeightControls()));
+		String atName = formatArmorType(aero, true);
+		if (atName.length() > 0) {
+			model.put("armorType", " (" + atName + ")");
+		} else {
+			model.put("armorType", "");
+		}
+		model.put("armorFactor", aero.getTotalOArmor());
+		model.put("armorMass", NumberFormat.getInstance().format(testAero.getWeightArmor()));
+		if (aero.isOmni()) {
+			addFixedOmni(aero);
+		}
+	}
+	
 	private void addEntityFluff(Entity entity) {
 		model.put("year", String.valueOf(entity.getYear()));
 		model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
@@ -343,6 +389,11 @@ public class TROView {
 			model.put("jumpCapacity", tank.getJumpMP() * 30);
 		}
 	}
+	
+	private void addAeroFluff(Aero aero) {
+		addMechVeeAeroFluff(aero);
+		// Add fluff frame description
+	}
 
 	private String formatTechBase(Entity entity) {
 		StringBuilder sb = new StringBuilder();
@@ -407,6 +458,10 @@ public class TROView {
 			{SuperHeavyTank.LOC_TURRET}, {SuperHeavyTank.LOC_TURRET_2}
 	};
 	
+	private static final int[][] AERO_ARMOR_LOCS = {
+			{Aero.LOC_NOSE}, {Aero.LOC_RWING, Aero.LOC_LWING}, {Aero.LOC_AFT}
+	};
+	
 	private void addArmorAndStructure(Mech mech) {
 		model.put("structureValues", addArmorStructureEntries(mech,
 				(en, loc) -> en.getOInternal(loc),
@@ -446,6 +501,15 @@ public class TROView {
 		}
 	}
 	
+	private void addArmorAndStructure(Aero aero) {
+		model.put("armorValues", addArmorStructureEntries(aero,
+				(en, loc) -> en.getOArmor(loc),
+				AERO_ARMOR_LOCS));
+		if (aero.hasPatchworkArmor()) {
+			model.put("patchworkByLoc", addPatchworkATs(aero, AERO_ARMOR_LOCS));
+		}
+	}
+	
 	/**
 	 * Convenience method to format armor and structure values, consolidating right/left values into a single
 	 * entry. In most cases the right and left armor values are the same, in which case only a single value
@@ -471,7 +535,8 @@ public class TROView {
 			if (locs.length > 1) {
 				for (int i = 1; i < locs.length; i++) {
 					if ((locs[i] < entity.locations())
-							&& (provider.apply(entity,  locs[i]) != provider.apply(entity, locs[0]))) {
+							&& ((provider.apply(entity,  locs[i]) != provider.apply(entity, locs[0]))
+									|| entity.hasETypeFlag(Entity.ETYPE_AERO))) {
 						val = Arrays.stream(locs)
 								.mapToObj(l -> String.valueOf(provider.apply(entity, l)))
 								.collect(Collectors.joining("/"));
@@ -526,7 +591,7 @@ public class TROView {
 		final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
 		int nameWidth = 30;
 		for (Mounted m : entity.getEquipment()) {
-			if (m.getLocation() < 0) {
+			if ((m.getLocation() < 0) || m.isWeaponGroup()) {
 				continue;
 			}
 			if (!m.getType().isHittable()) {
@@ -605,6 +670,9 @@ public class TROView {
 		double fixedTonnage = 0.0;
 		final List<Map<String, Object>> fixedList = new ArrayList<>();
 		for (int loc = 0; loc < entity.locations(); loc++) {
+			if (entity.isAero() && (loc == Aero.LOC_WINGS)) {
+				break;
+			}
 			int remaining = 0;
 			Map<String, Integer> fixedCount = new HashMap<>();
 			Map<String, Double> fixedWeight = new HashMap<>();
@@ -618,7 +686,7 @@ public class TROView {
 				} else if (crit.getMount() != null) {
 					if (crit.getMount().isOmniPodMounted()) {
 						remaining++;
-					} else {
+					} else if (!crit.getMount().isWeaponGroup()) {
 						String key = stripNotes(crit.getMount().getType().getName());
 						fixedCount.merge(key, 1, Integer::sum);
 						fixedWeight.merge(key, crit.getMount().getType().getTonnage(entity), Double::sum);
@@ -676,7 +744,7 @@ public class TROView {
 					&& (index != Mech.ACTUATOR_LOWER_LEG)
 					&& (index != Mech.ACTUATOR_FOOT);
 		}
-		return true;
+		return false;
 	}
 	
 	private String getSystemName(Entity entity, int index) {

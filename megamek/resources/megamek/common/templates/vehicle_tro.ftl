@@ -92,15 +92,16 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
 
 <#if isOmni>
 Fixed Equipment
-	<if fixedTonnage gt 0>
+	<#if fixedTonnage gt 0>
 ${formatBasicDataRow("Location", "Fixed", "Tonnage")}	
-<#list fixedEquipment as row>
-<#if row.equipment != "None">
+	<#list fixedEquipment as row>
+		<#if row.equipment != "None">
 ${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
+		</#if>
+	</#list>
 	<#else>
 None
 	</#if>
-</#list>
 </#if>
 
 Weapons

@@ -49,6 +49,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
     private static final long serialVersionUID = -8744665286254604559L;
     private Mounted club;
     private int aiming;
+    private boolean zweihandering;
 
     /**
      * Creates new ClubAttackAction
@@ -59,19 +60,21 @@ public class ClubAttackAction extends PhysicalAttackAction {
         this.club = club;
         aiming = aimTable;
     }
-
+    
     public ClubAttackAction(int entityId, int targetType, int targetId,
-                            Mounted club, int aimTable) {
+                            Mounted club, int aimTable, boolean zwei) {
         super(entityId, targetType, targetId);
         this.club = club;
         aiming = aimTable;
+        zweihandering = zwei;
+        
     }
 
     /**
      * Damage that the specified mech does with a club attack
      */
     public static int getDamageFor(Entity entity, Mounted club,
-            boolean targetInfantry) {
+            boolean targetInfantry, boolean zweihandering) {
         MiscType mType = (MiscType) (club.getType());
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
         if (mType.hasSubType(MiscType.S_SWORD)) {
@@ -142,6 +145,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_SPOT_WELDER)) {
             nDamage = 5;
         }
+        
+        //SMASH!
+        if(zweihandering) {
+        	nDamage += (int) Math.floor(entity.getWeight() / 10.0);
+        }
 
         // TSM doesn't apply to some weapons, including Saws.
         if ((entity.heat >= 9)
@@ -178,17 +186,21 @@ public class ClubAttackAction extends PhysicalAttackAction {
                + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
 
+    public boolean isZweihandering() {
+    	return zweihandering;
+    }
+    
     public ToHitData toHit(IGame game) {
         return ClubAttackAction.toHit(game, getEntityId(),
                                       game.getTarget(getTargetType(), getTargetId()), getClub(),
-                                      aiming);
+                                      aiming, zweihandering);
     }
 
     /**
      * To-hit number for the specified club to hit
      */
     public static ToHitData toHit(IGame game, int attackerId,
-                                  Targetable target, Mounted club, int aimTable) {
+                                  Targetable target, Mounted club, int aimTable, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         MiscType clubType;
         // arguments legal?
@@ -255,7 +267,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
                                     + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
-                                  && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB));
+                                  && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB)) 
+        		|| zweihandering;
         // Cast is safe because non-'Mechs never even get here.
         final boolean hasClaws = ((Mech) ae).hasClaw(Mech.LOC_RARM)
                                  || ((Mech) ae).hasClaw(Mech.LOC_LARM);

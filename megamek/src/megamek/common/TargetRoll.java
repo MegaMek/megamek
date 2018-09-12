@@ -104,7 +104,7 @@ public class TargetRoll implements Serializable {
 
     public List<TargetRollModifier> getModifiers() {
         return new ArrayList<TargetRollModifier>(modifiers);
-    }
+    } 
 
     /**
      * Returns a description of all applicable modifiers

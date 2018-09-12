@@ -425,7 +425,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean canZweihander = null != en
         		&& (en instanceof BipedMech) 
-        		&& ((BipedMech)en).canZweihander();
+        		&& ((BipedMech)en).canZweihander()
+        		&& Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());;
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
@@ -1043,8 +1044,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         final boolean canZweihander = null != en
         		&& (en instanceof BipedMech) 
-        		&& ((BipedMech)en).canZweihander();
-        
+        		&& ((BipedMech)en).canZweihander()
+        		&& Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
+                
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable(), false);
         boolean targetConvInf = (target instanceof Infantry)

@@ -7,6 +7,7 @@
 .DS_Store
 Thumbs.db
 /.gradle/
-/settings_local.gradle
+/properties_local.gradle
 /.classpath
 /.project
+/build/

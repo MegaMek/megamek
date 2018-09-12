@@ -2859,22 +2859,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (!isGood) {
                 setLoadEnabled(false);
             }
-            //Now check the hex for towable trailers
+            //Now check all eligible hexes for towable trailers
             isGood = false;
-            for (Entity other : game.getEntitiesVector(ce.getPosition())) {
-                // If the other unit is friendly and not the current entity
-                // if it can tow the other unit, and if the other hasn't moved
-                // then enable the "Tow" button.
-                if (ce.canTow(other) && other.isLoadableThisTurn()) {
-                    setTowEnabled(true);
-                    isGood = true;
+            for (Coords c : ce.getHitchLocations()) {
+                for (Entity other : game.getEntitiesVector(c)) {
+                    // If the other unit is friendly and not the current entity
+                    // if it can tow the other unit, and if the other hasn't moved
+                    // then enable the "Tow" button.
+                    if (ce.canTow(other) && other.isLoadableThisTurn()) {
+                        setTowEnabled(true);
+                        isGood = true;
 
-                    // We can stop looking.
-                    break;
-                }
-                // Nope. Discard it.
-                other = null;
-            } // Check the next entity in this position.
+                        // We can stop looking.
+                        break;
+                    }
+                    // Nope. Discard it.
+                    other = null;
+                } // Check the next entity.
+            }
             if (!isGood) {
                 setTowEnabled(false);
             }
@@ -3089,10 +3091,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             choice = choices.get(0);
         }
 
-        // We need to update the entity here so that the server knows
+        // We need to update the towing entity here so that the server knows
         // about our changes
-        //clientgui.getClient().sendUpdateEntity(choice);
-        //choice.setTargetBay(-1); // Safety set!
+        ce().setTowing(choice.getId());
+        clientgui.getClient().sendUpdateEntity(ce());
 
         // Return the chosen unit.
         return choice;

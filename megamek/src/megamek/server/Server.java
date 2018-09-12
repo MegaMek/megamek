@@ -8795,11 +8795,7 @@ public class Server implements Runnable {
 
                 // Find the unit being loaded.
                 Entity loaded = null;
-                Iterator<Entity> entities = game.getEntities(curPos);
-                while (entities.hasNext()) {
-
-                    // Is the other unit friendly and not the current entity?
-                    loaded = entities.next();
+                loaded = game.getEntity(entity.getTowing());
 
                     // This should never ever happen, but just in case...
                     if (loaded.equals(null)) {
@@ -8818,22 +8814,13 @@ public class Server implements Runnable {
                         } else {
                             // Have the deployed unit load the indicated unit.
                             towUnit(entity, loaded);
-
-                            // Stop looking.
-                            break;
-                        }
-
-                    } else {
-                        // Nope. Discard it.
-                        loaded = null;
                     }
-
-                } // Handle the next entity in this hex.
+                }
 
                 // We were supposed to find someone to load.
                 if (loaded == null) {
                     logError(METHOD_NAME,
-                            "Could not find unit for " + entity.getShortName() + " to tow in " + curPos);
+                            "Could not find unit for " + entity.getShortName() + " to tow.");
                 }
 
             } // End STEP_TOW

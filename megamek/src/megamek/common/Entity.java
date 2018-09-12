@@ -15024,15 +15024,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     //Now, check the location of the hitch (which should just be front or rear)
                     //and add the hex adjacent to the entity in the appropriate direction
                     //Offset the location value to match the directions in Coords.
-                    int loc = LOC_NONE;
+                    int dir = 0;
                     if (m.getLocation() == Tank.LOC_FRONT) {
-                        loc = (Tank.LOC_FRONT - 1);
+                        dir = (e.getFacing() % 6);
                     } else if (m.getLocation() == Tank.LOC_REAR
                             || m.getLocation() == SuperHeavyTank.LOC_REAR) {
-                        loc = (Tank.LOC_REAR - 1);
+                        dir = ((e.getFacing() + 3) % 6);
                     }
-                    if (!trailerPos.contains(e.getPosition().translated(loc))) {
-                        trailerPos.add(e.getPosition().translated(loc));
+                    if (!trailerPos.contains(e.getPosition().translated(dir))) {
+                        trailerPos.add(e.getPosition().translated(dir));
                     }
                 }
             }
@@ -15099,26 +15099,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     
     /**
-     * Used to determine if this entity is currently towing others
+     * Used with MoveStep.TOW to find and update the correct entity when adding it to a train
      */
-    private boolean isTowing = false;
+    private int isTowing = Entity.NONE;
 
     /**
-     * Returns the towed status of this entity
+     * Returns the entity to be towed
      * 
      * @return
      */
-    public boolean getTowing() {
+    public int getTowing() {
         return isTowing;
     }
     
     /**
      * Change the towed status of this entity
      * 
-     * @param b - is the entity being towed or not?
+     * @param id - the ID of the entity being towed
      */
-    public void setTowing(boolean b) {
-        isTowing = b;
+    public void setTowing(int id) {
+        isTowing = id;
     }
     
     /**
@@ -15164,7 +15164,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Sets the Entity that is directly towing this one
      * 
-     * @param e - the Entity towing this trailer
+     * @param id - the id of the Entity towing this trailer
      */
     public void setTowedBy(int id) {
         towedBy = id;
@@ -15195,7 +15195,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void towUnit(Entity e) {
         connectedUnits.add(e.getId());
         e.setTowedBy(getId());
-        e.setTowing(true);
         if (isTractor()) {
             e.setTractor(this);
         } else {

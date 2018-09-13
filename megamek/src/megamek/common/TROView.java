@@ -32,8 +32,10 @@ import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
+import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.InfantryAttack;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -47,6 +49,8 @@ public class TROView {
 	private Map<String, Object> model = new HashMap<>();
     private EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
             Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+    
+    private boolean includeFluff = true;
 
 	public TROView(Entity entity, boolean html) {
 		String templateFileName = null;
@@ -59,6 +63,9 @@ public class TROView {
 		} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
 			templateFileName = "aero";
 			addAeroData((Aero) entity);
+		} else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+			templateFileName = "ba";
+			addBattleArmorData((BattleArmor) entity);
 		}
 		if (null != templateFileName) {
 			templateFileName = "tro/" + templateFileName + ".ftl";
@@ -81,6 +88,8 @@ public class TROView {
 	 */
 	@Nullable public String processTemplate() {
 		if (null != template) {
+			model.put("includeFluff", includeFluff);
+			
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			Writer out = new OutputStreamWriter(os);
 			try {
@@ -227,7 +236,7 @@ public class TROView {
 		model.put("hasTurret", !tank.hasNoTurret());
 		model.put("hasTurret2", !tank.hasNoDualTurret());
 		model.put("moveType", Messages.getString("MovementType." + tank.getMovementModeAsString()));
-		TestTank testTank = new TestTank(tank, verifier.mechOption, null);
+		TestTank testTank = new TestTank(tank, verifier.tankOption, null);
 		model.put("isMass", NumberFormat.getInstance().format(testTank.getWeightStructure()));
 		model.put("engineName", stripNotes(tank.getEngine().getEngineName()));
 		model.put("engineMass", NumberFormat.getInstance().format(testTank.getWeightEngine()));
@@ -281,7 +290,7 @@ public class TROView {
 		addAeroFluff(aero);
 		model.put("isOmni", aero.isOmni());
 		model.put("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
-		TestAero testAero = new TestAero(aero, verifier.mechOption, null);
+		TestAero testAero = new TestAero(aero, verifier.aeroOption, null);
 		model.put("engineName", stripNotes(aero.getEngine().getEngineName()));
 		model.put("engineMass", NumberFormat.getInstance().format(testAero.getWeightEngine()));
 		model.put("safeThrust", aero.getWalkMP());
@@ -309,6 +318,80 @@ public class TROView {
 		if (aero.isOmni()) {
 			addFixedOmni(aero);
 		}
+	}
+	
+	private void addBattleArmorData(BattleArmor ba) {
+		addBasicData(ba);
+		TestBattleArmor testBA = new TestBattleArmor(ba, verifier.baOption, null);
+		if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+			model.put("chassisType", Messages.getString("TROView.chassisQuad"));
+		} else {
+			model.put("chassisType", Messages.getString("TROView.chassisBiped"));
+		}
+		model.put("weightClass", EntityWeightClass
+				.getClassName(EntityWeightClass.getWeightClass(ba.getTrooperWeight(), ba)));
+		model.put("weight", ba.getTrooperWeight() * 1000);
+		model.put("swarmAttack", ba.canMakeAntiMekAttacks()? "Yes" : "No");
+		// We need to allow it for UMU that otherwise qualifies
+		model.put("legAttack", (ba.canDoMechanizedBA()
+                && (ba.getWeightClass() < EntityWeightClass.WEIGHT_HEAVY))? "Yes" : "No");
+		model.put("mechanized", ba.canDoMechanizedBA()? "Yes" : "No");
+		model.put("antiPersonnel", ba.getEquipment().stream().anyMatch(m -> m.isAPMMounted())? "Yes" : "No");
+		
+		model.put("massChassis", testBA.getWeightChassis() * 1000);
+		model.put("groundMP", ba.getWalkMP());
+		model.put("groundMass", testBA.getWeightGroundMP() * 1000);
+		if (ba.getMovementMode() == EntityMovementMode.VTOL) {
+			model.put("vtolMP", ba.getOriginalJumpMP());
+			model.put("vtolMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
+		} else if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
+			model.put("umuMP", ba.getOriginalJumpMP());
+			model.put("umuMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
+		} else {
+			model.put("jumpMP", ba.getOriginalJumpMP());
+			model.put("jumpMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
+		}
+		List<Map<String, Object>> manipulators = new ArrayList<>();
+		manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LARM, ba.getLeftManipulator()));
+		manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RARM, ba.getRightManipulator()));
+		model.put("manipulators", manipulators);
+		model.put("armorType", EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1))
+				.replaceAll("^BA\\s+", ""));
+		model.put("armorMass", testBA.getWeightArmor() * 1000);
+		model.put("armorValue", ba.getOArmor(BattleArmor.LOC_TROOPER_1));
+		model.put("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
+		addBAEquipment(ba);
+		if (ba.getEquipment().stream().anyMatch(m -> m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET)) {
+			Map<String, Object> modularMount = new HashMap<>();
+			modularMount.put("name", ba.hasModularTurretMount()?
+					Messages.getString("TROView.BAModularTurret"):
+					Messages.getString("TROView.BATurret"));
+			modularMount.put("location", BattleArmor.getBaMountLocAbbr(BattleArmor.MOUNT_LOC_TURRET));
+			int turretSlots = ba.getTurretCapacity();
+			if (ba.hasModularTurretMount()) {
+				turretSlots += 2;
+			}
+			modularMount.put("slots", turretSlots + " (" + ba.getTurretCapacity() + ")");
+			modularMount.put("mass", testBA.getWeightTurret() * 1000);
+			model.put("modularMount", modularMount);
+		}
+	}
+	
+	private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted manipulator) {
+		Map<String, Object> retVal = new HashMap<>();
+		retVal.put("locName", BattleArmor.getBaMountLocAbbr(mountLoc));
+		if (null == manipulator) {
+			retVal.put("eqName", Messages.getString("TROView.None"));
+			retVal.put("eqMass", 0);
+		} else {
+			String name = manipulator.getName();
+			if (name.contains("[")) {
+				name = name.replaceAll(".*\\[", "").replaceAll("\\].*", "");
+			}
+			retVal.put("eqName", name);
+			retVal.put("eqMass", manipulator.getType().getTonnage(null) * 1000);
+		}
+		return retVal;
 	}
 	
 	private void addEntityFluff(Entity entity) {
@@ -654,6 +737,52 @@ public class TROView {
 		return nameWidth;
 	}
 	
+	private int addBAEquipment(BattleArmor ba) {
+		final List<Map<String, Object>> equipment = new ArrayList<>();
+		final List<Map<String, Object>> modularEquipment = new ArrayList<>();
+		String at = EquipmentType.getBaArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
+				TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+		final EquipmentType armor = EquipmentType.get(at);
+		Map<String, Object> row = null;
+		int nameWidth = 30;
+		for (Mounted m : ba.getEquipment()) {
+			if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
+					|| (m.getType() == armor)) {
+				continue;
+			}
+			if ((m.getType() instanceof MiscType)
+					&& m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+				continue;
+			}
+			row = new HashMap<>();
+			String name = stripNotes(m.getName());
+			if (m.getType() instanceof AmmoType) {
+				row.put("name", name.replaceAll("^BA\\s+", "") + " (" + m.getOriginalShots() + ")");
+			} else {
+				row.put("name", stripNotes(m.getName()));
+			}
+			row.put("location", BattleArmor.getBaMountLocAbbr(m.getBaMountLoc()));
+			if (name.length() >= nameWidth) {
+				nameWidth = name.length() + 1;
+			}
+			row.put("slots", m.getType().getCriticals(ba));
+			if (m.getType() instanceof AmmoType) {
+				row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
+			} else {
+				row.put("mass", m.getType().getTonnage(ba) * 1000);
+			}
+			if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
+				row.put("location", "-");
+				modularEquipment.add(row);
+			} else {
+				equipment.add(row);
+			}
+		}
+		model.put("equipment", equipment);
+		model.put("modularEquipment", modularEquipment);
+		return nameWidth;
+	}
+	
 	private Map<Integer, Integer> getSpreadableLocations(final Entity entity, final EquipmentType eq) {
 		Map<Integer, Integer> retVal = new HashMap<>();
 		for (int loc = 0; loc < entity.locations(); loc++) {
@@ -917,5 +1046,22 @@ public class TROView {
 			return sb.toString();
 		}
 		
+	}
+	
+	/**
+	 * Sets whether to include the fluff section when processing the template
+	 * 
+	 * @param includeFluff Whether to include the fluff section
+	 */
+	public void setIncludeFluff(boolean includeFluff) {
+		this.includeFluff = includeFluff;
+	}
+	
+	/**
+	 * 
+	 * @return Whether the fluff section will be included when processing the template
+	 */
+	public boolean getIncludeFluff() {
+		return includeFluff;
 	}
 }

@@ -5,57 +5,9 @@
 <body>
   <div style="font:12pt monospaced">
   <font size="+1"><b>${fullName}</b></font>
-  	<p>
-  	<b>Mass: </b>${massDesc}<br/>
-  	<b>Movement Type: </b>${moveType}<br/>
-  	<b>Power Plant: </b>${engineDesc}<br/>
-  	<b>Cruising Speed: </b>${cruisingSpeed} kph<br/>
-  	<b>Maximum Speed: </b>${maxSpeed} kph<br/>
-<#if jumpMP??>  	
-  	<b>Jump Jets: </b>${jjDesc}<br/>
-  	<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump Capacity: </b>${jumpCapacity} meters<br/>
+<#if includeFluff>
+<#include "fluff.ftlh">
 </#if>
-  	<b>Armor: </b>${armorDesc}</b><br/>
-  	<b>Armament:</b><br/>
-  		<#list armamentList as armament>
-  			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${armament}<br/>
-  		</#list>
-	<#if manufacturerDesc??><b>Manufacturer:</b> ${manufacturerDesc}<br/></#if>
-  	<#if factoryDesc??><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b>${factoryDesc}</b></#if>
-  	<#if communicationDesc??><b>Communication System: </b>${communicationDesc}<br/></#if>
-  	<#if targetingDesc??><b>Targeting & Tracking System: </b>${targetingDesc}<br/></#if>
-  	<b>Introduction Year:</b> ${year}<br/>
-  	<b>Tech Rating/Availability:</b> ${techRating}<br/>
-  	<b>Cost:</b> ${cost} C-bills<br/>
-  	</p>
-	
-	<#if fluffOverview??>
-	<p>
-	<b>Overview</b><br/>
-	${fluffOverview}
-	</p>
-	</#if>
-
-	<#if fluffCapabilities??>
-	<p>
-	<b>Capabilities</b><br/>
-	${fluffCapabilities}
-	</p>
-	</#if>
-
-	<#if fluffDeployment??>
-	<p>
-	<b>Deployment</b><br/>
-	${fluffDeployment}
-	</p>
-	</#if>
-
-	<#if fluffHistory??>
-	<p>
-	<b>History</b><br/>
-	${fluffHistory}
-	</p>
-	</#if>
   
 	<p>
 	<b>Type:</b> ${chassis}<br/>

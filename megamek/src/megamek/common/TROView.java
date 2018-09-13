@@ -322,6 +322,9 @@ public class TROView {
 	
 	private void addBattleArmorData(BattleArmor ba) {
 		addBasicData(ba);
+		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 25, 20, 8, 8},
+				new Justification[] { Justification.LEFT, Justification.LEFT,
+						Justification.CENTER, Justification.RIGHT }));
 		TestBattleArmor testBA = new TestBattleArmor(ba, verifier.baOption, null);
 		if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
 			model.put("chassisType", Messages.getString("TROView.chassisQuad"));
@@ -355,12 +358,18 @@ public class TROView {
 		manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LARM, ba.getLeftManipulator()));
 		manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RARM, ba.getRightManipulator()));
 		model.put("manipulators", manipulators);
-		model.put("armorType", EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1))
-				.replaceAll("^BA\\s+", ""));
+		String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
+				TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+		EquipmentType armor = EquipmentType.get(armorName);
+		model.put("armorType", armor.getName().replaceAll("^BA\\s+", ""));
+		model.put("armorSlots", armor.getCriticals(ba));
 		model.put("armorMass", testBA.getWeightArmor() * 1000);
 		model.put("armorValue", ba.getOArmor(BattleArmor.LOC_TROOPER_1));
 		model.put("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
-		addBAEquipment(ba);
+		int nameWidth = addBAEquipment(ba);
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 8, 12, 8},
+				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+						Justification.CENTER}));
 		if (ba.getEquipment().stream().anyMatch(m -> m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET)) {
 			Map<String, Object> modularMount = new HashMap<>();
 			modularMount.put("name", ba.hasModularTurretMount()?

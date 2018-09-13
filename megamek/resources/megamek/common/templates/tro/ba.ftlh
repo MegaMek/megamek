@@ -36,19 +36,19 @@
 		<#list manipulators as arm>
 		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;${arm.locName}:</td><td>${arm.eqName}</td><td></td><td align="right">${arm.eqMass} kg</td></tr>
 		</#list>
-		<tr><td>Armor:</td><td>${armorType}</td><td></td><td align="right">${armorMass} kg</td></tr>
+		<tr><td>Armor:</td><td>${armorType}</td><td align="center">${armorSlots}</td><td align="right">${armorMass} kg</td></tr>
 		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;Armor Value:</td><td>${armorValue} + ${internal} (Trooper)</td><td></td><td></td></tr>
 	</table>
 		
 	<table>
 		<tr><th>Weapons and Equipment</th><th>Location</th><th>Slots (Capacity)</th><th>Mass</th></tr>
 		<#list equipment as row>
-		<tr><td>${row.name}</td><td>${row.location}</td><td align="center">${row.slots}</td><td align="right">${row.mass} kg</td></tr>
+		<tr><td>${row.name}</td><td align="center">${row.location}</td><td align="center">${row.slots}</td><td align="right">${row.mass} kg</td></tr>
 		</#list>
 		<#if modularMount??>
-		<tr><td>${modularMount.name}</td><td>${modularMount.location}</td><td align="center">${modularMount.slots}</td><td align="right">${modularMount.mass} kg</td></tr>
+		<tr><td>${modularMount.name}</td><td align="center">${modularMount.location}</td><td align="center">${modularMount.slots}</td><td align="right">${modularMount.mass} kg</td></tr>
 		<#list modularEquipment as row>
-		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${row.name}</td><td>-</td><td align="center">${row.slots}</td><td align="right">${row.mass} kg</td></tr>
+		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${row.name}</td><td align="center">-</td><td align="center">${row.slots}</td><td align="right">${row.mass} kg</td></tr>
 		</#list>
 		</#if>
 	</table>

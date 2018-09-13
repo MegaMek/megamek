@@ -4563,9 +4563,6 @@ public class Server implements Runnable {
         
         loader.towUnit(unit);
 
-        // Remove the towed unit from the screen.
-        //unit.setPosition(null);
-
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
 
@@ -8797,32 +8794,27 @@ public class Server implements Runnable {
                 Entity loaded = null;
                 loaded = game.getEntity(entity.getTowing());
 
-                    // This should never ever happen, but just in case...
-                    if (loaded.equals(null)) {
-                        continue;
-                    }
-
-                    if (!entity.isEnemyOf(loaded) && !entity.equals(loaded)) {
-
-                        // The moving unit should be able to tow the other
-                        // unit and the other should be able to have a turn.
-                        if (!entity.canTow(loaded)
-                                || !loaded.isLoadableThisTurn()) {
-                            // Something is fishy in Denmark.
-                            logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
-                            loaded = null;
-                        } else {
-                            // Have the deployed unit load the indicated unit.
-                            towUnit(entity, loaded);
-                    }
-                }
-
-                // We were supposed to find someone to load.
+                // This should never ever happen, but just in case...
                 if (loaded == null) {
                     logError(METHOD_NAME,
-                            "Could not find unit for " + entity.getShortName() + " to tow.");
+                        "Could not find unit for " + entity.getShortName() + " to tow.");
+                    continue;
                 }
 
+                // The moving unit should be able to tow the other
+                // unit and the other should be able to have a turn.
+                //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
+                //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
+                //Do we need it here for safety, client/server sync or can this be further streamlined?
+                if (!entity.canTow(loaded)
+                        || !loaded.isLoadableThisTurn()) {
+                    // Something is fishy in Denmark.
+                    logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
+                    loaded = null;
+                } else {
+                    // Have the deployed unit load the indicated unit.
+                    towUnit(entity, loaded);
+                }
             } // End STEP_TOW
 
             // Handle mounting units to small craft/dropship

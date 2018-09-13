@@ -3060,8 +3060,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         for (Coords pos : ce().getHitchLocations()) {
             for (Entity other : game.getEntitiesVector(pos)) {
                 if (other.isLoadableThisTurn() && (ce() != null)
-                    && ce().canTow(other)
-                    && other != ce()) {
+                    && ce().canTow(other)) {
                     choices.add(other);
                 }
             }

@@ -1573,7 +1573,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isLoadableThisTurn() {
         return (delta_distance == 0) && (conveyance == Entity.NONE)
-               && !unloadedThisTurn && !isClearingMinefield() && getTowedBy() == Entity.NONE;
+               && !unloadedThisTurn && !isClearingMinefield() && getTractor() == null;
     }
 
     /**
@@ -15042,26 +15042,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     /**
      * Determines if this vehicle is currently able to tow designated trailer. 
-     * Can't tow enemies or if the hitch is occupied, or if the trailer's at a 
-     * different elevation.
      *
      * @param trailer - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the trailer can be towed, <code>false</code>
      * otherwise.
      */
-    public boolean canTow(Entity trailer) {        
+    public boolean canTow(Entity trailer) {
+        //Only allow the tow action by the lead vehicle
+        if (!isTractor()) {
+            return false;
+        }
+        
         //If this entity is in a transport bay, it can't tow another
         if (this.getTransportId() != Entity.NONE) {
             return false;
         }
         
-        // one can only tow friendly units!
-        if (trailer.isEnemyOf(this)) {
+        //If Trailer moved or is already being towed, discard it 
+        if (!trailer.isLoadableThisTurn()) {
             return false;
         }
         
         // Can't tow yourself, either.
         if (trailer.equals(this)) {
+            return false;
+        }
+        
+        // one can only tow friendly units!
+        if (trailer.isEnemyOf(this)) {
             return false;
         }
         
@@ -15073,26 +15081,38 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //If none of the above happen, assume that we can't tow the trailer...
         boolean result = false;
         
-        //Next, look for an empty hitch
-        for (Transporter t : getTransports()) {
-            if (t.canLoad(trailer)) {
-                result = true;
-                //stop looking
-                break;
-            }
+        //First, set up a list of all the entities in this train
+        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        thisTrain.add(this);
+        for (Entity tr : getAllTowedUnits()) {
+            thisTrain.add(tr);
         }
         
         //Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
-        //If you're just connecting a bunch of trailers together with no tractor, this doesn't matter.
-        if (getTractor() != null) {        
-            double tractorWeight = 0;
-            double trailerWeight = 0;
-            tractorWeight = getTractor().getWeight();
-            //Add up what the tractor's already towing
-            for (Entity tr : getTractor().getAllTowedUnits()) {
-                trailerWeight += tr.getWeight();
+        double tractorWeight = 0;
+        double trailerWeight = 0;
+        tractorWeight = getWeight();
+        //Add up what the tractor's already towing
+        for (Entity tr : getAllTowedUnits()) {
+            trailerWeight += tr.getWeight();
+        }
+        result = (trailerWeight + trailer.getWeight()) <= tractorWeight;
+        
+        //Next, look for an empty hitch somewhere in the train
+        boolean hitchFound = false;
+        for (Entity e : thisTrain) {
+            //Quit looking if we've already found a valid hitch
+            if (hitchFound) {
+                break;
             }
-            result = (trailerWeight + trailer.getWeight()) <= tractorWeight;
+            for (Transporter t : e.getTransports()) {
+                if (t.canLoad(trailer)) {
+                    result = true;
+                    hitchFound = true;
+                    //stop looking
+                    break;
+                }
+            }
         }
         return result;
     }
@@ -15147,8 +15167,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
-     * The ID of the entity directly towing this one, powered or unpowered. 
-     * This will often be the same entity as tractor
+     * The ID of the entity directly towing this one
+     * Used to find and set the correct Transporter
      */
     private int towedBy = Entity.NONE;
 

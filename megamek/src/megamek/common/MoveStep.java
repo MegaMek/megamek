@@ -3239,20 +3239,9 @@ public class MoveStep implements Serializable {
             // Find the unit being towed.
             Entity other = game.getEntity(entity.getTowing());
 
-            // Is the other unit friendly and not the current entity?
-            if (!entity.isEnemyOf(other)
-                    && !entity.equals(other)) {
-
-                // The moving unit should be able to tow the other unit.
-                if (!entity.canTow(other)) {
-                    return false;
-                }
-
-                // The other unit should be able to have a turn.
-                if (!other.isLoadableThisTurn()) {
-                    return false;
-                }
-
+            // The moving unit should be able to tow the other unit.
+            if (!entity.canTow(other)) {
+                return false;
             }
         } // End STEP_TOW-checks
 

@@ -2866,7 +2866,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // If the other unit is friendly and not the current entity
                     // if it can tow the other unit, and if the other hasn't moved
                     // then enable the "Tow" button.
-                    if (ce.canTow(other) && other.isLoadableThisTurn()) {
+                    if (ce.canTow(other)) {
                         setTowEnabled(true);
                         isGood = true;
 
@@ -3059,8 +3059,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         //We have to account for the positions of the whole train when looking to add new trailers
         for (Coords pos : ce().getHitchLocations()) {
             for (Entity other : game.getEntitiesVector(pos)) {
-                if (other.isLoadableThisTurn() && (ce() != null)
-                    && ce().canTow(other)) {
+                if (ce() != null && ce().canTow(other)) {
                     choices.add(other);
                 }
             }
@@ -3090,7 +3089,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             choice = choices.get(0);
         }
 
-        // We need to update the towing entity here so that the server knows
+        // We need to update the entities here so that the server knows
         // about our changes
         ce().setTowing(choice.getId());
         clientgui.getClient().sendUpdateEntity(ce());

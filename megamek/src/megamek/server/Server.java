@@ -8806,8 +8806,7 @@ public class Server implements Runnable {
                 //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
                 //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
                 //Do we need it here for safety, client/server sync or can this be further streamlined?
-                if (!entity.canTow(loaded)
-                        || !loaded.isLoadableThisTurn()) {
+                if (!entity.canTow(loaded)) {
                     // Something is fishy in Denmark.
                     logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
                     loaded = null;

@@ -40,9 +40,9 @@ None
 </#if>
 
 Weapons
-${formatEquipmentRow("and Ammo", "Location", "Tonnage")}	
+${formatEquipmentRow("and Ammo", "Location", "Tonnage", "Heat", "SRV", "MRV", "LRV", "ERV")}	
 <#list equipment as eq>
-${formatEquipmentRow(eq.name, eq.location, eq.tonnage)}
+${formatEquipmentRow(eq.name, eq.location, eq.tonnage, eq.heat, eq.srv, eq.mrv, eq.lrv, eq.erv)}
 </#list>
 	
 <#if quirks??>

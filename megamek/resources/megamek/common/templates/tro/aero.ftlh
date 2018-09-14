@@ -100,10 +100,10 @@
 	<b>Fixed Equipment</b><br/>
 		<#if fixedTonnage gt 0>
 			<table>
-			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Tonnage</i></td></tr>
+			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Tonnage</i></td><td><i>Heat</i></i></td><th>SRV</i></td><td><i>MRV</i></td><td><i>LRV</th><td><i>ERV</i></td></td></tr>
 			<#list fixedEquipment as row>
 				<#if row.equipment != "None">
-			<tr><td>${row.location}</td><td align="center">${row.equipment}</td><td align="center">${row.tonnage}</td></tr>
+			<tr><td>${row.location}</td><td align="center">${row.equipment}</td><td align="center">${row.tonnage}</td><td>${eq.heat}</td><td>${eq.srv}</td><td>${eq.mrv}</td><td>${eq.lrv}</td><td>${eq.erv}</td></tr>
 				</#if>
 			</#list>
 			</table>
@@ -113,9 +113,9 @@
 	</#if>
 	
 	<table>
-		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Tonnage</th></tr>
+		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Tonnage</th><th>Heat</th><th>SRV</th><th>MRV</th><th>LRV</th><th>ERV</th></tr>
 		<#list equipment as eq>
-			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage}</td></tr>
+			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage}</td><td>${eq.heat}</td><td>${eq.srv}</td><td>${eq.mrv}</td><td>${eq.lrv}</td><td>${eq.erv}</td></tr>
 		</#list>
 	</table>
 	

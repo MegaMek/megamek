@@ -284,9 +284,10 @@ public class TROView {
 		addBasicData(aero);
 		addArmorAndStructure(aero);
 		int nameWidth = addEquipment(aero);
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 8},
+		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 8, 5, 5, 5, 5, 5},
 				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER}));
+						Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER, 
+						Justification.CENTER, Justification.CENTER }));
 		addAeroFluff(aero);
 		model.put("isOmni", aero.isOmni());
 		model.put("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
@@ -682,7 +683,7 @@ public class TROView {
 	private int addEquipment(Entity entity) {
 		final int structure = entity.getStructureType();
 		final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
-		int nameWidth = 30;
+		int nameWidth = 20;
 		for (Mounted m : entity.getEquipment()) {
 			if ((m.getLocation() < 0) || m.isWeaponGroup()) {
 				continue;
@@ -721,9 +722,17 @@ public class TROView {
 				}
 				fields.put("tonnage", eq.getTonnage(entity) * count);
 				if (eq instanceof WeaponType) {
-					fields.put("heat", ((WeaponType) eq).getHeat() * count);
+					fields.put("heat", ((WeaponType) eq).getHeat());
+					fields.put("srv", (int) ((WeaponType) eq).getShortAV());
+					fields.put("mrv", (int) ((WeaponType) eq).getMedAV());
+					fields.put("lrv", (int) ((WeaponType) eq).getLongAV());
+					fields.put("erv", (int) ((WeaponType) eq).getExtAV());
 				} else {
 					fields.put("heat", "-");
+					fields.put("srv", "-");
+					fields.put("mrv", "-");
+					fields.put("lrv", "-");
+					fields.put("erv", "-");
 				}
 				if (eq.isSpreadable()) {
 					Map<Integer, Integer> byLoc = getSpreadableLocations(entity, eq);

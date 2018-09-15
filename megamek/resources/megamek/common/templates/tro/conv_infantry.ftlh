@@ -31,7 +31,7 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Ground MP:</b> ${groundMP}<#if groundMP == 0>*</#if><br/>
 </#if>
 <#if jumpMP??>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Jump MP:</b> ${groundMP}<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Jump MP:</b> ${jumpMP}<br/>
 </#if>
 <#if vtolMP??>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>VTOL MP:</b> ${vtolMP}<br/>

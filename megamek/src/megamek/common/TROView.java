@@ -392,6 +392,23 @@ public class TROView {
 		}
 	}
 	
+	private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted manipulator) {
+		Map<String, Object> retVal = new HashMap<>();
+		retVal.put("locName", BattleArmor.getBaMountLocAbbr(mountLoc));
+		if (null == manipulator) {
+			retVal.put("eqName", Messages.getString("TROView.None"));
+			retVal.put("eqMass", 0);
+		} else {
+			String name = manipulator.getName();
+			if (name.contains("[")) {
+				name = name.replaceAll(".*\\[", "").replaceAll("\\].*", "");
+			}
+			retVal.put("eqName", name);
+			retVal.put("eqMass", manipulator.getType().getTonnage(null) * 1000);
+		}
+		return retVal;
+	}
+	
 	private void addConvInfantryData(Infantry inf) {
 		addBasicData(inf);
 		addEntityFluff(inf);
@@ -411,11 +428,16 @@ public class TROView {
 			model.put("armorKit", armorKit.getName());
 		}
 		
-		StringJoiner sj = new StringJoiner(" ");
-		if (sj.toString().length() > 0) {
-			model.put("notes", sj.toString());
-		} else {
+		List<String> notes = new ArrayList<>();
+		addInfantryWeaponNotes(notes, inf);
+		if (null != armorKit) {
+			addInfantryArmorNotes(notes, armorKit);
+		}
+		addInfantryAugmentationNotes(notes, inf.getCrew());
+		if (notes.isEmpty()) {
 			model.put("notes", Messages.getString("TROView.None"));
+		} else {
+			model.put("notes", notes.stream().collect(Collectors.joining(" ")));
 		}
 		
 		switch(inf.getMovementMode()) {
@@ -437,7 +459,7 @@ public class TROView {
 				model.put("motiveType", inf.getMovementModeAsString());
 				break;
 		}
-		sj = new StringJoiner(", ");
+		StringJoiner sj = new StringJoiner(", ");
 		for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
 			if (inf.hasSpecialization(1 << i)) {
 				sj.add(Infantry.getSpecializationName(1 << i));
@@ -504,21 +526,68 @@ public class TROView {
 		model.put("maxDamage", sj.toString());
 	}
 	
-	private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted manipulator) {
-		Map<String, Object> retVal = new HashMap<>();
-		retVal.put("locName", BattleArmor.getBaMountLocAbbr(mountLoc));
-		if (null == manipulator) {
-			retVal.put("eqName", Messages.getString("TROView.None"));
-			retVal.put("eqMass", 0);
-		} else {
-			String name = manipulator.getName();
-			if (name.contains("[")) {
-				name = name.replaceAll(".*\\[", "").replaceAll("\\].*", "");
-			}
-			retVal.put("eqName", name);
-			retVal.put("eqMass", manipulator.getType().getTonnage(null) * 1000);
+	private void addInfantryWeaponNotes(List<String> notes, Infantry inf) {
+		if ((inf.getMovementMode() == EntityMovementMode.INF_UMU)
+				|| (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
+			notes.add(Messages.getString("TROView.InfantryNote.SCUBA"));
 		}
-		return retVal;
+		List<EquipmentType> fieldGuns = inf.getWeaponList().stream()
+				.filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
+				.map(Mounted::getType).collect(Collectors.toList());
+		int shots = inf.getAmmo().stream()
+				.filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
+				.mapToInt(Mounted::getOriginalShots).sum();
+		if (!fieldGuns.isEmpty()) {
+			notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGun"),
+					fieldGuns.size(), fieldGuns.get(0).getName(), shots,
+					(int) fieldGuns.get(0).getTonnage(inf)));
+		}
+		if (inf.getSecondaryN() > 1) {
+			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
+				notes.add(Messages.getString("TROView.InfantryNote.Burst"));
+			}
+			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+				notes.add(Messages.getString("TROView.InfantryNote.NonPenetrating"));
+			}
+			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_AA)) {
+				notes.add(Messages.getString("TROView.InfantryNote.AA"));
+			}
+			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_FLAMER)) {
+				notes.add(Messages.getString("TROView.InfantryNote.Heat"));
+			}
+		}
+	}
+	
+	private void addInfantryArmorNotes(List<String> notes, EquipmentType armorKit) {
+		if (armorKit.hasSubType(MiscType.S_DEST)) {
+			notes.add(Messages.getString("TROView.InfantryNote.DESTArmor"));
+		}
+		if (armorKit.hasSubType(MiscType.S_SNEAK_CAMO)) {
+			notes.add(Messages.getString("TROView.InfantryNote.CamoArmor"));
+		}
+		if (armorKit.hasSubType(MiscType.S_SNEAK_IR)) {
+			notes.add(Messages.getString("TROView.InfantryNote.IRArmor"));
+		}
+		if (armorKit.hasSubType(MiscType.S_SNEAK_ECM)) {
+			notes.add(Messages.getString("TROView.InfantryNote.ECMArmor"));
+		}
+	}
+	
+	private void addInfantryAugmentationNotes(List<String> notes, Crew crew) {
+		List<IOption> options = new ArrayList<>();
+		for (Enumeration<IOption> e = crew.getOptions().getOptions(); e.hasMoreElements(); ) {
+			final IOption option = e.nextElement();
+			if (option.booleanValue()) {
+				options.add(option);
+			}
+		}
+		if (!options.isEmpty()) {
+			notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
+			options.forEach(o -> {
+				notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemn?ented\\)", "")
+						+ ": " + o.getDescription().replaceAll("See IO.*", ""));
+			});
+		}
 	}
 	
 	private void addEntityFluff(Entity entity) {

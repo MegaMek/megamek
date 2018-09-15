@@ -667,6 +667,9 @@ public class TestAero extends TestEntity {
             if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
                 heat += 12;
             }
+            if (mtype.hasFlag(MiscType.F_NOVA)) {
+            	heat += 2;
+            }
         }
         if (aero.hasStealth()) {
             heat += 10;

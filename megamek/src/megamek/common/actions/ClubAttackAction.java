@@ -61,17 +61,31 @@ public class ClubAttackAction extends PhysicalAttackAction {
         aiming = aimTable;
     }
     
+    /**
+     * Creates a new club attack
+     * @param entityId - id of entity performing the attack
+     * @param targetType - type of target
+     * @param targetId - id of targeet
+     * @param club - The <code>Mounted</code> of the weapon doing the attack
+     * @param aimTable
+     * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
+     */
     public ClubAttackAction(int entityId, int targetType, int targetId,
-                            Mounted club, int aimTable, boolean zwei) {
+                            Mounted club, int aimTable, boolean zweihandering) {
         super(entityId, targetType, targetId);
         this.club = club;
         aiming = aimTable;
-        zweihandering = zwei;
+        this.zweihandering = zweihandering;
         
     }
 
     /**
-     * Damage that the specified mech does with a club attack
+     * Damage for the club attack
+     * @param entity - the entity performing the attack
+     * @param club - The <code>Mounted</code> of the weapon doing the attack
+     * @param targetInfantry - whether this attack targets infantry
+     * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
+     * @return an integer of the damage dealt
      */
     public static int getDamageFor(Entity entity, Mounted club,
             boolean targetInfantry, boolean zweihandering) {
@@ -146,9 +160,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             nDamage = 5;
         }
         
-        //SMASH!
+        //SMASH! CamOps, pg. 82
         if(zweihandering) {
-        	nDamage += (int) Math.floor(entity.getWeight() / 10.0);
+            nDamage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 
         // TSM doesn't apply to some weapons, including Saws.
@@ -186,8 +200,12 @@ public class ClubAttackAction extends PhysicalAttackAction {
                + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
 
+    /**
+     * 
+     * @return true if the entity is zweihandering (attacking with both hands)
+     */
     public boolean isZweihandering() {
-    	return zweihandering;
+        return zweihandering;
     }
     
     public ToHitData toHit(IGame game) {
@@ -198,6 +216,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified club to hit
+     * @param game
+     * @param attackerId - attacker id
+     * @param target <code>Targetable</code> of the target
+     * @param club - <code>Mounted</code> of the weapon
+     * @param aimTable
+     * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
+     * @return
      */
     public static ToHitData toHit(IGame game, int attackerId,
                                   Targetable target, Mounted club, int aimTable, boolean zweihandering) {
@@ -268,7 +293,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
                                   && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB)) 
-        		|| zweihandering;
+                    || zweihandering;
         // Cast is safe because non-'Mechs never even get here.
         final boolean hasClaws = ((Mech) ae).hasClaw(Mech.LOC_RARM)
                                  || ((Mech) ae).hasClaw(Mech.LOC_LARM);

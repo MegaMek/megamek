@@ -837,12 +837,16 @@ public class BipedMech extends Mech {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
     }
     
+    /**
+     * 
+     * @return true if this unit is capable of Zweihandering (melee attack with both hands)
+     */
     public boolean canZweihander() {
-    	return (getCrew() != null)
-    			&& getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ZWEIHANDER)
-    			&& hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
-    			&& hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)
-    			&& !isProne();
+        return (getCrew() != null)
+                && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ZWEIHANDER)
+                && hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
+                && hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)
+                && !isProne();
     }
 
 }

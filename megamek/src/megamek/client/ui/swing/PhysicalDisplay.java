@@ -424,9 +424,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean canZweihander = null != en
-        		&& (en instanceof BipedMech) 
-        		&& ((BipedMech)en).canZweihander()
-        		&& Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());;
+                && (en instanceof BipedMech) 
+                && ((BipedMech)en).canZweihander()
+                && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());;
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
@@ -499,10 +499,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             
             boolean zweihandering = false;
             int armChosenZwei = PunchAttackAction.RIGHT;
-        	if(canZweihander) {
-        		
-        		//need to choose a primary arm. Do it based on highest predicted damage     		
-        		ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient()
+            if(canZweihander) {
+                
+                //need to choose a primary arm. Do it based on highest predicted damage     		
+                ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient()
                         .getGame(), cen, target, PunchAttackAction.LEFT, true);
                 ToHitData rightArmZwei = PunchAttackAction.toHit(clientgui
                         .getClient().getGame(), cen, target, PunchAttackAction.RIGHT, true);
@@ -518,32 +518,31 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 int damageZwei = damageRightZwei;
                 double oddsZwei = oddsRight;
                 if ((oddsLeft * damageLeftZwei) > (oddsRight * damageRightZwei)) {
-                	toHitZwei = leftArmZwei;
-                	damageZwei = damageLeftZwei;
-                	oddsZwei = oddsLeft;
-                	armChosenZwei = PunchAttackAction.LEFT;
+                    toHitZwei = leftArmZwei;
+                    damageZwei = damageLeftZwei;
+                    oddsZwei = oddsLeft;
+                    armChosenZwei = PunchAttackAction.LEFT;
                 } 
                               
-        		zweihandering = clientgui.doYesNoDialog(Messages
-	                    .getString("PhysicalDisplay.ZweihanderPunchDialog.title"),
-	                    Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.message",
-	                            new Object[] { 
-	                            		toHitZwei.getValueAsString(),
-	                            		oddsZwei,
-	                                    toHitZwei.getDesc(),
-	                                    damageZwei,
-	                                    toHitZwei.getTableDesc()}));
-        	}
+                zweihandering = clientgui.doYesNoDialog(Messages
+                        .getString("PhysicalDisplay.ZweihanderPunchDialog.title"),
+                        Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.message",
+                            new Object[] { 
+                                    toHitZwei.getValueAsString(),
+                                    oddsZwei,
+                                    toHitZwei.getDesc(),
+                                    damageZwei,
+                                    toHitZwei.getTableDesc()}));
+            }
             
-        	if(zweihandering) {
-        		if(armChosenZwei==PunchAttackAction.LEFT) {
-        			leftArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
-        		} else {
-        			rightArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
-        		}
-        	}
-        	
-        	
+            if(zweihandering) {
+                if(armChosenZwei==PunchAttackAction.LEFT) {
+                    leftArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
+                } else {
+                    rightArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
+                }
+            }
+
             disableButtons();
             // declare searchlight, if possible
             if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
@@ -1043,9 +1042,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         final boolean canZweihander = null != en
-        		&& (en instanceof BipedMech) 
-        		&& ((BipedMech)en).canZweihander()
-        		&& Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
+                && (en instanceof BipedMech) 
+                && ((BipedMech)en).canZweihander()
+                && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
                 
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable(), false);
@@ -1080,23 +1079,23 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
         
         if (clientgui.doYesNoDialog(title, message)) {
-        	boolean zweihandering = false;
-        	if(canZweihander) {
-        		ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient()
+            boolean zweihandering = false;
+            if(canZweihander) {
+                ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient()
                         .getGame(), cen, target, club, ash.getAimTable(), true);
-	        	zweihandering = clientgui.doYesNoDialog(Messages
-	                    .getString("PhysicalDisplay.ZweihanderClubDialog.title"),
-	                    Messages.getString("PhysicalDisplay.ZweihanderClubDialog.message",
-	                            new Object[] { 
-	                                    toHitZwei.getValueAsString(),
-	                                    Compute.oddsAbove(toHit.getValue(),
-	                                            isAptPiloting),
-	                                    toHitZwei.getDesc(),
-	                                    ClubAttackAction.getDamageFor(en, club,
-	                                            targetConvInf, true),
-	                                    toHitZwei.getTableDesc() }));
-        	}
-        	
+                zweihandering = clientgui.doYesNoDialog(Messages
+                        .getString("PhysicalDisplay.ZweihanderClubDialog.title"),
+                        Messages.getString("PhysicalDisplay.ZweihanderClubDialog.message",
+                                new Object[] { 
+                                        toHitZwei.getValueAsString(),
+                                        Compute.oddsAbove(toHit.getValue(),
+                                                isAptPiloting),
+                                        toHitZwei.getDesc(),
+                                        ClubAttackAction.getDamageFor(en, club,
+                                                targetConvInf, true),
+                                        toHitZwei.getTableDesc() }));
+            }
+            
             disableButtons();
             // declare searchlight, if possible
             if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {

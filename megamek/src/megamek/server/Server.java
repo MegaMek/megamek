@@ -15697,17 +15697,23 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Apply damage to mech for zweihandering (melee attack with both hands) as per
+     * pg. 82, CamOps
+     * @param ae - the attacking entity
+     * @param missed - did the attack missed. If so PSR is necessary.
+     */
     private void applyZweihanderSelfDamage(Entity ae, boolean missed) {
-    	Report r = new Report(4022);
-    	r.subject = ae.getId();
-    	r.indent();
-    	r.addDesc(ae);
-    	addReport(r);
-    	addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
-    	addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
-    	if(missed) {
-    		game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
-    	}
+        Report r = new Report(4022);
+        r.subject = ae.getId();
+        r.indent();
+        r.addDesc(ae);
+        addReport(r);
+        addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
+        addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
+        if(missed) {
+            game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
+        }
     }
     
     /**
@@ -15840,7 +15846,7 @@ public class Server implements Runnable {
             }
             
             if(paa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, true);
+                applyZweihanderSelfDamage(ae, true);
             }
             
             return;
@@ -15864,7 +15870,7 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(paa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, false);
+                applyZweihanderSelfDamage(ae, false);
             }
             
             // And we're done!
@@ -15994,7 +16000,7 @@ public class Server implements Runnable {
         addNewLines();
 
         if(paa.isZweihandering()) {  
-        	applyZweihanderSelfDamage(ae, false);
+            applyZweihanderSelfDamage(ae, false);
         }
         addNewLines();
 
@@ -17259,7 +17265,7 @@ public class Server implements Runnable {
                                                  "missed a flail/wrecking ball attack"));
             }
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, true);
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         }
@@ -17292,7 +17298,7 @@ public class Server implements Runnable {
                 addReport(r);
                 damage = 0;
                 if(caa.isZweihandering()) {  
-                	applyZweihanderSelfDamage(ae, true);
+                    applyZweihanderSelfDamage(ae, true);
                 }
                 return;
             }
@@ -17324,7 +17330,7 @@ public class Server implements Runnable {
                 }
             }
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, true);
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -17399,7 +17405,7 @@ public class Server implements Runnable {
 
             }
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, true);
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         }
@@ -17422,8 +17428,8 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(caa.isZweihandering()) {  
-            	applyZweihanderSelfDamage(ae, false);
-            	if (((MiscType) caa.getClub().getType())
+                applyZweihanderSelfDamage(ae, false);
+                if (((MiscType) caa.getClub().getType())
                         .hasSubType(MiscType.S_CLUB)) {
                     // the club breaks
                     r = new Report(4150);
@@ -17650,8 +17656,8 @@ public class Server implements Runnable {
         }
         
         if(caa.isZweihandering()) {  
-        	applyZweihanderSelfDamage(ae, false);
-        	if (((MiscType) caa.getClub().getType())
+            applyZweihanderSelfDamage(ae, false);
+            if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_CLUB)) {
                 // the club breaks
                 r = new Report(4150);

@@ -68,8 +68,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
         this.arm = arm;
     }
     
+    /**
+     * 
+     * @return true if the entity is zweihandering (attacking with both hands)
+     */
     public boolean isZweihandering() {
-    	return zweihandering;
+        return zweihandering;
     }
 
     public boolean isBladeExtended(int arm) {
@@ -248,7 +252,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         
         if(zweihandering) {
-        	if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, otherArm)) {
@@ -347,8 +351,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
         
+        //CamOps, pg. 82
         if(zweihandering) {
-        	damage += (int) Math.floor(entity.getWeight() / 10.0);
+            damage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 
         float multiplier = 1.0f;

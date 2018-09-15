@@ -536,10 +536,14 @@ public class TROView {
 				.map(Mounted::getType).collect(Collectors.toList());
 		int shots = inf.getAmmo().stream()
 				.filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
-				.mapToInt(Mounted::getOriginalShots).sum();
-		if (!fieldGuns.isEmpty()) {
-			notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGun"),
-					fieldGuns.size(), fieldGuns.get(0).getName(), shots,
+				.mapToInt(Mounted::getBaseShotsLeft).sum();
+		if (fieldGuns.size() > 1) {
+			notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"),
+					fieldGuns.size(), fieldGuns.get(0).getName(), shots / fieldGuns.size(),
+					(int) fieldGuns.get(0).getTonnage(inf)));
+		} else if (fieldGuns.size() > 0) {
+			notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
+					fieldGuns.get(0).getName(), shots,
 					(int) fieldGuns.get(0).getTonnage(inf)));
 		}
 		if (inf.getSecondaryN() > 1) {

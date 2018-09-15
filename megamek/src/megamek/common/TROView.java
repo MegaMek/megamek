@@ -36,6 +36,7 @@ import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -66,6 +67,9 @@ public class TROView {
 		} else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
 			templateFileName = "ba";
 			addBattleArmorData((BattleArmor) entity);
+		} else if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+			templateFileName = "conv_infantry";
+			addConvInfantryData((Infantry) entity);
 		}
 		if (null != templateFileName) {
 			templateFileName = "tro/" + templateFileName + ".ftl";
@@ -323,6 +327,7 @@ public class TROView {
 	
 	private void addBattleArmorData(BattleArmor ba) {
 		addBasicData(ba);
+		addEntityFluff(ba);
 		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 25, 20, 8, 8},
 				new Justification[] { Justification.LEFT, Justification.LEFT,
 						Justification.CENTER, Justification.RIGHT }));
@@ -385,6 +390,118 @@ public class TROView {
 			modularMount.put("mass", testBA.getWeightTurret() * 1000);
 			model.put("modularMount", modularMount);
 		}
+	}
+	
+	private void addConvInfantryData(Infantry inf) {
+		addBasicData(inf);
+		addEntityFluff(inf);
+		model.put("transportWeight", inf.getWeight());
+		model.put("weaponPrimary", String.format("%d %s",
+				(inf.getSquadSize() - inf.getSecondaryN()) * inf.getSquadN(),
+				inf.getPrimaryWeapon().getName()));
+		if (inf.getSecondaryWeapon() != null) {
+			model.put("weaponSecondary", String.format("%d %s",
+					inf.getSecondaryN() * inf.getSquadN(),
+					inf.getPrimaryWeapon().getName()));
+		} else {
+			model.put("weaponSecondary", Messages.getString("TROView.None"));
+		}
+		EquipmentType armorKit = inf.getArmorKit();
+		if (null != armorKit) {
+			model.put("armorKit", armorKit.getName());
+		}
+		
+		StringJoiner sj = new StringJoiner(" ");
+		if (sj.toString().length() > 0) {
+			model.put("notes", sj.toString());
+		} else {
+			model.put("notes", Messages.getString("TROView.None"));
+		}
+		
+		switch(inf.getMovementMode()) {
+			case INF_LEG:
+				model.put("motiveType", Messages.getString("TROView.Foot"));
+				break;
+			case TRACKED:
+			case HOVER:
+			case WHEELED:
+				model.put("motiveType",
+						Messages.getString("TROView.Mechanized")
+						+ "/" + inf.getMovementModeAsString());
+				break;
+			case SUBMARINE:
+				model.put("motiveType",
+						Messages.getString("TROView.MechanizedSCUBA"));
+				break;
+			default:
+				model.put("motiveType", inf.getMovementModeAsString());
+				break;
+		}
+		sj = new StringJoiner(", ");
+		for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+			if (inf.hasSpecialization(1 << i)) {
+				sj.add(Infantry.getSpecializationName(1 << i));
+			}
+		}
+		if (sj.toString().length() > 0) {
+			model.put("specialty", sj.toString());
+		} else {
+			model.put("specialty", Messages.getString("TROView.None"));
+		}
+		if (inf.getMovementMode() != EntityMovementMode.SUBMARINE) {
+			model.put("groundMP", inf.getWalkMP());
+		}
+		if (inf.getMovementMode() == EntityMovementMode.INF_JUMP) {
+			model.put("jumpMP", inf.getOriginalJumpMP());
+		} else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
+			model.put("vtolMP", inf.getOriginalJumpMP());
+		} else if ((inf.getMovementMode() == EntityMovementMode.INF_UMU)
+				|| (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
+			model.put("umuMP", inf.getOriginalJumpMP());
+		}
+		model.put("squadSize", inf.getSquadSize());
+		model.put("squadCount", inf.getSquadN());
+		model.put("armorDivisor", inf.getDamageDivisor());
+		InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
+		if (inf.getSecondaryN() > 1) {
+			rangeWeapon = inf.getSecondaryWeapon();
+		}
+		
+		sj = new StringJoiner(", ");
+		int maxRange = rangeWeapon.getInfantryRange() * 3;
+		int lastMod = Compute.getInfantryRangeMods(0, rangeWeapon, inf.getSecondaryWeapon(), false).getValue();
+		int hex = 0;
+		for (int range = 1; range <= maxRange + 1; range++) {
+			int mod = Compute.getInfantryRangeMods(range, rangeWeapon, inf.getSecondaryWeapon(), false).getValue();
+			if (mod != lastMod) {
+				if (range - hex > 1) {
+					sj.add(String.format("%+d (%d-%d Hexes)", lastMod, hex, range - 1));
+				} else {
+					sj.add(String.format("%+d (%d Hexes)", lastMod, hex));
+				}
+				lastMod = mod;
+				hex = range;
+			}
+		}
+		model.put("toHitModifiers", sj.toString());
+		
+		sj = new StringJoiner(", ");
+		int lastStrength = inf.getShootingStrength();
+		double dpt = Math.round(inf.getDamagePerTrooper() * lastStrength) / (double) lastStrength;
+		int lastDamage = (int) Math.round(dpt * lastStrength);
+		for (int strength = inf.getShootingStrength(); strength >= 0; strength--) {
+			int damage = (int) Math.round(dpt * strength);
+			if (damage < lastDamage) {
+				if (lastStrength - strength > 1) {
+					sj.add(String.format("%d (%d-%d)", lastDamage, lastStrength, strength + 1));
+				} else {
+					sj.add(String.format("%d (%d)", lastDamage, lastStrength));
+				}
+				lastDamage = damage;
+				lastStrength = strength;
+			}
+		}
+		model.put("maxDamage", sj.toString());
 	}
 	
 	private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted manipulator) {

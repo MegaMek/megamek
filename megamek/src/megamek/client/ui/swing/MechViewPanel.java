@@ -39,7 +39,7 @@ import javax.swing.SwingConstants;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.common.Entity;
 import megamek.common.MechView;
-import megamek.common.TROView;
+import megamek.common.templates.TROView;
 
 
 public class MechViewPanel extends JPanel {

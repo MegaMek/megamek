@@ -75,7 +75,6 @@ import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.MechView;
-import megamek.common.TROView;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
@@ -83,6 +82,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.templates.TROView;
 
 /**
  *

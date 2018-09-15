@@ -12,7 +12,7 @@
  * details.
  */
 
-package megamek.common;
+package megamek.common.templates;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -36,7 +36,7 @@ public final class TemplateConfiguration {
 
 	private static Configuration createConfiguration() {
 		Configuration cfg = new Configuration(Configuration.getVersion());
-		cfg.setClassForTemplateLoading(TemplateConfiguration.class, "templates");
+		cfg.setClassForTemplateLoading(TemplateConfiguration.class, ".");
 		cfg.setDefaultEncoding("UTF-8");
 		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		cfg.setLogTemplateExceptions(false);

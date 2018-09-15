@@ -1,7 +1,7 @@
 /**
  * 
  */
-package megamek.common;
+package megamek.common.templates;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,6 +23,32 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
 import megamek.client.ui.Messages;
+import megamek.common.Aero;
+import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
+import megamek.common.Bay;
+import megamek.common.Compute;
+import megamek.common.Configuration;
+import megamek.common.Crew;
+import megamek.common.CriticalSlot;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
+import megamek.common.EquipmentType;
+import megamek.common.Infantry;
+import megamek.common.LandAirMech;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.QuadVee;
+import megamek.common.SuperHeavyTank;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.Transporter;
+import megamek.common.TroopSpace;
+import megamek.common.VTOL;
+import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;

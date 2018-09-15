@@ -15697,6 +15697,25 @@ public class Server implements Runnable {
     }
 
     /**
+     * Apply damage to mech for zweihandering (melee attack with both hands) as per
+     * pg. 82, CamOps
+     * @param ae - the attacking entity
+     * @param missed - did the attack missed. If so PSR is necessary.
+     */
+    private void applyZweihanderSelfDamage(Entity ae, boolean missed) {
+        Report r = new Report(4022);
+        r.subject = ae.getId();
+        r.indent();
+        r.addDesc(ae);
+        addReport(r);
+        addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
+        addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
+        if(missed) {
+            game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
+        }
+    }
+    
+    /**
      * Handle a punch attack
      */
     private void resolvePunchAttack(PhysicalResult pr, int lastEntityId) {
@@ -15715,6 +15734,9 @@ public class Server implements Runnable {
         }
         final String armName = paa.getArm() == PunchAttackAction.LEFT ? "Left Arm"
                                                                       : "Right Arm";
+        
+        final int armLoc = paa.getArm() == PunchAttackAction.LEFT ? Mech.LOC_LARM : Mech.LOC_RARM;
+        
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage
                                                             : pr.damageRight;
@@ -15732,6 +15754,7 @@ public class Server implements Runnable {
                                  && (roll == toHit.getValue());
 
         Report r;
+        
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
@@ -15794,7 +15817,7 @@ public class Server implements Runnable {
                 addReport(r);
             }
         }
-
+        
         // do we hit?
         if (roll < toHit.getValue()) {
             // nope
@@ -15820,6 +15843,11 @@ public class Server implements Runnable {
                 }
 
             }
+            
+            if(paa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
+            }
+            
             return;
         }
 
@@ -15840,6 +15868,10 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
+            if(paa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, false);
+            }
+            
             // And we're done!
             return;
         }
@@ -15954,8 +15986,6 @@ public class Server implements Runnable {
                 // ae.extendBlade(paa.getArm());
                 // check for breaking a nail
                 if (Compute.d6(2) > 9) {
-                    int armLoc = (paa.getArm() == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
-                                                                           : Mech.LOC_LARM;
                     addNewLines();
                     r = new Report(4456);
                     r.indent(2);
@@ -15967,6 +15997,12 @@ public class Server implements Runnable {
             }
         }
         addNewLines();
+
+        if(paa.isZweihandering()) {  
+            applyZweihanderSelfDamage(ae, false);
+        }
+        addNewLines();
+
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
@@ -17172,12 +17208,13 @@ public class Server implements Runnable {
 
         Report r;
 
+        
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // restore club attack
         caa.getClub().restore();
-
+        
         // Shield bash causes 1 point of damage to the shield
         if (((MiscType) caa.getClub().getType()).isShield()) {
             ((Mech) ae).shieldAbsorptionDamage(1, caa.getClub().getLocation(),
@@ -17210,7 +17247,7 @@ public class Server implements Runnable {
             addReport(r);
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                                                "hit with own flail/wrecking ball");
-            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false);
+            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false, caa.isZweihandering());
             pr.damage = (pr.damage / 2) + (pr.damage % 2);
             newToHit.setHitTable(ToHitData.HIT_NORMAL);
             newToHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -17225,6 +17262,9 @@ public class Server implements Runnable {
             } else {
                 game.addPSR(new PilotingRollData(ae.getId(), 0,
                                                  "missed a flail/wrecking ball attack"));
+            }
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         }
@@ -17256,6 +17296,9 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 addReport(r);
                 damage = 0;
+                if(caa.isZweihandering()) {  
+                    applyZweihanderSelfDamage(ae, true);
+                }
                 return;
             }
         }
@@ -17284,6 +17327,9 @@ public class Server implements Runnable {
                     game.addPSR(new PilotingRollData(ae.getId(), 0,
                             "missed a mace attack"));
                 }
+            }
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -17357,6 +17403,9 @@ public class Server implements Runnable {
                 }
 
             }
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
+            }
             return;
         }
 
@@ -17377,6 +17426,18 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, false);
+                if (((MiscType) caa.getClub().getType())
+                        .hasSubType(MiscType.S_CLUB)) {
+                    // the club breaks
+                    r = new Report(4150);
+                    r.subject = ae.getId();
+                    r.add(caa.getClub().getName());
+                    addReport(r);
+                    ae.removeMisc(caa.getClub().getName());
+                }
+            }
             // And we're done!
             return;
         }
@@ -17592,6 +17653,21 @@ public class Server implements Runnable {
             addReport(r);
             ae.removeMisc(caa.getClub().getName());
         }
+        
+        if(caa.isZweihandering()) {  
+            applyZweihanderSelfDamage(ae, false);
+            if (((MiscType) caa.getClub().getType())
+                    .hasSubType(MiscType.S_CLUB)) {
+                // the club breaks
+                r = new Report(4150);
+                r.subject = ae.getId();
+                r.add(caa.getClub().getName());
+                addReport(r);
+                ae.removeMisc(caa.getClub().getName());
+            }
+        }
+        
+        addNewLines();
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
@@ -34088,7 +34164,8 @@ public class Server implements Runnable {
                     ae,
                     caa.getClub(),
                     (caa.getTarget(game) instanceof Infantry)
-                    && !(caa.getTarget(game) instanceof BattleArmor));
+                    && !(caa.getTarget(game) instanceof BattleArmor),
+                    caa.isZweihandering());
             if (caa.getTargetType() == Targetable.TYPE_BUILDING) {
                 EquipmentType clubType = caa.getClub().getType();
                 if (clubType.hasSubType(MiscType.S_BACKHOE)
@@ -34137,12 +34214,14 @@ public class Server implements Runnable {
                     ae,
                     PunchAttackAction.LEFT,
                     (paa.getTarget(game) instanceof Infantry)
-                    && !(paa.getTarget(game) instanceof BattleArmor));
+                    && !(paa.getTarget(game) instanceof BattleArmor),
+                    paa.isZweihandering());
             damageRight = PunchAttackAction.getDamageFor(
                     ae,
                     PunchAttackAction.RIGHT,
                     (paa.getTarget(game) instanceof Infantry)
-                    && !(paa.getTarget(game) instanceof BattleArmor));
+                    && !(paa.getTarget(game) instanceof BattleArmor),
+                    paa.isZweihandering());
             paa.setArm(arm);
             // If we're punching while prone (at a Tank,
             // duh), then we can only use one arm.

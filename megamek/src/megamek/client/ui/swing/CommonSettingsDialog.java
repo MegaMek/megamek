@@ -739,7 +739,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
         showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
 
-        
         defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
 
         mouseWheelZoom.setSelected(gs.getMouseWheelZoom());

@@ -867,14 +867,16 @@ class EntitySprite extends Sprite {
         }
         
         //add portrait?
-        String category = entity.getCrew().getPortraitCategory(0);
-        String file = entity.getCrew().getPortraitFileName(0);
-        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT) &&
-                (null != category) && (null != file)) {
-            String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
-            File f = new File(imagePath);
-            if(f.exists()) {
-                addToTT("PilotPortrait",BR,imagePath);
+        if(null != entity.getCrew()) {
+            String category = entity.getCrew().getPortraitCategory(0);
+            String file = entity.getCrew().getPortraitFileName(0);
+            if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT) &&
+                    (null != category) && (null != file)) {
+                String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
+                File f = new File(imagePath);
+                if(f.exists()) {
+                    addToTT("PilotPortrait",BR,imagePath);
+                }
             }
         }
         

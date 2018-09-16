@@ -96,7 +96,7 @@ public class PlanetaryConditions implements Serializable {
     private boolean runOnce = false;
 
     //set up the specific conditions
-    private int lightConditions = WI_NONE;
+    private int lightConditions = L_DAY;
     private int weatherConditions = WE_NONE;
     private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;

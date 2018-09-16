@@ -1,5 +1,15 @@
-/**
- * 
+/*
+ * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
  */
 package megamek.common.templates;
 
@@ -27,27 +37,17 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
-import megamek.common.Compute;
 import megamek.common.Configuration;
-import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.Infantry;
-import megamek.common.LandAirMech;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.QuadVee;
-import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
-import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.TroopSpace;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
@@ -57,12 +57,6 @@ import megamek.common.options.Quirks;
 import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestTank;
-import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Fills in a template to produce a unit summary in TRO format.
@@ -78,37 +72,53 @@ public class TROView {
             Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
     
     private boolean includeFluff = true;
-
-	public TROView(Entity entity, boolean html) {
-		String templateFileName = null;
-		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-			templateFileName = "mech";
-			addMechData((Mech) entity);
-		} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
-			templateFileName = "vehicle";
-			addVehicleData((Tank) entity);
-		} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
-			templateFileName = "aero";
-			addAeroData((Aero) entity);
+    
+    protected TROView() {}
+    
+    public static TROView createView(Entity entity, boolean html) {
+    	TROView view = null;
+    	if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
+    		view = new MechTROView((Mech) entity);
+    	} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
+    		view = new VehicleTROView((Tank) entity);
+    	} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
+    		view = new AeroTROView((Aero) entity);
 		} else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
-			templateFileName = "ba";
-			addBattleArmorData((BattleArmor) entity);
+			view = new BattleArmorTROView((BattleArmor) entity);
 		} else if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-			templateFileName = "conv_infantry";
-			addConvInfantryData((Infantry) entity);
+			view = new InfantryTROView((Infantry) entity);
+		} else {
+			view = new TROView();
 		}
-		if (null != templateFileName) {
-			templateFileName = "tro/" + templateFileName + ".ftl";
-			if (html) {
-				templateFileName += "h";
-			}
+		if (null != view.getTemplateFileName(html)) {
 			try {
-				template = TemplateConfiguration.getInstance().getTemplate(templateFileName);
+				view.template = TemplateConfiguration.getInstance()
+						.getTemplate("tro/" + view.getTemplateFileName(html));
 			} catch (IOException e) {
-				DefaultMmLogger.getInstance().error(getClass(), "TROView(Entity)", e);
+				DefaultMmLogger.getInstance().error(TROView.class, "createView(Entity, boolean)", e);
 			}
+			view.initModel(view.verifier);
 		}
+		return view;
+    }
+
+	protected String getTemplateFileName(boolean html) {
+		return null;
 	}
+	
+	protected void setModelData(String key, Object data) {
+		model.put(key, data);
+	}
+	
+	protected void removeModelData(String key) {
+		model.remove(key);
+	}
+	
+	protected Object getModelData(String key) {
+		return model.get(key);
+	}
+	
+	protected void initModel(EntityVerifier verifier) {}
 	
 	/**
 	 * Uses the template and supplied {@link Entity} to generate a TRO document
@@ -134,7 +144,7 @@ public class TROView {
 		return null;
 	}
 	
-	private void addBasicData(Entity entity) {
+	protected void addBasicData(Entity entity) {
 		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 30, 20, 5},
 				new Justification[] { Justification.LEFT, Justification.LEFT, Justification.RIGHT }));
 		model.put("fullName", entity.getShortNameRaw());
@@ -162,465 +172,7 @@ public class TROView {
         
 	}
 
-	private void addMechData(Mech mech) {
-		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
-		addBasicData(mech);
-		addArmorAndStructure(mech);
-		int nameWidth = addEquipment(mech);
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 10, 8},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER, Justification.CENTER}));
-		addMechFluff(mech);
-		mech.setConversionMode(0);
-		model.put("isOmni", mech.isOmni());
-		model.put("isQuad", mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH));
-		model.put("isTripod", mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH));
-		TestMech testMech = new TestMech(mech, verifier.mechOption, null);
-		model.put("structureName", mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD?
-				"" : EquipmentType.getStructureTypeName(mech.getStructureType()));
-		model.put("isMass", NumberFormat.getInstance().format(testMech.getWeightStructure()));
-		model.put("engineName", stripNotes(mech.getEngine().getEngineName()));
-		model.put("engineMass", NumberFormat.getInstance().format(testMech.getWeightEngine()));
-		model.put("walkMP", mech.getWalkMP());
-		model.put("runMP", mech.getRunMPasString());
-		model.put("jumpMP", mech.getJumpMP());
-		model.put("hsType", mech.getHeatSinkTypeName());
-		model.put("hsCount", mech.hasDoubleHeatSinks()?
-				mech.heatSinks() + " [" + (mech.heatSinks() * 2) + "]" : mech.heatSinks());
-		model.put("hsMass", NumberFormat.getInstance().format(testMech.getWeightHeatSinks()));
-		if (mech.getGyroType() == Mech.GYRO_STANDARD) {
-			model.put("gyroType", mech.getRawSystemName(Mech.SYSTEM_GYRO));
-		} else {
-			model.put("gyroType", Mech.getGyroDisplayString(mech.getGyroType())); 
-		}
-		model.put("gyroMass", NumberFormat.getInstance().format(testMech.getWeightGyro()));
-		if ((mech.getCockpitType() == Mech.COCKPIT_STANDARD)
-				|| (mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {
-			model.put("cockpitType", mech.getRawSystemName(Mech.SYSTEM_COCKPIT));
-		} else {
-			model.put("cockpitType", Mech.getCockpitDisplayString(mech.getCockpitType()));
-		}
-		model.put("cockpitMass", NumberFormat.getInstance().format(testMech.getWeightCockpit()));
-		String atName = formatArmorType(mech, true);
-		if (atName.length() > 0) {
-			model.put("armorType", " (" + atName + ")");
-		} else {
-			model.put("armorType", "");
-		}
-		model.put("armorFactor", mech.getTotalOArmor());
-		model.put("armorMass", NumberFormat.getInstance().format(testMech.getWeightArmor()));
-		if (mech.isOmni()) {
-			addFixedOmni(mech);
-		}
-		if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
-			final LandAirMech lam = (LandAirMech) mech;
-			model.put("lamConversionMass", testMech.getWeightMisc());
-			if (lam.getLAMType() == LandAirMech.LAM_STANDARD) {
-				model.put("airmechCruise", lam.getAirMechCruiseMP());
-				model.put("airmechFlank", lam.getAirMechFlankMP());
-			} else {
-				model.put("airmechCruise", "N/A");
-				model.put("airmechFlank", "N/A");
-			}
-			lam.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
-			model.put("safeThrust", lam.getWalkMP());
-			model.put("maxThrust", lam.getRunMP());
-		} else if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
-			final QuadVee qv = (QuadVee) mech;
-			qv.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
-			model.put("qvConversionMass", testMech.getWeightMisc());
-			model.put("qvType", Messages.getString("MovementType." + qv.getMovementModeAsString()));
-			model.put("qvCruise", qv.getWalkMP());
-			model.put("qvFlank", qv.getRunMPasString());
-		}
-		model.put("rightArmActuators", countArmActuators(mech, Mech.LOC_RARM));
-		model.put("leftArmActuators", countArmActuators(mech, Mech.LOC_LARM));
-	}
-	
-	private String countArmActuators(Mech mech, int location) {
-		StringJoiner sj = new StringJoiner(", ");
-		for (int act = Mech.ACTUATOR_SHOULDER; act <= Mech.ACTUATOR_HAND; act++) {
-			if (mech.hasSystem(act, location)) {
-				sj.add(mech.getRawSystemName(act));
-			}
-		}
-		return sj.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void addVehicleData(Tank tank) {
-		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
-		addBasicData(tank);
-		addArmorAndStructure(tank);
-		int nameWidth = addEquipment(tank);
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 12},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER, Justification.CENTER}));
-		addVehicleFluff(tank);
-		model.put("isOmni", tank.isOmni());
-		model.put("isVTOL", tank.hasETypeFlag(Entity.ETYPE_VTOL));
-		model.put("isSuperheavy", tank.isSuperHeavy());
-		model.put("isSupport", tank.isSupportVehicle());
-		model.put("hasTurret", !tank.hasNoTurret());
-		model.put("hasTurret2", !tank.hasNoDualTurret());
-		model.put("moveType", Messages.getString("MovementType." + tank.getMovementModeAsString()));
-		TestTank testTank = new TestTank(tank, verifier.tankOption, null);
-		model.put("isMass", NumberFormat.getInstance().format(testTank.getWeightStructure()));
-		model.put("engineName", stripNotes(tank.getEngine().getEngineName()));
-		model.put("engineMass", NumberFormat.getInstance().format(testTank.getWeightEngine()));
-		model.put("walkMP", tank.getWalkMP());
-		model.put("runMP", tank.getRunMPasString());
-		if (tank.getJumpMP() > 0) {
-			model.put("jumpMP", tank.getJumpMP());
-		}
-		model.put("hsCount", Math.max(testTank.getCountHeatSinks(),
-				tank.getEngine().getWeightFreeEngineHeatSinks()));
-		model.put("hsMass", NumberFormat.getInstance().format(testTank.getWeightHeatSinks()));
-		model.put("controlMass", testTank.getWeightControls());
-		model.put("liftMass", testTank.getTankWeightLifting());
-		model.put("amplifierMass", testTank.getWeightPowerAmp());
-		model.put("turretMass", testTank.getTankWeightTurret());
-		model.put("turretMass2", testTank.getTankWeightDualTurret());
-		String atName = formatArmorType(tank, true);
-		if (atName.length() > 0) {
-			model.put("armorType", " (" + atName + ")");
-		} else {
-			model.put("armorType", "");
-		}
-		model.put("armorFactor", tank.getTotalOArmor());
-		model.put("armorMass", NumberFormat.getInstance().format(testTank.getWeightArmor()));
-		if (tank.isOmni()) {
-			addFixedOmni(tank);
-		}
-		for (Transporter t : tank.getTransports()) {
-			Map<String, Object> row = this.formatTransporter(t, tank.getLocationName(Tank.LOC_BODY));
-			if (null == row) {
-				continue;
-			}
-			if (tank.isOmni() && !tank.isPodMountedTransport(t)) {
-				((List<Map<String, Object>>) model.get("fixedEquipment")).add(row);
-				model.merge("fixedTonnage", row.get("tonnage"), (o1, o2) -> ((double) o1) + ((double) o2));
-			} else {
-				((List<Map<String, Object>>) model.get("equipment")).add(row);
-			}
-		}
-	}
-	
-	private void addAeroData(Aero aero) {
-		model.put("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10},
-				new Justification[] { Justification.LEFT, Justification.CENTER }));
-		addBasicData(aero);
-		addArmorAndStructure(aero);
-		int nameWidth = addEquipment(aero);
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 8, 5, 5, 5, 5, 5},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER, 
-						Justification.CENTER, Justification.CENTER }));
-		addAeroFluff(aero);
-		model.put("isOmni", aero.isOmni());
-		model.put("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
-		TestAero testAero = new TestAero(aero, verifier.aeroOption, null);
-		model.put("engineName", stripNotes(aero.getEngine().getEngineName()));
-		model.put("engineMass", NumberFormat.getInstance().format(testAero.getWeightEngine()));
-		model.put("safeThrust", aero.getWalkMP());
-		model.put("maxThrust", aero.getRunMP());
-		model.put("si", aero.get0SI());
-		model.put("hsCount", aero.getHeatType() == Aero.HEAT_DOUBLE?
-				aero.getOHeatSinks() + " [" + (aero.getOHeatSinks() * 2) + "]" : aero.getOHeatSinks());
-		model.put("fuelPoints", aero.getFuel());
-		model.put("fuelMass", aero.getFuelTonnage());
-		model.put("hsMass", NumberFormat.getInstance().format(testAero.getWeightHeatSinks()));
-		if (aero.getCockpitType() == Aero.COCKPIT_STANDARD) {
-			model.put("cockpitType", "Cockpit");
-		} else {
-			model.put("cockpitType", Aero.getCockpitTypeString(aero.getCockpitType()));
-		}
-		model.put("cockpitMass", NumberFormat.getInstance().format(testAero.getWeightControls()));
-		String atName = formatArmorType(aero, true);
-		if (atName.length() > 0) {
-			model.put("armorType", " (" + atName + ")");
-		} else {
-			model.put("armorType", "");
-		}
-		model.put("armorFactor", aero.getTotalOArmor());
-		model.put("armorMass", NumberFormat.getInstance().format(testAero.getWeightArmor()));
-		if (aero.isOmni()) {
-			addFixedOmni(aero);
-		}
-	}
-	
-	private void addBattleArmorData(BattleArmor ba) {
-		addBasicData(ba);
-		addEntityFluff(ba);
-		model.put("formatBasicDataRow", new FormatTableRowMethod(new int[] { 25, 20, 8, 8},
-				new Justification[] { Justification.LEFT, Justification.LEFT,
-						Justification.CENTER, Justification.RIGHT }));
-		TestBattleArmor testBA = new TestBattleArmor(ba, verifier.baOption, null);
-		if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
-			model.put("chassisType", Messages.getString("TROView.chassisQuad"));
-		} else {
-			model.put("chassisType", Messages.getString("TROView.chassisBiped"));
-		}
-		model.put("weightClass", EntityWeightClass
-				.getClassName(EntityWeightClass.getWeightClass(ba.getTrooperWeight(), ba)));
-		model.put("weight", ba.getTrooperWeight() * 1000);
-		model.put("swarmAttack", ba.canMakeAntiMekAttacks()? "Yes" : "No");
-		// We need to allow it for UMU that otherwise qualifies
-		model.put("legAttack", (ba.canDoMechanizedBA()
-                && (ba.getWeightClass() < EntityWeightClass.WEIGHT_HEAVY))? "Yes" : "No");
-		model.put("mechanized", ba.canDoMechanizedBA()? "Yes" : "No");
-		model.put("antiPersonnel", ba.getEquipment().stream().anyMatch(m -> m.isAPMMounted())? "Yes" : "No");
-		
-		model.put("massChassis", testBA.getWeightChassis() * 1000);
-		model.put("groundMP", ba.getWalkMP());
-		model.put("groundMass", testBA.getWeightGroundMP() * 1000);
-		if (ba.getMovementMode() == EntityMovementMode.VTOL) {
-			model.put("vtolMP", ba.getOriginalJumpMP());
-			model.put("vtolMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
-		} else if (ba.getMovementMode() == EntityMovementMode.INF_UMU) {
-			model.put("umuMP", ba.getOriginalJumpMP());
-			model.put("umuMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
-		} else {
-			model.put("jumpMP", ba.getOriginalJumpMP());
-			model.put("jumpMass", testBA.getWeightSecondaryMotiveSystem() * 1000);
-		}
-		List<Map<String, Object>> manipulators = new ArrayList<>();
-		manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_LARM, ba.getLeftManipulator()));
-		manipulators.add(formatManipulatorRow(BattleArmor.MOUNT_LOC_RARM, ba.getRightManipulator()));
-		model.put("manipulators", manipulators);
-		String armorName = EquipmentType.getArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
-				TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
-		EquipmentType armor = EquipmentType.get(armorName);
-		model.put("armorType", armor.getName().replaceAll("^BA\\s+", ""));
-		model.put("armorSlots", armor.getCriticals(ba));
-		model.put("armorMass", testBA.getWeightArmor() * 1000);
-		model.put("armorValue", ba.getOArmor(BattleArmor.LOC_TROOPER_1));
-		model.put("internal", ba.getOInternal(BattleArmor.LOC_TROOPER_1));
-		int nameWidth = addBAEquipment(ba);
-		model.put("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 8, 12, 8},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER}));
-		if (ba.getEquipment().stream().anyMatch(m -> m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET)) {
-			Map<String, Object> modularMount = new HashMap<>();
-			modularMount.put("name", ba.hasModularTurretMount()?
-					Messages.getString("TROView.BAModularTurret"):
-					Messages.getString("TROView.BATurret"));
-			modularMount.put("location", BattleArmor.getBaMountLocAbbr(BattleArmor.MOUNT_LOC_TURRET));
-			int turretSlots = ba.getTurretCapacity();
-			if (ba.hasModularTurretMount()) {
-				turretSlots += 2;
-			}
-			modularMount.put("slots", turretSlots + " (" + ba.getTurretCapacity() + ")");
-			modularMount.put("mass", testBA.getWeightTurret() * 1000);
-			model.put("modularMount", modularMount);
-		}
-	}
-	
-	private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted manipulator) {
-		Map<String, Object> retVal = new HashMap<>();
-		retVal.put("locName", BattleArmor.getBaMountLocAbbr(mountLoc));
-		if (null == manipulator) {
-			retVal.put("eqName", Messages.getString("TROView.None"));
-			retVal.put("eqMass", 0);
-		} else {
-			String name = manipulator.getName();
-			if (name.contains("[")) {
-				name = name.replaceAll(".*\\[", "").replaceAll("\\].*", "");
-			}
-			retVal.put("eqName", name);
-			retVal.put("eqMass", manipulator.getType().getTonnage(null) * 1000);
-		}
-		return retVal;
-	}
-	
-	private void addConvInfantryData(Infantry inf) {
-		addBasicData(inf);
-		addEntityFluff(inf);
-		model.put("transportWeight", inf.getWeight());
-		model.put("weaponPrimary", String.format("%d %s",
-				(inf.getSquadSize() - inf.getSecondaryN()) * inf.getSquadN(),
-				inf.getPrimaryWeapon().getName()));
-		if (inf.getSecondaryWeapon() != null) {
-			model.put("weaponSecondary", String.format("%d %s",
-					inf.getSecondaryN() * inf.getSquadN(),
-					inf.getPrimaryWeapon().getName()));
-		} else {
-			model.put("weaponSecondary", Messages.getString("TROView.None"));
-		}
-		EquipmentType armorKit = inf.getArmorKit();
-		if (null != armorKit) {
-			model.put("armorKit", armorKit.getName());
-		}
-		
-		List<String> notes = new ArrayList<>();
-		addInfantryWeaponNotes(notes, inf);
-		if (null != armorKit) {
-			addInfantryArmorNotes(notes, armorKit);
-		}
-		addInfantryAugmentationNotes(notes, inf.getCrew());
-		if (notes.isEmpty()) {
-			model.put("notes", Messages.getString("TROView.None"));
-		} else {
-			model.put("notes", notes.stream().collect(Collectors.joining(" ")));
-		}
-		
-		switch(inf.getMovementMode()) {
-			case INF_LEG:
-				model.put("motiveType", Messages.getString("TROView.Foot"));
-				break;
-			case TRACKED:
-			case HOVER:
-			case WHEELED:
-				model.put("motiveType",
-						Messages.getString("TROView.Mechanized")
-						+ "/" + inf.getMovementModeAsString());
-				break;
-			case SUBMARINE:
-				model.put("motiveType",
-						Messages.getString("TROView.MechanizedSCUBA"));
-				break;
-			default:
-				model.put("motiveType", inf.getMovementModeAsString());
-				break;
-		}
-		StringJoiner sj = new StringJoiner(", ");
-		for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
-			if (inf.hasSpecialization(1 << i)) {
-				sj.add(Infantry.getSpecializationName(1 << i));
-			}
-		}
-		if (sj.toString().length() > 0) {
-			model.put("specialty", sj.toString());
-		} else {
-			model.put("specialty", Messages.getString("TROView.None"));
-		}
-		if (inf.getMovementMode() != EntityMovementMode.SUBMARINE) {
-			model.put("groundMP", inf.getWalkMP());
-		}
-		if (inf.getMovementMode() == EntityMovementMode.INF_JUMP) {
-			model.put("jumpMP", inf.getOriginalJumpMP());
-		} else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
-			model.put("vtolMP", inf.getOriginalJumpMP());
-		} else if ((inf.getMovementMode() == EntityMovementMode.INF_UMU)
-				|| (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
-			model.put("umuMP", inf.getOriginalJumpMP());
-		}
-		model.put("squadSize", inf.getSquadSize());
-		model.put("squadCount", inf.getSquadN());
-		model.put("armorDivisor", inf.getDamageDivisor());
-		InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
-		if (inf.getSecondaryN() > 1) {
-			rangeWeapon = inf.getSecondaryWeapon();
-		}
-		
-		sj = new StringJoiner(", ");
-		int maxRange = rangeWeapon.getInfantryRange() * 3;
-		int lastMod = Compute.getInfantryRangeMods(0, rangeWeapon, inf.getSecondaryWeapon(), false).getValue();
-		int hex = 0;
-		for (int range = 1; range <= maxRange + 1; range++) {
-			int mod = Compute.getInfantryRangeMods(range, rangeWeapon, inf.getSecondaryWeapon(), false).getValue();
-			if (mod != lastMod) {
-				if (range - hex > 1) {
-					sj.add(String.format("%+d (%d-%d Hexes)", lastMod, hex, range - 1));
-				} else {
-					sj.add(String.format("%+d (%d Hexes)", lastMod, hex));
-				}
-				lastMod = mod;
-				hex = range;
-			}
-		}
-		model.put("toHitModifiers", sj.toString());
-		
-		sj = new StringJoiner(", ");
-		int lastStrength = inf.getShootingStrength();
-		double dpt = Math.round(inf.getDamagePerTrooper() * lastStrength) / (double) lastStrength;
-		int lastDamage = (int) Math.round(dpt * lastStrength);
-		for (int strength = inf.getShootingStrength(); strength >= 0; strength--) {
-			int damage = (int) Math.round(dpt * strength);
-			if (damage < lastDamage) {
-				if (lastStrength - strength > 1) {
-					sj.add(String.format("%d (%d-%d)", lastDamage, lastStrength, strength + 1));
-				} else {
-					sj.add(String.format("%d (%d)", lastDamage, lastStrength));
-				}
-				lastDamage = damage;
-				lastStrength = strength;
-			}
-		}
-		model.put("maxDamage", sj.toString());
-	}
-	
-	private void addInfantryWeaponNotes(List<String> notes, Infantry inf) {
-		if ((inf.getMovementMode() == EntityMovementMode.INF_UMU)
-				|| (inf.getMovementMode() == EntityMovementMode.SUBMARINE)) {
-			notes.add(Messages.getString("TROView.InfantryNote.SCUBA"));
-		}
-		List<EquipmentType> fieldGuns = inf.getWeaponList().stream()
-				.filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
-				.map(Mounted::getType).collect(Collectors.toList());
-		int shots = inf.getAmmo().stream()
-				.filter(m -> m.getLocation() == Infantry.LOC_FIELD_GUNS)
-				.mapToInt(Mounted::getBaseShotsLeft).sum();
-		if (fieldGuns.size() > 1) {
-			notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"),
-					fieldGuns.size(), fieldGuns.get(0).getName(), shots / fieldGuns.size(),
-					(int) fieldGuns.get(0).getTonnage(inf)));
-		} else if (fieldGuns.size() > 0) {
-			notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
-					fieldGuns.get(0).getName(), shots,
-					(int) fieldGuns.get(0).getTonnage(inf)));
-		}
-		if (inf.getSecondaryN() > 1) {
-			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
-				notes.add(Messages.getString("TROView.InfantryNote.Burst"));
-			}
-			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_NONPENETRATING)) {
-				notes.add(Messages.getString("TROView.InfantryNote.NonPenetrating"));
-			}
-			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_AA)) {
-				notes.add(Messages.getString("TROView.InfantryNote.AA"));
-			}
-			if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_FLAMER)) {
-				notes.add(Messages.getString("TROView.InfantryNote.Heat"));
-			}
-		}
-	}
-	
-	private void addInfantryArmorNotes(List<String> notes, EquipmentType armorKit) {
-		if (armorKit.hasSubType(MiscType.S_DEST)) {
-			notes.add(Messages.getString("TROView.InfantryNote.DESTArmor"));
-		}
-		if (armorKit.hasSubType(MiscType.S_SNEAK_CAMO)) {
-			notes.add(Messages.getString("TROView.InfantryNote.CamoArmor"));
-		}
-		if (armorKit.hasSubType(MiscType.S_SNEAK_IR)) {
-			notes.add(Messages.getString("TROView.InfantryNote.IRArmor"));
-		}
-		if (armorKit.hasSubType(MiscType.S_SNEAK_ECM)) {
-			notes.add(Messages.getString("TROView.InfantryNote.ECMArmor"));
-		}
-	}
-	
-	private void addInfantryAugmentationNotes(List<String> notes, Crew crew) {
-		List<IOption> options = new ArrayList<>();
-		for (Enumeration<IOption> e = crew.getOptions().getOptions(); e.hasMoreElements(); ) {
-			final IOption option = e.nextElement();
-			if (option.booleanValue()) {
-				options.add(option);
-			}
-		}
-		if (!options.isEmpty()) {
-			notes.add(Messages.getString("TROView.InfantryNote.Augmented"));
-			options.forEach(o -> {
-				notes.add(o.getDisplayableName().replaceAll("\\s+\\(Not Implemn?ented\\)", "")
-						+ ": " + o.getDescription().replaceAll("See IO.*", ""));
-			});
-		}
-	}
-	
-	private void addEntityFluff(Entity entity) {
+	protected void addEntityFluff(Entity entity) {
 		model.put("year", String.valueOf(entity.getYear()));
 		model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
 		model.put("techRating", entity.getFullRatingName());
@@ -638,7 +190,7 @@ public class TROView {
 		}
 	}
 	
-	private void addMechVeeAeroFluff(Entity entity) {
+	protected void addMechVeeAeroFluff(Entity entity) {
 		addEntityFluff(entity);
 		model.put("massDesc", (int) entity.getWeight()
 				+ Messages.getString("TROView.tons"));
@@ -666,45 +218,6 @@ public class TROView {
 		model.put("armamentList", armaments);
 	}
 	
-	private void addMechFluff(Mech mech) {
-		addMechVeeAeroFluff(mech);
-		// If we had a fluff field for chassis type we would put it here
-		String chassisDesc = EquipmentType.getStructureTypeName(mech.getStructureType());
-		if (mech.isIndustrial()) {
-			chassisDesc += Messages.getString("TROView.chassisIndustrial");
-		}
-		if (mech.isSuperHeavy()) {
-			chassisDesc += Messages.getString("TROView.chassisSuperheavy");
-		}
-		if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
-			chassisDesc += Messages.getString("TROView.chassisQuadVee");
-		} else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH)) {
-			chassisDesc += Messages.getString("TROView.chassisQuad");
-		} else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH)) {
-			chassisDesc += Messages.getString("TROView.chassisTripod");
-		} else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
-			chassisDesc += Messages.getString("TROView.chassisLAM");
-		} else {
-			chassisDesc += Messages.getString("TROView.chassisBiped");
-		}
-		model.put("chassisDesc", chassisDesc);
-		model.put("jjDesc", formatJJDesc(mech));
-		model.put("jumpCapacity", mech.getJumpMP() * 30);
-	}
-	
-	private void addVehicleFluff(Tank tank) {
-		addMechVeeAeroFluff(tank);
-		if (tank.getJumpMP() > 0) {
-			model.put("jjDesc", Messages.getString("TROView.jjVehicle"));
-			model.put("jumpCapacity", tank.getJumpMP() * 30);
-		}
-	}
-	
-	private void addAeroFluff(Aero aero) {
-		addMechVeeAeroFluff(aero);
-		// Add fluff frame description
-	}
-
 	private String formatTechBase(Entity entity) {
 		StringBuilder sb = new StringBuilder();
 		if (entity.isMixedTech()) {
@@ -718,7 +231,7 @@ public class TROView {
 		return sb.toString();
 	}
 	
-	private String formatArmorType(Entity entity, boolean trim) {
+	protected String formatArmorType(Entity entity, boolean trim) {
 		if (entity.hasPatchworkArmor()) {
 			return EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK);
 		}
@@ -734,7 +247,7 @@ public class TROView {
 		return name;
 	}
 
-	private String formatArmorType(int at, boolean trim) {
+	protected String formatArmorType(int at, boolean trim) {
 		// Some types do not have armor on the first location, and others have only a single location
 		if (trim && (at == EquipmentType.T_ARMOR_STANDARD)) {
 			return "";
@@ -746,80 +259,6 @@ public class TROView {
 		return name;
 	}
 
-	private static final int[][] MECH_ARMOR_LOCS = {
-			{Mech.LOC_HEAD}, {Mech.LOC_CT}, {Mech.LOC_RT, Mech.LOC_LT},
-			{Mech.LOC_RARM, Mech.LOC_LARM}, {Mech.LOC_RLEG, Mech.LOC_CLEG, Mech.LOC_LLEG}
-	};
-	
-	private static final int[][] MECH_ARMOR_LOCS_REAR = {
-			{Mech.LOC_CT}, {Mech.LOC_RT, Mech.LOC_LT}
-	};
-	
-	private static final int[][] TANK_ARMOR_LOCS = {
-			{Tank.LOC_FRONT}, {Tank.LOC_RIGHT, Tank.LOC_LEFT}, {Tank.LOC_REAR},
-			{Tank.LOC_TURRET}, {Tank.LOC_TURRET_2}, {VTOL.LOC_ROTOR}
-	};
-	
-	private static final int[][] SH_TANK_ARMOR_LOCS = {
-			{SuperHeavyTank.LOC_FRONT},
-			{SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT},
-			{SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT},
-			{SuperHeavyTank.LOC_REAR},
-			{SuperHeavyTank.LOC_TURRET}, {SuperHeavyTank.LOC_TURRET_2}
-	};
-	
-	private static final int[][] AERO_ARMOR_LOCS = {
-			{Aero.LOC_NOSE}, {Aero.LOC_RWING, Aero.LOC_LWING}, {Aero.LOC_AFT}
-	};
-	
-	private void addArmorAndStructure(Mech mech) {
-		model.put("structureValues", addArmorStructureEntries(mech,
-				(en, loc) -> en.getOInternal(loc),
-				MECH_ARMOR_LOCS));
-		model.put("armorValues", addArmorStructureEntries(mech,
-				(en, loc) -> en.getOArmor(loc),
-				MECH_ARMOR_LOCS));
-		model.put("rearArmorValues", addArmorStructureEntries(mech,
-				(en, loc) -> en.getOArmor(loc, true),
-				MECH_ARMOR_LOCS_REAR));
-		if (mech.hasPatchworkArmor()) {
-			model.put("patchworkByLoc", addPatchworkATs(mech, MECH_ARMOR_LOCS));
-		}
-	}
-	
-	private void addArmorAndStructure(Tank tank) {
-		if (tank.hasETypeFlag(Entity.ETYPE_SUPER_HEAVY_TANK)) {
-			model.put("structureValues", addArmorStructureEntries(tank,
-					(en, loc) -> en.getOInternal(loc),
-					SH_TANK_ARMOR_LOCS));
-			model.put("armorValues", addArmorStructureEntries(tank,
-					(en, loc) -> en.getOArmor(loc),
-					SH_TANK_ARMOR_LOCS));
-			if (tank.hasPatchworkArmor()) {
-				model.put("patchworkByLoc", addPatchworkATs(tank, SH_TANK_ARMOR_LOCS));
-			}
-		} else {
-			model.put("structureValues", addArmorStructureEntries(tank,
-					(en, loc) -> en.getOInternal(loc),
-					TANK_ARMOR_LOCS));
-			model.put("armorValues", addArmorStructureEntries(tank,
-					(en, loc) -> en.getOArmor(loc),
-					TANK_ARMOR_LOCS));
-			if (tank.hasPatchworkArmor()) {
-				model.put("patchworkByLoc", addPatchworkATs(tank, TANK_ARMOR_LOCS));
-			}
-		}
-	}
-	
-	private void addArmorAndStructure(Aero aero) {
-		model.put("armorValues", addArmorStructureEntries(aero,
-				(en, loc) -> en.getOArmor(loc),
-				AERO_ARMOR_LOCS));
-		if (aero.hasPatchworkArmor()) {
-			model.put("patchworkByLoc", addPatchworkATs(aero, AERO_ARMOR_LOCS));
-		}
-	}
-	
 	/**
 	 * Convenience method to format armor and structure values, consolidating right/left values into a single
 	 * entry. In most cases the right and left armor values are the same, in which case only a single value
@@ -834,7 +273,7 @@ public class TROView {
 	 * @return			A {@link Map} with the armor/structure value mapped to the abbreviation of each
 	 * 					of the location keys.
 	 */
-	private Map<String, String> addArmorStructureEntries(Entity entity,
+	protected Map<String, String> addArmorStructureEntries(Entity entity,
 			BiFunction<Entity, Integer, Integer> provider, int[][] locSets) {
 		Map<String, String> retVal = new HashMap<>();
 		for (int[] locs : locSets) {
@@ -866,7 +305,7 @@ public class TROView {
 		return retVal;
 	}
 	
-	private Map<String, String> addPatchworkATs(Entity entity, int[][] locSets) {
+	protected Map<String, String> addPatchworkATs(Entity entity, int[][] locSets) {
 		Map<String, String> retVal = new HashMap<>();
 		for (int[] locs : locSets) {
 			if ((locs.length == 0) || (locs[0] >= entity.locations())) {
@@ -896,7 +335,7 @@ public class TROView {
 		return retVal;
 	}
 	
-	private int addEquipment(Entity entity) {
+	protected int addEquipment(Entity entity) {
 		final int structure = entity.getStructureType();
 		final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
 		int nameWidth = 20;
@@ -971,52 +410,6 @@ public class TROView {
 		return nameWidth;
 	}
 	
-	private int addBAEquipment(BattleArmor ba) {
-		final List<Map<String, Object>> equipment = new ArrayList<>();
-		final List<Map<String, Object>> modularEquipment = new ArrayList<>();
-		String at = EquipmentType.getBaArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
-				TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
-		final EquipmentType armor = EquipmentType.get(at);
-		Map<String, Object> row = null;
-		int nameWidth = 30;
-		for (Mounted m : ba.getEquipment()) {
-			if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
-					|| (m.getType() == armor)) {
-				continue;
-			}
-			if ((m.getType() instanceof MiscType)
-					&& m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
-				continue;
-			}
-			row = new HashMap<>();
-			String name = stripNotes(m.getName());
-			if (m.getType() instanceof AmmoType) {
-				row.put("name", name.replaceAll("^BA\\s+", "") + " (" + m.getOriginalShots() + ")");
-			} else {
-				row.put("name", stripNotes(m.getName()));
-			}
-			row.put("location", BattleArmor.getBaMountLocAbbr(m.getBaMountLoc()));
-			if (name.length() >= nameWidth) {
-				nameWidth = name.length() + 1;
-			}
-			row.put("slots", m.getType().getCriticals(ba));
-			if (m.getType() instanceof AmmoType) {
-				row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
-			} else {
-				row.put("mass", m.getType().getTonnage(ba) * 1000);
-			}
-			if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET) {
-				row.put("location", "-");
-				modularEquipment.add(row);
-			} else {
-				equipment.add(row);
-			}
-		}
-		model.put("equipment", equipment);
-		model.put("modularEquipment", modularEquipment);
-		return nameWidth;
-	}
-	
 	private Map<Integer, Integer> getSpreadableLocations(final Entity entity, final EquipmentType eq) {
 		Map<Integer, Integer> retVal = new HashMap<>();
 		for (int loc = 0; loc < entity.locations(); loc++) {
@@ -1030,7 +423,7 @@ public class TROView {
 		return retVal;
 	}
 	
-	private void addFixedOmni(final Entity entity) {
+	protected void addFixedOmni(final Entity entity) {
 		double fixedTonnage = 0.0;
 		final List<Map<String, Object>> fixedList = new ArrayList<>();
 		for (int loc = 0; loc < entity.locations(); loc++) {
@@ -1092,7 +485,7 @@ public class TROView {
 		model.put("fixedTonnage", fixedTonnage);
 	}
 	
-	private boolean showFixedSystem(Entity entity, int index, int loc) {
+	protected boolean showFixedSystem(Entity entity, int index, int loc) {
 		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
 			return ((index != Mech.SYSTEM_COCKPIT) || (loc != Mech.LOC_HEAD))
 					&& ((index != Mech.SYSTEM_SENSORS) || (loc != Mech.LOC_HEAD))
@@ -1111,7 +504,7 @@ public class TROView {
 		return false;
 	}
 	
-	private String getSystemName(Entity entity, int index) {
+	protected String getSystemName(Entity entity, int index) {
 		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
 			// Here we're only concerned with engines that take extra critical slots in the side torso
 			if (index == Mech.SYSTEM_ENGINE) {
@@ -1149,7 +542,7 @@ public class TROView {
 	 * @param rear     Whether the equipment is rear mounted
 	 * @return         The location name to use in the table.
 	 */
-	private String formatLocationTableEntry(Entity entity, Mounted mounted) {
+	protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
 		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
 			String loc = entity.getLocationAbbr(mounted.getLocation());
 			if (mounted.isRearMounted()) {
@@ -1173,7 +566,7 @@ public class TROView {
 	 * @return            A map of values used by the equipment tables (omni fixed and pod/non-omni).
 	 * 					  Returns {@code null} for a type of {@link Transporter} that should not be shown.
 	 */
-	private @Nullable Map<String, Object> formatTransporter(Transporter transporter, String loc) {
+	protected @Nullable Map<String, Object> formatTransporter(Transporter transporter, String loc) {
 		Map<String, Object> retVal = new HashMap<>();
 		if (transporter instanceof TroopSpace) {
 			retVal.put("name", Messages.getString("TROView.TroopSpace"));
@@ -1192,24 +585,7 @@ public class TROView {
 		return retVal;
 	}
 	
-	private String formatJJDesc(Mech mech) {
-		switch (mech.getJumpType()) {
-			case Mech.JUMP_STANDARD:
-				return Messages.getString("TROView.jjStandard");
-			case Mech.JUMP_IMPROVED:
-				return Messages.getString("TROView.jjImproved");
-			case Mech.JUMP_PROTOTYPE:
-				return Messages.getString("TROView.jjPrototype");
-			case Mech.JUMP_PROTOTYPE_IMPROVED:
-				return Messages.getString("TROView.jjImpPrototype");
-			case Mech.JUMP_BOOSTER:
-				return Messages.getString("TROView.jjBooster");
-			default:
-				return Messages.getString("TROView.jjNone");
-		}
-	}
-	
-	enum Justification {
+	protected enum Justification {
 		LEFT ((str, w) -> String.format("%-" + w + "s", str)),
 		CENTER ((str, w) -> {
 			if (w > str.length()) {
@@ -1242,12 +618,12 @@ public class TROView {
 	 * @param str The String to process
 	 * @return    The same String with notes removed
 	 */
-	private String stripNotes(String str) {
+	protected String stripNotes(String str) {
 		return str.replaceAll("\\s+\\[.*?\\]", "")
 				.replaceAll("\\s+\\(.*?\\)", "");
 	}
 
-	static class FormatTableRowMethod implements TemplateMethodModelEx {
+	protected static class FormatTableRowMethod implements TemplateMethodModelEx {
 		final private int[] colWidths;
 		final private Justification[] justification;
 		

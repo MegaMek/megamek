@@ -19,6 +19,7 @@ import java.util.Map;
 
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
+import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.Transporter;
@@ -154,4 +155,8 @@ public class VehicleTROView extends TROView {
 		}
 	}
 	
+	@Override
+	protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+		return entity.getLocationName(mounted.getLocation());
+	}
 }

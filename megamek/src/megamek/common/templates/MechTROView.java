@@ -17,10 +17,12 @@ import java.text.NumberFormat;
 import java.util.StringJoiner;
 
 import megamek.client.ui.Messages;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
+import megamek.common.Mounted;
 import megamek.common.QuadVee;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestMech;
@@ -201,4 +203,55 @@ public class MechTROView extends TROView {
 		}
 	}
 	
+	@Override
+	protected boolean showFixedSystem(Entity entity, int index, int loc) {
+		return ((index != Mech.SYSTEM_COCKPIT) || (loc != Mech.LOC_HEAD))
+				&& ((index != Mech.SYSTEM_SENSORS) || (loc != Mech.LOC_HEAD))
+				&& ((index != Mech.SYSTEM_LIFE_SUPPORT) || (loc != Mech.LOC_HEAD))
+				&& ((index != Mech.SYSTEM_ENGINE) || (loc != Mech.LOC_CT))
+				&& (index != Mech.SYSTEM_GYRO)
+				&& (index != Mech.ACTUATOR_SHOULDER)
+				&& (index != Mech.ACTUATOR_UPPER_ARM)
+				&& (index != Mech.ACTUATOR_LOWER_ARM)
+				&& (index != Mech.ACTUATOR_HAND)
+				&& (index != Mech.ACTUATOR_HIP)
+				&& (index != Mech.ACTUATOR_UPPER_LEG)
+				&& (index != Mech.ACTUATOR_LOWER_LEG)
+				&& (index != Mech.ACTUATOR_FOOT);
+	}
+	
+	@Override
+	protected String getSystemName(Entity entity, int index) {
+		// Here we're only concerned with engines that take extra critical slots in the side torso
+		if (index == Mech.SYSTEM_ENGINE) {
+			StringBuilder sb = new StringBuilder();
+			if (entity.getEngine().hasFlag(Engine.LARGE_ENGINE)) {
+				sb.append("Large ");
+			}
+			switch (entity.getEngine().getEngineType()) {
+			case Engine.XL_ENGINE:
+				sb.append("XL");
+				break;
+			case Engine.LIGHT_ENGINE:
+				sb.append("Light");
+				break;
+			case Engine.XXL_ENGINE:
+				sb.append("XXL");
+				break;
+			}
+			sb.append(" Engine");
+			return sb.toString();
+		} else {
+			return ((Mech) entity).getRawSystemName(index);
+		}
+	}
+	
+	@Override
+	protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+		String loc = entity.getLocationAbbr(mounted.getLocation());
+		if (mounted.isRearMounted()) {
+			loc += "(R)";
+		}
+		return loc;
+	}
 }

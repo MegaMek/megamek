@@ -39,7 +39,6 @@ import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
-import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Infantry;
@@ -475,8 +474,11 @@ public class TROView {
 					} else {
 						row.put("equipment", entry.getKey());
 					}
-					row.put("tonnage", fixedWeight.get(entry.getKey()));
-					fixedTonnage += fixedWeight.get(entry.getKey());
+					if (fixedWeight.containsKey(entry.getKey())) {
+						// Not valid for mech systems 
+						row.put("tonnage", fixedWeight.get(entry.getKey()));
+						fixedTonnage += fixedWeight.get(entry.getKey());
+					}
 					fixedList.add(row);
 				}
 			}
@@ -485,50 +487,28 @@ public class TROView {
 		model.put("fixedTonnage", fixedTonnage);
 	}
 	
+	/**
+	 * Used to determine whether system crits should be shown when detailing fixed equipment in an
+	 * omni unit. By default this is false, but mechs override it to show some systems.
+	 * 
+	 * @param entity The unit the TRO is for
+	 * @param index  The system index of the critical slot
+	 * @param loc    The slot location
+	 * @return       Whether to show this as a fixed system in an omni configuration
+	 */
 	protected boolean showFixedSystem(Entity entity, int index, int loc) {
-		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-			return ((index != Mech.SYSTEM_COCKPIT) || (loc != Mech.LOC_HEAD))
-					&& ((index != Mech.SYSTEM_SENSORS) || (loc != Mech.LOC_HEAD))
-					&& ((index != Mech.SYSTEM_LIFE_SUPPORT) || (loc != Mech.LOC_HEAD))
-					&& ((index != Mech.SYSTEM_ENGINE) || (loc != Mech.LOC_CT))
-					&& (index != Mech.SYSTEM_GYRO)
-					&& (index != Mech.ACTUATOR_SHOULDER)
-					&& (index != Mech.ACTUATOR_UPPER_ARM)
-					&& (index != Mech.ACTUATOR_LOWER_ARM)
-					&& (index != Mech.ACTUATOR_HAND)
-					&& (index != Mech.ACTUATOR_HIP)
-					&& (index != Mech.ACTUATOR_UPPER_LEG)
-					&& (index != Mech.ACTUATOR_LOWER_LEG)
-					&& (index != Mech.ACTUATOR_FOOT);
-		}
 		return false;
 	}
 	
+	/**
+	 * Used to show the name of fixed system critical slots in an omni unit. This is only used for Mechs,
+	 * and returns a default value of "Unknown System" for other units.
+	 * 
+	 * @param entity The unit the TRO is for
+	 * @param index  The system index of the critical slot
+	 * @return       The name of the system to display in the fixed equipment table
+	 */
 	protected String getSystemName(Entity entity, int index) {
-		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-			// Here we're only concerned with engines that take extra critical slots in the side torso
-			if (index == Mech.SYSTEM_ENGINE) {
-				StringBuilder sb = new StringBuilder();
-				if (entity.getEngine().hasFlag(Engine.LARGE_ENGINE)) {
-					sb.append("Large ");
-				}
-				switch (entity.getEngine().getEngineType()) {
-				case Engine.XL_ENGINE:
-					sb.append("XL");
-					break;
-				case Engine.LIGHT_ENGINE:
-					sb.append("Light");
-					break;
-				case Engine.XXL_ENGINE:
-					sb.append("XXL");
-					break;
-				}
-				sb.append(" Engine");
-				return sb.toString();
-			} else {
-				return ((Mech) entity).getRawSystemName(index);
-			}
-		}
 		return "Unknown System";
 	}
 	
@@ -543,16 +523,6 @@ public class TROView {
 	 * @return         The location name to use in the table.
 	 */
 	protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
-		if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
-			String loc = entity.getLocationAbbr(mounted.getLocation());
-			if (mounted.isRearMounted()) {
-				loc += "(R)";
-			}
-			return loc;
-		}
-		if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
-			return entity.getLocationName(mounted.getLocation());
-		}
 		// Default: location abbreviation
 		return entity.getLocationAbbr(mounted.getLocation());
 	}

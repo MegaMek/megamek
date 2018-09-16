@@ -17,7 +17,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.Messages;
+import megamek.common.Messages;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;

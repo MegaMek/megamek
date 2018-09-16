@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import megamek.client.ui.Messages;
+import megamek.common.Messages;
 import megamek.common.Compute;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;

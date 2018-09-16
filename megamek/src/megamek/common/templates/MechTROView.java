@@ -16,7 +16,7 @@ package megamek.common.templates;
 import java.text.NumberFormat;
 import java.util.StringJoiner;
 
-import megamek.client.ui.Messages;
+import megamek.common.Messages;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;

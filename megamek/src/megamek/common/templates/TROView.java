@@ -32,22 +32,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
-import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Bay;
-import megamek.common.Configuration;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Tank;
-import megamek.common.Transporter;
-import megamek.common.TroopSpace;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;
@@ -80,6 +65,8 @@ public class TROView {
     		view = new MechTROView((Mech) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
     		view = new VehicleTROView((Tank) entity);
+    	} else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+    		view = new SmallCraftTROView((SmallCraft) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
     		view = new AeroTROView((Aero) entity);
 		} else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
@@ -335,11 +322,16 @@ public class TROView {
 	}
 	
 	protected int addEquipment(Entity entity) {
+		return addEquipment(entity, true);
+	}
+	
+	protected int addEquipment(Entity entity, boolean includeAmmo) {
 		final int structure = entity.getStructureType();
 		final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
 		int nameWidth = 20;
 		for (Mounted m : entity.getEquipment()) {
-			if ((m.getLocation() < 0) || m.isWeaponGroup()) {
+			if ((m.getLocation() < 0) || m.isWeaponGroup()
+					|| (!includeAmmo && (m.getType() instanceof AmmoType))) {
 				continue;
 			}
 			if (!m.getType().isHittable()) {

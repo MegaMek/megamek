@@ -14,9 +14,19 @@
 package megamek.common.templates;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import megamek.common.Messages;
+import megamek.common.Mounted;
 import megamek.common.Aero;
+import megamek.common.Bay;
 import megamek.common.Entity;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 
@@ -104,4 +114,72 @@ public class AeroTROView extends TROView {
 		}
 	}
 	
+	protected void addBays() {
+		List<Map<String, Object>> bays = new ArrayList<>();
+		for (Bay bay : aero.getTransportBays()) {
+			if (bay.isQuarters()) {
+				continue;
+			}
+			BayData bayData = BayData.getBayType(bay);
+			if (null != bayData) {
+				Map<String, Object> bayRow = new HashMap<>();
+				bayRow.put("name", bayData.getDisplayName());
+				if (bayData.isCargoBay()) {
+					bayRow.put("size", bay.getCapacity() + Messages.getString("TROView.tons"));
+				} else {
+					bayRow.put("size", (int) bay.getCapacity());
+				}
+				bayRow.put("doors", bay.getDoors());
+				bays.add(bayRow);
+			} else {
+				DefaultMmLogger.getInstance().warning(getClass(), "addBays()",
+						"Could not determine bay type for " + bay.toString());
+			}
+		}
+		setModelData("bays", bays);
+	}
+	
+	/**
+	 * Adds ammo data used by large craft
+	 */
+	protected void addAmmo() {
+		Map<String, List<Mounted>> ammoByType = aero.getAmmo().stream()
+				.collect(Collectors.groupingBy(m -> m.getType().getName()));
+		List<Map<String, Object>> ammo = new ArrayList<>();
+		for (List<Mounted> aList : ammoByType.values()) {
+			Map<String, Object> ammoEntry = new HashMap<>();
+			ammoEntry.put("name", aList.get(0).getType().getName().replaceAll("\\s+Ammo", ""));
+			ammoEntry.put("shots", aList.stream().mapToInt(Mounted::getUsableShotsLeft).sum());
+			ammoEntry.put("tonnage", aList.stream().mapToDouble(m -> m.getType().getTonnage(aero)).sum());
+			ammo.add(ammoEntry);
+		}
+		setModelData("ammo", ammo);
+	}
+
+	/**
+	 * Convenience method to add the number of crew in a category to a list, and choose the singular or
+	 * plural form. The localized string property should be provided for both singular and plural entries,
+	 * even if they are the same (such as enlisted/non-rated and bay personnel in English).
+	 * 
+	 * The model needs to have a "crew" entry initialized to a {@code List<String>} before calling this
+	 * method.
+	 * 
+	 * @param stringKey The key for the string property in the singular form. A "TROView." prefix will be added,
+	 *                  and if the plural form is needed "s" will be appended.
+	 * @param count     The number of crew in the category
+	 * @throws NullPointerException If the "crew" property in the model has not been initialized
+	 * @throws ClassCastException   If the crew property of the model is not a {@code List<String>}
+	 */
+	@SuppressWarnings("unchecked")
+	protected void addCrewEntry(String stringKey, int count) {
+		if (count > 1) {
+			((List<String>) getModelData("crew"))
+			.add(String.format(Messages.getString("TROView." + stringKey + "s"), count));
+		} else if (count > 2) {
+			((List<String>) getModelData("crew"))
+			.add(String.format(Messages.getString("TROView." + stringKey), count));
+		}
+	}
+
 }
+

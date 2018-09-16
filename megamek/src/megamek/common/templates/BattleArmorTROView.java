@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.Messages;
+import megamek.common.Messages;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.EntityMovementMode;

@@ -78,6 +78,7 @@ import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
+import megamek.common.TankTrailerHitch;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.TeleMissile;
@@ -3088,6 +3089,43 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         else {
             choice = choices.get(0);
         }
+        
+        //Set up the correct hitch/transporter to use
+        HashMap<Integer, Integer> hitchChoices = new HashMap<Integer, Integer>();
+        //First, set up a list of all the entities in this train
+        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        thisTrain.add(ce());
+        for (Entity tr : ce().getAllTowedUnits()) {
+            thisTrain.add(tr);
+        }
+        for (Entity e : thisTrain) {
+            for (Transporter t : e.getTransports()) {
+                if (t.canLoad(choice) && (t instanceof TankTrailerHitch)) {
+                    hitchChoices.put(e.getId(), e.getTransports().indexOf(t));
+                }
+            }
+        }
+        String[] retVal = new String[hitchChoices.size()];
+        int i = 0;
+        for (Integer id : hitchChoices.keySet()) {
+            Entity e = game.getEntity(id);
+            retVal[i++] = e.getShortName() + " Trailer Hitch: "
+                          + e.getHitchById(hitchChoices.get(id)).getUnused() + ")";
+        }
+        if (hitchChoices.size() > 1) {
+            String hitchString = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages.getString(
+                                    "MovementDisplay.loadUnitBayNumberDialog.message",
+                                    new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                            Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, retVal,
+                            null);
+            choice.setTargetBay(Integer.parseInt(hitchString.substring(0, hitchString.indexOf(" "))));
+        } else {
+            choice.setTargetBay(-1); // Safety set!
+        }
 
         // We need to update the entities here so that the server knows
         // about our changes
@@ -4597,7 +4635,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (other != null) {
                 cmd.addStep(MoveStepType.TOW);
                 clientgui.bv.drawMovementData(ce(), cmd);
-            } // else - didn't find a unit to load
+            } // else - didn't find a unit to tow
         } else if (actionCmd.equals(MoveCommand.MOVE_MOUNT.getCmd())) {
             Entity other = getMountedUnit();
             if (other != null) {

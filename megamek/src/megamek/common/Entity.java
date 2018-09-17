@@ -15041,6 +15041,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Matches up a trailer hitch transporter with its Id # 
+     *
+     * @param bayNumber - the index of the transporter we're trying to find.
+     * @returns the trailerhitch corresponding to the passed-in value
+     */
+    public TankTrailerHitch getHitchById(int bayNumber) {
+        for (Transporter next : transports) {
+            if (next instanceof TankTrailerHitch) {
+                if (transports.indexOf(next) == bayNumber) {
+                    return (TankTrailerHitch) next;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Determines if this vehicle is currently able to tow designated trailer. 
      *
      * @param trailer - the <code>Entity</code> to be loaded.

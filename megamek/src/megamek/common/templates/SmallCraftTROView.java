@@ -54,16 +54,18 @@ public class SmallCraftTROView extends AeroTROView {
 		setModelData("formatBayRow", new FormatTableRowMethod(new int[] { 8, 24, 10 },
 				new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT } ));
 		setModelData("usesWeaponBays", aero.usesWeaponBays());
-		int nameWidth = 30;
 		if (aero.usesWeaponBays()) {
 			addWeaponBays(aero.isSpheroid()? SPHEROID_ARCS: AERODYNE_ARCS);
+			setModelData("formatBayRow", new FormatTableRowMethod(new int[] { 30, 5, 8, 8, 8, 8, 12},
+					new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+							Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.LEFT }));
 		} else {
-			nameWidth = addEquipment(aero, false);
+			int nameWidth = addEquipment(aero, false);
+			setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 8, 5, 5, 5, 5, 5},
+					new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
+							Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER, 
+							Justification.CENTER, Justification.CENTER }));
 		}
-		setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 8, 8, 5, 5, 5, 5, 5},
-				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
-						Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER, 
-						Justification.CENTER, Justification.CENTER }));
 		addFluff();
 		TestSmallCraft testAero = new TestSmallCraft(aero, verifier.aeroOption, null);
 		

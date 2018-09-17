@@ -25,6 +25,7 @@ import megamek.common.Messages;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.Bay;
 import megamek.common.Entity;
 import megamek.common.logging.DefaultMmLogger;
@@ -145,13 +146,17 @@ public class AeroTROView extends TROView {
 	}
 	
 	private Map<String, Object> createBayRow(Mounted bay) {
-		Map<String, Integer> weaponCount = new HashMap<>();
+		Map<WeaponType, Integer> weaponCount = new HashMap<>();
 		int heat = 0;
 		int srv = 0;
 		int mrv = 0;
 		int lrv = 0;
 		int erv = 0;
 		int multiplier = ((WeaponType) bay.getType()).isCapital()? 10 : 1;
+		Map<Integer, Integer> shotsByAmmoType = bay.getBayAmmo().stream()
+				.map(eqNum -> aero.getEquipment(eqNum))
+				.collect(Collectors.groupingBy(m -> ((AmmoType) m.getType()).getAmmoType(),
+						Collectors.summingInt(Mounted::getBaseShotsLeft))); 
 		for (Integer eqNum : bay.getBayWeapons()) {
 			final Mounted wMount = aero.getEquipment(eqNum);
 			if (null == wMount) {
@@ -160,7 +165,7 @@ public class AeroTROView extends TROView {
 				continue;
 			}
 			final WeaponType wtype = (WeaponType) wMount.getType();
-			weaponCount.merge(wtype.getName(), 1, Integer::sum);
+			weaponCount.merge(wtype, 1, Integer::sum);
 			heat += wtype.getHeat();
 			srv += wtype.getShortAV() * multiplier;
 			mrv += wtype.getMedAV() * multiplier;
@@ -168,10 +173,16 @@ public class AeroTROView extends TROView {
 			erv += wtype.getExtAV() * multiplier;
 		}
 		Map<String, Object> retVal = new HashMap<>();
-		retVal.put("weapons",
-				weaponCount.entrySet().stream()
-					.map(e -> String.format("%d %s", e.getValue(), e.getKey()))
-						.collect(Collectors.toList()));
+		List<String> weapons = new ArrayList<>();
+		for (Map.Entry<WeaponType, Integer> entry : weaponCount.entrySet()) {
+			final WeaponType wtype = entry.getKey();
+			if (shotsByAmmoType.containsKey(wtype.getAmmoType())) {
+				weapons.add(String.format("%d %s (%d shots)",
+						entry.getValue(), wtype.getName(),
+						shotsByAmmoType.get(wtype.getAmmoType())));
+			}
+		}
+		retVal.put("weapons", weapons);
 		retVal.put("heat", heat);
 		retVal.put("srv", Math.round(srv / 10.0) + "(" + srv + ")");
 		retVal.put("mrv", Math.round(mrv / 10.0) + "(" + mrv + ")");

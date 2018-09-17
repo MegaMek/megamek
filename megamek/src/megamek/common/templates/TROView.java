@@ -66,7 +66,9 @@ public class TROView {
     	} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
     		view = new VehicleTROView((Tank) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-    		view = new SmallCraftTROView((SmallCraft) entity);
+    		view = new SmallCraftDropshipTROView((SmallCraft) entity);
+    	} else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+    		view = new CapitalShipTROView((Jumpship) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
     		view = new AeroTROView((Aero) entity);
 		} else if (entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
@@ -253,7 +255,7 @@ public class TROView {
 	 * 
 	 * @param entity    The entity to collect structure or armor values for
 	 * @param provider  The function that retrieves the armor or structure value for the entity and location
-	 * @param locSets   An two-dimensional array that groups locations that should appear on the same line.
+	 * @param locSets   A two-dimensional array that groups locations that should appear on the same line.
 	 * 					Any location that is not legal for the unit (e.g. center leg on non-tripods) is
 	 *                	ignored. If the first location in a group is illegal, the entire group is skipped.
 	 * @return			A {@link Map} with the armor/structure value mapped to the abbreviation of each

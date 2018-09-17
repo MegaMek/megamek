@@ -13,28 +13,27 @@
  */
 package megamek.common.templates;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import megamek.common.Aero;
 import megamek.common.Entity;
+import megamek.common.Messages;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestSmallCraft;
-import megamek.common.Messages;
 
 /**
- * Creates a TRO template model for small craft
+ * Creates a TRO template model for small craft and dropships
  * 
  * @author Neoancient
  *
  */
-public class SmallCraftTROView extends AeroTROView {
+public class SmallCraftDropshipTROView extends AeroTROView {
 	
 	private final SmallCraft aero;
 	
-	public SmallCraftTROView(SmallCraft aero) {
+	public SmallCraftDropshipTROView(SmallCraft aero) {
 		super(aero);
 		this.aero = aero;
 	}
@@ -55,8 +54,8 @@ public class SmallCraftTROView extends AeroTROView {
 				new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT } ));
 		setModelData("usesWeaponBays", aero.usesWeaponBays());
 		if (aero.usesWeaponBays()) {
-			addWeaponBays(aero.isSpheroid()? SPHEROID_ARCS: AERODYNE_ARCS);
-			setModelData("formatBayRow", new FormatTableRowMethod(new int[] { 30, 5, 8, 8, 8, 8, 12},
+			int nameWidth = addWeaponBays(aero.isSpheroid()? SPHEROID_ARCS: AERODYNE_ARCS);
+			setModelData("formatBayRow", new FormatTableRowMethod(new int[] { nameWidth, 5, 8, 8, 8, 8, 12},
 					new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
 							Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.LEFT }));
 		} else {
@@ -79,7 +78,7 @@ public class SmallCraftTROView extends AeroTROView {
 				aero.getOHeatSinks() + " (" + (aero.getOHeatSinks() * 2) + ")" : aero.getOHeatSinks());
 		setModelData("si", aero.get0SI());
 		setModelData("armorType", formatArmorType(aero, false).toLowerCase());
-		setModelData("armorMass", NumberFormat.getInstance().format(testAero.getWeightArmor()));
+		setModelData("armorMass", testAero.getWeightArmor());
 		
 		addTransportBays();
 		addAmmo();

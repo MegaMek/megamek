@@ -117,7 +117,19 @@ public class AeroTROView extends TROView {
 		}
 	}
 	
-	protected void addWeaponBays(String[][] arcSets) {
+	/**
+	 * Adds the details for all weapon bays, including heat by bay and location and rows for each
+	 * bay.
+	 * 
+	 * @param arcSets  A two-dimensional array that groups arcs that should appear on the same line
+	 * 				   (e.g. left/right). Only the first arc in any group is actually evaluated, since
+	 * 				   the rules require left/right arcs be identical, but both arcs are combined in
+	 *                 the name. 
+	 * @return         The width of the longest value for bay/weapon name, for use in laying out
+	 *                 plain text.
+	 */
+	protected int addWeaponBays(String[][] arcSets) {
+		int nameWidth = 1;
 		Map<String, List<Mounted>> baysByLoc = aero.getWeaponBayList()
 				.stream().collect(Collectors.groupingBy(m -> getArcAbbr(m)));
 		List<String> bayArcs = new ArrayList<>();
@@ -132,6 +144,8 @@ public class AeroTROView extends TROView {
 					Map<String, Object> row = createBayRow(bay);
 					heat += ((Number) row.get("heat")).intValue();
 					rows.add(row);
+					nameWidth = Math.max(nameWidth, ((List<?>)row.get("weapons"))
+							.stream().mapToInt(w -> ((String) w).length()).max().orElse(0) + 1);
 				}
 				String arcName = Arrays.stream(arcSet).collect(Collectors.joining("/"))
 						.replaceAll("\\s+(Fwd|Aft)\\/", "/");
@@ -143,6 +157,7 @@ public class AeroTROView extends TROView {
 		setModelData("weaponBayArcs", bayArcs);
 		setModelData("weaponBayHeat", heatByLoc);
 		setModelData("weaponBays", bayDetails);
+		return nameWidth;
 	}
 	
 	private Map<String, Object> createBayRow(Mounted bay) {
@@ -180,6 +195,8 @@ public class AeroTROView extends TROView {
 				weapons.add(String.format("%d %s (%d shots)",
 						entry.getValue(), wtype.getName(),
 						shotsByAmmoType.get(wtype.getAmmoType())));
+			} else {
+				weapons.add(String.format("%d %s", entry.getValue(), wtype.getName()));
 			}
 		}
 		retVal.put("weapons", weapons);

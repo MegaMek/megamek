@@ -6,7 +6,9 @@
   <div style="font:12pt monospaced">
   <font size="+1"><b>${fullName}</b></font>
   	<p>
+<#if typeDesc??>
   	<b>Type: </b>${typeDesc}<br/>
+</#if>
   	<b>Mass: </b>${massDesc} tons<br/>
 <#if use??>  	
   	<b>Use:</b> ${use}<br/>
@@ -35,7 +37,12 @@
 	<p>
 	<b>Armor</b><br/>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Nose:</b> ${armorValues.NOS}<br/>
+<#if armorValues.RS??>	
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Sides:</b> ${armorValues.RS}<br/>
+<#else>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Fore Sides:</b> ${armorValues.FRS}<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Aft Sides:</b> ${armorValues.ARS}<br/>
+</#if>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Aft:</b> ${armorValues.AFT}<br/>
 	</p>
 	<p>
@@ -64,7 +71,7 @@
 	<br/>
 	</p>
 	<p>
-	<b>Notes: </p> Mounts ${armorMass} tons of ${armorType} armor.<br/>
+	<b>Notes: </b><#if armorMass gt 0>Mounts ${armorMass} tons of ${armorType} armor.</#if><br/>
 	</p>
 
 <#if usesWeaponBays>
@@ -76,6 +83,8 @@
 			<#list weaponBays[arc] as bay>
 				<tr><td>${bay.weapons?join(", ")}</td><td align="center">${bay.heat}</td><td align="center">${bay.srv}</td><td align="center">${bay.mrv}</td><td align="center">${bay.lrv}</td><td align="center">${bay.erv}</td><td>${bay.class}</td></tr>
 			</#list>
+		<#else>
+		None
 		</#list>
 	</table>
 <#else>
@@ -83,6 +92,8 @@
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Tonnage</th><th>Heat</th><th>SRV</th><th>MRV</th><th>LRV</th><th>ERV</th></tr>
 		<#list equipment as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage}</td><td>${eq.heat}</td><td>${eq.srv}</td><td>${eq.mrv}</td><td>${eq.lrv}</td><td>${eq.erv}</td></tr>
+		<#else>
+		None			
 		</#list>
 	</table>
 </#if>

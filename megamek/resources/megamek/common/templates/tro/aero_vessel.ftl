@@ -1,5 +1,7 @@
 ${fullName}
+<#if typeDesc??>
 Type: ${typeDesc}
+</#if>
 Mass: ${massDesc} tons
 <#if use??>  	
 Use: ${use}
@@ -25,7 +27,12 @@ Structural Integrity: ${si}
 
 Armor
     Nose: ${armorValues.NOS}
+<#if armorValues.RS??>
     Sides: ${armorValues.RS}
+<#else>
+    Fore Sides: ${armorValues.FRS}
+    Aft Sides: ${armorValues.ARS}
+</#if>
     Aft: ${armorValues.AFT}
 
 Cargo
@@ -59,12 +66,16 @@ ${formatBayRow(bay.weapons[0], bay.heat, bay.srv, bay.mrv, bay.lrv, bay.erv, bay
     ${wpn}
 </#list>
 </#list>
+<#else>
+None
 </#list>
 <#else>
 Weapons
 ${formatEquipmentRow("and Ammo", "Location", "Tonnage", "Heat", "SRV", "MRV", "LRV", "ERV")}	
 <#list equipment as eq>
 ${formatEquipmentRow(eq.name, eq.location, eq.tonnage, eq.heat, eq.srv, eq.mrv, eq.lrv, eq.erv)}
+<#else>
+None
 </#list>
 </#if>
 	

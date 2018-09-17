@@ -67,12 +67,25 @@
 	<b>Notes: </p> Mounts ${armorMass} tons of ${armorType} armor.<br/>
 	</p>
 
+<#if usesWeaponBays>
+	<table>
+		<tr><th align="left">Weapons:</th><th></th><th colspan="4">Capital Attack Values (Standard)</th><th></th></tr>
+		<tr><th align="left">Arc (Heat)</th><th>Heat</th><th>SRV</th><th>MRV</th><th>LRV</th><th>ERV</th><th>Class</th></tr>
+		<#list weaponBayArcs as arc>
+		<tr><td><b>${arc} (${weaponBayHeat[arc]} Heat)</td></tr>
+			<#list weaponBays[arc] as bay>
+				<tr><td>${bay.weapons?join(", ")}</td><td align="center">${bay.heat}</td><td align="center">${bay.srv}</td><td align="center">${bay.mrv}</td><td align="center">${bay.lrv}</td><td align="center">${bay.erv}</td><td>${bay.class}</td></tr>
+			</#list>
+		</#list>
+	</table>
+<#else>
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Tonnage</th><th>Heat</th><th>SRV</th><th>MRV</th><th>LRV</th><th>ERV</th></tr>
 		<#list equipment as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage}</td><td>${eq.heat}</td><td>${eq.srv}</td><td>${eq.mrv}</td><td>${eq.lrv}</td><td>${eq.erv}</td></tr>
 		</#list>
 	</table>
+</#if>
 	
 	<#if quirks??>
 		<p>

@@ -15,6 +15,7 @@ package megamek.common.templates;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 import megamek.common.Messages;
 import megamek.common.Mounted;
+import megamek.common.WeaponType;
 import megamek.common.Aero;
 import megamek.common.Bay;
 import megamek.common.Entity;
@@ -114,7 +116,83 @@ public class AeroTROView extends TROView {
 		}
 	}
 	
-	protected void addBays() {
+	protected void addWeaponBays(String[][] arcSets) {
+		Map<String, List<Mounted>> baysByLoc = aero.getWeaponBayList()
+				.stream().collect(Collectors.groupingBy(m -> getArcAbbr(m)));
+		List<String> bayArcs = new ArrayList<>();
+		Map<String, Integer> heatByLoc = new HashMap<>();
+		Map<String, List<Map<String, Object>>> bayDetails = new HashMap<>();
+		for (String[] arcSet : arcSets) {
+			List<Mounted> bayList = baysByLoc.get(arcSet[0]);
+			if (null != bayList) {
+				List<Map<String, Object>> rows = new ArrayList<>();
+				int heat = 0;
+				for (Mounted bay : bayList) {
+					Map<String, Object> row = createBayRow(bay);
+					heat += ((Number) row.get("heat")).intValue();
+					rows.add(row);
+				}
+				String arcName = Arrays.stream(arcSet).collect(Collectors.joining("/"))
+						.replaceAll("\\s+(Fwd|Aft)\\/", "/");
+				bayArcs.add(arcName);
+				heatByLoc.put(arcName, heat);
+				bayDetails.put(arcName, rows);
+			}
+		}
+		setModelData("weaponBayArcs", bayArcs);
+		setModelData("weaponBayHeat", heatByLoc);
+		setModelData("weaponBays", bayDetails);
+	}
+	
+	private Map<String, Object> createBayRow(Mounted bay) {
+		Map<String, Integer> weaponCount = new HashMap<>();
+		int heat = 0;
+		int srv = 0;
+		int mrv = 0;
+		int lrv = 0;
+		int erv = 0;
+		int multiplier = ((WeaponType) bay.getType()).isCapital()? 10 : 1;
+		for (Integer eqNum : bay.getBayWeapons()) {
+			final Mounted wMount = aero.getEquipment(eqNum);
+			if (null == wMount) {
+				DefaultMmLogger.getInstance().error(getClass(), "createBayRow(Mounted)",
+						"Bay " + bay.getName() + " has non-existent weapon");
+				continue;
+			}
+			final WeaponType wtype = (WeaponType) wMount.getType();
+			weaponCount.merge(wtype.getName(), 1, Integer::sum);
+			heat += wtype.getHeat();
+			srv += wtype.getShortAV() * multiplier;
+			mrv += wtype.getMedAV() * multiplier;
+			lrv += wtype.getLongAV() * multiplier;
+			erv += wtype.getExtAV() * multiplier;
+		}
+		Map<String, Object> retVal = new HashMap<>();
+		retVal.put("weapons",
+				weaponCount.entrySet().stream()
+					.map(e -> String.format("%d %s", e.getValue(), e.getKey()))
+						.collect(Collectors.toList()));
+		retVal.put("heat", heat);
+		retVal.put("srv", Math.round(srv / 10.0) + "(" + srv + ")");
+		retVal.put("mrv", Math.round(mrv / 10.0) + "(" + mrv + ")");
+		retVal.put("lrv", Math.round(lrv / 10.0) + "(" + lrv + ")");
+		retVal.put("erv", Math.round(erv / 10.0) + "(" + erv + ")");
+		retVal.put("class", bay.getType().getName().replaceAll("\\s+Bay", ""));
+		return retVal;
+	}
+	
+	/**
+	 * Firing arc abbreviation, which may be different than mounting location for side arcs on
+	 * small craft and dropships
+	 * 
+	 * @param Mounted  The weapon mount
+	 * @return         The arc abbreviation.
+	 */
+	protected String getArcAbbr(Mounted m) {
+		return aero.getLocationAbbr(m.getLocation());
+	}
+	
+	protected void addTransportBays() {
 		List<Map<String, Object>> bays = new ArrayList<>();
 		for (Bay bay : aero.getTransportBays()) {
 			if (bay.isQuarters()) {

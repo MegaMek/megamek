@@ -412,14 +412,17 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         }
         treeCategories.setSelectionPath(new TreePath(node.getPath()));
         fillTable(category);
-        int rowIndex = 0;
+        int modelRowIndex = -1;
         for (int i = 0; i < camoModel.getRowCount(); i++) {
             if (((String) camoModel.getValueAt(i, 0)).equals(filename)) {
-                rowIndex = i;
+                modelRowIndex = i;
                 break;
             }
         }
-        tableCamo.setRowSelectionInterval(rowIndex, rowIndex);
+        int viewRowIndex = modelRowIndex != -1
+                         ? tableCamo.convertRowIndexToView(modelRowIndex)
+                         : 0;
+        tableCamo.setRowSelectionInterval(viewRowIndex, viewRowIndex);
     }
 
     Icon generateIcon(String cat, String item) {

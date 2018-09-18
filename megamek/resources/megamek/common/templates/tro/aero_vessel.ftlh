@@ -31,6 +31,15 @@
 	<b>Fuel:</b> ${fuelMass} tons (${fuelPoints})<br/>
 	<b>Safe Thrust:</b> ${safeThrust}<br/>
 	<b>Maximum Thrust:</b> ${maxThrust}<br/>
+	<#if sailIntegrity??>
+	<b>Sail Integrity:</b> ${sailIntegrity}<br/>
+	</#if>
+	<#if kfIntegrity??>
+	<b>KF Drive Integrity:</b> ${kfIntegrity}<br/>
+	</#if>
+	<#if jumpRange??>
+	<b>Jump Range:</b> ${jumpRange}<br/>
+	</#if>
 	<b>Heat Sinks:</b> ${hsCount}<br/>
 	<b>Structural Integrity:</b> ${si}<br/>
 	</p>
@@ -58,6 +67,17 @@
 </#list>
 	</p>
 	<p>
+<#if dropshipCapacity??>
+	<b>Dropship Capacity:</b> ${dropshipCapacity}<br/>
+</#if>
+<#if gravDecks??>
+	<b>Grav Decks:</b> ${gravDecks?size}<#if gravDecks?size gt 0> (${gravDecks?join(", ")})</#if><br/>
+</#if>
+	<b>Escape Pods:</b> ${escapePods}<br/>
+	<b>Life Boats:</b> ${lifeBoats}<br/>
+	<b>Crew:</b> <#if crew?size gt 0> ${crew?join(", ")}<#else>None</#if><br/>
+	</p>
+	<p>
 	<b>Ammunition:</b>
 <#list ammo as row>
 	${row.shots} rounds of ${row.name} ammunition (${row.tonnage} tons)<#if row?has_next>, </#if>
@@ -67,11 +87,15 @@
 	<br/>
 	</p>
 	<p>
-	<b>Crew:</b> <#if crew?size gt 0> ${crew?join(", ")}<#else>None</#if>		
-	<br/>
-	</p>
-	<p>
+<#if miscEquipment?? && miscEquipment?size gt 0>
+	<b>Notes: </b> Equipped with 
+	<#list miscEquipment as eq>
+		${eq}<#if miscEquipment?size gt 1>,</#if>
+	</#list>
+	and ${armorMass} tons of ${armorType} armor.<br/>
+<#else>
 	<b>Notes: </b><#if armorMass gt 0>Mounts ${armorMass} tons of ${armorType} armor.</#if><br/>
+</#if>
 	</p>
 
 <#if usesWeaponBays>

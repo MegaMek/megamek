@@ -22,6 +22,15 @@ Dimensions
 Fuel: ${fuelMass} tons (${fuelPoints})
 Safe Thrust: ${safeThrust}
 Maximum Thrust: ${maxThrust}
+<#if sailIntegrity??>
+Sail Integrity: ${sailIntegrity}
+</#if>
+<#if kfIntegrity??>
+KF Drive Integrity: ${kfIntegrity}
+</#if>
+<#if jumpRange??>
+Jump Range: ${jumpRange}
+</#if>
 Heat Sinks: ${hsCount}
 Structural Integrity: ${si}
 
@@ -51,17 +60,33 @@ Ammunition:
 	None
 </#list>		
 
+<#if dropshipCapacity??>
+Dropship Capacity: ${dropshipCapacity}
+</#if>
+<#if gravDecks??>
+Grav Decks: ${gravDecks?size}<#if gravDecks?size gt 0> (${gravDecks?join(", ")})</#if>
+</#if>
+Escape Pods: ${escapePods}
+Life Boats: ${lifeBoats}
 Crew: <#if crew?size gt 0> ${crew?join(", ")}<#else>None</#if>		
 
-Notes: Mounts ${armorMass} tons of ${armorType} armor.
+<#if miscEquipment?? && miscEquipment?size gt 0>
+Notes: Equipped with 
+	<#list miscEquipment as eq>
+    ${eq}
+	</#list>
+	${armorMass} tons of ${armorType} armor.
+<#else>
+Notes: <#if armorMass gt 0>Mounts ${armorMass} tons of ${armorType} armor.</#if>
+</#if>
 
 <#if usesWeaponBays>
-${formatBayRow("Weapons:", "", "Capital Attack Values (Standard)")}
-${formatBayRow("Arc (Heat)", "Heat", "SRV", "MRV", "LRV", "ERV", "Class")}
+${formatWeaponBayRow("Weapons:", "", "Capital Attack Values (Standard)")}
+${formatWeaponBayRow("Arc (Heat)", "Heat", "SRV", "MRV", "LRV", "ERV", "Class")}
 <#list weaponBayArcs as arc>
 ${arc} (${weaponBayHeat[arc]} Heat)
 <#list weaponBays[arc] as bay>
-${formatBayRow(bay.weapons[0], bay.heat, bay.srv, bay.mrv, bay.lrv, bay.erv, bay.class)}
+${formatWeaponBayRow(bay.weapons[0], bay.heat, bay.srv, bay.mrv, bay.lrv, bay.erv, bay.class)}
 <#list bay.weapons[1..] as wpn>
     ${wpn}
 </#list>

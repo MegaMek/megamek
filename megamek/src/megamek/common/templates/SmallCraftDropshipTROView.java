@@ -79,6 +79,8 @@ public class SmallCraftDropshipTROView extends AeroTROView {
 		setModelData("si", aero.get0SI());
 		setModelData("armorType", formatArmorType(aero, false).toLowerCase());
 		setModelData("armorMass", testAero.getWeightArmor());
+		setModelData("escapePods", aero.getEscapePods());
+		setModelData("lifeBoats", aero.getLifeBoats());
 		
 		addTransportBays();
 		addAmmo();

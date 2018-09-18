@@ -3195,13 +3195,31 @@ public class Tank extends Entity {
         }
     }
     
-    // Add a transporter for each trailer hitch the unit is equipped with
+    /**
+     * Add a transporter for each trailer hitch the unit is equipped with
+     */
     public void setTrailerHitches() {
+        if (hasTrailerHitch()) {
+            return;
+        }
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_HITCH)) {
                 addTransporter(new TankTrailerHitch());
             }
         }
+    }
+    
+    /**
+     * Check to see if the unit has a trailer hitch transporter already
+     * We need this to prevent duplicate transporters being created
+     */
+    protected boolean hasTrailerHitch() {
+        for (Transporter t : getTransports()) {
+            if (t instanceof TankTrailerHitch) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

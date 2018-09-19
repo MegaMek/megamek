@@ -3109,8 +3109,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         int i = 0;
         for (Integer id : hitchChoices.keySet()) {
             Entity e = game.getEntity(id);
-            retVal[i++] = e.getShortName() + " Trailer Hitch: "
-                          + e.getHitchById(hitchChoices.get(id)).getUnused() + ")";
+            retVal[i++] = hitchChoices.get(id) + ", " + id + ", " + e.getShortName() + " Trailer Hitch";
         }
         if (hitchChoices.size() > 1) {
             String hitchString = (String) JOptionPane
@@ -3122,9 +3121,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, retVal,
                             null);
-            choice.setTargetBay(Integer.parseInt(hitchString.substring(0, hitchString.indexOf(" "))));
+            choice.setTargetBay(Integer.parseInt(hitchString.substring(0, 1)));
+            choice.setTowedBy(Integer.parseInt(hitchString.substring(3, 4)));
         } else {
-            choice.setTargetBay(-1); // Safety set!
+            choice.setTargetBay(hitchChoices.get(1));
         }
 
         // We need to update the entities here so that the server knows

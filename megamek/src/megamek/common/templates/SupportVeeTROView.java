@@ -64,6 +64,8 @@ public class SupportVeeTROView extends TROView {
 		setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 12},
 				new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER,
 						Justification.CENTER, Justification.CENTER}));
+		setModelData("formatBayRow", new FormatTableRowMethod(new int[] { 8, 24, 10 },
+				new Justification[] { Justification.LEFT, Justification.LEFT, Justification.LEFT } ));
 		addFluff();
 		addTransportBays(tank);
 		TestSupportVehicle testTank = new TestSupportVehicle(tank, verifier.tankOption, null);

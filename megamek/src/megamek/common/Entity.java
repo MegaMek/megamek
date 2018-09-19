@@ -15,7 +15,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -13440,64 +13439,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Finally use that total to compute and return the actual power
         // amplifier weight.
         return Math.ceil(total / 5) / 2;
-    }
-
-    public class EntityFluff implements Serializable {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -8018098140016149185L;
-        private String capabilities = "";
-        private String overview = "";
-        private String deployment = "";
-        private String history = "";
-        private String mmlImageFilePath = "";
-
-        public EntityFluff() {
-            // Constructor
-        }
-
-        public String getCapabilities() {
-            return capabilities;
-        }
-
-        public void setCapabilities(String newCapabilities) {
-            capabilities = newCapabilities;
-        }
-
-        public String getOverview() {
-            return overview;
-        }
-
-        public void setOverview(String newOverview) {
-            overview = newOverview;
-        }
-
-        public String getDeployment() {
-            return deployment;
-        }
-
-        public void setDeployment(String newDeployment) {
-            deployment = newDeployment;
-        }
-
-        public void setHistory(String newHistory) {
-            history = newHistory;
-        }
-
-        public String getHistory() {
-            return history;
-        }
-
-        public String getMMLImagePath() {
-            return mmlImageFilePath;
-        }
-
-        public void setMMLImagePath(String filePath) {
-            mmlImageFilePath = filePath;
-        }
-
-
     }
 
     public Vector<Integer> getLoadedKeepers() {

@@ -87,7 +87,7 @@ public class CapitalShipTROView extends AeroTROView {
 		setModelData("miscEquipment", misc);
 		setModelData("lfBattery", aero.hasLF());
 		
-		addTransportBays();
+		addTransportBays(aero);
 		addAmmo();
 		addCrew();
 	}

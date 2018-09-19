@@ -63,6 +63,9 @@ public class TROView {
     	TROView view = null;
     	if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
     		view = new MechTROView((Mech) entity);
+    	} else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
+    			|| (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
+    		view = new SupportVeeTROView((Tank) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
     		view = new VehicleTROView((Tank) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
@@ -140,6 +143,7 @@ public class TROView {
 		model.put("techBase", formatTechBase(entity));
 		model.put("tonnage", NumberFormat.getInstance().format(entity.getWeight()));
 		model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
+		model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
 		
         StringJoiner quirksList = new StringJoiner(", ");
         Quirks quirks = entity.getQuirks();
@@ -162,7 +166,6 @@ public class TROView {
 
 	protected void addEntityFluff(Entity entity) {
 		model.put("year", String.valueOf(entity.getYear()));
-		model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
 		model.put("techRating", entity.getFullRatingName());
 		if (entity.getFluff().getOverview().length() > 0) {
 			model.put("fluffOverview", entity.getFluff().getOverview());
@@ -180,8 +183,8 @@ public class TROView {
 	
 	protected void addMechVeeAeroFluff(Entity entity) {
 		addEntityFluff(entity);
-		model.put("massDesc", (int) entity.getWeight()
-				+ Messages.getString("TROView.tons"));
+		model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
+				+ Messages.getString(entity.getWeight() == 1.0? "TROView.ton" : "TROView.tons"));
 		// Prefix engine manufacturer
 		model.put("engineDesc", stripNotes(entity.getEngine().getEngineName()));
 		model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
@@ -220,6 +223,11 @@ public class TROView {
 	}
 	
 	protected String formatArmorType(Entity entity, boolean trim) {
+		if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
+				|| entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL)
+				|| entity.hasETypeFlag(Entity.ETYPE_FIXED_WING_SUPPORT)) {
+			return "BAR " + entity.getBARRating(Tank.LOC_FRONT);
+		}
 		if (entity.hasPatchworkArmor()) {
 			return EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK);
 		}
@@ -273,7 +281,7 @@ public class TROView {
 				for (int i = 1; i < locs.length; i++) {
 					if ((locs[i] < entity.locations())
 							&& ((provider.apply(entity,  locs[i]) != provider.apply(entity, locs[0]))
-									|| entity.hasETypeFlag(Entity.ETYPE_AERO))) {
+									|| !entity.hasETypeFlag(Entity.ETYPE_MECH))) {
 						val = Arrays.stream(locs)
 								.mapToObj(l -> String.valueOf(provider.apply(entity, l)))
 								.collect(Collectors.joining("/"));
@@ -479,6 +487,31 @@ public class TROView {
 		}
 		model.put("fixedEquipment", fixedList);
 		model.put("fixedTonnage", fixedTonnage);
+	}
+	
+	protected void addTransportBays(Entity entity) {
+		List<Map<String, Object>> bays = new ArrayList<>();
+		for (Bay bay : entity.getTransportBays()) {
+			if (bay.isQuarters()) {
+				continue;
+			}
+			BayData bayData = BayData.getBayType(bay);
+			if (null != bayData) {
+				Map<String, Object> bayRow = new HashMap<>();
+				bayRow.put("name", bayData.getDisplayName());
+				if (bayData.isCargoBay()) {
+					bayRow.put("size", bay.getCapacity() + Messages.getString("TROView.tons"));
+				} else {
+					bayRow.put("size", (int) bay.getCapacity());
+				}
+				bayRow.put("doors", bay.getDoors());
+				bays.add(bayRow);
+			} else {
+				DefaultMmLogger.getInstance().warning(getClass(), "addBays()",
+						"Could not determine bay type for " + bay.toString());
+			}
+		}
+		setModelData("bays", bays);
 	}
 	
 	/**

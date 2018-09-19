@@ -157,6 +157,9 @@ public class VehicleTROView extends TROView {
 	
 	@Override
 	protected String formatLocationTableEntry(Entity entity, Mounted mounted) {
+		if (mounted.isSponsonTurretMounted()) {
+			return Messages.getString("TROView.Sponson");
+		}
 		return entity.getLocationName(mounted.getLocation());
 	}
 }

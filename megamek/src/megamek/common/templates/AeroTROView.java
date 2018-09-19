@@ -21,15 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import megamek.common.Aero;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.Messages;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.Entity;
 import megamek.common.logging.DefaultMmLogger;
-import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 
@@ -218,31 +216,6 @@ public class AeroTROView extends TROView {
 	 */
 	protected String getArcAbbr(Mounted m) {
 		return aero.getLocationAbbr(m.getLocation());
-	}
-	
-	protected void addTransportBays() {
-		List<Map<String, Object>> bays = new ArrayList<>();
-		for (Bay bay : aero.getTransportBays()) {
-			if (bay.isQuarters()) {
-				continue;
-			}
-			BayData bayData = BayData.getBayType(bay);
-			if (null != bayData) {
-				Map<String, Object> bayRow = new HashMap<>();
-				bayRow.put("name", bayData.getDisplayName());
-				if (bayData.isCargoBay()) {
-					bayRow.put("size", bay.getCapacity() + Messages.getString("TROView.tons"));
-				} else {
-					bayRow.put("size", (int) bay.getCapacity());
-				}
-				bayRow.put("doors", bay.getDoors());
-				bays.add(bayRow);
-			} else {
-				DefaultMmLogger.getInstance().warning(getClass(), "addBays()",
-						"Could not determine bay type for " + bay.toString());
-			}
-		}
-		setModelData("bays", bays);
 	}
 	
 	/**

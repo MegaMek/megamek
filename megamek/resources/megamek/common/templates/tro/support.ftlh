@@ -11,33 +11,30 @@
   
 	<p>
 	<b>Type:</b> ${chassis}<br/>
+	<b>Chassis Type:</b> ${moveType} (${weightClass})<br/>
 	<b>Technology Base:</b> ${techBase}<br/> 
-	<b>Tonnage:</b> ${tonnage}<br/>
+	<b>Mass:</b> ${mass} ${weightStandard}<br/>
 	<b>Battle Value:</b> ${battleValue}<br/>
 	</p>
 	
 	<table>
-	<tr><th>Equipment</th><th/><th>Mass</th></tr>
-	<tr><td>Internal Structure</td><td></td><td align="center">${isMass}</td></tr>
-	<tr><td>Engine</td><td align="center">${engineName}</td><td align="center">${engineMass}</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cruising MP:</td><td align="center">${walkMP}</td><td></td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Flanking MP:</td><td align="center">${runMP}</td><td></td></tr>
-<#if jumpMP??>
-	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jumping MP:</td><td align="center">${jumpMP}</td><td></td></tr>
-</#if>	
+	<tr><th>Equipment</th><th/><th>Mass (${weightStandard})</th></tr>
+	<tr><td>Chassis/Controls</td><td></td><td align="center">${chassisControlMass}</td></tr>
+	<tr><td>Engine/Trans.</td><td align="center">${engineName}</td><td align="center">${engineMass}</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cruise MP:</td><td align="center">${walkMP}</td><td></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Flank MP:</td><td align="center">${runMP}</td><td></td></tr>
 	<tr><td>Heat Sinks:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
-	<tr><td>Control Equipment:</td><td></td><td align="center">${controlMass}</td</tr>
-<#if liftMass gt 0>
-	<tr><td>Lift Equipment:</td><td></td><td align="center">${liftMass}</td</tr>
-</#if>
+	<tr><td>Fuel:</td><td align="center">${fuelRange}</td><td align="center">${fuelMass}</td></tr>
+<#if amplifierMass gt 0>
 	<tr><td>Power Amplifier:</td><td></td><td align="center">${amplifierMass}</td</tr>
+</#if>
 <#if hasTurret2>
 	<tr><td>Rear Turret:</td><td></td><td align="center">${turretMass}</td</tr>
 	<tr><td>Front Turret:</td><td></td><td align="center">${turretMass2}</td</tr>
 <#elseif hasTurret>
 	<tr><td>Turret:</td><td></td><td align="center">${turretMass}</td</tr>
 </#if>
-	<tr><td>Armor Factor${armorType}:</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
+	<tr><td>Armor Factor (${barRating}):</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>
 	</table>
 
 	<table width="80%">
@@ -48,7 +45,7 @@
 			<td align="center">${armorValues.FR}</td>
 			<#if patchworkByLoc??><td>${patchworkByLoc.FR}</td></#if>
 		</tr>
-<#if isSuperheavy && !isVTOL>
+<#if armorValues.FRRS??>
 		<tr>
 			<td>Front R/L Side</td>
 			<td align="center">${structureValues.FRRS}</td>
@@ -110,7 +107,7 @@
 	<b>Fixed Equipment</b><br/>
 		<#if fixedTonnage gt 0>
 			<table>
-			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Tonnage</i></td></tr>
+			<tr><td><i>Location</i></td><td align="center"><i>Fixed</i></td><td align="center"><i>Mass (${weightStandard})</i></td></tr>
 			<#list fixedEquipment as row>
 				<#if row.equipment != "None">
 			<tr><td>${row.location}</td><td align="center">${row.equipment}</td><td align="center">${row.tonnage}</td></tr>
@@ -123,11 +120,39 @@
 	</#if>
 	
 	<table>
-		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Tonnage</th></tr>
-		<#list equipment as eq>
+		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Critical</th><th>Mass (${weightStandard})</th></tr>
+		<#list weaponList as eq>
 			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.slots}</td><td align="center">${eq.tonnage}</td></tr>
+		<#else>
+			<tr><td>None</td></tr>
 		</#list>
 	</table>
+
+	<p>
+	<b>Cargo</b><br/>
+<#list bays>
+	<table>
+	<#items as bay>
+		<tr><td>Bay ${bay?counter}:</td><td>${bay.name} (${bay.size})</td><td>${bay.doors} <#if bay.doors == 1>Door<#else>Doors</#if></td></tr>
+	</#items>
+	</table>
+<#else>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br/>
+</#list>
+	</p>
+
+	<p>
+	<b>Notes: </b>
+	<#if chassisMods?size + miscEquipment?size gt 0>Features
+		<#if chassisMods?size gt 0>
+		${chassisMods?join(", ")} Chassis and Controls Modification<#if chassisMods?size gt 1>s</#if><#if miscEquipment?size gt 0>, </#if>
+		</#if>	
+		<#if miscEquipment?size gt 0>
+		${miscEquipment?join(", ")}<br/>
+		</#if>
+	<#else>
+	None
+	</#if><br/>
 	
 	<#if quirks??>
 		<p>

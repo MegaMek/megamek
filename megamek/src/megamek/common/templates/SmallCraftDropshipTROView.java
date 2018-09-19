@@ -82,7 +82,7 @@ public class SmallCraftDropshipTROView extends AeroTROView {
 		setModelData("escapePods", aero.getEscapePods());
 		setModelData("lifeBoats", aero.getLifeBoats());
 		
-		addTransportBays();
+		addTransportBays(aero);
 		addAmmo();
 		addCrew();
 	}

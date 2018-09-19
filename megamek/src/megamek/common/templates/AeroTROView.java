@@ -169,10 +169,10 @@ public class AeroTROView extends TROView {
 		int erv = 0;
 		int multiplier = ((WeaponType) bay.getType()).isCapital()? 10 : 1;
 		EquipmentType linker = null;
-		Map<Integer, Integer> shotsByAmmoType = bay.getBayAmmo().stream()
-				.map(eqNum -> aero.getEquipment(eqNum))
-				.collect(Collectors.groupingBy(m -> ((AmmoType) m.getType()).getAmmoType(),
-						Collectors.summingInt(Mounted::getBaseShotsLeft))); 
+		Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream()
+				.map(num -> aero.getEquipment(num))
+				.collect(Collectors.groupingBy(m -> (AmmoType) m.getType(),
+						Collectors.summingInt(Mounted::getBaseShotsLeft)));
 		for (Integer eqNum : bay.getBayWeapons()) {
 			final Mounted wMount = aero.getEquipment(eqNum);
 			if (null == wMount) {
@@ -196,16 +196,15 @@ public class AeroTROView extends TROView {
 		List<String> weapons = new ArrayList<>();
 		for (Map.Entry<WeaponType, Integer> entry : weaponCount.entrySet()) {
 			final WeaponType wtype = entry.getKey();
-			StringBuilder sb = new StringBuilder(entry.getValue())
-					.append(" ").append(wtype.getName());
+			StringBuilder sb = new StringBuilder();
+			sb.append(entry.getValue()).append(" ").append(wtype.getName());
 			if (null != linker) {
 				sb.append("+").append(linker.getName().replace(" FCS", ""));
 			}
-			if (shotsByAmmoType.containsKey(wtype.getAmmoType())) {
-				sb.append(" (").append(shotsByAmmoType.get(wtype.getAmmoType())).append(")");
-			}
 			weapons.add(sb.toString());
 		}
+		shotsByAmmoType.forEach((at, count) -> weapons.add(String.format("%s (%d %s)",
+				at.getName(), at.getShots() * count, Messages.getString("TROView.shots"))));
 		retVal.put("weapons", weapons);
 		retVal.put("heat", heat);
 		retVal.put("srv", Math.round(srv / 10.0) + "(" + srv + ")");

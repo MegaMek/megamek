@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.Messages;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.logging.DefaultMmLogger;
@@ -166,6 +168,7 @@ public class AeroTROView extends TROView {
 		int lrv = 0;
 		int erv = 0;
 		int multiplier = ((WeaponType) bay.getType()).isCapital()? 10 : 1;
+		EquipmentType linker = null;
 		Map<Integer, Integer> shotsByAmmoType = bay.getBayAmmo().stream()
 				.map(eqNum -> aero.getEquipment(eqNum))
 				.collect(Collectors.groupingBy(m -> ((AmmoType) m.getType()).getAmmoType(),
@@ -178,6 +181,10 @@ public class AeroTROView extends TROView {
 				continue;
 			}
 			final WeaponType wtype = (WeaponType) wMount.getType();
+			if ((wMount.getLinkedBy() != null)
+					&& (wMount.getLinkedBy().getType() instanceof MiscType)) {
+				linker = wMount.getLinkedBy().getType();
+			}
 			weaponCount.merge(wtype, 1, Integer::sum);
 			heat += wtype.getHeat();
 			srv += wtype.getShortAV() * multiplier;
@@ -189,13 +196,15 @@ public class AeroTROView extends TROView {
 		List<String> weapons = new ArrayList<>();
 		for (Map.Entry<WeaponType, Integer> entry : weaponCount.entrySet()) {
 			final WeaponType wtype = entry.getKey();
-			if (shotsByAmmoType.containsKey(wtype.getAmmoType())) {
-				weapons.add(String.format("%d %s (%d shots)",
-						entry.getValue(), wtype.getName(),
-						shotsByAmmoType.get(wtype.getAmmoType())));
-			} else {
-				weapons.add(String.format("%d %s", entry.getValue(), wtype.getName()));
+			StringBuilder sb = new StringBuilder(entry.getValue())
+					.append(" ").append(wtype.getName());
+			if (null != linker) {
+				sb.append("+").append(linker.getName().replace(" FCS", ""));
 			}
+			if (shotsByAmmoType.containsKey(wtype.getAmmoType())) {
+				sb.append(" (").append(shotsByAmmoType.get(wtype.getAmmoType())).append(")");
+			}
+			weapons.add(sb.toString());
 		}
 		retVal.put("weapons", weapons);
 		retVal.put("heat", heat);

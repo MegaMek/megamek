@@ -286,6 +286,10 @@ public class BLKFile {
                     dataFile.getDataAsString("imagepath")[0]);
         }
 
+        if (dataFile.exists("notes")) {
+            e.getFluff().setNotes(dataFile.getDataAsString("notes")[0]);
+        }
+        
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -745,6 +749,10 @@ public class BLKFile {
 
         if (t.getFluff().getMMLImagePath().trim().length() > 0) {
             blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
+        }
+
+        if (t.getFluff().getNotes().trim().length() > 0) {
+            blk.writeBlockData("notes", t.getFluff().getNotes());
         }
 
         if (t.getSource().trim().length() > 0) {

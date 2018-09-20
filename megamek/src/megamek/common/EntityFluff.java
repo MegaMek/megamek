@@ -57,6 +57,7 @@ public class EntityFluff implements Serializable {
     private Map<System, String> systemModels = new EnumMap<>(System.class);
     
     private String mmlImageFilePath = "";
+    private String notes = "";
 
     public EntityFluff() {
         // Constructor
@@ -193,6 +194,18 @@ public class EntityFluff implements Serializable {
     		mmlImageFilePath = "";
     	}
     }
+
+	public String getNotes() {
+		return notes;
+	}
+	
+	public void setNotes(String notes) {
+    	if (null != notes) {
+    		this.notes = notes;
+    	} else {
+    		this.notes = "";
+    	}
+	}
 	
     /**
      * Used for writing the system manufacturers to a unit file

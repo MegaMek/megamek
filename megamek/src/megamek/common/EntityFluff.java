@@ -15,7 +15,9 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 
@@ -31,8 +33,17 @@ public class EntityFluff implements Serializable {
      */
     private static final long serialVersionUID = -8018098140016149185L;
     
-    public enum Component {
-    	CHASSIS, ENGINE, ARMOR, JUMPJET, COMMUNICATIONS, TARGETING
+    public enum System {
+    	CHASSIS, ENGINE, ARMOR, JUMPJET, COMMUNICATIONS, TARGETING;
+
+		public static @Nullable System parse(String string) {
+			for (System c : values()) {
+				if (c.toString().equals(string)) {
+					return c;
+				}
+			}
+			return null;
+		}
     }
     
     private String capabilities = "";
@@ -42,8 +53,8 @@ public class EntityFluff implements Serializable {
 
     private String manufacturer = "";
     private String primaryFactory = "";
-    private Map<Component, String> componentManufacturers = new EnumMap<>(Component.class);
-    private Map<Component, String> componentModels = new EnumMap<>(Component.class);
+    private Map<System, String> systemManufacturers = new EnumMap<>(System.class);
+    private Map<System, String> systemModels = new EnumMap<>(System.class);
     
     private String mmlImageFilePath = "";
 
@@ -126,48 +137,48 @@ public class EntityFluff implements Serializable {
     /**
      * Retrieves the manufacturer of particular system component
      * 
-     * @param comp The system component
-     * @return     The name of the manufacturer, or an empty string if it has not been set.
+     * @param system The system component
+     * @return       The name of the manufacturer, or an empty string if it has not been set.
      */
-    public String getComponentManufacturer(Component comp) {
-    	return componentManufacturers.getOrDefault(comp, "");
+    public String getSystemManufacturer(System system) {
+    	return systemManufacturers.getOrDefault(system, "");
     }
     
     /**
      * Sets the name of the manufacturer of a particular system component.
      * 
-     * @param comp The system component
+     * @param system The system component
      * @param manu The name of the manufacturer, or {@code null} or an empty string to remove the entry.
      */
-    public void setComponentManufacturer(Component comp, @Nullable String manu) {
+    public void setSystemManufacturer(System system, @Nullable String manu) {
     	if ((null != manu) && (manu.length() > 0)) {
-    		componentManufacturers.put(comp, manu);
+    		systemManufacturers.put(system, manu);
     	} else {
-    		componentManufacturers.remove(comp);
+    		systemManufacturers.remove(system);
     	}
     }
     
     /**
      * Retrieves the manufacturer of particular system component
      * 
-     * @param comp The system component
-     * @return     The name of the manufacturer, or an empty string if it has not been set.
+     * @param system The system component
+     * @return       The name of the manufacturer, or an empty string if it has not been set.
      */
-    public String getComponentModel(Component comp) {
-    	return componentModels.getOrDefault(comp, "");
+    public String getSystemModel(System system) {
+    	return systemModels.getOrDefault(system, "");
     }
     
     /**
      * Sets the model name of a particular system component.
      * 
-     * @param comp  The system component
-     * @param model The model name, or {@code null} or an empty string to remove the entry.
+     * @param system  The system component
+     * @param model   The model name, or {@code null} or an empty string to remove the entry.
      */
-    public void setComponentModel(Component comp, @Nullable String model) {
+    public void setSystemModel(System system, @Nullable String model) {
     	if ((null != model) && (model.length() > 0)) {
-    		componentModels.put(comp, model);
+    		systemModels.put(system, model);
     	} else {
-    		componentModels.remove(comp);
+    		systemModels.remove(system);
     	}
     }
 
@@ -182,7 +193,29 @@ public class EntityFluff implements Serializable {
     		mmlImageFilePath = "";
     	}
     }
+	
+    /**
+     * Used for writing the system manufacturers to a unit file
+     * 
+     * @return A list of all system manufacturers formatted as "system:manufacturer"
+     */
+    public List<String> createSystemManufacturersList() {
+    	return systemManufacturers.entrySet().stream()
+    			.filter(e -> e.getValue().length() > 0)
+    			.map(e -> e.getKey().toString() + ":" + e.getValue())
+    			.collect(Collectors.toList());
+    }
 
-
+    /**
+     * Used for writing the system models to a unit file
+     * 
+     * @return A list of all system models formatted as "system:model"
+     */
+    public List<String> createSystemModelsList() {
+    	return systemManufacturers.entrySet().stream()
+    			.filter(e -> e.getValue().length() > 0)
+    			.map(e -> e.getKey().toString() + ":" + e.getValue())
+    			.collect(Collectors.toList());
+    }
 }
 

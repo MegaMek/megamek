@@ -17,6 +17,7 @@ package megamek.common.loaders;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ import megamek.common.Dropship;
 import megamek.common.DropshuttleBay;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityFluff;
 import megamek.common.EquipmentType;
 import megamek.common.FirstClassQuartersCargoBay;
 import megamek.common.FixedWingSupport;
@@ -248,6 +250,34 @@ public class BLKFile {
 
         if (dataFile.exists("history")) {
             e.getFluff().setHistory(dataFile.getDataAsString("history")[0]);
+        }
+        
+        if (dataFile.exists("manufacturer")) {
+        	e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
+        }
+
+        if (dataFile.exists("primaryFactory")) {
+        	e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
+        }
+        
+        if (dataFile.exists("systemManufacturers")) {
+        	for (String line : dataFile.getDataAsString("systemManufacturers")) {
+        		String[] fields = line.split(":");
+        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+        		if ((null != comp) && (fields.length > 1)) {
+        			e.getFluff().setSystemManufacturer(comp, fields[1]);
+        		}
+        	}
+        }
+
+        if (dataFile.exists("systemModels")) {
+        	for (String line : dataFile.getDataAsString("systemModels")) {
+        		String[] fields = line.split(":");
+        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+        		if ((null != comp) && (fields.length > 1)) {
+        			e.getFluff().setSystemModel(comp, fields[1]);
+        		}
+        	}
         }
 
 
@@ -691,8 +721,26 @@ public class BLKFile {
             blk.writeBlockData("deployment", t.getFluff().getDeployment());
         }
 
-        if (t.getFluff().getDeployment().trim().length() > 0) {
+        if (t.getFluff().getHistory().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());
+        }
+
+        if (t.getFluff().getManufacturer().trim().length() > 0) {
+            blk.writeBlockData("manufacturer", t.getFluff().getManufacturer());
+        }
+
+        if (t.getFluff().getPrimaryFactory().trim().length() > 0) {
+            blk.writeBlockData("primaryFactory", t.getFluff().getPrimaryFactory());
+        }
+        
+        List<String> list = t.getFluff().createSystemManufacturersList();
+        if (!list.isEmpty()) {
+        	blk.writeBlockData("systemManufacturers", list);
+        }
+
+        list = t.getFluff().createSystemModelsList();
+        if (!list.isEmpty()) {
+        	blk.writeBlockData("systemModels", list);
         }
 
         if (t.getFluff().getMMLImagePath().trim().length() > 0) {
@@ -876,7 +924,7 @@ public class BLKFile {
             	// TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
-                    Double fsize = new Double(transporter.substring(11));
+                    double fsize = Double.valueOf(transporter.substring(11));
                     e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);

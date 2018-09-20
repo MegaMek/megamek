@@ -37,9 +37,11 @@ public class EntityFluff implements Serializable {
     	CHASSIS, ENGINE, ARMOR, JUMPJET, COMMUNICATIONS, TARGETING;
 
 		public static @Nullable System parse(String string) {
-			for (System c : values()) {
-				if (c.toString().equals(string)) {
-					return c;
+			if (null != string) {
+				for (System c : values()) {
+					if (c.toString().equals(string.toUpperCase())) {
+						return c;
+					}
 				}
 			}
 			return null;

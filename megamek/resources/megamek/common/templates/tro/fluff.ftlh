@@ -16,7 +16,7 @@
   		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${armament}<br/>
 	</#list>
 <#if manufacturerDesc??><b>Manufacturer:</b> ${manufacturerDesc}<br/></#if>
-<#if factoryDesc??><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b>${factoryDesc}</b></#if>
+<#if factoryDesc??><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Primary Factory: </b>${factoryDesc}<br/></#if>
 <#if communicationDesc??><b>Communication System: </b>${communicationDesc}<br/></#if>
 <#if targetingDesc??><b>Targeting & Tracking System: </b>${targetingDesc}<br/></#if>
 <b>Introduction Year:</b> ${year}<br/>

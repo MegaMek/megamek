@@ -179,14 +179,45 @@ public class TROView {
 		if (entity.getFluff().getHistory().length() > 0) {
 			model.put("fluffHistory", entity.getFluff().getHistory());
 		}
+		if (entity.getFluff().getManufacturer().length() > 0) {
+			model.put("manufacturerDesc", entity.getFluff().getManufacturer());
+		}
+		if (entity.getFluff().getPrimaryFactory().length() > 0) {
+			model.put("factoryDesc", entity.getFluff().getPrimaryFactory());
+		}
+	}
+	
+	/**
+	 * Builds the fluff name for a system component.
+	 * 
+	 * @param system  The system component
+	 * @param fluff   The {@link Entity}'s fluff object
+	 * @param altText Alternate text that will be used if neither fluff field is set.
+	 * @return        The fluff display name, which consists of the manufacturer and the model separated
+	 *                by a space. If either is missing it is left out.
+	 */
+	protected String formatSystemFluff(EntityFluff.System system,
+			EntityFluff fluff, String altText) {
+		StringJoiner sj = new StringJoiner(" ");
+		if (fluff.getSystemManufacturer(system).length() > 0) {
+			sj.add(fluff.getSystemManufacturer(system));
+		}
+		if (fluff.getSystemModel(system).length() > 0) {
+			sj.add(fluff.getSystemModel(system));
+		}
+		if (sj.toString().length() > 0) {
+			return sj.toString();
+		} else {
+			return altText;
+		}
 	}
 	
 	protected void addMechVeeAeroFluff(Entity entity) {
 		addEntityFluff(entity);
 		model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
 				+ Messages.getString(entity.getWeight() == 1.0? "TROView.ton" : "TROView.tons"));
-		// Prefix engine manufacturer
-		model.put("engineDesc", stripNotes(entity.getEngine().getEngineName()));
+		model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE,
+				entity.getFluff(), stripNotes(entity.getEngine().getEngineName())));
 		model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
 		model.put("maxSpeed", entity.getRunMP() * 10.8);
 		model.put("armorDesc", formatArmorType(entity, false));
@@ -207,6 +238,10 @@ public class TROView {
 			armaments.add(String.format(Messages.getString("TROView.podspace.format"), podSpace));
 		}
 		model.put("armamentList", armaments);
+		model.put("communicationDesc", formatSystemFluff(EntityFluff.System.COMMUNICATIONS,
+				entity.getFluff(), Messages.getString("TROView.Unknown")));
+		model.put("targetingDesc", formatSystemFluff(EntityFluff.System.TARGETING,
+				entity.getFluff(), Messages.getString("TROView.Unknown")));
 	}
 	
 	private String formatTechBase(Entity entity) {

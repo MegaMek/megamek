@@ -19,6 +19,7 @@ import java.util.StringJoiner;
 import megamek.common.Messages;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityFluff;
 import megamek.common.EquipmentType;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
@@ -157,8 +158,10 @@ public class MechTROView extends TROView {
 		} else {
 			chassisDesc += Messages.getString("TROView.chassisBiped");
 		}
-		setModelData("chassisDesc", chassisDesc);
-		setModelData("jjDesc", formatJJDesc());
+        setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS,
+                mech.getFluff(), chassisDesc));
+        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET,
+                mech.getFluff(), formatJJDesc()));
 		setModelData("jumpCapacity", mech.getJumpMP() * 30);
 	}
 	

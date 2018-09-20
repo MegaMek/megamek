@@ -19,6 +19,7 @@ import java.util.Map;
 
 import megamek.common.Messages;
 import megamek.common.Entity;
+import megamek.common.EntityFluff;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
@@ -113,7 +114,8 @@ public class VehicleTROView extends TROView {
 	private void addFluff() {
 		addMechVeeAeroFluff(tank);
 		if (tank.getJumpMP() > 0) {
-			setModelData("jjDesc", Messages.getString("TROView.jjVehicle"));
+	        setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET,
+	                tank.getFluff(), Messages.getString("TROView.jjVehicle")));
 			setModelData("jumpCapacity", tank.getJumpMP() * 30);
 		}
 	}

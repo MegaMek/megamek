@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
+import megamek.common.EntityFluff;
 import megamek.common.EquipmentType;
 import megamek.common.Messages;
 import megamek.common.MiscType;
@@ -101,7 +102,8 @@ public class AeroTROView extends TROView {
 	
 	private void addFluff() {
 		addMechVeeAeroFluff(aero);
-		// Add fluff frame description
+		setModelData("frameDesc", formatSystemFluff(EntityFluff.System.CHASSIS,
+				aero.getFluff(), Messages.getString("TROView.Unknown")));
 	}
 
 	private static final int[][] AERO_ARMOR_LOCS = {

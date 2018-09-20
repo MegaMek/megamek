@@ -170,7 +170,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_MOUNTAINEER= "tm_mountaineer"; //$NON-NLS$
     public static final String PILOT_TM_SWAMP_BEAST= "tm_swamp_beast"; //$NON-NLS$
     // public static final String PILOT_WIND_WALKER= "wind_walker"; //$NON-NLS$
-    // public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
+    public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
 
     // GUNNERY SKILLS
     // public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";

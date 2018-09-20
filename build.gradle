@@ -27,12 +27,12 @@ ext {
     mmBranchTag = mmBranch.equals('master')? '' : '-' + mmBranch
 }
 
-// A settings_local.gradle file can be used to override any of the above options. For instance,
+// A properties_local.gradle file can be used to override any of the above options. For instance,
 // rootProject.ext.gitRoot = 'file:///path/to/local/repo' will cause the release target to clone a
 // local copy of the repository rather than downloading it.
 
-def localSettings = file('settings_local.gradle')
-if (localSettings.exists()) {
-    apply from: localSettings
+def localProperties = file('properties_local.gradle')
+if (localProperties.exists()) {
+    apply from: localProperties
 }
 

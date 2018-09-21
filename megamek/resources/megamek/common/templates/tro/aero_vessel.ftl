@@ -15,8 +15,15 @@ Cost: ${cost} C-bills
 
 <#if dimensions??>
 Dimensions
+<#if dimensions.length??>
     Length: ${dimensions.length}
+</#if>
+<#if dimensions.width??>
     Width: ${dimensions.width}
+</#if>
+<#if dimensions.height??>
+    Height: ${dimensions.height}
+</#if>
 
 </#if>	
 Fuel: ${fuelMass} tons (${fuelPoints})

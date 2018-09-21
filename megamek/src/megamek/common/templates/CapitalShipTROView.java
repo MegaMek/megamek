@@ -4,6 +4,7 @@
 package megamek.common.templates;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -94,7 +95,22 @@ public class CapitalShipTROView extends AeroTROView {
 	
 	private void addFluff() {
 		addEntityFluff(aero);
-		//Use, dimensions
+		Map<String, String> dimensions = new HashMap<>();
+		if (aero.getFluff().getLength().length() > 0) {
+			dimensions.put("length", aero.getFluff().getLength());
+		}
+		if (aero.getFluff().getWidth().length() > 0) {
+			dimensions.put("width", aero.getFluff().getWidth());
+		}
+		if (aero.getFluff().getHeight().length() > 0) {
+			dimensions.put("height", aero.getFluff().getHeight());
+		}
+		if (!dimensions.isEmpty()) {
+			setModelData("dimensions", dimensions);
+		}
+		if (aero.getFluff().getUse().length() > 0) {
+			setModelData("use", aero.getFluff().getUse());
+		}
 	}
 	
 	private static final String[][] ARCS = {

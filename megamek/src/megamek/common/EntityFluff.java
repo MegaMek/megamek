@@ -60,6 +60,12 @@ public class EntityFluff implements Serializable {
     
     private String mmlImageFilePath = "";
     private String notes = "";
+    
+    // For aerospace vessels
+    private String use = "";
+    private String length = "";
+    private String width = "";
+    private String height = "";
 
     public EntityFluff() {
         // Constructor
@@ -206,6 +212,54 @@ public class EntityFluff implements Serializable {
     		this.notes = notes;
     	} else {
     		this.notes = "";
+    	}
+	}
+	
+	public String getUse() {
+		return use;
+	}
+	
+	public void setUse(String use) {
+    	if (null != use) {
+    		this.use = use;
+    	} else {
+    		this.use = "";
+    	}
+	}
+	
+	public String getLength() {
+		return length;
+	}
+	
+	public void setLength(String length) {
+    	if (null != length) {
+    		this.length = length;
+    	} else {
+    		this.length = "";
+    	}
+	}
+	
+	public String getWidth() {
+		return width;
+	}
+	
+	public void setWidth(String width) {
+    	if (null != width) {
+    		this.width = width;
+    	} else {
+    		this.width = "";
+    	}
+	}
+	
+	public String getHeight() {
+		return height;
+	}
+	
+	public void setHeight(String height) {
+    	if (null != height) {
+    		this.height = height;
+    	} else {
+    		this.height = "";
     	}
 	}
 	

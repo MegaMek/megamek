@@ -23,8 +23,9 @@
 <#if dimensions??>
 	<p>
 	<b>Dimensions</b><br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Length:</b> ${dimensions.length}<br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Width:</b> ${dimensions.width}<br/>
+	<#if dimensions.length??>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Length:</b> ${dimensions.length}<br/></#if>
+	<#if dimensions.width??>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Width:</b> ${dimensions.width}<br/></#if>
+	<#if dimensions.height??>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Height:</b> ${dimensions.height}<br/></#if>
 	</p>
 </#if>	
 	<p>

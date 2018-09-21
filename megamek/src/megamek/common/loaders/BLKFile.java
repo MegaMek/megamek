@@ -290,6 +290,22 @@ public class BLKFile {
             e.getFluff().setNotes(dataFile.getDataAsString("notes")[0]);
         }
         
+        if (dataFile.exists("use")) {
+            e.getFluff().setUse(dataFile.getDataAsString("use")[0]);
+        }
+        
+        if (dataFile.exists("length")) {
+            e.getFluff().setLength(dataFile.getDataAsString("length")[0]);
+        }
+        
+        if (dataFile.exists("width")) {
+            e.getFluff().setWidth(dataFile.getDataAsString("width")[0]);
+        }
+        
+        if (dataFile.exists("height")) {
+            e.getFluff().setHeight(dataFile.getDataAsString("height")[0]);
+        }
+        
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -753,6 +769,22 @@ public class BLKFile {
 
         if (t.getFluff().getNotes().trim().length() > 0) {
             blk.writeBlockData("notes", t.getFluff().getNotes());
+        }
+
+        if (t.getFluff().getUse().trim().length() > 0) {
+            blk.writeBlockData("use", t.getFluff().getUse());
+        }
+
+        if (t.getFluff().getLength().trim().length() > 0) {
+            blk.writeBlockData("length", t.getFluff().getLength());
+        }
+
+        if (t.getFluff().getWidth().trim().length() > 0) {
+            blk.writeBlockData("width", t.getFluff().getWidth());
+        }
+
+        if (t.getFluff().getHeight().trim().length() > 0) {
+            blk.writeBlockData("height", t.getFluff().getHeight());
         }
 
         if (t.getSource().trim().length() > 0) {

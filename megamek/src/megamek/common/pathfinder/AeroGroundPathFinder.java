@@ -63,6 +63,11 @@ public class AeroGroundPathFinder {
         try {
             aeroGroundPaths = new ArrayList<MovePath>();
             
+            // if we're out of control, then we can't actually do anything
+            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
+                return;
+            }
+            
             // recalculate max thrust for the given path's entity
             maxThrust = calculateMaxSafeThrust((IAero) startingEdge.getEntity());                
             Collection<MovePath> validAccelerations = generateValidAccelerations(startingEdge);
@@ -83,7 +88,7 @@ public class AeroGroundPathFinder {
             
             getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
         } catch(Exception e) {
-            getLogger().log(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
         }
     }
     

@@ -20,9 +20,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import megamek.client.ui.SharedUtility;
 import megamek.common.BombType;
@@ -31,7 +29,6 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
@@ -41,16 +38,28 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
-public abstract class PathRanker {
+public abstract class PathRanker implements IPathRanker {
 
+    //TODO: Introduce PathRankerCacheHelper class that contains "global" path ranker state
+    //TODO: Introduce FireControlCacheHelpr class that contains "global" Fire Control state
+    //PathRanker classes should be pretty stateless, except pointers to princess and such
+    
+    /**
+     * The possible path ranker types.
+     * If you're adding a new one, add it here then make sure to add it to Princess.InitializePathRankers
+     */
+    public enum PathRankerType {
+        Basic,
+        Infantry,
+        NewtonianAerospace
+    }
+    
     private Princess owner;
 
     public PathRanker(Princess princess) {
         owner = princess;
     }
 
-    private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
-    
     /**
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
@@ -58,7 +67,7 @@ public abstract class PathRanker {
     RankedPath rankPath(MovePath path, IGame game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(), game);
+        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(me), game);
         int maxWeaponRange = me.getMaxWeaponRange();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
@@ -70,7 +79,7 @@ public abstract class PathRanker {
     abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords);
 
-    ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                     double fallTolerance, int startingHomeDistance,
                                     List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
@@ -83,7 +92,7 @@ public abstract class PathRanker {
             }
 
             // the cached path probability data is really only relevant for one iteration through this method
-            pathSuccessProbabilities.clear();
+            getPathRankerState().getPathSuccessProbabilities().clear();
             
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
@@ -133,14 +142,9 @@ public abstract class PathRanker {
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
-        HomeEdge homeEdge = getOwner().getHomeEdge();
+        CardinalEdge homeEdge = getOwner().getHomeEdge(mover);
         boolean fleeing = getOwner().isFallingBack(mover);
-        //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
-        boolean isZeroMoveInfantry = mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
-        if (isZeroMoveInfantry) {
-            startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
-        }
-
+        
         boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
         
         for (MovePath path : startingPathList) {
@@ -148,7 +152,7 @@ public abstract class PathRanker {
             if(path == null) {
                 continue;
             }
-            
+
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
@@ -214,7 +218,13 @@ public abstract class PathRanker {
         return returnPaths;
     }
 
-    RankedPath getBestPath(List<RankedPath> ps) {
+    /**
+     * Returns the best path of a list of ranked paths.
+     * 
+     * @param ps The list of ranked paths to process
+     * @return "Best" out of those paths
+     */
+    public RankedPath getBestPath(List<RankedPath> ps) {
         final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
@@ -240,7 +250,7 @@ public abstract class PathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    Entity findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Entity findClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
@@ -274,12 +284,12 @@ public abstract class PathRanker {
     }
 
     /**
-     * Returns the probability of success of a movepath
+     * Returns the probability of success of a move path
      */
-    public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+    protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         // introduced a caching mechanism, as the success probability was being calculated at least twice
-        if(pathSuccessProbabilities.containsKey(movePath.getKey())) {
-            return pathSuccessProbabilities.get(movePath.getKey());
+        if(getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
+            return getPathRankerState().getPathSuccessProbabilities().get(movePath.getKey());
         }
         
         MovePath pathCopy = movePath.clone();
@@ -296,7 +306,7 @@ public abstract class PathRanker {
                 continue;
             }
             boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions()
-                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
             if (naturalAptPilot) {
                 msg.append("\n\t\tPilot has Natural Aptitude Piloting");
             }
@@ -319,7 +329,7 @@ public abstract class PathRanker {
         }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
-        pathSuccessProbabilities.put(movePath.getKey(), successProbability);
+        getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
         
         return successProbability;
     }
@@ -328,7 +338,7 @@ public abstract class PathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -337,16 +347,16 @@ public abstract class PathRanker {
             int boardHeight = game.getBoard().getHeight();
             int boardWidth = game.getBoard().getWidth();
             StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-            if (HomeEdge.NORTH.equals(homeEdge)) {
+            if (CardinalEdge.NORTH.equals(homeEdge)) {
                 msg.append("North");
                 edgeCoords = new Coords(position.getX(), 0);
-            } else if (HomeEdge.SOUTH.equals(homeEdge)) {
+            } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
                 msg.append("South");
                 edgeCoords = new Coords(position.getX(), boardHeight);
-            } else if (HomeEdge.WEST.equals(homeEdge)) {
+            } else if (CardinalEdge.WEST.equals(homeEdge)) {
                 msg.append("West");
                 edgeCoords = new Coords(0, position.getY());
-            } else if (HomeEdge.EAST.equals(homeEdge)) {
+            } else if (CardinalEdge.EAST.equals(homeEdge)) {
                 msg.append("East");
                 edgeCoords = new Coords(boardWidth, position.getY());
             } else {
@@ -401,6 +411,11 @@ public abstract class PathRanker {
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, IGame game) {
+        // airborne aircraft cannot collapse buildings
+        if(path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+            return false;
+        }
+        
         // If we're jumping onto a building, make sure it can support our weight.
         if (path.isJumping()) {
             final Coords finalCoords = path.getFinalCoords();
@@ -486,5 +501,13 @@ public abstract class PathRanker {
 
     protected Princess getOwner() {
         return owner;
+    }
+    
+    /**
+     * Convenience property to access bot-wide state information.
+     * @return
+     */
+    protected PathRankerState getPathRankerState() {
+        return owner.getPathRankerState();
     }
 }

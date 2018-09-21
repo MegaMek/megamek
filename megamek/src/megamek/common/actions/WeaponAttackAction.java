@@ -98,6 +98,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      *
      */
     private static final long serialVersionUID = -9096603813317359351L;
+    
+    public static final int STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF = 100000;
+    
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Entity.LOC_NONE;
@@ -320,7 +323,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // ASEW Missiles cannot be launched in an atmosphere
         if ((wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
-                && !game.getBoard().inSpace()) {
+                && !ae.isSpaceborne()) {
             return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch ASEW missile in an atmosphere."));
         }
         
@@ -1120,14 +1123,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
                     if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals((Entity) a)
-                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
+                            && ((en.getWeight() - te.getWeight()) >= -STRATOPS_SENSOR_SHADOW_WEIGHT_DIFF)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
@@ -3540,10 +3543,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
+        // Check to see if another solo weapon was fired
+        boolean hasSoloAttack = false;
+        String soloWeaponName = "";
+        for (EntityAction ea : game.getActionsVector()) {
+            if ((ea.getEntityId() == attackerId) && (ea instanceof WeaponAttackAction)) {
+                WeaponAttackAction otherWAA = (WeaponAttackAction) ea;
+                final Mounted otherWeapon = ae.getEquipment(otherWAA.getWeaponId());
+
+                if (!(otherWeapon.getType() instanceof WeaponType)) {
+                    continue;
+                }
+                final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
+                hasSoloAttack |= (otherWtype.hasFlag(WeaponType.F_SOLO_ATTACK) && otherWAA.getWeaponId() != weaponId);
+                if (hasSoloAttack) {
+                    soloWeaponName = otherWeapon.getName();
+                    break;
+                }
+            }
+        }
+        if (hasSoloAttack) {
+            return "Already firing a weapon that can only be fired by itself! (" + soloWeaponName + ")";
+        }
+        
         // Handle solo attack weapons.
         if (wtype.hasFlag(WeaponType.F_SOLO_ATTACK)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
+            for (EntityAction ea : game.getActionsVector()) {
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }
@@ -3830,11 +3855,34 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
+        
+        //If using SO advanced sensors, the firing unit or one on its NC3 network must have a valid firing solution
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && ae.isSpaceborne()) {
+            boolean networkFiringSolution = false;
+            //Check to see if the attacker has a firing solution. Naval C3 networks share targeting data
+            if (ae.hasNavalC3()) {
+                for (Entity en : game.getEntitiesVector()) {
+                    if (en != ae && !en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.hasFiringSolution(game, en, te)) {
+                        networkFiringSolution = true;
+                        break;
+                    }
+                }
+            }
+            if (!networkFiringSolution) {
+                //If we don't check for target type here, we can't fire screens and missiles at hexes...
+                if (!Compute.hasFiringSolution(game, ae, te) && target.getTargetType() == Targetable.TYPE_ENTITY) {
+                    return "no firing solution to target";
+                }
+            }
+        }
 
         // http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
         // anything outside of visual range requires a "sensor lock" in order to
         // direct fire
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
                 && !Compute.inVisualRange(game, ae, target)
                 && !(Compute.inSensorRange(game, ae, target, null) // Can shoot
                                                                    // at
@@ -3851,7 +3899,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                             // unit
                 && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
             boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3() || ae.hasActiveNovaCEWS()) {
+            if (ae.hasC3() || ae.hasC3i() || ae.hasNavalC3()|| ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {
@@ -3873,7 +3921,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)
                 && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
-                && !ae.isMakingVTOLGroundAttack()) {
+                && !ae.isMakingVTOLGroundAttack()
+                && !ae.isOffBoard()) {
             return "Target not in arc.";
         }
 
@@ -4051,9 +4100,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "cannot target aero units beyond altitude 8";
         }
 
+        boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(WeaponType.F_INF_AA)
-                && !isArtilleryFLAK // Can make GroundToAir Flak attacks
-                && !((atype != null) && (atype.getAmmoType() == AmmoType.T_AC_LBX))) {
+                && !isArtilleryFLAK // Can make GroundToAir Flak attacks)
+                && !isWeaponFieldGuns) {
             return "Infantry cannot engage in ground-to-air attacks";
         }
 

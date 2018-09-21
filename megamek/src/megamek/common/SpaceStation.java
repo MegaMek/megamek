@@ -28,6 +28,8 @@ public class SpaceStation extends Jumpship {
      */
     private static final long serialVersionUID = -3160156173650960985L;
     
+    // This only affects cost, but may have an effect in a large-scale strategic setting.
+    private boolean modular = false;
     
     //ASEW Missile Effects, per location
     //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
@@ -59,7 +61,9 @@ public class SpaceStation extends Jumpship {
     
     public SpaceStation() {
         super();
+        setDesignType(Aero.CIVILIAN); // Affects number of facing changes allowed in a turn
         setDriveCoreType(DRIVE_CORE_NONE);
+        setSail(false);
     }
     
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
@@ -67,18 +71,36 @@ public class SpaceStation extends Jumpship {
             .setTechRating(RATING_D)
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    /*
+
     private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setReintroductionFactions(F_RS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-            */
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return TA_SPACE_STATION;
+        return modular? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
+    }
+    
+    public static TechAdvancement getModularTA() {
+        return TA_SPACE_STATION_MODULAR;
+    }
+    
+    /**
+     * Designates whether this is a modular space station
+     * @param modular
+     */
+    public void setModular(boolean modular) {
+        this.modular = modular;
+    }
+    
+    /**
+     * @return True if this space station has a modular construction, otherwise false.
+     */
+    public boolean isModular() {
+        return modular;
     }
 
     @Override
@@ -118,7 +140,7 @@ public class SpaceStation extends Jumpship {
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());
@@ -160,6 +182,9 @@ public class SpaceStation extends Jumpship {
         costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double weightMultiplier = 5.00f;
+        if (modular) {
+            weightMultiplier = 50.00f;
+        }
 
         // Sum Costs
         for (int i = 0; i < costIdx; i++) {

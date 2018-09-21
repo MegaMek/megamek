@@ -25,11 +25,11 @@ Fortress
 </year>
 
 <originalBuildYear>
-0
+2613
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -91,6 +91,8 @@ IS Ammo AC/5:40
 Large Laser
 Medium Laser
 Medium Laser
+(B) ISLongTom
+ISLongTomAmmo:125
 </Nose Equipment>
 
 <Left Side Equipment>

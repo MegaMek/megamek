@@ -39,9 +39,6 @@ super * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;
 super * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
 super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
 
-super * "woods:1" "volcano" "snow/snow_lf.png"
-super * "woods:2" "volcano" "snow/snow_hf.png"
-
 super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
 super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
 super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"

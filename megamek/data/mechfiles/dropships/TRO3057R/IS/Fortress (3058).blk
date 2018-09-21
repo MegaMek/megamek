@@ -29,7 +29,7 @@ Fortress
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -43,7 +43,7 @@ infantrybay:3.0:1:3:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:70.0:0
 crewquarters:252.0:0
-cargobay:353.0:1:4
+cargobay:353.0:1:7
 </transporters>
 
 <SafeThrust>
@@ -91,6 +91,8 @@ IS Gauss Ammo:32
 ISERLargeLaser
 (B) ISMediumPulseLaser
 ISMediumPulseLaser
+(B) ISLongTom
+ISLongTomAmmo:125
 </Nose Equipment>
 
 <Left Side Equipment>

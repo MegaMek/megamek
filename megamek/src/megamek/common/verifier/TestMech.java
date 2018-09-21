@@ -221,7 +221,7 @@ public class TestMech extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
         return false;
     }
 
@@ -396,10 +396,6 @@ public class TestMech extends TestEntity {
             StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
         if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
-            if (!entity.hasWorkingMisc(MiscType.F_ECM)) {
-                buff.append("stealth armor needs ECM suite\n");
-                return false;
-            }
             // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LARM) != 2) {

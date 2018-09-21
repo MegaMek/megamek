@@ -170,7 +170,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_MOUNTAINEER= "tm_mountaineer"; //$NON-NLS$
     public static final String PILOT_TM_SWAMP_BEAST= "tm_swamp_beast"; //$NON-NLS$
     // public static final String PILOT_WIND_WALKER= "wind_walker"; //$NON-NLS$
-    // public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
+    public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
 
     // GUNNERY SKILLS
     // public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";
@@ -223,6 +223,7 @@ public class OptionsConstants {
     public static final String UNOFF_ALLWEATHER = "allweather"; // $NON-NLS$
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter"; // $NON-NLS$
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek"; // $NON-NLS$
+    public static final String UNOFF_SMALL_PILOT = "small_pilot"; // $NON-NLS$
 
     
       //EDGE 
@@ -362,6 +363,7 @@ public class OptionsConstants {
     public static final String ADVANCED_ALTERNATE_PILOT_BV_MOD= "alternate_pilot_bv_mod";  //$NON-NLS$
 
     public static final String ADVCOMBAT_TACOPS_AMS= "tacops_ams";  //$NON-NLS$
+    public static final String ADVCOMBAT_TACOPS_MANUAL_AMS= "tacops_manual_ams";  //$NON-NLS$
     public static final String ADVCOMBAT_FLOATING_CRITS= "floating_crits";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_CRIT_ROLL= "tacops_crit_roll";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS= "tacops_engine_explosions";  //$NON-NLS$
@@ -478,6 +480,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_STRATOPS_SPACE_BOMB= "stratops_space_bomb";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH= "stratops_bearings_only";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH= "stratops_waypoint_launch";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_ADVANCED_SENSORS= "stratops_advanced_sensors";  //$NON-NLS$
     public static final String ADVAERORULES_VARIABLE_DAMAGE_THRESH= "variable_damage_thresh";  //$NON-NLS$
     public static final String ADVAERORULES_AT2_NUKES= "at2_nukes";  //$NON-NLS$
     public static final String ADVAERORULES_AERO_SANITY= "aero_sanity";  //$NON-NLS$

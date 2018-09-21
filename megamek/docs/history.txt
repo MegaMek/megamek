@@ -1,6 +1,71 @@
+
 VERSION HISTORY:
 ----------------
-v0.43.11-RC5-git
+v0.45.2-SNAPSHOT
++ Switched build system from ant to gradle.
++ Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
++ PR #1132: Zweihander
+
+v0.45.1 (2018-09-03 2300 UTC)
++ PR #1096: Security - address XXE vulnerabilities in XML parsers
++ PR #1053: Gradient & Difference Clouds Camos
++ Issue #1081: Narc Explosive ammo type no longer missing the letter "E" in reports
++ Issue #378: [Feature] Implements Tac Ops "Use AMS as Weapon" rule
++ Issue #1051: AMS no longer nags player when a shutdown mech is attacked
++ Data: New Sprites and data fixes.
++ PR #1084: [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") 
+         and retreat edges (for when the bot is trying to "forced withdraw" crippled units)
++ Data: Moving old and out of date Read.me file.
++ PR #1092: Fixes for force generator (some unit rating mismatches, skill calculations, a few faction rule fixes)
++ PR #1100: Changed a long-standing bot behavior where a bot with "immediate withdrawal" 
+		on would ignore "forced withdrawal" rules and keep firing with its crippled units.
++ Data: New Sprites and some unit fixes.
++ PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
++ Issue #612: [Feature] Year setting in various random unit generation mechanisms now gets set to the game year whenever that changes.
++ PR #1068: Advanced Aerospace construction data and unit fixes.
+
+v0.45.0 (2018-08-02 0200 UTC)
++ PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.
++ Issue #1008: When adding units through Add A Combat Unit dialog adds two instead of one when using enter key
++ PR #989: Errata - Range Master SPA no longer applicable to LOS range
++ PR #1001: [Feature] Prototype improvements to infantry pathfinding allowing Princess to make significantly better use of infantry than previously.
++ PR #1013: Defer calculating initial BV when adding multiple entities to game.
+        Fixes bug that disconnects C3 networks when loading from MUL of any unit loaded before the C3 master.
++ Issue #1027: Off-board Infantry Field Artillery "Target Out of Arc"
++ Issue #1028: Infantry TAG has 0 range
++ PR #1025: [Feature] Princess can now fly spacecraft using the advanced flight rules.
++ PR #997: [Feature] Spacecraft can now fire tele-operated missiles.
++ Fixed fusion engine weight calculation for conventional fighter validation.
++ Issue #1048: Field Gunners unable to target Air Units
++ Issue #1046: Narc Ammo Type Missing From Reports
++ Issue #1039: NPE FiringDisplay.clear
++ PR #1054: Adding the small pilot custom trait [Pilot option that ignores effects of cramped cockpit quirk]
++ Issue #1038: BA leg attack doesn't report hit
++ Issue #1023: MM doesn't inform user if previous solo attack was made (like leg attack)
++ Bug: ammo selection in lounge is filtered using variable tech level even when option is not enabled.
++ Issue #1017: Advanced munitions available at standard tech level
++ PR #970: [Feature] Implementation of StartOps Advanced Space Sensors
++ Issue #1060: Allow Princess to properly consider paths that take her aircraft (VTOL and ASF) over low-CF fixed structures
++ Issue #1056: Rotary AC Ammo Does Not Populate Munitions Carried Lists
++ PR #1041: Force Generator
+	Available as tab in Random Army Dialog; generates faction- and era-appropriate forces up to a regiment
+	(larger for some factions) with optional support combat and transport forces. Some or all of the
+	force can be added to the forces in the lounge or exported to a MUL.
+	See documentation: docs/RAT Stuff/force-generator.txt
++ PR #1070: Makes the advanced search dialog smaller by default and resizable.
++ PR #1071 - Mech Sprites
++ Data - New Sprites
++ Issue #1073: Princess will no longer be able to move out-of-control aeros on ground and atmospheric maps
++ PR #1064: Fixes targeting and landing issues with glider protomechs
+
+v0.44.0 (2018-06-24 1900 UTC)
++ Data: Dropship infantry bay fixes.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
++ Data: New Sprites
++ Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
++ PR #1003: Fix validation failures from configuring ammo.
+
+v0.43.11-RC5 (2018-06-04 0100 UTC)
 + Data: Adding missing weights for infantry weapons.
 + PR #971: Fixes for incorrect flight time calculations for cruise missile artillery in weapon bays and/or on spacecraft.
 + PR #696: Fixes #974: Edge Reroll for Superchargers Breaks Superchargers
@@ -10,6 +75,12 @@ v0.43.11-RC5-git
 + PR #963: Fix for glitchy-looking empty hexes near window edges when rendering large/zoomed maps in isometric mode
 + Data: New and Updated Sprites.
 + Updated RAT generator files with dropship name changes and conformed mechs and vehicles to MUL early SW era.
++ Data: New and Fixed RATs (thanks mkerensky)
++ Data: Various minor data fixes, including fix for #984,#719
++ Data: Fixing #906 Incorrect heat for Prototype Rocket Launcher 15 
++ PR #985: When considering point blank shots from hidden units, Princess will make use of torso twists.
++ PR #988: Sniper SPA should not affect LOS-range shots, per errata
++ Data: Reference fixes for ATOW-C equipment, and making the Mydron a little lighter.
 
 v0.43.10-RC4 (2018-04-18 18:00 UTC)
 + PR #952: Ground to air fix

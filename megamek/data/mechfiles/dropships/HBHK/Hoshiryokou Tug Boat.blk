@@ -37,11 +37,9 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:8.0:1:1
-steeragequarters:45.0:0
 crewquarters:0.0:0
-2ndclassquarters:35.0:0
-1stclassquarters:10.0:0
+steeragequarters:65.0:0
+cargobay:7.0:1:1
 </transporters>
 
 <SafeThrust>
@@ -123,7 +121,7 @@ HB:House Kurita - Age of War
 </designtype>
 
 <crew>
-6
+5
 </crew>
 
 <officers>
@@ -135,7 +133,7 @@ HB:House Kurita - Age of War
 </gunners>
 
 <passengers>
-9
+8
 </passengers>
 
 <marines>
@@ -158,3 +156,6 @@ HB:House Kurita - Age of War
 1
 </escape_pod>
 
+<History>
+The TRO has the unit overweight. To make it legal we've dropped 1 passenger and 1 ton of cargo space.
+</history>

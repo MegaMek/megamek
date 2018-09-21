@@ -469,7 +469,7 @@ public class TestBattleArmor extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
         return false;
     }
 
@@ -1289,6 +1289,12 @@ public class TestBattleArmor extends TestEntity {
             // counted, unless it's squad-level equipment
             if ((m.getLocation() == trooper) && (trooper != BattleArmor.LOC_SQUAD)
                     && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
+                continue;
+            }
+            
+            // The weight of an anti-personnel weapon in an AP mount or armored glove manipulator doesn't
+            // count toward suit weight limit.
+            if (m.isAPMMounted()) {
                 continue;
             }
 

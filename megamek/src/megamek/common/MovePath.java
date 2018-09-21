@@ -48,11 +48,11 @@ public class MovePath implements Cloneable, Serializable {
         return game;
     }
 
-    protected void setGame(IGame game) {
+    public void setGame(IGame game) {
         this.game = game;
     }
 
-    protected void setEntity(Entity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 
@@ -132,6 +132,7 @@ public class MovePath implements Cloneable, Serializable {
         sb.append(this.getKey().hashCode());
         sb.append(' '); // it's useful to know for debugging purposes which path you're looking at.
         sb.append("Length: " + this.length());
+        sb.append("Final Coords: " + this.getFinalCoords());
         sb.append(System.lineSeparator());
         
         for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements(); ) {
@@ -683,8 +684,29 @@ public class MovePath implements Cloneable, Serializable {
      * if the target moves.
      * @return Whether or not this flight path takes us over an enemy unit
      */
-    private boolean getFliesOverEnemy() {
+    public boolean getFliesOverEnemy() {
     	return fliesOverEnemy;
+    }
+    
+    /**
+     * Method that determines whether a given path goes through a given set of x/y coordinates
+     * Useful for debugging mainly.
+     * Note that battletech map coordinates begin at 1, while the internal representation begins at 0
+     * so subtract 1 from each axis to get the actual coordinates.
+     * @param x X-coordinate
+     * @param y Y-coordinate
+     * @return Whether this path goes through the set of coordinates.
+     */
+    public boolean goesThroughCoords(int x, int y) {
+        Enumeration<MoveStep> steps = getSteps();
+        while(steps.hasMoreElements()) {
+            MoveStep step = steps.nextElement();
+            if(step.getPosition().getX() == x && step.getPosition().getY() == y) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**
@@ -719,9 +741,14 @@ public class MovePath implements Cloneable, Serializable {
      * this path.
      */
     public Coords getFinalCoords() {
+        if(getGame().useVectorMove()) {
+            return Compute.getFinalPosition(getEntity().getPosition(), getFinalVectors());
+        }
+        
         if (getLastStep() != null) {
             return getLastStep().getPosition();
         }
+        
         return getEntity().getPosition();
     }
 
@@ -1239,6 +1266,7 @@ public class MovePath implements Cloneable, Serializable {
     @SuppressWarnings("unused")
     private void notSoLazyPathfinder(final Coords dest, final MoveStepType type,
                                      final int timeLimit) {
+        final int MAX_CANDIDATES = 100;
         final long endTime = System.currentTimeMillis() + timeLimit;
 
         MoveStepType step = type;
@@ -1292,12 +1320,11 @@ public class MovePath implements Cloneable, Serializable {
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
                     }
-                    candidates.add(expandedPath);
-                    discovered.put(expandedPath.getKey(), expandedPath);
                     // Make sure the candidate list doesn't get too big
-                    if (candidates.size() > 100) {
-                        candidates.remove(candidates.size() - 1);
+                    if (candidates.size() <= MAX_CANDIDATES) {
+                        candidates.add(expandedPath);
                     }
+                    discovered.put(expandedPath.getKey(), expandedPath);
                 }
             }
             // If we're doing a special movement, like charging or DFA, we will
@@ -1314,12 +1341,11 @@ public class MovePath implements Cloneable, Serializable {
                     if (discovered.containsKey(expandedPath.getKey())) {
                         continue;
                     }
-                    candidates.add(expandedPath);
-                    discovered.put(expandedPath.getKey(), expandedPath);
                     // Make sure the candidate list doesn't get too big
-                    if (candidates.size() > 100) {
-                        candidates.remove(candidates.size() - 1);
+                    if (candidates.size() <= MAX_CANDIDATES) {
+                        candidates.add(expandedPath);
                     }
+                    discovered.put(expandedPath.getKey(), expandedPath);
                 }
             }
 
@@ -1564,9 +1590,12 @@ public class MovePath implements Cloneable, Serializable {
      * land unless it has taken off in the same phase or it is a LAM or glider ProtoMech that is using hover
      * movement.
      * 
+     * @param includeMovePathHexes  Whether to include the hexes plotted in this MovePath in the total distance
+     *                              moved. This should be true when plotting movement in the client and
+     *                              false when the server checks for automatic landing at the end of movement. 
      * @return whether the unit is an airborne WiGE that must land at the end of movement.
      */
-    public boolean automaticWiGELanding() {
+    public boolean automaticWiGELanding(boolean includeMovePathHexes) {
         if (getEntity().getMovementMode() != EntityMovementMode.WIGE
                 || getEntity().isAirborne()) {
             return false;
@@ -1580,9 +1609,17 @@ public class MovePath implements Cloneable, Serializable {
                 return getEntity().isAirborneVTOLorWIGE();
             }
         }
-        if ((getHexesMoved() + getEntity().delta_distance >= 5)
-                || (getEntity() instanceof Protomech
-                        && getHexesMoved() + getEntity().delta_distance == 4)) {
+        // If movement has been interrupted (such as by a sideslip) and remaining movement points have
+        // been spent, this MovePath only contains the hexes moved after the interruption. The hexes already
+        // moved this turn are in delta_distance. WHen the server checks at the end of movement, delta_distance
+        // already includes the hexes in this MovePath.
+        int moved = getEntity().delta_distance;
+        if (includeMovePathHexes) {
+            moved += getHexesMoved();
+        }
+        if ((moved >= 5)
+                || (getEntity().hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                        && moved == 4)) {
             return false;
         }
         if (getEntity().wigeLiftoffHover() || steps.stream().map(s -> s.getType())

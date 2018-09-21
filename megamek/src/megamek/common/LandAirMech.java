@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
 
@@ -719,7 +720,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             roll.addModifier(1, "Small Cockpit");
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 
@@ -734,9 +735,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (moved == EntityMovementType.MOVE_OVER_THRUST) {
                 roll.addModifier(+1, "Used more than safe thrust");
             }
+            
             int vel = getCurrentVelocity();
             int vmod = vel - (2 * getWalkMP());
-            if (vmod > 0) {
+            if (!getGame().getBoard().inSpace() && (vmod > 0)) {
                 roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
             }
 
@@ -2075,6 +2077,36 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
+    }
+    
+    /**
+     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     */
+    @Override
+    public void updateSensorOptions() {
+        //Remove everything but Radar if we're not in space
+        if (!isSpaceborne()) {
+            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            if (isAero()) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                        sensorsToRemove.add(sensor);
+                    }
+                }
+            }
+            getSensors().removeAll(sensorsToRemove);
+            if (sensorsToRemove.size() >= 1) {
+            setNextSensor(getSensors().firstElement());
+            }
+        }
+        //If we are in space, add them back...
+        if (isSpaceborne()) {
+            if (isAero()) {
+                //ASFs and small craft get thermal/optical sensors
+                getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
+                setNextSensor(getSensors().firstElement());
+            }
+        }
     }
 
 }

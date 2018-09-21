@@ -78,7 +78,7 @@ public abstract class TestEntity implements TestEntityOption {
     
     public abstract boolean isSmallCraft();
     
-    public abstract boolean isJumpship();
+    public abstract boolean isAdvancedAerospace();
 
     public abstract double getWeightControls();
 
@@ -303,6 +303,8 @@ public abstract class TestEntity implements TestEntityOption {
             return TestBattleArmor.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_SMALL_CRAFT) != 0) {
             return TestSmallCraft.legalArmorsFor(techManager);
+        } else if ((etype & Entity.ETYPE_JUMPSHIP) != 0) {
+            return TestAdvancedAerospace.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_AERO) != 0) {
             return TestAero.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_TANK) != 0) {
@@ -832,6 +834,7 @@ public abstract class TestEntity implements TestEntityOption {
          */
         boolean retVal = false;
         int eTechLevel = SimpleTechLevel.convertCompoundToSimple(getEntity().getTechLevel()).ordinal();
+        int ammoRulesLevel = SimpleTechLevel.convertCompoundToSimple(ammoTechLvl).ordinal();
         int eRulesLevel = getEntity().findMinimumRulesLevel().ordinal();
         if ((eTechLevel >= eRulesLevel) && (getEntity().getEarliestTechDate() <= getEntity().getYear())) {
             return false;
@@ -849,7 +852,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             int eqTechLevel = TechConstants.convertFromSimplelevel(eqRulesLevel, nextE.isClan());
             if (nextE instanceof AmmoType) {
-                if (eqRulesLevel > eRulesLevel) {
+                if (eqRulesLevel > ammoRulesLevel) {
                     if (!retVal) {
                         buff.append("Ammo illegal at unit's tech level (");
                         buff.append(TechConstants
@@ -1056,7 +1059,7 @@ public abstract class TestEntity implements TestEntityOption {
         Set<EquipmentType> checked = new HashSet<>();
         for (Mounted mounted : getEntity().getEquipment()) {
             final EquipmentType nextE = mounted.getType();
-            if (checked.contains(nextE)) {
+            if (checked.contains(nextE) || (nextE instanceof AmmoType)) {
                 continue;
             }
             checked.add(nextE);
@@ -1260,6 +1263,11 @@ public abstract class TestEntity implements TestEntityOption {
             illegal = true;
         }
         
+        if (getEntity().hasStealth() && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
+            buff.append("Stealth armor requires an ECM generator.\n");
+            illegal = true;
+        }
+        
         if (getEntity().isOmni()) {
             for (Mounted m : getEntity().getEquipment()) {
                 if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {
@@ -1297,12 +1305,17 @@ public abstract class TestEntity implements TestEntityOption {
     public double getWeightCarryingSpace() {
         double carryingSpace = getEntity().getTroopCarryingSpace();
         double cargoWeight = 0;
+        Ceil rounding = Ceil.HALFTON;
+        if (getEntity().isSupportVehicle()
+                && (getEntity().getWeight() < 5.0)) {
+            rounding = Ceil.KILO;
+        }
         for (Bay bay : getEntity().getTransportBays()) {
             if (!bay.isQuarters()) {
-                cargoWeight += ceil(bay.getWeight(), Ceil.HALFTON);
+                cargoWeight += bay.getWeight();
             }
         }
-        return carryingSpace + cargoWeight;
+        return ceil(carryingSpace + cargoWeight, rounding);
     }
 
     public String printWeightCarryingSpace() {

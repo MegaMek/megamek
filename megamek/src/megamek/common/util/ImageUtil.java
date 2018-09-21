@@ -35,7 +35,6 @@ import java.util.List;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
-import sun.awt.image.ToolkitImage;
 
 /**
  * Generic utility methods for image data
@@ -122,7 +121,7 @@ public final class ImageUtil {
 
             ImageProducer prod;
             prod = new FilteredImageSource(img.getSource(), filter);
-            ToolkitImage result = (ToolkitImage)Toolkit.getDefaultToolkit().createImage(prod);
+            Image result = Toolkit.getDefaultToolkit().createImage(prod);
             waitUntilLoaded(result);
             return ImageUtil.createAcceleratedImage(result);
         }
@@ -187,12 +186,12 @@ public final class ImageUtil {
                 System.out.println("Trying to load image for a non-existant "
                         + "file! Path: " + fileName);
             }
-            ToolkitImage result = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(fileName);
+            Image result = Toolkit.getDefaultToolkit().getImage(fileName);
             if(null == result) {
                 return null;
             }
             boolean isAnimated = waitUntilLoaded(result);
-            return isAnimated ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            return isAnimated ? result : ImageUtil.createAcceleratedImage(result);
         }
     }
 
@@ -254,7 +253,7 @@ public final class ImageUtil {
                 return null;
             }
             System.out.println("Loading atlas: " + baseFile);
-            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
+            Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if(null == base) {
                 return null;
             }
@@ -346,16 +345,13 @@ public final class ImageUtil {
      * @param result  Returns true if the given image is animated.
      * @return
      */
-    private static boolean waitUntilLoaded(ToolkitImage result) {
+    private static boolean waitUntilLoaded(Image result) {
         FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
         // Check to see if the image is loaded
-        int infoFlags = result.check(observer);
-        if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-            // Image not loaded, wait for it to load
+        if (!Toolkit.getDefaultToolkit().prepareImage(result, -1, -1, observer)) {
             long startTime = System.currentTimeMillis();
             long maxRuntime = 10000;
             long runTime = 0;
-            result.preload(observer);
             while (!observer.isLoaded() && runTime < maxRuntime) {
                 try {
                     Thread.sleep(10);
@@ -382,7 +378,7 @@ public final class ImageUtil {
         
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 0) {
+            if ((infoflags & DONE) > 0) {
                 loaded = true;
                 animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();

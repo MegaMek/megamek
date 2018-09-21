@@ -236,7 +236,16 @@ public class FireControl {
             new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
 
-    private final Princess owner;
+    /**
+     * The possible fire control types.
+     * If you're adding a new one, add it here then make sure to add it to Princess.InitializeFireControls
+     */
+    public enum FireControlType {
+        Basic, 
+        Infantry
+    }
+    
+    protected final Princess owner;
 
     /**
      * Constructor
@@ -1212,7 +1221,7 @@ public class FireControl {
         }
 
         final StringBuilder ret = new StringBuilder();
-        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
         for (final Targetable enemy : enemies) {
             for (final Mounted weapon : shooter.getWeaponList()) {
                 final String shootingCheck = checkGuess(shooter, enemy, weapon, game);
@@ -1267,13 +1276,14 @@ public class FireControl {
         modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
         modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
 
+        double expectedDamage = firingPlan.getExpectedDamage();
         double utility = 0;
-        utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
+        utility += DAMAGE_UTILITY * expectedDamage;
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
         // Multiply the combined damage/crit/kill utility for a target by a log-scaled factor based on the target's damage potential.
         utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
-        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcDamageAllocationUtility(firingPlan.getTarget(), firingPlan.getExpectedDamage());
+        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
@@ -1844,7 +1854,9 @@ public class FireControl {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
-            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+            // if the bombing plan actually involves doing something
+            if((bombingPlan.size() > 0) && 
+                    (bombingPlan.getUtility() > myPlan.getUtility())) {
                 return bombingPlan;
             }
         }
@@ -2196,7 +2208,8 @@ public class FireControl {
      * @return A list of potential targets.
      */
     private List<Targetable> getTargetableEnemyEntities(final Entity shooter,
-                                                        final IGame game) {
+                                                        final IGame game,
+                                                        final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
@@ -2218,7 +2231,7 @@ public class FireControl {
         }
 
         // Add in potential building targets and the like.
-        targetableEnemyList.addAll(getAdditionalTargets());
+        targetableEnemyList.addAll(fireControlState.getAdditionalTargets());
 
         return targetableEnemyList;
     }
@@ -2230,8 +2243,7 @@ public class FireControl {
      * @param game    The game being played.
      * @return A list of potential targets.
      */
-    List<Targetable> getAllTargetableEnemyEntities(final IPlayer player,
-                                                   final IGame game) {
+    static List<Targetable> getAllTargetableEnemyEntities(final IPlayer player, final IGame game, final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
@@ -2248,7 +2260,7 @@ public class FireControl {
         }
 
         // Add in potential building targets and the like.
-        targetableEnemyList.addAll(getAdditionalTargets());
+        targetableEnemyList.addAll(fireControlState.getAdditionalTargets());
 
         return targetableEnemyList;
     }
@@ -2270,7 +2282,7 @@ public class FireControl {
         FiringPlan bestPlan = null;
 
         // Get a list of potential targets.
-        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game);
+        final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
 
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
@@ -2328,6 +2340,7 @@ public class FireControl {
                 maxDamage += weaponType.getDamage();
             }
         }
+
         return maxDamage;
     }
 
@@ -2337,7 +2350,7 @@ public class FireControl {
      * @param facing The facing to be corrected.
      * @return The properly adjusted facing.
      */
-    static int correctFacing(int facing) {
+    public static int correctFacing(int facing) {
         while (0 > facing) {
             facing += 6;
         }
@@ -2386,21 +2399,6 @@ public class FireControl {
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                                  shooter.getEquipmentNum(mountedAmmo));
         }
-    }
-
-    /*
-     * Here's a list of things that aren't technically units, but I want to be
-     * able to target anyways. This is create with buildings and bridges and
-     * mind
-     */
-    private List<Targetable> additionalTargets = new ArrayList<>();
-
-    List<Targetable> getAdditionalTargets() {
-        return additionalTargets;
-    }
-
-    void setAdditionalTargets(final List<Targetable> targets) {
-        additionalTargets = targets;
     }
 
     Mounted getClusterAmmo(final List<Mounted> ammoList,

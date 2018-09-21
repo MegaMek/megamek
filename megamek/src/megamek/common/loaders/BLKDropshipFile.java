@@ -34,7 +34,6 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
-import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
@@ -193,7 +192,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("designtype")) {
             a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
         } else {
-            a.setDesignType(SmallCraft.MILITARY);
+            a.setDesignType(Aero.MILITARY);
         }
 
         if (!dataFile.exists("armor")) {

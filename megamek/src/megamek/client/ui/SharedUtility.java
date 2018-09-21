@@ -38,6 +38,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.options.OptionsConstants;
@@ -743,7 +744,12 @@ public class SharedUtility {
                 if (!game.getBoard().contains(md.getLastStep().getPosition())) {
                     md.removeLastStep();
                     if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                        md.addStep(MoveStepType.RETURN);
+                        //Telemissiles shouldn't get a return option
+                        if (entity instanceof TeleMissile) {
+                            md.addStep(MoveStepType.OFF);
+                        } else {
+                            md.addStep(MoveStepType.RETURN);
+                        }
                     } else {
                         md.addStep(MoveStepType.OFF);
                     }
@@ -853,7 +859,9 @@ public class SharedUtility {
                 // for purposes of bombing
                 en.addPassedThrough(right);
                 en.addPassedThrough(left);
-                client.sendUpdateEntity(en);
+                if(client !=  null) {
+                    client.sendUpdateEntity(en);
+                }
 
                 // if the left is preferred, increment i so next one is skipped
                 if ((leftTonnage < rightTonnage)
@@ -866,7 +874,12 @@ public class SharedUtility {
 
             if(!game.getBoard().contains(c)) {
                 if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                    md.addStep(MoveStepType.RETURN);
+                    //Telemissiles shouldn't get a return option
+                    if (en instanceof TeleMissile) {
+                        md.addStep(MoveStepType.OFF);
+                    } else {
+                        md.addStep(MoveStepType.RETURN);
+                    }
                 } else {
                     md.addStep(MoveStepType.OFF);
                 }

@@ -31,7 +31,8 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element maxOccurs="1" ref="chassis"/>
-                <xs:element maxOccurs="1" ref="model"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="model"/>
+                <xs:element minOccurs="0" maxOccurs="1" name="unitType" type="xs:string"/>
                 <xs:element minOccurs="0" maxOccurs="unbounded" ref="quirk"/>
                 <xs:element minOccurs="0" maxOccurs="unbounded" ref="weaponQuirk"/>
             </xs:sequence>

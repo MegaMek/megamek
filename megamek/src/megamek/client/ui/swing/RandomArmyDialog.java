@@ -66,12 +66,15 @@ import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.IGame.Phase;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.TechConstants;
-import megamek.common.IGame.Phase;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -86,6 +89,17 @@ WindowListener, TreeSelectionListener {
      *
      */
     private static final long serialVersionUID = 4072453002423681675L;
+    
+    @SuppressWarnings("unused")
+    private static final int TAB_BV_MATCHING       = 0;
+    private static final int TAB_RAT               = 1;
+    private static final int TAB_RAT_GENERATOR     = 2;
+    private static final int TAB_FORMATION_BUILDER = 3;
+    private static final int TAB_FORCE_GENERATOR   = 4;
+    
+    private static final String CARD_PREVIEW    = "card_preview"; //$NON-NLS-1$
+    private static final String CARD_FORCE_TREE = "card_force_tree"; // $NON-NLS-1$
+    
     private ClientGUI m_clientgui;
     private Client m_client;
     AdvancedSearchDialog asd;
@@ -99,14 +113,14 @@ WindowListener, TreeSelectionListener {
     private JComboBox<String> m_chType = new JComboBox<String>();
 
     private JTree m_treeRAT = new JTree();
-    //private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
     private JPanel m_pFormations = new JPanel();
-    private ForceGenerationOptionsPanel m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
+    private ForceGeneratorViewUi m_pForceGen;
+    private ForceGenerationOptionsPanel m_pRATGenOptions;
     private JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
-    private ForceGenerationOptionsPanel m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
+    private ForceGenerationOptionsPanel m_pFormationOptions;
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
@@ -119,6 +133,8 @@ WindowListener, TreeSelectionListener {
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
     private JButton m_bAddToForce = new JButton(Messages.getString("RandomArmyDialog.AddToForce"));
 
+    private CardLayout m_lRightCards = new CardLayout();
+    private JPanel m_pRightPane = new JPanel(m_lRightCards);
     private JSplitPane m_pSplit;
 
     private JButton m_bAddAll = new JButton(Messages.getString("RandomArmyDialog.AddAll"));
@@ -370,6 +386,9 @@ WindowListener, TreeSelectionListener {
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(pRATGenTop), c);
         
+        m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR, m_clientgui);
+        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER, null);
+        
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -443,6 +462,8 @@ WindowListener, TreeSelectionListener {
         m_pFormations.add(new JScrollPane(m_pFormationOptions), BorderLayout.CENTER);
         m_pFormationOptions.setYear(m_clientgui.getClient().getGame().getOptions()
                 .intOption("year"));
+        
+        m_pForceGen = new ForceGeneratorViewUi(cl);
 
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
@@ -502,8 +523,21 @@ WindowListener, TreeSelectionListener {
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
-
-        m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pPreview);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.Forcetab"), m_pForceGen.getLeftPanel());
+        m_pMain.addChangeListener(ev -> {
+            if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+                m_lRightCards.show(m_pRightPane, CARD_FORCE_TREE);
+                this.m_bRandomSkills.setEnabled(false);
+            } else {
+                m_lRightCards.show(m_pRightPane, CARD_PREVIEW);
+                this.m_bRandomSkills.setEnabled(true);
+            }
+        });
+        
+        m_pRightPane.add(m_pPreview, CARD_PREVIEW);
+        m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
+        
+        m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pRightPane);
         m_pSplit.setOneTouchExpandable(false);
         m_pSplit.setResizeWeight(0.5);
 
@@ -515,6 +549,8 @@ WindowListener, TreeSelectionListener {
         validate();
         pack();
         setLocationRelativeTo(cl.frame);
+        
+        m_client.getGame().addGameListener(gameListener);
     }
 
     public void valueChanged(TreeSelectionEvent ev) {
@@ -534,43 +570,47 @@ WindowListener, TreeSelectionListener {
 
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(m_bOK)) {
-            ArrayList<Entity> entities = new ArrayList<Entity>(
-                    armyModel.getAllUnits().size());
-            Client c = null;
-            if (m_chPlayer.getSelectedIndex() > 0) {
-                String name = (String) m_chPlayer.getSelectedItem();
-                c = m_clientgui.getBots().get(name);
-            }
-            if (c == null) {
-                c = m_client;
-            }
-            for (MechSummary ms : armyModel.getAllUnits()) {
-                try {
-                    Entity e = new MechFileParser(ms.getSourceFile(), 
-                            ms.getEntryName()).getEntity();
-  
-                    autoSetSkillsAndName(e);
-                    e.setOwner(c.getLocalPlayer());
-                    if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
-                        e.setDeployRound(c.getGame().getRoundCount()+1);
-                        e.setGame(c.getGame());
-                        // Set these to true, otherwise units reinforced in
-                        // the movement turn are considered selectable
-                        e.setDone(true);
-                        e.setUnloaded(true);
-                    }
-                    entities.add(e);
-                } catch (EntityLoadingException ex) {
-                    System.out.println("Unable to load mech: " + //$NON-NLS-1$ 
-                            ms.getSourceFile() + ": " + ms.getEntryName() + //$NON-NLS-1$
-                            ": " + ex.getMessage()); //$NON-NLS-1$ 
-                    ex.printStackTrace();
-                    return;
+            if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+                m_pForceGen.addChosenUnits((String) m_chPlayer.getSelectedItem());
+            } else {
+                ArrayList<Entity> entities = new ArrayList<Entity>(
+                        armyModel.getAllUnits().size());
+                Client c = null;
+                if (m_chPlayer.getSelectedIndex() > 0) {
+                    String name = (String) m_chPlayer.getSelectedItem();
+                    c = m_clientgui.getBots().get(name);
                 }
+                if (c == null) {
+                    c = m_client;
+                }
+                for (MechSummary ms : armyModel.getAllUnits()) {
+                    try {
+                        Entity e = new MechFileParser(ms.getSourceFile(), 
+                                ms.getEntryName()).getEntity();
+      
+                        autoSetSkillsAndName(e);
+                        e.setOwner(c.getLocalPlayer());
+                        if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
+                            e.setDeployRound(c.getGame().getRoundCount()+1);
+                            e.setGame(c.getGame());
+                            // Set these to true, otherwise units reinforced in
+                            // the movement turn are considered selectable
+                            e.setDone(true);
+                            e.setUnloaded(true);
+                        }
+                        entities.add(e);
+                    } catch (EntityLoadingException ex) {
+                        System.out.println("Unable to load mech: " + //$NON-NLS-1$ 
+                                ms.getSourceFile() + ": " + ms.getEntryName() + //$NON-NLS-1$
+                                ": " + ex.getMessage()); //$NON-NLS-1$ 
+                        ex.printStackTrace();
+                        return;
+                    }
+                }
+                c.sendAddEntity(entities);
+                armyModel.clearData();
+                unitsModel.clearData();
             }
-            c.sendAddEntity(entities);
-            armyModel.clearData();
-            unitsModel.clearData();
             
             // Save preferences
             GUIPreferences guip = GUIPreferences.getInstance();
@@ -616,19 +656,19 @@ WindowListener, TreeSelectionListener {
         } else if (ev.getSource().equals(m_bRoll)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
-                if(m_pMain.getSelectedIndex() == 1) {
+                if(m_pMain.getSelectedIndex() == TAB_RAT) {
                     int units = Integer.parseInt(m_tUnits.getText());
                     if(units > 0) {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
-                } else if (m_pMain.getSelectedIndex() == 2) {
+                } else if (m_pMain.getSelectedIndex() == TAB_RAT_GENERATOR) {
                 	int units = m_pRATGenOptions.getNumUnits();
                 	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 		unitsModel.setData(generatedRAT.generateUnits(units));
                 	}
                 	//generateUnits removes salvage entries that have no units meeting criteria
                 	ratModel.refreshData();
-                } else if (m_pMain.getSelectedIndex() == 3) {
+                } else if (m_pMain.getSelectedIndex() == TAB_FORMATION_BUILDER) {
                     ArrayList<MechSummary> unitList = new ArrayList<>();
                     FactionRecord fRec = m_pFormationOptions.getFaction();
                     FormationType ft = FormationType.getFormationType(m_pFormationOptions.getStringOption("formationType"));
@@ -847,6 +887,14 @@ WindowListener, TreeSelectionListener {
             m_treeRAT.setSelectionPath(path);
         }
     }
+    
+    private void updateRATYear() {
+        int gameYear = m_clientgui.getClient().getGame().getOptions().intOption("year");
+        
+        m_pRATGenOptions.setYear(gameYear);
+        m_pFormationOptions.setYear(gameYear);
+        m_pForceGen.setYear(gameYear);
+    }
 
     private void createRatTreeNodes(DefaultMutableTreeNode parentNode, RandomUnitGenerator.RatTreeNode ratTreeNode) {
         for (RandomUnitGenerator.RatTreeNode child : ratTreeNode.children) {
@@ -941,6 +989,19 @@ WindowListener, TreeSelectionListener {
         }
     }
 
+    /**
+     * This class now listens for game settings changes and updates the RAT year whenever
+     * the game year changes. Well, whenever any game settings changes.
+     */
+    private GameListener gameListener = new GameListenerAdapter() {
+        @Override
+        public void gameSettingsChange(GameSettingsChangeEvent e) {
+            if(!e.isMapSettingsOnlyChange()) {
+                updateRATYear();
+            }
+        }
+    };
+    
     /**
      * A table model for displaying units
      */

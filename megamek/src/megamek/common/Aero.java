@@ -277,6 +277,33 @@ public class Aero extends Entity implements IAero, IBomber {
         }        
     }
     
+    // Is it Civilian or Military
+    public static final int CIVILIAN = 0;
+    public static final int MILITARY = 1;
+    protected int designType = MILITARY;
+    
+    /**
+     * Sets the unit as either a civilian or military design 
+     */
+    public void setDesignType(int design) {
+        designType = design;
+    }
+    
+    /**
+     * Returns the unit's design type 
+     */
+    public int getDesignType() {
+        return designType;
+    }
+    
+    /**
+     * A method to determine if an aero has suffered 3 sensor hits. 
+     * When double-blind is on, this affects both standard visibility and sensor rolls
+     */
+    public boolean isAeroSensorDestroyed() {
+        return getSensorHits() >= 3;
+    }
+    
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, partial repairs and bomb load.
@@ -2567,7 +2594,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         int vel = getCurrentVelocity();
         int vmod = vel - (2 * getWalkMP());
-        if (vmod > 0) {
+        if (!getGame().getBoard().inSpace() && (vmod > 0)) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
@@ -2615,7 +2642,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "cramped cockpit");
         }
 
@@ -4100,6 +4127,20 @@ public class Aero extends Entity implements IAero, IBomber {
         return 0;
     }
 
+    /**
+     * @return The number of escape pods carried by the unit
+     */
+    public int getEscapePods() {
+        return 0;
+    }
+
+    /**
+     * @return The number of lifeboats carried by the unit
+     */
+    public int getLifeBoats() {
+        return 0;
+    }
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO;
@@ -4190,5 +4231,84 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //ASFs and Small Craft should use regular old AMS...
         return super.getActiveAMS();
+    }
+    
+    /**
+     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     */
+    @Override
+    public void updateSensorOptions() {
+        //Prevent adding duplicates
+        boolean hasSpacecraftThermal = false;
+        boolean hasAeroThermal = false;
+        boolean hasESM = false;
+        for (Sensor sensor : getSensors()) {
+            if (sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                hasSpacecraftThermal = true;
+            }
+            if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                hasAeroThermal = true;
+            }
+            if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+                hasESM = true;
+            }
+        }
+        //Remove everything but Radar if we're not in space
+        if (!isSpaceborne()) {
+            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+                        hasESM = false;
+                        sensorsToRemove.add(sensor);
+                    }
+                    if (sensor.getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+                        hasSpacecraftThermal = false;
+                        sensorsToRemove.add(sensor);
+                    }
+                }
+            } else if (hasETypeFlag(Entity.ETYPE_AERO)) {
+                for (Sensor sensor : getSensors()) {
+                    if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
+                        hasAeroThermal = false;
+                        sensorsToRemove.add(sensor);
+                    }
+                }
+            }
+            getSensors().removeAll(sensorsToRemove);
+            if (sensorsToRemove.size() >= 1) {
+            setNextSensor(getSensors().firstElement());
+            }
+        }
+        //If we are in space, add them back...
+        if (isSpaceborne()) {
+            if (hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+                    || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                    || hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                    || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                //Large craft get thermal/optical sensors
+                if (!hasSpacecraftThermal) {
+                    getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+                    hasSpacecraftThermal = true;
+                }
+                //Only military craft get ESM, which detects active radar
+                //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
+                if (getDesignType() == Aero.MILITARY 
+                        || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
+                        || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                    if (!hasESM) {
+                        getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
+                        hasESM = true;
+                    }
+                }
+            } else if (hasETypeFlag(Entity.ETYPE_AERO) 
+                        || hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+                //ASFs and small craft get thermal/optical sensors
+                if (!hasAeroThermal) {
+                    getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
+                    hasAeroThermal = true;
+                }
+            }
+        }
     }
 }

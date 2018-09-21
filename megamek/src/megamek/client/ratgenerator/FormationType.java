@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -254,13 +255,32 @@ public class FormationType {
         p.add(params);
         List<Integer> n = new ArrayList<>();
         n.add(numUnits);
-        return generateFormation(p, n, networkMask, bestEffort);
+        return generateFormation(p, n, networkMask, bestEffort, -1, -1);
     }
     
     public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
             int networkMask, boolean bestEffort) {
+        return generateFormation(params, numUnits, networkMask, bestEffort, -1, -1);
+    }
+    
+    public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
+            int networkMask, boolean bestEffort, int groupSize, int nGroups) {
         if (params.size() != numUnits.size() || params.isEmpty()) {
             throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
+        }
+        final GroupingConstraint useGrouping;
+        if (null == groupingCriteria) {
+            useGrouping = null;
+        } else {
+            useGrouping = groupingCriteria.copy();
+            if (groupSize > 0) {
+                useGrouping.groupSize = groupSize;
+                useGrouping.numGroups = 0;
+            }
+            if (nGroups > 0) {
+                useGrouping.numGroups =  nGroups;
+                useGrouping.groupSize = 0;
+            }
         }
         
         List<Integer> wcs = IntStream.rangeClosed(minWeightClass,
@@ -383,7 +403,7 @@ public class FormationType {
         int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
 
         /* Simple case: all units have the same requirements. */
-        if (otherCriteria.isEmpty() && groupingCriteria == null
+        if (otherCriteria.isEmpty() && useGrouping == null
                 && networkMask == ModelRecord.NETWORK_NONE) {
             List<MechSummary> retVal = new ArrayList<>();
             for (int i = 0; i < params.size(); i++) {
@@ -400,7 +420,7 @@ public class FormationType {
         }
         
         /* Simple case: single set of parameters and single additional criterion. */
-        if (params.size() == 1 && otherCriteria.size() == 1 && groupingCriteria == null
+        if (params.size() == 1 && otherCriteria.size() == 1 && useGrouping == null
                 && networkMask == ModelRecord.NETWORK_NONE) {
             List<MechSummary> retVal = new ArrayList<>();
             retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
@@ -497,7 +517,8 @@ public class FormationType {
 	        } else {
 	        	combinations = findCombinations(cUnits);
 	        }
-	        List<MechSummary> list = new ArrayList<>();
+	        //Group units by param index so they can be returned in the order requested.
+	        Map<Integer,List<MechSummary>> list = new TreeMap<>();
 	        final int POS_C3S = 0;
 	        final int POS_C3M = 1;
 	        final int POS_C3MM = 2;
@@ -537,12 +558,12 @@ public class FormationType {
 	        			int utIndex = Compute.randomInt(unitTypeGroupings.size());
 	        			combo = unitTypeGroupings.get(utIndex);
 	
-	        			if (groupingCriteria != null
-	        					&& params.stream().anyMatch(p -> groupingCriteria.appliesTo(p.getUnitType()))) {
+	        			if (useGrouping != null
+	        					&& params.stream().anyMatch(p -> useGrouping.appliesTo(p.getUnitType()))) {
 	        				/* Create a temporary map that only includes units that have a grouping criterion */
 	        				Map<Integer,Integer> groupedUnits = new LinkedHashMap<>();
 	        				for (int p = 0; p < params.size(); p++) {
-	        					if (groupingCriteria.appliesTo(params.get(p).getUnitType())) {
+	        					if (useGrouping.appliesTo(params.get(p).getUnitType())) {
 	        						for (Integer i : combo.keySet()) {
 	        							if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
 	        								groupedUnits.merge(i, combo.get(i), Integer::sum);
@@ -550,12 +571,12 @@ public class FormationType {
 	        						}
 	    						}
 	    					}
-	    					List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits);
+	    					List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
 	
 	    					while (groups.size() > 0) {
 	    						int gIndex = Compute.randomInt(groups.size());
 	    						list.clear();
-    							List<MechSummary> found = new ArrayList<>();
+    							Map<Integer,List<MechSummary>> found = new TreeMap<>();
 	    						Map<Integer,Integer> workingCombo = new HashMap<>(combo);
 	    						for (Map<Integer,Integer> g : groups.get(gIndex)) {
 	    							/* The first unit selected may lead to a dead end, if the constraints
@@ -585,20 +606,23 @@ public class FormationType {
 		    										if (base == null) {
 		    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
 		    											if (base != null) {
-		    												found.add(base);
+                                                            found.putIfAbsent(tableIndex, new ArrayList<>());
+                                                            found.get(tableIndex).add(base);
 		    											}
 		    										} else {
 		    											final MechSummary b = base;
 		    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
-		    													&& groupingCriteria.matches(ms, b));
+		    													&& useGrouping.matches(ms, b));
 		    											if (unit != null) {
-		    												found.add(unit);
+		    											    found.putIfAbsent(tableIndex, new ArrayList<>());
+                                                            found.get(tableIndex).add(unit);
 		    											}
 		    										}
 		    									}
 		    								}
 		    							}
-		    							if (found.size() < g.values().stream().mapToInt(Integer::intValue).sum()) {
+		    							if (found.values().stream().mapToInt(List::size).sum()
+		    							        < g.values().stream().mapToInt(Integer::intValue).sum()) {
 		    								found.clear();
 		    								base = null;
 		    								int mask = (1 << otherCriteria.size()) - 1;
@@ -611,7 +635,10 @@ public class FormationType {
 		    								break;
 		    							}
 	    							}
-		    						list.addAll(found);
+	    							for (Map.Entry<Integer, List<MechSummary>> e : found.entrySet()) {
+	    							    list.putIfAbsent(e.getKey(), new ArrayList<>());
+	    							    list.get(e.getKey()).addAll(e.getValue());
+	    							}
 		    						for (Integer k : g.keySet()) {
 		    							workingCombo.merge(k, -g.get(k), Integer::sum);
 		    						}
@@ -631,15 +658,18 @@ public class FormationType {
 	    								for (int j = 0; j < workingCombo.get(i); j++) {
 	    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
 	    									if (unit != null) {
-	    										list.add(unit);
+	    									    list.putIfAbsent(tableIndex, new ArrayList<>());
+	    										list.get(tableIndex).add(unit);
 	    									}
 	    								}
 	    							}
 	    						}
-	    						if (list.size() < cUnits) {
+	    						List<MechSummary> retVal = list.values().stream()
+	    						        .flatMap(l -> l.stream()).collect(Collectors.toList());
+	    						if (retVal.size() < cUnits) {
 	    							groups.remove(gIndex);
 	    						} else {
-	    							return list;
+	    							return retVal;
 	    						}
 	    					}
 	    				} else {
@@ -657,21 +687,26 @@ public class FormationType {
     							for (int j = 0; j < combo.get(i); j++) {
     								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
     								if (unit != null) {
-    									list.add(unit);
+    								    list.putIfAbsent(tableIndex, new ArrayList<>());
+    									list.get(tableIndex).add(unit);
     								}
     							}
 	    					}
 	    				}
-	        			if (list.size() < cUnits) {
-	        				unitTypeGroupings.remove(utIndex);
-	        			} else {
-	        				return list;
-	        			}
+                        List<MechSummary> retVal = list.values().stream()
+                                .flatMap(l -> l.stream()).collect(Collectors.toList());
+                        if (retVal.size() < cUnits) {
+                            unitTypeGroupings.remove(utIndex);
+                        } else {
+                            return retVal;
+                        }
 	    			}
-					if (list.size() < cUnits) {
+                    List<MechSummary> retVal = list.values().stream()
+                            .flatMap(l -> l.stream()).collect(Collectors.toList());
+                    if (retVal.size() < cUnits) {
 						networkGroupings.remove(networkIndex);
 					} else {
-						return list;
+						return retVal;
 					}
 	    		}
 	    		combinations.remove(index);
@@ -935,10 +970,18 @@ public class FormationType {
      * @return	A list of possible groupings. Each entry is a list of size() equal to numGroups.
      * 			The entry for each group is a map of the same format as <code>combination</code>. 
      */
-    private List<List<Map<Integer,Integer>>> findMatchedGroups(Map<Integer,Integer> combination) {
+    private List<List<Map<Integer,Integer>>> findMatchedGroups(Map<Integer,Integer> combination,
+            GroupingConstraint groupingCriteria) {
     	int numUnits = combination.values().stream().mapToInt(Integer::intValue).sum();
-    	int size = Math.min(numUnits, groupingCriteria.getGroupSize());
-    	int numGroups = Math.min(groupingCriteria.getNumGroups(), numUnits / size);
+        int size = Math.min(groupingCriteria.getGroupSize(), numUnits);
+    	int numGroups = Math.max(groupingCriteria.getNumGroups(), 1);
+    	if (groupingCriteria.getGroupSize() == 0 && groupingCriteria.getNumGroups() > 0) {
+    	    numGroups = groupingCriteria.getNumGroups();
+    	    size = Math.max(1, numUnits / numGroups);
+    	} else if (groupingCriteria.getNumGroups() == 0 && groupingCriteria.getGroupSize() > 0) {
+            size = groupingCriteria.getGroupSize();
+            numGroups = Math.max(1, numUnits / size);
+    	}
     	List<Integer> keyList = new ArrayList<>(combination.keySet());
     	
     	List<int[][]> list = new ArrayList<>();
@@ -1409,7 +1452,7 @@ public class FormationType {
                     "Brawler, Sniper, Skirmisher"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
+                FormationType::checkUnitMatch,
                 "Same model, Heavy");
         allFormationTypes.put(ft.name, ft);
     }
@@ -1426,8 +1469,7 @@ public class FormationType {
                 "Scout"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model, Light");
+                FormationType::checkUnitMatch, "Same model, Light");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1440,8 +1482,7 @@ public class FormationType {
                 "Medium"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model, Medium");
+                FormationType::checkUnitMatch, "Same model, Medium");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1454,8 +1495,7 @@ public class FormationType {
                 "Heavy+"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model, Heavy+");
+                FormationType::checkUnitMatch, "Same model, Heavy+");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1481,7 +1521,7 @@ public class FormationType {
     
     private static void createBerserkerLance() {
         FormationType ft = new FormationType("Berserker/Close", "Battle");
-        ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.allowedUnitTypes = FLAG_MEK | FLAG_PROTOMEK;
         ft.idealRole = UnitRole.BRAWLER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
@@ -1512,11 +1552,8 @@ public class FormationType {
         FormationType ft = new FormationType("Order", "Command");
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.exclusiveFaction = "DC";
-        ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, Integer.MAX_VALUE, 1,
-                ms -> true,
-                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis())
-                    && ms0.getWeightClass() == ms1.getWeightClass(),
-                "Same chassis");
+        ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, 0, 1,
+                ms -> true, FormationType::checkUnitMatch, "Same model");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1806,7 +1843,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER).contains(UnitRoleHandler.getRoleFor(ms)),
                 "Interceptor/Fast Dogfighter"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1823,7 +1860,7 @@ public class FormationType {
                             (((MiscType)et).hasFlag(MiscType.F_BAP)
                             || ((MiscType)et).hasFlag(MiscType.F_ECM)))),
                 "Probe, ECM, TAG"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1840,7 +1877,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.FIRE_SUPPORT),
                 "Fire Support"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1853,7 +1890,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.INTERCEPTOR),
                 "Interceptor"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1866,7 +1903,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
                         UnitRole.DOGFIGHTER).contains(UnitRoleHandler.getRoleFor(ms)), "Attack, Dogfighter"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1885,6 +1922,24 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);                
     }
 
+    /**
+     * Helper function used by some grouping constraints to compare units. Units are considered to match
+     * if they are the same model, but omnis can match with different configurations. This is used primarily
+     * for ground units; aerospace units match based on chassis.
+     * 
+     * @param ms0
+     * @param ms1
+     * @return    Whether the two units are considered the same for grouping considerations.
+     */
+    private static boolean checkUnitMatch(final MechSummary ms0, final MechSummary ms1) {
+        final ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms0.getName());
+        if (null != mRec && mRec.isOmni()) {
+            return ms0.getChassis().equals(ms1.getChassis());
+        } else {
+            return ms0.getName().equals(ms1.getName());
+        }
+    }
+    
     /**
      * base class for limitations on formation type 
      */
@@ -2053,6 +2108,11 @@ public class FormationType {
         
         public boolean hasGeneralCriteria() {
             return criterion != null;
+        }
+        
+        public GroupingConstraint copy() {
+            return new GroupingConstraint(this.unitTypes, this.groupSize, this.numGroups,
+                this.criterion, this.groupConstraint, this.description);
         }
     }
 }

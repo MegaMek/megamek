@@ -377,6 +377,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             elevation = Math.max(elevation, minElev);
         }
+        
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 elevation, en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);

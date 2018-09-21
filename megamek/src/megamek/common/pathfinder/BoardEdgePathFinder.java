@@ -389,6 +389,7 @@ public class BoardEdgePathFinder {
      * @param destinationRegion Where we're going
      * @return True or false
      */
+    @SuppressWarnings("unused")
     private boolean coordinatesHaveCachedPath(Coords coords, int destinationRegion) {
         return edgePathCache.containsKey(destinationRegion) && edgePathCache.get(destinationRegion).containsKey(coords);
     }

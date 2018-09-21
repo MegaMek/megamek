@@ -51,13 +51,13 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         tonnage = 100.0f;
         bv = 670;
         cost = 75000;
-        this.flags = flags.or(F_MISSILE);
         shortAV = 3;
         medAV = 3;
         longAV = 3;
         this.missileArmor = 30;
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
+        this.atClass = CLASS_CAPITAL_MISSILE;
         rulesRefs = "345,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setIntroLevel(false)

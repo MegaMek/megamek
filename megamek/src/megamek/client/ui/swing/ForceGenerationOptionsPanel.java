@@ -103,12 +103,12 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     private static final int LATEST_YEAR = 3150;
 
     public ForceGenerationOptionsPanel() {
-        this(null);
+        this(null, null);
     }
     
-    public ForceGenerationOptionsPanel(Use use) {
+    public ForceGenerationOptionsPanel(Use use, ClientGUI gui) {
         setLayout(new GridBagLayout());
-
+        
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -119,7 +119,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weighty = 0.0;
         add(new JLabel(Messages.getString("RandomArmyDialog.Year")), c);
 
-        txtYear.setText(String.valueOf(ratGenYear));
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -201,7 +200,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 1;
-        c.gridwidth = 2;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
@@ -771,6 +770,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 panMotive.add(createSubtypeCheck("leg", true));
                 panMotive.add(createSubtypeCheck("jump", true));
                 panMotive.add(createSubtypeCheck("umu", true));
+                panMotive.add(createSubtypeCheck("vtol", true));
                 break;
             case UnitType.NAVAL:
                 panMotive.add(createSubtypeCheck("naval", true));

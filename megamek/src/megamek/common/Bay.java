@@ -27,10 +27,11 @@ public class Bay implements Transporter, ITechnology {
 
     // Private attributes and helper functions.
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -9056450317468016272L;
+    
+    public final static String FIELD_SEPARATOR = ":";
+    public final static String FACING_PREFIX = "f";
+    
     int doors = 1;
     int doorsNext = 1;
     int currentdoors = doors;
@@ -483,6 +484,30 @@ public class Bay implements Transporter, ITechnology {
     
     public int getBayNumber() {
         return bayNumber;
+    }
+    
+    /**
+     * Some bays (dropshuttle and repair facility) have a maximum number per armor facing.
+     * @return The facing of the bay, or Entity.LOC_NONE if the bay does not require a facing.
+     */
+    public int getFacing() {
+        return Entity.LOC_NONE;
+    }
+
+    /**
+     * Sets the armor facing for the bay, if the bay type requires it. If not required by the bay
+     * type, does nothing.
+     * 
+     * @param value The location to use for the facing.
+     */
+    public void setFacing(int facing) {
+        // do nothing by default
+    }
+
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
     }
 
     @Override

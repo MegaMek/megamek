@@ -41,10 +41,10 @@ smallcraftbay:2.0:2:1
 infantrybay:5.0:3:3:Foot
 infantrybay:5.0:3:5:Foot
 2ndclassquarters:70.0:0
-1stclassquarters:50.0:0
-crewquarters:217.0:0
-cargobay:948.5:0:2
-cargobay:948.0:0:4
+crewquarters:56.0:0
+1stclassquarters:20.0:0
+cargobay:959.0:0:7
+cargobay:959.0:0:8
 </transporters>
 
 <SafeThrust>
@@ -64,7 +64,7 @@ cargobay:948.0:0:4
 </sink_type>
 
 <fuel>
-6819
+6818
 </fuel>
 
 <engine_type>
@@ -80,9 +80,9 @@ cargobay:948.0:0:4
 </armor_tech>
 
 <armor>
-113
-112
-112
+115
+114
+114
 80
 </armor>
 
@@ -130,15 +130,15 @@ XTRO Primitives IV - Age of War
 </designtype>
 
 <crew>
-316
+300
 </crew>
 
 <officers>
-5
+2
 </officers>
 
 <gunners>
-12
+2
 </gunners>
 
 <passengers>
@@ -164,4 +164,8 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 1
 </escape_pod>
+
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>
 

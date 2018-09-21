@@ -28,12 +28,12 @@ import java.util.Map;
 
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
 import megamek.common.util.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -151,9 +151,8 @@ public class SkinXMLHandler {
         if (!file.exists() || !file.isFile()) {
             return false;
         }
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             Document doc = builder.parse(file);
             // TODO: Just validate against the XSD
             // Until that's done, just assume anything with UI_ELEMENT tags is
@@ -200,9 +199,8 @@ public class SkinXMLHandler {
         }
 
         // Build the XML document.
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             System.out.println("Parsing " + file.getName());
             Document doc = builder.parse(file);
             System.out.println("Parsing finished.");

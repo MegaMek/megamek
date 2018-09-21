@@ -33,6 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import megamek.common.BipedMech;
 import megamek.common.Entity;
@@ -44,6 +47,7 @@ import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * TdbFile.java
@@ -85,10 +89,10 @@ public class TdbFile implements IMechLoader {
             JAXBContext jc = JAXBContext.newInstance(TdbFile.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            TdbFile tdbFile = (TdbFile) um.unmarshal(is);
+            TdbFile tdbFile = (TdbFile) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
             
             return tdbFile;
-        } catch (JAXBException e) {
+        } catch (JAXBException | SAXException | ParserConfigurationException e) {
             throw new EntityLoadingException("   Failure to parse XML ("
                     + e.getLocalizedMessage() + ")", e);
         }

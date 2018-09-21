@@ -139,29 +139,10 @@ public class MechTROView extends TROView {
 	
 	protected void addFluff() {
 		addMechVeeAeroFluff(mech);
-		// If we had a fluff field for chassis type we would put it here
-		String chassisDesc = EquipmentType.getStructureTypeName(mech.getStructureType());
-		if (mech.isIndustrial()) {
-			chassisDesc += Messages.getString("TROView.chassisIndustrial");
-		}
-		if (mech.isSuperHeavy()) {
-			chassisDesc += Messages.getString("TROView.chassisSuperheavy");
-		}
-		if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
-			chassisDesc += Messages.getString("TROView.chassisQuadVee");
-		} else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH)) {
-			chassisDesc += Messages.getString("TROView.chassisQuad");
-		} else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH)) {
-			chassisDesc += Messages.getString("TROView.chassisTripod");
-		} else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
-			chassisDesc += Messages.getString("TROView.chassisLAM");
-		} else {
-			chassisDesc += Messages.getString("TROView.chassisBiped");
-		}
         setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS,
-                mech.getFluff(), chassisDesc));
+                mech.getFluff(), () -> formatChassisDesc()));
         setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET,
-                mech.getFluff(), formatJJDesc()));
+                mech.getFluff(), () -> formatJJDesc()));
 		setModelData("jumpCapacity", mech.getJumpMP() * 30);
 	}
 	
@@ -187,6 +168,28 @@ public class MechTROView extends TROView {
 		if (mech.hasPatchworkArmor()) {
 			setModelData("patchworkByLoc", addPatchworkATs(mech, MECH_ARMOR_LOCS));
 		}
+	}
+	
+	private String formatChassisDesc() {
+        String chassisDesc = EquipmentType.getStructureTypeName(mech.getStructureType());
+        if (mech.isIndustrial()) {
+            chassisDesc += Messages.getString("TROView.chassisIndustrial");
+        }
+        if (mech.isSuperHeavy()) {
+            chassisDesc += Messages.getString("TROView.chassisSuperheavy");
+        }
+        if (mech.hasETypeFlag(Entity.ETYPE_QUADVEE)) {
+            chassisDesc += Messages.getString("TROView.chassisQuadVee");
+        } else if (mech.hasETypeFlag(Entity.ETYPE_QUAD_MECH)) {
+            chassisDesc += Messages.getString("TROView.chassisQuad");
+        } else if (mech.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH)) {
+            chassisDesc += Messages.getString("TROView.chassisTripod");
+        } else if (mech.hasETypeFlag(Entity.ETYPE_LAND_AIR_MECH)) {
+            chassisDesc += Messages.getString("TROView.chassisLAM");
+        } else {
+            chassisDesc += Messages.getString("TROView.chassisBiped");
+        }
+        return chassisDesc;
 	}
 	
 	private String formatJJDesc() {

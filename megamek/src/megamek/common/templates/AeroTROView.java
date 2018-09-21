@@ -103,7 +103,7 @@ public class AeroTROView extends TROView {
 	private void addFluff() {
 		addMechVeeAeroFluff(aero);
 		setModelData("frameDesc", formatSystemFluff(EntityFluff.System.CHASSIS,
-				aero.getFluff(), Messages.getString("TROView.Unknown")));
+				aero.getFluff(), () -> Messages.getString("TROView.Unknown")));
 	}
 
 	private static final int[][] AERO_ARMOR_LOCS = {

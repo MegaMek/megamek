@@ -26,13 +26,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
-import megamek.common.*;
+import megamek.common.Aero;
+import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
+import megamek.common.Bay;
+import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EntityFluff;
+import megamek.common.EquipmentType;
+import megamek.common.Infantry;
+import megamek.common.Jumpship;
+import megamek.common.Mech;
+import megamek.common.Messages;
+import megamek.common.Mounted;
+import megamek.common.SmallCraft;
+import megamek.common.Tank;
+import megamek.common.Transporter;
+import megamek.common.TroopSpace;
+import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;
@@ -197,7 +216,7 @@ public class TROView {
 	 *                by a space. If either is missing it is left out.
 	 */
 	protected String formatSystemFluff(EntityFluff.System system,
-			EntityFluff fluff, String altText) {
+			EntityFluff fluff, Supplier<String> altText) {
 		StringJoiner sj = new StringJoiner(" ");
 		if (fluff.getSystemManufacturer(system).length() > 0) {
 			sj.add(fluff.getSystemManufacturer(system));
@@ -208,7 +227,7 @@ public class TROView {
 		if (sj.toString().length() > 0) {
 			return sj.toString();
 		} else {
-			return altText;
+			return altText.get();
 		}
 	}
 	
@@ -217,10 +236,11 @@ public class TROView {
 		model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
 				+ Messages.getString(entity.getWeight() == 1.0? "TROView.ton" : "TROView.tons"));
 		model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE,
-				entity.getFluff(), stripNotes(entity.getEngine().getEngineName())));
+				entity.getFluff(), () -> stripNotes(entity.getEngine().getEngineName())));
 		model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
 		model.put("maxSpeed", entity.getRunMP() * 10.8);
-		model.put("armorDesc", formatArmorType(entity, false));
+		model.put("armorDesc", formatSystemFluff(EntityFluff.System.ARMOR,
+				entity.getFluff(), () -> formatArmorType(entity, false)));
 		Map<String, Integer> weaponCount = new HashMap<>();
 		double podSpace = 0.0;
 		for (Mounted m : entity.getEquipment()) {
@@ -239,9 +259,9 @@ public class TROView {
 		}
 		model.put("armamentList", armaments);
 		model.put("communicationDesc", formatSystemFluff(EntityFluff.System.COMMUNICATIONS,
-				entity.getFluff(), Messages.getString("TROView.Unknown")));
+				entity.getFluff(), () -> Messages.getString("TROView.Unknown")));
 		model.put("targetingDesc", formatSystemFluff(EntityFluff.System.TARGETING,
-				entity.getFluff(), Messages.getString("TROView.Unknown")));
+				entity.getFluff(), () -> Messages.getString("TROView.Unknown")));
 	}
 	
 	private String formatTechBase(Entity entity) {

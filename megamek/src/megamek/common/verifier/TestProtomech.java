@@ -150,4 +150,47 @@ public class TestProtomech extends TestEntity {
         return 0;
     }
 
+    /**
+     * Equipment slot limit by location
+     * 
+     * @param loc The Protomech location
+     * @return    The number of equipment slots in the location
+     */
+    public static int maxSlotsByLocation(int loc) {
+        switch(loc) {
+            case Protomech.LOC_TORSO:
+                return 2;
+            case Protomech.LOC_LARM:
+            case Protomech.LOC_RARM:
+            case Protomech.LOC_MAINGUN:
+                return 1;
+            case Protomech.LOC_HEAD:
+            case Protomech.LOC_LEG:
+            default:
+                return 0;
+        }
+    }
+    
+    /**
+     * The maximum total weight that can be mounted in a given location.
+     * 
+     * @param loc The location
+     * @return    The weight limit for that location, in tons.
+     */
+    public static double maxWeightByLocation(int loc) {
+        switch(loc) {
+            case Protomech.LOC_TORSO:
+                return 2.0;
+            case Protomech.LOC_LARM:
+            case Protomech.LOC_RARM:
+                return 0.5;
+            case Protomech.LOC_MAINGUN:
+                return Double.MAX_VALUE;
+            case Protomech.LOC_HEAD:
+            case Protomech.LOC_LEG:
+            default:
+                return 0;
+        }
+    }
+
 }

@@ -105,8 +105,7 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public int getCountHeatSinks() {
-        // TODO Auto-generated method stub
-        return 0;
+        return heatNeutralHSRequirement();
     }
 
     @Override

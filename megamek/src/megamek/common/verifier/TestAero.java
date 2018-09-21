@@ -630,62 +630,10 @@ public class TestAero extends TestEntity {
         return aero.getFuelTonnage();
     }
 
-    /**
-     * @return The number of heat sinks required by conventional fighters
-     */
-    private int getConventionalCountHeatLaserWeapons() {
-        int heat = 0;
-        for (Mounted m : aero.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                    || wt.hasFlag(WeaponType.F_PPC)
-                    || wt.hasFlag(WeaponType.F_PLASMA)
-                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
-                    && !m.getLinkedBy().isInoperable()
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
-                    MiscType) && m.getLinkedBy().getType().
-                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                heat += 5;
-            }
-        }
-        for (Mounted m : aero.getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                heat += 2;
-            }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
-                heat += 12;
-            }
-            if (mtype.hasFlag(MiscType.F_NOVA)) {
-            	heat += 2;
-            }
-        }
-        if (aero.hasStealth()) {
-            heat += 10;
-        }
-        return heat;
-    }
-
     @Override
     public int getCountHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            return getConventionalCountHeatLaserWeapons();
+            return heatNeutralHSRequirement();
         }
         return aero.getHeatSinks();
     }
@@ -693,7 +641,7 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            int required = getConventionalCountHeatLaserWeapons();
+            int required = heatNeutralHSRequirement();
             return Math.max(0, required - engine.getWeightFreeEngineHeatSinks());
         } else {
             return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);

@@ -1,6 +1,28 @@
 ${fullName}
+<#if showFluff>
+<#if fluffOverview??>
+
+Overview
+${fluffOverview}
+</#if>
+<#if fluffCapabilities??>
+
+Capabilities
+${fluffCapabilities}
+</#if>
+<#if fluffDeployment??>
+
+Deployment
+${fluffDeployment}
+</#if>
+<#if fluffHistory??>
+
+History
+${fluffHistory}
+</#if>
 <#if notableUnit??>
 Notable Unit:  ${notableUnit}
+</#if>
 </#if>
 Tech Base: ${techBase} 
 Tech Rating/Availability: ${techRating}

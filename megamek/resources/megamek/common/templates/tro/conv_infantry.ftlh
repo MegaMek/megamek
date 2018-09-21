@@ -6,6 +6,36 @@
   <div style="font:12pt monospaced">
   <font size="+1"><b>${fullName}</b></font>
 
+<#if includeFluff>
+	<#if fluffOverview??>
+	<p>
+	<b>Overview</b><br/>
+	${fluffOverview}
+	</p>
+	</#if>
+	
+	<#if fluffCapabilities??>
+	<p>
+	<b>Capabilities</b><br/>
+	${fluffCapabilities}
+	</p>
+	</#if>
+	
+	<#if fluffDeployment??>
+	<p>
+	<b>Deployment</b><br/>
+	${fluffDeployment}
+	</p>
+	</#if>
+	
+	<#if fluffHistory??>
+	<p>
+	<b>History</b><br/>
+	${fluffHistory}
+	</p>
+	</#if>
+</#if>
+
 	<p>
 <#if notableUnit??>
 	<b>Notable Unit: </b> ${notableUnit}<br/>

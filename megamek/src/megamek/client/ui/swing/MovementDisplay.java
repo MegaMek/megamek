@@ -943,7 +943,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateTakeCoverButton();
 
         // Infantry - Urban Guerrilla calling for support
-        if (isInfantry && ce.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
+        if (isInfantry && ce.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
                 && ((Infantry) ce).getCanCallSupport()) {
             getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(true);
         } else {
@@ -1844,10 +1844,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                                     new Double(
                                                             Compute.oddsAbove(
                                                                     toHit.getValue(),
-                                                                    ce().getCrew()
-                                                                            .getOptions()
-                                                                            .booleanOption(
-                                                                                    OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                                     toHit.getDesc(),
                                                     new Integer(toDefender),
                                                     toHit.getTableDesc(),

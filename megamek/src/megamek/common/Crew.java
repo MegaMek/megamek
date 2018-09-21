@@ -657,7 +657,7 @@ public class Crew implements Serializable {
         this.options = options;
     }
 
-    public PilotOptions getOptions2() {
+    public PilotOptions getOptions() {
         return options;
     }
 

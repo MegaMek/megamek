@@ -2103,7 +2103,8 @@ public abstract class Mech extends Entity {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && hasAbility(OptionsConstants.EDGE_WHEN_TAC))
+                        if ((getCrew().hasEdgeRemaining() && getCrew()
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -2131,7 +2132,8 @@ public abstract class Mech extends Entity {
                         return new HitData(Mech.LOC_LARM);
                     case 12:
                         if (getCrew().hasEdgeRemaining()
-                                && hasAbility(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                                && getCrew().getOptions().booleanOption(
+                                        OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                     aimedLocation, aimingMode, cover);
@@ -2144,7 +2146,8 @@ public abstract class Mech extends Entity {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && hasAbility(OptionsConstants.EDGE_WHEN_TAC))
+                        if ((getCrew().hasEdgeRemaining() && getCrew()
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -2181,7 +2184,8 @@ public abstract class Mech extends Entity {
                         return new HitData(Mech.LOC_RLEG);
                     case 12:
                         if (getCrew().hasEdgeRemaining()
-                                && hasAbility(OptionsConstants.EDGE_WHEN_HEADHIT)) {
+                                && getCrew().getOptions().booleanOption(
+                                        OptionsConstants.EDGE_WHEN_HEADHIT)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                     aimedLocation, aimingMode, cover);
@@ -5262,7 +5266,7 @@ public abstract class Mech extends Entity {
             cockpitCost = 200000;
         }
         if (hasEiCockpit()
-                && ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT))) {
+                && ((null != getCrew()) && hasAbility(OptionsConstants.UNOFF_EI_IMPLANT))) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;
@@ -5558,15 +5562,15 @@ public abstract class Mech extends Entity {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                && (!getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT))) {
+                && (!hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
@@ -5590,7 +5594,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 

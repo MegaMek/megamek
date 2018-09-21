@@ -227,7 +227,7 @@ public class EntityFluff implements Serializable {
      * @return A list of all system models formatted as "system:model"
      */
     public List<String> createSystemModelsList() {
-    	return systemManufacturers.entrySet().stream()
+    	return systemModels.entrySet().stream()
     			.filter(e -> e.getValue().length() > 0)
     			.map(e -> e.getKey().toString() + ":" + e.getValue())
     			.collect(Collectors.toList());

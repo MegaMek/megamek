@@ -3109,8 +3109,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         int i = 0;
         for (Integer id : hitchChoices.keySet()) {
             Entity e = game.getEntity(id);
-            retVal[i++] = hitchChoices.get(id) + ", " + id + ", " + e.getShortName() + " Trailer Hitch";
+            retVal[i++] = hitchChoices.get(id) + e.getShortName() + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
         }
+        //Gah, multiple choice test!
         if (hitchChoices.size() > 1) {
             String hitchString = (String) JOptionPane
                     .showInputDialog(
@@ -3121,8 +3122,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, retVal,
                             null);
-            choice.setTargetBay(Integer.parseInt(hitchString.substring(0, 1)));
-            choice.setTowedBy(Integer.parseInt(hitchString.substring(3, 4)));
+            //choice.setTargetBay(Integer.parseInt(hitchString.substring(0, 1)));
+            int start = hitchString.indexOf("#[");
+            int testid = Integer.parseInt(hitchString.substring((start + 2), hitchString.indexOf("]")));
+            //choice.setTowedBy(Integer.parseInt(hitchString.substring(hitchString.indexOf("("), hitchString.indexOf(")"))));
         } else {
             choice.setTargetBay(hitchChoices.get(1));
         }

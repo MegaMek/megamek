@@ -159,6 +159,42 @@ public class TestProtomech extends TestEntity {
         // TODO Auto-generated method stub
         return 0;
     }
+    
+    /**
+     * Determine the minimum walk MP for the protomech based on configuration
+     * 
+     * @param proto The protomech
+     * @return      The minimum walk MP
+     */
+    public int getMinimumWalkMP(Protomech proto) {
+        if (proto.isGlider()) {
+            return 4;
+        } else if (proto.isQuad()) {
+            return 3;
+        } else {
+            return 1;
+        }
+    }
+    
+    /**
+     * Computes the required engine rating
+     * 
+     * @param proto The protomech
+     * @return      The engine rating required for the weight, speed, and configuration
+     */
+    public static int calcEngineRating(Protomech proto) {
+        int moveFactor = (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
+        // More efficient engine use for gliders and quads
+        if (proto.isGlider() || proto.isQuad()) {
+            moveFactor -= 2;
+        }
+        int engineRating = Math.max(1, (int)(moveFactor * proto.getWeight()));
+        // Engine ratings over 40 have to be rounded up to the nearest 5.
+        if (engineRating > 40) {
+            return (int) Math.ceil(engineRating / 5.0) * 5;
+        }
+        return engineRating;
+    }
 
     /**
      * Equipment slot limit by location

@@ -34,6 +34,7 @@ import megamek.common.LocationFullException;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestProtomech;
 
 public class BLKProtoFile extends BLKFile implements IMechLoader {
 
@@ -100,8 +101,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int engineCode = BLKFile.FUSION;
         int engineFlags = Engine.NORMAL_ENGINE;
         engineFlags |= Engine.CLAN_ENGINE;
-
-        int engineRating = (int) Math.round(dataFile.getDataAsInt("cruiseMP")[0] * 1.5) * (int) t.getWeight();
+        int engineRating = TestProtomech.calcEngineRating(t);
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {

@@ -13,8 +13,11 @@
  */
 package megamek.common.verifier;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
@@ -23,6 +26,48 @@ import megamek.common.Entity;
 import megamek.common.Protomech;
 
 public class TestProtomechTest {
+    
+    @Test
+    public void testCalcEngineRatingUnder40NoRounding() {
+        Protomech mockProto = mock(Protomech.class);
+        when(mockProto.getWeight()).thenReturn(6.0);
+        // walking 6
+        when(mockProto.getOriginalWalkMP()).thenReturn(4);
+        
+        assertEquals(TestProtomech.calcEngineRating(mockProto), 36);
+    }
+    
+    @Test
+    public void testCalcEngineRatingOver40RoundsTo5() {
+        Protomech mockProto = mock(Protomech.class);
+        when(mockProto.getWeight()).thenReturn(6.0);
+        // running 8
+        when(mockProto.getOriginalWalkMP()).thenReturn(5);
+        
+        assertEquals(TestProtomech.calcEngineRating(mockProto), 50);
+    }
+    
+    @Test
+    public void testCalcEngineRatingGliderEfficiency() {
+        Protomech mockProto = mock(Protomech.class);
+        when(mockProto.getWeight()).thenReturn(6.0);
+        when(mockProto.isGlider()).thenReturn(true);
+        // running 6, engine rating calculated as running - 2
+        when(mockProto.getOriginalWalkMP()).thenReturn(4);
+        
+        assertEquals(TestProtomech.calcEngineRating(mockProto), 24);
+    }
+    
+    @Test
+    public void testCalcEngineRatingQuadEfficiency() {
+        Protomech mockProto = mock(Protomech.class);
+        when(mockProto.getWeight()).thenReturn(6.0);
+        when(mockProto.isQuad()).thenReturn(true);
+        // running 6, engine rating calculated as running - 2
+        when(mockProto.getOriginalWalkMP()).thenReturn(4);
+        
+        assertEquals(TestProtomech.calcEngineRating(mockProto), 24);
+    }
     
     @Test
     public void testEngineWeight() {

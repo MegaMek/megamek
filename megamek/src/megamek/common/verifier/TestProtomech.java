@@ -78,6 +78,11 @@ public class TestProtomech extends TestEntity {
     public boolean isProtomech() {
         return true;
     }
+    
+    @Override
+    public double getWeightStructure() {
+        return proto.getWeight() * 0.1;
+    }
 
     @Override
     public double getWeightControls() {
@@ -153,17 +158,28 @@ public class TestProtomech extends TestEntity {
     /**
      * Equipment slot limit by location
      * 
-     * @param loc The Protomech location
-     * @return    The number of equipment slots in the location
+     * @param loc   The Protomech location
+     * @param quad  Whether the protomech is a quad
+     * @param ultra Whether the protomech is ultraheavy
+     * @return      The number of equipment slots in the location
      */
-    public static int maxSlotsByLocation(int loc) {
+    public static int maxSlotsByLocation(int loc, boolean quad, boolean ultra) {
         switch(loc) {
-            case Protomech.LOC_TORSO:
-                return 2;
+            case Protomech.LOC_TORSO: {
+                int slots = 2;
+                if (ultra) {
+                    slots++;
+                }
+                if (quad) {
+                    slots += slots;
+                }
+                return slots;
+            }
             case Protomech.LOC_LARM:
             case Protomech.LOC_RARM:
+                return quad? 0 : 1;
             case Protomech.LOC_MAINGUN:
-                return 1;
+                return (quad && ultra)? 2 : 1;
             case Protomech.LOC_HEAD:
             case Protomech.LOC_LEG:
             default:
@@ -174,22 +190,28 @@ public class TestProtomech extends TestEntity {
     /**
      * The maximum total weight that can be mounted in a given location.
      * 
-     * @param loc The location
-     * @return    The weight limit for that location, in tons.
+     * @param loc   The Protomech location
+     * @param quad  Whether the protomech is a quad
+     * @param ultra Whether the protomech is ultraheavy
+     * @return      The weight limit for that location, in tons.
      */
-    public static double maxWeightByLocation(int loc) {
+    public static double maxWeightByLocation(int loc, boolean quad, boolean ultra) {
         switch(loc) {
             case Protomech.LOC_TORSO:
-                return 2.0;
+                if (quad) {
+                    return ultra? 8.0 : 5.0;
+                } else {
+                    return ultra? 4.0 : 2.0;
+                }
             case Protomech.LOC_LARM:
             case Protomech.LOC_RARM:
-                return 0.5;
+                return quad? 0.0 : 0.5;
             case Protomech.LOC_MAINGUN:
                 return Double.MAX_VALUE;
             case Protomech.LOC_HEAD:
             case Protomech.LOC_LEG:
             default:
-                return 0;
+                return 0.0;
         }
     }
 

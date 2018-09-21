@@ -5,6 +5,7 @@ v0.45.2-SNAPSHOT
 + Switched build system from ant to gradle.
 + Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
 + PR #1132: Zweihander
++ Issue #1149: Force Generator switching from Mechs to Protomechs for Clans that deploy them
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers

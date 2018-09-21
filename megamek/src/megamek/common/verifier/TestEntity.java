@@ -79,6 +79,8 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isSmallCraft();
     
     public abstract boolean isAdvancedAerospace();
+    
+    public abstract boolean isProtomech();
 
     public abstract double getWeightControls();
 

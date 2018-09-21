@@ -167,6 +167,11 @@ public class TestTank extends TestEntity {
         return false;
     }
 
+    @Override
+    public boolean isProtomech() {
+        return false;
+    }
+
     public double getTankWeightTurret() {
         double weight = 0;
 

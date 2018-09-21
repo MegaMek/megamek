@@ -83,6 +83,11 @@ public class TestProtomech extends TestEntity {
     public double getWeightStructure() {
         return proto.getWeight() * 0.1;
     }
+    
+    @Override
+    public double getWeightEngine() {
+        return proto.getEngine().getWeightEngine(proto, Ceil.KILO);
+    }
 
     @Override
     public double getWeightControls() {
@@ -214,5 +219,22 @@ public class TestProtomech extends TestEntity {
                 return 0.0;
         }
     }
-
+    
+    private static final int MAX_ARMOR_FACTOR[] = { 15, 17, 22, 24, 33, 35, 40, 42, 51, 53, 58, 60, 65, 67 };
+    
+    /**
+     * Calculate the maximum armor factor based on weight and whether there is a main gun location
+     * 
+     * @param weight  The weight of the protomech in tons
+     * @param mainGun Whether the protomech has a main gun location
+     * @return        The maximum total number of armor points
+     */
+    public static int maxArmorFactor(double weight, boolean mainGun) {
+        final int weightIndex = Math.max(0, (int) weight - 2);
+        int base = MAX_ARMOR_FACTOR[Math.min(weightIndex, MAX_ARMOR_FACTOR.length - 1)];
+        if (mainGun) {
+            return base + ((weight > 9)? 6 : 3);
+        }
+        return base;
+    }
 }

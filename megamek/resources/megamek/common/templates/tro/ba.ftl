@@ -1,4 +1,10 @@
 ${fullName}
+<#if includeFluff>
+Type: ${chassis}
+Manufacturer: <#if manufacturerDesc??>${manufacturerDesc}<#else>Unknown</#if>
+    Primary Factory: <#if factoryDesc??>${factoryDesc}<#else>Unknown</#if>
+
+</#if>
 Tech Base: ${techBase} 
 Chassis Type: ${chassisType}
 Weight Class: ${weightClass}

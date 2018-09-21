@@ -285,7 +285,7 @@
 		
 		<ruleGroup>
 			<unitType ifUnitType="Mek" ifDateBetween="3070,"
-					ifRole="!command">
+					ifRole="!command" ifTopLevel="0">
 				<option>ProtoMek</option>
 				<option weight="5" />
 			</unitType>

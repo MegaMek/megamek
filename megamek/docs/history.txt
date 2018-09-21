@@ -5,6 +5,8 @@ v0.45.2-SNAPSHOT
 + Switched build system from ant to gradle.
 + Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
 + PR #1132: Zweihander
++ Issue #1149: Force Generator switching from Mechs to Protomechs for Clans that deploy them
++ Data: Various fixes to unit names as a result of the Large Craft changes.
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers
@@ -23,6 +25,7 @@ v0.45.1 (2018-09-03 2300 UTC)
 + PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
 + Issue #612: [Feature] Year setting in various random unit generation mechanisms now gets set to the game year whenever that changes.
 + PR #1068: Advanced Aerospace construction data and unit fixes.
++ PR #1134: pilot portrait option for tooltip
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.

@@ -1308,7 +1308,7 @@
 			<option ifRole="command" weight="1">H</option>
 		</weightClass>
 
-		<unitType ifUnitType="Mek" ifRole="!command">
+		<unitType ifUnitType="Mek" ifRole="!command" ifTopLevel="0">
 			<option weight="3" />
 			<option>ProtoMek</option>
 		</unitType>

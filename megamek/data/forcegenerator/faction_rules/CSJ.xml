@@ -623,7 +623,7 @@
 		</weightClass>
 	
 		<unitType ifUnitType="Mek" ifDateBetween="3059,"
-				ifRating="SL|PG|Sol">
+				ifRating="SL|PG|Sol" ifTopLevel="0">
 			<option weight="6" />
 			<option>ProtoMek</option>
 		</unitType>
@@ -633,7 +633,7 @@
 		</subforces>
 		
 		<subforces ifUnitType="ProtoMek">
-			<subforce num="5">%POINT%</subforce>
+			<subforce num="3">%STAR%</subforce>
 		</subforces>
 	</force>
 
@@ -758,7 +758,7 @@
 		</weightClass>
 		
 		<unitType ifUnitType="Mek" ifDateBetween="3059,"
-				ifRating="SL|PG|Sol">
+				ifRating="SL|PG|Sol" ifTopLevel="0">
 			<option weight="6" />
 			<option>ProtoMek</option>
 		</unitType>
@@ -769,7 +769,7 @@
 		
 		<subforces ifUnitType="ProtoMek">
 			<subforce ifUnitType="ProtoMek"
-				num="5">%POINT%</subforce>
+				num="2">%STAR%</subforce>
 		</subforces>
 	</force>
 

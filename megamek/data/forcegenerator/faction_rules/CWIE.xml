@@ -118,7 +118,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocat
 		the the exiles abandoned their use during or after the Jihad.-->
 		
 		<unitType ifUnitType="Mek" ifRole="!command"
-				ifDateBetween="3060,3084">
+				ifDateBetween="3060,3084" ifTopLevel="0">
 			<option weight="9" />
 			<option weight="3" ifDateBetween="3070," />
 			<option ifRating="FL|SL">ProtoMek</option>

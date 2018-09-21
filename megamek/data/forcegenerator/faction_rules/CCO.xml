@@ -869,7 +869,7 @@ ranked SL units.-->
 		<!--Clan Coyote was a little late to the party on Huntress, not
 		getting Proto tech until 3062.-->
 		
-		<unitType ifUnitType="Mek" ifDateBetween="3062," ifRole="!command">
+		<unitType ifUnitType="Mek" ifDateBetween="3062," ifRole="!command" ifTopLevel="0">
 			<option weight="6" />
 			<option ifRating="FL|SL">ProtoMek</option>
 			<option ifRating="FL|SL" ifDateBetween="3070,">ProtoMek</option>

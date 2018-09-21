@@ -542,7 +542,7 @@
 				<option weightClass="M,M,L" weight="2">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="A,L,L">%STAR%</option>
+				<option weightClass="H,L,L">%STAR%</option>
 				<option weightClass="M,L,L" weight="4">%STAR%</option>
 				<option weightClass="L,L,L" weight="3">%STAR%</option>
 			</subforceOption>

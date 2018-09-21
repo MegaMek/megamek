@@ -657,7 +657,7 @@ public class Crew implements Serializable {
         this.options = options;
     }
 
-    public PilotOptions getOptions() {
+    public PilotOptions getOptions2() {
         return options;
     }
 
@@ -905,14 +905,6 @@ public class Crew implements Serializable {
             return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
         }
         return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
-    }
-
-    public int modifyPhysicalDamagaForMeleeSpecialist() {
-        if (!getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
-            return 0;
-        }
-
-        return 1;
     }
 
     public boolean hasEdgeRemaining() {

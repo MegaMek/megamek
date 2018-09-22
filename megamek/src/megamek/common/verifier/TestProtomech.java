@@ -15,23 +15,39 @@ package megamek.common.verifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.sun.istack.Nullable;
+
+import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.ITechManager;
 import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
-import megamek.common.verifier.TestBattleArmor.BAArmor;
+import megamek.common.WeaponType;
+import megamek.common.util.StringUtil;
 
 /**
  * @author Neoancient
  *
  */
 public class TestProtomech extends TestEntity {
+    
+    /**
+     * Any protomech with a larger mass than this is ultra-heavy
+     */
+    public static final double MAX_STD_TONNAGE = 9.0;
+    
+    /**
+     * Maximum weight for a protomech
+     */
+    public static final double MAX_TONNAGE = 15.0;
     
     public enum ProtomechJumpJets {
         JJ_STANDARD ("ProtomechJumpJet", false),
@@ -94,7 +110,21 @@ public class TestProtomech extends TestEntity {
          * @return    The {@link ProtomechArmor} that corresponds to the given type
          *            or null if no match was found.
          */
-        public static ProtomechArmor getArmor(int t, boolean c) {
+        public static @Nullable ProtomechArmor getArmor(Protomech proto) {
+            return getArmor(proto.getArmorType(Protomech.LOC_TORSO),
+                    TechConstants.isClan(proto.getArmorTechLevel(Protomech.LOC_TORSO)));
+        }
+
+        /**
+         * Given an armor type, return the {@link ProtomechArmor} instance that
+         * represents that type.
+         *
+         * @param t   The armor type.
+         * @param c   Whether this armor type is Clan or not.
+         * @return    The {@link ProtomechArmor} that corresponds to the given type
+         *            or null if no match was found.
+         */
+        public static @Nullable ProtomechArmor getArmor(int t, boolean c) {
             for (ProtomechArmor a : values()) {
                 if ((a.type == t) && (a.isClan == c)) {
                     return a;
@@ -214,7 +244,7 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        return (proto.getWeight() > 9)? 0.75 : 0.5;
+        return (proto.getWeight() > MAX_STD_TONNAGE)? 0.75 : 0.5;
     }
 
     @Override
@@ -239,8 +269,7 @@ public class TestProtomech extends TestEntity {
     
     @Override
     public double getWeightAllocatedArmor() {
-        ProtomechArmor armor = ProtomechArmor.getArmor(proto.getArmorType(0),
-                TechConstants.isClan(proto.getArmorTechLevel(0)));
+        ProtomechArmor armor = ProtomechArmor.getArmor(proto);
         double wtPerPoint = 0.0;
         if (null != armor) {
             wtPerPoint = armor.getWtPerPoint();
@@ -250,43 +279,184 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     @Override
     public String printWeightControls() {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
+                "Controls:", getPrintSize() - 5));
+        retVal.append(makeWeightString(getWeightControls()));
+        retVal.append("\n");
+        return retVal.toString();
+    }
+    
+    @Override
+    public double getWeightCarryingSpace() {
+        return 0.0;
     }
 
     @Override
     public boolean correctEntity(StringBuffer buff) {
-        // TODO Auto-generated method stub
-        return false;
+        return correctEntity(buff, getEntity().getTechLevel());
     }
 
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-        // TODO Auto-generated method stub
-        return false;
+        boolean correct = true;
+        if (skip()) {
+            return correct;
+        }
+        if (!correctWeight(buff)) {
+            buff.insert(0, printTechLevel() + printShortMovement());
+            buff.append(printWeightCalculation());
+            correct = false;
+        }
+        if (!engine.engineValid) {
+            buff.append(engine.problem.toString()).append("\n\n");
+            correct = false;
+        }
+        if (showCorrectArmor() && !correctArmor(buff)) {
+            correct = false;
+        }
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
+            correct = false;
+        }
+        if (hasIllegalTechLevels(buff, ammoTechLvl)) {
+            correct = false;
+        }
+        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+            correct = false;
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
+            correct = false;
+        }
+        correct = correct && correctMovement(buff);
+        return correct;
     }
+    
+    @Override
+    public boolean correctWeight(StringBuffer buff) {
+        boolean correct = super.correctWeight(buff);
+        if (proto.getWeight() > MAX_TONNAGE) {
+            buff.append("Exceeds maximum weight of ").append(MAX_TONNAGE).append("\n");
+            correct = false;
+        }
+        return correct;
+    }
+    
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = false;
+        Map<Integer, Integer> slotsByLoc = new HashMap<>();
+        Map<Integer, Double> weightByLoc = new HashMap<>();
+        for (Mounted mount : proto.getEquipment()) {
+            slotsByLoc.merge(mount.getLocation(), slotCount(mount.getType()), Integer::sum);
+            weightByLoc.merge(mount.getLocation(),
+                    mount.getType().getTonnage(proto, mount.getLocation()), Double::sum);
+            if (mount.isRearMounted() && (mount.getLocation() != Protomech.LOC_TORSO)) {
+                buff.append("Equipment can only be rear-mounted on the torso\n");
+                illegal = true;
+            }
+            if ((mount.getType() instanceof WeaponType)
+                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
+                buff.append(mount.toString()).append(" is not a legal protomech weapon.\n");
+                illegal = true;
+            } else if ((mount.getType() instanceof MiscType)
+                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
+                buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
+                illegal = true;
+            }
+        }
+        ProtomechArmor armor = ProtomechArmor.getArmor(proto);
+        if (null == armor) {
+            buff.append("Does not have legal armor type.\n");
+            illegal = true;
+        } else {
+            slotsByLoc.merge(Protomech.LOC_TORSO, armor.getTorsoSlots(), Integer::sum);
+        }
+        for (int loc = 0; loc < proto.locations(); loc++) {
+            if (slotsByLoc.getOrDefault(loc, 0) > maxSlotsByLocation(loc, proto)) {
+                buff.append("Exceeds ").append(maxSlotsByLocation(loc, proto))
+                    .append(" slot limit in ").append(proto.getLocationName(loc)).append("\n");
+                illegal = true;
+            }
+            if (weightByLoc.getOrDefault(loc, 0.0) > maxWeightByLocation(loc, proto)) {
+                buff.append("Exceeds ").append(maxWeightByLocation(loc, proto) * 1000)
+                    .append(" kg limit in ").append(proto.getLocationName(loc)).append("\n");
+                illegal = true;
+            }
+        }
+        if (proto.isGlider() && proto.isQuad()) {
+            buff.append("Glider protomechs cannot be quads.\n");
+            illegal = true;
+        }
+        
+        return illegal;
+    }
+    
+    /**
+     * Checks for exceeding the maximum number of armor points for the tonnage.
+     * 
+     * @param buffer  A string buffer for appending error messages.
+     * @return        Whether the number of armor points is legal
+     */
+    public boolean correctArmor(StringBuffer buffer) {
+        if (proto.getTotalArmor() > maxArmorFactor(proto)) {
+            buffer.append("Exceeds maximum of ").append(maxArmorFactor(proto)).append(" armor points.\n");
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Checks whether the protomech meets the minimum MP requirements for the configuration.
+     * 
+     * @param buffer A buffer for error messages
+     * @return       Whether the MP is legal.
+     */
+    public boolean correctMovement(StringBuffer buffer) {
+        if (proto.isGlider()
+                && proto.getOriginalWalkMP() < 4) {
+            buffer.append("Glider protomechs have a minimum cruising MP of 4.\n");
+            return false;
+        } else if (proto.isQuad()
+                && proto.getOriginalWalkMP() < 3) {
+            buffer.append("Quad protomechs have a minimum walk MP of 3.\n");
+            return false;
+        }
+        return true;
+    }
+    
 
     @Override
     public StringBuffer printEntity() {
-        // TODO Auto-generated method stub
-        return null;
+        StringBuffer buff = new StringBuffer();
+        buff.append("Protomech: ").append(proto.getDisplayName()).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");
+        buff.append(printTechLevel());
+        buff.append("Intro year: ").append(proto.getYear());
+        buff.append(printSource());
+        buff.append(printShortMovement());
+        if (correctWeight(buff, true, true)) {
+            buff.append("Weight: ").append(getWeight()).append(" (")
+                    .append(calculateWeight()).append(")\n");
+        }
+        buff.append(printWeightCalculation()).append("\n");
+        buff.append(printArmorPlacement());
+        correctArmor(buff);
+        buff.append(printLocations());
+        printFailedEquipment(buff);
+        return buff;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return "Protomech: " + proto.getDisplayName();
     }
 
     @Override
     public double getWeightPowerAmp() {
-        // TODO Auto-generated method stub
         return 0;
     }
     
@@ -319,6 +489,37 @@ public class TestProtomech extends TestEntity {
             moveFactor -= 2;
         }
         return Math.max(1, (int)(moveFactor * proto.getWeight()));
+    }
+    
+    /**
+     * Determines the number of critical slots taken up by a piece of equipment. Most take up
+     * a single slot, but ammo and movement enchancement systems take none.
+     * 
+     * @param etype The equipment
+     * @return      The number of slots required by the equipment.
+     */
+    public static int slotCount(EquipmentType etype) {
+        if (etype instanceof AmmoType) {
+            return 0;
+        }
+        if ((etype instanceof MiscType)
+                &&(etype.hasFlag(MiscType.F_MASC)
+                || etype.hasFlag(MiscType.F_UMU)
+                || etype.hasFlag(MiscType.F_JUMP_JET))) {
+            return 0;
+        }
+        return 1;
+    }
+    
+    /**
+     * Equipment slot limit by location
+     * 
+     * @param loc   The Protomech location
+     * @param proto The Protomech
+     * @return      The number of equipment slots in the location
+     */
+    public static int maxSlotsByLocation(int loc, Protomech proto) {
+        return maxSlotsByLocation(loc, proto.isQuad(), proto.getWeight() > MAX_STD_TONNAGE);
     }
 
     /**
@@ -357,6 +558,17 @@ public class TestProtomech extends TestEntity {
      * The maximum total weight that can be mounted in a given location.
      * 
      * @param loc   The Protomech location
+     * @param proto The Protomech
+     * @return      The weight limit for that location, in tons.
+     */
+    public static double maxWeightByLocation(int loc, Protomech proto) {
+        return maxWeightByLocation(loc, proto.isQuad(), proto.getWeight() > MAX_STD_TONNAGE);
+    }
+    
+    /**
+     * The maximum total weight that can be mounted in a given location.
+     * 
+     * @param loc   The Protomech location
      * @param quad  Whether the protomech is a quad
      * @param ultra Whether the protomech is ultraheavy
      * @return      The weight limit for that location, in tons.
@@ -386,6 +598,16 @@ public class TestProtomech extends TestEntity {
     /**
      * Calculate the maximum armor factor based on weight and whether there is a main gun location
      * 
+     * @param proto   The protomech
+     * @return        The maximum total number of armor points
+     */
+    public static int maxArmorFactor(Protomech proto) {
+        return maxArmorFactor(proto.getWeight(), proto.hasMainGun());
+    }
+    
+    /**
+     * Calculate the maximum armor factor based on weight and whether there is a main gun location
+     * 
      * @param weight  The weight of the protomech in tons
      * @param mainGun Whether the protomech has a main gun location
      * @return        The maximum total number of armor points
@@ -394,7 +616,7 @@ public class TestProtomech extends TestEntity {
         final int weightIndex = Math.max(0, (int) weight - 2);
         int base = MAX_ARMOR_FACTOR[Math.min(weightIndex, MAX_ARMOR_FACTOR.length - 1)];
         if (mainGun) {
-            return base + ((weight > 9)? 6 : 3);
+            return base + ((weight > MAX_STD_TONNAGE)? 6 : 3);
         }
         return base;
     }

@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.BLKAeroFile;
@@ -57,6 +59,7 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.MegaMekFile;
+import megamek.common.verifier.TestProtomech;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -894,6 +897,20 @@ public class MechFileParser {
                         BattleArmor.MOUNT_LOC_NONE, false);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
+            }
+        } else if (ent.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (ent.getOriginalJumpMP() > 0)) {
+            long jjs = ent.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET)).count();
+            TestProtomech.ProtomechJumpJets jjtype = ent.getOriginalJumpMP() > ent.getOriginalWalkMP()?
+                    TestProtomech.ProtomechJumpJets.JJ_STANDARD :
+                        TestProtomech.ProtomechJumpJets.JJ_EXTENDED;
+            EquipmentType jjEq = EquipmentType.get(jjtype.getName());
+            while (jjs < ent.getOriginalJumpMP()) {
+                try {
+                    ent.addEquipment(jjEq, Protomech.LOC_NONE);
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
+                }
+                jjs++;
             }
         }
 

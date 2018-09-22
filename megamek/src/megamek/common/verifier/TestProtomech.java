@@ -278,6 +278,14 @@ public class TestProtomech extends TestEntity {
     }
 
     @Override
+    public String printWeightStructure() {
+        return StringUtil.makeLength(
+                "Structure: "
+                        + Integer.toString(getEntity().getTotalOInternal()), getPrintSize() - 5)
+                + TestEntity.makeWeightString(getWeightStructure()) + "\n";
+    }
+
+    @Override
     public String printWeightMisc() {
         return "";
     }

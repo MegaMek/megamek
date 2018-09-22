@@ -13,8 +13,19 @@
  */
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.ITechManager;
+import megamek.common.MiscType;
 import megamek.common.Protomech;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechConstants;
+import megamek.common.verifier.TestBattleArmor.BAArmor;
 
 /**
  * @author Neoancient
@@ -22,6 +33,118 @@ import megamek.common.Protomech;
  */
 public class TestProtomech extends TestEntity {
     
+    public enum ProtomechJumpJets {
+        JJ_STANDARD ("ProtomechJumpJet", false),
+        JJ_EXTENDED ("ExtendedJumpJetSystem", true),
+        JJ_UMU ("ProtomechUMU", false);
+        
+        private final String internalName;
+        private final boolean improved;
+        
+        private ProtomechJumpJets(String internalName, boolean improved) {
+            this.internalName = internalName;
+            this.improved = improved;
+        }
+        
+        public String getName() {
+            return internalName;
+        }
+        
+        public boolean isImproved() {
+            return improved;
+        }
+        
+        public static List<EquipmentType> allJJs() {
+            return Arrays.stream(values())
+                    .map(jj -> EquipmentType.get(jj.internalName))
+                    .collect(Collectors.toList());
+        }
+    }
+    
+    /**
+     * All the protomech armor options. Both of the them.
+     *
+     */
+    public static enum ProtomechArmor {
+        STANDARD (EquipmentType.T_ARMOR_STANDARD, true, 0, 0.05),
+        EDP (EquipmentType.T_ARMOR_EDP, true, 1, 0.075);
+
+        private final int type;
+        private final boolean isClan;
+        private final int torsoSlots;
+        private final double wtPerPoint;
+
+        ProtomechArmor(int t, boolean c, int slots, double weight) {
+            type = t;
+            isClan = c;
+            torsoSlots = slots;
+            wtPerPoint = weight;
+        }
+
+        public static int armorCount() {
+            return values().length;
+        }
+
+        /**
+         * Given an armor type, return the {@link ProtomechArmor} instance that
+         * represents that type.
+         *
+         * @param t   The armor type.
+         * @param c   Whether this armor type is Clan or not.
+         * @return    The {@link ProtomechArmor} that corresponds to the given type
+         *            or null if no match was found.
+         */
+        public static ProtomechArmor getArmor(int t, boolean c) {
+            for (ProtomechArmor a : values()) {
+                if ((a.type == t) && (a.isClan == c)) {
+                    return a;
+                }
+            }
+            return null;
+        }
+        
+        /**
+         * @return The {@link MiscType} for this armor.
+         */
+        public EquipmentType getArmorEqType() {
+            String name = EquipmentType.getArmorTypeName(type, isClan);
+            return EquipmentType.get(name);
+        }
+        
+        public int getType() {
+            return type;
+        }
+        
+        public boolean isClan() {
+            return isClan;
+        }
+        
+        public int getTorsoSlots() {
+            return torsoSlots;
+        }
+        
+        public double getWtPerPoint() {
+            return wtPerPoint;
+        }
+    }
+
+    /**
+     * Filters all protomech armor according to given tech constraints
+     * 
+     * @param techManager
+     * @return A list of all armors that meet the tech constraints
+     */
+    public static List<EquipmentType> legalArmorsFor(ITechManager techManager) {
+        List<EquipmentType> retVal = new ArrayList<>();
+        for (ProtomechArmor armor : ProtomechArmor.values()) {
+            final EquipmentType eq = armor.getArmorEqType();
+            if ((null != eq) && techManager.isLegal(eq)) {
+                retVal.add(eq);
+            }
+        }
+        return retVal;
+    }
+        
     private final Protomech proto;
     private final String fileString;
 
@@ -91,31 +214,38 @@ public class TestProtomech extends TestEntity {
 
     @Override
     public double getWeightControls() {
-        // TODO Auto-generated method stub
-        return 0;
+        return (proto.getWeight() > 9)? 0.75 : 0.5;
     }
 
     @Override
     public double getWeightMisc() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public double getWeightHeatSinks() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getCountHeatSinks() * 0.25;
     }
 
     @Override
     public boolean hasDoubleHeatSinks() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public int getCountHeatSinks() {
         return heatNeutralHSRequirement();
+    }
+    
+    @Override
+    public double getWeightAllocatedArmor() {
+        ProtomechArmor armor = ProtomechArmor.getArmor(proto.getArmorType(0),
+                TechConstants.isClan(proto.getArmorTechLevel(0)));
+        double wtPerPoint = 0.0;
+        if (null != armor) {
+            wtPerPoint = armor.getWtPerPoint();
+        }
+        return proto.getTotalArmor() * wtPerPoint;
     }
 
     @Override
@@ -188,12 +318,7 @@ public class TestProtomech extends TestEntity {
         if (proto.isGlider() || proto.isQuad()) {
             moveFactor -= 2;
         }
-        int engineRating = Math.max(1, (int)(moveFactor * proto.getWeight()));
-        // Engine ratings over 40 have to be rounded up to the nearest 5.
-        if (engineRating > 40) {
-            return (int) Math.ceil(engineRating / 5.0) * 5;
-        }
-        return engineRating;
+        return Math.max(1, (int)(moveFactor * proto.getWeight()));
     }
 
     /**

@@ -234,7 +234,7 @@ public class TestProtomech extends TestEntity {
     
     @Override
     public double getWeightStructure() {
-        return proto.getWeight() * 0.1;
+        return ceil(proto.getWeight() * 0.1, Ceil.KILO);
     }
     
     @Override
@@ -359,7 +359,10 @@ public class TestProtomech extends TestEntity {
         Map<Integer, Integer> slotsByLoc = new HashMap<>();
         Map<Integer, Double> weightByLoc = new HashMap<>();
         for (Mounted mount : proto.getEquipment()) {
-            slotsByLoc.merge(mount.getLocation(), slotCount(mount.getType()), Integer::sum);
+            if (!requiresSlot(mount.getType())) {
+                continue;
+            }
+            slotsByLoc.merge(mount.getLocation(), 1, Integer::sum);
             weightByLoc.merge(mount.getLocation(),
                     mount.getType().getTonnage(proto, mount.getLocation()), Double::sum);
             if (mount.isRearMounted() && (mount.getLocation() != Protomech.LOC_TORSO)) {
@@ -367,11 +370,13 @@ public class TestProtomech extends TestEntity {
                 illegal = true;
             }
             if ((mount.getType() instanceof WeaponType)
-                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
+                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)
+                    && !mount.getType().hasFlag(WeaponType.F_MECH_WEAPON)) {
                 buff.append(mount.toString()).append(" is not a legal protomech weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
-                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
+                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)
+                    && !mount.getType().hasFlag(MiscType.F_MECH_EQUIPMENT)) {
                 buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
                 illegal = true;
             }
@@ -464,6 +469,16 @@ public class TestProtomech extends TestEntity {
     }
 
     @Override
+    public double getWeightAmmo() {
+        double weight = 0.0;
+        for (Mounted m : getEntity().getAmmo()) {
+            AmmoType mt = (AmmoType) m.getType();
+            weight += (mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0;
+        }
+        return weight;
+    }
+
+    @Override
     public double getWeightPowerAmp() {
         return 0;
     }
@@ -500,23 +515,21 @@ public class TestProtomech extends TestEntity {
     }
     
     /**
-     * Determines the number of critical slots taken up by a piece of equipment. Most take up
-     * a single slot, but ammo and movement enchancement systems take none.
+     * Determines whether a piece of equipment counts toward the slot and weight limits of a location.
      * 
      * @param etype The equipment
-     * @return      The number of slots required by the equipment.
+     * @return      Whether the equipment takes a slot.
      */
-    public static int slotCount(EquipmentType etype) {
+    public static boolean requiresSlot(EquipmentType etype) {
         if (etype instanceof AmmoType) {
-            return 0;
+            return false;
         }
-        if ((etype instanceof MiscType)
-                &&(etype.hasFlag(MiscType.F_MASC)
+        if (etype instanceof MiscType) {
+            return !(etype.hasFlag(MiscType.F_MASC)
                 || etype.hasFlag(MiscType.F_UMU)
-                || etype.hasFlag(MiscType.F_JUMP_JET))) {
-            return 0;
+                || etype.hasFlag(MiscType.F_JUMP_JET));
         }
-        return 1;
+        return true;
     }
     
     /**
@@ -591,7 +604,10 @@ public class TestProtomech extends TestEntity {
                 }
             case Protomech.LOC_LARM:
             case Protomech.LOC_RARM:
-                return quad? 0.0 : 0.5;
+                if (quad) {
+                    return 0;
+                }
+                return ultra? 1.0 : 0.5;
             case Protomech.LOC_MAINGUN:
                 return Double.MAX_VALUE;
             case Protomech.LOC_HEAD:

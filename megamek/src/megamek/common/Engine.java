@@ -327,7 +327,7 @@ public class Engine implements Serializable, ITechnology {
         }
         // Protomech engines with rating < 40 use a special calculation
         if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
-            return TestEntity.ceil(engineRating * 0.025, TestEntity.Ceil.KILO);
+            return TestEntity.ceil(engineRating * 0.025, roundWeight);
         }
         double weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {

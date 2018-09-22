@@ -203,9 +203,12 @@ public class TestProtomechTest {
         Engine engine40 = new Engine(40, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         Engine engine35 = new Engine(35, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
         
-        assertEquals(engine42.getWeightEngine(mockProto), engine45.getWeightEngine(mockNonProto), 0.001);
-        assertEquals(engine40.getWeightEngine(mockProto), engine40.getWeightEngine(mockNonProto), 0.001);
-        assertTrue(engine35.getWeightEngine(mockProto) < engine35.getWeightEngine(mockNonProto));
+        assertEquals(engine42.getWeightEngine(mockProto, TestEntity.Ceil.KILO),
+                engine45.getWeightEngine(mockNonProto), 0.001);
+        assertEquals(engine40.getWeightEngine(mockProto, TestEntity.Ceil.KILO),
+                engine40.getWeightEngine(mockNonProto), 0.001);
+        assertTrue(engine35.getWeightEngine(mockProto,
+                TestEntity.Ceil.KILO) < engine35.getWeightEngine(mockNonProto));
     }
 
     @Test

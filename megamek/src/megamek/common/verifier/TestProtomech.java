@@ -232,7 +232,7 @@ public class TestProtomech extends TestEntity {
     
     @Override
     public double getWeightStructure() {
-        return ceil(proto.getWeight() * 0.1, Ceil.KILO);
+        return round(proto.getWeight() * 0.1, Ceil.KILO);
     }
     
     @Override
@@ -263,6 +263,12 @@ public class TestProtomech extends TestEntity {
     @Override
     public int getCountHeatSinks() {
         return heatNeutralHSRequirement();
+    }
+    
+    @Override
+    public double calculateWeight() {
+        // Deal with some floating point precision issues
+        return round(super.calculateWeight(), Ceil.KILO);
     }
     
     @Override

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.TestEntity;
 
 /**
  * Protomechs. Level 2 Clan equipment.
@@ -602,7 +603,7 @@ public class Protomech extends Entity {
             weight += getArmor(loc)
                     * EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(loc));
         }
-        return weight;
+        return TestEntity.round(weight, TestEntity.Ceil.KILO);
     }
     /**
      * get this ProtoMech's run MP without factoring in a possible myomer

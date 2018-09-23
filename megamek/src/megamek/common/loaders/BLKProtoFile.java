@@ -34,6 +34,7 @@ import megamek.common.LocationFullException;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestProtomech;
 
 public class BLKProtoFile extends BLKFile implements IMechLoader {
 
@@ -100,8 +101,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int engineCode = BLKFile.FUSION;
         int engineFlags = Engine.NORMAL_ENGINE;
         engineFlags |= Engine.CLAN_ENGINE;
-
-        int engineRating = (int) Math.round(dataFile.getDataAsInt("cruiseMP")[0] * 1.5) * (int) t.getWeight();
+        int engineRating = TestProtomech.calcEngineRating(t);
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {
@@ -125,6 +125,18 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         t.setHasMainGun(hasMainGun);
 
+        if (dataFile.exists("armor_type")){
+            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        
+        if (dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        } else {
+            t.setArmorTechLevel(TechConstants.T_ALL_CLAN);
+        }
+        
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {
             t.initializeArmor(armor[x], x);

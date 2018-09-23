@@ -348,10 +348,10 @@ public final class PhysicalCalculator {
         }
 
         ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to,
-                                                 PunchAttackAction.LEFT);
+                                                 PunchAttackAction.LEFT, false);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
-                                                    PunchAttackAction.LEFT, targetConvInfantry);
+                                                    PunchAttackAction.LEFT, targetConvInfantry, false);
             bestDmg = (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0) * damage;
             // Adjust damage for targets armor
             bestType = PhysicalOption.PUNCH_LEFT;
@@ -360,10 +360,10 @@ public final class PhysicalCalculator {
         }
 
         odds = PunchAttackAction.toHit(game, from.getId(), to,
-                                       PunchAttackAction.RIGHT);
+                                       PunchAttackAction.RIGHT, false);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
-                                                    PunchAttackAction.RIGHT, targetConvInfantry);
+                                                    PunchAttackAction.RIGHT, targetConvInfantry, false);
             dmg = (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0) * damage;
             // Adjust damage for targets armor
             dmg *= punchThroughMod(to, location_table, target_arc, dmg, dmg);
@@ -375,13 +375,13 @@ public final class PhysicalCalculator {
 
         // Check for a double punch
         odds = PunchAttackAction.toHit(game, from.getId(), to,
-                                       PunchAttackAction.LEFT);
+                                       PunchAttackAction.LEFT, false);
         ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to,
-                                                   PunchAttackAction.RIGHT);
+                                                   PunchAttackAction.RIGHT, false);
         if ((odds.getValue() != TargetRoll.IMPOSSIBLE)
                 && (odds_a.getValue() != TargetRoll.IMPOSSIBLE)) {
             damage = PunchAttackAction.getDamageFor(from,
-                                                    PunchAttackAction.LEFT, targetConvInfantry);
+                                                    PunchAttackAction.LEFT, targetConvInfantry, false);
             dmg = (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0) * damage;
             double dmg_a = (Compute.oddsAbove(odds_a.getValue(), fromAptPiloting) / 100.0)
                            * damage;
@@ -442,9 +442,9 @@ public final class PhysicalCalculator {
                 location_table = ToHitData.HIT_NORMAL;
             }
             odds = ClubAttackAction.toHit(game, from.getId(), to, club,
-                                          ToHitData.HIT_NORMAL);
+                                          ToHitData.HIT_NORMAL, false);
             if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
-                damage = ClubAttackAction.getDamageFor(from, club, targetConvInfantry);
+                damage = ClubAttackAction.getDamageFor(from, club, targetConvInfantry, false);
                 dmg = (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0) * damage;
                 // Adjust damage for targets armor
                 dmg *= punchThroughMod(to, location_table, target_arc, dmg, dmg);

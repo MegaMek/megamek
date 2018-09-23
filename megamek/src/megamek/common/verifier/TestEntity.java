@@ -79,6 +79,8 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isSmallCraft();
     
     public abstract boolean isAdvancedAerospace();
+    
+    public abstract boolean isProtomech();
 
     public abstract double getWeightControls();
 
@@ -768,6 +770,62 @@ public abstract class TestEntity implements TestEntityOption {
             return 10;
         }
         return mt.getCriticals(getEntity());
+    }
+
+    /**
+     * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
+     * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
+     * equipment.
+     * 
+     * @return The number of heat sinks required in construction
+     */
+    protected int heatNeutralHSRequirement() {
+        int heat = 0;
+        for (Mounted m : getEntity().getWeaponList()) {
+            WeaponType wt = (WeaponType) m.getType();
+            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
+                    || wt.hasFlag(WeaponType.F_PPC)
+                    || wt.hasFlag(WeaponType.F_PLASMA)
+                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                heat += wt.getHeat();
+            }
+            // laser insulator reduce heat by 1, to a minimum of 1
+            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
+                    && !m.getLinkedBy().isInoperable()
+                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                heat -= 1;
+                if (heat == 0) {
+                    heat++;
+                }
+            }
+
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                    MiscType) && m.getLinkedBy().getType().
+                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                heat += 5;
+            }
+        }
+        for (Mounted m : getEntity().getMisc()) {
+            MiscType mtype = (MiscType)m.getType();
+            // mobile HPGs count as energy weapons for construction purposes
+            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
+                heat += 20;
+            }
+            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                heat += 2;
+            }
+            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+                heat += 12;
+            }
+            if (mtype.hasFlag(MiscType.F_NOVA)) {
+                heat += 2;
+            }
+        }
+        if (getEntity().hasStealth()) {
+            heat += 10;
+        }
+        return heat;
     }
 
     public double calculateWeight() {

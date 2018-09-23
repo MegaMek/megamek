@@ -496,6 +496,11 @@ public class TestBattleArmor extends TestEntity {
     public boolean isAdvancedAerospace() {
         return false;
     }
+    
+    @Override
+    public boolean isProtomech() {
+        return false;
+    }
 
     @Override
     public double getWeightControls() {

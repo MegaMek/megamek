@@ -5545,12 +5545,12 @@ public class Compute {
                                             Targetable target) {
 
         if (PunchAttackAction.toHit(game, entityId, target,
-                                    PunchAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE) {
+                                    PunchAttackAction.LEFT, false).getValue() != TargetRoll.IMPOSSIBLE) {
             return true;
         }
 
         if (PunchAttackAction.toHit(game, entityId, target,
-                                    PunchAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE) {
+                                    PunchAttackAction.RIGHT, false).getValue() != TargetRoll.IMPOSSIBLE) {
             return true;
         }
 
@@ -5615,7 +5615,7 @@ public class Compute {
         for (Mounted club : game.getEntity(entityId).getClubs()) {
             if (null != club) {
                 if (ClubAttackAction.toHit(game, entityId, target, club,
-                                           ToHitData.HIT_NORMAL).getValue() != TargetRoll.IMPOSSIBLE) {
+                                           ToHitData.HIT_NORMAL, false).getValue() != TargetRoll.IMPOSSIBLE) {
                     return true;
                 }
             }

@@ -595,6 +595,15 @@ public class Protomech extends Entity {
         return false;
     }
 
+    @Override
+    public double getArmorWeight() {
+        double weight = 0.0;
+        for (int loc = 0; loc < locations(); loc++) {
+            weight += getArmor(loc)
+                    * EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(loc));
+        }
+        return weight;
+    }
     /**
      * get this ProtoMech's run MP without factoring in a possible myomer
      * booster

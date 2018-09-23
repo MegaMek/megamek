@@ -82,19 +82,17 @@ public class TestProtomech extends TestEntity {
      *
      */
     public static enum ProtomechArmor {
-        STANDARD (EquipmentType.T_ARMOR_STANDARD, true, 0, 0.05),
-        EDP (EquipmentType.T_ARMOR_EDP, true, 1, 0.075);
+        STANDARD (EquipmentType.T_ARMOR_STANDARD, true, 0),
+        EDP (EquipmentType.T_ARMOR_EDP, true, 1);
 
         private final int type;
         private final boolean isClan;
         private final int torsoSlots;
-        private final double wtPerPoint;
 
-        ProtomechArmor(int t, boolean c, int slots, double weight) {
+        ProtomechArmor(int t, boolean c, int slots) {
             type = t;
             isClan = c;
             torsoSlots = slots;
-            wtPerPoint = weight;
         }
 
         public static int armorCount() {
@@ -154,7 +152,7 @@ public class TestProtomech extends TestEntity {
         }
         
         public double getWtPerPoint() {
-            return wtPerPoint;
+            return EquipmentType.getProtomechArmorWeightPerPoint(type);
         }
     }
 

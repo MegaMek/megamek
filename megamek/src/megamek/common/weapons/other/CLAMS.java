@@ -52,7 +52,7 @@ public class CLAMS extends AmmoWeapon {
 		maxRange = RANGE_SHORT;
 		shortAV = 3;
 		ammoType = AmmoType.T_AMS;
-		tonnage = 0.5f;
+		tonnage = 0.5;
 		criticals = 1;
 		bv = 32;
 		flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON)

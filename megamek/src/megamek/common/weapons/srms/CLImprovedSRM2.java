@@ -41,7 +41,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 1;
         bv = 28;
         flags = flags.or(F_NO_FIRES);

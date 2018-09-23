@@ -50,7 +50,7 @@ public abstract class InfantryWeapon extends Weapon {
         longRange = 0;
         extremeRange = 0;
         heat = 0;
-        tonnage = 0.0f;
+        tonnage = 0.0;
         criticals = 0;
         tankslots = 0;
         infantryDamage = 0;

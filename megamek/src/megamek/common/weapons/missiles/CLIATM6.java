@@ -40,7 +40,7 @@ public class CLIATM6 extends CLIATMWeapon {
         this.mediumRange = 10;
         this.longRange = 15;
         this.extremeRange = 20;
-        this.tonnage = 3.5f;
+        this.tonnage = 3.5;
         this.criticals = 3;
         this.bv = 165; // Ammo BV is 39
         this.cost = 250000;

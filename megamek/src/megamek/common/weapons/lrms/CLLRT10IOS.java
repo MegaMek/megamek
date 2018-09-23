@@ -40,7 +40,7 @@ public class CLLRT10IOS extends LRTWeapon {
         waterMediumRange = 14;
         waterLongRange = 21;
         waterExtremeRange = 28;
-        tonnage = 2.0f;
+        tonnage = 2.0;
         criticals = 1;
         bv = 22;
         flags = flags.or(F_ONESHOT);

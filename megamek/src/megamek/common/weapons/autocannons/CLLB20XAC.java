@@ -43,7 +43,7 @@ public class CLLB20XAC extends LBXACWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 12.0f;
+        tonnage = 12.0;
         criticals = 9;
         bv = 237;
         cost = 600000;

@@ -778,6 +778,19 @@ public class EquipmentType implements ITechnology {
         }
     }
     
+    /**
+     * Computes protomech armor weight by point.
+     *  
+     * @param type    The armor type
+     * @return        The weight of a point of armor in kg
+     */
+    public static double getProtomechArmorWeightPerPoint(int type) {
+        if (type == T_ARMOR_EDP) {
+            return 0.075;
+        }
+        return 0.05;
+    }
+    
     /* Armor and structure are stored as integers and standard uses a generic MiscType that
      * does not have its own TechAdvancement.
      */

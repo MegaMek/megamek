@@ -54,7 +54,7 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
         waterMediumRange = 3;
         waterLongRange = 4;
         waterExtremeRange = 6;
-        tonnage = 2.0f;
+        tonnage = 2.0;
         criticals = 1;
         bv = 48;
         cost = 240000;

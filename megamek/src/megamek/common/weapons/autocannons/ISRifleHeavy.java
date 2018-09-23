@@ -47,7 +47,7 @@ public class ISRifleHeavy extends RifleWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 27;
-        tonnage = 8.0f;
+        tonnage = 8.0;
         criticals = 3;
         bv = 91;
         cost = 90000;

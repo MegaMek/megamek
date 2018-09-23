@@ -49,7 +49,7 @@ public class ISPulseLaserSmall extends PulseLaserWeapon {
         this.waterMediumRange = 2;
         this.waterLongRange = 2;
         this.waterExtremeRange = 4;
-        this.tonnage = 1.0f;
+        this.tonnage = 1.0;
         this.criticals = 1;
         this.bv = 12;
         this.cost = 16000;

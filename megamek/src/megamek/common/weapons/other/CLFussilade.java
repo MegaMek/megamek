@@ -47,6 +47,8 @@ public class CLFussilade extends ATMWeapon {
         longAV = 6;
         maxRange = RANGE_MED;
         cost = 100000;
+        tonnage = 1.5;
+        criticals = 1;
         bv = 11;
         rulesRefs = "65,IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)

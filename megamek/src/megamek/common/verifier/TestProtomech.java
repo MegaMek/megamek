@@ -82,19 +82,17 @@ public class TestProtomech extends TestEntity {
      *
      */
     public static enum ProtomechArmor {
-        STANDARD (EquipmentType.T_ARMOR_STANDARD, true, 0, 0.05),
-        EDP (EquipmentType.T_ARMOR_EDP, true, 1, 0.075);
+        STANDARD (EquipmentType.T_ARMOR_STANDARD, true, 0),
+        EDP (EquipmentType.T_ARMOR_EDP, true, 1);
 
         private final int type;
         private final boolean isClan;
         private final int torsoSlots;
-        private final double wtPerPoint;
 
-        ProtomechArmor(int t, boolean c, int slots, double weight) {
+        ProtomechArmor(int t, boolean c, int slots) {
             type = t;
             isClan = c;
             torsoSlots = slots;
-            wtPerPoint = weight;
         }
 
         public static int armorCount() {
@@ -154,7 +152,7 @@ public class TestProtomech extends TestEntity {
         }
         
         public double getWtPerPoint() {
-            return wtPerPoint;
+            return EquipmentType.getProtomechArmorWeightPerPoint(type);
         }
     }
 
@@ -234,7 +232,7 @@ public class TestProtomech extends TestEntity {
     
     @Override
     public double getWeightStructure() {
-        return ceil(proto.getWeight() * 0.1, Ceil.KILO);
+        return round(proto.getWeight() * 0.1, Ceil.KILO);
     }
     
     @Override
@@ -265,6 +263,12 @@ public class TestProtomech extends TestEntity {
     @Override
     public int getCountHeatSinks() {
         return heatNeutralHSRequirement();
+    }
+    
+    @Override
+    public double calculateWeight() {
+        // Deal with some floating point precision issues
+        return round(super.calculateWeight(), Ceil.KILO);
     }
     
     @Override
@@ -380,6 +384,16 @@ public class TestProtomech extends TestEntity {
                 buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
                 illegal = true;
             }
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                if (proto.isGlider() || proto.isQuad()) {
+                    buff.append("Quad and glider protomechs cannot use a magnetic clamp system.\n");
+                    illegal = true;
+                }
+                if (mount.getLocation() != Protomech.LOC_TORSO) {
+                    buff.append("The magnetic clamp system must be mounted in the torso.\n");
+                    illegal = true;
+                }
+            }
         }
         ProtomechArmor armor = ProtomechArmor.getArmor(proto);
         if (null == armor) {
@@ -473,7 +487,7 @@ public class TestProtomech extends TestEntity {
         double weight = 0.0;
         for (Mounted m : getEntity().getAmmo()) {
             AmmoType mt = (AmmoType) m.getType();
-            weight += (mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0;
+            weight += Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0;
         }
         return weight;
     }

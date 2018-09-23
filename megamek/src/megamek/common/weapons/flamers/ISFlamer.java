@@ -44,7 +44,7 @@ public class ISFlamer extends FlamerWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 1f;
+        this.tonnage = 1;
         this.criticals = 1;
         this.bv = 6;
         this.cost = 7500;

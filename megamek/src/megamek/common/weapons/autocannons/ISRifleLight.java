@@ -47,7 +47,7 @@ public class ISRifleLight extends RifleWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 18;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 1;
         bv = 21;
         cost = 37750;

@@ -45,7 +45,7 @@ public class ISERLaserLarge extends LaserWeapon {
         this.waterMediumRange = 9;
         this.waterLongRange = 12;
         this.waterExtremeRange = 18;
-        this.tonnage = 5.0f;
+        this.tonnage = 5.0;
         this.criticals = 2;
         this.bv = 163;
         this.cost = 200000;

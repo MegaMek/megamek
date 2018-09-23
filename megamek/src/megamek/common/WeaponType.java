@@ -260,11 +260,14 @@ import megamek.common.weapons.missiles.ISMRM30OS;
 import megamek.common.weapons.missiles.ISMRM40;
 import megamek.common.weapons.missiles.ISMRM40IOS;
 import megamek.common.weapons.missiles.ISMRM40OS;
+/*
+ * See note below.
 import megamek.common.weapons.missiles.ISRL1;
 import megamek.common.weapons.missiles.ISRL2;
 import megamek.common.weapons.missiles.ISRL3;
 import megamek.common.weapons.missiles.ISRL4;
 import megamek.common.weapons.missiles.ISRL5;
+*/
 import megamek.common.weapons.missiles.ISThunderBolt10;
 import megamek.common.weapons.missiles.ISThunderBolt15;
 import megamek.common.weapons.missiles.ISThunderBolt20;
@@ -1478,11 +1481,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLSRT4OS());
         EquipmentType.addType(new CLSRT6OS());
         // RLs
+        /*
+         * This is a duplicate of the ISBARL, and not available for mechs.
         EquipmentType.addType(new ISRL1());
         EquipmentType.addType(new ISRL2());
         EquipmentType.addType(new ISRL3());
         EquipmentType.addType(new ISRL4());
         EquipmentType.addType(new ISRL5());
+        */
         EquipmentType.addType(new RocketLauncher10());
         EquipmentType.addType(new RocketLauncher15());
         EquipmentType.addType(new RocketLauncher20());

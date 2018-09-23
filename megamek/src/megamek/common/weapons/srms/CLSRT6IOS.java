@@ -39,7 +39,7 @@ public class CLSRT6IOS extends SRTWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 1f;
+        tonnage = 1;
         criticals = 1;
         bv = 12;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);

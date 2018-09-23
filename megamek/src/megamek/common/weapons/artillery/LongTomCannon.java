@@ -43,7 +43,7 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         heat = 20;
         rackSize = 20;
         ammoType = AmmoType.T_LONG_TOM_CANNON;
-        tonnage = 20f;
+        tonnage = 20;
         criticals = 15;
         bv = 329;
         cost = 650000;

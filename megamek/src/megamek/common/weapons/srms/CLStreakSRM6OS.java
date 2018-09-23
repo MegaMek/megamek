@@ -38,7 +38,7 @@ public class CLStreakSRM6OS extends StreakSRMWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 3.5f;
+        tonnage = 3.5;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         bv = 24;

@@ -46,7 +46,7 @@ public class ISAC5 extends ACWeapon {
 		mediumRange = 12;
 		longRange = 18;
 		extremeRange = 24;
-		tonnage = 8.0f;
+		tonnage = 8.0;
 		criticals = 4;
 		bv = 70;
 		cost = 125000;

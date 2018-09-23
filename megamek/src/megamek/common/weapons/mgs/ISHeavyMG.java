@@ -49,7 +49,7 @@ public class ISHeavyMG extends MGWeapon {
         this.mediumRange = 2;
         this.longRange = 2;
         this.extremeRange = 2;
-        this.tonnage = 1.0f;
+        this.tonnage = 1.0;
         this.criticals = 1;
         this.bv = 6;
         this.cost = 7500;

@@ -49,7 +49,7 @@ public class ISLightMGA extends AmmoWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to

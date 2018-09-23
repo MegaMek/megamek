@@ -39,7 +39,7 @@ public class CLNarcIOS extends NarcWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         flags = flags.or(F_ONESHOT);
         bv = 6;

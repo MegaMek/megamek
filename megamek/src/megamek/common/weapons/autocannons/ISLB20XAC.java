@@ -42,7 +42,7 @@ public class ISLB20XAC extends LBXACWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 14.0f;
+        tonnage = 14.0;
         criticals = 11;
         bv = 237;
         cost = 600000;

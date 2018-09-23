@@ -45,7 +45,7 @@ public class CLERLaserLarge extends LaserWeapon {
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
         this.waterExtremeRange = 20;
-        this.tonnage = 4.0f;
+        this.tonnage = 4.0;
         this.criticals = 1;
         this.bv = 248;
         this.cost = 200000;

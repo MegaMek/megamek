@@ -32,7 +32,7 @@ public class ISLightTAG extends TAGWeapon {
         super();
         this.name = "Light TAG [IS]";
         this.setInternalName("ISLightTAG");
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
         this.hittable = true;
         this.spreadable = false;

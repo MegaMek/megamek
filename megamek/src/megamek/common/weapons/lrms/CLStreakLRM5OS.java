@@ -41,7 +41,7 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         criticals = 1;
         bv = 17;
         flags = flags.or(F_ONESHOT);

@@ -14,6 +14,7 @@
 package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,7 +41,15 @@ public abstract class SRTWeapon extends MissileWeapon {
         ammoType = AmmoType.T_SRM_TORPEDO;
         flags = flags.andNot(F_AERO_WEAPON);
     }
-
+    
+    @Override
+    public double getTonnage(Entity entity, int location) {
+        if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            return getRackSize() * 0.25;
+        } else {
+            return super.getTonnage(entity, location);
+        }
+    }
     /*
      * (non-Javadoc)
      *

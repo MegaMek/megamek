@@ -384,6 +384,16 @@ public class TestProtomech extends TestEntity {
                 buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
                 illegal = true;
             }
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                if (proto.isGlider() || proto.isQuad()) {
+                    buff.append("Quad and glider protomechs cannot use a magnetic clamp system.\n");
+                    illegal = true;
+                }
+                if (mount.getLocation() != Protomech.LOC_TORSO) {
+                    buff.append("The magnetic clamp system must be mounted in the torso.\n");
+                    illegal = true;
+                }
+            }
         }
         ProtomechArmor armor = ProtomechArmor.getArmor(proto);
         if (null == armor) {

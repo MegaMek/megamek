@@ -9325,7 +9325,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 25000;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_MAGNETIC_CLAMP).or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT)
+        misc.flags = misc.flags.or(F_MAGNETIC_CLAMP).or(F_BA_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT)
                 .andNot(F_TANK_EQUIPMENT).andNot(F_FIGHTER_EQUIPMENT);
         String[] saModes = { "On", "Off" };
         misc.setModes(saModes);

@@ -39,7 +39,7 @@ public class ISSRM4OS extends SRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         criticals = 1;
         bv = 8;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);

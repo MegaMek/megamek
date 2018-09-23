@@ -45,7 +45,7 @@ public class ISTHBUAC20 extends UACWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         criticals = 11;
         bv = 335;
         cost = 600000;

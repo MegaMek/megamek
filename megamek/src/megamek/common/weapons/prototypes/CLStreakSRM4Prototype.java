@@ -36,7 +36,7 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 2;
         bv = 39;
         cost = 60000;

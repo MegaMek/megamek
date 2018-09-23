@@ -35,7 +35,7 @@ public class ISBombTAG extends TAGWeapon {
 
         this.name = "TAG Pod";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_TAG));
-        this.tonnage = 0;
+        this.tonnage = 1;
         this.criticals = 0;
         this.hittable = false;
         this.spreadable = false;
@@ -47,7 +47,7 @@ public class ISBombTAG extends TAGWeapon {
         this.extremeRange = 20;
         this.bv = 0;
         this.cost = 50000;
-        flags = flags.or(F_BOMB_WEAPON);
+        flags = flags.or(F_BOMB_WEAPON).andNot(F_MECH_WEAPON);;
         rulesRefs = "238,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)

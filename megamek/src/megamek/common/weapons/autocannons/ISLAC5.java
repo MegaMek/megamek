@@ -39,7 +39,7 @@ public class ISLAC5 extends LACWeapon {
         mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 62;
         cost = 150000;

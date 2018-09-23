@@ -48,7 +48,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         mediumRange = 3;
         longRange = 4;
         extremeRange = 6;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         bv = 15;
         shortAV = 4;

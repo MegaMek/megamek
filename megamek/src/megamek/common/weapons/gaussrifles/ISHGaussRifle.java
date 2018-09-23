@@ -54,7 +54,7 @@ public class ISHGaussRifle extends GaussWeapon {
         damageShort = 25;
         damageMedium = 20;
         damageLong = 10;
-        tonnage = 18.0f;
+        tonnage = 18.0;
         criticals = 11;
         bv = 346;
         cost = 500000;

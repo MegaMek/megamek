@@ -40,12 +40,12 @@ public class ISLAAMissileWeapon extends ThunderBoltWeapon {
         this.mediumRange = 21;
         this.longRange = 28;
         this.extremeRange = 42;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 0;
         this.hittable = false;
         this.bv = 0;
         this.cost = 6000;
-        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON);
+        this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE).or(F_BOMB_WEAPON).andNot(F_MECH_WEAPON);;
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;

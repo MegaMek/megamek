@@ -41,7 +41,7 @@ public class CLUAC10Prototype extends CLPrototypeUACWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 24;
-        tonnage = 13.0f;
+        tonnage = 13.0;
         criticals = 8;
         bv = 210;
         cost = 320000;

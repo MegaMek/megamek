@@ -41,7 +41,7 @@ public class CLImprovedSRM4 extends SRMWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        this.tonnage = 2.0f;
+        this.tonnage = 2.0;
         this.criticals = 1;
         this.bv = 39;
         this.cost = 60000;

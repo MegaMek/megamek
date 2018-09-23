@@ -40,7 +40,7 @@ public class CLStreakLRM7OS extends StreakLRMWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 1;
         bv = 120;
         cost = 105000;

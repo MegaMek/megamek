@@ -54,7 +54,7 @@ public class ISVariableSpeedPulseLaserMedium extends
         damageShort = 9;
         damageMedium = 7;
         damageLong = 5;
-        tonnage = 4.0f;
+        tonnage = 4.0;
         criticals = 2;
         bv = 56;
         cost = 200000;

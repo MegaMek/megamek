@@ -36,7 +36,7 @@ public class ISLRM10OS extends LRMWeapon {
         heat = 4;
         rackSize = 10;
         minimumRange = 6;
-        tonnage = 5.5f;
+        tonnage = 5.5;
         criticals = 2;
         bv = 18;
         flags = flags.or(F_ONESHOT);

@@ -48,7 +48,7 @@ public class CapMissBarracudaWeapon extends CapitalMissileWeapon {
         this.mediumRange = 30;
         this.longRange = 40;
         this.extremeRange = 50;
-        this.tonnage = 90.0f;
+        this.tonnage = 90.0;
         this.bv = 522;
         this.cost = 90000;
         this.flags = flags.or(F_MISSILE);

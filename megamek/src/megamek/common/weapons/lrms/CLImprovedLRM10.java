@@ -39,7 +39,7 @@ public class CLImprovedLRM10 extends LRMWeapon {
         heat = 4;
         rackSize = 10;
         minimumRange = 6;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         criticals = 1;
         bv = 90;
         cost = 100000;

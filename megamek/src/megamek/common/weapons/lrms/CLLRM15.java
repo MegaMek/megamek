@@ -35,7 +35,7 @@ public class CLLRM15 extends LRMWeapon {
         heat = 5;
         rackSize = 15;
         minimumRange = WEAPON_NA;
-        tonnage = 3.5f;
+        tonnage = 3.5;
         criticals = 2;
         bv = 164;
         cost = 175000;

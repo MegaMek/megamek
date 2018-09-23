@@ -46,7 +46,7 @@ public class CLRAC5 extends RACWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 10.0f;
+        tonnage = 10.0;
         criticals = 8;
         bv = 345;
         cost = 275000;

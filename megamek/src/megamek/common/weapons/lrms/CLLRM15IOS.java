@@ -35,7 +35,7 @@ public class CLLRM15IOS extends LRMWeapon {
         heat = 5;
         rackSize = 15;
         minimumRange = WEAPON_NA;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 2;
         bv = 33;
         flags = flags.or(F_ONESHOT);

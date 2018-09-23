@@ -45,7 +45,7 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 1;
         bv = 64;
         cost = 50000;

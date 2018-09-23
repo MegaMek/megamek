@@ -50,7 +50,7 @@ public class Thumper extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 21;
         extremeRange = 21; // No extreme range.
-        tonnage = 15f;
+        tonnage = 15;
         criticals = 15;
         bv = 43;
         cost = 187500;

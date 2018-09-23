@@ -48,7 +48,7 @@ public class CLHeavyMG extends MGWeapon {
         this.mediumRange = 2;
         this.longRange = 2;
         this.extremeRange = 2;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
         this.bv = 6;
         this.cost = 7500;

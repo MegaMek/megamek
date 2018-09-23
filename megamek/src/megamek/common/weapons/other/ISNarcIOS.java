@@ -39,7 +39,7 @@ public class ISNarcIOS extends NarcWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         criticals = 2;
         flags = flags.or(F_ONESHOT);
         bv = 6;

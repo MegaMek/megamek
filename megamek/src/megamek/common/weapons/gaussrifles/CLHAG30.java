@@ -40,7 +40,7 @@ public class CLHAG30 extends HAGWeapon {
         mediumRange = 16;
         longRange = 24;
         extremeRange = 32;
-        tonnage = 13.0f;
+        tonnage = 13.0;
         criticals = 8;
         bv = 401;
         cost = 500000;

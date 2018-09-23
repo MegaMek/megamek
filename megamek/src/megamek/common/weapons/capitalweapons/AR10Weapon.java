@@ -51,7 +51,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.mediumRange = 30;
         this.longRange = 40;
         this.extremeRange = 50;
-        this.tonnage = 250.0f;
+        this.tonnage = 250.0;
         this.bv = 961;
         this.cost = 250000;
         this.flags = flags.or(F_MISSILE);

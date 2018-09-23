@@ -42,7 +42,7 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 8.0f;
+        tonnage = 8.0;
         criticals = 6;
         bv = 83;
         cost = 250000;

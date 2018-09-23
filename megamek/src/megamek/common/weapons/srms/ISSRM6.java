@@ -39,7 +39,7 @@ public class ISSRM6 extends SRMWeapon {
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.tonnage = 3.0f;
+        this.tonnage = 3.0;
         this.criticals = 2;
         this.bv = 59;
         this.cost = 80000;

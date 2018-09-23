@@ -47,6 +47,7 @@ import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Messages;
 import megamek.common.Mounted;
+import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.Transporter;
@@ -82,6 +83,8 @@ public class TROView {
     	TROView view = null;
     	if (entity.hasETypeFlag(Entity.ETYPE_MECH)) {
     		view = new MechTROView((Mech) entity);
+    	} else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+    	    view = new ProtomechTROView((Protomech) entity);
     	} else if (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_TANK)
     			|| (entity.hasETypeFlag(Entity.ETYPE_SUPPORT_VTOL))) {
     		view = new SupportVeeTROView((Tank) entity);

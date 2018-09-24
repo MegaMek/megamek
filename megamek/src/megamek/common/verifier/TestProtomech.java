@@ -404,13 +404,11 @@ public class TestProtomech extends TestEntity {
                 illegal = true;
             }
             if ((mount.getType() instanceof WeaponType)
-                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)
-                    && !mount.getType().hasFlag(WeaponType.F_MECH_WEAPON)) {
+                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
                 buff.append(mount.toString()).append(" is not a legal protomech weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
-                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)
-                    && !mount.getType().hasFlag(MiscType.F_MECH_EQUIPMENT)) {
+                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
                 buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
                 illegal = true;
             }

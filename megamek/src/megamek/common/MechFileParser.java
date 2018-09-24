@@ -904,7 +904,7 @@ public class MechFileParser {
             EquipmentType jjEq = EquipmentType.get(jjtype.getName());
             while (jjs < ent.getOriginalJumpMP()) {
                 try {
-                    ent.addEquipment(jjEq, Protomech.LOC_NONE);
+                    ent.addEquipment(jjEq, Protomech.LOC_UNALLOCATED);
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }

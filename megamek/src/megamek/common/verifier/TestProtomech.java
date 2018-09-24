@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.sun.istack.Nullable;
-
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -31,6 +29,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
 /**

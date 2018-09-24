@@ -422,6 +422,16 @@ public class TestProtomech extends TestEntity {
                     illegal = true;
                 }
             }
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOQMS)) {
+                if (!proto.isQuad()) {
+                    buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
+                    illegal = true;
+                }
+                if (mount.getLocation() != Protomech.LOC_TORSO) {
+                    buff.append(mount.getType().getName() + " must be mounted in the torso.\n");
+                    illegal = true;
+                }
+            }
         }
         ProtomechArmor armor = ProtomechArmor.getArmor(proto);
         if (null == armor) {

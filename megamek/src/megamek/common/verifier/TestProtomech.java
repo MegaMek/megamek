@@ -302,7 +302,37 @@ public class TestProtomech extends TestEntity {
         retVal.append("\n");
         return retVal.toString();
     }
-    
+
+    @Override
+    public StringBuffer printWeapon(StringBuffer buff, int posLoc, int posWeight) {
+        for (Mounted m : getEntity().getWeaponList()) {
+            WeaponType mt = (WeaponType) m.getType();
+
+            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(
+                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                            getPrintSize() - 5 - 20))
+                    .append(TestEntity.makeWeightString(round(mt
+                            .getTonnage(getEntity()), Ceil.KILO))).append("\n");
+        }
+        return buff;
+    }
+
+    @Override
+    public StringBuffer printAmmo(StringBuffer buff, int posLoc, int posWeight) {
+        for (Mounted m : getEntity().getAmmo()) {
+            AmmoType mt = (AmmoType) m.getType();
+
+            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(" ").append(
+                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                            getPrintSize() - 5 - 20))
+                    .append(TestEntity.makeWeightString(
+                            Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0)).append("\n");
+        }
+        return buff;
+    }
+
     @Override
     public double getWeightCarryingSpace() {
         return 0.0;

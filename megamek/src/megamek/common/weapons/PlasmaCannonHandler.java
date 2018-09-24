@@ -290,8 +290,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3;
             }
-            if (((Entity) target).getCrew().getOptions()
-                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn = Math.max(toReturn / 2, 1);
             }
         } else if (bDirect) {

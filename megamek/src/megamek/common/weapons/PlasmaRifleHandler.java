@@ -149,8 +149,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         bSalvo = true;
         // pain shunted infantry get half damage
         if ((target instanceof Infantry)
-                && ((Entity) target).getCrew().getOptions()
-                        .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+                && ((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             toReturn = Math.max(toReturn / 2, 1);
         }
         return toReturn;

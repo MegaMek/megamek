@@ -197,7 +197,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         return nDamage
-               + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+               + entity.modifyPhysicalDamageForMeleeSpecialist();
     }
 
     /**

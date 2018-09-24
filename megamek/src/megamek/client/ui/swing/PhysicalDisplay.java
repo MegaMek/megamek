@@ -290,8 +290,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         if ((entity instanceof Mech)
             && !entity.isProne()
-            && entity.getCrew().getOptions()
-                     .booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER)) { //$NON-NLS-1$
+            && entity.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER)) { //$NON-NLS-1$
             setDodgeEnabled(true);
         }
     }
@@ -420,15 +419,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
         final Entity en = ce();
         final boolean isAptPiloting = (en.getCrew() != null)
-                && en.getCrew()
-                        .getOptions()
-                        .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean canZweihander = null != en
                 && (en instanceof BipedMech) 
                 && ((BipedMech)en).canZweihander()
                 && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());;
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
+                && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
         
               
         final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
@@ -629,11 +626,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
         final Entity en = ce();
         final boolean isAptPiloting = (en.getCrew() != null)
-                && en.getCrew()
-                        .getOptions()
-                        .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
+                && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
         
         ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, KickAttackAction.LEFT);
@@ -725,10 +720,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -760,10 +752,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -802,10 +791,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc() });
         if (counter) {
             message = Messages
@@ -816,10 +802,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                     new Double(
                                             Compute.oddsAbove(
                                                     toHit.getValue(),
-                                                    ce().getCrew()
-                                                            .getOptions()
-                                                            .booleanOption(
-                                                                    OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                     toHit.getDesc() });
         }
         if (clientgui.doYesNoDialog(title, message)) {
@@ -849,10 +832,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -885,10 +865,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc(),
                                 ce().getVibroClaws() + toHit.getTableDesc() });
 
@@ -921,16 +898,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     JumpJetAttackAction.RIGHT);
             if ((d_left * Compute.oddsAbove(
                     left.getValue(),
-                    ce().getCrew()
-                            .getOptions()
-                            .booleanOption(
-                                    OptionsConstants.PILOT_APTITUDE_PILOTING))) > (d_right * Compute
+                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) > (d_right * Compute
                     .oddsAbove(
                             right.getValue(),
-                            ce().getCrew()
-                                    .getOptions()
-                                    .booleanOption(
-                                            OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
+                            ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
                 toHit = left;
                 leg = JumpJetAttackAction.LEFT;
                 damage = d_left;
@@ -951,10 +922,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc(), damage });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -1036,11 +1004,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         final Entity en = ce();
         
         final boolean isAptPiloting = (en.getCrew() != null)
-                && en.getCrew()
-                        .getOptions()
-                        .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
+                && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
         final boolean canZweihander = null != en
                 && (en instanceof BipedMech) 
                 && ((BipedMech)en).canZweihander()
@@ -1132,10 +1098,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 proto.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 proto.getDesc(),
                                 ProtomechPhysicalAttackAction.getDamageFor(
                                         ce(), target) + proto.getTableDesc() });
@@ -1234,10 +1197,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                     new Double(
                                             Compute.oddsAbove(
                                                     toHitLeft.getValue(),
-                                                    ce().getCrew()
-                                                            .getOptions()
-                                                            .booleanOption(
-                                                                    OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                     new Integer(damageLeft) });
         }
 
@@ -1253,10 +1213,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                     new Double(
                                             Compute.oddsAbove(
                                                     toHitRight.getValue(),
-                                                    ce().getCrew()
-                                                            .getOptions()
-                                                            .booleanOption(
-                                                                    OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                    ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                     new Integer(damageRight) });
         }
 
@@ -1360,10 +1317,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Double(
                                         Compute.oddsAbove(
                                                 toHit.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                 toHit.getDesc(),
                                 ThrashAttackAction.getDamageFor(ce())
                                         + toHit.getTableDesc() });

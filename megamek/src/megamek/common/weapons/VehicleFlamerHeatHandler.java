@@ -144,8 +144,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
                 toReturn += toHit.getMoS() / 3;
             }
             // pain shunted infantry get half damage
-            if (((Entity) target).getCrew().getOptions()
-                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn /= 2;
             }
             if (bGlancing) {

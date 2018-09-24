@@ -27,7 +27,11 @@
 	<#else>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Walking MP:</td><td align="center">${walkMP}</td><td></td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Running MP:</td><td align="center">${runMP}</td><td></td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jumping MP:</td><td align="center">${jumpMP}</td><td></td></tr>
+		<#if umuMP??>
+		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UMU MP:</td><td align="center">${umuMP}</td><td align="center">${umuMass}</td></tr>
+		<#else>
+		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jumping MP:</td><td align="center">${jumpMP}</td><td align="center"><#if jumpMass gt 0>${jumpMass}</#if></td></tr>
+		</#if>
 	</#if>
 	<tr><td>Heat Sinks:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
 	<tr><td>Cockpit:</td><td></td><td align="center">${cockpitMass}</td></tr>

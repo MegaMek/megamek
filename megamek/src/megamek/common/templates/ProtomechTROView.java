@@ -18,12 +18,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EntityFluff;
 import megamek.common.EquipmentType;
 import megamek.common.Messages;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.verifier.EntityVerifier;
@@ -68,7 +70,17 @@ public class ProtomechTROView extends TROView {
         setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
         setModelData("walkMP", proto.getWalkMP());
         setModelData("runMP", proto.getRunMPasString());
-        setModelData("jumpMP", proto.getJumpMP());
+        List<Mounted> umu = proto.getMisc().stream()
+                .filter(m -> m.getType().hasFlag(MiscType.F_UMU)).collect(Collectors.toList());
+        if (umu.isEmpty()) {
+            setModelData("jumpMP", proto.getOriginalJumpMP());
+            setModelData("jumpMass", Math.round(1000 * proto.getMisc().stream()
+                    .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                    .mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
+        } else {
+            setModelData("umuMP", umu.size());
+            setModelData("umuMass", Math.round(1000 * umu.stream().mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
+        }
         setModelData("hsCount", testproto.getCountHeatSinks());
         setModelData("hsMass", NumberFormat.getInstance().format(testproto.getWeightHeatSinks() * 1000));
         setModelData("cockpitMass", NumberFormat.getInstance().format(testproto.getWeightControls() * 1000));
@@ -120,6 +132,11 @@ public class ProtomechTROView extends TROView {
         for (Mounted m : entity.getEquipment()) {
             if ((m.getLocation() < 0) || m.isWeaponGroup()
                     || (!includeAmmo && (m.getType() instanceof AmmoType))) {
+                continue;
+            }
+            if ((m.getType() instanceof MiscType)
+                    && (m.getType().hasFlag(MiscType.F_JUMP_JET)
+                            || m.getType().hasFlag(MiscType.F_UMU))) {
                 continue;
             }
             String loc = formatLocationTableEntry(entity, m);

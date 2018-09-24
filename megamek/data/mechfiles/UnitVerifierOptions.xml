@@ -61,10 +61,10 @@
     0
     </maxOverweight>
     <showUnderweighted>
-    false
+    true
     </showUnderweighted>
     <minUnderweight>
-    1.0
+    0
     </minUnderweight>
     <ignoreFailedEquipment>
     </ignoreFailedEquipment>

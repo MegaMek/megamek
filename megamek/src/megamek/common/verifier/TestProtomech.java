@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.sun.istack.Nullable;
-
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -31,6 +29,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
 /**
@@ -304,6 +303,22 @@ public class TestProtomech extends TestEntity {
     }
 
     @Override
+    public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
+            int posWeight) {
+        for (Mounted m : getEntity().getMisc()) {
+            MiscType mt = (MiscType) m.getType();
+
+            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(
+                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                            getPrintSize() - 5 - 20)).append(
+                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO)));
+            buff.append("\n");
+        }
+        return buff;
+    }
+
+    @Override
     public StringBuffer printWeapon(StringBuffer buff, int posLoc, int posWeight) {
         for (Mounted m : getEntity().getWeaponList()) {
             WeaponType mt = (WeaponType) m.getType();
@@ -404,13 +419,11 @@ public class TestProtomech extends TestEntity {
                 illegal = true;
             }
             if ((mount.getType() instanceof WeaponType)
-                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)
-                    && !mount.getType().hasFlag(WeaponType.F_MECH_WEAPON)) {
+                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
                 buff.append(mount.toString()).append(" is not a legal protomech weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
-                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)
-                    && !mount.getType().hasFlag(MiscType.F_MECH_EQUIPMENT)) {
+                    && !mount.getType().hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
                 buff.append(mount.toString()).append(" is not legal protomech equipment.\n");
                 illegal = true;
             }
@@ -421,6 +434,16 @@ public class TestProtomech extends TestEntity {
                 }
                 if (mount.getLocation() != Protomech.LOC_TORSO) {
                     buff.append("The magnetic clamp system must be mounted in the torso.\n");
+                    illegal = true;
+                }
+            }
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOQMS)) {
+                if (!proto.isQuad()) {
+                    buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
+                    illegal = true;
+                }
+                if (mount.getLocation() != Protomech.LOC_TORSO) {
+                    buff.append(mount.getType().getName() + " must be mounted in the torso.\n");
                     illegal = true;
                 }
             }

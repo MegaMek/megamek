@@ -3309,7 +3309,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod++;
         }
         if ((mod > 0) && (getCrew() != null)
-                && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
+                && hasAbility(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
             mod--;
         }
 
@@ -5118,13 +5118,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
        
         // check for Manei Domini implants
-        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
-        	|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)	
-        	|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        	|| hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)	
+        	|| hasAbility(OptionsConstants.MD_MM_IMPLANTS))
         		&& (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
-            		&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
-			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) 
+            || (hasAbility(OptionsConstants.MD_MM_IMPLANTS) 
+            		&& (hasAbility(OptionsConstants.MD_VDNI) 
+			|| hasAbility(OptionsConstants.MD_BVDNI)))) 
                
         {
             return !checkECM
@@ -5138,7 +5138,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                   getPosition());
         }
         // check for SPA
-        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+        if (hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -5157,13 +5157,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) 
-        		|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
-        		|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) 
+        		|| hasAbility(OptionsConstants.MD_MM_IMPLANTS))
+        		|| hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
                 	&& (this instanceof Infantry) && !(this instanceof BattleArmor))        		
-                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
-                	&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
-    			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
+                || (hasAbility(OptionsConstants.MD_MM_IMPLANTS) 
+                	&& (hasAbility(OptionsConstants.MD_VDNI) 
+    			|| hasAbility(OptionsConstants.MD_BVDNI)))) {
             cyberBonus = 2;
         }
 
@@ -5179,7 +5179,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check for SPA
         int spaBonus = 0;
-        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+        if (hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
             spaBonus = 1;
         }
 
@@ -5479,8 +5479,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         if ((this instanceof Infantry) && (null != crew)
-            && crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
-            && crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
+            && hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+            && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return true;
         }
         return false;
@@ -6791,14 +6791,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
         if ((weatherMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
+                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
         if ((windMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
+                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
@@ -7264,7 +7264,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
                 && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
-            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+            if (hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 roll.addModifier(-1, "Mountaineer");
             }
         } else {
@@ -7294,7 +7294,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
-            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+            if (hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
                 roll.addModifier(-1, "Swamp Beast");
             }
             addPilotingModifierForTerrain(roll, curPos, false);
@@ -7350,7 +7350,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = 1;
         }
 
-        if ((waterLevel > 1) && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+        if ((waterLevel > 1) && hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && ((this instanceof Mech) || (this instanceof Protomech))) {
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
@@ -7670,7 +7670,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = -1;
         }
 
-        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE)) {
+        if (hasAbility(OptionsConstants.PILOT_MANEUVERING_ACE)) {
             mod--;
         }
 
@@ -9388,7 +9388,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isUsingManAce() {
-        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE);
+        return hasAbility(OptionsConstants.PILOT_MANEUVERING_ACE);
     }
 
     public Enumeration<Entity> getKills() {
@@ -9683,7 +9683,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // check if we can dodge and target can attack us,
             // then we are eligible.
             canHit |= ((this instanceof Mech) && !isProne()
-                       && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
+                       && hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
                     .canPhysicalTarget(game, target.getId(), this));
         }
 
@@ -10145,16 +10145,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getShortRangeModifier() {
         int mod = 0;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_MEDIUM)) {
             mod = 2;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_LONG)) {
             mod = 4;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_EXTREME)) {
             mod = 6;
         }
-        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
@@ -10174,10 +10174,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_MEDIUM)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_M)) {
@@ -10191,10 +10191,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_LONG)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
@@ -10214,10 +10214,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_EXTREME)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         return mod;
@@ -10605,7 +10605,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT));
+        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFF_EI_IMPLANT));
     }
 
     public boolean isLayingMines() {
@@ -10811,7 +10811,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         IHex hex = game.getBoard().getHex(c);
         hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
 
-        if (hex.containsTerrain(Terrains.JUNGLE) && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+        if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
             roll.addModifier(-1, "Forest Ranger");
         }
     }
@@ -14585,7 +14585,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getAllowedPhysicalAttacks() {
-        if ((null != crew) && crew.getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
+        if ((null != crew) && hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             return 2;
         }
         return 1;
@@ -14940,5 +14940,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public String getTilesetModeString() {
         return "";
+    }
+    
+    /**
+     * determine if an entity has an ability that is identified by its presence or absence only.
+     * The entity may gain this ability from different places, not exclusively the crew.
+     * @param name - name of the ability as recorded in the options
+     * @return true if the entity has this ability from some source
+     */
+    public boolean hasAbility(String name) {
+        if(null != getCrew()) {
+            return getCrew().getOptions().booleanOption(name);
+        }
+        //TODO: look for the ability at the player level
+        return false;
+    }
+    
+    /**
+     * determine if an entity has an ability at a given level.
+     * The entity may gain this ability from different places, not exclusively the crew.
+     * @param name - name of the ability as recorded in the optionsme
+     * @param choice - A string indicating the given level being asked about
+     * @return true if the entity has this ability at the given choice from some source
+     */
+    public boolean hasAbility(String name, String choice) {
+        if(null != getCrew()) {
+            return getCrew().getOptions().stringOption(name).equals(choice);
+        }
+        return false;
+    }
+    
+    public int modifyPhysicalDamageForMeleeSpecialist() {
+        if (!hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
+            return 0;
+        }
+
+        return 1;
     }
 }

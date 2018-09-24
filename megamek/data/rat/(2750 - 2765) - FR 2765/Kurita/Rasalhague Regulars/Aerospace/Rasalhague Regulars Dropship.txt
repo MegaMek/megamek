@@ -1,5 +1,5 @@
 Rasalhague Regulars Dropship
-Vulture (Standard),1
+Vulture (2405),1
 Leopard (2537),2
 Lion (2595),3
 Dictator (Standard),4

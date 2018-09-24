@@ -843,7 +843,7 @@ public class BipedMech extends Mech {
      */
     public boolean canZweihander() {
         return (getCrew() != null)
-                && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ZWEIHANDER)
+                && hasAbility(OptionsConstants.PILOT_ZWEIHANDER)
                 && hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)
                 && hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)
                 && !isLocationBad(Mech.LOC_RARM)

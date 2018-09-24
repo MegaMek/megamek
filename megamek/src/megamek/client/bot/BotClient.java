@@ -257,6 +257,11 @@ public abstract class BotClient extends Client {
 
     protected abstract void checkMoral();
 
+    @Override
+    protected boolean keepGameLog() {
+        return false;
+    }
+
     /**
      * Helper function that determines which of this bot's entities are stranded inside immobilized transports. 
      * @return Array of entity IDs.

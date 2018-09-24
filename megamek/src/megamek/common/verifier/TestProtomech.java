@@ -303,6 +303,22 @@ public class TestProtomech extends TestEntity {
     }
 
     @Override
+    public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
+            int posWeight) {
+        for (Mounted m : getEntity().getMisc()) {
+            MiscType mt = (MiscType) m.getType();
+
+            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(
+                    StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                            getPrintSize() - 5 - 20)).append(
+                    TestEntity.makeWeightString(round(mt.getTonnage(getEntity()), Ceil.KILO)));
+            buff.append("\n");
+        }
+        return buff;
+    }
+
+    @Override
     public StringBuffer printWeapon(StringBuffer buff, int posLoc, int posWeight) {
         for (Mounted m : getEntity().getWeaponList()) {
             WeaponType mt = (WeaponType) m.getType();

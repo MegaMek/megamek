@@ -64,8 +64,8 @@ public class EntityState {
             building = false;
             aero = target.isAero();
             airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-            naturalAptGun = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-            naturalAptPilot = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+            naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         } else { // for buildings and such
             position = target.getPosition();
             facing = 0;
@@ -106,9 +106,8 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = path.getEntity().getCrew().getOptions()
-                              .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptGun = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        naturalAptPilot = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         setSecondaryFacing(getFacing());
     }
 

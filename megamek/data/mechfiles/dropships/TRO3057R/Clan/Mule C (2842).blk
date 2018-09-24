@@ -1,0 +1,153 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mule C
+</Name>
+
+<model>
+(2842)
+</model>
+
+<Tonnage>
+11200
+</Tonnage>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<Armor>
+70
+80
+80
+60
+</Armor>
+
+<Nose Equipment>
+
+CLUltraAC5
+
+CLUltraAC5 Ammo:20
+
+CLERMediumLaser
+
+(B) CLERSmallLaser
+
+CLERSmallLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+CLSRM6
+
+CLSRM6 Ammo:15
+
+CLERMediumLaser
+
+CLERMediumLaser 
+
+(R) CLERLargeLaser
+
+(R) CLERMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+CLSRM6
+
+CLSRM6 Ammo:15
+
+CLERMediumLaser
+
+CLERMediumLaser 
+
+(R) CLERLargeLaser
+
+(R) CLERMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+CLERLargeLaser
+
+CLERMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<heatsinks>
+59
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+9570
+</fuel>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+2842
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+CargoBay:2869:2
+CargoBay:2869:2
+CargoBay:2869:2
+</transporters>
+
+<escape_pod>
+2
+</escape_pod>
+<life_boat>
+2
+</life_boat>
+
+<crew>
+19
+</crew>
+
+<passengers>
+0
+</passengers>

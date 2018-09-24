@@ -101,7 +101,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
         } else { // Otherwise, there's a shutdown check
             boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
             int hotDogMod = 0;
-            if (entityTarget.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOT_DOG)) {
+            if (entityTarget.hasAbility(OptionsConstants.PILOT_HOT_DOG)) {
                 hotDogMod = 1;
             }
             int shutdown = (4 + (((entityTarget.heat) / 4) * 2))

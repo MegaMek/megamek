@@ -379,10 +379,10 @@ public class Terrain implements ITerrain, Serializable {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     mp -= 1;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                     mp -= 1;
                 }
-                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
@@ -392,14 +392,14 @@ public class Terrain implements ITerrain, Serializable {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     mp -= 1;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+                if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
                     mp -= 1;
                 }
-                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+                if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
                     if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic"))) {
                         mp -= 1;
                     }
@@ -410,14 +410,14 @@ public class Terrain implements ITerrain, Serializable {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     mp -= 1;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+                if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
                     mp -= 1;
                 }
-                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+                if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
                     if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic"))) {
                         mp -= 1;
                     }
@@ -439,7 +439,7 @@ public class Terrain implements ITerrain, Serializable {
                 if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                     return 0;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                if (e.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
                     return 0;
                 }
                 return 1;
@@ -448,7 +448,7 @@ public class Terrain implements ITerrain, Serializable {
                 if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                     return 0;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+                if (e.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
                     mp -= 1;
                 }
                 if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
@@ -483,10 +483,10 @@ public class Terrain implements ITerrain, Serializable {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     mp -= 1;
                 }
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+                if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                     mp -= 1;
                 }
-                if ((e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }

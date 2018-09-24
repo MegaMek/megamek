@@ -108,7 +108,7 @@ public class KickAttackAction extends PhysicalAttackAction {
 
         int toReturn = (int) Math.floor(damage * multiplier);
         toReturn = (int) Math.round(toReturn * talonMultiplier);
-        toReturn += entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        toReturn += entity.modifyPhysicalDamageForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);

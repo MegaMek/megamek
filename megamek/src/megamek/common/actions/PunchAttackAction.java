@@ -371,7 +371,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             multiplier *= 2.0f;
         }
         int toReturn = (int) Math.floor(damage * multiplier)
-                       + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+                       + entity.modifyPhysicalDamageForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);

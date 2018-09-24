@@ -1416,5 +1416,30 @@ public class TestAero extends TestEntity {
         }
         return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
     }
-    
+
+    /**
+     * Determines whether a piece of equipment should be mounted in a specific location, as opposed
+     * to the fuselage.
+     * 
+     * @param eq             The equipment
+     * @param usesWeaponBays If the aero uses weapon bays, the ammo is mounted there. Otherwise it's in the
+     *                       fuselage.
+     * @return               Whether the equipment needs to be assigned to a location with a firing arc.
+     */
+    public static boolean eqRequiresLocation(EquipmentType eq, boolean usesWeaponBays) {
+        if (eq instanceof AmmoType) {
+            return usesWeaponBays;
+        } else if (eq instanceof MiscType) {
+            return eq.hasFlag(MiscType.F_ARTEMIS)
+                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                    || eq.hasFlag(MiscType.F_APOLLO)
+                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                    || eq.hasFlag(MiscType.F_LASER_INSULATOR);
+        } else if (eq instanceof WeaponType) {
+            return true;
+        }
+        return false;
+    }
 }

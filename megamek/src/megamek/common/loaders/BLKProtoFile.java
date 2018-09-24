@@ -34,6 +34,7 @@ import megamek.common.LocationFullException;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKProtoFile extends BLKFile implements IMechLoader {
 
@@ -41,6 +42,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Protomech t = new Protomech();
@@ -189,9 +191,11 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
                     if (ammoIndex > 0) {
-                        t.addEquipment(etype, nLoc, false, shotsCount);
-                    } else {
+                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED, false, shotsCount);
+                    } else if (TestEntity.eqRequiresLocation(t, etype)) {
                         t.addEquipment(etype, nLoc);
+                    } else {
+                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED);
                     }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());

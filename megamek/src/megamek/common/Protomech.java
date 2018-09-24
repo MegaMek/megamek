@@ -35,10 +35,10 @@ public class Protomech extends Entity {
     public static final int NUM_PMECH_LOCATIONS = 6;
 
     private static final String[] LOCATION_NAMES = { "Head", "Torso",
-            "Right Arm", "Left Arm", "Legs", "Main Gun" };
+            "Right Arm", "Left Arm", "Legs", "Main Gun", "Unallocated" };
 
     private static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA",
-            "L", "MG" };
+            "L", "MG", "-" };
 
     // weapon bools
     private boolean bHasMainGun;
@@ -83,8 +83,9 @@ public class Protomech extends Entity {
     public static final int LOC_LEG = 4;
     public static final int LOC_MAINGUN = 5;
 
+    public static final int LOC_UNALLOCATED = 6;
     // Near miss reprs.
-    public static final int LOC_NMISS = 6;
+    public static final int LOC_NMISS = 7;
 
     // "Systems". These represent protomech critical hits; which remain constant
     // regardless of proto.

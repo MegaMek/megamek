@@ -358,6 +358,27 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return 0;
     }
+    
+    /**
+     * Determines whether a type of equipment requires a particular location on an {@link Entity}.
+     * 
+     * @param entity
+     * @param eq
+     * @return
+     */
+    public static boolean eqRequiresLocation(Entity entity, EquipmentType eq) {
+        if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
+            return TestAero.eqRequiresLocation(eq, entity.usesWeaponBays());
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            // TODO: Move to TestProtomech
+            return (eq instanceof AmmoType)
+                    || ((eq instanceof MiscType)
+                            && (eq.hasFlag(MiscType.F_JUMP_JET)
+                                    || eq.hasFlag(MiscType.F_UMU)
+                                    || eq.hasFlag(MiscType.F_MASC)));
+        }
+        return true;
+    }
 
     private boolean hasMASC() {
         if (getEntity() instanceof Mech) {

@@ -3129,6 +3129,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             start = hitchString.indexOf("<");
             choice.setTowedBy(Integer.parseInt(hitchString.substring((start + 1), hitchString.indexOf(">"))));
         } else {
+            //and in case there's just one choice...
+            for (Integer id : hitchChoices.keySet()) {
+                choice.setTowedBy(id);
+            }
             choice.setTargetBay(hitchChoices.get(1));
         }
 

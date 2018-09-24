@@ -3109,7 +3109,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         int i = 0;
         for (Integer id : hitchChoices.keySet()) {
             Entity e = game.getEntity(id);
-            retVal[i++] = hitchChoices.get(id) + e.getShortName() + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
+            retVal[i++] = e.getShortName() + " Id:" + "<" + id + ">" + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
         }
         //Gah, multiple choice test!
         if (hitchChoices.size() > 1) {
@@ -3117,15 +3117,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     .showInputDialog(
                             clientgui,
                             Messages.getString(
-                                    "MovementDisplay.loadUnitBayNumberDialog.message",
+                                    "MovementDisplay.loadUnitHitchDialog.message",
                                     new Object[]{ce().getShortName()}), //$NON-NLS-1$
-                            Messages.getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+                            Messages.getString("MovementDisplay.loadUnitHitchDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, retVal,
                             null);
-            //choice.setTargetBay(Integer.parseInt(hitchString.substring(0, 1)));
+            //We need to pull the chosen transporter number out of the string
             int start = hitchString.indexOf("#[");
-            int testid = Integer.parseInt(hitchString.substring((start + 2), hitchString.indexOf("]")));
-            //choice.setTowedBy(Integer.parseInt(hitchString.substring(hitchString.indexOf("("), hitchString.indexOf(")"))));
+            choice.setTargetBay(Integer.parseInt(hitchString.substring((start + 2), hitchString.indexOf("]"))));
+            //and then the Entity id the transporter is attached to...
+            start = hitchString.indexOf("<");
+            choice.setTowedBy(Integer.parseInt(hitchString.substring((start + 1), hitchString.indexOf(">"))));
         } else {
             choice.setTargetBay(hitchChoices.get(1));
         }
@@ -3134,6 +3136,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // about our changes
         ce().setTowing(choice.getId());
         clientgui.getClient().sendUpdateEntity(ce());
+        clientgui.getClient().sendUpdateEntity(choice);
 
         // Return the chosen unit.
         return choice;

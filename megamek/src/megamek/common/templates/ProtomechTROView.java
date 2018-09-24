@@ -14,9 +14,17 @@
 package megamek.common.templates;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.EntityFluff;
+import megamek.common.EquipmentType;
 import megamek.common.Messages;
+import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtomech;
@@ -28,19 +36,19 @@ import megamek.common.verifier.TestProtomech;
  *
  */
 public class ProtomechTROView extends TROView {
-    
+
     private final Protomech proto;
-    
+
     public ProtomechTROView(Protomech proto) {
-            this.proto = proto;
+        this.proto = proto;
     }
-    
+
     @Override
     protected String getTemplateFileName(boolean html) {
-            if (html) {
-                    return "protomech.ftlh";
-            }
-            return "protomech.ftl";
+        if (html) {
+            return "protomech.ftlh";
+        }
+        return "protomech.ftl";
     }
 
     @Override
@@ -105,6 +113,49 @@ public class ProtomechTROView extends TROView {
                 PROTO_ARMOR_LOCS));
     }
 
-
+    @Override
+    protected int addEquipment(Entity entity, boolean includeAmmo) {
+        final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
+        int nameWidth = 20;
+        for (Mounted m : entity.getEquipment()) {
+            if ((m.getLocation() < 0) || m.isWeaponGroup()
+                    || (!includeAmmo && (m.getType() instanceof AmmoType))) {
+                continue;
+            }
+            String loc = formatLocationTableEntry(entity, m);
+            equipment.putIfAbsent(loc, new HashMap<>());
+            if (m.getType() instanceof AmmoType) {
+                equipment.get(loc).merge(m.getType(), m.getBaseShotsLeft(), Integer::sum);
+            } else {
+                equipment.get(loc).merge(m.getType(), 1, Integer::sum);
+            }
+        }
+        final List<Map<String, Object>> eqList = new ArrayList<>();
+        for (String loc : equipment.keySet()) {
+            for (Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
+                final EquipmentType eq = entry.getKey();
+                final int count = equipment.get(loc).get(eq);
+                String name = stripNotes(eq.getName());
+                if (eq instanceof AmmoType) {
+                    name = String.format("%s (%d)", name, count);
+                } else if (count > 1) {
+                    name = String.format("%d %ss", count, eq.getName());
+                }
+                Map<String, Object> fields = new HashMap<>();
+                fields.put("name", name);
+                if (name.length() >= nameWidth) {
+                    nameWidth = name.length() + 1;
+                }
+                if (eq instanceof AmmoType) {
+                    fields.put("mass", Math.round((((AmmoType) eq).getKgPerShot()) * count));
+                } else {
+                    fields.put("mass", Math.round(eq.getTonnage(entity) * 1000 * count));
+                }
+                fields.put("location", loc);
+                eqList.add(fields);
+            }
+        }
+        setModelData("equipment", eqList);
+        return nameWidth;
+    }
 }
-

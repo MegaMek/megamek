@@ -71,7 +71,7 @@
 	<table>
 		<tr><th align="left">Weapons<br/>and Ammo</th><th>Location</th><th>Mass (kg)</th></tr>
 		<#list equipment as eq>
-			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.tonnage * 1000}</td></tr>
+			<tr><td>${eq.name}</td><td align="center">${eq.location}</td><td align="center">${eq.mass}</td></tr>
 		</#list>
 	</table>
 	

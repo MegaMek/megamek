@@ -32,13 +32,13 @@ public class Protomech extends Entity {
      */
     private static final long serialVersionUID = -1376410042751538158L;
 
-    public static final int NUM_PMECH_LOCATIONS = 6;
+    public static final int NUM_PMECH_LOCATIONS = 7;
 
-    private static final String[] LOCATION_NAMES = { "Head", "Torso",
-            "Right Arm", "Left Arm", "Legs", "Main Gun", "Unallocated" };
+    private static final String[] LOCATION_NAMES = { "Unallocated", "Head", "Torso",
+            "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
-    private static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA",
-            "L", "MG", "-" };
+    private static final String[] LOCATION_ABBRS = { "-", "HD", "T", "RA", "LA",
+            "L", "MG" };
 
     // weapon bools
     private boolean bHasMainGun;
@@ -74,16 +74,17 @@ public class Protomech extends Entity {
      */
     private boolean m_bHasNoMainGun = false;
 
-    public static final int LOC_HEAD = 0;
-    public static final int LOC_TORSO = 1;
+    public static final int LOC_UNALLOCATED = 0;
 
-    public static final int LOC_RARM = 2;
-    public static final int LOC_LARM = 3;
+    public static final int LOC_HEAD = 1;
+    public static final int LOC_TORSO = 2;
 
-    public static final int LOC_LEG = 4;
-    public static final int LOC_MAINGUN = 5;
+    public static final int LOC_RARM = 3;
+    public static final int LOC_LARM = 4;
 
-    public static final int LOC_UNALLOCATED = 6;
+    public static final int LOC_LEG = 5;
+    public static final int LOC_MAINGUN = 6;
+
     // Near miss reprs.
     public static final int LOC_NMISS = 7;
 
@@ -103,9 +104,9 @@ public class Protomech extends Entity {
     public static final int SYSTEM_TORSO_WEAPON_E = 8;
     public static final int SYSTEM_TORSO_WEAPON_F = 9;
 
-    private static final int[] NUM_OF_SLOTS = { 2, 3, 2, 2, 3, 0 };
+    private static final int[] NUM_OF_SLOTS = { 0, 2, 3, 2, 2, 3, 0 };
 
-    public static final int[] POSSIBLE_PILOT_DAMAGE = { 1, 3, 1, 1, 1, 0 };
+    public static final int[] POSSIBLE_PILOT_DAMAGE = { 0, 1, 3, 1, 1, 1, 0 };
 
     public static final String systemNames[] = { "Arm", "Leg", "Head", "Torso" };
 
@@ -352,6 +353,9 @@ public class Protomech extends Entity {
             case LOC_LEG:
             case LOC_TORSO:
                 return 3;
+            case LOC_UNALLOCATED:
+                // This is needed to keep everything ordered in the unit display system tab
+                return 1;
         }
         return 0;
     }
@@ -806,6 +810,11 @@ public class Protomech extends Entity {
     public int getDependentLocation(int loc) {
 
         return LOC_NONE;
+    }
+    
+    @Override
+    public int firstArmorIndex() {
+        return LOC_HEAD;
     }
 
     /**
@@ -1931,7 +1940,8 @@ public class Protomech extends Entity {
 
     @Override
     public int getArmor(int loc, boolean rear) {
-        if (loc == LOC_NMISS) {
+        if ((loc == LOC_UNALLOCATED)
+                || (loc == LOC_NMISS)) {
             return IArmorState.ARMOR_NA;
         }
         return super.getArmor(loc, rear);
@@ -1939,7 +1949,8 @@ public class Protomech extends Entity {
 
     @Override
     public int getInternal(int loc) {
-        if (loc == LOC_NMISS) {
+        if ((loc == LOC_UNALLOCATED)
+                || (loc == LOC_NMISS)) {
             return IArmorState.ARMOR_NA;
         }
         return super.getInternal(loc);

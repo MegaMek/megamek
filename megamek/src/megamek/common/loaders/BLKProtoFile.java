@@ -117,9 +117,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int[] armor = dataFile.getDataAsInt("armor");
 
         boolean hasMainGun = false;
-        if (Protomech.NUM_PMECH_LOCATIONS == armor.length) {
+        int armorLocs = armor.length + t.firstArmorIndex();
+        if (Protomech.NUM_PMECH_LOCATIONS == armorLocs) {
             hasMainGun = true;
-        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armor.length) {
+        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armorLocs) {
             hasMainGun = false;
         } else {
             throw new EntityLoadingException("Incorrect armor array length");
@@ -129,7 +130,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {
-            t.initializeArmor(armor[x], x);
+            t.initializeArmor(armor[x], x + t.firstArmorIndex());
         }
 
         t.autoSetInternal();

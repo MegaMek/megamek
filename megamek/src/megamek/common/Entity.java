@@ -3036,6 +3036,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
     }
+    
+    /**
+     * @return The index of the first armored location (skipping vehicle body, et. al.)
+     */
+    public int firstArmorIndex() {
+        return 0;
+    }
 
     /**
      * Initializes the armor on the unit. Sets the original and starting point

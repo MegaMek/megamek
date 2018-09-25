@@ -736,6 +736,11 @@ public class Tank extends Entity {
     public boolean hasRearArmor(int loc) {
         return false;
     }
+    
+    @Override
+    public int firstArmorIndex() {
+        return LOC_FRONT;
+    }
 
     /**
      * Returns the Compute.ARC that the weapon fires into.

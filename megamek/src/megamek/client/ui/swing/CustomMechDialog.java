@@ -1197,14 +1197,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             if (entity instanceof BattleArmor) {
                 // have to reset internals because of dermal armor option
-                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                     ((BattleArmor) entity).setInternal(2);
                 } else {
                     ((BattleArmor) entity).setInternal(1);
                 }
             } else if (entity instanceof Infantry) {
                 // need to reset armor on conventional infantry
-                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                     entity.initializeArmor(
                             entity.getOInternal(Infantry.LOC_INFANTRY),
                             Infantry.LOC_INFANTRY);

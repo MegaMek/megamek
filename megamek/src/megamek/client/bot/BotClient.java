@@ -257,6 +257,11 @@ public abstract class BotClient extends Client {
 
     protected abstract void checkMoral();
 
+    @Override
+    protected boolean keepGameLog() {
+        return false;
+    }
+
     /**
      * Helper function that determines which of this bot's entities are stranded inside immobilized transports. 
      * @return Array of entity IDs.
@@ -889,7 +894,7 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean aptGunnery = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
         return potentialDmg * oddsTakeDmg;
     }
@@ -909,8 +914,7 @@ public abstract class BotClient extends Client {
      */
     private static float getDeployDamage(IGame g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
         Entity attacker = g.getEntity(waa.getEntityId());
-        boolean naturalAptGunnery = attacker.getCrew().getOptions()
-                                            .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         ToHitData hitData = waa.toHit(g, allECMInfo);
         if (hitData.getValue() > 12) {

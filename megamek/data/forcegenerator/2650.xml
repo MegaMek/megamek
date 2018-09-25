@@ -2399,18 +2399,21 @@
 			<roles>cargo</roles>
 			<availability>General:4</availability>
 		</model>
-		<model name='(Standard)'>
+		<model name='(2405)'>
 			<roles>troop carrier</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Invader Jumpship' unitType='Jumpship'>
 		<availability>CC:7,MOC:6,IS:6,Periphery.Deep:5,RWR:6,FS:7,Periphery:5,TC:6,OA:6,LA:7,PIR:2,SL:8,FWL:7</availability>
-		<model name='(Standard)'>
+		<model name='(2631)'>
 			<availability>General:6</availability>
 		</model>
-		<model name='(PPC)'>
+		<model name='(2631 PPC)'>
 			<availability>General:6</availability>
+		</model>
+		<model name='(2631) (LF)'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Liberty Jumpship' unitType='Jumpship'>
@@ -2427,7 +2430,7 @@
 	</chassis>
 	<chassis name='Star Lord JumpShip' unitType='Jumpship'>
 		<availability>SL:6,IS:4,RWR:3,MERC:2,Periphery:2</availability>
-		<model name='(Standard)'>
+		<model name='(2590)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -2477,7 +2480,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Black Lion I-Battlecruiser' unitType='Warship'>
+	<chassis name='Black Lion I Battlecruiser' unitType='Warship'>
 		<availability>CC:1,SL:2</availability>
 		<model name=''>
 			<availability>General:8</availability>
@@ -2485,7 +2488,7 @@
 	</chassis>
 	<chassis name='Bonaventure Corvette' unitType='Warship'>
 		<availability>RWR:5</availability>
-		<model name='(Standard)'>
+		<model name='(2317)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2541,7 +2544,7 @@
 	</chassis>
 	<chassis name='Dart Light Cruiser' unitType='Warship'>
 		<availability>MOC:2,OA:2,RWR:2,TC:2</availability>
-		<model name='(Standard)'>
+		<model name='(2305)'>   
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2569,7 +2572,7 @@
 	</chassis>
 	<chassis name='Essex I Destroyer' unitType='Warship'>
 		<availability>RWR:2</availability>
-		<model name='(Standard)'>
+		<model name='(2351)'>
 			<roles>destroyer</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2597,7 +2600,7 @@
 	</chassis>
 	<chassis name='Lola I Destroyer' unitType='Warship'>
 		<availability>CC:2,LA:3,SL:2,FWL:2,RWR:3,FS:2,DC:2</availability>
-		<model name='(Standard)'>
+		<model name='(2345)'>
 			<roles>destroyer</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2625,7 +2628,7 @@
 	</chassis>
 	<chassis name='Monsoon Battleship' unitType='Warship'>
 		<availability>SL:2</availability>
-		<model name='(Standard)'>
+		<model name='(2574)'>
 			<roles>battleship</roles>
 			<availability>General:8</availability>
 		</model>
@@ -2724,7 +2727,7 @@
 	</chassis>
 	<chassis name='Vigilant Corvette' unitType='Warship'>
 		<availability>CC:2,LA:3,FWL:2,RWR:4,FS:2,DC:2</availability>
-		<model name='(Standard)'>
+		<model name='(2320)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>

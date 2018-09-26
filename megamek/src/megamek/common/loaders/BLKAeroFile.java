@@ -31,6 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
@@ -211,6 +212,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
     @Override
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
+        boolean addedCase = false;
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null) {
             return;
@@ -261,6 +263,13 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 }                 
 
                 EquipmentType etype = EquipmentType.get(equipName);
+                
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CASE)) {
+                    if (etype.isClan() || addedCase) {
+                        continue;
+                    }
+                    addedCase = true;
+                }
 
                 if (etype == null) {
                     // try w/ prefix

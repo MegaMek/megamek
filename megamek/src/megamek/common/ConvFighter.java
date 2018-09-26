@@ -31,6 +31,11 @@ public class ConvFighter extends Aero {
     private static final long serialVersionUID = 6297668284292929409L;
 
     @Override
+    public int getUnitType() {
+        return UnitType.CONV_FIGHTER;
+    }
+
+    @Override
     public boolean doomedInVacuum() {
         return true;
     }

@@ -867,6 +867,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
     }
+
+    /**
+     * @see {@link UnitType}
+     */
+    public abstract int getUnitType();
     
     public CrewType defaultCrewType() {
         return CrewType.SINGLE;

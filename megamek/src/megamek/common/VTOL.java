@@ -54,6 +54,11 @@ public class VTOL extends Tank implements IBomber {
     public static final int CRIT_FLIGHT_STABILIZER = 19;
 
     @Override
+    public int getUnitType() {
+        return UnitType.VTOL;
+    }
+
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }

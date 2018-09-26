@@ -77,6 +77,11 @@ public class Dropship extends SmallCraft {
     private boolean kfBoomDamaged = false;
     private int collarType = COLLAR_STANDARD;
 
+    @Override
+    public int getUnitType() {
+        return UnitType.DROPSHIP;
+    }
+
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }

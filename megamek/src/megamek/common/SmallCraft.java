@@ -58,6 +58,11 @@ public class SmallCraft extends Aero {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
+    public int getUnitType() {
+        return UnitType.SMALL_CRAFT;
+    }
+
+    @Override
     public TechAdvancement getConstructionTechAdvancement() {
         if (isPrimitive()) {
             return TA_SM_CRAFT_PRIMITIVE;

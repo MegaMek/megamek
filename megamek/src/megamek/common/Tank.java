@@ -106,6 +106,14 @@ public class Tank extends Entity {
             300, 400, 500, 625 };
 
     @Override
+    public int getUnitType() {
+        EntityMovementMode mm = getMovementMode();
+        return (mm == EntityMovementMode.NAVAL) || (mm == EntityMovementMode.HYDROFOIL) || (mm == EntityMovementMode.SUBMARINE)
+             ? UnitType.NAVAL
+             : UnitType.TANK;
+    }
+
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }

@@ -212,7 +212,12 @@ public class Aero extends Entity implements IAero, IBomber {
         // need to set altitude to something different than entity
         altitude = 5;
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.AERO;
+    }
+
     protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)

@@ -100,8 +100,12 @@ public class Jumpship extends Aero {
         super();
         damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
     }
-    
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.JUMPSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};

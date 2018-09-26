@@ -46,7 +46,12 @@ public class Warship extends Jumpship {
         damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
         setDriveCoreType(DRIVE_CORE_COMPACT);
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.WARSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations, as seen above: NOS,FLS,FRS,AFT,ALS,ARS,LBS,RBS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0, 0, 0};

@@ -1427,19 +1427,19 @@ public class TestAero extends TestEntity {
      * @return               Whether the equipment needs to be assigned to a location with a firing arc.
      */
     public static boolean eqRequiresLocation(EquipmentType eq, boolean usesWeaponBays) {
-        if (eq instanceof AmmoType) {
-            return usesWeaponBays;
-        } else if (eq instanceof MiscType) {
-            return eq.hasFlag(MiscType.F_ARTEMIS)
-                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
-                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
-                    || eq.hasFlag(MiscType.F_APOLLO)
-                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                    || eq.hasFlag(MiscType.F_LASER_INSULATOR);
-        } else if (eq instanceof WeaponType) {
-            return true;
+        if (usesWeaponBays) {
+            return (eq instanceof WeaponType)
+                    || (eq instanceof AmmoType)
+                    || ((eq instanceof MiscType)
+                            && (eq.hasFlag(MiscType.F_ARTEMIS)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                                    || eq.hasFlag(MiscType.F_APOLLO)
+                                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                                    || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
+        } else  {
+            return !(eq instanceof AmmoType);
         }
-        return false;
     }
 }

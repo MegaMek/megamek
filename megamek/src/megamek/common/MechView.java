@@ -74,10 +74,12 @@ public class MechView {
     private boolean isGunEmplacement;
     private boolean isAero;
     private boolean isConvFighter;
+    @SuppressWarnings("unused")
     private boolean isFixedWingSupport;
     private boolean isSquadron;
     private boolean isSmallCraft;
     private boolean isJumpship;
+    @SuppressWarnings("unused")
     private boolean isSpaceStation;
 
     private List<ViewElement> sHead = new ArrayList<>();
@@ -683,11 +685,7 @@ public class MechView {
                     continue;
                 }
                 // skip the "Wings" location
-                if (!a.isLargeCraft() && (loc == Aero.LOC_WINGS)) {
-                    continue;
-                }
-                // Skip the "Body" location on fixed-wing support vees.
-                if (isFixedWingSupport && (loc == FixedWingSupport.LOC_BODY)) {
+                if (!a.isLargeCraft() && (loc >= Aero.LOC_WINGS)) {
                     continue;
                 }
 

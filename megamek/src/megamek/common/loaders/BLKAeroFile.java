@@ -35,6 +35,7 @@ import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKAeroFile extends BLKFile implements IMechLoader {
 
@@ -48,6 +49,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Aero a = new Aero();
@@ -174,6 +176,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
         a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
         a.initializeArmor(0, Aero.LOC_WINGS);
+        a.initializeArmor(0, Aero.LOC_FUSELAGE);
 
         a.autoSetCapArmor();
         a.autoSetFatalThresh();
@@ -188,6 +191,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         loadEquipment(a, "Right Wing", Aero.LOC_RWING);
         loadEquipment(a, "Left Wing", Aero.LOC_LWING);
         loadEquipment(a, "Aft", Aero.LOC_AFT);
+        loadEquipment(a, "Fuselage", Aero.LOC_FUSELAGE);
 
         // now organize the weapons into groups for capital fighters
         a.updateWeaponGroups();
@@ -265,7 +269,8 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 

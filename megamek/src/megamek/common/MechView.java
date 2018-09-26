@@ -680,18 +680,16 @@ public class MechView {
                     continue;
                 }
                 // skip broadsides on warships
-                if ((entity instanceof Warship)
-                        && ((loc == Warship.LOC_LBS) || (loc == Warship.LOC_RBS))) {
+                if (isJumpship && (loc >= Jumpship.LOC_SYSTEM_WIDE)) {
+                    continue;
+                }
+                if (isSmallCraft && (loc >= SmallCraft.LOC_SYSTEM_WIDE)) {
                     continue;
                 }
                 // skip the "Wings" location
                 if (!a.isLargeCraft() && (loc >= Aero.LOC_WINGS)) {
                     continue;
                 }
-                if (isSmallCraft && (loc >= SmallCraft.LOC_SYSTEM_WIDE)) {
-                    continue;
-                }
-
                 String[] row = { entity.getLocationName(loc), "", "" };
                 if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
                     row[1] = renderArmor(entity.getArmor(loc),

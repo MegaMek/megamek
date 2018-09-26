@@ -31,19 +31,19 @@ public class Warship extends Jumpship {
     private static final long serialVersionUID = 4650692419224312511L;
 
     // additional Warship locations
-    public static final int LOC_LBS = 6;
-    public static final int LOC_RBS = 7;
+    public static final int LOC_LBS = 7;
+    public static final int LOC_RBS = 8;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
-            "Aft Right Side", "Left Broadsides", "Right Broadsides" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "-", "LBS", "RBS" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+            "Aft", "Aft Left Side", "Aft Right Side", "System Wide", "Left Broadsides", "Right Broadsides" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
 
     public Warship() {
         super();
-        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         setDriveCoreType(DRIVE_CORE_COMPACT);
     }
     
@@ -102,7 +102,7 @@ public class Warship extends Jumpship {
 
     @Override
     public int locations() {
-        return 8;
+        return 9;
     }
 
     @Override
@@ -213,7 +213,7 @@ public class Warship extends Jumpship {
 
     @Override
     public double getArmorWeight() {
-        return getArmorWeight(locations() - 2);
+        return getArmorWeight(locations() - 3);
     }
     
     @Override
@@ -459,6 +459,7 @@ public class Warship extends Jumpship {
         return 8;
     }
 
+    @Override
     public int getNumAlphaStrikeWeaponsLocations() {
         return 4;
     }
@@ -471,6 +472,7 @@ public class Warship extends Jumpship {
         return 0;
     }
     
+    @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (location) {
         case LOC_NOSE:
@@ -521,6 +523,7 @@ public class Warship extends Jumpship {
         return "";
     }
     
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }

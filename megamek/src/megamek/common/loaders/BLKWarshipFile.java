@@ -31,12 +31,14 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKWarshipFile extends BLKFile implements IMechLoader {
 
@@ -44,6 +46,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Warship a = new Warship();
@@ -250,8 +253,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(0, Warship.LOC_LBS);
-        a.initializeArmor(0, Warship.LOC_RBS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_SYSTEM_WIDE);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_LBS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_RBS);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -347,7 +351,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                     // first load the equipment
                     Mounted newmount;
                     try {
-                        if (nAmmo == 1) {
+                        if (!TestEntity.eqRequiresLocation(a, etype)) {
+                            newmount = a.addEquipment(etype, Warship.LOC_SYSTEM_WIDE);
+                        } else if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
                             newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);

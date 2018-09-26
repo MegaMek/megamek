@@ -15065,11 +15065,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * otherwise.
      */
     public boolean canTow(Entity trailer) {
-        //Only allow the tow action by the lead vehicle
-        if (!isTractor()) {
-            return false;
-        }
-        
         //If this entity is in a transport bay, it can't tow another
         if (this.getTransportId() != Entity.NONE) {
             return false;
@@ -15230,21 +15225,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param e - the entity to be added to this train
      */
     public void towUnit(Entity e) {
-        connectedUnits.add(e.getId());
-        e.setTowedBy(getId());
-        if (isTractor()) {
-            e.setTractor(this);
-        } else {
-            e.setTractor(this.getTractor());
-        }
-        //You could still have a null tractor if you're linking a bunch of idle trailers together
-        //If not, update the whole train
-        if (e.getTractor() != null) {
-            e.getTractor().addTowedUnit(e);
-            for (int i : e.getConnectedUnits()) {
-                Entity trailer = game.getEntity(i);
-                e.getTractor().addTowedUnit(trailer);
-                trailer.setTractor(getTractor());
+        addTowedUnit(e);
+        e.setTractor(this);
+        //Now, find the transporter and the actual towing entity (trailer or tractor)
+        Entity towingEnt = game.getEntity(e.towedBy);
+        if (towingEnt != null) {
+            towingEnt.connectedUnits.add(e.getId());
+            Transporter hitch = towingEnt.getHitchById(e.getTargetBay());
+            if (hitch != null) {
+                hitch.load(e);
             }
         }
     }

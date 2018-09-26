@@ -150,11 +150,9 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Wing", Aero.LOC_RWING);
-        loadEquipment(a, "Left Wing", Aero.LOC_LWING);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
-        loadEquipment(a, "Fuselage", Aero.LOC_FUSELAGE);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
 
         if (dataFile.exists("omni")) {
             a.setOmni(true);

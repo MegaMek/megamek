@@ -688,6 +688,9 @@ public class MechView {
                 if (!a.isLargeCraft() && (loc >= Aero.LOC_WINGS)) {
                     continue;
                 }
+                if (isSmallCraft && (loc >= SmallCraft.LOC_SYSTEM_WIDE)) {
+                    continue;
+                }
 
                 String[] row = { entity.getLocationName(loc), "", "" };
                 if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {

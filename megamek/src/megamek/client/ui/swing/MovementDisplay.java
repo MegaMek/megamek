@@ -3131,7 +3131,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             //and in case there's just one choice...
             choice.setTowedBy(hitchChoices.keySet().iterator().next());
-            choice.setTargetBay(hitchChoices.get(1));
+            choice.setTargetBay(hitchChoices.get(hitchChoices.keySet().iterator().next()));
         }
 
         // We need to update the entities here so that the server knows

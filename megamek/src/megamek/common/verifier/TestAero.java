@@ -1439,7 +1439,13 @@ public class TestAero extends TestEntity {
                                     || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
                                     || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
         } else if (eq instanceof MiscType) {
-            return !eq.hasFlag(MiscType.F_CASE) || eq.isClan();
+            if (eq.hasFlag(MiscType.F_CASE)) {
+                return eq.isClan();
+            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)) {
+                return false;
+            } else {
+                return true;
+            }
         } else {
             return !(eq instanceof AmmoType);
         }

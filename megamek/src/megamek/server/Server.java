@@ -895,12 +895,7 @@ public class Server implements Runnable {
      * Returns a free connection id.
      */
     public int getFreeConnectionId() {
-        while ((getPendingConnection(connectionCounter) != null)
-               || (getConnection(connectionCounter) != null)
-               || (getPlayer(connectionCounter) != null)) {
-            connectionCounter++;
-        }
-        return connectionCounter;
+        return connectionCounter++;
     }
 
     /**

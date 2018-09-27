@@ -10027,7 +10027,7 @@ public class Server implements Runnable {
      * @param trailer    The current trailer being updated
      */
     private void processTrailerMovement(Entity tractor, Entity trailer) {
-        int trailerPositionOffset = 0;
+        double trailerPositionOffset = 0;
         int stepNumber = 0;
         Coords trailerPos = null;
         ArrayList<Coords> trailerPath = null;
@@ -10035,17 +10035,17 @@ public class Server implements Runnable {
         trailerPath = initializeTrailerCoordinates(tractor, tractor.getAllTowedUnits());
         //Place large trailers in their own hexes behind the tractor
         if (trailer.getWeight() > 100) {
-            stepNumber = (trailerPath.size() - trailerPositionOffset);
+            stepNumber = (trailerPath.size() - (int) trailerPositionOffset);
             trailerPos = trailerPath.get(stepNumber);
             trailer.setPosition(trailerPos);
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
-            trailerPositionOffset /= 2;
+            trailerPositionOffset /= 2.0;
             if (trailerPositionOffset == 1) {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
             } else {
-                stepNumber = (trailerPath.size() - trailerPositionOffset);
+                stepNumber = (trailerPath.size() - (int) trailerPositionOffset);
                 trailerPos = trailerPath.get(stepNumber);
                 trailer.setPosition(trailerPos);
                 trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
@@ -10065,15 +10065,18 @@ public class Server implements Runnable {
     public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, ArrayList<Entity> allTowedTrailers) {
         ArrayList<Coords> trainCoords = new ArrayList<Coords>();
         Coords position = null;
-        Collections.sort(allTowedTrailers, Collections.reverseOrder());
+        Collections.reverse(allTowedTrailers);
         for (Entity trailer : allTowedTrailers) {
             position = trailer.getPosition();
+            //Duplicates foul up the works...
             if (!trainCoords.contains(position)) {
                 trainCoords.add(position);
             }
         }
         for (Coords c : tractor.getPassedThrough() ) {
-            trainCoords.add(c);
+            if (!trainCoords.contains(c)) {
+                trainCoords.add(c);
+            }
         }
         return trainCoords;    
     }

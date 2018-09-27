@@ -9925,8 +9925,12 @@ public class Server implements Runnable {
         
         //If the entity is towing trailers, update the position of those trailers
         if (entity.getAllTowedUnits().size() > 0) {
+            ArrayList<Coords> trailerPath = new ArrayList<Coords>();
+            ArrayList<Entity> reversedTrailers = new ArrayList<Entity>();
+            reversedTrailers = entity.getAllTowedUnits();
+            trailerPath = initializeTrailerCoordinates(entity, reversedTrailers);
             for (Entity trailer : entity.getAllTowedUnits()) {
-                processTrailerMovement(entity, trailer);
+                processTrailerMovement(entity, trailer, trailerPath);
                 entityUpdate(trailer.getId());
             }
         }
@@ -10026,11 +10030,11 @@ public class Server implements Runnable {
      * @param tractor    The Entity that is moving
      * @param trailer    The current trailer being updated
      */
-    private void processTrailerMovement(Entity tractor, Entity trailer) {
+    private void processTrailerMovement(Entity tractor, Entity trailer, ArrayList<Coords> trainPath) {
         double trailerPositionOffset = 0;
         int stepNumber = 0;
         Coords trailerPos = null;
-        ArrayList<Coords> trailerPath = null;
+        ArrayList<Coords> trailerPath = new ArrayList<Coords>();
         trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer) + 2); //Offset so we get the right position index
         trailerPath = initializeTrailerCoordinates(tractor, tractor.getAllTowedUnits());
         //Place large trailers in their own hexes behind the tractor

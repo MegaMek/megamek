@@ -213,9 +213,8 @@ public class TestAdvancedAerospace extends TestAero {
      */
     public static double[] extraSlotCost(Jumpship vessel) {
         int slotsPerArc = 12;
-        int arcs = 6;
+        int arcs = vessel.locations();
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            arcs = 8;
             slotsPerArc = 20;
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             slotsPerArc = 20;

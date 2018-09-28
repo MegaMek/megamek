@@ -53,9 +53,9 @@ public class Jumpship extends Aero {
     // given for primitive assumes a 30ly range, but the final value has to be computed.
     private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "-" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
-            "Aft", "Aft Left Side", "Aft Right Side", "System Wide" };
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;

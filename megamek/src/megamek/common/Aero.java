@@ -99,7 +99,7 @@ public class Aero extends Entity implements IAero, IBomber {
     // and bombs and such
     private static final int[] NUM_OF_SLOTS = { 100, 100, 100, 100, 100, 100, 100 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "-" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "FSLG" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage" };
 
     @Override

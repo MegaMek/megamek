@@ -28,9 +28,9 @@ public class SmallCraft extends Aero {
     public static final int LOC_SYSTEM_WIDE = 4;
     
     private static String[] LOCATION_ABBRS =
-        { "NOS", "LS", "RS", "AFT", "-" };
+        { "NOS", "LS", "RS", "AFT", "HULL" };
     private static String[] LOCATION_NAMES =
-        { "Nose", "Left Side", "Right Side", "Aft", "System Wide" };
+        { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nCrew = 0;

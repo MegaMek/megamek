@@ -34,9 +34,9 @@ public class Warship extends Jumpship {
     public static final int LOC_LBS = 7;
     public static final int LOC_RBS = 8;
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "-", "LBS", "RBS" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL", "LBS", "RBS" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
-            "Aft", "Aft Left Side", "Aft Right Side", "System Wide", "Left Broadsides", "Right Broadsides" };
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull", "Left Broadsides", "Right Broadsides" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;

@@ -34,10 +34,10 @@ public class Protomech extends Entity {
 
     public static final int NUM_PMECH_LOCATIONS = 7;
 
-    private static final String[] LOCATION_NAMES = { "Unallocated", "Head", "Torso",
+    private static final String[] LOCATION_NAMES = { "Body", "Head", "Torso",
             "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
-    private static final String[] LOCATION_ABBRS = { "-", "HD", "T", "RA", "LA",
+    private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA",
             "L", "MG" };
 
     // weapon bools

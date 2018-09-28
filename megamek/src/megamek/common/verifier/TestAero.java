@@ -313,6 +313,12 @@ public class TestAero extends TestEntity {
                 loc = Aero.LOC_AFT;
             }
         }
+        // Blue shield particle field dampener takes one slot in each arc.
+        if (a.hasMisc(MiscType.F_BLUE_SHIELD)) {
+            for (int i = 0; i < availSpace.length; i++) {
+                availSpace[i]--;
+            }
+        }
         
         // XXL engines take up extra space in the aft in conventional fighters
         if (((a.getEntityType() & Entity.ETYPE_CONV_FIGHTER) != 0)

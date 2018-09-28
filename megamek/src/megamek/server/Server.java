@@ -9927,6 +9927,7 @@ public class Server implements Runnable {
         if (entity.getAllTowedUnits().size() > 0) {
             ArrayList<Coords> trailerPath = new ArrayList<Coords>();
             ArrayList<Entity> reversedTrailers = new ArrayList<Entity>();
+            //If I don't make a copy, my original gets reversed before movement is processed.
             reversedTrailers = entity.getAllTowedUnits();
             trailerPath = initializeTrailerCoordinates(entity, reversedTrailers);
             for (Entity trailer : entity.getAllTowedUnits()) {
@@ -10034,13 +10035,11 @@ public class Server implements Runnable {
         double trailerPositionOffset = 0;
         int stepNumber = 0;
         Coords trailerPos = null;
-        ArrayList<Coords> trailerPath = new ArrayList<Coords>();
         trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer) + 2); //Offset so we get the right position index
-        trailerPath = initializeTrailerCoordinates(tractor, tractor.getAllTowedUnits());
         //Place large trailers in their own hexes behind the tractor
         if (trailer.getWeight() > 100) {
-            stepNumber = (trailerPath.size() - (int) trailerPositionOffset);
-            trailerPos = trailerPath.get(stepNumber);
+            stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+            trailerPos = trainPath.get(stepNumber);
             trailer.setPosition(trailerPos);
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
@@ -10049,8 +10048,8 @@ public class Server implements Runnable {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
             } else {
-                stepNumber = (trailerPath.size() - (int) trailerPositionOffset);
-                trailerPos = trailerPath.get(stepNumber);
+                stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                trailerPos = trainPath.get(stepNumber);
                 trailer.setPosition(trailerPos);
                 trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
             }

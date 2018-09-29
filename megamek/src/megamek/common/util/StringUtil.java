@@ -136,22 +136,29 @@ public class StringUtil {
     }
 
     /**
-     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
+     * Returns TRUE if the passed in text is either a NULL value or is a string
+     * entirely composed of whitespace.
      *
      * @param text  The string to be evaluated.
      */
-    public static boolean isNullOrEmpty(String text) {
-        return (text == null) || (text.trim().isEmpty());
+    public static boolean isNullOrBlank(CharSequence text) {
+        return (text == null) || text.codePoints().anyMatch(Character::isWhitespace);
     }
 
+    /**
+     * @deprecated use {@link #isNullOrBlank(CharSequence)} instead
+     */
+    @Deprecated
+    public static boolean isNullOrEmpty(String text) {
+        return isNullOrBlank(text);
+    }
 
     /**
-     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
-     *
-     * @param text The string to be evaluated.
+     * @deprecated use {@link #isNullOrBlank(CharSequence)} instead
      */
+    @Deprecated
     public static boolean isNullOrEmpty(StringBuilder text) {
-        return (text == null) || isNullOrEmpty(text.toString());
+        return isNullOrBlank(text);
     }
 
     /**

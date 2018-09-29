@@ -15,6 +15,7 @@ import megamek.common.preference.PreferenceManager;
 public class StringUtilTest {
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testSplitString() {
         // simple cases
         assertEquals(vec("a","b"), StringUtil.splitString("a-b", "-"));
@@ -29,6 +30,7 @@ public class StringUtilTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testStringComparator() {
         assertTrue(StringUtil.stringComparator().compare("a", "a") == 0);
         assertTrue(StringUtil.stringComparator().compare("a", "b") < 0);
@@ -37,6 +39,7 @@ public class StringUtilTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testParseBoolean() {
         assertTrue(StringUtil.parseBoolean("true"));
         assertTrue(StringUtil.parseBoolean("TRUE"));
@@ -51,67 +54,80 @@ public class StringUtilTest {
     }
 
     @Test
-    public void testMakeLength() {
+    public void testAbbr() {
+        assertEquals("", StringUtil.abbr("", 0, ""));
+        assertEquals("", StringUtil.abbr("1", 0, "..."));
 
+        assertEquals("",     StringUtil.abbr("1234", 0, ".."));
+        assertEquals("1",    StringUtil.abbr("1234", 1, ".."));
+        assertEquals("12",   StringUtil.abbr("1234", 2, ".."));
+        assertEquals("1..",  StringUtil.abbr("1234", 3, ".."));
+        assertEquals("1234", StringUtil.abbr("1234", 4, ".."));
+        assertEquals("1234", StringUtil.abbr("1234", 5, ".."));
+        
         try {
-            StringUtil.makeLength(null, 5);
+            StringUtil.abbr(null, -1, "");
             fail();
         } catch (@SuppressWarnings("unused") NullPointerException e) {
             // expected
         }
 
-        assertEquals("     ", StringUtil.makeLength("",5));
-        
-        assertEquals("1    ", StringUtil.makeLength("1",5,false));
-        assertEquals("    1", StringUtil.makeLength("1",5,true));
-        
-        assertEquals("1    ", StringUtil.makeLength("1",5));
-        assertEquals("    1", StringUtil.makeLength(1,5));
-
-        assertEquals("12345", StringUtil.makeLength("12345",5));
-        assertEquals("123..", StringUtil.makeLength("123456",5));
-        assertEquals("123..", StringUtil.makeLength(123456,5));
-
-        assertEquals("",   StringUtil.makeLength("", 0));
-        assertEquals(" ",  StringUtil.makeLength("", 1));
-        assertEquals("  ", StringUtil.makeLength("", 2));
-        assertEquals("1",  StringUtil.makeLength("1", 1));
-        assertEquals("1 ", StringUtil.makeLength("1", 2));
-        assertEquals("12", StringUtil.makeLength("12", 2));
-        assertEquals("..", StringUtil.makeLength("123", 2));
-        assertEquals("123", StringUtil.makeLength("123", 3));
-        assertEquals("1..", StringUtil.makeLength("1234", 3));
-
-        assertEquals(69, StringUtil.makeLength("", 69).length());
-        
         try {
-            StringUtil.makeLength("", -1);
+            StringUtil.abbr("", -1, "");
             fail();
-        } catch (@SuppressWarnings("unused") StringIndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
             // expected
         }
 
         try {
-            StringUtil.makeLength("1", 0);
+            StringUtil.abbr("", 1, null);
             fail();
-        } catch (@SuppressWarnings("unused") StringIndexOutOfBoundsException e) {
-            // expected
-        }
-
-        try {
-            StringUtil.makeLength("12", 1);
-            fail();
-        } catch (@SuppressWarnings("unused") StringIndexOutOfBoundsException e) {
-            // expected
-        }
-
-        try {
-            StringUtil.makeLength("", 70);
-            fail();
-        } catch (@SuppressWarnings("unused") StringIndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") NullPointerException e) {
             // expected
         }
     }
+
+    @Test
+    public void testPad() {
+        assertEquals("1234",  StringUtil.pad("1234", 0, true, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 1, true, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 2, true, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 3, true, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 4, true, '-'));
+        assertEquals("-1234", StringUtil.pad("1234", 5, true, '-'));
+
+        assertEquals("1234",  StringUtil.pad("1234", 0, false, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 1, false, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 2, false, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 3, false, '-'));
+        assertEquals("1234",  StringUtil.pad("1234", 4, false, '-'));
+        assertEquals("1234-", StringUtil.pad("1234", 5, false, '-'));
+
+        try {
+            StringUtil.pad(null, 2, false, '-');
+            fail();
+        } catch (@SuppressWarnings("unused") NullPointerException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testPadAbbr() {
+        assertEquals("",      StringUtil.padAbbr("1234", 0, true));
+        assertEquals("1",     StringUtil.padAbbr("1234", 1, true));
+        assertEquals("12",    StringUtil.padAbbr("1234", 2, true));
+        assertEquals("1..",   StringUtil.padAbbr("1234", 3, true));
+        assertEquals("1234",  StringUtil.padAbbr("1234", 4, true));
+        assertEquals(" 1234", StringUtil.padAbbr("1234", 5, true));
+
+        assertEquals("",      StringUtil.padAbbr("1234", 0, false));
+        assertEquals("1",     StringUtil.padAbbr("1234", 1, false));
+        assertEquals("12",    StringUtil.padAbbr("1234", 2, false));
+        assertEquals("1..",   StringUtil.padAbbr("1234", 3, false));
+        assertEquals("1234",  StringUtil.padAbbr("1234", 4, false));
+        assertEquals("1234 ", StringUtil.padAbbr("1234", 5, false));
+    }
+
 
     @Test
     public void testAddDateTimeStamp() {
@@ -133,51 +149,44 @@ public class StringUtilTest {
     }
 
     @Test
-    public void testIsNullOrEmpty() {
-        assertTrue(StringUtil.isNullOrEmpty((String) null));
-        assertTrue(StringUtil.isNullOrEmpty((StringBuilder) null));
-        assertTrue(StringUtil.isNullOrEmpty(""));
-        assertTrue(StringUtil.isNullOrEmpty(new StringBuilder("")));
-        assertTrue(StringUtil.isNullOrEmpty(" "));
-        assertTrue(StringUtil.isNullOrEmpty(new StringBuilder(" ")));
-        assertTrue(StringUtil.isNullOrEmpty("\t"));
-        assertTrue(StringUtil.isNullOrEmpty(new StringBuilder("\t")));
-        assertTrue(StringUtil.isNullOrEmpty("\u0000")); // nul is whitespace
-        assertTrue(StringUtil.isNullOrEmpty(new StringBuilder("\u0000")));
-        assertTrue(StringUtil.isNullOrEmpty("\r\n\t "));
-        assertTrue(StringUtil.isNullOrEmpty(new StringBuilder("\r\n\t ")));
+    public void testIsNullOrBlank() {
+        assertTrue(StringUtil.isNullOrBlank(null));
+        assertTrue(StringUtil.isNullOrBlank(""));
+        assertTrue(StringUtil.isNullOrBlank(" "));
+        assertTrue(StringUtil.isNullOrBlank("\u00a0"));
+        assertTrue(StringUtil.isNullOrBlank("\r\n\t "));
 
-        assertFalse(StringUtil.isNullOrEmpty("a"));
-        assertFalse(StringUtil.isNullOrEmpty(" a "));
-        assertFalse(StringUtil.isNullOrEmpty("\u00a0")); // nbsp is not considered whitespace
+        assertFalse(StringUtil.isNullOrBlank("\u0000"));
+        assertFalse(StringUtil.isNullOrBlank("a"));
+        assertFalse(StringUtil.isNullOrBlank(" a "));
     }
 
     @Test
-    public void testMakeXmlSafe() {
-        assertEquals("", StringUtil.makeXmlSafe(null));
-        assertEquals("", StringUtil.makeXmlSafe(""));
+    public void testEscapeXml10() {
+        assertEquals("", StringUtil.escapeXml10(""));
+        assertEquals(" \t\r\n", StringUtil.escapeXml10(" \t\r\n"));
 
-        assertEquals("", StringUtil.makeXmlSafe(" "));
-        assertEquals("", StringUtil.makeXmlSafe("\t"));
-        assertEquals("", StringUtil.makeXmlSafe("\u0000"));
+        assertEquals("ab", StringUtil.escapeXml10("\u0000a\u0001b\u0002"));
+        assertEquals("ab", StringUtil.escapeXml10("\uFFFEab\uFFFF"));
 
-        assertEquals(" a ",   StringUtil.makeXmlSafe(" a "));
-        assertEquals("\ta\t", StringUtil.makeXmlSafe("\ta\t"));
-        assertEquals(" a ",   StringUtil.makeXmlSafe("\u0000a\u0000"));
+        assertEquals("&amp;",  StringUtil.escapeXml10("&"));
+        assertEquals("&lt;",   StringUtil.escapeXml10("<"));
+        assertEquals("&gt;",   StringUtil.escapeXml10(">"));
+        assertEquals("&quot;", StringUtil.escapeXml10("\""));
+        assertEquals("&apos;", StringUtil.escapeXml10("'"));
+
+        assertEquals("&amp;amp;", StringUtil.escapeXml10("&amp;"));
         
-        assertEquals("&amp;",  StringUtil.makeXmlSafe("&"));
-        assertEquals("&lt;", StringUtil.makeXmlSafe("<"));
-        assertEquals("&gt;", StringUtil.makeXmlSafe(">"));
-
-        assertEquals("&amp;quote;", StringUtil.makeXmlSafe("\"")); // don't know how to highlight this, but
-                                                                   // result is messed-up twice
-                                                                   // (xml's &quot; has no trailing "e" plus there is an extra &amp;) 
-
-        assertEquals("&amp;",    StringUtil.makeXmlSafe("&amp;"));
-        assertEquals("&amp;gt;", StringUtil.makeXmlSafe("&gt;"));
+        try {
+            StringUtil.escapeXml10(null);
+            fail();
+        } catch (@SuppressWarnings("unused") NullPointerException e) {
+            // expected
+        }
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testIsNumeric() {
         assertTrue(StringUtil.isNumeric("0"));
         assertTrue(StringUtil.isNumeric("0."));
@@ -186,13 +195,15 @@ public class StringUtilTest {
         assertTrue(StringUtil.isNumeric("-0"));
         assertTrue(StringUtil.isNumeric("-0e-0"));
         assertTrue(StringUtil.isNumeric("-0E-0"));
-        assertTrue(StringUtil.isNumeric("Infinity"));
-        assertTrue(StringUtil.isNumeric("+Infinity"));
-        assertTrue(StringUtil.isNumeric("-Infinity"));
-        assertTrue(StringUtil.isNumeric("NaN"));
+        
+        assertFalse(StringUtil.isNumeric("Infinity"));
+        assertFalse(StringUtil.isNumeric("+Infinity"));
+        assertFalse(StringUtil.isNumeric("-Infinity"));
+        assertFalse(StringUtil.isNumeric("NaN"));
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testIsPositiveInteger() {
         assertTrue(StringUtil.isPositiveInteger("1"));
         assertTrue(StringUtil.isPositiveInteger("0"));
@@ -206,6 +217,7 @@ public class StringUtilTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testIsInteger() {
         assertTrue(StringUtil.isInteger("1"));
         assertTrue(StringUtil.isInteger("0"));

@@ -273,24 +273,6 @@ public class MechFileParser {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_BA_HEAT));
                 ent.setNextSensor(ent.getSensors().lastElement());
             }
-        } else if ((ent instanceof Protomech) && (ent.getOriginalJumpMP() > 0)) {
-            long jjs = ent.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET)).count();
-            EquipmentType jjtype;
-            if (ent.getOriginalJumpMP() > ent.getOriginalWalkMP()) {
-                jjtype = EquipmentType.get("ExtendedJumpJetSystem");
-            } else {
-                jjtype = EquipmentType.get("ProtomechJumpJet");
-            }
-            while (jjs < ent.getOriginalJumpMP()) {
-                try {
-                    ent.addEquipment(jjtype, Protomech.LOC_BODY);
-                } catch (LocationFullException ex) {
-                    // TODO Auto-generated catch block
-                    ex.printStackTrace();
-                }
-                jjs++;
-            }
-            
         }
 
         // Walk through the list of equipment.

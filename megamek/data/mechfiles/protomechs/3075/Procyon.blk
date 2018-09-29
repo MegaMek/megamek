@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,76 +20,54 @@ Procyon
 (Standard)
 </Model>
 
-<year>
-3063
-</year>
-
-<originalBuildYear>
-3063
-</originalBuildYear>
-
-<type>
-Clan Level 2
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+5
+</Tonnage>
 
 <cruiseMP>
 5
 </cruiseMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 2
 8
 2
 2
 6
-</armor>
-
-<Body Equipment>
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
-
-<Torso Equipment>
-</Torso Equipment>
+</Armor>
 
 <Right Arm Equipment>
+CLERSmallLaser
 </Right Arm Equipment>
 
 <Left Arm Equipment>
+CLERSmallLaser
 </Left Arm Equipment>
 
-<Legs Equipment>
-</Legs Equipment>
+<type>
+Clan
+</type>
+
+<year>
+3063
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 TRO 3075 - Civil War
 </source>
-
-<tonnage>
-5.0
-</tonnage>
-

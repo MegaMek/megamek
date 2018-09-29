@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,83 +16,65 @@ ProtoMech
 Orc
 </Name>
 
-<Model>
+<model>
 2
-</Model>
+</model>
 
-<year>
-3067
-</year>
-
-<originalBuildYear>
-3067
-</originalBuildYear>
-
-<type>
-Clan Level 2
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+4
+</Tonnage>
 
 <cruiseMP>
 6
 </cruiseMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 4
 7
 2
 2
 5
-</armor>
-
-<Body Equipment>
-Clan Machine Gun Ammo - Proto
-Clan Ammo Protomech LRM-2
-Clan Ammo Protomech LRM-2
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
+</Armor>
 
 <Torso Equipment>
+CLMG
+CLMG Ammo (10)
+CLLRM2 Ammo (3)
+CLLRM2 Ammo (3)
 </Torso Equipment>
 
 <Right Arm Equipment>
+CLLRM2
 </Right Arm Equipment>
 
 <Left Arm Equipment>
+CLLRM2
 </Left Arm Equipment>
 
-<Legs Equipment>
-</Legs Equipment>
+<type>
+Clan
+</type>
+
+<year>
+3067
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 TRO 3075 - Civil War
 </source>
-
-<tonnage>
-4.0
-</tonnage>
-

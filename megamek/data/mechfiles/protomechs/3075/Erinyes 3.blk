@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,81 +16,55 @@ ProtoMech
 Erinyes
 </Name>
 
-<Model>
+<model>
 3
-</Model>
+</model>
 
-<year>
-3072
-</year>
-
-<originalBuildYear>
-3072
-</originalBuildYear>
-
-<type>
-Clan Level 2
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+2
+</Tonnage>
 
 <cruiseMP>
 5
 </cruiseMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 2
 4
 1
 1
 4
-</armor>
-
-<Body Equipment>
-Clan Light Machine Gun Ammo - Proto
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
+</Armor>
 
 <Torso Equipment>
+CLLightMG
+CLLightMG Ammo (10)
 </Torso Equipment>
 
-<Right Arm Equipment>
-</Right Arm Equipment>
+<type>
+Clan
+</type>
 
-<Left Arm Equipment>
-</Left Arm Equipment>
+<year>
+3072
+</year>
 
-<Legs Equipment>
-</Legs Equipment>
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 TRO 3075 - Jihad
 </source>
-
-<tonnage>
-2.0
-</tonnage>
-

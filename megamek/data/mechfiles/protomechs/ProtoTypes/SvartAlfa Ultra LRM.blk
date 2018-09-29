@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,63 +20,35 @@ Svartalfa Ultra ProtoMech
 (LRM Variant)
 </Model>
 
-<year>
-3083
-</year>
-
-<originalBuildYear>
-3083
-</originalBuildYear>
-
-<type>
-Clan Level 3
-</type>
-
-<motion_type>
-WiGE
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+14
+</Tonnage>
 
 <cruiseMP>
 4
 </cruiseMP>
 
-<engine_type>
+<jumpingMP>
 0
-</engine_type>
+</jumpingMP>
 
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 4
 15
 2
 2
 8
 6
-</armor>
+</Armor>
 
-<Body Equipment>
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
+<Main Gun Equipment>
+CLLRM15
+CLLRM15 Ammo (10)
+</Main Gun Equipment>
 
 <Torso Equipment>
+CLLRM15
+CLLRM15 Ammo (10)
 </Torso Equipment>
 
 <Right Arm Equipment>
@@ -85,17 +57,34 @@ Clan Ammo LRM-15
 <Left Arm Equipment>
 </Left Arm Equipment>
 
-<Legs Equipment>
-</Legs Equipment>
+<type>
+Clan Level 3
+</type>
 
-<Main Gun Equipment>
-</Main Gun Equipment>
+<year>
+3083
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<glider>
+true
+</glider>
+
+<motion_type>
+WiGE
+</motion_type>
 
 <source>
 TRO Prototypes - Jihad
 </source>
-
-<tonnage>
-14.0
-</tonnage>
-

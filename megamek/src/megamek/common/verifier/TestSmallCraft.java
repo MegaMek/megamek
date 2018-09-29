@@ -172,7 +172,7 @@ public class TestSmallCraft extends TestAero {
      *           allotment
      */
     public static double[] extraSlotCost(SmallCraft sc) {
-        int arcs = sc.isSpheroid()? 6 : 4;
+        int arcs = sc.isSpheroid()? 7 : 5;
         int weaponsPerArc[] = new int[arcs];
         double weaponTonnage[] = new double[arcs];
         boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);

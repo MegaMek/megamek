@@ -132,13 +132,20 @@ public class BehaviorSettings {
         this.logger = logger;
     }
 
-    public BehaviorSettings getCopy() throws PrincessException {
+    /**
+     * @return a copy of these settings
+     */
+    public BehaviorSettings copy() {
         final BehaviorSettings copy = new BehaviorSettings();
         copy.setDestinationEdge(getDestinationEdge());
         copy.setRetreatEdge(getRetreatEdge());
         copy.setForcedWithdrawal(isForcedWithdrawal());
         copy.setAutoFlee(shouldAutoFlee());
-        copy.setDescription(getDescription());
+        try {
+            copy.setDescription(getDescription());
+        } catch (PrincessException e) {
+            throw new AssertionError(e);
+        }
         copy.setFallShameIndex(getFallShameIndex());
         copy.setBraveryIndex(getBraveryIndex());
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
@@ -152,6 +159,18 @@ public class BehaviorSettings {
             copy.addPriorityUnit(p);
         }
         return copy;
+    }
+
+    /**
+     * @return a copy of these settings
+     * @throws PrincessException
+     *         despite declaring it, this method never throws
+     *         {@linkplain PrincessException}
+     * @deprecated use {@link #copy()} instead
+     */
+    @Deprecated
+    public BehaviorSettings getCopy() throws PrincessException {
+        return copy();
     }
 
     /**

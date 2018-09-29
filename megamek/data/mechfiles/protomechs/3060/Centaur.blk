@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,58 +20,89 @@ Centaur
 (Standard)
 </Model>
 
-<Tonnage>
-5
-</Tonnage>
+<year>
+3060
+</year>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 6
 </cruiseMP>
 
-<Armor>
+<jumpingMP>
+0
+</jumpingMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 3
 7
 2
 2
 4
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-2
+Clan Ammo Protomech LRM-3
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLSRM2
+CLLRM3
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <Main Gun Equipment>
 CLERMicroLaser
 </Main Gun Equipment>
 
-<Torso Equipment>
-CLSRM2
-CLLRM3
-CLSRM2 Ammo (10)
-CLLRM3 Ammo (8)
-</Torso Equipment>
-
-<type>
-Clan
-</type>
-
-<year>
-3060
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
-
 <source>
 TRO 3060 - Clan Invasion
 </source>
+
+<tonnage>
+5.0
+</tonnage>
+

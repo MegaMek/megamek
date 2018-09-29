@@ -59,16 +59,6 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             t.setModel("");
         }
 
-        if (dataFile.exists("quad") && dataFile.getDataAsString("quad")[0].equalsIgnoreCase("true")) {
-            t.setIsQuad(true);
-            t.setMovementMode(EntityMovementMode.QUAD);
-        }
-
-        if (dataFile.exists("glider") && dataFile.getDataAsString("glider")[0].equalsIgnoreCase("true")) {
-            t.setIsGlider(true);
-            t.setMovementMode(EntityMovementMode.WIGE);
-        }
-
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -93,6 +83,8 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
+        t.setIsQuad(nMotion == EntityMovementMode.QUAD);
+        t.setIsGlider(nMotion == EntityMovementMode.WIGE);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,51 +20,82 @@ Siren
 4
 </Model>
 
-<Tonnage>
-3
-</Tonnage>
-
-<cruiseMP>
-10
-</cruiseMP>
-
-<Armor>
-2
-5
-1
-1
-3
-</Armor>
-
-<Torso Equipment>
-CLERMicroLaser
-CLMyomerBooster
-</Torso Equipment>
-
-<type>
-Clan
-</type>
-
 <year>
 3068
 </year>
 
-<internal_type>
-0
-</internal_type>
+<originalBuildYear>
+3068
+</originalBuildYear>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
+<type>
+Clan Level 2
+</type>
 
 <motion_type>
 Biped
 </motion_type>
 
+<transporters>
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+2
+5
+1
+1
+3
+</armor>
+
+<Body Equipment>
+CLMyomerBooster
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLERMicroLaser
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
 <source>
 TRO 3060 - Jihad
 </source>
+
+<tonnage>
+3.0
+</tonnage>
+

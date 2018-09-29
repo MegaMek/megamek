@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,26 +20,67 @@ Orc
 3
 </Model>
 
-<Tonnage>
-4
-</Tonnage>
+<year>
+3071
+</year>
+
+<originalBuildYear>
+3071
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 6
 </cruiseMP>
 
-<Armor>
+<jumpingMP>
+0
+</jumpingMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 3
 5
 2
 2
 4
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-3
+Clan Ammo SRM-1
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLSRM3
-CLSRM3 Ammo (3)
-CLSRM1 Ammo (6)
 </Torso Equipment>
 
 <Right Arm Equipment>
@@ -50,30 +91,14 @@ CLSRM1
 CLSRM1
 </Left Arm Equipment>
 
-<type>
-Clan
-</type>
-
-<year>
-3071
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3075 - Jihad
 </source>
+
+<tonnage>
+4.0
+</tonnage>
+

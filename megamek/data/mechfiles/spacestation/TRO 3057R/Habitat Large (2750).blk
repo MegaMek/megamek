@@ -40,7 +40,7 @@ Aerodyne
 smallcraftbay:40.0:5:1
 crewquarters:3381.0:0
 1stclassquarters:286590.0:0
-cargobay:174612.0:1:2
+cargobay:174612.0:1:4
 </transporters>
 
 <SafeThrust>
@@ -109,6 +109,9 @@ ISSmallPulseLaser
 (B) ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

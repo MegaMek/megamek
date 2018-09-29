@@ -39,9 +39,9 @@ Aerodyne
 <transporters>
 1stclassquarters:70.0:0
 crewquarters:280.0:0
-cargobay:146.5:1:1
-cargobay:146.5:1:2
-cargobay:145.5:1:3
+cargobay:146.5:1:3
+cargobay:146.5:1:4
+cargobay:145.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -99,6 +99,9 @@ cargobay:145.5:1:3
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

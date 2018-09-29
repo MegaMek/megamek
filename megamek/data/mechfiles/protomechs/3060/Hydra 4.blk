@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,59 +20,83 @@ Hydra
 4
 </Model>
 
-<Tonnage>
-6
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
 </cruiseMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 4
 12
 4
 4
 8
 3
-</Armor>
+</armor>
 
-<Main Gun Equipment>
-CLAPGaussRifle
-CLAPGaussRifle Ammo (10)
-</Main Gun Equipment>
+<Body Equipment>
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
-CLAPGaussRifle
-CLAPGaussRifle Ammo (10)
-CLAPGaussRifle
-CLAPGaussRifle Ammo (10)
 </Torso Equipment>
 
-<type>
-Clan
-</type>
+<Right Arm Equipment>
+</Right Arm Equipment>
 
-<year>
-3072
-</year>
+<Left Arm Equipment>
+</Left Arm Equipment>
 
-<internal_type>
-0
-</internal_type>
+<Legs Equipment>
+</Legs Equipment>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Main Gun Equipment>
+</Main Gun Equipment>
 
 <source>
 TRO 3060 - Jihad
 </source>
+
+<tonnage>
+6.0
+</tonnage>
+

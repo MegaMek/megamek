@@ -130,7 +130,6 @@ Clan Ammo LRM-20 (Clan) Artemis-capable:6
 Clan Ammo LRM-20 (Clan) Artemis-capable:6
 CLArtemisIV
 CLArtemisIV
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -138,6 +137,10 @@ ISMobileHPG
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 45

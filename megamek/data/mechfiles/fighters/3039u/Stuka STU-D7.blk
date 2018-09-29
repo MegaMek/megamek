@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,59 +20,32 @@ Stuka
 STU-D7
 </Model>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3070
+</year>
+
+<originalBuildYear>
+3070
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-80
-45
-45
-46
-</Armor>
-
-<Nose Equipment>
-LRM 20
-ISArtemisIV
-SRM 6
-ISArtemisIV
-SRM 6
-ISArtemisIV
-ISERMediumLaser
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo SRM-6 Artemis-capable
-IS Ammo SRM-6 Artemis-capable
-IS Ammo SRM-6 Artemis-capable
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISRotaryAC5
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISRotaryAC5
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 21
@@ -86,30 +59,67 @@ ISERMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+2
+</engine_type>
 
-<year>
-3070
-</year>
+<armor>
+80
+45
+45
+46
+</armor>
+
+<Nose Equipment>
+LRM 20
+ISArtemisIV
+SRM 6
+ISArtemisIV
+SRM 6
+ISArtemisIV
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISRotaryAC5
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISRotaryAC5
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Ammo SRM-6 Artemis-capable
+IS Ammo SRM-6 Artemis-capable
+IS Ammo SRM-6 Artemis-capable
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+100.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

@@ -132,6 +132,9 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 16
 </structural_integrity>
@@ -183,8 +186,4 @@ TRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
-
-<history>
-The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
-</history>
 

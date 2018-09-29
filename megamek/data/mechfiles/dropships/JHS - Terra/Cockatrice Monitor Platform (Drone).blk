@@ -40,7 +40,7 @@ Spheroid
 1stclassquarters:20.0:0
 2ndclassquarters:0.0:0
 crewquarters:63.0:0
-cargobay:21.0:1:1
+cargobay:21.0:1:4
 </transporters>
 
 <SafeThrust>
@@ -91,7 +91,6 @@ ISArtemisIV
 (B) ISLightGaussRifle
 IS Light Gauss Ammo:32
 (B) ISLaserAntiMissileSystem
-ImprovedCasparIIDroneControlSystem
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -121,6 +120,10 @@ IS Light Gauss Ammo:32
 (B) ISLargePulseLaser
 ISLargePulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+ImprovedCasparIIDroneControlSystem
+</Hull Equipment>
 
 <structural_integrity>
 15

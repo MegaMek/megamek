@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,25 +17,60 @@ Medium Strike Fighter Defender II
 </Name>
 
 <Model>
+
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3038
+</year>
+
+<originalBuildYear>
+3038
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 7
 6
 6
 5
-</Armor>
+</armor>
 
 <Nose Equipment>
-IS Ammo LRM-5 Artemis-capable
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -51,42 +86,18 @@ ISArtemisIV
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-0
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-480
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3038
-</year>
+<Fuselage Equipment>
+IS Ammo LRM-5 Artemis-capable
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+25.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

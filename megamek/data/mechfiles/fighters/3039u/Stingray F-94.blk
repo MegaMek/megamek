@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,25 +20,59 @@ Stingray
 F-94
 </Model>
 
-<Tonnage>
-60
-</Tonnage>
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 60
 45
 45
 34
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISERLargeLaser
 Medium Laser
-IS Ammo LRM-10
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -54,42 +88,18 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-20
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3052
-</year>
+<Fuselage Equipment>
+IS Ammo LRM-10
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+60.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

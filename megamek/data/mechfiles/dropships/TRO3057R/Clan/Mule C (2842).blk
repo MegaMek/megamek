@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -18,82 +16,35 @@ Dropship
 Mule C
 </Name>
 
-<model>
+<Model>
 (2842)
-</model>
+</Model>
 
-<Tonnage>
-11200
-</Tonnage>
+<year>
+2842
+</year>
+
+<originalBuildYear>
+2842
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+cargobay:2869.0:2:1
+cargobay:2869.0:2:2
+cargobay:2869.0:2:3
+</transporters>
 
 <SafeThrust>
 3
 </SafeThrust>
-
-<Armor>
-70
-80
-80
-60
-</Armor>
-
-<Nose Equipment>
-
-CLUltraAC5
-
-CLUltraAC5 Ammo:20
-
-CLERMediumLaser
-
-(B) CLERSmallLaser
-
-CLERSmallLaser
-
-</Nose Equipment>
-
-<Left Side Equipment>
-
-CLSRM6
-
-CLSRM6 Ammo:15
-
-CLERMediumLaser
-
-CLERMediumLaser 
-
-(R) CLERLargeLaser
-
-(R) CLERMediumLaser
-
-</Left Side Equipment>
-
-<Right Side Equipment> 
-
-CLSRM6
-
-CLSRM6 Ammo:15
-
-CLERMediumLaser
-
-CLERMediumLaser 
-
-(R) CLERLargeLaser
-
-(R) CLERMediumLaser
-
-</Right Side Equipment>
-
-<Aft Equipment> 
-
-CLERLargeLaser
-
-CLERMediumLaser
-
-</Aft Equipment>
-
-<structural_integrity>
-10
-</structural_integrity>
 
 <heatsinks>
 59
@@ -107,47 +58,104 @@ CLERMediumLaser
 9570
 </fuel>
 
-<type>
-Clan Level 2
-</type>
-
-<year>
-2842
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-spheroid
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-CargoBay:2869:2
-CargoBay:2869:2
-CargoBay:2869:2
-</transporters>
+<armor_tech>
+-1
+</armor_tech>
 
-<escape_pod>
-2
-</escape_pod>
-<life_boat>
-2
-</life_boat>
+<armor>
+70
+80
+80
+60
+</armor>
+
+<Nose Equipment>
+(B) CLUltraAC5
+Clan Ultra AC/5 Ammo:20
+(B) CLERMediumLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLSRM6
+Clan Ammo SRM-6:15
+(B) CLERMediumLaser
+CLERMediumLaser
+(R) (B) CLERLargeLaser
+(R) CLERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLSRM6
+Clan Ammo SRM-6:15
+(B) CLERMediumLaser
+CLERMediumLaser
+(R) (B) CLERLargeLaser
+(R) CLERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<tonnage>
+11200.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 19
 </crew>
 
+<officers>
+0
+</officers>
+
+<gunners>
+0
+</gunners>
+
 <passengers>
 0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+2
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

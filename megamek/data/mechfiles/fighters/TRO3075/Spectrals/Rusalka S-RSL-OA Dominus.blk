@@ -24,6 +24,10 @@ S-RSL-OA Dominus
 3071
 </year>
 
+<originalBuildYear>
+3071
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -84,27 +91,33 @@ ISLargePulseLaser:OMNI
 ISMediumPulseLaser:OMNI
 ISMediumPulseLaser:OMNI
 ISERSmallLaser:OMNI
-ISCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
 ISMML9:OMNI
 ISArtemisIV:OMNI
-IS Ammo MML-9 SRM Artemis-capable:OMNI
-IS Ammo MML-9 LRM Artemis-capable:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISMML9:OMNI
 ISArtemisIV:OMNI
-IS Ammo MML-9 SRM Artemis-capable:OMNI
-IS Ammo MML-9 LRM Artemis-capable:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser:OMNI
 Medium Laser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISCASE:OMNI
+IS Ammo MML-9 SRM Artemis-capable:OMNI
+IS Ammo MML-9 LRM Artemis-capable:OMNI
+IS Ammo MML-9 SRM Artemis-capable:OMNI
+IS Ammo MML-9 LRM Artemis-capable:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

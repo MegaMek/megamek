@@ -42,7 +42,7 @@ battlearmorbay:12.0:1:2
 2ndclassquarters:0.0:0
 1stclassquarters:200.0:0
 crewquarters:658.0:0
-cargobay:8854.5:2:3
+cargobay:8854.5:2:6
 </transporters>
 
 <SafeThrust>
@@ -95,7 +95,6 @@ Sub-Capital Cannon (Light)
 Sub-Capital Cannon (Light)
 Sub-Capital Cannon (Light)
 Ammo Light SCC:120
-ISNC3
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -239,6 +238,10 @@ ISAntiMissileSystem
 ISAMS Ammo:180
 </Aft Equipment>
 
+<Hull Equipment>
+ISNC3
+</Hull Equipment>
+
 <structural_integrity>
 150
 </structural_integrity>
@@ -250,6 +253,10 @@ XTRO Republic I - Early Republic
 <tonnage>
 100000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 256

@@ -41,8 +41,8 @@ Aerodyne
 steeragequarters:180.0:0
 crewquarters:154.0:0
 1stclassquarters:50.0:0
-smallcraftbay:2.0:1:1
-cargobay:509.0:2:2
+smallcraftbay:2.0:1:5
+cargobay:509.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -181,6 +181,9 @@ IS Ammo MML-9 LRM Artemis-capable:78
 IS Ammo MML-9 SRM Artemis-capable:66
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 25
 </structural_integrity>
@@ -192,6 +195,10 @@ TRO 3085 - Jihad
 <tonnage>
 9400.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 32

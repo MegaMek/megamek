@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,32 @@ Corsair
 CSR-V20
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3010
+</year>
+
+<originalBuildYear>
+3010
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-73
-50
-50
-43
-</Armor>
-
-<Nose Equipment>
-Large Laser
-Large Laser
-SRM 6
-IS Ammo SRM-6
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 16
@@ -63,30 +59,44 @@ IS Ammo SRM-6
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3010
-</year>
+<armor>
+73
+50
+50
+43
+</armor>
+
+<Nose Equipment>
+Large Laser
+Large Laser
+SRM 6
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

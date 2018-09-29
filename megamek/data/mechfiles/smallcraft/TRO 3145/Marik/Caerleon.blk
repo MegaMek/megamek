@@ -38,8 +38,8 @@ Aerodyne
 
 <transporters>
 2ndclassquarters:0.0:0
-battlearmorbay:3.0:1:1
-cargobay:0.5:1:2
+battlearmorbay:3.0:1:2
+cargobay:0.5:1:3
 crewquarters:0.0:0
 1stclassquarters:0.0:0
 steeragequarters:20.0:0
@@ -105,6 +105,9 @@ IS Ammo LRM-15 Artemis-capable
 ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 6

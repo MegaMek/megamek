@@ -37,7 +37,7 @@ Spheroid
 </motion_type>
 
 <transporters>
-infantrybay:3.0:1:1
+infantrybay:3.0:1:1:Foot
 asfbay:2.0:2:2
 cargobay:850.0:2:3
 2ndclassquarters:0.0:0
@@ -146,6 +146,9 @@ ISERLargeLaser
 (B) ISMediumPulseLaser
 ISMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 22

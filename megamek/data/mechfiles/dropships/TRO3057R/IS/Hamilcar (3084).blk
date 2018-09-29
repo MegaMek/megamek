@@ -131,6 +131,9 @@ ISArtemisIV
 IS Streak SRM 4 Ammo:25
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 9
 </structural_integrity>

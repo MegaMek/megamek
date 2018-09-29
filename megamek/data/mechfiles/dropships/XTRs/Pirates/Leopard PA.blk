@@ -41,7 +41,7 @@ smallcraftbay:2.0:2:1
 asfbay:2.0:2:2
 1stclassquarters:20.0:0
 2ndclassquarters:0.0:0
-infantrybay:4.0:1:3:Jump
+infantrybay:4.0:1:5:Jump
 crewquarters:77.0:0
 </transporters>
 
@@ -132,6 +132,9 @@ ISMediumPulseLaser
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 10

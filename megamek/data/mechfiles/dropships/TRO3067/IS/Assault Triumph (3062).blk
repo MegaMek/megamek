@@ -44,7 +44,7 @@ battlearmorbay:6.0:1:4
 2ndclassquarters:0.0:0
 crewquarters:84.0:0
 1stclassquarters:30.0:0
-cargobay:854.5:1:5
+cargobay:854.5:1:8
 </transporters>
 
 <SafeThrust>
@@ -139,6 +139,9 @@ ISMediumPulseLaser
 ISMediumPulseLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 11
 </structural_integrity>
@@ -150,6 +153,10 @@ TRO 3067 - Civil War
 <tonnage>
 8000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 264

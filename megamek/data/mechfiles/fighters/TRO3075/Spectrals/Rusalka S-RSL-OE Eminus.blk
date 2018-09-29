@@ -24,6 +24,10 @@ S-RSL-OE Eminus
 3071
 </year>
 
+<originalBuildYear>
+3071
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -81,9 +88,6 @@ Aerodyne
 
 <Nose Equipment>
 ISLightGaussRifle:OMNI
-IS Light Gauss Ammo:OMNI
-IS Light Gauss Ammo:OMNI
-ISCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -99,6 +103,15 @@ ISERMediumLaser:OMNI
 <Aft Equipment>
 Small Laser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
+ISCASE:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

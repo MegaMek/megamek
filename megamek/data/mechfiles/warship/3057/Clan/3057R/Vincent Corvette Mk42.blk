@@ -41,7 +41,7 @@ smallcraftbay:4.0:1:1
 asfbay:10.0:2:2
 1stclassquarters:280.0:0
 crewquarters:1057.0:0
-cargobay:92187.5:1:3
+cargobay:92187.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -85,7 +85,6 @@ cargobay:92187.5:1:3
 (B) Capital Missile Launcher (Barracuda)
 Capital Missile Launcher (Barracuda)
 Ammo Barracuda:20
-ISSmallNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -103,7 +102,6 @@ CLERLargeLaser
 </Right Front Side Equipment>
 
 <Aft Equipment>
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -111,6 +109,11 @@ ISMobileHPG
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)

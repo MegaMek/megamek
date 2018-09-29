@@ -41,7 +41,7 @@ asfbay:10.0:5:1
 2ndclassquarters:0.0:0
 1stclassquarters:90.0:0
 crewquarters:287.0:0
-cargobay:1873.0:2:2
+cargobay:1873.0:2:5
 </transporters>
 
 <SafeThrust>
@@ -95,7 +95,6 @@ CLArtemisV
 (B) CLERLargeLaser
 CLERLargeLaser
 CLERLargeLaser
-ISMobileHPG
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -135,6 +134,10 @@ CLMediumPulseLaser
 (B) CLLaserAntiMissileSystem
 CLLaserAntiMissileSystem
 </Aft Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <structural_integrity>
 18

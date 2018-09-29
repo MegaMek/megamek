@@ -98,6 +98,9 @@ Large Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
@@ -111,7 +114,7 @@ HB Kurita - Star League
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

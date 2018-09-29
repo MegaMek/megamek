@@ -92,10 +92,18 @@ ISTankCockpitCommandConsole
 
 <Aft Equipment>
 IS Vehicular Stealth
+IS Vehicular Stealth
+IS Vehicular Stealth
 ISArrowIV
-ISArrowIVAmmo
-ISArrowIVAmmo
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISArrowIVAmmo
+ISArrowIVAmmo
+</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

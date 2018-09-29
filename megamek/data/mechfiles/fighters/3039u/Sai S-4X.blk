@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,63 @@ Sai
 S-4X
 </Model>
 
-<Tonnage>
-40
-</Tonnage>
+<year>
+3048
+</year>
+
+<originalBuildYear>
+3048
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+21
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 35
 27
 27
 18
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISERLargeLaser
@@ -50,42 +93,17 @@ ISMediumPulseLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-21
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3048
-</year>
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+40.0
+</tonnage>
 
-<armor_type>
-19
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

@@ -176,6 +176,9 @@ ISERLargeLaser
 Ammo NAC/20:50
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) PPC
 PPC
@@ -260,6 +263,3 @@ TRO3067 - Clan Invasion
 0
 </escape_pod>
 
-<history>
-The ship as built in the TRO is tons underweight. Increasing Cargo space to use all available weight.
-</history>

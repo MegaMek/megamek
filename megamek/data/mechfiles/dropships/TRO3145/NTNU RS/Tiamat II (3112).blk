@@ -42,7 +42,7 @@ asfbay:6.0:1:1
 steeragequarters:180.0:0
 crewquarters:350.0:0
 1stclassquarters:100.0:0
-cargobay:2581.0:1:2
+cargobay:2581.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -104,7 +104,6 @@ ISERPPC
 ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
-ISNC3
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -223,6 +222,10 @@ ISLaserAntiMissileSystem
 Ammo Screen:20
 </Aft Equipment>
 
+<Hull Equipment>
+ISNC3
+</Hull Equipment>
+
 <structural_integrity>
 75
 </structural_integrity>
@@ -234,6 +237,10 @@ RS 3145 NTNU - Late Republic
 <tonnage>
 36000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 62

@@ -42,7 +42,7 @@ smallcraftbay:2.0:2:1
 crewquarters:154.0:0
 steeragequarters:180.0:0
 2ndclassquarters:0.0:0
-cargobay:511.0:1:2
+cargobay:511.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -98,7 +98,6 @@ ISArtemisIV
 (B) ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:48
-ISNC3
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -178,6 +177,10 @@ ISLargeVSPLaser
 (B) ISAntiMissileSystem
 ISAMS Ammo:36
 </Aft Equipment>
+
+<Hull Equipment>
+ISNC3
+</Hull Equipment>
 
 <structural_integrity>
 25

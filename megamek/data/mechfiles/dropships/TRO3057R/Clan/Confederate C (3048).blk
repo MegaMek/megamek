@@ -42,7 +42,7 @@ mechbay:3.0:3
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:56.0:0
-cargobay:233.0:2:3
+cargobay:233.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -125,6 +125,9 @@ Large Laser
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 10

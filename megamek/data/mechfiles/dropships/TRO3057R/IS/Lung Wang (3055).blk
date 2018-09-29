@@ -40,7 +40,7 @@ Spheroid
 mechbay:4.0:2
 asfbay:2.0:2:2
 cargobay:289.5:2:3
-infantrybay:1.0:0:4
+infantrybay:1.0:0:4:Foot
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:84.0:0
@@ -141,6 +141,9 @@ ISArtemisIV
 IS Ammo SRM-6 Artemis-capable:15
 ISArtemisIV
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 15

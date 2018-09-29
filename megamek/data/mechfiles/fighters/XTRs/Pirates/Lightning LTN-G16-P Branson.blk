@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,25 +20,66 @@ Lightning
 LTN-G16-P (Branson)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3071
+</year>
+
+<originalBuildYear>
+3071
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+13
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 44
 35
 35
 33
-</Armor>
+</armor>
 
 <Nose Equipment>
-ISHVAC10
-ISHVAC10 Ammo
-ISHVAC10 Ammo
+Hyper Velocity Auto Cannon/10
 ISERMediumLaser
 </Nose Equipment>
 
@@ -55,42 +96,19 @@ ISERSmallLaser
 ISERSmallLaser
 </Aft Equipment>
 
-<heatsinks>
-13
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 4
-</type>
-
-<year>
-3071
-</year>
+<Fuselage Equipment>
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+</Fuselage Equipment>
 
 <source>
 XTRO Pirates - Jihad
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-19
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

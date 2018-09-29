@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -18,57 +18,79 @@ Satyr
 
 <Model>
 XP
-</model>
-
-<Tonnage>
-4
-</Tonnage>
-
-<cruiseMP>
-6
-</cruiseMP>
-
-<jumpingMP>
-9
-</jumpingMP>
-
-<Armor>
-2
-5
-1
-1
-3
-</Armor>
-
-<Torso Equipment>
-CLSRM2
-CLSRM2 Ammo (10)
-</Torso Equipment>
-
-<type>
-Clan
-</type>
+</Model>
 
 <year>
 3079
 </year>
 
-<internal_type>
-0
-</internal_type>
+<originalBuildYear>
+3079
+</originalBuildYear>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
+<type>
+Clan Level 2
+</type>
 
 <motion_type>
 Biped
 </motion_type>
 
+<transporters>
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+2
+5
+1
+1
+3
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-2
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
 <source>
 TRO Prototypes - Jihad
 </source>
+
+<tonnage>
+4.0
+</tonnage>
+

@@ -1427,13 +1427,12 @@ public class TestAero extends TestEntity {
      * Determines whether a piece of equipment should be mounted in a specific location, as opposed
      * to the fuselage.
      * 
-     * @param eq             The equipment
-     * @param usesWeaponBays If the aero uses weapon bays, the ammo is mounted there. Otherwise it's in the
-     *                       fuselage.
-     * @return               Whether the equipment needs to be assigned to a location with a firing arc.
+     * @param eq      The equipment
+     * @param entity  The aerospace unit
+     * @return        Whether the equipment needs to be assigned to a location with a firing arc.
      */
-    public static boolean eqRequiresLocation(EquipmentType eq, boolean usesWeaponBays) {
-        if (usesWeaponBays) {
+    public static boolean eqRequiresLocation(EquipmentType eq, Entity entity) {
+        if (entity.usesWeaponBays()) {
             return (eq instanceof WeaponType)
                     || (eq instanceof AmmoType)
                     || ((eq instanceof MiscType)
@@ -1452,8 +1451,9 @@ public class TestAero extends TestEntity {
             } else {
                 return true;
             }
-        } else {
-            return !(eq instanceof AmmoType);
+        } else if (eq instanceof AmmoType) {
+            return !entity.isFighter();
         }
+        return true;
     }
 }

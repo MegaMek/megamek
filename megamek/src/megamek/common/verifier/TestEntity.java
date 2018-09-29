@@ -374,7 +374,7 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static boolean eqRequiresLocation(Entity entity, EquipmentType eq) {
         if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
-            return TestAero.eqRequiresLocation(eq, entity.usesWeaponBays());
+            return TestAero.eqRequiresLocation(eq, entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             // TODO: Move to TestProtomech
             return (eq instanceof AmmoType)

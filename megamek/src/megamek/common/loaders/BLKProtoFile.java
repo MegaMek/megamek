@@ -120,6 +120,18 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         t.setHasMainGun(hasMainGun);
 
+        if (dataFile.exists("armor_type")){
+            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        
+        if (dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        } else {
+            t.setArmorTechLevel(TechConstants.T_ALL_CLAN);
+        }
+        
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {
             t.initializeArmor(armor[x], x + t.firstArmorIndex());

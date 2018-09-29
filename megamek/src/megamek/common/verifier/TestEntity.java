@@ -377,8 +377,8 @@ public abstract class TestEntity implements TestEntityOption {
             return TestAero.eqRequiresLocation(eq, entity.isFighter());
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             // TODO: Move to TestProtomech
-            return (eq instanceof AmmoType)
-                    || ((eq instanceof MiscType)
+            return !(eq instanceof AmmoType)
+                    && !((eq instanceof MiscType)
                             && (eq.hasFlag(MiscType.F_JUMP_JET)
                                     || eq.hasFlag(MiscType.F_UMU)
                                     || eq.hasFlag(MiscType.F_MASC)));

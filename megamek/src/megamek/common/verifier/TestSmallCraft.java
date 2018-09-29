@@ -47,7 +47,7 @@ public class TestSmallCraft extends TestAero {
     public static final int ARC_LWING = SmallCraft.LOC_LWING;
     public static final int ARC_RWING = SmallCraft.LOC_RWING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
-    public static final int ARC_NONE = SmallCraft.LOC_SYSTEM_WIDE;
+    public static final int ARC_NONE = SmallCraft.LOC_HULL;
     public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
     public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
     public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 4;

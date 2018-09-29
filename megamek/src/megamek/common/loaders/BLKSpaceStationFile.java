@@ -222,7 +222,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(IArmorState.ARMOR_NA, SpaceStation.LOC_SYSTEM_WIDE);
+        a.initializeArmor(IArmorState.ARMOR_NA, SpaceStation.LOC_HULL);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -307,7 +307,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                     Mounted newmount;
                     try {
                         if (!TestEntity.eqRequiresLocation(a, etype)) {
-                            newmount = a.addEquipment(etype, SpaceStation.LOC_SYSTEM_WIDE);
+                            newmount = a.addEquipment(etype, SpaceStation.LOC_HULL);
                         } else if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {

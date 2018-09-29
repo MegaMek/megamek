@@ -221,7 +221,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_SYSTEM_WIDE);
+        a.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
 
         a.autoSetInternal();
         a.autoSetThresh();
@@ -312,7 +312,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                     Mounted newmount;
                     try {
                         if (!TestEntity.eqRequiresLocation(a, etype)) {
-                            newmount = a.addEquipment(etype, Jumpship.LOC_SYSTEM_WIDE);
+                            newmount = a.addEquipment(etype, Jumpship.LOC_HULL);
                         } else if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {

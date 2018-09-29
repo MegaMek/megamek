@@ -393,19 +393,18 @@ public abstract class TestEntity implements TestEntityOption {
      * @param entity  The Entity to place the equipment in
      * @return        The location to place equipment that is not required to be assigned a location,
      *                defaulting to Entity.LOC_NONE for unit types that do not have such a location.
-     * @see #eqRequiresLocation(Entity, EquipmentType)
      */
     public static int getSystemWideLocation(Entity entity) {
         if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            return Jumpship.LOC_SYSTEM_WIDE;
+            return Jumpship.LOC_HULL;
         } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return SmallCraft.LOC_SYSTEM_WIDE;
+            return SmallCraft.LOC_HULL;
         } else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
             return Aero.LOC_FUSELAGE;
         } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
             return Tank.LOC_BODY;
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            return Protomech.LOC_UNALLOCATED;
+            return Protomech.LOC_BODY;
         }
         return Entity.LOC_NONE;
     }

@@ -680,10 +680,10 @@ public class MechView {
                     continue;
                 }
                 // skip broadsides on warships
-                if (isJumpship && (loc >= Jumpship.LOC_SYSTEM_WIDE)) {
+                if (isJumpship && (loc >= Jumpship.LOC_HULL)) {
                     continue;
                 }
-                if (isSmallCraft && (loc >= SmallCraft.LOC_SYSTEM_WIDE)) {
+                if (isSmallCraft && (loc >= SmallCraft.LOC_HULL)) {
                     continue;
                 }
                 // skip the "Wings" location

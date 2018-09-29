@@ -25,7 +25,7 @@ public class SmallCraft extends Aero {
 
     private static final long serialVersionUID = 6708788176436555036L;
     
-    public static final int LOC_SYSTEM_WIDE = 4;
+    public static final int LOC_HULL = 4;
     
     private static String[] LOCATION_ABBRS =
         { "NOS", "LS", "RS", "AFT", "HULL" };
@@ -192,6 +192,11 @@ public class SmallCraft extends Aero {
     @Override
     public int locations() {
         return 5;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     // what is different - hit table is about it

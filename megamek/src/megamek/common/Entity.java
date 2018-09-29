@@ -1397,7 +1397,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns the number of locations in the entity
      */
     public abstract int locations();
-
+    
+    /**
+     * Determines where to place equipment that does not require a specific location. What
+     * this means varies by {@link Entity} type.
+     * 
+     * @return        The location to place equipment that is not required to be assigned a location,
+     *                defaulting to Entity.LOC_NONE for unit types that do not have such a location.
+     */
+    public int getBodyLocation() {
+        return LOC_NONE;
+    }
+    
     /**
      * Returns the player that "owns" this entity.
      */

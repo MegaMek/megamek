@@ -74,7 +74,7 @@ public class Protomech extends Entity {
      */
     private boolean m_bHasNoMainGun = false;
 
-    public static final int LOC_UNALLOCATED = 0;
+    public static final int LOC_BODY = 0;
 
     public static final int LOC_HEAD = 1;
     public static final int LOC_TORSO = 2;
@@ -353,7 +353,7 @@ public class Protomech extends Entity {
             case LOC_LEG:
             case LOC_TORSO:
                 return 3;
-            case LOC_UNALLOCATED:
+            case LOC_BODY:
                 // This is needed to keep everything ordered in the unit display system tab
                 return 1;
         }
@@ -1940,7 +1940,7 @@ public class Protomech extends Entity {
 
     @Override
     public int getArmor(int loc, boolean rear) {
-        if ((loc == LOC_UNALLOCATED)
+        if ((loc == LOC_BODY)
                 || (loc == LOC_NMISS)) {
             return IArmorState.ARMOR_NA;
         }
@@ -1949,7 +1949,7 @@ public class Protomech extends Entity {
 
     @Override
     public int getInternal(int loc) {
-        if ((loc == LOC_UNALLOCATED)
+        if ((loc == LOC_BODY)
                 || (loc == LOC_NMISS)) {
             return IArmorState.ARMOR_NA;
         }
@@ -1992,6 +1992,11 @@ public class Protomech extends Entity {
             return NUM_PMECH_LOCATIONS - 1;
         }
         return NUM_PMECH_LOCATIONS;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_BODY;
     }
 
     /**

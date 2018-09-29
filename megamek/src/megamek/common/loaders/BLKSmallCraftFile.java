@@ -187,7 +187,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.RW], SmallCraft.LOC_RWING);
         a.initializeArmor(armor[BLKAeroFile.LW], SmallCraft.LOC_LWING);
         a.initializeArmor(armor[BLKAeroFile.AFT], SmallCraft.LOC_AFT);
-        a.initializeArmor(IArmorState.ARMOR_NA, SmallCraft.LOC_SYSTEM_WIDE);
+        a.initializeArmor(IArmorState.ARMOR_NA, SmallCraft.LOC_HULL);
 
         a.autoSetInternal();
         // This is not working right for arrays for some reason
@@ -261,7 +261,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : SmallCraft.LOC_SYSTEM_WIDE;
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : SmallCraft.LOC_HULL;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 

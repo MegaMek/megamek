@@ -318,6 +318,11 @@ public class Tank extends Entity {
         }
         return 7;
     }
+    
+    @Override
+    public int getBodyLocation() {
+        return LOC_BODY;
+    }
 
     @Override
     public boolean canChangeSecondaryFacing() {

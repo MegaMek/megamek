@@ -37,7 +37,7 @@ public class Jumpship extends Aero {
     public static final int LOC_FRS = 2;
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
-    public static final int LOC_SYSTEM_WIDE = 6;
+    public static final int LOC_HULL = 6;
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
@@ -173,6 +173,11 @@ public class Jumpship extends Aero {
     @Override
     public int locations() {
         return 7;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     /**

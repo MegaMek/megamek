@@ -206,7 +206,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.RW], Dropship.LOC_RWING);
         a.initializeArmor(armor[BLKAeroFile.LW], Dropship.LOC_LWING);
         a.initializeArmor(armor[BLKAeroFile.AFT], Dropship.LOC_AFT);
-        a.initializeArmor(IArmorState.ARMOR_NA, Dropship.LOC_SYSTEM_WIDE);
+        a.initializeArmor(IArmorState.ARMOR_NA, Dropship.LOC_HULL);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -309,7 +309,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                     Mounted newmount;
                     try {
                         if (!TestEntity.eqRequiresLocation(a, etype)) {
-                            newmount = a.addEquipment(etype, Dropship.LOC_SYSTEM_WIDE);
+                            newmount = a.addEquipment(etype, Dropship.LOC_HULL);
                         } else if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {

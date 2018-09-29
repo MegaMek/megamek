@@ -192,11 +192,11 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
                     if (ammoIndex > 0) {
-                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED, false, shotsCount);
+                        t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
                     } else if (TestEntity.eqRequiresLocation(t, etype)) {
                         t.addEquipment(etype, nLoc);
                     } else {
-                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED);
+                        t.addEquipment(etype, Protomech.LOC_BODY);
                     }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());

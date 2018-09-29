@@ -385,6 +385,11 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    public int getBodyLocation() {
+        return LOC_FUSELAGE;
+    }
+
+    @Override
     public boolean canChangeSecondaryFacing() {
         return false;
     }

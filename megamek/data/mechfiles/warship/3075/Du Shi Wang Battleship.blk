@@ -44,7 +44,7 @@ dockingcollar
 crewquarters:1855.0:0
 1stclassquarters:650.0:0
 steeragequarters:50.0:0
-cargobay:73529.0:4:6
+cargobay:73529.0:4:2
 </transporters>
 
 <SafeThrust>
@@ -120,9 +120,6 @@ Naval Laser 45
 Naval Laser 45
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <Left Broadsides Equipment>
 (B) Naval Laser 45
 Naval Laser 45
@@ -193,4 +190,8 @@ TRO3075 - Star League
 <escape_pod>
 15
 </escape_pod>
+
+<history>
+The ship as built in the TRO is overweight. Reducing the Cargo to make it legal.
+</history>
 

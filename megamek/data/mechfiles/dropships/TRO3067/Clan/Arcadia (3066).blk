@@ -44,7 +44,7 @@ crewquarters:91.0:0
 steeragequarters:0.0:0
 1stclassquarters:30.0:0
 2ndclassquarters:630.0:0
-cargobay:197.5:2:8
+cargobay:197.5:2:4
 </transporters>
 
 <SafeThrust>
@@ -149,9 +149,6 @@ CLStreakSRM6
 Clan Streak SRM 6 Ammo:45
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 11
 </structural_integrity>
@@ -163,10 +160,6 @@ TRO 3067 - Civil War
 <tonnage>
 3000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 103

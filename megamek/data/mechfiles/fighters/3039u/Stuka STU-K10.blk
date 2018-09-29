@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,20 @@ Stuka
 STU-K10
 </Model>
 
-<year>
-2711
-</year>
-
-<originalBuildYear>
-2711
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+100
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-32
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 84
 54
 54
 48
-</armor>
+</Armor>
 
 <Nose Equipment>
 LRM 20
@@ -76,6 +41,8 @@ Small Laser
 Small Laser
 Small Laser
 Small Laser
+IS Ammo LRM-20
+IS Ammo LRM-20
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -93,19 +60,42 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+32
+</heatsinks>
 
-<Fuselage Equipment>
-IS Ammo LRM-20
-IS Ammo LRM-20
-</Fuselage Equipment>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2711
+</year>
 
 <source>
 TRO 3039 - Star League
 </source>
 
-<tonnage>
-100.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

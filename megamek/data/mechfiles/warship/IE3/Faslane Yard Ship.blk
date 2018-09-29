@@ -44,7 +44,7 @@ dockingcollar
 2ndclassquarters:630.0:0
 navalrepairunpressurized:2000000.0:1:4:f0
 crewquarters:1190.0:0
-cargobay:128610.0:1:6
+cargobay:128610.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -158,6 +158,7 @@ LRM 20
 IS Ammo LRM-20 Artemis-capable:48
 ISArtemisIV
 ISArtemisIV
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -197,10 +198,6 @@ IS Ammo LRM-20 Artemis-capable:48
 ISArtemisIV
 ISArtemisIV
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Medium)
@@ -297,3 +294,6 @@ IE3 - Early Succession War
 10
 </escape_pod>
 
+<History>
+The crew in the TRO is off from the building calculations. Corrected here, but weight had to be moved from Cargo.
+</history>

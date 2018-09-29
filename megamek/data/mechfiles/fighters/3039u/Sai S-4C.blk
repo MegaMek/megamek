@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,39 @@ Sai
 S-4C
 </Model>
 
-<year>
-3052
-</year>
-
-<originalBuildYear>
-3052
-</originalBuildYear>
-
-<type>
-Clan Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+40
+</Tonnage>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+40
+28
+28
+19
+</Armor>
+
+<Nose Equipment>
+CLERPPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakSRM4
+CLStreakSRM4
+Clan Streak SRM 4 Ammo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLStreakSRM4
+CLStreakSRM4
+Clan Streak SRM 4 Ammo
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 14
@@ -59,9 +66,21 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+Clan Level 2
+</type>
+
+<year>
+3052
+</year>
+
+<source>
+TRO 3039 - Clan Invasion
+</source>
+
+<internal_type>
+0				
+</internal_type>
 
 <armor_type>
 19
@@ -71,44 +90,10 @@ Aerodyne
 2
 </armor_tech>
 
-<armor>
-40
-28
-28
-19
-</armor>
+<engine_type>				
+2
+</engine_type>
 
-<Nose Equipment>
-CLERPPC
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLStreakSRM4
-CLStreakSRM4
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLStreakSRM4
-CLStreakSRM4
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Streak SRM 4 Ammo
-Clan Streak SRM 4 Ammo
-CLCASE
-</Fuselage Equipment>
-
-<source>
-TRO 3039 - Clan Invasion
-</source>
-
-<tonnage>
-40.0
-</tonnage>
-
+<motion_type>
+aerodyne
+</motion_type>

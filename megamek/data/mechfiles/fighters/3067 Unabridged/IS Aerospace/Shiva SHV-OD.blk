@@ -24,10 +24,6 @@ SHV-OD
 3073
 </year>
 
-<originalBuildYear>
-3073
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -84,31 +77,25 @@ Aerodyne
 
 <Nose Equipment>
 ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
 ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 ISGuardianECMSuite:OMNI
 ISMediumVSPLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Light Gauss Ammo:OMNI
-IS Gauss Ammo:OMNI
-IS Gauss Ammo:OMNI
-IS Gauss Ammo:OMNI
-IS Gauss Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

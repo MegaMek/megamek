@@ -24,10 +24,6 @@ KC-9
 3053
 </year>
 
-<originalBuildYear>
-3053
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,10 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-cargobay:76.0:1:1
-</transporters>
 
 <SafeThrust>
 3
@@ -68,8 +60,16 @@ cargobay:76.0:1:1
 34
 33
 33
-33
+33	
 </armor>
+
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Nose Equipment>
 </Nose Equipment>
@@ -80,31 +80,24 @@ cargobay:76.0:1:1
 <Right Wing Equipment>
 </Right Wing Equipment>
 
-<Aft Equipment>
-Lift Hoist/Arresting Hoist
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
 <Body Equipment>
 PropChassisMod
 VSTOLChassisMod
 </Body Equipment>
 
-<barrating>
-7
-</barrating>
+<Aft Equipment>
+Lift Hoist
+</Aft Equipment>
 
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:76:1
+</transporters>
 
 <source>
 TRO Vehicle Annex (r) - Clan Invasion
 </source>
 
 <tonnage>
-200.0
+200
 </tonnage>
 

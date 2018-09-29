@@ -24,10 +24,6 @@ Xerxes
 3069
 </year>
 
-<originalBuildYear>
-3069
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -85,26 +78,20 @@ CLERLargeLaser
 
 <Left Wing Equipment>
 CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

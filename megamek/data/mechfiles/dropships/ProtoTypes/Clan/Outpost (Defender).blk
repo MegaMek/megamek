@@ -42,7 +42,7 @@ battlearmorbay:5.0:1:2
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
 crewquarters:112.0:0
-cargobay:892.0:1:6
+cargobay:892.0:1:3
 </transporters>
 
 <SafeThrust>
@@ -159,9 +159,6 @@ CLMediumPulseLaser
 (B) CLLaserAntiMissileSystem
 CLLaserAntiMissileSystem
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 20

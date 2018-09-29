@@ -24,10 +24,6 @@ HMR-HG
 3075
 </year>
 
-<originalBuildYear>
-3075
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -80,6 +73,8 @@ Aerodyne
 
 <Nose Equipment>
 ISUltraAC20
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -90,14 +85,6 @@ ISUltraAC20
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Jihad

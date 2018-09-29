@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,29 +20,36 @@ Escape Pod
 (Standard)
 </Model>
 
-<year>
-2647
-</year>
-
-<originalBuildYear>
-2647
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-cargobay:0.48:0:1
-</transporters>
+<Tonnage>
+5
+</Tonnage>
 
 <SafeThrust>
 4
 </SafeThrust>
+
+<Armor>
+1
+1
+1
+1
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment> 
+</Right Side Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
 
 <heatsinks>
 0
@@ -56,85 +63,42 @@ cargobay:0.48:0:1
 10
 </fuel>
 
-<engine_type>
-1
-</engine_type>
+<type>
+IS Level 2
+</type>
 
-<armor_type>
-41
-</armor_type>
+<year>
+2647
+</year>
 
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
-1
-1
-1
-1
-</armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment>
-</Right Side Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
-
-<structural_integrity>
-1
-</structural_integrity>
-
-<tonnage>
-5.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
 
 <designtype>
-1
+0
 </designtype>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+CargoBay:.48:0
+</transporters>
 
 <crew>
 1
 </crew>
 
-<officers>
-0
-</officers>
-
-<gunners>
-0
-</gunners>
-
 <passengers>
-0
+6
 </passengers>
-
-<marines>
-0
-</marines>
-
-<battlearmor>
-0
-</battlearmor>
-
-<otherpassenger>
-0
-</otherpassenger>
-
-<life_boat>
-0
-</life_boat>
-
-<escape_pod>
-0
-</escape_pod>
-

@@ -24,10 +24,6 @@ SHV-OC
 3060
 </year>
 
-<originalBuildYear>
-3060
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -95,6 +88,8 @@ ISERSmallLaser:OMNI
 <Left Wing Equipment>
 ISERPPC:OMNI
 ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
 ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 </Left Wing Equipment>
@@ -102,22 +97,14 @@ ISERMediumLaser:OMNI
 <Right Wing Equipment>
 ISERPPC:OMNI
 ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
 ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Light Gauss Ammo:OMNI
-IS Light Gauss Ammo:OMNI
-IS Light Gauss Ammo:OMNI
-IS Light Gauss Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Clan Invasion

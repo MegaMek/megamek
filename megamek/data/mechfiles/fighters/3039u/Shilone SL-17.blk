@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,40 @@ Shilone
 SL-17
 </Model>
 
-<year>
-2796
-</year>
-
-<originalBuildYear>
-2796
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+65
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+60
+44
+44
+36
+</Armor>
+
+<Nose Equipment>
+LRM 20
+Large Laser
+IS Ammo LRM-20
+IS Ammo LRM-20
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+SRM 4
+IS Ammo SRM-4
+</Aft Equipment>
 
 <heatsinks>
 20
@@ -59,48 +67,30 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-0
-</engine_type>
+<type>
+IS Level 2
+</type>
 
-<armor>
-60
-44
-44
-36
-</armor>
-
-<Nose Equipment>
-LRM 20
-Large Laser
-</Nose Equipment>
-
-<Left Wing Equipment>
-Medium Laser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-Medium Laser
-</Right Wing Equipment>
-
-<Aft Equipment>
-SRM 4
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo SRM-4
-</Fuselage Equipment>
+<year>
+2796
+</year>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

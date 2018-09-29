@@ -24,10 +24,6 @@ Boomerang Spotter Plane
 2888
 </year>
 
-<originalBuildYear>
-2888
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 4
@@ -70,6 +63,14 @@ Aerodyne
 0
 </armor>
 
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Nose Equipment>
 ISReconCamera
 </Nose Equipment>
@@ -80,12 +81,6 @@ ISReconCamera
 <Right Wing Equipment>
 </Right Wing Equipment>
 
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
 <Body Equipment>
 Ejection Seat (Support Vehicle)
 UltraLightChassisMod
@@ -93,19 +88,18 @@ VSTOLChassisMod
 PropChassisMod
 </Body Equipment>
 
-<barrating>
-2
-</barrating>
+<Aft Equipment>
+</Aft Equipment>
 
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargospace:.013:1
+</transporters>
 
 <source>
 TRO 3039 - Early Succession War
 </source>
 
 <tonnage>
-5.0
+5
 </tonnage>
 

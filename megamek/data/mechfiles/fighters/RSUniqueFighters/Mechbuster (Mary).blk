@@ -2,100 +2,66 @@
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
-
 <UnitType>
 ConvFighter
 </UnitType>
-
 <Name>
 Mechbuster
 </Name>
-
 <Model>
 (Mary)
 </Model>
-
-<year>
-3071
-</year>
-
-<originalBuildYear>
-3071
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
-
+<Tonnage>
+50
+</Tonnage>
 <SafeThrust>
 5
 </SafeThrust>
-
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-0
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-480
-</fuel>
-
-<engine_type>
-1
-</engine_type>
-
-<armor>
+<Armor>
 19
 9
 9
 11
-</armor>
-
+</Armor>
 <Nose Equipment>
 ISLightGaussRifle
+ISLightGauss Ammo
+ISLightGauss Ammo
 </Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Light Gauss Ammo
-IS Light Gauss Ammo
-</Fuselage Equipment>
+<heatsinks>
+0
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+480
+</fuel>
+<type>
+IS Level 2
+</type>
+<year>
+3071
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
 
 <source>
 RS Unique Fighters
 </source>
-
-<tonnage>
-50.0
-</tonnage>
-

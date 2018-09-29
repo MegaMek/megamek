@@ -24,10 +24,6 @@ DAR4-XP
 3070
 </year>
 
-<originalBuildYear>
-3070
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 8
@@ -79,7 +72,7 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Binary Laser (Blazer) Cannon
+Blazer Cannon
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -92,12 +85,6 @@ ISMediumVSPLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 XTRO Davion - Jihad

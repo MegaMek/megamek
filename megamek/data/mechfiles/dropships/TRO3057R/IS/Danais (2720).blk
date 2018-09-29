@@ -41,7 +41,7 @@ smallcraftbay:2.0:2:1
 1stclassquarters:10.0:0
 2ndclassquarters:70.0:0
 crewquarters:28.0:0
-cargobay:1674.0:2:5
+cargobay:1674.0:2:2
 </transporters>
 
 <SafeThrust>
@@ -90,9 +90,6 @@ cargobay:1674.0:2:5
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 7

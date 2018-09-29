@@ -24,10 +24,6 @@ STM-O
 3098
 </year>
 
-<originalBuildYear>
-3098
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 10
@@ -86,6 +79,7 @@ Aerodyne
 ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
+IS Streak SRM 4 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -98,13 +92,6 @@ ISStreakSRM4:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Streak SRM 4 Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth - Early Republic

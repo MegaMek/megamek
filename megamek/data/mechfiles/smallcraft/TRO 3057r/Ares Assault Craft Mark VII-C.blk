@@ -41,7 +41,7 @@ Aerodyne
 crewquarters:0.0:0
 1stclassquarters:0.0:0
 steeragequarters:25.0:0
-cargobay:36.5:1:5
+cargobay:36.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -95,9 +95,6 @@ CLMediumPulseLaser
 <Aft Equipment>
 CLMediumPulseLaser
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 6

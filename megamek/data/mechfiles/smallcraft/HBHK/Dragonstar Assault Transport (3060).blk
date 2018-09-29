@@ -42,7 +42,7 @@ battlearmorbay:3.0:2:1
 crewquarters:0.0:0
 1stclassquarters:0.0:0
 steeragequarters:20.0:0
-cargobay:4.5:0:6
+cargobay:4.5:0:2
 </transporters>
 
 <SafeThrust>
@@ -98,9 +98,6 @@ ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 6
 </structural_integrity>
@@ -114,7 +111,7 @@ HB Kurita - Clan Invasion
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

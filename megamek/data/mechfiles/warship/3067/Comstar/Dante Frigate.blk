@@ -41,9 +41,9 @@ dockingcollar
 dockingcollar
 crewquarters:1267.0:0
 1stclassquarters:590.0:0
-asfbay:12.0:4:3
-cargobay:15550.5:1:4
-cargobay:15550.5:1:5
+asfbay:12.0:4:1
+cargobay:15550.5:1:2
+cargobay:15550.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -184,6 +184,7 @@ ISAMS Ammo:228
 ISLargePulseLaser
 ISLargePulseLaser
 ISLargePulseLaser
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -239,10 +240,6 @@ ISLargePulseLaser
 Naval Autocannon (NAC/30)
 Ammo NAC/30:20
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) ISERLargeLaser

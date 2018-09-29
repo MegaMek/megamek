@@ -24,10 +24,6 @@ CH
 3064
 </year>
 
-<originalBuildYear>
-3064
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 8
@@ -92,12 +85,6 @@ CLHeavyLargeLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Civil War

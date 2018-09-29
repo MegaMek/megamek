@@ -42,7 +42,7 @@ smallcraftbay:1.0:1:1
 crewquarters:154.0:0
 1stclassquarters:50.0:0
 steeragequarters:180.0:0
-cargobay:99.0:2:6
+cargobay:99.0:2:2
 </transporters>
 
 <SafeThrust>
@@ -139,9 +139,6 @@ ISLargeVSPLaser
 ISAMS Ammo:24
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 25
 </structural_integrity>
@@ -153,10 +150,6 @@ JHS 3076 - Jihad
 <tonnage>
 9400.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 27

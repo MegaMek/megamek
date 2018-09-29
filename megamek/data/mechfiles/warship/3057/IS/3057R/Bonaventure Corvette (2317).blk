@@ -101,6 +101,7 @@ IS Ammo LRM-15:56
 (B) LRM 15
 LRM 15
 IS Ammo LRM-15:56
+ISSmallNavalCommScannerSuite
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -110,10 +111,6 @@ IS Ammo LRM-15:56
 <Aft Right Side Equipment>
 (B) Large Laser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISSmallNavalCommScannerSuite
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Autocannon/10

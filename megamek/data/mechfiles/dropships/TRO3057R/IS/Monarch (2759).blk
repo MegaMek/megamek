@@ -40,7 +40,7 @@ Aerodyne
 crewquarters:238.0:0
 2ndclassquarters:1400.0:0
 1stclassquarters:720.0:0
-cargobay:1119.0:1:4
+cargobay:1119.0:1:1
 </transporters>
 
 <SafeThrust>
@@ -89,9 +89,6 @@ cargobay:1119.0:1:4
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 6

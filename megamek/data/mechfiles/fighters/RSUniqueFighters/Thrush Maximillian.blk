@@ -24,10 +24,6 @@ Thrush
 3067
 </year>
 
-<originalBuildYear>
-3067
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -37,7 +33,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:1.0:0:1
+cargobay:1.0:0
 </transporters>
 
 <SafeThrust>
@@ -83,12 +79,6 @@ ISERMediumLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 RS Unique Fighters - Civil War

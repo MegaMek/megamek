@@ -41,7 +41,7 @@ smallcraftbay:2.0:2:1
 1stclassquarters:20.0:0
 2ndclassquarters:42.0:0
 crewquarters:56.0:0
-cargobay:1533.0:2:5
+cargobay:1533.0:2:2
 </transporters>
 
 <SafeThrust>
@@ -113,9 +113,6 @@ Medium Laser
 (B) Medium Laser
 Medium Laser
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 7

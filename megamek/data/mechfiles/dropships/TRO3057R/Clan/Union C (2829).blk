@@ -42,7 +42,7 @@ mechbay:10.0:1
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:84.0:0
-cargobay:501.0:1:6
+cargobay:501.0:1:3
 </transporters>
 
 <SafeThrust>
@@ -129,9 +129,6 @@ CLArtemisIV
 CLMediumPulseLaser
 CLMediumPulseLaser
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 12

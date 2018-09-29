@@ -24,10 +24,6 @@ B
 3086
 </year>
 
-<originalBuildYear>
-3086
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -93,7 +89,7 @@ Searchlight:OMNI
 </Wings Equipment>
 
 <Body Equipment>
-MASH Core Component:OMNI
+MASH core component:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI
 MASH Operation Theater:OMNI

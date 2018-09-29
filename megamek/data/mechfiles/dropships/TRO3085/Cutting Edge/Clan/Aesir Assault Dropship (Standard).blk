@@ -43,7 +43,7 @@ smallcraftbay:3.0:1:3
 1stclassquarters:90.0:0
 steeragequarters:125.0:0
 crewquarters:259.0:0
-cargobay:1529.0:2:7
+cargobay:1529.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -99,6 +99,7 @@ CLAntiMissileSystem
 CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:216
+ISSmallNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -213,10 +214,6 @@ CLLargePulseLaser
 CLLargePulseLaser
 </Aft Equipment>
 
-<Hull Equipment>
-ISSmallNavalCommScannerSuite
-</Hull Equipment>
-
 <structural_integrity>
 25
 </structural_integrity>
@@ -228,10 +225,6 @@ TRO 3085 - Jihad
 <tonnage>
 18000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 112

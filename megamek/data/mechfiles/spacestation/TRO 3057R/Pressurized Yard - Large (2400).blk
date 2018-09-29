@@ -47,7 +47,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:76939.0:1:7
+cargobay:76939.0:1:3
 </transporters>
 
 <SafeThrust>
@@ -105,9 +105,6 @@ cargobay:76939.0:1:7
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 1
 </structural_integrity>
@@ -160,4 +157,8 @@ TRO3057r - Age of War
 <escape_pod>
 40
 </escape_pod>
+
+<history>
+These stations have been remade to better reflect the actual ships they build.  They are not to be considered canon.
+</history>
 

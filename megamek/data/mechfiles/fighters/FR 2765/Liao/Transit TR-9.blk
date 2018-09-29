@@ -24,10 +24,6 @@ TR-9
 2571
 </year>
 
-<originalBuildYear>
-2571
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -82,6 +75,9 @@ Aerodyne
 Autocannon/20
 Medium Laser
 Medium Laser
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,15 +90,6 @@ Medium Laser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo AC/20
-</Fuselage Equipment>
 
 <source>
 Field Report 2765 Liao - Age of War

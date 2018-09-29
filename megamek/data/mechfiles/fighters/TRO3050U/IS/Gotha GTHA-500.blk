@@ -24,10 +24,6 @@ GTHA-500
 2657
 </year>
 
-<originalBuildYear>
-2657
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -82,6 +75,7 @@ Aerodyne
 PPC
 Medium Laser
 Medium Laser
+IS Ammo LRM-15
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -98,13 +92,6 @@ Small Laser
 Medium Laser
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-15
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

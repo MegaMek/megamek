@@ -24,10 +24,6 @@ Xerxes
 2827
 </year>
 
-<originalBuildYear>
-2827
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -85,25 +78,20 @@ CLERLargeLaser
 
 <Left Wing Equipment>
 CLUltraAC20
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLUltraAC20
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Succession Wars

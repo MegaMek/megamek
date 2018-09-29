@@ -41,7 +41,7 @@ asfbay:6.0:1:1
 2ndclassquarters:0.0:0
 crewquarters:126.0:0
 1stclassquarters:40.0:0
-cargobay:371.5:1:5
+cargobay:371.5:1:2
 </transporters>
 
 <SafeThrust>
@@ -125,9 +125,6 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 10
 </structural_integrity>
@@ -139,10 +136,6 @@ TRO 3075 - Jihad
 <tonnage>
 11200.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 30

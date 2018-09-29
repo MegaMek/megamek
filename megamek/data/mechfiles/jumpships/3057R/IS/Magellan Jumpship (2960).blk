@@ -38,7 +38,7 @@ Aerodyne
 
 <transporters>
 smallcraftbay:1.0:1:1
-infantrybay:1.0:0:4:Foot
+infantrybay:1.0:0:4
 2ndclassquarters:28.0:0
 1stclassquarters:70.0:0
 crewquarters:182.0:0
@@ -116,6 +116,8 @@ IS Ammo LRM-20 Artemis-capable:12
 (B) ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:24
+MASH Core Component
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -133,11 +135,6 @@ ISAMS Ammo:24
 (B) ISERLargeLaser
 (B) ISLargePulseLaser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-MASH Core Component
-ISMobileHPG
-</Hull Equipment>
 
 <structural_integrity>
 1

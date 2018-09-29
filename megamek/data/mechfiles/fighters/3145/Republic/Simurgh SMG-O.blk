@@ -24,10 +24,6 @@ SMG-O
 3109
 </year>
 
-<originalBuildYear>
-3109
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -86,6 +79,15 @@ Aerodyne
 ISHeavyGaussRifle:OMNI
 ISRotaryAC5:OMNI
 ISRotaryAC5:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -96,21 +98,6 @@ ISRotaryAC5:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISHeavyGauss Ammo:OMNI
-ISHeavyGauss Ammo:OMNI
-ISHeavyGauss Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3145 Republic of the Sphere - Late Republic

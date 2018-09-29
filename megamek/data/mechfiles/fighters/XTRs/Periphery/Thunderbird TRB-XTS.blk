@@ -24,10 +24,6 @@ TRB-XTS
 3073
 </year>
 
-<originalBuildYear>
-3073
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -81,6 +74,10 @@ Aerodyne
 <Nose Equipment>
 Centurion Weapon System
 Centurion Weapon System
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,16 +94,6 @@ ISLaserInsulator
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-</Fuselage Equipment>
 
 <source>
 XTRO Periphery - Jihad

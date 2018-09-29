@@ -101,9 +101,6 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 9
 </structural_integrity>
@@ -155,4 +152,8 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+
+<history>
+Unit was constructed without Primitive rules from IO. The unit is unfixable in it's current form.
+</history>
 

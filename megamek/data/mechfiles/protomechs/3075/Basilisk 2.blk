@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,28 +16,13 @@ ProtoMech
 Basilisk
 </Name>
 
-<Model>
+<model>
 2
-</Model>
+</model>
 
-<year>
-3064
-</year>
-
-<originalBuildYear>
-3064
-</originalBuildYear>
-
-<type>
-Clan Level 2
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+7
+</Tonnage>
 
 <cruiseMP>
 4
@@ -47,41 +32,19 @@ Biped
 4
 </jumpingMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 5
 12
 4
 4
 6
 3
-</armor>
+</Armor>
 
-<Body Equipment>
-Clan Ammo SRM-2
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
+<Main Gun Equipment>
+CLSRM2
+CLSRM2 Ammo (10)
+</Main Gun Equipment>
 
 <Torso Equipment>
 CLERSmallLaser
@@ -95,18 +58,30 @@ CLERMicroLaser
 CLERMicroLaser
 </Left Arm Equipment>
 
-<Legs Equipment>
-</Legs Equipment>
+<type>
+Clan
+</type>
 
-<Main Gun Equipment>
-CLSRM2
-</Main Gun Equipment>
+<year>
+3064
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 TRO 3075 - Civil War
 </source>
-
-<tonnage>
-7.0
-</tonnage>
-

@@ -42,7 +42,7 @@ smallcraftbay:2.0:1:2
 steeragequarters:180.0:0
 1stclassquarters:40.0:0
 crewquarters:133.0:0
-cargobay:614.0:2:6
+cargobay:614.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -98,6 +98,7 @@ ISApollo
 ISApollo
 (B) Screen Launcher
 Ammo Screen:10
+ISNC3
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -155,10 +156,6 @@ ISApollo
 ISApollo
 </Aft Equipment>
 
-<Hull Equipment>
-ISNC3
-</Hull Equipment>
-
 <structural_integrity>
 30
 </structural_integrity>
@@ -170,10 +167,6 @@ TRO 3085 - Jihad
 <tonnage>
 12000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 29

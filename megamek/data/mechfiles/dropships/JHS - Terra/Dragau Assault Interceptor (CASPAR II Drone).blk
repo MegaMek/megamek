@@ -93,6 +93,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:48
+CasparIIDroneControlSystem
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -131,10 +132,6 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:72
 </Aft Equipment>
-
-<Hull Equipment>
-CasparIIDroneControlSystem
-</Hull Equipment>
 
 <structural_integrity>
 15

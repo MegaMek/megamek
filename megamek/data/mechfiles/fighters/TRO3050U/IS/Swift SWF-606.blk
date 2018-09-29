@@ -24,10 +24,6 @@ SWF-606
 2682
 </year>
 
-<originalBuildYear>
-2682
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 13
@@ -91,12 +84,6 @@ Medium Laser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

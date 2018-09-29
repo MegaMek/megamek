@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,39 @@ Koroshiya
 KOS-1A
 </Model>
 
-<year>
-3128
-</year>
-
-<originalBuildYear>
-3128
-</originalBuildYear>
-
-<type>
-IS Level 3
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+95
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+103
+71
+71
+51
+</Armor>
+
+<Nose Equipment>
+ISMRM40
+ISApollo
+ISMRM40 Ammo
+ISMRM40 Ammo
+ISHeavyPPC
+ISHeavyPPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISAngelECM
+</Aft Equipment>
 
 <heatsinks>
 21
@@ -59,55 +66,34 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+IS Level 3
+</type>
 
-<armor_type>
-3
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
-103
-71
-71
-51
-</armor>
-
-<Nose Equipment>
-MRM 40
-ISApollo
-Heavy PPC
-Heavy PPC
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISAngelECMSuite
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-</Fuselage Equipment>
+<year>
+3128
+</year>
 
 <source>
 TRO 3145 Draconis Combine - Late Republic
 </source>
 
-<tonnage>
-95.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+3
+</armor_type>
+
+<engine_type>				
+2
+</engine_type>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<motion_type>
+aerodyne
+</motion_type>

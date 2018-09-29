@@ -40,7 +40,7 @@ Aerodyne
 smallcraftbay:20.0:3:1
 crewquarters:1421.0:0
 1stclassquarters:60010.0:0
-cargobay:46807.5:1:4
+cargobay:46807.5:1:2
 </transporters>
 
 <SafeThrust>
@@ -97,9 +97,6 @@ cargobay:46807.5:1:4
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 1

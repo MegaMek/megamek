@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,34 @@ Light Strike Fighter
 Suzume ('Sparrow')
 </Model>
 
-<year>
-2801
-</year>
-
-<originalBuildYear>
-2801
-</originalBuildYear>
-
-<type>
-IS Level 1
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+10
+</Tonnage>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+2
+3
+3
+2
+</Armor>
+
+<Nose Equipment>
+LRM 5
+IS Ammo LRM-5
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 0
@@ -59,42 +61,30 @@ Aerodyne
 160
 </fuel>
 
-<engine_type>
-1
-</engine_type>
+<type>
+IS Level 1
+</type>
 
-<armor>
-2
-3
-3
-2
-</armor>
-
-<Nose Equipment>
-LRM 5
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-5
-</Fuselage Equipment>
+<year>
+2801
+</year>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<tonnage>
-10.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

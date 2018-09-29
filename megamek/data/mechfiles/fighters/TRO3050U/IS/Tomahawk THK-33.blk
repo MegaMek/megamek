@@ -24,10 +24,6 @@ THK-33
 2642
 </year>
 
-<originalBuildYear>
-2642
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 8
@@ -84,12 +77,6 @@ Large Laser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

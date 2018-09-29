@@ -24,10 +24,6 @@ Xerxes
 3070
 </year>
 
-<originalBuildYear>
-3070
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -83,28 +76,22 @@ Aerodyne
 
 <Left Wing Equipment>
 CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

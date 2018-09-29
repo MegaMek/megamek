@@ -24,10 +24,6 @@ EST-OA
 3066
 </year>
 
-<originalBuildYear>
-3066
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -88,6 +81,9 @@ Aerodyne
 
 <Nose Equipment>
 ISHeavyGaussRifle:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -102,15 +98,6 @@ ISERLargeLaser:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISHeavyGauss Ammo:OMNI
-ISHeavyGauss Ammo:OMNI
-ISHeavyGauss Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

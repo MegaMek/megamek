@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,47 @@ Riever
 F-700
 </Model>
 
-<year>
-3050
-</year>
-
-<originalBuildYear>
-3050
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+100
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+81
+60
+60
+47
+</Armor>
+
+<Nose Equipment>
+Autocannon/20
+LRM 10
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo LRM-10
+IS Ammo LRM-10
+</Nose Equipment>
+
+<Left Wing Equipment>
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo SRM-6
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo SRM-6
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 20
@@ -59,55 +74,30 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+IS Level 2
+</type>
 
-<armor>
-81
-60
-60
-47
-</armor>
-
-<Nose Equipment>
-Autocannon/20
-LRM 10
-</Nose Equipment>
-
-<Left Wing Equipment>
-SRM 6
-SRM 6
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-SRM 6
-SRM 6
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo LRM-10
-IS Ammo LRM-10
-IS Ammo SRM-6
-IS Ammo SRM-6
-IS Ammo SRM-6
-IS Ammo SRM-6
-</Fuselage Equipment>
+<year>
+3050
+</year>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<tonnage>
-100.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

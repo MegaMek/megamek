@@ -40,7 +40,7 @@ Aerodyne
 2ndclassquarters:0.0:0
 crewquarters:14.0:0
 1stclassquarters:80.0:0
-cargobay:6.0:1:4
+cargobay:6.0:1:1
 </transporters>
 
 <SafeThrust>
@@ -90,9 +90,6 @@ cargobay:6.0:1:4
 <Aft Equipment>
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 8
 </structural_integrity>
@@ -106,7 +103,7 @@ HB: House Steiner
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>
@@ -122,7 +119,7 @@ HB: House Steiner
 </gunners>
 
 <passengers>
-0
+7
 </passengers>
 
 <marines>

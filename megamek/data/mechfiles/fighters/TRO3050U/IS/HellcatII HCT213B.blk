@@ -24,10 +24,6 @@ HCT-213B
 2710
 </year>
 
-<originalBuildYear>
-2710
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -93,12 +86,6 @@ Large Laser
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

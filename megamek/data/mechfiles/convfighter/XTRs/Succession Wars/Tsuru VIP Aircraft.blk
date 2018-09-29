@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,57 +20,24 @@ Tsuru VIP Aircraft
 (Standard)
 </Model>
 
-<year>
-3021
-</year>
-
-<originalBuildYear>
-3021
-</originalBuildYear>
-
-<type>
-IS Level 4
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-cargobay:15.0:1:1
-1stclassquarters:10.0:1
-</transporters>
+<Tonnage>
+100
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-0
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-320
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 24
 24
 24
 31
-</armor>
+</Armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Nose Equipment>
 </Nose Equipment>
@@ -82,14 +49,6 @@ ISChaffPod
 <Right Wing Equipment>
 ISChaffPod
 </Right Wing Equipment>
-
-<Aft Equipment>
-ISChaffPod
-ISChaffPod
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
 
 <Body Equipment>
 Armored Chassis
@@ -108,22 +67,63 @@ Ejection Seat (Support Vehicle)
 Ejection Seat (Support Vehicle)
 Ejection Seat (Support Vehicle)
 Ejection Seat (Support Vehicle)
-Communications Equipment (3 ton)
+CommsGear:3
 </Body Equipment>
 
-<barrating>
-10
-</barrating>
+<Aft Equipment>
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
 
-<structural_tech_rating>
-3
-</structural_tech_rating>
+<transporters>
+cargobay:15:1
+1stclassquarters:10:1
+</transporters>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3021
+</year>
 
 <source>
 XTRO Succession Wars - Succession Wars
 </source>
 
-<tonnage>
-100.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<barrating>
+10
+</barrating>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<vstol>
+1
+</vstol>

@@ -24,10 +24,6 @@ LCR-3
 3086
 </year>
 
-<originalBuildYear>
-3086
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -84,25 +77,19 @@ Bombast Laser
 
 <Left Wing Equipment>
 Extended LRM 10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Extended LRM 10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
 </Right Wing Equipment>
 
 <Aft Equipment>
 ISMediumXPulseLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo Extended LRM-10
-IS Ammo Extended LRM-10
-IS Ammo Extended LRM-10
-IS Ammo Extended LRM-10
-</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Early Republic

@@ -41,7 +41,7 @@ crewquarters:0.0:0
 1stclassquarters:0.0:0
 steeragequarters:0.0:0
 2ndclassquarters:35.0:0
-cargobay:3.5:0:5
+cargobay:3.5:0:1
 </transporters>
 
 <SafeThrust>
@@ -91,9 +91,6 @@ cargobay:3.5:0:5
 <Aft Equipment>
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 6
 </structural_integrity>
@@ -107,7 +104,7 @@ TRO 3057 - Star League
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>
@@ -123,7 +120,7 @@ TRO 3057 - Star League
 </gunners>
 
 <passengers>
-0
+2
 </passengers>
 
 <marines>

@@ -46,7 +46,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:460.0:0
 crewquarters:833.0:0
-cargobay:54989.0:2:6
+cargobay:54989.0:2:4
 </transporters>
 
 <SafeThrust>
@@ -164,9 +164,6 @@ Medium Laser
 Medium Laser
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <Left Broadsides Equipment>
 (B) Naval PPC (Medium)
 Naval PPC (Medium)
@@ -247,4 +244,8 @@ TRO3075 - Star League
 <escape_pod>
 30
 </escape_pod>
+
+<history>
+The ship as built in the TRO is overweight. Reducing the Cargo to make it legal.
+</history>
 

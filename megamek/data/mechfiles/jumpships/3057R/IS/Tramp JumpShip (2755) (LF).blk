@@ -42,8 +42,8 @@ smallcraftbay:2.0:2:1
 crewquarters:133.0:0
 dockingcollar
 dockingcollar
-cargobay:668.5:1:4
-cargobay:668.0:1:5
+cargobay:668.5:1:2
+cargobay:668.0:1:3
 </transporters>
 
 <SafeThrust>
@@ -126,9 +126,6 @@ ISAMS Ammo:24
 ISAntiMissileSystem
 ISAMS Ammo:24
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 1

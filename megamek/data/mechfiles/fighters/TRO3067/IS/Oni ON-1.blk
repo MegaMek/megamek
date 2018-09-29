@@ -24,10 +24,6 @@ ON-1
 3066
 </year>
 
-<originalBuildYear>
-3066
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -80,6 +73,8 @@ Aerodyne
 
 <Nose Equipment>
 MRM 30
+IS MRM 30 Ammo
+IS MRM 30 Ammo
 ISERSmallLaser
 </Nose Equipment>
 
@@ -93,14 +88,6 @@ ISERLargeLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS MRM 30 Ammo
-IS MRM 30 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

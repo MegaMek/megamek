@@ -24,10 +24,6 @@ FR-1
 2400
 </year>
 
-<originalBuildYear>
-2400
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -80,27 +73,21 @@ Aerodyne
 
 <Nose Equipment>
 Autocannon/2
+IS Ammo AC/2
 </Nose Equipment>
 
 <Left Wing Equipment>
 LRM 10
+IS Ammo LRM-10
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 LRM 10
+IS Ammo LRM-10
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo AC/2
-IS Ammo LRM-10
-IS Ammo LRM-10
-</Fuselage Equipment>
 
 <source>
 ED: Age of War - Age of War

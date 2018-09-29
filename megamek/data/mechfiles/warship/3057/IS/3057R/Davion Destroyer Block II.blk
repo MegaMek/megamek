@@ -43,7 +43,7 @@ dockingcollar
 steeragequarters:280.0:0
 crewquarters:1120.0:0
 1stclassquarters:990.0:0
-cargobay:72216.5:2:5
+cargobay:72216.5:2:2
 </transporters>
 
 <SafeThrust>
@@ -192,9 +192,6 @@ Medium Laser
 Medium Laser
 Medium Laser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/30)

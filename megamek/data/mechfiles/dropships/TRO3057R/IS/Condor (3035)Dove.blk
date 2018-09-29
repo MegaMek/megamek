@@ -41,7 +41,7 @@ steeragequarters:750.0:0
 2ndclassquarters:420.0:0
 1stclassquarters:290.0:0
 crewquarters:308.0:0
-cargobay:1109.0:1:5
+cargobay:1109.0:1:1
 </transporters>
 
 <SafeThrust>
@@ -111,20 +111,17 @@ Medium Laser
 (B) Large Laser
 Medium Laser
 Medium Laser
+MASH core component
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
 </Aft Equipment>
-
-<Hull Equipment>
-MASH Core Component
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-</Hull Equipment>
 
 <structural_integrity>
 9

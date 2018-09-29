@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,20 @@ Lucifer
 LCF-R20
 </Model>
 
-<year>
-2609
-</year>
-
-<originalBuildYear>
-2609
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+65
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-23
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 135
 80
 80
 73
-</armor>
+</Armor>
 
 <Nose Equipment>
 Large Laser
@@ -89,17 +54,42 @@ Small Laser
 Medium Laser
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+23
+</heatsinks>
 
-<Fuselage Equipment>
-</Fuselage Equipment>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2609
+</year>
 
 <source>
 TRO 3039 - Star League
 </source>
 
-<tonnage>
-65.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

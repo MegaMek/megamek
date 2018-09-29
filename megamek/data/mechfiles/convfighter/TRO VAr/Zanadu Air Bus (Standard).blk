@@ -24,10 +24,6 @@ Zanadu Air Bus
 3004
 </year>
 
-<originalBuildYear>
-3004
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,11 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-cargobay:6.5:1:1
-troopspace:7.5
-</transporters>
 
 <SafeThrust>
 3
@@ -72,6 +63,14 @@ troopspace:7.5
 13
 </armor>
 
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
 <Nose Equipment>
 </Nose Equipment>
 
@@ -81,23 +80,17 @@ troopspace:7.5
 <Right Wing Equipment>
 </Right Wing Equipment>
 
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
 <Body Equipment>
 FieldKitchen
 </Body Equipment>
 
-<barrating>
-6
-</barrating>
+<Aft Equipment>
+</Aft Equipment>
 
-<structural_tech_rating>
-2
-</structural_tech_rating>
+<transporters>
+cargobay:6.5:1
+troopspace:7.5
+</transporters>
 
 <source>
 TRO Vehicle Annex (r) - Succession Wars

@@ -49,7 +49,7 @@ crewquarters:5313.0:0
 1stclassquarters:1930.0:0
 2ndclassquarters:420.0:0
 steeragequarters:2850.0:0
-infantrybay:10.0:2:11:Foot
+infantrybay:10.0:2:5:Foot
 </transporters>
 
 <SafeThrust>
@@ -230,9 +230,6 @@ Machine Gun
 Machine Gun
 IS Ammo MG - Full:200
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Heavy)

@@ -146,6 +146,7 @@ IS LB 10-X Cluster Ammo:20
 Small Laser
 Small Laser
 Small Laser
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -171,10 +172,6 @@ Small Laser
 Small Laser
 Small Laser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

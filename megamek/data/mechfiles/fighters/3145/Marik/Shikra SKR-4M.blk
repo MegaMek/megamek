@@ -1,9 +1,9 @@
-#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,47 @@ Shikra
 SKR-4M
 </Model>
 
-<year>
-3101
-</year>
-
-<originalBuildYear>
-3101
-</originalBuildYear>
-
-<type>
-Mixed (IS Chassis) Advanced
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+90
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+111
+83
+83
+70
+</Armor>
+
+<Nose Equipment>
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLUltraAC10
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLUltraAC10
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
 
 <heatsinks>
 10
@@ -59,63 +74,42 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
-
-<armor_type>
-20
-</armor_type>
+<type>
+Mixed (IS Chassis) Advanced 
+</type>
 
 <armor_tech>
 5
 </armor_tech>
 
-<armor>
-111
-83
-83
-70
-</armor>
-
-<Nose Equipment>
-ISGaussRifle
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLUltraAC10
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLUltraAC10
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumPulseLaser
-ISChaffPod
-ISChaffPod
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-</Fuselage Equipment>
+<year>
+3101
+</year>
 
 <source>
 TRO 3145 Free Worlds League - Late Republic
 </source>
 
-<tonnage>
-90.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+20
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
 

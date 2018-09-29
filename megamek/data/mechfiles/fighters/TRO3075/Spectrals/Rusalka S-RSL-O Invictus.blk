@@ -24,10 +24,6 @@ S-RSL-O Invictus
 3071
 </year>
 
-<originalBuildYear>
-3071
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -89,7 +82,10 @@ Aerodyne
 <Nose Equipment>
 ISERPPC:OMNI
 LRM 15:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
 ISArtemisIV:OMNI
+ISCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -107,15 +103,6 @@ ISMediumPulseLaser:OMNI
 <Aft Equipment>
 ISERSmallLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-15 Artemis-capable:OMNI
-IS Ammo LRM-15 Artemis-capable:OMNI
-ISCASE:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

@@ -24,10 +24,6 @@ AHB-443b
 2703
 </year>
 
-<originalBuildYear>
-2703
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -81,40 +74,34 @@ Aerodyne
 <Nose Equipment>
 ISERLargeLaser
 ISNarcBeacon
+ISNarc Pods
+ISNarc Pods
+ISNarc Pods
+ISNarc Pods
 </Nose Equipment>
 
 <Left Wing Equipment>
 LRM 20
 SRM 6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-6
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 LRM 20
 SRM 6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-6
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISNarc Pods
-ISNarc Pods
-ISNarc Pods
-ISNarc Pods
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo SRM-6
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo SRM-6
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Star League

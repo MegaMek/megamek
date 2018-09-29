@@ -1,9 +1,11 @@
 #building block data file
+
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
@@ -14,39 +16,69 @@ Aero
 
 <Name>
 Bullet Suicide Drone
+
 </Name>
 
 <Model>
 (Standard)
 </Model>
 
-<year>
-3075
-</year>
+<Tonnage>
+20
 
-<originalBuildYear>
-3075
-</originalBuildYear>
-
-<type>
-IS Level 4
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+7
+5
+5
+3
+</Armor>
 
+<Nose Equipment>
+ISSRM2
+ISSRM2 Ammo
+ISBoobyTrap
+ISDroneOperatingSystem
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3075
+
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
 <heatsinks>
 10
 </heatsinks>
@@ -55,44 +87,6 @@ Aerodyne
 1
 </sink_type>
 
-<fuel>
-320
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
-7
-5
-5
-3
-</armor>
-
-<Nose Equipment>
-SRM 2
-ISBoobyTrap
-ISDroneOperatingSystem
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-2
-</Fuselage Equipment>
-
-<tonnage>
-20.0
-</tonnage>
-
+<motion_type>
+aerodyne
+</motion_type>

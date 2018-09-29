@@ -24,10 +24,6 @@ SF-1X
 3030
 </year>
 
-<originalBuildYear>
-3030
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -80,6 +73,7 @@ Aerodyne
 
 <Nose Equipment>
 ISUltraAC5
+IS Ultra AC/5 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,13 +89,6 @@ Medium Laser
 <Aft Equipment>
 Small Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ultra AC/5 Ammo
-</Fuselage Equipment>
 
 <source>
 XTRO Succession Wars I - Succession Wars

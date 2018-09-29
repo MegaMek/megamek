@@ -33,7 +33,7 @@ IS Level 4
 </type>
 
 <motion_type>
-Aerodyne
+None
 </motion_type>
 
 <transporters>
@@ -100,15 +100,7 @@ ISMediumXPulseLaser
 
 <Aft Equipment>
 IS Vehicular Stealth
-IS Vehicular Stealth
-IS Vehicular Stealth
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 XTRO Phantoms - Jihad
@@ -117,4 +109,10 @@ XTRO Phantoms - Jihad
 <tonnage>
 100.0
 </tonnage>
+
+<transporters>
+troopspace:16
+cargobay:2:1
+</transporters>
+
 

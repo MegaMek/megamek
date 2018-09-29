@@ -44,7 +44,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:210.0:0
 crewquarters:735.0:0
-cargobay:98680.0:7:6
+cargobay:98680.0:7:4
 </transporters>
 
 <SafeThrust>
@@ -135,6 +135,7 @@ CLMediumPulseLaser
 (B) CLLRM20
 Clan Ammo LRM-20 (Clan) Artemis-capable:24
 CLArtemisIV
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -160,10 +161,6 @@ CLMediumPulseLaser
 Clan Ammo LRM-20 (Clan) Artemis-capable:24
 CLArtemisIV
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) CLERLargeLaser

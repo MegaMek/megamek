@@ -24,10 +24,6 @@ F
 3095
 </year>
 
-<originalBuildYear>
-3095
-</originalBuildYear>
-
 <type>
 Mixed (IS Chassis) Advanced
 </type>
@@ -35,9 +31,6 @@ Mixed (IS Chassis) Advanced
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 4

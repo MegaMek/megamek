@@ -41,8 +41,8 @@ protomechbay:5.0:1:1
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:98.0:0
-battlearmorbay:2.0:1:5
-cargobay:220.5:2:6
+battlearmorbay:2.0:1:2
+cargobay:220.5:2:3
 </transporters>
 
 <SafeThrust>
@@ -146,9 +146,6 @@ Clan Ammo ATM-9 HE:14
 Clan Ammo ATM-9:14
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 11
 </structural_integrity>
@@ -160,10 +157,6 @@ TRO 3067 - Jihad
 <tonnage>
 3000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 56

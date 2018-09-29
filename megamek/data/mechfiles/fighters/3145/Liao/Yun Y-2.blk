@@ -1,9 +1,9 @@
-#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
@@ -20,33 +20,38 @@ Yun
 Y-2
 </Model>
 
-<year>
-3107
-</year>
-
-<originalBuildYear>
-3107
-</originalBuildYear>
-
-<type>
-IS Level 3
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-troopspace:4.0
-</transporters>
+<Tonnage>
+40
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+43
+34
+34
+25
+</Armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6 Ammo
+ISStreakSRM6 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment> 
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISGuardianECM
+</Aft Equipment>
 
 <heatsinks>
 12
@@ -60,56 +65,41 @@ troopspace:4.0
 400
 </fuel>
 
-<engine_type>
-0
-</engine_type>
+<type>
+IS Level 3
+</type>
 
-<armor_type>
-22
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
-43
-34
-34
-25
-</armor>
-
-<Nose Equipment>
-ISERMediumLaser
-ISStreakSRM6
-ISStreakSRM6
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-IS Vehicular Stealth
-IS Vehicular Stealth
-ISGuardianECMSuite
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Streak SRM 6 Ammo
-IS Streak SRM 6 Ammo
-</Fuselage Equipment>
+<year>
+3107
+</year>
 
 <source>
 TRO 3145 Capellan Confederation - Late Republic
 </source>
 
-<tonnage>
-40.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
 
+<armor_type>
+22
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<transporters>
+troopspace:4
+</transporters>

@@ -24,10 +24,6 @@ Prime
 2968
 </year>
 
-<originalBuildYear>
-2968
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -88,8 +81,15 @@ Aerodyne
 
 <Nose Equipment>
 CLUltraAC20:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
 CLERSmallLaser:OMNI
 CLERLargeLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -106,15 +106,6 @@ CLERLargeLaser:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession Wars

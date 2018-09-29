@@ -40,8 +40,8 @@ Spheroid
 smallcraftbay:2.0:2:1
 crewquarters:301.0:0
 1stclassquarters:90.0:0
+cargobay:4200.0:2:3
 cargobay:4200.0:2:4
-cargobay:4200.0:2:5
 cargobay:1331.0:1:8
 2ndclassquarters:56.0:0
 steeragequarters:50.0:0
@@ -113,9 +113,6 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 12
 </structural_integrity>
@@ -167,4 +164,8 @@ H:Reunification War - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+<History>
+The TRO has the unit 400 tons overweight, also missing 4 heat sinks.  Corrected to reduce cargo by 400 tons, and added missing HS.
+</history>
 

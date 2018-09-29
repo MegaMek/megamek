@@ -40,7 +40,7 @@ Spheroid
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:196.0:0
-cargobay:154.5:1:4
+cargobay:154.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -101,6 +101,7 @@ ISArtemisIV
 ISArtemisIV
 ISArtemisIV
 ISArtemisIV
+ImprovedCasparDroneControlSystem
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -158,12 +159,8 @@ Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-</Aft Equipment>
-
-<Hull Equipment>
-ImprovedCasparDroneControlSystem
 SDSSelfDestructSystem
-</Hull Equipment>
+</Aft Equipment>
 
 <structural_integrity>
 21
@@ -176,10 +173,6 @@ H:Liberation of Terra I - Star League
 <tonnage>
 4000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 14

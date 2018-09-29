@@ -24,10 +24,6 @@ Mosquito Radar Plane IX
 3062
 </year>
 
-<originalBuildYear>
-3062
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 4
@@ -48,7 +41,7 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-0
+5
 </heatsinks>
 
 <sink_type>
@@ -70,6 +63,14 @@ Aerodyne
 5
 </armor>
 
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Nose Equipment>
 ISERMediumLaser
 ISInfraredImager
@@ -87,26 +88,15 @@ External Stores Hardpoint
 External Stores Hardpoint
 </Right Wing Equipment>
 
-<Aft Equipment>
-RemoteSensorDispenser
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
 <Body Equipment>
 STOLChassisMod
 Basic Fire Control
 Communications Equipment (2 ton)
 </Body Equipment>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
+<Aft Equipment>
+RemoteSensorDispenser
+</Aft Equipment>
 
 <source>
 TRO Vehicle Annex (r) - Civil War

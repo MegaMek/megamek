@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,51 @@ Chippewa
 CHP-W7T
 </Model>
 
-<year>
-3069
-</year>
-
-<originalBuildYear>
-3069
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+90
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+42
+23
+23
+28
+</Armor>
+
+<Nose Equipment>
+LRM 15
+ISArtemisIV
+LRM 15
+ISArtemisIV
+SRM 6
+ISArtemisIV
+Medium Laser
+Medium Laser
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo SRM-6
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISSNPPC
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISSNPPC
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Aft Equipment>
 
 <heatsinks>
 25
@@ -59,67 +78,30 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+IS Level 2
+</type>
 
-<armor_type>
-19
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
-42
-23
-23
-28
-</armor>
-
-<Nose Equipment>
-LRM 15
-ISArtemisIV
-LRM 15
-ISArtemisIV
-SRM 6
-ISArtemisIV
-Medium Laser
-Medium Laser
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISSNPPC
-ISPlasmaRifle
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISSNPPC
-ISPlasmaRifle
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISSmallPulseLaser
-ISSmallPulseLaser
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo SRM-6
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-</Fuselage Equipment>
+<year>
+3069
+</year>
 
 <source>
 TRO 3039 - Jihad
 </source>
 
-<tonnage>
-90.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

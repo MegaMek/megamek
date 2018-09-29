@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,20 @@ Transgressor
 TR-13A
 </Model>
 
-<year>
-3052
-</year>
-
-<originalBuildYear>
-3052
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+75
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-25
-</heatsinks>
-
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 82
 51
 51
 40
-</armor>
+</Armor>
 
 <Nose Equipment>
 ISERLargeLaser
@@ -89,17 +54,42 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+25
+</heatsinks>
 
-<Fuselage Equipment>
-</Fuselage Equipment>
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3052
+</year>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<tonnage>
-75.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

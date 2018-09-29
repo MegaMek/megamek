@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,37 +16,58 @@ FixedWingSupport
 Stork Light Refueling Craft
 </Name>
 
-<Model>
+<model>
 (Original)
-</Model>
+</model>
 
-<year>
-2623
-</year>
-
-<originalBuildYear>
-2623
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-liquidcargobay:19.58:1:1
-</transporters>
+<Tonnage>
+80
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+25
+17
+17
+25
+</Armor>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Nose Equipment>
+ISSRM4
+ISAntiMissileSystem
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISSRM4
+ISAntiMissileSystem
+RefuelingDrogue
+</Aft Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+Armored Chassis
+ISSRM4 Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Body Equipment>
 
 <heatsinks>
 0
@@ -60,59 +81,35 @@ liquidcargobay:19.58:1:1
 250
 </fuel>
 
-<engine_type>
-0
-</engine_type>
+<type>
+IS Level 2
+</type>
 
-<armor>
-25
-17
-17
-25
-</armor>
-
-<Nose Equipment>
-SRM 4
-ISAntiMissileSystem
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-SRM 4
-ISAntiMissileSystem
-RefuelingDrogue
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Body Equipment>
-Advanced Fire Control
-Armored Chassis
-IS Ammo SRM-4
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-</Body Equipment>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
+<year>
+2623
+</year>
 
 <source>
 TRO 3075 - Star League
 </source>
 
-<tonnage>
-80.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+liquidcargobay:19.58:1
+</transporters>
 

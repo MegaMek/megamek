@@ -24,10 +24,6 @@ HMR-HDb
 2731
 </year>
 
-<originalBuildYear>
-2731
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -80,6 +73,8 @@ Aerodyne
 
 <Nose Equipment>
 ISGaussRifle
+IS Gauss Ammo
+IS Gauss Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -90,14 +85,6 @@ ISGaussRifle
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Gauss Ammo
-IS Gauss Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Star League

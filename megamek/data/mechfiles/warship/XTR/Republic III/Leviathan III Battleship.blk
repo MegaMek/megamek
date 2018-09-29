@@ -431,6 +431,7 @@ CLLaserAntiMissileSystem
 CLLaserAntiMissileSystem
 CLLaserAntiMissileSystem
 CLAMS Ammo:1008
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -576,10 +577,6 @@ CLLaserAntiMissileSystem
 CLLaserAntiMissileSystem
 CLAMS Ammo:1008
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Gauss (Heavy)
@@ -831,4 +828,8 @@ XTR RotS 3 - Dark Ages
 <escape_pod>
 150
 </escape_pod>
+
+<history>
+The ship as built in the TRO is overweight. Reducing the Cargo to make it legal.
+</history>
 

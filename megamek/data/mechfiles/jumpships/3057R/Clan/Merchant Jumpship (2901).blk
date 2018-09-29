@@ -40,10 +40,10 @@ Aerodyne
 smallcraftbay:2.0:2:1
 cargobay:303.0:1:2
 cargobay:303.0:1:3
+megamek.common.DockingCollar@98cb655
+megamek.common.DockingCollar@b587ab3
 1stclassquarters:40.0:0
 crewquarters:126.0:0
-dockingcollar
-dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -93,6 +93,7 @@ dockingcollar
 </Right Front Side Equipment>
 
 <Aft Equipment>
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -100,10 +101,6 @@ dockingcollar
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <structural_integrity>
 1
@@ -124,6 +121,10 @@ TRO 3057R - Late Succession War - Lostech
 <grav_decks>
 40
 </grav_decks>
+
+<docking_collar>
+2
+</docking_collar>
 
 <crew>
 32

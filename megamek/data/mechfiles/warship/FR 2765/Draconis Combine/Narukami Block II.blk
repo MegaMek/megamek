@@ -43,7 +43,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 1stclassquarters:400.0:0
-smallcraftbay:2.0:2:4
+smallcraftbay:2.0:2:3
 crewquarters:1435.0:0
 </transporters>
 
@@ -192,9 +192,6 @@ Large Laser
 Large Laser
 Large Laser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/35)

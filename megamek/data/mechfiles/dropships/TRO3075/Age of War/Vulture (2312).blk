@@ -123,9 +123,6 @@ IS Ammo AC/5:40
 Medium Laser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 9
 </structural_integrity>
@@ -177,4 +174,8 @@ TRO 3075 - Age of War
 <escape_pod>
 7
 </escape_pod>
+
+<history>
+The TRO has the ship constucted not using the current IO Primitive rules. Ship has been rebuild to those rules, loss of cargo space to become valid.
+</history>
 

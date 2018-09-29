@@ -43,7 +43,7 @@ navalrepairpressurized:30000.0:1:3:f0
 navalrepairpressurized:30000.0:1:4:f3
 crewquarters:3465.0:0
 1stclassquarters:920.0:0
-cargobay:125483.0:1:7
+cargobay:125483.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -304,9 +304,6 @@ Small Laser
 Small Laser
 Small Laser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 1

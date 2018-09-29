@@ -24,10 +24,6 @@ Chippewa IIC
 2861
 </year>
 
-<originalBuildYear>
-2861
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -83,10 +76,16 @@ CLLRM15
 CLArtemisIV
 CLLRM15
 CLArtemisIV
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
 CLStreakSRM4
+Clan Streak SRM 4 Ammo
 CLERMediumLaser
 CLERMediumLaser
 CLTargeting Computer
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -103,18 +102,6 @@ CLERLargeLaser
 CLERSmallLaser
 CLERSmallLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Streak SRM 4 Ammo
-CLCASE
-</Fuselage Equipment>
 
 <source>
 ED:Golden Age - Succession Wars

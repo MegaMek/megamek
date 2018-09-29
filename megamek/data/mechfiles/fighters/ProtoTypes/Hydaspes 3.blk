@@ -24,10 +24,6 @@ Hydaspes
 3085
 </year>
 
-<originalBuildYear>
-3085
-</originalBuildYear>
-
 <type>
 Clan Level 3
 </type>
@@ -35,9 +31,6 @@ Clan Level 3
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -89,32 +82,28 @@ CLCASE
 <Left Wing Equipment>
 CLLRM20
 CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
 CLMediumPulseLaser
 CLMediumPulseLaser
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLLRM20
 CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
 CLMediumPulseLaser
 CLMediumPulseLaser
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-IS Coolant Pod
-IS Coolant Pod
+Clan Coolant Pod
+Clan Coolant Pod
 CLCASE
-</Fuselage Equipment>
+</Aft Equipment>
 
 <source>
 TRO Prototypes - Jihad

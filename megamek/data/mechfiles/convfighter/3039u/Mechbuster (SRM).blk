@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,37 @@ MechBuster
 (SRM)
 </Model>
 
-<year>
-3022
-</year>
-
-<originalBuildYear>
-3022
-</originalBuildYear>
-
-<type>
-IS Level 1
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+50
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+20
+10
+10
+10
+</Armor>
+
+<Nose Equipment>
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+IS Ammo SRM-6
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 0
@@ -59,45 +64,30 @@ Aerodyne
 480
 </fuel>
 
-<engine_type>
-1
-</engine_type>
+<type>
+IS Level 1
+</type>
 
-<armor>
-20
-10
-10
-10
-</armor>
-
-<Nose Equipment>
-SRM 6
-SRM 6
-SRM 6
-SRM 6
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-6
-</Fuselage Equipment>
+<year>
+3022
+</year>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<tonnage>
-50.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

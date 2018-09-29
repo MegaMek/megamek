@@ -89,9 +89,6 @@ crewquarters:35.0:0
 <Aft Equipment>
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 10
 </structural_integrity>
@@ -143,4 +140,8 @@ TRO 3075 - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+<History>
+The unit per the TRO is overweight, and has a massive surplus of Heat Sinks, reduced heat sinks to make it legal.
+<History>
 

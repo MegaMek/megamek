@@ -42,7 +42,7 @@ asfbay:5.0:2:2
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
 crewquarters:91.0:0
-cargobay:798.5:1:6
+cargobay:798.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -168,9 +168,6 @@ CLERLargeLaser
 CLUltraAC20
 Clan Ultra AC/20 Ammo:50
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 10

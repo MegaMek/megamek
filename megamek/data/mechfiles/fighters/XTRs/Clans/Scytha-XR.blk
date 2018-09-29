@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,41 @@ Scytha
 XR
 </Model>
 
-<year>
-3076
-</year>
-
-<originalBuildYear>
-3076
-</originalBuildYear>
-
-<type>
-Clan Level 4
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+90
+</Tonnage>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+76
+72
+72
+67
+</Armor>
+
+<Nose Equipment>
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLLargePulseLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLImprovedHeavyLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLImprovedHeavyLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Aft Equipment>
 
 <heatsinks>
 26
@@ -59,60 +68,34 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
-
-<armor_type>
-16
-</armor_type>
+<type>
+Clan Level 4
+</type>
 
 <armor_tech>
 8
 </armor_tech>
 
-<armor>
-76
-72
-72
-67
-</armor>
-
-<Nose Equipment>
-CLRotaryAC5
-CLLargePulseLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLCASE
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLCASE
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLERMediumLaser
-CLERMediumLaser
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLCASE
-</Fuselage Equipment>
+<year>
+3076
+</year>
 
 <source>
 XTRO Clans - Jihad
 </source>
 
-<tonnage>
-90.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
 
+<armor_type>
+16
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

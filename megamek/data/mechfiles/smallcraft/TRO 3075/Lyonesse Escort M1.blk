@@ -91,7 +91,7 @@ IS Ammo SRM-6
 Heavy PPC
 ISERMediumLaser
 ISERMediumLaser
-(R) ISERMediumLaser
+(R) ISERMediumLaser 
 </Left Side Equipment>
 
 <Right Side Equipment>
@@ -108,9 +108,6 @@ ISERMediumLaser
 ISERSmallLaser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 7
 </structural_integrity>
@@ -124,7 +121,7 @@ TRO 3075 - Jihad
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

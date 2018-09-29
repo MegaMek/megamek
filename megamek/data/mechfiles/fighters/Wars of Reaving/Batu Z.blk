@@ -24,10 +24,6 @@ Z
 3072
 </year>
 
-<originalBuildYear>
-3072
-</originalBuildYear>
-
 <type>
 Clan Level 4
 </type>
@@ -35,9 +31,6 @@ Clan Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 9
@@ -84,8 +77,17 @@ Aerodyne
 
 <Nose Equipment>
 CLiATM12:OMNI
+Clan Ammo iATM-12:OMNI
+Clan Ammo iATM-12:OMNI
+Clan Ammo iATM-12:OMNI
+Clan Ammo iATM-12:OMNI
 NovaCEWS:OMNI
 CLTargeting Computer:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -101,17 +103,6 @@ CLERMediumLaser:OMNI
 <Aft Equipment>
 CLERSmallLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo iATM-12:OMNI
-Clan Ammo iATM-12:OMNI
-Clan Ammo iATM-12:OMNI
-Clan Ammo iATM-12:OMNI
-CLCASE
-</Fuselage Equipment>
 
 <source>
 The Wars of Reaving (s) - Jihad

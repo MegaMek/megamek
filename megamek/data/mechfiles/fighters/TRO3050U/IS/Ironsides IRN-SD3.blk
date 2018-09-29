@@ -24,10 +24,6 @@ IRN-SD3
 3070
 </year>
 
-<originalBuildYear>
-3070
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -74,31 +67,25 @@ Aerodyne
 ISERPPC
 ISERLargeLaser
 MRM 10
+IS MRM 10 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
 MRM 10
+IS MRM 10 Ammo
 MRM 10
+IS MRM 10 Ammo
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 MRM 10
+IS MRM 10 Ammo
 MRM 10
+IS MRM 10 Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS MRM 10 Ammo
-IS MRM 10 Ammo
-IS MRM 10 Ammo
-IS MRM 10 Ammo
-IS MRM 10 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Jihad

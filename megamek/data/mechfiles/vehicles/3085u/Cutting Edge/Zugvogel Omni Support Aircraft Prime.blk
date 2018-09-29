@@ -24,10 +24,6 @@ Prime
 3086
 </year>
 
-<originalBuildYear>
-3086
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -37,7 +33,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:23.5:1:1
+cargobay:23.5:1
 </transporters>
 
 <SafeThrust>

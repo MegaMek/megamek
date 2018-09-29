@@ -24,20 +24,13 @@ LTN-G16S
 3068
 </year>
 
-<originalBuildYear>
-3068
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
 
 <motion_type>
-Aerodyne
+None
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -73,6 +66,9 @@ Aerodyne
 <Nose Equipment>
 ISHeavyGaussRifle
 ISERMediumLaser
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -90,15 +86,6 @@ ISERSmallLaser
 <Aft Equipment>
 ISERMediumLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

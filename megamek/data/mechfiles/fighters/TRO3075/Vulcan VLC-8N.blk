@@ -24,10 +24,6 @@ VLC-8N
 3074
 </year>
 
-<originalBuildYear>
-3074
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -83,29 +76,23 @@ ISLargePulseLaser
 ISLargePulseLaser
 SRM 6
 ISArtemisIV
+IS Ammo SRM-6 Artemis-capable
 ISERMediumLaser
 </Nose Equipment>
 
 <Left Wing Equipment>
 ISLightGaussRifle
+IS Light Gauss Ammo
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISLightGaussRifle
+IS Light Gauss Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
 ISERMediumLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-6 Artemis-capable
-IS Light Gauss Ammo
-IS Light Gauss Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

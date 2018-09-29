@@ -24,10 +24,6 @@ SL-27X
 3069
 </year>
 
-<originalBuildYear>
-3069
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 11
@@ -86,12 +79,6 @@ Light PPC
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 XTRO Corporation - Jihad

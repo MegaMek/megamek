@@ -24,10 +24,6 @@ Prime
 2930
 </year>
 
-<originalBuildYear>
-2930
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 13
@@ -85,6 +78,12 @@ Aerodyne
 <Nose Equipment>
 CLERSmallLaser:OMNI
 CLStreakSRM2:OMNI
+Clan Streak SRM 2 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,14 +96,6 @@ CLERMediumLaser:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Streak SRM 2 Ammo:OMNI
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession Wars

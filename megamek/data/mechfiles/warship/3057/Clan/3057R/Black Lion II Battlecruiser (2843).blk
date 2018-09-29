@@ -136,6 +136,7 @@ Ammo NAC/30:50
 (B) Naval Autocannon (NAC/30)
 Naval Autocannon (NAC/30)
 Ammo NAC/30:50
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -169,10 +170,6 @@ Ammo NAC/20:25
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

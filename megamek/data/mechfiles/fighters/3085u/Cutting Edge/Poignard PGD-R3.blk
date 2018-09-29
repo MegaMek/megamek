@@ -24,10 +24,6 @@ PGD-R3
 3085
 </year>
 
-<originalBuildYear>
-3085
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 9
@@ -98,12 +91,6 @@ ISSmallPulseLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3085 - Jihad

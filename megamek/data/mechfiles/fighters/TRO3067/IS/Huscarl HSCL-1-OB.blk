@@ -24,10 +24,6 @@ HSCL-1-OB
 3064
 </year>
 
-<originalBuildYear>
-3064
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -79,34 +72,28 @@ SRM 4:OMNI
 ISArtemisIV:OMNI
 SRM 4:OMNI
 ISArtemisIV:OMNI
+IS Ammo SRM-4 Artemis-capable:OMNI
+IS Ammo SRM-4 Artemis-capable:OMNI
 Autocannon/5:OMNI
+IS Ammo AC/5:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
 LRM 20:OMNI
 ISArtemisIV:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 LRM 20:OMNI
 ISArtemisIV:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-4 Artemis-capable:OMNI
-IS Ammo SRM-4 Artemis-capable:OMNI
-IS Ammo AC/5:OMNI
-IS Ammo LRM-20 Artemis-capable:OMNI
-IS Ammo LRM-20 Artemis-capable:OMNI
-IS Ammo LRM-20 Artemis-capable:OMNI
-IS Ammo LRM-20 Artemis-capable:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

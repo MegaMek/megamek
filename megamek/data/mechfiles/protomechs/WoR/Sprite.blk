@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,24 +20,9 @@ Sprite
 (Standard)
 </Model>
 
-<year>
-3072
-</year>
-
-<originalBuildYear>
-3072
-</originalBuildYear>
-
-<type>
-Clan Level 3
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+15
+</Tonnage>
 
 <cruiseMP>
 3
@@ -47,65 +32,54 @@ Biped
 5
 </jumpingMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 9
 30
 6
 6
 14
-</armor>
+</Armor>
 
-<Body Equipment>
-Clan Ammo LRM-5
-Clan Ammo LRM-5
-Clan Ammo LRM-5
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-</Body Equipment>
+<Left Arm Equipment>
+CLLRM5
+CLLRM5 Ammo (12)
+</Left Arm Equipment>
 
-<Head Equipment>
-</Head Equipment>
+<Right Arm Equipment>
+CLLRM5
+CLLRM5 Ammo (12)
+</Right Arm Equipment>
 
 <Torso Equipment>
 CLLRM5
 CLLRM5
+CLLRM5 Ammo (24)
 </Torso Equipment>
 
-<Right Arm Equipment>
-CLLRM5
-</Right Arm Equipment>
+<type>
+Clan Level 3
+</type>
 
-<Left Arm Equipment>
-CLLRM5
-</Left Arm Equipment>
+<year>
+3072
+</year>
 
-<Legs Equipment>
-</Legs Equipment>
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 Wars of Reaving - Jihad
 </source>
-
-<tonnage>
-15.0
-</tonnage>
-

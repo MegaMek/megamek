@@ -83,6 +83,7 @@ crewquarters:546.0:0
 
 <Nose Equipment>
 (B) Naval PPC (Medium)
+ISLookDownRadar
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -98,6 +99,9 @@ Ammo NAC/20:10
 <Aft Equipment>
 (B) Naval PPC (Medium)
 Naval PPC (Medium)
+ISHighResImager
+ISInfraredImager
+ISSmallNavalCommScannerSuite
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -109,13 +113,6 @@ Naval Laser 45
 (B) Naval Laser 45
 Naval Laser 45
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISLookDownRadar
-ISHighResImager
-ISInfraredImager
-ISSmallNavalCommScannerSuite
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

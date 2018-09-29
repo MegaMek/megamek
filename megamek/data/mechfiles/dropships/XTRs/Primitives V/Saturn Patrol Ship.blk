@@ -136,9 +136,6 @@ Machine Gun
 IS Ammo MG - Full:200
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 15
 </structural_integrity>
@@ -190,4 +187,8 @@ XTRO Primitives IV - Age of War
 <escape_pod>
 2
 </escape_pod>
+
+<history>
+The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
+</history>
 

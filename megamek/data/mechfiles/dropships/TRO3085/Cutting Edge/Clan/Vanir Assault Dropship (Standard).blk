@@ -41,8 +41,8 @@ Spheroid
 crewquarters:371.0:0
 steeragequarters:250.0:0
 1stclassquarters:90.0:0
-cargobay:1638.0:2:5
-smallcraftbay:3.0:2:6
+cargobay:1638.0:2:1
+smallcraftbay:3.0:2:2
 </transporters>
 
 <SafeThrust>
@@ -98,6 +98,7 @@ CLAntiMissileSystem
 CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:216
+ISSmallNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -232,10 +233,6 @@ CLLargePulseLaser
 CLLargePulseLaser
 </Aft Equipment>
 
-<Hull Equipment>
-ISSmallNavalCommScannerSuite
-</Hull Equipment>
-
 <structural_integrity>
 25
 </structural_integrity>
@@ -247,10 +244,6 @@ TRO 3085 - Jihad
 <tonnage>
 18000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 68

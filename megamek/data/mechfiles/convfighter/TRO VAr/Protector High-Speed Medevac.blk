@@ -24,10 +24,6 @@ C-790
 2997
 </year>
 
-<originalBuildYear>
-2997
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,10 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-troopspace:4.5
-</transporters>
 
 <SafeThrust>
 5
@@ -68,8 +60,16 @@ troopspace:4.5
 20
 15
 15
-12
+12	
 </armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <Nose Equipment>
 </Nose Equipment>
@@ -79,12 +79,6 @@ troopspace:4.5
 
 <Right Wing Equipment>
 </Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
 
 <Body Equipment>
 STOLChassisMod
@@ -100,13 +94,12 @@ Paramedic Equipment
 Paramedic Equipment
 </Body Equipment>
 
-<barrating>
-6
-</barrating>
+<Aft Equipment>
+</Aft Equipment>
 
-<structural_tech_rating>
-2
-</structural_tech_rating>
+<transporters>
+troopspace:4.5
+</transporters>
 
 <source>
 TRO Vehicle Annex (r) - Succession Wars

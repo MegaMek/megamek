@@ -135,6 +135,7 @@ Capital Missile Launcher (Barracuda)
 Capital Missile Launcher (Barracuda)
 Capital Missile Launcher (Barracuda)
 Ammo Barracuda:40
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -162,10 +163,6 @@ Naval Laser 45
 Naval Laser 45
 Naval Laser 45
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Heavy)

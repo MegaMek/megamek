@@ -76,9 +76,17 @@ Aerodyne
 
 <Nose Equipment>
 CLUltraAC20:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
 CLERSmallLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -103,15 +111,6 @@ Cargo (1 ton):OMNI
 Cargo (1 ton):OMNI
 Cargo (1 ton):OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession Wars

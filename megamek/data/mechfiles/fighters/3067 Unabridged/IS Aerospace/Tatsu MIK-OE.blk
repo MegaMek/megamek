@@ -24,10 +24,6 @@ MIK-OE
 3075
 </year>
 
-<originalBuildYear>
-3075
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -80,8 +73,13 @@ Aerodyne
 
 <Nose Equipment>
 ISAntiMissileSystem:OMNI
+ISAMS Ammo:OMNI
 ISPlasmaRifle:OMNI
 ISPlasmaRifle:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,17 +95,6 @@ ISSNPPC:OMNI
 <Aft Equipment>
 ISGuardianECMSuite:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISAMS Ammo:OMNI
-ISPlasmaRifleAmmo:OMNI
-ISPlasmaRifleAmmo:OMNI
-ISPlasmaRifleAmmo:OMNI
-ISPlasmaRifleAmmo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

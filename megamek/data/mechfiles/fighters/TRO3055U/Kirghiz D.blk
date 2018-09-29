@@ -88,27 +88,6 @@ CLMediumPulseLaser:OMNI
 <Left Wing Equipment>
 CLATM12:OMNI
 CLATM12:OMNI
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLATM12:OMNI
-CLATM12:OMNI
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLERSmallLaser:OMNI
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo ATM-12:OMNI
-Clan Ammo ATM-12:OMNI
-Clan Ammo ATM-12:OMNI
-Clan Ammo ATM-12:OMNI
-Clan Ammo ATM-12:OMNI
-Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
@@ -116,7 +95,33 @@ Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 CLCASE
-</Fuselage Equipment>
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLATM12:OMNI
+CLATM12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERSmallLaser:OMNI
+</Aft Equipment>
 
 <source>
 TRO 3055u - Civil War

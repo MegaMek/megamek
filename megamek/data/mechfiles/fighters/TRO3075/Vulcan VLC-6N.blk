@@ -24,10 +24,6 @@ VLC-6N
 2767
 </year>
 
-<originalBuildYear>
-2767
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -74,30 +67,24 @@ Aerodyne
 Large Laser
 Medium Laser
 SRM 6
+IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
 ISGaussRifle
+IS Gauss Ammo
+IS Gauss Ammo
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISGaussRifle
+IS Gauss Ammo
+IS Gauss Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-6
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Star League

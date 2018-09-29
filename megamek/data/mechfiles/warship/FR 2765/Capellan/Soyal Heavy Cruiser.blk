@@ -43,7 +43,7 @@ dockingcollar
 dockingcollar
 mechbay:48.0:2
 dockingcollar
-smallcraftbay:2.0:1:4
+smallcraftbay:2.0:1:2
 1stclassquarters:700.0:0
 crewquarters:2737.0:0
 steeragequarters:140.0:0
@@ -145,9 +145,6 @@ Ammo NAC/20:20
 Capital Missile Launcher (Killer Whale)
 Ammo Killer Whale:60
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/30)

@@ -40,7 +40,7 @@ Aerodyne
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:70.0:0
-cargobay:92.0:1:4
+cargobay:92.0:1:1
 </transporters>
 
 <SafeThrust>
@@ -156,9 +156,6 @@ CLArtemisIV
 (B) CLStreakSRM6
 Clan Streak SRM 6 Ammo:15
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 16

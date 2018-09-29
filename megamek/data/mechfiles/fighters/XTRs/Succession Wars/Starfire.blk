@@ -24,10 +24,6 @@ SF-1X (Prototype)
 3028
 </year>
 
-<originalBuildYear>
-3028
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -36,16 +32,9 @@ IS Level 4
 Aerodyne
 </motion_type>
 
-<transporters>
-</transporters>
-
 <SafeThrust>
 7
 </SafeThrust>
-
-<cockpit_type>
-0
-</cockpit_type>
 
 <heatsinks>
 20
@@ -80,6 +69,7 @@ Aerodyne
 
 <Nose Equipment>
 ISUltraAC5Prototype
+IS Ultra AC/5 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,13 +85,6 @@ Medium Laser
 <Aft Equipment>
 Small Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ultra AC/5 Ammo
-</Fuselage Equipment>
 
 <source>
 XTRO Succession Wars - Succession Wars

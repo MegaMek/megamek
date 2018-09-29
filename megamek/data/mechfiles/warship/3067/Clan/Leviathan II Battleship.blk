@@ -50,7 +50,7 @@ dockingcollar
 1stclassquarters:1950.0:0
 crewquarters:6825.0:0
 2ndclassquarters:1575.0:0
-cargobay:50293.0:10:6
+cargobay:50293.0:10:3
 </transporters>
 
 <SafeThrust>
@@ -374,6 +374,7 @@ CLAntiMissileSystem
 CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:1008
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -495,10 +496,6 @@ CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:1008
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Gauss (Medium)
@@ -737,3 +734,6 @@ TRO3067 - Civil War
 150
 </escape_pod>
 
+<history>
+The ship as built in the TRO is 25420 tons underweight. Increasing Cargo space to use all available weight.
+</history>

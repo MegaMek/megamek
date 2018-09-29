@@ -42,7 +42,7 @@ lightvehiclebay:12.0:2:2
 2ndclassquarters:0.0:0
 1stclassquarters:90.0:0
 crewquarters:280.0:0
-cargobay:2355.5:1:6
+cargobay:2355.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -154,9 +154,6 @@ Medium Laser
 SRM 6
 IS Ammo SRM-6:60
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 14

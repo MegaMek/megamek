@@ -229,6 +229,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:144
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -302,10 +303,6 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:144
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 55
@@ -445,4 +442,8 @@ TRO3067 - Clan Invasion
 <escape_pod>
 50
 </escape_pod>
+
+<history>
+The ship as built in the TRO is underweight. Increasing Cargo space to use all available weight.
+</history>
 

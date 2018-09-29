@@ -41,7 +41,7 @@ smallcraftbay:7.0:1:1
 asfbay:24.0:3:2
 1stclassquarters:130.0:0
 crewquarters:434.0:0
-cargobay:5742.5:1:5
+cargobay:5742.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -242,9 +242,6 @@ IS Ammo SRM-6 Artemis-capable:30
 ISArtemisIV
 ISArtemisIV
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 1

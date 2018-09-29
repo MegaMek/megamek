@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,20 @@ Light Strike Fighter
 Owl III
 </Model>
 
-<year>
-3062
-</year>
-
-<originalBuildYear>
-3062
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+10
+</Tonnage>
 
 <SafeThrust>
 10
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-10
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-320
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 2
 2
 2
 2
-</armor>
+</Armor>
 
 <Nose Equipment>
 ISERMediumLaser
@@ -84,17 +49,42 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+10
+</heatsinks>
 
-<Fuselage Equipment>
-</Fuselage Equipment>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3062
+</year>
 
 <source>
 TRO 3039 - Civil War
 </source>
 
-<tonnage>
-10.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

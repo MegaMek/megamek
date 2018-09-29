@@ -1,9 +1,9 @@
-#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,38 @@ Cutlass
 CUT-01E
 </Model>
 
-<year>
-3104
-</year>
-
-<originalBuildYear>
-3104
-</originalBuildYear>
-
-<type>
-IS Level 3
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+70
+</Tonnage>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+71
+54
+54
+53
+</Armor>
+
+<Nose Equipment>
+ISERLargeLaser
+ISGuardianECMSuite
+ISBeagleActiveProbe
+ISExtendedLRM20
+ISExtendedLRM20 Ammo
+ISExtendedLRM20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment> 
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
 
 <heatsinks>
 11
@@ -59,54 +65,38 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+IS Level 3
+</type>
 
-<armor_type>
-3
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
-71
-54
-54
-53
-</armor>
-
-<Nose Equipment>
-ISERLargeLaser
-ISGuardianECMSuite
-BeagleActiveProbe
-Extended LRM 20
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo Extended LRM-20
-IS Ammo Extended LRM-20
-</Fuselage Equipment>
+<year>
+3104
+</year>
 
 <source>
 TRO 3145 Federated Suns - Late Republic
 </source>
 
-<tonnage>
-70.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+3
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
 

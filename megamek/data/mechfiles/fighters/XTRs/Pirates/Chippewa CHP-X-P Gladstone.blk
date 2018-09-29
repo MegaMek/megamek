@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,67 +20,30 @@ Chippewa
 CHP-X-P (Gladstone)
 </Model>
 
-<year>
-3074
-</year>
-
-<originalBuildYear>
-3074
-</originalBuildYear>
-
-<type>
-IS Level 4
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+90
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-25
-</heatsinks>
-
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
-3
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
+<Armor>
 43
 24
 24
 29
-</armor>
+</Armor>
 
 <Nose Equipment>
-Extended LRM 15
-Extended LRM 15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
 ISERMediumLaser
 ISERMediumLaser
 </Nose Equipment>
@@ -102,23 +65,42 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+25
+</heatsinks>
 
-<Fuselage Equipment>
-IS Ammo Extended LRM-15
-IS Ammo Extended LRM-15
-IS Ammo Extended LRM-15
-IS Ammo Extended LRM-15
-IS Ammo Extended LRM-15
-IS Ammo Extended LRM-15
-</Fuselage Equipment>
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3074
+</year>
 
 <source>
 XTRO Pirates - Jihad
 </source>
 
-<tonnage>
-90.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
 
+<armor_type>
+3
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

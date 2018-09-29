@@ -24,10 +24,6 @@ E
 3069
 </year>
 
-<originalBuildYear>
-3069
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 9
@@ -84,29 +77,23 @@ Aerodyne
 
 <Nose Equipment>
 CLPlasmaCannon:OMNI
+CLPlasmaCannonAmmo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLPlasmaCannon:OMNI
+CLPlasmaCannonAmmo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLPlasmaCannon:OMNI
+CLPlasmaCannonAmmo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLERSmallLaser:OMNI
 CLTargeting Computer:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-CLPlasmaCannonAmmo:OMNI
-CLPlasmaCannonAmmo:OMNI
-CLPlasmaCannonAmmo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Jihad

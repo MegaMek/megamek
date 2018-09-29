@@ -42,10 +42,10 @@ mechbay:12.0:2
 heavyvehiclebay:12.0:1:3
 battlearmorbay:16.0:1:5
 2ndclassquarters:0.0:0
-lightvehiclebay:8.0:1:6
+lightvehiclebay:8.0:1:4
 1stclassquarters:30.0:0
 crewquarters:84.0:0
-cargobay:651.5:1:9
+cargobay:651.5:1:6
 </transporters>
 
 <SafeThrust>
@@ -146,9 +146,6 @@ ISLargePulseLaser
 ISLaserAntiMissileSystem
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 11
 </structural_integrity>
@@ -160,10 +157,6 @@ TRO 3067 - Jihad
 <tonnage>
 8000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 280

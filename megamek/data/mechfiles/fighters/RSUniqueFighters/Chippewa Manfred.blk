@@ -24,10 +24,6 @@ CHP-W7 (Manfred)
 3068
 </year>
 
-<originalBuildYear>
-3068
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -84,6 +77,14 @@ LRM 15
 Medium Laser
 Medium Laser
 SRM 6
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -98,20 +99,6 @@ ISLargePulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Ammo SRM-6
-</Fuselage Equipment>
 
 <source>
 RS Unique Fighters - Jihad

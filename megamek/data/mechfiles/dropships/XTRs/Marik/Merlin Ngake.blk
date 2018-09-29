@@ -41,7 +41,7 @@ cargobay:150.0:2:1
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:84.0:0
-cargobay:147.0:3:5
+cargobay:147.0:3:2
 </transporters>
 
 <SafeThrust>
@@ -122,9 +122,6 @@ ISLargeXPulseLaser
 (B) ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 20

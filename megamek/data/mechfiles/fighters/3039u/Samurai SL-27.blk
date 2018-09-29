@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,68 +20,27 @@ Samurai
 SL-27
 </Model>
 
-<year>
-3068
-</year>
-
-<originalBuildYear>
-3068
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+50
+</Tonnage>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-15
-</heatsinks>
-
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-640
-</fuel>
-
-<engine_type>
-2
-</engine_type>
-
-<armor_type>
-19
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
+<Armor>
 56
 35
 35
 35
-</armor>
+</Armor>
 
 <Nose Equipment>
 ISPlasmaRifle
 ISMediumPulseLaser
 ISMediumPulseLaser
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -101,19 +60,42 @@ ISERMediumLaser
 ISERSmallLaser
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+15
+</heatsinks>
 
-<Fuselage Equipment>
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-</Fuselage Equipment>
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+640
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3068
+</year>
 
 <source>
 TRO 3039 - Jihad
 </source>
 
-<tonnage>
-50.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+19
+</armor_type>
+
+<engine_type>				
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

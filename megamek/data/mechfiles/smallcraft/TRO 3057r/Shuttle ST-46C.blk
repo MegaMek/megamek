@@ -41,7 +41,7 @@ Aerodyne
 crewquarters:0.0:0
 1stclassquarters:0.0:0
 steeragequarters:15.0:0
-cargobay:13.0:0:5
+cargobay:13.0:0:1
 </transporters>
 
 <SafeThrust>
@@ -91,9 +91,6 @@ cargobay:13.0:0:5
 <Aft Equipment>
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 6
 </structural_integrity>
@@ -107,7 +104,7 @@ TRO 3057 - Early Succession War
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

@@ -24,10 +24,6 @@ A
 2968
 </year>
 
-<originalBuildYear>
-2968
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -88,38 +81,51 @@ Aerodyne
 
 <Nose Equipment>
 CLLRM20:OMNI
+Clan Ammo LRM-20:OMNI
 CLSRM6:OMNI
+Clan Ammo SRM-6:OMNI
 CLNarcBeacon:OMNI
+CLNarc Pods:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLLRM20:OMNI
+Clan Ammo LRM-20:OMNI
 CLSRM6:OMNI
 CLERLargeLaser:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLLRM20:OMNI
+Clan Ammo LRM-20:OMNI
 CLSRM6:OMNI
 CLERLargeLaser:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLStreakSRM6:OMNI
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo LRM-20:OMNI
-Clan Ammo SRM-6:OMNI
-ISNarc Pods:OMNI
-Clan Ammo LRM-20:OMNI
-Clan Ammo LRM-20:OMNI
 Clan Streak SRM 6 Ammo:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 CLCASE
-</Fuselage Equipment>
+CLCASE
+CLCASE
+</Aft Equipment>
 
 <source>
 TRO 3055u - Succession Wars

@@ -40,7 +40,7 @@ Spheroid
 2ndclassquarters:0.0:0
 crewquarters:126.0:0
 1stclassquarters:40.0:0
-cargobay:166.5:1:4
+cargobay:166.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -131,9 +131,6 @@ Medium Laser
 (B) ISERPPC
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 21
 </structural_integrity>
@@ -145,10 +142,6 @@ TRO 3075 - Civil War
 <tonnage>
 4000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 18

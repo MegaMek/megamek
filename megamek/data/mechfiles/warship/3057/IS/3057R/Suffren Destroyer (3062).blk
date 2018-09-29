@@ -150,6 +150,7 @@ ISArtemisIV
 (B) ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -171,10 +172,6 @@ ISERLargeLaser
 ISERLargeLaser
 ISERLargeLaser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

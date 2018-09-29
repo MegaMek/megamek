@@ -80,6 +80,7 @@ steeragequarters:20.0:0
 </armor>
 
 <Nose Equipment>
+BeagleActiveProbe
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -91,14 +92,10 @@ steeragequarters:20.0:0
 <Aft Equipment>
 ISERMediumLaser
 ISERMediumLaser
-</Aft Equipment>
-
-<Hull Equipment>
-BeagleActiveProbe
 ISGuardianECMSuite
 ISHypersprectralImager
 ISSpaceMineDispenser
-</Hull Equipment>
+</Aft Equipment>
 
 <structural_integrity>
 8

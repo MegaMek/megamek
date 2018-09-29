@@ -38,13 +38,13 @@ Aerodyne
 
 <transporters>
 smallcraftbay:2.0:2:1
+megamek.common.DockingCollar@55f5199e
+megamek.common.DockingCollar@50657386
+megamek.common.DockingCollar@6dd6e4a3
 1stclassquarters:40.0:0
 crewquarters:140.0:0
-cargobay:1125.5:1:4
-cargobay:1125.5:1:5
-dockingcollar
-dockingcollar
-dockingcollar
+cargobay:1125.5:1:2
+cargobay:1125.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -132,9 +132,6 @@ ISAntiMissileSystem
 ISAMS Ammo:24
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 1
 </structural_integrity>
@@ -154,6 +151,10 @@ TRO 3057R - Jihad
 <grav_decks>
 140
 </grav_decks>
+
+<docking_collar>
+3
+</docking_collar>
 
 <crew>
 34

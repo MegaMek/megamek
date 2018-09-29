@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,36 +16,38 @@ ConvFighter
 MechBuster
 </Name>
 
-<Model>
+<model>
 (Standard)
-</Model>
+</model>
 
-<year>
-3002
-</year>
-
-<originalBuildYear>
-3002
-</originalBuildYear>
-
-<type>
-IS Level 1
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+50
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+12
+10
+10
+10
+</Armor>
+
+<Nose Equipment>
+Autocannon/20
+IS Ammo AC/20
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 0
@@ -59,42 +61,30 @@ Aerodyne
 320
 </fuel>
 
-<engine_type>
-1
-</engine_type>
+<type>
+IS Level 1
+</type>
 
-<armor>
-12
-10
-10
-10
-</armor>
-
-<Nose Equipment>
-Autocannon/20
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo AC/20
-</Fuselage Equipment>
+<year>
+3002
+</year>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<tonnage>
-50.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

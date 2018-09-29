@@ -115,12 +115,14 @@ Ammo AR10 Killer Whale:10
 </Right Front Side Equipment>
 
 <Aft Equipment>
+SDSSelfDestructSystem
 (B) Naval Laser 45
 Naval Laser 45
 Naval Laser 45
 (B) Capital Missile Launcher (Barracuda)
 Capital Missile Launcher (Barracuda)
 Ammo Barracuda:40
+ImprovedCasparDroneControlSystem
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -140,11 +142,6 @@ Naval Autocannon (NAC/20)
 Naval Autocannon (NAC/20)
 Ammo NAC/20:300
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-SDSSelfDestructSystem
-ImprovedCasparDroneControlSystem
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 55

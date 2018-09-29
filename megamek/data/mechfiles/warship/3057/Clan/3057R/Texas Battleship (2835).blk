@@ -115,6 +115,7 @@ Ammo NAC/40:75
 </Right Front Side Equipment>
 
 <Aft Equipment>
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -162,10 +163,6 @@ Naval PPC (Heavy)
 Naval PPC (Heavy)
 Naval PPC (Heavy)
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 45

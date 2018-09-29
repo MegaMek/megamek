@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,37 @@ Bluehawk Combat Support Fighter
 MSF-42
 </Model>
 
-<year>
-3019
-</year>
-
-<originalBuildYear>
-3019
-</originalBuildYear>
-
-<type>
-IS Level 1
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+50
+</Tonnage>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+14
+12
+12
+10
+</Armor>
+
+<Nose Equipment>
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (100)
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLRM10
+ISLRM10 Ammo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLRM10
+ISLRM10 Ammo
+</Right Wing Equipment>
 
 <heatsinks>
 0
@@ -59,48 +64,30 @@ Aerodyne
 480
 </fuel>
 
-<engine_type>
-1
-</engine_type>
+<type>
+IS Level 1
+</type>
 
-<armor>
-14
-12
-12
-10
-</armor>
-
-<Nose Equipment>
-Machine Gun
-Machine Gun
-Machine Gun
-</Nose Equipment>
-
-<Left Wing Equipment>
-LRM 10
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-LRM 10
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Machine Gun Ammo - Half
-IS Ammo LRM-10
-IS Ammo LRM-10
-</Fuselage Equipment>
+<year>
+3019
+</year>
 
 <source>
 HB:Major Periphery States - Succession Wars
 </source>
 
-<tonnage>
-50.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

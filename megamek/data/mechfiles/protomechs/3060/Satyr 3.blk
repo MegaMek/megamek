@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,24 +20,9 @@ Satyr
 3
 </Model>
 
-<year>
-3065
-</year>
-
-<originalBuildYear>
-3065
-</originalBuildYear>
-
-<type>
-Clan Level 2
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+4
+</Tonnage>
 
 <cruiseMP>
 7
@@ -47,60 +32,43 @@ Biped
 5
 </jumpingMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 2
 5
 1
 1
 4
-</armor>
-
-<Body Equipment>
-Clan Streak SRM 2 Ammo
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
+</Armor>
 
 <Torso Equipment>
 CLStreakSRM2
+CLStreakSRM2 Ammo (10)
 </Torso Equipment>
 
-<Right Arm Equipment>
-</Right Arm Equipment>
+<type>
+Clan
+</type>
 
-<Left Arm Equipment>
-</Left Arm Equipment>
+<year>
+3065
+</year>
 
-<Legs Equipment>
-</Legs Equipment>
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 TRO 3060 - Civil War
 </source>
-
-<tonnage>
-4.0
-</tonnage>
-

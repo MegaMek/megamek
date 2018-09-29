@@ -42,7 +42,7 @@ smallcraftbay:2.0:2:2
 1stclassquarters:70.0:0
 steeragequarters:120.0:0
 crewquarters:224.0:0
-cargobay:568.0:2:6
+cargobay:568.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -178,9 +178,6 @@ ISAntiMissileSystem
 ISAMS Ammo:72
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 20
 </structural_integrity>
@@ -192,10 +189,6 @@ TRO 3085 - Jihad
 <tonnage>
 12000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 42

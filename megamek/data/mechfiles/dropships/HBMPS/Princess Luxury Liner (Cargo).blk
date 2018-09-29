@@ -43,8 +43,8 @@ cargobay:2086.0:4:4
 2ndclassquarters:700.0:0
 1stclassquarters:100.0:0
 crewquarters:301.0:0
-cargobay:2263.0:0:7
-cargobay:446.0:0:8
+cargobay:2263.0:0:3
+cargobay:446.0:0:5
 </transporters>
 
 <SafeThrust>
@@ -117,9 +117,6 @@ IS Machine Gun Ammo - Half:100
 Machine Gun
 IS Machine Gun Ammo - Half:100
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 10

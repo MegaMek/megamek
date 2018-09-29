@@ -24,10 +24,6 @@ ON-2X
 3077
 </year>
 
-<originalBuildYear>
-3077
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -79,9 +72,10 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Binary Laser (Blazer) Cannon
+Blazer Cannon
 MRM 30
 ISApollo
+IS MRM 30 Ammo
 ISLaserAntiMissileSystem
 </Nose Equipment>
 
@@ -95,18 +89,9 @@ ISERMediumLaser
 
 <Aft Equipment>
 IS Vehicular Stealth
-IS Vehicular Stealth
-IS Vehicular Stealth
 ISMediumPulseLaser
 ISAngelECMSuite
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS MRM 30 Ammo
-</Fuselage Equipment>
 
 <source>
 XTRO Kurita - Jihad

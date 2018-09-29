@@ -24,10 +24,6 @@ EST-R3
 3063
 </year>
 
-<originalBuildYear>
-3063
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -81,6 +74,10 @@ Aerodyne
 <Nose Equipment>
 ISGaussRifle
 ISGaussRifle
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 Medium Laser
 Medium Laser
 </Nose Equipment>
@@ -95,16 +92,6 @@ Large Laser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

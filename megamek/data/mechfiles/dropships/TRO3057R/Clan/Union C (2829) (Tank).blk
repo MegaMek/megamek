@@ -37,13 +37,13 @@ Spheroid
 </motion_type>
 
 <transporters>
-infantrybay:10.0:1:2:Foot
+infantrybay:10.0:1:2
 infantrybay:5.0:1:3:Mechanized
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:84.0:0
-heavyvehiclebay:20.0:1:6
-cargobay:661.0:1:7
+heavyvehiclebay:20.0:1:1
+cargobay:661.0:1:4
 </transporters>
 
 <SafeThrust>
@@ -130,9 +130,6 @@ CLArtemisIV
 CLMediumPulseLaser
 CLMediumPulseLaser
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 12

@@ -24,10 +24,6 @@ SU-14
 3082
 </year>
 
-<originalBuildYear>
-3082
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -80,6 +73,8 @@ Aerodyne
 
 <Nose Equipment>
 MRM 20
+IS MRM 20 Ammo
+IS MRM 20 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,14 +90,6 @@ PPC Capacitor
 <Aft Equipment>
 ISLaserAntiMissileSystem
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS MRM 20 Ammo
-IS MRM 20 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

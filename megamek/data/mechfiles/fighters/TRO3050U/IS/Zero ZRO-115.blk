@@ -24,10 +24,6 @@ ZRO-115
 3055
 </year>
 
-<originalBuildYear>
-3055
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -74,6 +67,7 @@ Aerodyne
 ISERPPC
 ISStreakSRM2
 ISStreakSRM2
+IS Streak SRM 2 Ammo
 Medium Laser
 </Nose Equipment>
 
@@ -85,13 +79,6 @@ Medium Laser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Streak SRM 2 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Clan Invasion

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,34 @@ Light Strike Fighter
 Angel
 </Model>
 
-<year>
-2643
-</year>
-
-<originalBuildYear>
-2643
-</originalBuildYear>
-
-<type>
-IS Level 1
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+10
+</Tonnage>
 
 <SafeThrust>
 10
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+2
+2
+2
+2
+</Armor>
+
+<Nose Equipment>
+SRM 4
+IS Ammo SRM-4
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 10
@@ -59,42 +61,30 @@ Aerodyne
 160
 </fuel>
 
-<engine_type>
-0
-</engine_type>
+<type>
+IS Level 1
+</type>
 
-<armor>
-2
-2
-2
-2
-</armor>
-
-<Nose Equipment>
-SRM 4
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-4
-</Fuselage Equipment>
+<year>
+2643
+</year>
 
 <source>
 TRO 3039 - Star League
 </source>
 
-<tonnage>
-10.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

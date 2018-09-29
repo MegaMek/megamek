@@ -24,10 +24,6 @@ SGT-4R
 3133
 </year>
 
-<originalBuildYear>
-3133
-</originalBuildYear>
-
 <type>
 IS Level 3
 </type>
@@ -35,9 +31,6 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 8
@@ -84,25 +77,19 @@ Large Re-engineered Laser
 
 <Left Wing Equipment>
 ISMML5
+IS Ammo MML-5 LRM
 ISArtemisIV
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISMML5
+IS Ammo MML-5 LRM
 ISArtemisIV
 </Right Wing Equipment>
 
 <Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo MML-5 LRM
-IS Ammo MML-5 LRM
 IS Ammo MML-5 SRM
-</Fuselage Equipment>
+</Aft Equipment>
 
 <source>
 TRO 3145 NTNU - Late Republic

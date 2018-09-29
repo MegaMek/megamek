@@ -24,10 +24,6 @@ TRB-D36
 2480
 </year>
 
-<originalBuildYear>
-2480
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -79,28 +72,22 @@ Medium Laser
 Large Laser
 Medium Laser
 LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Large Laser
 Medium Laser
 LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Age of War

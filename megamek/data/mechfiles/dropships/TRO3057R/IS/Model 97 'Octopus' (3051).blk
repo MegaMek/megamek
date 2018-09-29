@@ -38,12 +38,12 @@ Spheroid
 
 <transporters>
 smallcraftbay:4.0:2:3
-infantrybay:8.0:1:4:Foot
+infantrybay:8.0:1:4
 1stclassquarters:70.0:0
 crewquarters:231.0:0
 2ndclassquarters:0.0:0
-cargobay:2386.0:1:6
-cargobay:2386.0:1:7
+cargobay:2386.0:1:1
+cargobay:2386.0:1:2
 </transporters>
 
 <SafeThrust>
@@ -89,6 +89,7 @@ Medium Laser
 IS Ammo LRM-10 Artemis-capable:24
 ISArtemisIV
 (B) ISLargePulseLaser
+ISNavalTugAdaptor
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -127,10 +128,6 @@ Medium Laser
 IS Ammo LRM-10 Artemis-capable:24
 ISArtemisIV
 </Aft Equipment>
-
-<Hull Equipment>
-ISNavalTugAdaptor
-</Hull Equipment>
 
 <structural_integrity>
 20

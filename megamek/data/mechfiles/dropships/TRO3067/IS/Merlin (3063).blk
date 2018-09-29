@@ -41,7 +41,7 @@ asfbay:2.0:2:1
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:84.0:0
-cargobay:717.5:3:5
+cargobay:717.5:3:2
 </transporters>
 
 <SafeThrust>
@@ -126,9 +126,6 @@ ISERLargeLaser
 ISERPPC
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 20
 </structural_integrity>
@@ -140,10 +137,6 @@ TRO 3067 - Civil War
 <tonnage>
 2500.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 16

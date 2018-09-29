@@ -24,10 +24,6 @@ SCK-OB
 3097
 </year>
 
-<originalBuildYear>
-3097
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -87,6 +80,12 @@ ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 ISRotaryAC5:OMNI
 ISRotaryAC5:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,18 +96,6 @@ ISRotaryAC5:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3145 Republic of the Sphere - Early Republic

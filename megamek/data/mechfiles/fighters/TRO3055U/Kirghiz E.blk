@@ -83,33 +83,37 @@ CLLargePulseLaser:OMNI
 
 <Left Wing Equipment>
 CLHAG40:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLHAG40:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+Hyper-Assault Gauss Rifle/40 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLERSmallLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-Hyper-Assault Gauss Rifle/40 Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Jihad

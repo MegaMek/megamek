@@ -111,6 +111,7 @@ Naval PPC (Heavy)
 <Aft Equipment>
 (B) Naval PPC (Heavy)
 Naval PPC (Heavy)
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -148,10 +149,6 @@ Ammo AR10 Barracuda:6
 (B) Naval PPC (Heavy)
 Naval PPC (Heavy)
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/25)

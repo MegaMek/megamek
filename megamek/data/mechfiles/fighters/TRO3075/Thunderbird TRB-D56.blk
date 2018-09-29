@@ -24,10 +24,6 @@ TRB-D56
 3074
 </year>
 
-<originalBuildYear>
-3074
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -81,36 +74,30 @@ Aerodyne
 <Nose Equipment>
 ISUltraAC10
 Heavy PPC
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
 ISERMediumLaser
 LRM 20
 ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISERMediumLaser
 LRM 20
 ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
 </Right Wing Equipment>
 
 <Aft Equipment>
 ISERSmallLaser
 ISERSmallLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

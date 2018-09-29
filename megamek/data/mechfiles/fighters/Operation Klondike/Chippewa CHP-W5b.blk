@@ -24,10 +24,6 @@ CHP-W5b
 2731
 </year>
 
-<originalBuildYear>
-2731
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -81,8 +74,12 @@ Aerodyne
 <Nose Equipment>
 LRM 15
 ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
 LRM 15
 ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
 Medium Laser
 Medium Laser
 </Nose Equipment>
@@ -101,16 +98,6 @@ ISERLargeLaser
 Small Laser
 Small Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-</Fuselage Equipment>
 
 <source>
 H:Operation Klondyke - Star League

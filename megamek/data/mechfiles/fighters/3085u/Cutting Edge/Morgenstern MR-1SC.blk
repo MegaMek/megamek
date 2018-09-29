@@ -24,10 +24,6 @@ MR-1SC
 3086
 </year>
 
-<originalBuildYear>
-3086
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -106,12 +99,6 @@ ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 ISMediumPulseLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3085 - Early Republic

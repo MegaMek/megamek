@@ -40,7 +40,7 @@ Aerodyne
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:84.0:0
-cargobay:257.5:2:4
+cargobay:257.5:2:1
 </transporters>
 
 <SafeThrust>
@@ -121,9 +121,6 @@ ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 12

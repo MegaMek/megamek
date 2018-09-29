@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,36 @@ Cheetah
 F-14-S
 </Model>
 
-<year>
-3052
-</year>
-
-<originalBuildYear>
-3052
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+25
+</Tonnage>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+9
+7
+7
+9
+</Armor>
+
+<Nose Equipment>
+Small Laser
+ISStreakSRM2
+ISStreakSRM2
+IS Streak SRM 2 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <heatsinks>
 10
@@ -59,44 +63,30 @@ Aerodyne
 240
 </fuel>
 
-<engine_type>
-0
-</engine_type>
+<type>
+IS Level 2
+</type>
 
-<armor>
-9
-7
-7
-9
-</armor>
-
-<Nose Equipment>
-Small Laser
-ISStreakSRM2
-ISStreakSRM2
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Streak SRM 2 Ammo
-</Fuselage Equipment>
+<year>
+3052
+</year>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<tonnage>
-25.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

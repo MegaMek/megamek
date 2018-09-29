@@ -73,6 +73,8 @@ Aerodyne
 <Nose Equipment>
 Large Laser
 SRM 2
+IS Ammo SRM-2
+IS Streak SRM 4 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -85,14 +87,6 @@ ISStreakSRM4
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo SRM-2
-IS Streak SRM 4 Ammo
-</Fuselage Equipment>
 
 <source>
 HB:House Steiner - Civil War

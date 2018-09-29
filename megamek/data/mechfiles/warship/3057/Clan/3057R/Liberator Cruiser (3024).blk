@@ -177,6 +177,7 @@ Naval Laser 55
 Naval Laser 55
 Naval Laser 55
 Naval Laser 55
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -224,10 +225,6 @@ CLLBXAC20
 CLLBXAC20
 Clan LB 20-X AC Ammo:40
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/30)

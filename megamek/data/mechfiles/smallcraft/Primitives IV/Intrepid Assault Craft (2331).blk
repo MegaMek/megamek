@@ -37,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-infantrybay:1.0:2:1:Foot
+infantrybay:1.0:2:1
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
@@ -99,9 +99,6 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 10
 </structural_integrity>
@@ -115,7 +112,7 @@ XTRO Primitives IV - Age of War
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

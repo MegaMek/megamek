@@ -42,7 +42,7 @@ crewquarters:735.0:0
 1stclassquarters:2940.0:0
 cargobay:1792.0:1:5
 navalrepairpressurized:24000.0:1:6:f0
-cargobay:6375.5:1:4
+cargobay:6375.5:1:2
 </transporters>
 
 <SafeThrust>
@@ -117,9 +117,6 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 1

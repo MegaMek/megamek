@@ -24,10 +24,6 @@ SHV-O
 3060
 </year>
 
-<originalBuildYear>
-3060
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -88,7 +81,11 @@ Aerodyne
 
 <Nose Equipment>
 ISLBXAC20:OMNI
+IS LB 20-X Cluster Ammo:OMNI
+IS LB 20-X Cluster Ammo:OMNI
 SRM 6:OMNI
+IS Ammo SRM-6:OMNI
+IS Ammo SRM-6:OMNI
 ISERSmallLaser:OMNI
 </Nose Equipment>
 
@@ -104,16 +101,6 @@ ISLargePulseLaser:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS LB 20-X Cluster Ammo:OMNI
-IS LB 20-X Cluster Ammo:OMNI
-IS Ammo SRM-6:OMNI
-IS Ammo SRM-6:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Clan Invasion

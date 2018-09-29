@@ -192,9 +192,6 @@ Medium Laser
 Medium Laser
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/35)
 Naval Autocannon (NAC/35)
@@ -283,4 +280,8 @@ FR2765-DCMS - Star League
 <escape_pod>
 45
 </escape_pod>
+
+<history>
+The ship from the TRO is unable to use the advanced armor as written. This is rebuilt with the correct armor type, but results in reduced armor values.
+</history>
 

@@ -1,51 +1,78 @@
+
 #building block data file
+
 <BlockVersion>
+
 1
+
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
+
 MAM0
+
 </Version>
 
 <UnitType>
+
 Aero
+
 </UnitType>
 
 <Name>
+
 Typhoon
+
 </Name>
 
 <Model>
+
 TFN-5H
+
 </Model>
 
-<year>
-3074
-</year>
+<Tonnage>
 
-<originalBuildYear>
-3074
-</originalBuildYear>
+90
 
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+</Tonnage>
 
 <SafeThrust>
+
 5
+
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+46
+33
+33
+22
+</Armor>
+
+<Nose Equipment>
+ISLRM10
+ISArtemisIV
+IS Ammo LRM-10 Artemis-capable
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargeLaser
+ISLargeLaser
+ISHeavyPPC
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+ISLargeLaser
+ISLargeLaser
+ISHeavyPPC
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+</Aft Equipment>
 
 <heatsinks>
 23
@@ -59,53 +86,32 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+3074
+</year>
+
+<internal_type>
 0
-</engine_type>
+</internal_type>
 
 <armor_type>
 19
 </armor_type>
 
-<armor_tech>
--1
-</armor_tech>
+<engine_type>
+0
+</engine_type>
 
-<armor>
-46
-33
-33
-22
-</armor>
+<motion_type>
+aerodyne
+</motion_type>
 
-<Nose Equipment>
-LRM 10
-ISArtemisIV
-</Nose Equipment>
 
-<Left Wing Equipment>
-Large Laser
-Large Laser
-Heavy PPC
-</Left Wing Equipment>
 
-<Right Wing Equipment>
-Large Laser
-Large Laser
-Heavy PPC
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-10 Artemis-capable
-</Fuselage Equipment>
-
-<tonnage>
-90.0
-</tonnage>
 

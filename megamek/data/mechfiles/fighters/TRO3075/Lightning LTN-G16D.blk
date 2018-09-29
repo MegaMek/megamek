@@ -24,10 +24,6 @@ LTN-G16D
 3068
 </year>
 
-<originalBuildYear>
-3068
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -81,6 +74,9 @@ Aerodyne
 <Nose Equipment>
 ISRotaryAC2
 ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
 Medium Laser
 </Nose Equipment>
 
@@ -97,15 +93,6 @@ ISMediumPulseLaser
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISRotaryAC2 Ammo
-ISRotaryAC2 Ammo
-ISRotaryAC2 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

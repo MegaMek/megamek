@@ -94,6 +94,13 @@ IS Gauss Ammo:48
 (B) LRM 10
 IS Ammo LRM-10 Artemis-capable:24
 ISArtemisIV
+ISNavalTugAdaptor
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
+AdvRoboticTransportSystem
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -154,16 +161,6 @@ IS Ammo LRM-10 Artemis-capable:24
 ISArtemisIV
 </Aft Equipment>
 
-<Hull Equipment>
-ISNavalTugAdaptor
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-</Hull Equipment>
-
 <structural_integrity>
 25
 </structural_integrity>
@@ -175,10 +172,6 @@ H:Liberation of Terra I - Star League
 <tonnage>
 15000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 69

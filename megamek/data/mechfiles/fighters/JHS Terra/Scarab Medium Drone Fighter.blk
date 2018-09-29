@@ -1,9 +1,9 @@
-#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,38 @@ Scarab Medium Drone Fighter
 (Standard)
 </Model>
 
-<year>
-3072
-</year>
-
-<originalBuildYear>
-3072
-</originalBuildYear>
-
-<type>
-IS Level 4
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+70
+</Tonnage>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+62
+52
+52
+42
+</Armor>
+
+<Nose Equipment>
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISGuardianECM
+ISBeagleActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargePulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
 
 <heatsinks>
 10
@@ -59,54 +65,39 @@ Aerodyne
 480
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+IS Level 4
+</type>
 
-<armor_type>
-20
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<armor>
-62
-52
-52
-42
-</armor>
-
-<Nose Equipment>
-ISMediumVSPLaser
-ISMediumVSPLaser
-ISGuardianECMSuite
-BeagleActiveProbe
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISLargePulseLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISLargePulseLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
+<year>
+3072
+</year>
 
 <source>
 JHS Terra - Jihad
 </source>
 
-<tonnage>
-70.0
-</tonnage>
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+20
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+Aerospace Smart Robotic Control System (Improved) gives the Scarab a Piloting Skill of 5 and a Gunnery Skill of 4.  The ASRCS is not programmed into MM. Unit included for completeness.
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
 

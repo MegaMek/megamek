@@ -141,9 +141,6 @@ Medium Laser
 (B) PPC
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 21
 </structural_integrity>
@@ -155,10 +152,6 @@ TRO 3075 - Age of War
 <tonnage>
 4000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 18

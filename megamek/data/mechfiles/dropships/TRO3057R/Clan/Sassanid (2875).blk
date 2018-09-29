@@ -155,9 +155,6 @@ CLMediumPulseLaser
 (B) CLERLargeLaser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 10
 </structural_integrity>

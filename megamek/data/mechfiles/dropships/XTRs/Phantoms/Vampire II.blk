@@ -42,7 +42,7 @@ battlearmorbay:4.0:4:1
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:90.0:0
-cargobay:8.0:1:6
+cargobay:8.0:1:2
 </transporters>
 
 <SafeThrust>
@@ -85,6 +85,7 @@ cargobay:8.0:1:6
 Heavy PPC
 Heavy PPC
 Heavy PPC
+Communications Equipment (8 ton)
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -105,10 +106,6 @@ ISLaserAntiMissileSystem
 (B) ISERLargeLaser
 ISERLargeLaser
 </Aft Equipment>
-
-<Hull Equipment>
-Communications Equipment (8 ton)
-</Hull Equipment>
 
 <structural_integrity>
 7

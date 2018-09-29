@@ -104,6 +104,7 @@ Ammo NAC/10:70
 (B) Naval Autocannon (NAC/30)
 Naval Autocannon (NAC/30)
 Ammo NAC/30:50
+ISLargeNavalCommScannerSuite
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -125,10 +126,6 @@ Ammo NAC/30:25
 (B) Large Laser
 Large Laser
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISLargeNavalCommScannerSuite
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)

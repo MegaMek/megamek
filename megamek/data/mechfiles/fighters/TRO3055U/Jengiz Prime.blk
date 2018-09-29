@@ -24,10 +24,6 @@ Prime
 3032
 </year>
 
-<originalBuildYear>
-3032
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -84,37 +77,45 @@ Aerodyne
 
 <Nose Equipment>
 CLLBXAC10:OMNI
+Clan LB 10-X Cluster Ammo:OMNI
 CLERPPC:OMNI
 CLMediumPulseLaser:OMNI
 CLERSmallLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLLargePulseLaser:OMNI
 CLMediumPulseLaser:OMNI
 CLSRM6:OMNI
+Clan Ammo SRM-6:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLLargePulseLaser:OMNI
 CLMediumPulseLaser:OMNI
 CLSRM6:OMNI
+Clan Ammo SRM-6:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLMediumPulseLaser:OMNI
 CLECMSuite:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan LB 10-X Cluster Ammo:OMNI
-Clan Ammo SRM-6:OMNI
-Clan Ammo SRM-6:OMNI
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession War

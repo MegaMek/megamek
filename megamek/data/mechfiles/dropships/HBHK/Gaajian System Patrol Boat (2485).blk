@@ -87,6 +87,8 @@ PPC
 Medium Laser
 Medium Laser
 Medium Laser
+ISLookDownRadar
+ISHighResImager
 (B) Small Laser
 Small Laser
 Small Laser
@@ -121,11 +123,6 @@ Small Laser
 Small Laser
 Small Laser
 </Aft Equipment>
-
-<Hull Equipment>
-ISLookDownRadar
-ISHighResImager
-</Hull Equipment>
 
 <structural_integrity>
 12
@@ -178,4 +175,8 @@ HB:HK - Age of War
 <escape_pod>
 4
 </escape_pod>
+
+<History>
+The TRO calls for 43.5 tons of armor, which is .5 over what is allowed. Reduced armor compensate.
+</History>
 

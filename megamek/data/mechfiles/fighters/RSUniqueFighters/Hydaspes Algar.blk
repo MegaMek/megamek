@@ -24,10 +24,6 @@ Hydaspes
 3070
 </year>
 
-<originalBuildYear>
-3070
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -81,6 +74,20 @@ Aerodyne
 <Nose Equipment>
 CLERMediumLaser
 CLERMediumLaser
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,25 +104,6 @@ CLATM12
 CLERMediumLaser
 CLERMediumLaser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-CLCASE
-</Fuselage Equipment>
 
 <source>
 RS Unique Fighters - Jihad

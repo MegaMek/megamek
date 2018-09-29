@@ -24,10 +24,6 @@ X
 3066
 </year>
 
-<originalBuildYear>
-3066
-</originalBuildYear>
-
 <type>
 Clan Level 4
 </type>
@@ -35,9 +31,6 @@ Clan Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -85,6 +78,14 @@ Aerodyne
 <Nose Equipment>
 CLLRM20:OMNI
 CLArtemisV:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -92,6 +93,14 @@ CLLRM20:OMNI
 CLArtemisV:OMNI
 CLLRM20:OMNI
 CLArtemisV:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -99,28 +108,20 @@ CLLRM20:OMNI
 CLArtemisV:OMNI
 CLLRM20:OMNI
 CLArtemisV:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLECMSuite:OMNI
 CLMediumPulseLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3055u - Civil War

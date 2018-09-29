@@ -48,7 +48,7 @@ navalrepairpressurized:80000.0:1:8:f0
 crewquarters:518.0:0
 steeragequarters:4200.0:0
 2ndclassquarters:1750.0:0
-cargobay:14662.0:0:12
+cargobay:14662.0:0:7
 </transporters>
 
 <SafeThrust>
@@ -144,9 +144,6 @@ Medium Laser
 Small Laser
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 1
 </structural_integrity>
@@ -199,4 +196,8 @@ HB:MPS - Age of War
 <escape_pod>
 0
 </escape_pod>
+
+<history>
+The ship as built in the book is tons underweight. Increasing Cargo space to use all available weight.  The 80000 ton pressurized bay represents the Factory modules
+</history>
 

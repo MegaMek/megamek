@@ -147,6 +147,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:240
+ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -174,10 +175,6 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:240
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISMobileHPG
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 55
@@ -281,4 +278,8 @@ TRO3085S - Star League
 <escape_pod>
 600
 </escape_pod>
+
+<History>
+The original introdate predates Mobile HPG by 40 years. This ship is dated for 2700 to represents the addition of the mobile hpg. Otherwise it's the same the Newgrange. The ship as built in the TRO is underweight. Increasing Cargo space to use all available weight.
+</history>
 

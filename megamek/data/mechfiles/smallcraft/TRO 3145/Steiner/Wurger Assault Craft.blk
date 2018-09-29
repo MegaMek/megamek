@@ -92,6 +92,7 @@ ISAMS Ammo
 ISAMS Ammo
 ISAMS Ammo
 ISAMS Ammo
+BeagleActiveProbe
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -119,12 +120,8 @@ ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
-</Aft Equipment>
-
-<Hull Equipment>
-BeagleActiveProbe
 ISGuardianECMSuite
-</Hull Equipment>
+</Aft Equipment>
 
 <structural_integrity>
 9
@@ -139,7 +136,7 @@ TRO 3145 Lyran Commonwealth - Early Republic
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

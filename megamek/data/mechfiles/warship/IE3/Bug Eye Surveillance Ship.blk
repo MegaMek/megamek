@@ -40,7 +40,7 @@ Aerodyne
 steeragequarters:60.0:0
 1stclassquarters:80.0:0
 crewquarters:280.0:0
-cargobay:270.5:1:4
+cargobay:270.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -82,6 +82,10 @@ cargobay:270.5:1:4
 
 <Nose Equipment>
 (B) PPC
+ISLargeNavalCommScannerSuite
+ISLookDownRadar
+ISInfraredImager
+ISHighResImager
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -100,13 +104,6 @@ IS Ammo AC/20:30
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-ISLargeNavalCommScannerSuite
-ISLookDownRadar
-ISInfraredImager
-ISHighResImager
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Large Laser

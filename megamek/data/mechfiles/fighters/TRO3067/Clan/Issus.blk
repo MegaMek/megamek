@@ -24,10 +24,6 @@ Issus
 2842
 </year>
 
-<originalBuildYear>
-2842
-</originalBuildYear>
-
 <type>
 Clan Level 2
 </type>
@@ -35,9 +31,6 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 8
@@ -80,7 +73,9 @@ Aerodyne
 
 <Nose Equipment>
 CLStreakSRM6
+Clan Streak SRM 6 Ammo
 CLERSmallLaser
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,14 +90,6 @@ CLERLargeLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan Streak SRM 6 Ammo
-CLCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Succession Wars

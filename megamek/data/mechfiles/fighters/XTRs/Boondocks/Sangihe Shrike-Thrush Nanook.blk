@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,36 +16,37 @@ Aero
 Sangihe Shrike-Thrush 'Nanook'
 </Name>
 
-<Model>
-
-</Model>
-
-<year>
-3068
-</year>
-
-<originalBuildYear>
-3068
-</originalBuildYear>
-
-<type>
-Mixed (IS Chassis) Experimental
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+25
+</Tonnage>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+32
+20
+20
+14
+</Armor>
+
+<Nose Equipment>
+ClMediumPulseLaser
+ClMediumPulseLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ClERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ClERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISSmallLaser
+</Aft Equipment>
 
 <heatsinks>
 10
@@ -59,89 +60,62 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-3
-</engine_type>
+<type>
+Mixed (IS Chassis) Experimental 
+</type>
+
+<year>
+3068
+</year>
+
+<source>
+XTRO Boondocks - Jihad
+</source>
+
+<internal_type>
+0				
+</internal_type>
 
 <armor_type>
 7
 </armor_type>
 
-<Left Wing_armor_type>
-3
-</Left Wing_armor_type>
+<Nose_armor_type>
+2
+</Nose_armor_type>
 
-<Left Wing_armor_tech>
-(Unknown Technology Base)
-</Left Wing_armor_tech>
+<Nose_armor_tech>
+7
+</Nose_armor_tech>
 
 <Right Wing_armor_type>
 3
 </Right Wing_armor_type>
 
 <Right Wing_armor_tech>
-(Unknown Technology Base)
+7
 </Right Wing_armor_tech>
+
+<Left Wing_armor_type>
+3
+</Left Wing_armor_type>
+
+<Left Wing_armor_tech>
+7
+</Left Wing_armor_tech>
 
 <Aft_armor_type>
 2
 </Aft_armor_type>
 
 <Aft_armor_tech>
-Clan
+7
 </Aft_armor_tech>
 
-<Wings_armor_type>
-0
-</Wings_armor_type>
+<engine_type>				
+3
+</engine_type>
 
-<Wings_armor_tech>
-Inner Sphere
-</Wings_armor_tech>
-
-<Fuselage_armor_type>
--1
-</Fuselage_armor_type>
-
-<Fuselage_armor_tech>
-(Unknown Technology Base)
-</Fuselage_armor_tech>
-
-<armor>
-32
-20
-20
-14
-</armor>
-
-<Nose Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-Small Laser
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
-
-<source>
-XTRO Boondocks - Jihad
-</source>
-
-<tonnage>
-25.0
-</tonnage>
-
+<motion_type>
+aerodyne
+</motion_type>

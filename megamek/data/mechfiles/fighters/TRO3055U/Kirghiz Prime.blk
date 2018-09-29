@@ -76,17 +76,39 @@ Aerodyne
 
 <Nose Equipment>
 CLLBXAC10:OMNI
+Clan LB 10-X Cluster Ammo:OMNI
+Clan LB 10-X Cluster Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLGaussRifle:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLGaussRifle:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
@@ -94,22 +116,15 @@ CLCASE
 CLERSmallLaser:OMNI
 CLStreakSRM6:OMNI
 CLStreakSRM6:OMNI
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-Clan LB 10-X Cluster Ammo:OMNI
-Clan LB 10-X Cluster Ammo:OMNI
-Clan Gauss Ammo:OMNI
-Clan Gauss Ammo:OMNI
-Clan Gauss Ammo:OMNI
-Clan Gauss Ammo:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLCASE
-</Fuselage Equipment>
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+</Aft Equipment>
 
 <source>
 TRO 3055u - Succession Wars

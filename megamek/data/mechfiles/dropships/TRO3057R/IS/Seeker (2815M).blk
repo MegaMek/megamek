@@ -40,7 +40,7 @@ Spheroid
 lightvehiclebay:28.0:1:1
 mechbay:2.0:1
 cargobay:300.0:0:3
-infantrybay:9.0:1:4:Foot
+infantrybay:9.0:1:4
 cargobay:191.0:1:5
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
@@ -84,6 +84,7 @@ crewquarters:112.0:0
 </armor>
 
 <Nose Equipment>
+MASH core component
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -109,10 +110,6 @@ crewquarters:112.0:0
 Medium Laser
 Medium Laser
 </Aft Equipment>
-
-<Hull Equipment>
-MASH Core Component
-</Hull Equipment>
 
 <structural_integrity>
 10

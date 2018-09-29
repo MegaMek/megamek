@@ -37,12 +37,12 @@ Aerodyne
 </motion_type>
 
 <transporters>
-infantrybay:12.0:1:1:Foot
+infantrybay:12.0:1:1
 lightvehiclebay:20.0:1:2
 crewquarters:175.0:0
 2ndclassquarters:21.0:0
 1stclassquarters:60.0:0
-cargobay:1526.5:1:6
+cargobay:1526.5:1:3
 </transporters>
 
 <SafeThrust>
@@ -113,11 +113,8 @@ Medium Laser
 (B) ISERLargeLaser
 Medium Laser
 Medium Laser
+MASH core component
 </Aft Equipment>
-
-<Hull Equipment>
-MASH Core Component
-</Hull Equipment>
 
 <structural_integrity>
 10

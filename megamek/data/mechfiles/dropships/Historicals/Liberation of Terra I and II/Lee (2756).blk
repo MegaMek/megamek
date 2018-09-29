@@ -44,7 +44,7 @@ steeragequarters:150.0:0
 1stclassquarters:80.0:0
 crewquarters:161.0:0
 2ndclassquarters:140.0:0
-cargobay:950.5:1:8
+cargobay:950.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -198,9 +198,6 @@ ISArtemisIV
 ISArtemisIV
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 25
 </structural_integrity>
@@ -212,10 +209,6 @@ H:Liberation of Terra II - Star League
 <tonnage>
 17000.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 125

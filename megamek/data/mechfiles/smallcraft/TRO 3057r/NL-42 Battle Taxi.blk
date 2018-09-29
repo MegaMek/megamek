@@ -99,9 +99,6 @@ ISMediumPulseLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 9
 </structural_integrity>
@@ -115,7 +112,7 @@ TRO 3057-Clan Invasion
 </tonnage>
 
 <designtype>
-1
+0
 </designtype>
 
 <crew>

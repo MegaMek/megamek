@@ -24,10 +24,6 @@ MR-1S
 3086
 </year>
 
-<originalBuildYear>
-3086
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -93,6 +86,8 @@ ISMML7:OMNI
 ISArtemisIV:OMNI
 ISMML7:OMNI
 ISArtemisIV:OMNI
+IS Ammo MML-7 SRM Artemis-capable:OMNI
+IS Ammo MML-7 LRM Artemis-capable:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -104,14 +99,6 @@ ISArtemisIV:OMNI
 <Aft Equipment>
 ISERMediumLaser:OMNI
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo MML-7 SRM Artemis-capable:OMNI
-IS Ammo MML-7 LRM Artemis-capable:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3085 - Early Republic

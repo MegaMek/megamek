@@ -24,10 +24,6 @@ EGL-R4
 2492
 </year>
 
-<originalBuildYear>
-2492
-</originalBuildYear>
-
 <type>
 IS Level 4
 </type>
@@ -35,9 +31,6 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 5
@@ -96,12 +89,6 @@ Medium Laser
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
 
 <source>
 TRO 3075 - Age of War

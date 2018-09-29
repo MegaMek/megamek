@@ -40,10 +40,10 @@ Aerodyne
 smallcraftbay:2.0:2:1
 cargobay:328.5:1:2
 cargobay:328.0:1:3
+megamek.common.DockingCollar@1c709ae3
+megamek.common.DockingCollar@1a9e70e
 1stclassquarters:40.0:0
 crewquarters:119.0:0
-dockingcollar
-dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -101,9 +101,6 @@ dockingcollar
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 1
 </structural_integrity>
@@ -123,6 +120,10 @@ TRO 3057U -
 <grav_decks>
 50
 </grav_decks>
+
+<docking_collar>
+2
+</docking_collar>
 
 <crew>
 31

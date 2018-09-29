@@ -24,10 +24,6 @@ CRX-OC
 3067
 </year>
 
-<originalBuildYear>
-3067
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 9
@@ -76,6 +69,8 @@ Aerodyne
 
 <Nose Equipment>
 MRM 20:OMNI
+IS MRM 20 Ammo:OMNI
+IS MRM 20 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -86,14 +81,6 @@ MRM 20:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS MRM 20 Ammo:OMNI
-IS MRM 20 Ammo:OMNI
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

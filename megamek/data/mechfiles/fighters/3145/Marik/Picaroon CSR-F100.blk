@@ -1,9 +1,9 @@
-#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,33 @@ Picaroon
 CSR-F100
 </Model>
 
-<year>
-3097
-</year>
-
-<originalBuildYear>
-3097
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+35
+</Tonnage>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Armor>
+75
+52
+52
+45
+</Armor>
+
+<Nose Equipment>
+ISHeavyPPC
+</Nose Equipment>
+
+<Left Wing Equipment> 
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
 
 <heatsinks>
 10
@@ -59,49 +60,38 @@ Aerodyne
 400
 </fuel>
 
-<engine_type>
-2
-</engine_type>
+<type>
+IS Level 2
+</type>
+
+<year>
+3097
+</year>
+
+<internal_type>
+0
+</internal_type>
 
 <armor_type>
 19
 </armor_type>
 
-<armor_tech>
--1
-</armor_tech>
+<engine_type>
+2
+</engine_type>
 
-<armor>
-75
-52
-52
-45
-</armor>
+<motion_type>
+aerodyne
+</motion_type>
 
-<Nose Equipment>
-Heavy PPC
-</Nose Equipment>
+<history>
+</history>
 
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-</Fuselage Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <source>
 TRO 3145 Free Worlds League - Early Republic
 </source>
-
-<tonnage>
-35.0
-</tonnage>
 

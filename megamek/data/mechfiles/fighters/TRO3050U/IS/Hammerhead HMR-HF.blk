@@ -24,10 +24,6 @@ HMR-HF
 3068
 </year>
 
-<originalBuildYear>
-3068
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 7
@@ -80,6 +73,8 @@ Aerodyne
 
 <Nose Equipment>
 ISLBXAC10
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
 ISERMediumLaser
 ISERMediumLaser
 </Nose Equipment>
@@ -92,14 +87,6 @@ ISERMediumLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS LB 10-X Cluster Ammo
-IS LB 10-X Cluster Ammo
-</Fuselage Equipment>
 
 <source>
 TRO 3050u - Jihad

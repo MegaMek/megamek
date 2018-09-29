@@ -37,7 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-infantrybay:12.0:2:1:Foot
+infantrybay:12.0:2:1
 cargobay:2274.0:2:2
 2ndclassquarters:0.0:0
 1stclassquarters:50.0:0
@@ -142,9 +142,6 @@ Medium Laser
 IS Ammo SRM-6 Artemis-capable:15
 ISArtemisIV
 </Aft Equipment>
-
-<Hull Equipment>
-</Hull Equipment>
 
 <structural_integrity>
 10

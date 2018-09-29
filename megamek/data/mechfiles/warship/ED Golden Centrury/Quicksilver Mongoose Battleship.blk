@@ -44,7 +44,7 @@ dockingcollar
 1stclassquarters:600.0:0
 steeragequarters:125.0:0
 crewquarters:2639.0:0
-cargobay:51084.0:4:6
+cargobay:51084.0:4:2
 </transporters>
 
 <SafeThrust>
@@ -174,9 +174,6 @@ CLLargePulseLaser
 CLLargePulseLaser
 </Aft Right Side Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <Left Broadsides Equipment>
 (B) Naval Laser 45
 Naval Laser 45
@@ -267,4 +264,8 @@ ED: Golden Century - Early Succession War
 <escape_pod>
 15
 </escape_pod>
+
+<history>
+The ship as built in the TRO is overweight. Reducing the Cargo to make it legal.
+</history>
 

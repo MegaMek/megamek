@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,59 +20,24 @@ Sparrowhawk
 SPR-DH
 </Model>
 
-<year>
-3076
-</year>
-
-<originalBuildYear>
-3076
-</originalBuildYear>
-
-<type>
-IS Level 4
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+30
+</Tonnage>
 
 <SafeThrust>
 9
 </SafeThrust>
 
-<cockpit_type>
-3
-</cockpit_type>
-
-<heatsinks>
-10
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-240
-</fuel>
-
-<engine_type>
-0
-</engine_type>
-
-<armor>
+<Armor>
 21
 13
 13
 17
-</armor>
+</Armor>
 
 <Nose Equipment>
-Medium Laser
-Medium Laser
+ISMediumLaser
+ISMediumLaser
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -86,17 +51,46 @@ ISERSmallLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+10
+</heatsinks>
 
-<Fuselage Equipment>
-</Fuselage Equipment>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3076
+</year>
 
 <source>
 XTRO RetroTech - Jihad
 </source>
 
-<tonnage>
-30.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<cockpit_type>
+3
+</cockpit_type>

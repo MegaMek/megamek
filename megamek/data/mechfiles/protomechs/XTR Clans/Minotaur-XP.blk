@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,24 +20,9 @@ Minotaur
 XP
 </Model>
 
-<year>
-3078
-</year>
-
-<originalBuildYear>
-3078
-</originalBuildYear>
-
-<type>
-Clan Level 4
-</type>
-
-<motion_type>
-Biped
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+9
+</Tonnage>
 
 <cruiseMP>
 3
@@ -47,61 +32,49 @@ Biped
 0
 </jumpingMP>
 
-<engine_type>
-0
-</engine_type>
-
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
-<internal_type>
--1
-</internal_type>
-
-<armor>
+<Armor>
 6
 18
 4
 4
 10
 3
-</armor>
-
-<Body Equipment>
-Clan Ammo SRM-5
-</Body Equipment>
-
-<Head Equipment>
-</Head Equipment>
-
-<Torso Equipment>
-CLImprovedSmallHeavyLaser
-CLImprovedSmallHeavyLaser
-</Torso Equipment>
-
-<Right Arm Equipment>
-</Right Arm Equipment>
-
-<Left Arm Equipment>
-</Left Arm Equipment>
-
-<Legs Equipment>
-</Legs Equipment>
+</Armor>
 
 <Main Gun Equipment>
-CLSRM5
+Clan SRM-5
+CLSRM5 Ammo (12)
 </Main Gun Equipment>
+
+<Torso Equipment>
+CLImprovedHeavySmallLaser
+CLImprovedHeavySmallLaser
+</Torso Equipment>
+
+<type>
+Clan Level 4
+</type>
+
+<year>
+3078
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>
 
 <source>
 XTRO Clans - Jihad
 </source>
-
-<tonnage>
-9.0
-</tonnage>
-

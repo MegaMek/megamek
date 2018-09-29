@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,55 +20,20 @@ Cheetah
 F-11-RR
 </Model>
 
-<year>
-3054
-</year>
-
-<originalBuildYear>
-3054
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+25
+</Tonnage>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-10
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-800
-</fuel>
-
-<engine_type>
-2
-</engine_type>
-
-<armor>
+<Armor>
 13
 11
 11
 13
-</armor>
+</Armor>
 
 <Nose Equipment>
 Small Laser
@@ -85,17 +50,42 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+10
+</heatsinks>
 
-<Fuselage Equipment>
-</Fuselage Equipment>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+800
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3054
+</year>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<tonnage>
-25.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

@@ -24,10 +24,6 @@ CMT-3T
 3065
 </year>
 
-<originalBuildYear>
-3065
-</originalBuildYear>
-
 <type>
 IS Level 2
 </type>
@@ -35,9 +31,6 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
-
-<transporters>
-</transporters>
 
 <SafeThrust>
 6
@@ -80,6 +73,10 @@ Aerodyne
 
 <Nose Equipment>
 LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+ISCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,16 +91,6 @@ ISERMediumLaser
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
-ISCASE
-</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

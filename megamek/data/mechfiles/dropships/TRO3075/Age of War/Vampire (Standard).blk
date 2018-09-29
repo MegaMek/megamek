@@ -42,7 +42,7 @@ cargobay:10.0:1:2
 1stclassquarters:20.0:0
 crewquarters:0.0:0
 steeragequarters:35.0:0
-infantrybay:3.0:4:6:Jump
+infantrybay:3.0:4:1:Jump
 </transporters>
 
 <SafeThrust>
@@ -106,9 +106,6 @@ IS Ammo LRM-20:6
 Medium Laser
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 11
 </structural_integrity>
@@ -120,10 +117,6 @@ TRO 3075 - Star League
 <tonnage>
 400.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 70

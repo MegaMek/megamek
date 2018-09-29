@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,60 +20,29 @@ Transit
 TR-12
 </Model>
 
-<year>
-3063
-</year>
-
-<originalBuildYear>
-3063
-</originalBuildYear>
-
-<type>
-IS Level 2
-</type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<transporters>
-</transporters>
+<Tonnage>
+50
+</Tonnage>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<cockpit_type>
-0
-</cockpit_type>
-
-<heatsinks>
-12
-</heatsinks>
-
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<engine_type>
-2
-</engine_type>
-
-<armor>
+<Armor>
 69
 39
 39
 37
-</armor>
+</Armor>
 
 <Nose Equipment>
 ISLBXAC20
 ISERMediumLaser
 ISERMediumLaser
+ISLBXAC20 CL Ammo
+ISLBXAC20 CL Ammo
+ISLBXAC20 CL Ammo
+ISLBXAC20 CL Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -87,21 +56,42 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<Wings Equipment>
-</Wings Equipment>
+<heatsinks>
+12
+</heatsinks>
 
-<Fuselage Equipment>
-IS LB 20-X Cluster Ammo
-IS LB 20-X Cluster Ammo
-IS LB 20-X Cluster Ammo
-IS LB 20-X Cluster Ammo
-</Fuselage Equipment>
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3063
+</year>
 
 <source>
 TRO 3039 - Civil War
 </source>
 
-<tonnage>
-50.0
-</tonnage>
+<internal_type>
+0				
+</internal_type>
 
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

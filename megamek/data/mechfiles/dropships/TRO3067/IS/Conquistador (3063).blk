@@ -41,11 +41,11 @@ mechbay:24.0:4
 asfbay:18.0:2:2
 heavyvehiclebay:12.0:1:3
 battlearmorbay:20.0:0:4
-infantrybay:16.0:0:5:Foot
+infantrybay:16.0:0:5
 1stclassquarters:50.0:0
 2ndclassquarters:280.0:0
 crewquarters:217.0:0
-cargobay:753.5:1:9
+cargobay:753.5:1:6
 </transporters>
 
 <SafeThrust>
@@ -250,9 +250,6 @@ ISAntiMissileSystem
 ISAMS Ammo:168
 </Aft Equipment>
 
-<Hull Equipment>
-</Hull Equipment>
-
 <structural_integrity>
 30
 </structural_integrity>
@@ -264,10 +261,6 @@ TRO 3067 - Civil War
 <tonnage>
 17400.0
 </tonnage>
-
-<designtype>
-1
-</designtype>
 
 <crew>
 779

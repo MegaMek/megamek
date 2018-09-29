@@ -39,7 +39,7 @@ Aerodyne
 <transporters>
 1stclassquarters:390.0:0
 crewquarters:1330.0:0
-cargobay:1840.5:1:3
+cargobay:1840.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -88,6 +88,7 @@ Naval Laser 55
 Naval PPC (Heavy)
 (B) Capital Missile Launcher (Killer Whale)
 Ammo Killer Whale:20
+CasparDroneControlSystem
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -115,12 +116,14 @@ Ammo AR10 Killer Whale:10
 </Right Front Side Equipment>
 
 <Aft Equipment>
+SDSSelfDestructSystem
 (B) Naval Laser 45
 Naval Laser 45
 Naval Laser 45
 (B) Capital Missile Launcher (Barracuda)
 Capital Missile Launcher (Barracuda)
 Ammo Barracuda:40
+AutoTacticalAnalysisComputer
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -140,12 +143,6 @@ Naval Autocannon (NAC/20)
 Naval Autocannon (NAC/20)
 Ammo NAC/20:300
 </Aft Right Side Equipment>
-
-<Hull Equipment>
-CasparDroneControlSystem
-SDSSelfDestructSystem
-AutoTacticalAnalysisComputer
-</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 55

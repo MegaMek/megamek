@@ -80,6 +80,10 @@ Aerodyne
 
 <Nose Equipment>
 ISUltraAC20
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
 ISReconCamera
 </Nose Equipment>
 
@@ -92,16 +96,6 @@ ISReconCamera
 <Aft Equipment>
 ISFlotationHull
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

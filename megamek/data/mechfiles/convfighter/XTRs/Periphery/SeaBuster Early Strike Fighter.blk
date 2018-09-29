@@ -80,6 +80,7 @@ Aerodyne
 
 <Nose Equipment>
 ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo
 ISReconCamera
 </Nose Equipment>
 
@@ -91,13 +92,6 @@ ISReconCamera
 
 <Aft Equipment>
 </Aft Equipment>
-
-<Wings Equipment>
-</Wings Equipment>
-
-<Fuselage Equipment>
-ISImprovedHeavyGauss Ammo
-</Fuselage Equipment>
 
 <source>
 XTRO Periphery - Jihad

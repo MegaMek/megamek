@@ -1403,8 +1403,12 @@ public class TestAero extends TestEntity {
         int capitalWeapons = 0;
         int stdWeapons = 0;
         for (Mounted m : aero.getTotalWeaponList()) {
-            if ((m.getType() instanceof BayWeapon)
-                    || (((WeaponType)m.getType()).getLongRange() <= 1)) {
+            if (m.getType() instanceof BayWeapon) {
+                continue;
+            }
+            if ((((WeaponType)m.getType()).getLongRange() <= 1)
+                    // MML range depends on ammo, and getLongRange() returns 0
+                    && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
                 continue;
             }
             if (((WeaponType)m.getType()).isCapital()

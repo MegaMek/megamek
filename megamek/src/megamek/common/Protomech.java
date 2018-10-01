@@ -169,6 +169,11 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public int getUnitType() {
+        return UnitType.PROTOMEK;
+    }
+
+    @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }

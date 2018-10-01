@@ -352,6 +352,11 @@ public abstract class Mech extends Entity {
         }
     }
 
+    @Override
+    public int getUnitType() {
+        return UnitType.MEK;
+    }
+
     /**
      * @return if this mech cannot stand up from hulldown
      */

@@ -34,8 +34,12 @@ public class SpaceStation extends Jumpship {
     //ASEW Missile Effects, per location
     //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
-    
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.SPACE_STATION;
+    }
+
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc

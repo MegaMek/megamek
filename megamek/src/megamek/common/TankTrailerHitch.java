@@ -274,6 +274,11 @@ public class TankTrailerHitch implements Transporter {
     public int getCargoMpReduction() {
         return 0;
     }
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 
     @Override
     public String toString() {

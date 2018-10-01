@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ *           Copyright (C) 2018 The MegaMek team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -13,20 +14,18 @@
  */
 package megamek.common.logging;
 
-import megamek.common.annotations.Nullable;
-import org.apache.log4j.Level;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+
+import megamek.common.annotations.Nullable;
+
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
  * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 9/7/13 9:31 AM
  */
 public enum LogLevel {
+
     OFF(Level.OFF),
     FATAL(Level.FATAL),
     ERROR(Level.ERROR),
@@ -46,11 +45,11 @@ public enum LogLevel {
     }
 
     public int toInt() {
-        return level.toInt();
+        return level.intLevel();
     }
 
     public boolean willLog(final LogLevel logLevel) {
-        return logLevel.getLevel().isGreaterOrEqual(getLevel());
+        return logLevel.getLevel().compareTo(level) >= 0;
     }
 
     public static String[] getLogLevelNames() {
@@ -72,21 +71,22 @@ public enum LogLevel {
 
     @Nullable
     public static LogLevel getFromLog4jLevel(final int level) {
-        if (Level.FATAL_INT == level) {
+        if (Level.FATAL.intLevel() == level) {
             return FATAL;
-        } else if (Level.ERROR_INT == level) {
+        } else if (Level.ERROR.intLevel() == level) {
             return ERROR;
-        } else if (Level.WARN_INT == level) {
+        } else if (Level.WARN.intLevel() == level) {
             return WARNING;
-        } else if (Level.INFO_INT == level) {
+        } else if (Level.INFO.intLevel() == level) {
             return INFO;
-        } else if (Level.DEBUG_INT == level) {
+        } else if (Level.DEBUG.intLevel() == level) {
             return DEBUG;
-        } else if (Level.TRACE_INT == level) {
+        } else if (Level.TRACE.intLevel() == level) {
             return TRACE;
-        } else if (Level.OFF_INT == level) {
+        } else if (Level.OFF.intLevel() == level) {
             return OFF;
         }
         return null;
     }
+
 }

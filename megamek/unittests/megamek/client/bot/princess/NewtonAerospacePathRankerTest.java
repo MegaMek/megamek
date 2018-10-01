@@ -13,42 +13,13 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Game;
-import megamek.common.GameTurn;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
-import megamek.common.Tank;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.LogLevel;
-
-import megamek.common.logging.MMLogger;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import megamek.common.IGame;
+import megamek.common.options.GameOptions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -69,7 +40,6 @@ public class NewtonAerospacePathRankerTest {
 
         MoralUtil mockMoralUtil = Mockito.mock(MoralUtil.class);
 
-        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
@@ -77,7 +47,6 @@ public class NewtonAerospacePathRankerTest {
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
         Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         
         mockGame = Mockito.mock(IGame.class);
         mockGameOptions = Mockito.mock(GameOptions.class);

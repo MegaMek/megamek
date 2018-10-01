@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration name="development-configuration" monitorinterval="5" status="warn">
+
+    <!-- This is the default log4j2 configuration, intended for development. -->
+
+    <properties>
+        <!-- This is the same pattern as console.pattern below, but with ANSI colouring:
+                 %d{ABSOLUTE} [%-20.20thread] %highlight{%-5level} %-40.40logger - %highlight{%message{nolookups}}%n%rThrowable
+             To use it from eclipse, search the marketplace for the "ANSI Escape in Console" plugin.
+             Not sure about visualising ANSI in windows... log4j2 documentation says it will work if an extra
+             optional dependency (Jansi) is provided and a system property set.
+
+             Add this to a patter to show the class, method, file and line where the loggig call occurred
+                %class.%method (%file:%line)
+             (that information is fetched from the stack trace, which can be relatively slow).
+
+             If you feel a sense of nostalgia for the old log format, this pattern
+                 %n%d{HH:mm:ss,SSS} %p [%c] {%t} \n%m%n
+             used to be the default one up to v0.45.1.
+
+             See the official documentation at
+                 https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout
+             for info on the supported pattern parameters -->
+        <property name="console.pattern">%d{ABSOLUTE} [%-20.20thread] %-5level %-40.40logger - %message{nolookups}%n%rThrowable</property>
+        <property name="logfile.filename">${sys:megamek.log.file:-./logs/mm.log}</property>
+        <!-- The trailing spaces in header lines are so that people can copy&paste the header into github issues -->
+        <property name="logfile.pattern">%d{ABSOLUTE} [%-30.30thread] %-5level %-40.40logger - %message{nolookups}%n%rThrowable</property>
+        <!-- This is the minimum level of log messages that will be replicated/diverted to princess.log.
+            Note this merely controls what messages get replicated to princess.log and is NOT the same as setting the
+            level for the "megamek.client.bot.princess" logger.
+            You most probably want this to be either "off" (disable princess.log) or "all" (send all princess logs
+            to princess.log). -->
+        <property name="logfile.princess.threshold">off</property>
+        <!-- This controls whether log messages from princess should be replicated or diverted to princess.log.
+             Use "true" if you want princess messages to appear in both princess.log and the "regular" log;
+             use "false" to hide them in the regular log. -->
+        <property name="logger.princess.additivity">true</property>
+    </properties>
+
+    <appenders>
+        <console name="console" direct="true">
+            <patternlayout pattern="${console.pattern}" />
+        </console>
+        <file name="file" fileName="${logfile.filename}" append="false" createondemand="true">
+            <patternlayout pattern="${logfile.pattern}" disableAnsi="true" />
+        </file>
+        <file name="princess" filename="logs/princess.log" append="false" createondemand="true">
+            <patternlayout pattern="${logfile.pattern}" disableAnsi="true" />
+            <thresholdfilter level="${logfile.princess.threshold}" onmatch="accept" onmismatch="deny" />
+        </file>
+    </appenders>
+
+    <loggers>
+
+        <!-- You can set thresholds on specific categories like so:
+
+             <logger name="megamek.common"               level="error" />
+             <logger name="megamek.common.QuirksHandler" level="warn" />
+             <logger name="megamek"                      level="info" />
+
+             level can be: off, fatal, error, warn, info, debug, trace, all -->
+
+        <!-- Note that setting the level of "megamek.client.bot.princess" here
+             is ineffective, as it will be overridden via code. -->
+
+        <logger name="megamek" level="debug" />
+        <logger name="System"  level="all" />
+        <root level="info">
+            <appenderref ref="console" />
+            <appenderref ref="file" />
+        </root>
+        <logger name="megamek.client.bot.princess" additivity="${logger.princess.additivity}">
+            <appender-ref ref="princess" />
+        </logger>
+    </loggers>
+
+</configuration>

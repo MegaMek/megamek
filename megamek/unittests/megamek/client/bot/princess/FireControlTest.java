@@ -232,7 +232,7 @@ public class FireControlTest {
         Mockito.doReturn(mockShooterMoveMod)
                .when(testFireControl)
                .getAttackerMovementModifier(Mockito.any(IGame.class), Mockito.anyInt(),
-                                            Mockito.any(EntityMovementType.class));
+                                            Mockito.nullable(EntityMovementType.class));
         Mockito.doReturn(mockTargetMoveMod)
                .when(testFireControl)
                .getTargetMovementModifier(Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean(),

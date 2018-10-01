@@ -255,4 +255,8 @@ public final class TroopSpace implements Transporter {
         currentSpace = totalSpace;
     }
     
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 } // End package class TroopSpace implements Transporter

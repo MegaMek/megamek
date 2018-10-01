@@ -459,6 +459,7 @@ Drake Medium Strike Fighter (Standard)|
 Planetlifter Support Aircraft (Standard)|
 SeaBuster Early Strike Fighter (Standard)|
 Hurricane Conventional Fighter (Standard)|
+Vendetta Medium Fighter (Standard)|
 Mustang Fighter (Standard)|
 Colt Medium Fighter (LRM)|
 Colt Medium Fighter (SRM)|
@@ -606,9 +607,9 @@ Pentagon (2751)|
 Pentagon (Standard)|
 Pentagon Mk I|
 Vampire (Standard)|
+Vulture (2312)|
 Vulture (2405)|
 Vulture (Cargo)|
-Vulture (Standard)|
 Aurora (BA)|
 Aurora (Cargo)|
 Aurora (Combined Arms)|
@@ -1112,7 +1113,6 @@ Shiva SHV-S|
 Lucifer LCF-X30|
 Seydlitz SYD-45X 'Starling'|
 Slayer SL-CX1|
-SeaBuster Early Strike Fighter|
 Thunderbird TRB-XTS|
 Battle Taxi NL-43|
 Deathstalker XF-78|
@@ -2201,28 +2201,97 @@ Mechanized Hover Platoon (LRM)|
 Mechanized Tracked Platoon (LRM)|
 Mechanized Wheeled Platoon (LRM)|
 Motorized Platoon (LRM)|
-Comitatus JumpShip (Standard)|
-Hunter Jumpship (Lithium-Fusion)|
-Hunter Jumpship (Standard)|
-Invader Jumpship (Clan)[PPC]|
-Invader Jumpship (Clan)|
-Merchant Jumpship (Clan)|
-Monolith Jumpship (Clan)|
-Odyssey Jumpship (Standard)|
-Tramp Jumpship (LF) (Clan)|
-Chimeisho JumpShip (Standard)|
+Burrower DTM-1 MiningMech|
+Burrower DTM-1M MiningMech MOD|
+Buster BC XXI-M HaulerMech MOD|
+Carbine CON-9M Karenna ConstructionMech MOD|
+Carbine CON-9M-J ConstructionMech MOD|
+Carbine CON-9M-JB ConstructionMech MOD|
+Centurion CN9-H2 MilitiaMech|
+Centurion CN9-H2H MilitiaMech|
+Centurion CN9-H3 MilitiaMech|
+Crosscut ED-X4M-A LoggerMech MOD|
+Crosscut ED-X4M-E LoggerMech MOD|
+Crosscut ED-X4M-L LoggerMech MOD|
+Deep Lord RCL-Z1M-B MilitiaMech|
+Demeter WLD-1 AgroMech|
+Demeter WLD-1-M AgroMech MOD|
+DemolitionMech WI-DMM MOD|
+Dig Lord RCL-4M MiningMech MOD|
+Dig Lord RCL-4M-B MiningMech MOD|
+Euras 2 SolahmaMech|
+Euras SolahmaMech|
+Exo HMX-1|
+Exo HMX-2|
+Exo HMX-3|
+Exo HMX-3M|
+Firebee WI-WAM MilitiaMech|
+Ground Pounder DVM-2 MiningMech|
+Ground Pounder DVM-2M MiningMech MOD|
+Guard GS-107X SecurityMech|
+Guard GS-54 SecurityMech|
+Gulon C SolahmaMech|
+Gulon GLN-1A MiningMech|
+Gulon GLN-1B SecurityMech|
+Harvester HVR-199 AgroMech|
+Harvester HVR-199M AgroMech MOD|
+Harvester HVR-199M-A AgroMech MOD|
+Harvester HVR-199M-B AgroMech MOD|
+Harvester HVR-199M-M AgroMech MOD|
+Heavy Forester HFL-1 LoggerMech|
+Heavy Forester HFL-1M LoggerMech MOD|
+Heavy Lifter HCL-1M CargoMech MOD|
+Heavy Lifter HCL-1MM MilitiaMech|
+Inquisitor ITW-80 SecurityMech|
+Inquisitor ITW-85 SecurityMech|
+MuckRaker GMMM-2 MiningMech|
+MuckRaker GMMM-2M MiningMech MOD|
+MuckRaker GMMM-2M-B MiningMech MOD|
+Opossum OPO-2 SalvageMech|
+Opossum OPO-3 SalvageMech MOD|
+Pacifier CCU-36 SecurityMech|
+Pacifier CCU-40 SecurityMech|
+Pompier GM-4P SecurityMech|
+St. Florian FLN-366 FireMech|
+St. Florian FLN-366-M FireMech MOD|
+StrongArm SC CV ConstructionMech|
+StrongArm SC CV-M ConstructionMech MOD|
+StrongArm SC CVI ConstructionMech|
+Hoverbike (Laser)|
+Hoverbike (MG)|
+Hoverbike (Standard)|
+Minigun Cycle (SRM)|
+Minigun Cycle (Standard)|
+Monocycle (Standard)|
+Scout ATV (Standard)|
+Squad Transport VTOL (Standard)|
+TrackBike (Standard)|
+Trike (Standard)|
+Prime Mover (SL Era Original)|
+Prime Mover (SL Era Refit)|
+Prime Mover (Standard)|
+Sturmvogel Gunship (LB 10-X)|
+Sturmvogel Gunship (Standard)|
+Sturmvogel Maritime Patrol WiGE (LB 2-X)|
+Sturmvogel Maritime Patrol WiGE (Standard)|
+Wheeled Scout (Recon Camera)|
+Wheeled Scout (Remote Sensor)|
+Wheeled Scout (Standard)|
+Comitatus JumpShip (2995)|
+Hunter Jumpship (2832)|
+Odyssey Jumpship (2887)|
+Chimeisho JumpShip (3056)|
+Invader Jumpship (2631 PPC)|
+Invader Jumpship (2631)|
+Magellan Jumpship (2960)|
+Merchant Jumpship (2503)|
+Monolith Jumpship (2776)|
+Scout JumpShip (2712)|
+Star Lord JumpShip (2590)|
+Tramp JumpShip (2754)|
+Tramp JumpShip (3071)|
 Explorer JumpShip (HPG)|
 Explorer JumpShip (Standard)|
-Invader Jumpship (PPC)|
-Invader Jumpship (Standard)|
-Magellan Jumpship (Standard)|
-Merchant Jumpship (Standard)|
-Monolith Jumpship (Standard)|
-Quetzalcoatl-Scout JumpShip (Standard)|
-Scout JumpShip (Standard)|
-Star Lord JumpShip (Standard)|
-Tramp JumpShip (Lithium-Fusion)|
-Tramp JumpShip (Standard)|
 Aquilla Transport Jumpship (Standard)|
 Liberty Jumpship (Standard)|
 Leviathan Jumpship (Standard)|
@@ -5599,26 +5668,6 @@ Boggart (Quad) 1|
 Sprite 2|
 Sprite (Standard)|
 Minotaur XP|
-Bayamo Hoverbike (Standard)|
-Bayamo Hoverbike (Standard)|
-Bayamo Hoverbike (Standard)|
-Minigun Cycle (SRM)|
-Minigun Cycle (Standard)|
-Monocycle (Standard)|
-Motuo Che Shang No.2 (Standard)|
-Squad Transport VTOL (Standard)|
-Motuo Che Shang No.2 (Standard)|
-Motuo Che Shang No.2 (Standard)|
-Prime Mover (SL Era Original)|
-Prime Mover (SL Era Refit)|
-Prime Mover (Standard)|
-Sturmvogel Gunship (LB 10-X)|
-Sturmvogel Gunship (Standard)|
-Sturmvogel Maritime Patrol WiGE (LB 2-X)|
-Sturmvogel Maritime Patrol WiGE (Standard)|
-Wheeled Scout (Recon Camera)|
-Wheeled Scout (Remote Sensor)|
-Wheeled Scout (Standard)|
 Dragonstar Assault Transport (3060)|
 Dragonstar Passenger Transport (Standard)|
 Mowang Courier (Standard)|
@@ -5660,22 +5709,35 @@ Ares Landing Craft Mk.I|
 Ares Assault Craft Mk.III|
 Crucible Station (Standard)|
 Hong Lung Interdiction Station (Standard)|
-Snowden Mining Station Mk I|
+Snowden Mining Station (MK I)|
 Snowden Mining Station (Standard)|
-M9 Pavise SDS Battle Station|
+M9 SDS Battle Station 'Pavise'|
 Drake SDS Control Station (Standard)|
-Bastion System Defense Station (Standard)|
-BattleSat System Defense Station (Standard)|
-Capitol System Defense Station (Standard)|
-Large Habitat (Standard)|
-Large Pressurized Yard (Standard)|
-Large Unpressurized Yard (Standard)|
-Medium-Large Factory (Standard)|
-Olympus Recharge Station (Standard)|
-Small Factory (Standard)|
-Small Habitat (Standard)|
-Small Pressurized Yard (Standard)|
-Small Unpressurized Yard (Standard)|
+Alliance Space Station (2713)|
+Alliance Space Station (3061)|
+Bastion System Defense Station (2584)|
+Bastion System Defense Station (3058)|
+Bastion System Defense Station (3091)|
+BattleSat System Defense Station (3056)|
+BattleSat System Defense Station (3089)|
+Capitol System Defense Station (3051)|
+Factory - Medium/Large (2400)|
+Factory - Medium/Large (2750)|
+Factory - Small (2300)|
+Habitat - Large (2500)|
+Habitat - Large (2750)|
+Habitat - Small (2400)|
+Olympus Recharge Station (2663)|
+Olympus Recharge Station (2942)|
+Olympus Recharge Station (3072)|
+Pressurized Yard - Huge (2450)|
+Pressurized Yard - Large (2400)|
+Pressurized Yard - Medium (2350)|
+Pressurized Yard - Small (2200)|
+Unpressurized Yard - Huge (2350)|
+Unpressurized Yard - Large (2300)|
+Unpressurized Yard - Medium (2250)|
+Unpressurized Yard - Small (2100)|
 Puma Assault Tank PAT-001|
 Puma Assault Tank PAT-002|
 Air Car (Standard)|
@@ -6893,12 +6955,6 @@ Mosquito Light Fighter (Standard)|
 Randolph Support Vehicle (Standard)|
 SRM Carrier (Primitive)|
 Strike Falcon Attack VTOL (Standard)|
-Alacorn Heavy Tank Mk I|
-Alacorn Heavy Tank Mk II|
-Caravan Heavy Transport (Standard)|
-Carter Medical Emergency Response Vehicle (Standard)|
-Korvin Tank KRV-2|
-Vendetta Medium Fighter (Standard)|
 Chi-Ha Infantry Combat Vehicle (Original)|
 Chi-Ha Infantry Combat Vehicle (Standard)|
 Cobra VTOL Transport (Fusion)|
@@ -6934,41 +6990,98 @@ Condor Heavy Hover Tank (Fission)|
 J. Edgar Light Hover Tank (Cell)|
 Kestrel VTOL (Scout)|
 Soarece Superheavy MBT (Standard)|
-Du Shi Wang Battleship (Standard)|
-Feng Huang Cruiser (Upgrade)|
-Feng Huang Cruiser (Standard)|
-Aegis Heavy Cruiser (Clan)|
-Black Lion Battlecruiser (Clan)|
-Cameron Battlecruiser (Clan)|
+Aegis Heavy Cruiser (2843)|
+Black Lion II Battlecruiser (2843)|
+Cameron Battlecruiser (2851)|
+Carrack Transport (Merchant 2985)|
+Congress Frigate (2914)|
+Essex II Destroyer (2862)|
+Fredasa Corvette Raider (2962)|
+Liberator Cruiser (3024)|
+Lola III Destroyer (2841)|
+McKenna Battleship (2851)|
+Nightlord Battleship (2932)|
+Potemkin Troop Cruiser (2875)|
+Sovetskii Soyuz Heavy Cruiser (2845)|
+Sovetskii Soyuz Heavy Cruiser (Dire Wolf) (2845)|
+Texas Battleship (2835)|
+Vincent Corvette Mk 42|
+Volga Transport (2836)|
+Whirlwind Destroyer (2901)|
+York Destroyer Carrier (2947)|
+Aegis Heavy Cruiser (2372)|
+Aegis Heavy Cruiser (2582)|
+Atreus Battleship (2552)|
+Avatar Heavy Cruiser (2531)|
+Baron Destroyer (2520)|
+Black Lion II Battlecruiser (2691)|
+Bonaventure Corvette (2317)|
+Cameron Battlecruiser (2688)|
+Carrack Transport (2600)|
+Carson Destroyer (2632)|
+Congress Frigate (2542)|
+Dart Light Cruiser (2305)|
+Davion Destroyer Block I|
+Davion Destroyer Block II|
+Essex II Destroyer (2711)|
+Farragut Battleship (2448)|
+Fox Corvette (3057)|
+Impavido Destroyer (3058)|
+Kimagure Pursuit Cruiser (2582)|
+Kirishima Cruiser (3061)|
+Kyushu Frigate (3057)|
+Lola I Destroyer (2345)|
+Lola II Destroyer (2622)|
+Lola III Destroyer (2662)|
+Luxor Heavy Cruiser (2727)|
+Mako Corvette (2692)|
+McKenna Battleship (2652)|
+Monsoon Battleship (2368)|
+Monsoon Battleship (LF) (2574)|
+Naga Destroyer (2645)|
+Nightwing Surveillance (2447)|
+Pinto Corvette (2502)|
+Potemkin Troop Cruiser (2611)|
+Quixote Frigate (2350)|
+Riga Frigate (2440)|
+Sovetskii Soyuz Heavy Cruiser (2742)|
+Suffren Destroyer (3062)|
+Sylvester Transport (2499)|
+Texas Battleship (2618)|
+Tracker Surveillance (2407)|
+Vigilant Corvette (2320)|
+Vincent Corvette Mk 39|
+Volga Transport (2709)|
+Wagon Wheel Frigate (2570)|
+Whirlwind Destroyer (2606)|
+Winchester Cruiser (2364)|
 Carrack Transport (Clan)|
-Carrack Transport (Merchant)|
-Congress Frigate (Clan)|
 Conqueror Battlecruiser Carrier (Standard)|
-Essex Destroyer (Clan)|
-Fredasa Corvette Raider (Standard)|
 Leviathan Heavy Transport (Standard)|
 Leviathan II Battleship (Standard)|
-Liberator Cruiser (Standard)|
-Lola III Destroyer (Clan)|
-McKenna Battleship (Clan)|
-Nightlord Battleship (Standard)|
-Potemkin Troop Cruiser (Clan)|
-Quicksilver Mongoose Battleship (Standard)|
-Sovetskii Soyuz Heavy Cruiser (Clan)|
-Texas Battleship (Clan)|
-Vincent Corvette Mk 42|
-Volga Transport (Clan)|
-Whirlwind Destroyer (Clan)|
-York Destroyer Carrier (Standard)|
 Dante Frigate (Standard)|
-Suffren Destroyer (Standard)|
+Avalon Cruiser (Standard)|
 Inazuma Corvette (Standard)|
-Kirishima Cruiser (Standard)|
-Kyushu Frigate (Standard)|
+Tatsumaki Destroyer (Standard)|
+Feng Huang Cruiser (Upgrade)|
+Feng Huang Cruiser (Standard)|
+Agamemnon Heavy Cruiser (Standard)|
+Eagle Frigate (Standard)|
+Thera Carrier (Standard)|
+Zechetinu Corvette (Standard)|
+Zechetinu II Corvette (Standard)|
+Mjolnir Battlecruiser (Standard)|
+Du Shi Wang Battleship (Standard)|
+Robinson Transport Block I|
+Robinson Transport Block II|
 Samarkand Carrier Block I|
 Samarkand Carrier Block II|
-Tatsumaki Destroyer (Standard)|
-Black Lion I-Battlecruiser|
+Tharkad Battlecruiser (2690)|
+Tharkad Battlecruiser (WoB)|
+Newgrange III Yardship 'Eyrines'|
+Newgrange III Yardship (2700)|
+Quicksilver Mongoose Battleship (Standard)|
+Black Lion I Battlecruiser|
 Soyal Heavy Cruiser (Standard)|
 Congress D Frigate (Standard)|
 Defender Battlecruiser (Standard)|
@@ -6977,24 +7090,11 @@ Narukami Destroyer (Block I)|
 Narukami Destroyer (Block II)|
 League Destroyer (Block I)|
 League Destroyer (Block II)|
-Athena Cruiser (Standard)|
-Essex I Destroyer (Standard)|
-Riga II Destroyer/Carrier (Standard)|
+Athena Cruiser (2569)|
+Essex I Destroyer (2351)|
+Riga II Destroyer/Carrier (2747)|
 Commonwealth Light Cruiser (Block I)|
 Commonwealth Light Cruiser (Block II)|
-Avalon Cruiser (Standard)|
-Davion Destroyer Block I|
-Davion Destroyer Block II|
-Fox Corvette (Standard)|
-Robinson Transport Block I|
-Robinson Transport Block II|
-Agamemnon Heavy Cruiser (Standard)|
-Atreus Battleship (Standard)|
-Eagle Frigate (Standard)|
-Impavido Destroyer (Standard)|
-Thera Carrier (Standard)|
-Zechetinu Corvette (Standard)|
-Zechetinu II Corvette (Standard)|
 M5 Capital Drone (Caspar)|
 M5C Capital Drone (Caspar)|
 Stefan Amaris Battleship (Standard)|
@@ -7005,45 +7105,5 @@ Bug-Eye Surveillance Ship (Standard)|
 Faslane Yardship (Standard)|
 Newgrange Yardship (Standard)|
 Naga Destroyer (Caspar II Control Ship)|
-Mako Corvette (Standard)|
-Mjolnir Battlecruiser (Standard)|
-Sylvester Transport (Standard)|
-Tharkad Battlecruiser (2690)|
-Tharkad Battlecruiser (WoB)|
-Pinto Corvette (Standard)|
-Wagon Wheel Frigate (Standard)|
-Winchester Cruiser (Standard)|
-Aegis Heavy Cruiser (2372)|
-Aegis Heavy Cruiser (2582)|
-Avatar Heavy Cruiser (Standard)|
-Baron Destroyer (Standard)|
-Black Lion Battlecruiser (2691)|
-Bonaventure Corvette (Standard)|
-Cameron Battlecruiser (2688)|
-Carson Destroyer (Standard)|
-Congress Frigate (2542)|
-Dart Light Cruiser (Standard)|
-Essex Destroyer (2711)|
-Farragut Battleship (Standard)|
-Kimagure Pursuit Cruiser (Standard)|
-Lola I Destroyer (Standard)|
-Lola II Destroyer (Standard)|
-Lola III Destroyer (2662)|
-Luxor Heavy Cruiser (Standard)|
-McKenna Battleship (2652)|
-Monsoon Battleship (Lithium-Fusion)|
-Monsoon Battleship (Standard)|
-Naga Destroyer (Standard)|
-Nightwing Surveillance (Standard)|
-Potemkin Troop Cruiser (2611)|
-Quixote Frigate (Standard)|
-Riga Frigate (Standard)|
-Sovetskii Soyuz Heavy Cruiser (2742)|
-Texas Battleship (2618)|
-Tracker Surveillance (Standard)|
-Vigilant Corvette (Standard)|
-Vincent Corvette Mk 39|
-Volga Transport (2709)|
-Whirlwind Destroyer (2606)|
 Kimagure Pursuit Cruiser (Surprise)|
 Leviathan III Battleship (Standard)|

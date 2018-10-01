@@ -119,7 +119,6 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weighty = 0.0;
         add(new JLabel(Messages.getString("RandomArmyDialog.Year")), c);
 
-        txtYear.setText(String.valueOf(ratGenYear));
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;

@@ -11574,7 +11574,7 @@ public class Server implements Runnable {
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
-                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+                if (entity.hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
                     target += 2;
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER)
@@ -15825,6 +15825,25 @@ public class Server implements Runnable {
     }
 
     /**
+     * Apply damage to mech for zweihandering (melee attack with both hands) as per
+     * pg. 82, CamOps
+     * @param ae - the attacking entity
+     * @param missed - did the attack missed. If so PSR is necessary.
+     */
+    private void applyZweihanderSelfDamage(Entity ae, boolean missed) {
+        Report r = new Report(4022);
+        r.subject = ae.getId();
+        r.indent();
+        r.addDesc(ae);
+        addReport(r);
+        addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
+        addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
+        if(missed) {
+            game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
+        }
+    }
+    
+    /**
      * Handle a punch attack
      */
     private void resolvePunchAttack(PhysicalResult pr, int lastEntityId) {
@@ -15843,6 +15862,9 @@ public class Server implements Runnable {
         }
         final String armName = paa.getArm() == PunchAttackAction.LEFT ? "Left Arm"
                                                                       : "Right Arm";
+        
+        final int armLoc = paa.getArm() == PunchAttackAction.LEFT ? Mech.LOC_LARM : Mech.LOC_RARM;
+        
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage
                                                             : pr.damageRight;
@@ -15860,6 +15882,7 @@ public class Server implements Runnable {
                                  && (roll == toHit.getValue());
 
         Report r;
+        
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
@@ -15922,7 +15945,7 @@ public class Server implements Runnable {
                 addReport(r);
             }
         }
-
+        
         // do we hit?
         if (roll < toHit.getValue()) {
             // nope
@@ -15948,6 +15971,11 @@ public class Server implements Runnable {
                 }
 
             }
+            
+            if(paa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
+            }
+            
             return;
         }
 
@@ -15968,6 +15996,10 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
+            if(paa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, false);
+            }
+            
             // And we're done!
             return;
         }
@@ -16082,8 +16114,6 @@ public class Server implements Runnable {
                 // ae.extendBlade(paa.getArm());
                 // check for breaking a nail
                 if (Compute.d6(2) > 9) {
-                    int armLoc = (paa.getArm() == PunchAttackAction.RIGHT) ? Mech.LOC_RARM
-                                                                           : Mech.LOC_LARM;
                     addNewLines();
                     r = new Report(4456);
                     r.indent(2);
@@ -16095,6 +16125,12 @@ public class Server implements Runnable {
             }
         }
         addNewLines();
+
+        if(paa.isZweihandering()) {  
+            applyZweihanderSelfDamage(ae, false);
+        }
+        addNewLines();
+
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
@@ -17300,12 +17336,13 @@ public class Server implements Runnable {
 
         Report r;
 
+        
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // restore club attack
         caa.getClub().restore();
-
+        
         // Shield bash causes 1 point of damage to the shield
         if (((MiscType) caa.getClub().getType()).isShield()) {
             ((Mech) ae).shieldAbsorptionDamage(1, caa.getClub().getLocation(),
@@ -17338,7 +17375,7 @@ public class Server implements Runnable {
             addReport(r);
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                                                "hit with own flail/wrecking ball");
-            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false);
+            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false, caa.isZweihandering());
             pr.damage = (pr.damage / 2) + (pr.damage % 2);
             newToHit.setHitTable(ToHitData.HIT_NORMAL);
             newToHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -17353,6 +17390,9 @@ public class Server implements Runnable {
             } else {
                 game.addPSR(new PilotingRollData(ae.getId(), 0,
                                                  "missed a flail/wrecking ball attack"));
+            }
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         }
@@ -17384,6 +17424,9 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 addReport(r);
                 damage = 0;
+                if(caa.isZweihandering()) {  
+                    applyZweihanderSelfDamage(ae, true);
+                }
                 return;
             }
         }
@@ -17412,6 +17455,9 @@ public class Server implements Runnable {
                     game.addPSR(new PilotingRollData(ae.getId(), 0,
                             "missed a mace attack"));
                 }
+            }
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -17485,6 +17531,9 @@ public class Server implements Runnable {
                 }
 
             }
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, true);
+            }
             return;
         }
 
@@ -17505,6 +17554,18 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
+            if(caa.isZweihandering()) {  
+                applyZweihanderSelfDamage(ae, false);
+                if (((MiscType) caa.getClub().getType())
+                        .hasSubType(MiscType.S_CLUB)) {
+                    // the club breaks
+                    r = new Report(4150);
+                    r.subject = ae.getId();
+                    r.add(caa.getClub().getName());
+                    addReport(r);
+                    ae.removeMisc(caa.getClub().getName());
+                }
+            }
             // And we're done!
             return;
         }
@@ -17720,6 +17781,21 @@ public class Server implements Runnable {
             addReport(r);
             ae.removeMisc(caa.getClub().getName());
         }
+        
+        if(caa.isZweihandering()) {  
+            applyZweihanderSelfDamage(ae, false);
+            if (((MiscType) caa.getClub().getType())
+                    .hasSubType(MiscType.S_CLUB)) {
+                // the club breaks
+                r = new Report(4150);
+                r.subject = ae.getId();
+                r.add(caa.getClub().getName());
+                addReport(r);
+                ae.removeMisc(caa.getClub().getName());
+            }
+        }
+        
+        addNewLines();
 
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
@@ -19775,7 +19851,7 @@ public class Server implements Runnable {
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
 
             int hotDogMod = 0;
-            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOT_DOG)) {
+            if (entity.hasAbility(OptionsConstants.PILOT_HOT_DOG)) {
                 hotDogMod = 1;
             }
             if (entity.getTaserInterferenceHeat()) {
@@ -20798,8 +20874,7 @@ public class Server implements Runnable {
                 if ((damageHeat > 0)
                     && (entity instanceof Mech)
                     && (((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                    && !entity.getCrew().getOptions()
-                              .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+                    && !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                     damageToCrew += 1;
                 }
                 r = new Report(5070);
@@ -20813,8 +20888,7 @@ public class Server implements Runnable {
                        && (entity.heat >= 32)
                        && !entity.getCrew().isDead()
                        && !entity.getCrew().isDoomed()
-                       && !entity.getCrew().getOptions()
-                                 .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+                       && !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 // Crew may take damage from heat if MaxTech option is set
                 int heatroll = Compute.d6(2);
                 int avoidNumber = -1;
@@ -22498,12 +22572,12 @@ public class Server implements Runnable {
         }
 
         // no consciousness roll for pain-shunted warriors
-        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+        if (e.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             return vDesc;
         }
 
-        // no consciousness roll for capital fighter pilots
-        if (e.isCapitalFighter()) {
+        // no consciousness roll for capital fighter pilots or large craft crews
+        if (e.isCapitalFighter() || e.isLargeCraft()) {
             return vDesc;
         }
 
@@ -22518,8 +22592,7 @@ public class Server implements Runnable {
                     e.getCrew().decreaseEdge();
                 }
                 int roll = Compute.d6(2);
-                if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
-)) {
+                if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
                     roll = Math.min(12, roll + 1);
                 }
                 Report r = new Report(6030);
@@ -22588,7 +22661,7 @@ public class Server implements Runnable {
                             && !e.getCrew().isKoThisRound(pos)) {
                         int roll = Compute.d6(2);
 
-                        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE)) {
+                        if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
                             roll = Math.min(12, roll + 1);
                         }
 
@@ -23002,14 +23075,14 @@ public class Server implements Runnable {
 
         // Find out if Human TRO plays a part it crit bonus
         Entity ae = game.getEntity(hit.getAttackerId());
-        if ((ae != null) && !ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).isEmpty() && !areaSatArty) {
-            if ((te instanceof Mech) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_MECH)) {
+        if ((ae != null) && !areaSatArty) {
+            if ((te instanceof Mech) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MECH)) {
                 critBonus += 1;
-            } else if ((te instanceof Aero) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_AERO)) {
+            } else if ((te instanceof Aero) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
                 critBonus += 1;
-            } else if ((te instanceof Tank) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_VEE)) {
+            } else if ((te instanceof Tank) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_VEE)) {
                 critBonus += 1;
-            } else if ((te instanceof BattleArmor) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_BA)) {
+            } else if ((te instanceof BattleArmor) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_BA)) {
                 critBonus += 1;
             }
         }
@@ -23099,7 +23172,7 @@ public class Server implements Runnable {
         switch (bFrag) {
             case ANTI_INFANTRY:
                 if (isPlatoon
-                    && te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    && te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                     int reduce = Math.min(damage - 1, Compute.d6());
                     damage -= reduce;
                     r = new Report(6042);
@@ -23936,6 +24009,48 @@ public class Server implements Runnable {
                 // further processing
                 if (te instanceof Aero) {
                     Aero a = (Aero) te;
+                    
+                    // check for large craft ammo explosions here: damage vented through armor, excess
+                    // dissipating, much like Tank CASE.
+                    if (ammoExplosion && te.isLargeCraft()) {
+                        te.damageThisPhase += damage;
+                        r = new Report(6128);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(damage);
+                        int loc = hit.getLocation();
+                        //Roll for broadside weapons so fore/aft side armor facing takes the damage
+                        if (loc == Warship.LOC_LBS) {
+                            int locRoll = Compute.d6();
+                            if (locRoll < 4) {
+                                loc = Jumpship.LOC_FLS;
+                            } else {
+                                loc = Jumpship.LOC_ALS;
+                            }
+                        }
+                        if (loc == Warship.LOC_RBS) {
+                            int locRoll = Compute.d6();
+                            if (locRoll < 4) {
+                                loc = Jumpship.LOC_FRS;
+                            } else {
+                                loc = Jumpship.LOC_ARS;
+                            }
+                        }
+                        r.add(te.getLocationAbbr(loc));
+                        vDesc.add(r);
+                        if (damage > te.getArmor(loc)) {
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
+                            r = new Report(6090);
+                        } else {
+                            te.setArmor(te.getArmor(loc) - damage, loc);
+                            r = new Report(6085);
+                            r.add(te.getArmor(loc));
+                        }
+                        r.subject = te_n;
+                        r.indent(3);
+                        vDesc.add(r);
+                        damage = 0;
+                    }
 
                     // check for overpenetration
                     if (game.getOptions().booleanOption(
@@ -23996,7 +24111,9 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     if (!ammoExplosion) {
                         r.messageId = 9005;
-                    } else {
+                    }
+                    //Only for fighters
+                    if (ammoExplosion && !a.isLargeCraft()) {
                         r.messageId = 9006;
                     }
                     r.add(damage);
@@ -24523,7 +24640,7 @@ public class Server implements Runnable {
             }
 
             if (isHeadHit
-                && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                && !te.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
             }
@@ -24633,9 +24750,9 @@ public class Server implements Runnable {
 
         // if using VDNI (but not buffered), check for damage on an internal hit
         if (tookInternalDamage
-            && te.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-            && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-            && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            && te.hasAbility(OptionsConstants.MD_VDNI)
+            && !te.hasAbility(OptionsConstants.MD_BVDNI)
+            && !te.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -25745,8 +25862,8 @@ public class Server implements Runnable {
         }
 
         // if using buffered VDNI then a possible pilot hit
-        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-            && !en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+        if (en.hasAbility(OptionsConstants.MD_BVDNI)
+            && !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -26388,13 +26505,12 @@ public class Server implements Runnable {
             case Aero.CRIT_CREW:
                 // pilot hit
                 r = new Report(6650);
-                if (aero.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                if (aero.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                     r = new Report(6651);
                     r.subject = aero.getId();
                     reports.add(r);
                     break;
-                } else if (aero.getCrew().getOptions()
-                             .booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+                } else if (aero.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
                     r = new Report(6652);
                     r.subject = aero.getId();
                     reports.add(r);
@@ -26543,6 +26659,54 @@ public class Server implements Runnable {
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
                         && !(aero instanceof FighterSquadron)
                         && (weapon.getType() instanceof WeaponType)) {
+                        //Bay Weapons
+                        if (aero.usesWeaponBays()) {
+                            //Finish reporting(9150) a hit on the bay
+                            r.add(weapon.getName());
+                            reports.add(r);
+                            //Pick a random weapon in the bay and get the stats
+                            int wId = weapon.getBayWeapons().get(Compute.randomInt(weapon.getBayWeapons().size()));
+                            Mounted bayW = aero.getEquipment(wId);
+                            Mounted bayWAmmo = bayW.getLinked();
+                            if (bayWAmmo != null && bayWAmmo.getType().isExplosive(bayWAmmo)) {
+                                r = new Report(9156);
+                                r.subject = aero.getId();
+                                r.newlines = 1;
+                                r.indent(2);
+                                //On a roll of 10+, the ammo bin explodes
+                                int ammoRoll = Compute.d6(2);
+                                boomTarget = 10;
+                                r.choose(ammoRoll >= boomTarget);
+                                reports.add(r);
+                                if (ammoRoll >= boomTarget) {
+                                    reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                }
+                            }
+                            //Hit the weapon then also hit all the other weapons in the bay
+                            weapon.setHit(true);
+                            for(int next : weapon.getBayWeapons()) {
+                                Mounted bayWeap = aero.getEquipment(next);
+                                if(null != bayWeap) {
+                                    bayWeap.setHit(true);
+                                    //Taharqa: We should also damage the critical slot, or
+                                    //MM and MHQ won't remember that this weapon is damaged on the MUL
+                                    //file
+                                    for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                        CriticalSlot slot1 = aero.getCritical(loc, i);
+                                        if ((slot1 == null) ||
+                                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                            continue;
+                                        }
+                                        Mounted mounted = slot1.getMount();
+                                        if (mounted.equals(bayWeap)) {
+                                            aero.hitAllCriticals(loc, i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
                         // does it use Ammo?
                         WeaponType wtype = (WeaponType) weapon.getType();
                         if (wtype.getAmmoType() != AmmoType.T_NA) {
@@ -26877,14 +27041,14 @@ public class Server implements Runnable {
                 }
                 break;
             case Tank.CRIT_COMMANDER:
-                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                if (tank.hasAbility(OptionsConstants.MD_VDNI)
+                    || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
                 } else {
-                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
                         && !tank.isCommanderHitPS()) {
                         r = new Report(6606);
                         r.subject = tank.getId();
@@ -26906,16 +27070,15 @@ public class Server implements Runnable {
                 // fall through here, because effects of crew stunned also
                 // apply
             case Tank.CRIT_CREW_STUNNED:
-                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                if (tank.hasAbility(OptionsConstants.MD_VDNI)
+                    || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
                 } else {
-                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
-                        || tank.getCrew().getOptions()
-                             .booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
+                        || tank.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
                         r = new Report(6186);
                         r.subject = tank.getId();
                         reports.add(r);
@@ -26929,14 +27092,14 @@ public class Server implements Runnable {
                 }
                 break;
             case Tank.CRIT_DRIVER:
-                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                if (tank.hasAbility(OptionsConstants.MD_VDNI)
+                    || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
                 } else {
-                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
                         && !tank.isDriverHitPS()) {
                         r = new Report(6601);
                         r.subject = tank.getId();
@@ -26951,14 +27114,14 @@ public class Server implements Runnable {
                 }
                 break;
             case Tank.CRIT_CREW_KILLED:
-                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                if (tank.hasAbility(OptionsConstants.MD_VDNI)
+                    || tank.hasAbility(OptionsConstants.MD_BVDNI)) {
                     r = new Report(6191);
                     r.subject = tank.getId();
                     reports.add(r);
                     reports.addAll(damageCrew(tank, 1));
                 } else {
-                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                    if (tank.hasAbility(OptionsConstants.MD_PAIN_SHUNT)
                         && !tank.isCrewHitPS()) {
                         r = new Report(6191);
                         r.subject = tank.getId();
@@ -29065,17 +29228,16 @@ public class Server implements Runnable {
                 && (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }
-        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE)
-                || en.getCrew().getOptions().booleanOption(OptionsConstants.MISC_IRON_MAN)) {
+        if (en.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)
+                || en.hasAbility(OptionsConstants.MISC_IRON_MAN)) {
             pilotDamage -= 1;
         }
         // tanks only take pilot damage when using BVDNI or VDNI
         if ((en instanceof Tank)
-            && !(en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) || en
-                .getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI))) {
+            && !(en.hasAbility(OptionsConstants.MD_VDNI) || en.hasAbility(OptionsConstants.MD_BVDNI))) {
             pilotDamage = 0;
         }
-        if (!en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+        if (!en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             vDesc.addAll(damageCrew(en, pilotDamage, en.getCrew().getCurrentPilotIndex()));
         }
         if (en.getCrew().isDoomed() || en.getCrew().isDead()) {
@@ -29565,8 +29727,8 @@ public class Server implements Runnable {
     private Vector<Report> checkPilotAvoidFallDamage(Entity entity, int fallHeight, PilotingRollData roll) {
         Vector<Report> reports = new Vector<>();
         
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
-                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+        if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                || entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             return reports;
         }
         // we want to be able to avoid pilot damage even when it was
@@ -34124,7 +34286,8 @@ public class Server implements Runnable {
                     ae,
                     caa.getClub(),
                     (caa.getTarget(game) instanceof Infantry)
-                    && !(caa.getTarget(game) instanceof BattleArmor));
+                    && !(caa.getTarget(game) instanceof BattleArmor),
+                    caa.isZweihandering());
             if (caa.getTargetType() == Targetable.TYPE_BUILDING) {
                 EquipmentType clubType = caa.getClub().getType();
                 if (clubType.hasSubType(MiscType.S_BACKHOE)
@@ -34173,22 +34336,22 @@ public class Server implements Runnable {
                     ae,
                     PunchAttackAction.LEFT,
                     (paa.getTarget(game) instanceof Infantry)
-                    && !(paa.getTarget(game) instanceof BattleArmor));
+                    && !(paa.getTarget(game) instanceof BattleArmor),
+                    paa.isZweihandering());
             damageRight = PunchAttackAction.getDamageFor(
                     ae,
                     PunchAttackAction.RIGHT,
                     (paa.getTarget(game) instanceof Infantry)
-                    && !(paa.getTarget(game) instanceof BattleArmor));
+                    && !(paa.getTarget(game) instanceof BattleArmor),
+                    paa.isZweihandering());
             paa.setArm(arm);
             // If we're punching while prone (at a Tank,
             // duh), then we can only use one arm.
             if (ae.isProne()) {
                 double oddsLeft = Compute.oddsAbove(toHit.getValue(),
-                                                    ae.getCrew().getOptions().booleanOption(OptionsConstants
-                                                                                                    .PILOT_APTITUDE_PILOTING));
+                                                    ae.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING));
                 double oddsRight = Compute.oddsAbove(toHitRight.getValue(),
-                                                     ae.getCrew().getOptions().booleanOption(OptionsConstants
-                                                                                                     .PILOT_APTITUDE_PILOTING));
+                                                     ae.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING));
                 // Use the best attack.
                 if ((oddsLeft * damage) > (oddsRight * damageRight)) {
                     paa.setArm(PunchAttackAction.LEFT);

@@ -311,9 +311,7 @@ public class CEntity {
 
         overall_armor_percent = entity.getArmorRemainingPercent();
         base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll()
-                .getValue(),
-                                          entity.getCrew().getOptions().booleanOption(OptionsConstants
-                                                                                              .PILOT_APTITUDE_PILOTING)) / 100;
+                .getValue(), entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100;
 
         // Heat characterisation - how badly will a Mech overheat this round
         int heat_capacity = entity.getHeatCapacity();
@@ -389,8 +387,7 @@ public class CEntity {
                 cur_weapon_damage[1] = (tsm_offset ? 1.0 : 0.5)
                         * (entity.getWeight() / 10)
                         * (Compute.oddsAbove(entity.getCrew().getPiloting(),
-                                             entity.getCrew().getOptions()
-                                                   .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100);
+                                             entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100);
 
                 // Either a kick or double-punch to the front
                 overall_damage[Compute.ARC_FORWARD][1] = 2.0 * cur_weapon_damage[1];
@@ -408,8 +405,7 @@ public class CEntity {
                 overall_damage[Compute.ARC_360][0] = (hits_by_racksize[number_of_shooters]
                         * ((BattleArmor) entity).getVibroClaws()
                         * Compute.oddsAbove(gunnery,
-                                            entity.getCrew().getOptions()
-                                                  .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY))) / 100.0;
+                                            entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))) / 100.0;
             }
 
             // Iterate over each weapon, calculating average damage
@@ -449,8 +445,7 @@ public class CEntity {
                 ammo_ranges = getAmmoRanges(weapon, ammo_list);
                 cur_weapon_damage = getRawDamage(cur_weapon, ammo_ranges);
 
-                boolean aptGunnery = entity.getCrew().getOptions()
-                                           .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
 
                 // Apply to-hit modifiers to the damage values
                 cur_weapon_damage = getExpectedDamage(weapon, gunnery,
@@ -572,8 +567,7 @@ public class CEntity {
                     continue;
                 }
 
-                boolean aptGunnery = entity.getCrew().getOptions()
-                                           .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
 
                 cur_weapon_damage = CEntity.getRawDamage(cur_weapon, null);
                 cur_weapon_damage = CEntity.getExpectedDamage(weapon, gunnery,
@@ -1910,7 +1904,7 @@ public class CEntity {
                 total_mod += 4;
             }
 
-            boolean aptGunnery = attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            boolean aptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
             modified_damages[cur_range] = (raw_damage
                                            * Compute.oddsAbove(total_mod, aptGunnery)) / 100.0;
 

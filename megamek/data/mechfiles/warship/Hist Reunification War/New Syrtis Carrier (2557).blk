@@ -2,280 +2,337 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 New Syrtis Carrier
 </Name>
+
 <Model>
 (2557)
 </Model>
-<Tonnage>
-920000
-</Tonnage>
+
+<year>
+2557
+</year>
+
+<originalBuildYear>
+2557
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:60.0:3:1
+smallcraftbay:12.0:1:2
+asfbay:60.0:3:3
+smallcraftbay:12.0:1:4
+cargobay:50310.0:4:6
+cargobay:50310.0:4:7
+dockingcollar
+dockingcollar
+crewquarters:5313.0:0
+1stclassquarters:1930.0:0
+2ndclassquarters:420.0:0
+steeragequarters:2850.0:0
+infantrybay:10.0:2:5:Foot
+</transporters>
+
 <SafeThrust>
 4
 </SafeThrust>
-<Armor>
-80
-80
+
+<heatsinks>
+2451
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+50000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
 80
 80
 80
 70
-</Armor>
+80
+80
+</armor>
+
 <Nose Equipment>
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:60
-NL55
-NL55
-NL55
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:60
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
-Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
 </Nose Equipment>
 
-<Front Left Side Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-Barracuda
-Barracuda
-Barracuda Ammo:40
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
-Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
-</Front Left Side Equipment>
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Left Front Side Equipment>
 
-<Front Right Side Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-Barracuda
-Barracuda
-Barracuda Ammo:40
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
-Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
-</Front Right Side Equipment>
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Right Front Side Equipment>
 
-<Left Broadside Equipment>
-HeavyNPPC
-HeavyNPPC
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:60
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
-Large Laser
+<Aft Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-HeavyNPPC
-HeavyNPPC
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:60
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
-Large Laser
-Large Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
-</Right Broadside Equipment>
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Aft Equipment>
 
 <Aft Left Side Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-Barracuda
-Barracuda
-Barracuda Ammo:40
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
-Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
 </Aft Left Side Equipment>
 
 <Aft Right Side Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-Barracuda
-Barracuda
-Barracuda Ammo:40
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:40
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
-Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
 </Aft Right Side Equipment>
 
-<Aft Equipment>
-NAC10
-NAC10
-NAC10 Ammo:40
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM15 Ammo:60
+<Left Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:60
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:60
+(B) LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-15:60
+(B) Large Laser
 Large Laser
 Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-ISMG Ammo (200)
-</Aft Equipment>
+(B) Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+IS Ammo MG - Full:200
+</Right Broadsides Equipment>
 
 <structural_integrity>
 60
 </structural_integrity>
 
-<heatsinks>
-2451
-</heatsinks>
-<sink_type>
-0
-</sink_type>
-<fuel>
-50000
-</fuel>
-<type>
-IS Level 3
-</type>
-<year>
-2557
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
-<transporters>
-ASFBay:60:4
-ASFBay:60:4
-InfantryBay:10:2
-CargoBay:50310:6
-CargoBay:50310:6
-</transporters>
-<docking_collar>
-2
-</docking_collar>
-<grav_deck>
-2
-</grav_deck>
-<escape_pod>
-90
-</escape_pod>
-<life_boat>
-200
-</life_boat>
+<source>
+Hist:RW - Age of War
+</source>
+
+<tonnage>
+920000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+145
+145
+</grav_decks>
+
 <crew>
 1572
 </crew>
+
+<officers>
+173
+</officers>
+
+<gunners>
+125
+</gunners>
+
 <passengers>
-650
+530
 </passengers>
 
-<history>
-173 Officers, 634 Enlisted/non-rated, 125 Gunners, 20 First Class Passengers, 60 Second Class Passengers, 450 Steerage Passengers, 120 Marines, 640 Bay personnel
-</history>
+<marines>
+120
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+200
+</life_boat>
+
+<escape_pod>
+90
+</escape_pod>
+

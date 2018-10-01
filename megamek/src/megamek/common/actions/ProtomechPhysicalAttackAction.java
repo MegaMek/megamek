@@ -72,7 +72,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
         if ((null != entity.getCrew())
-                && entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
+                && entity.hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             toReturn *= 2;
         }
   return toReturn;

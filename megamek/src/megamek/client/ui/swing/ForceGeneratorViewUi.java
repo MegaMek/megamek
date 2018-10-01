@@ -222,6 +222,10 @@ public class ForceGeneratorViewUi {
 	    return rightPanel;
 	}
 	
+	public void setYear(int year) {
+	    panControls.setCurrentYear(year);
+	}
+	
 	/**
 	 * Adds the chosen units to the game
 	 */

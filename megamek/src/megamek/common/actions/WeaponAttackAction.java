@@ -525,7 +525,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
         boolean narcSpotter = false;
-        if (isIndirect && !ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+        if (isIndirect && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
             if ((target instanceof Entity) && !isTargetECMAffected && (te != null) && (atype != null) && usesAmmo
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     && (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam()))) {
@@ -572,7 +572,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         LosEffects los;
         ToHitData losMods;
 
-        if (isIndirect && ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+        if (isIndirect && ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
                 && !underWater) {
             los = new LosEffects();
             losMods = new ToHitData();
@@ -1211,26 +1211,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Has the pilot the appropriate gunnery skill?
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_LASER)
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
                 && wtype.hasFlag(WeaponType.F_ENERGY)) {
             toHit.addModifier(-1, "Gunnery/Energy");
         }
 
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
                 && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
             toHit.addModifier(-1, "Gunnery/Ballistic");
         }
 
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_MISSILE)
+        if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
                 && wtype.hasFlag(WeaponType.F_MISSILE)) {
             toHit.addModifier(-1, "Gunnery/Missile");
         }
 
         // Is the pilot a weapon specialist?
-        if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_WEAPON_SPECIALIST)
-                .equals(wtype.getName())) {
+        if (ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
             toHit.addModifier(-2, "weapon specialist");
-        } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SPECIALIST)) {
+        } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
 			// aToW style gunnery specialist: -1 to specialized weapon and +1 to
 			// all other weapons
 			// Note that weapon specialist supercedes gunnery specialization, so
@@ -1238,22 +1237,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 			// a specialization in Medium Lasers and a Laser specialization, you
 			// only get the -2 specialization mod
             if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_SPECIALIST)
-                        .equals(Crew.SPECIAL_ENERGY)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
                     toHit.addModifier(-1, "Energy Specialization");
                 } else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
             } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_SPECIALIST)
-                        .equals(Crew.SPECIAL_BALLISTIC)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, "Ballistic Specialization");
                 } else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
             } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_SPECIALIST)
-                        .equals(Crew.SPECIAL_MISSILE)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, "Missile Specialization");
                 } else {
                     toHit.addModifier(+1, "Unspecialized");
@@ -1262,7 +1258,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if (te != null) {
-            if (te.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
+            if (te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
@@ -1270,17 +1266,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
                 toHit.addModifier(+1, "Urban Guerrilla");
             }
-            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
+            if (te.hasAbility(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
                     && !ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
                 toHit.addModifier(+1, OptionsConstants.PILOT_SHAKY_STICK);
             }
-            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)
+            if (te.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
                     && te.moved == EntityMovementType.MOVE_WALK) {
                 toHit.addModifier(+1, "Forest Ranger");
             }
-            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)
+            if (te.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
                         || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
                     && te.moved == EntityMovementType.MOVE_RUN) {
@@ -1289,8 +1285,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // check for VDNI
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                || ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (ae.hasAbility(OptionsConstants.MD_VDNI)
+                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
             toHit.addModifier(-1, "VDNI");
         }
 
@@ -1298,13 +1294,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
+            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
                     && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
                 toHit.addModifier(+1, "PL-MASC");
             }
 
             // check for cyber eye laser sighting on ranged attacks
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER)
+            if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
                     && !(wtype instanceof InfantryAttack)) {
                 toHit.addModifier(-1, "MD laser-sighting");
             }
@@ -1426,7 +1422,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if (weatherToHitMods.getValue() > 0) {
-            if ((ae.getCrew() != null) && ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_WEATHERED)) {
+            if ((ae.getCrew() != null) && ae.hasAbility(OptionsConstants.UNOFF_WEATHERED)) {
                 weatherToHitMods.addModifier(-1, "weathered");
             }
             toHit.append(weatherToHitMods);
@@ -1496,7 +1492,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
             int mod = 7;
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+            if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 mod--;
             }
             toHit.addModifier(mod, "indirect artillery modifier");
@@ -1570,7 +1566,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 || (ae.isMakingVTOLGroundAttack())) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
-                if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                     toHit.addModifier(-2, "Golden Goose");
                 }
             } else if (isStrafing) {
@@ -1586,7 +1582,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             } else {
                 toHit.addModifier(+2, "air to ground strike");
-                if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+                if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                     if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
                         toHit.addModifier(-2, "Golden Goose");
                     } else {
@@ -1634,7 +1630,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Indirect fire has a +1 mod
         if (isIndirect) {
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+            if (ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 toHit.addModifier(0, "indirect fire");
             } else {
                 toHit.addModifier(1, "indirect fire");
@@ -2520,8 +2516,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // check for VDNI
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                || ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (ae.hasAbility(OptionsConstants.MD_VDNI)
+                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
             toHit.addModifier(-1, "VDNI");
         }
 
@@ -2529,7 +2525,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
+            if (ae.hasAbility(OptionsConstants.MD_PL_MASC)
                     && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
                 toHit.addModifier(+1, "PL-MASC");
             }
@@ -3756,7 +3752,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)
-                    && !ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+                    && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 return "No available spotter";
             }
         }
@@ -3777,7 +3773,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
-        if (isIndirect && ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+        if (isIndirect && ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
                 && !underWater) {
             // Assume that no LOS mods apply
             los = new LosEffects();
@@ -3871,7 +3867,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             if (!networkFiringSolution) {
-                if (!Compute.hasFiringSolution(game, ae, te)) {
+                //If we don't check for target type here, we can't fire screens and missiles at hexes...
+                if (!Compute.hasFiringSolution(game, ae, te) && target.getTargetType() == Targetable.TYPE_ENTITY) {
                     return "no firing solution to target";
                 }
             }

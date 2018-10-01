@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,55 @@ Katya Ground Assault Craft
 C-905(RL20)
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 10
 5
 5
 4
-</Armor>
+</armor>
 
 <Nose Equipment>
 Light Machine Gun
@@ -54,45 +89,11 @@ RL20
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-0
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-320
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3067
-</year>
-
 <source>
 HB:House Liao - Civil War
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+30.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<vstol>
-</vstol>

@@ -307,8 +307,7 @@ public class FireCommand extends ClientCommand {
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
                        + Compute.oddsAbove(toHit.getValue(),
-                                           ce().getCrew().getOptions()
-                                               .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
+                                           ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }

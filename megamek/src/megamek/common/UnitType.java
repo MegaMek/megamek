@@ -45,6 +45,21 @@ public class UnitType {
     public static String determineUnitType(Entity e) {
         return names[determineUnitTypeCode(e)];
     }
+    
+    /**
+     * Reverse lookup for type integer constant from name
+     * 
+     * @param name  Unit type name
+     * @return      The unit type constant. If no match can be found, returns -1.
+     */
+    public static int determineUnitTypeCode(String name) {
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].equals(name)) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static int determineUnitTypeCode(Entity e) {
         EntityMovementMode mm = e.getMovementMode();

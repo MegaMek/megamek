@@ -90,15 +90,17 @@ public interface ITechManager {
         int faction = getTechFaction();
         boolean clanTech = useClanTechBase();
         
-        boolean introducedIS = tech.getIntroductionDate(false) <= getTechIntroYear();
-        boolean introducedClan = tech.getIntroductionDate(true) <= getTechIntroYear();
+        int isIntroDate = tech.getIntroductionDate(false);
+        int clanIntroDate = tech.getIntroductionDate(true);
+        boolean introducedIS = (isIntroDate != ITechnology.DATE_NONE) && (isIntroDate <= getTechIntroYear());
+        boolean introducedClan = (clanIntroDate != ITechnology.DATE_NONE) && (clanIntroDate <= getTechIntroYear());
         boolean extinctIS = tech.isExtinct(getTechIntroYear(), false);
         boolean extinctClan = tech.isExtinct(getTechIntroYear(), true);
         // A little bit of hard-coded universe detail
         if ((faction == ITechnology.F_CS)
-                && extinctIS && (tech.getReintroductionDate(false) != ITechnology.DATE_NONE)
+                && extinctIS && (isIntroDate != ITechnology.DATE_NONE)
                 && (tech.getBaseAvailability(ITechnology.getTechEra(getTechIntroYear())) < ITechnology.RATING_X)
-                && tech.getIntroductionDate(false) <= getTechIntroYear()) {
+                && isIntroDate <= getTechIntroYear()) {
             // ComStar has access to Star League tech that is otherwise extinct in the Inner Sphere as if TH,
             // unless it has an availability of X (which is SLDF Royal equipment).
             extinctIS = false;

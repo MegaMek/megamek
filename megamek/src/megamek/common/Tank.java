@@ -2056,8 +2056,8 @@ public class Tank extends Entity {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -3531,7 +3531,7 @@ public class Tank extends Entity {
                 case EquipmentType.T_ARMOR_HARDENED:
                     usedSlots++;
                     break;
-                case EquipmentType.T_ARMOR_STEALTH:
+                case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
                     usedSlots += 2;
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:

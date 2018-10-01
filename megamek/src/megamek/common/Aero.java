@@ -2624,14 +2624,14 @@ public class Aero extends Entity implements IAero, IBomber {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -2642,7 +2642,7 @@ public class Aero extends Entity implements IAero, IBomber {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "cramped cockpit");
         }
 
@@ -4124,6 +4124,20 @@ public class Aero extends Entity implements IAero, IBomber {
      * @return The number conventional marines available to vessels for boarding actions.
      */
     public int getNMarines() {
+        return 0;
+    }
+
+    /**
+     * @return The number of escape pods carried by the unit
+     */
+    public int getEscapePods() {
+        return 0;
+    }
+
+    /**
+     * @return The number of lifeboats carried by the unit
+     */
+    public int getLifeBoats() {
         return 0;
     }
 

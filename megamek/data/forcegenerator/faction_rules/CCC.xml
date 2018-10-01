@@ -801,7 +801,7 @@
 			<option ifRole="command" weight="1">H</option>			
 		</weightClass>
 
-		<unitType ifUnitType="Mek" ifDateBetween="3060," ifRole="!command">
+		<unitType ifUnitType="Mek" ifDateBetween="3060," ifRole="!command" ifTopLevel="0">
 			<option weight="6" />
 			<option ifRating="FL|SL">ProtoMek</option>
 			<option ifDateBetween="3085," ifRating="FL|SL"

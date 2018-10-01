@@ -281,11 +281,15 @@ public class MULParser {
         }
         
         Element element = xmlDoc.getDocumentElement();
-
+        
         // Get rid of empty text nodes and adjacent text nodes...
         // Stupid weird parsing of XML. At least this cleans it up.
         element.normalize();
 
+        parse(element);
+    }
+
+    public void parse(Element element) {
         String version = element.getAttribute(VERSION);
         if (version.equals("")){
             warning.append("Warning: No version specified, correct parsing " +

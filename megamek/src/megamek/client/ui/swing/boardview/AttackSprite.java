@@ -327,13 +327,13 @@ class AttackSprite extends Sprite {
                         attack.getEntityId(),
                         this.boardView1.game.getTarget(attack.getTargetType(),
                                 attack.getTargetId()),
-                        PunchAttackAction.LEFT).getValueAsString();
+                        PunchAttackAction.LEFT, false).getValueAsString();
                 rollRight = PunchAttackAction.toHit(
                         this.boardView1.game,
                         attack.getEntityId(),
                         this.boardView1.game.getTarget(attack.getTargetType(),
                                 attack.getTargetId()),
-                        PunchAttackAction.RIGHT).getValueAsString();
+                        PunchAttackAction.RIGHT, false).getValueAsString();
                 bufer = Messages
                         .getString(
                                 "BoardView1.punchBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
@@ -344,7 +344,7 @@ class AttackSprite extends Sprite {
                         attack.getEntityId(),
                         this.boardView1.game.getTarget(attack.getTargetType(),
                                 attack.getTargetId()),
-                        PunchAttackAction.LEFT).getValueAsString();
+                        PunchAttackAction.LEFT, false).getValueAsString();
                 bufer = Messages.getString(
                         "BoardView1.punchLeft", new Object[] { rollLeft }); //$NON-NLS-1$
                 break;
@@ -354,7 +354,7 @@ class AttackSprite extends Sprite {
                         attack.getEntityId(),
                         this.boardView1.game.getTarget(attack.getTargetType(),
                                 attack.getTargetId()),
-                        PunchAttackAction.RIGHT).getValueAsString();
+                        PunchAttackAction.RIGHT, false).getValueAsString();
                 bufer = Messages
                         .getString(
                                 "BoardView1.punchRight", new Object[] { rollRight }); //$NON-NLS-1$

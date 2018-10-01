@@ -320,6 +320,11 @@ import java.util.Vector;
     public int getCargoMpReduction() {
         return 0;
     }
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 
     @Override
     public String toString() {

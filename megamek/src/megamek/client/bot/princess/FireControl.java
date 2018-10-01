@@ -1854,7 +1854,9 @@ public class FireControl {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
-            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+            // if the bombing plan actually involves doing something
+            if((bombingPlan.size() > 0) && 
+                    (bombingPlan.getUtility() > myPlan.getUtility())) {
                 return bombingPlan;
             }
         }

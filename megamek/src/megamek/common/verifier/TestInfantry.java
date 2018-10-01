@@ -60,7 +60,7 @@ public class TestInfantry extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
         return false;
     }
 
@@ -136,10 +136,10 @@ public class TestInfantry extends TestEntity {
     	if (inf.getSecondaryWeapon() != null) {
         	int secondaryCrew = inf.getSecondaryWeapon().getCrew();
         	if (inf.getCrew() != null) {
-        		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+        		if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
         			secondaryCrew--;
         		}
-        		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+        		if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
         			secondaryCrew--;
         		}
         	}
@@ -180,10 +180,10 @@ public class TestInfantry extends TestEntity {
     		max = 1;
     	}
     	if (inf.getCrew() != null) {
-    		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+    		if (inf.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
     			max++;
     		}
-    		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+    		if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
     			max++;
     		}
     	}

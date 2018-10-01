@@ -16192,20 +16192,20 @@
 	</chassis>
 	<chassis name='Vulture' unitType='Dropship'>
 		<availability>MERC:1,Periphery:1</availability>
-		<model name='(Standard)'>
+		<model name='(2405)'>
 			<roles>troop carrier</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Chimeisho JumpShip' unitType='Jumpship'>
 		<availability>DC:4</availability>
-		<model name='(Standard)'>
+		<model name='(3056)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Comitatus JumpShip' unitType='Jumpship'>
 		<availability>CSA:5,CSR:5,CW:4,CBS:5,CSV:6,CLAN:5,CGS:4,CJF:3,CWIE:4</availability>
-		<model name='(Standard)'>
+		<model name='(2995)'>
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
@@ -16222,25 +16222,25 @@
 	</chassis>
 	<chassis name='Hunter Jumpship' unitType='Jumpship'>
 		<availability>MERC.WD:3,CDS:4,CLAN:3,CGS:5,CCO:4,BAN:4,CGB:5</availability>
-		<model name='(Lithium-Fusion)'>
+		<model name='(2948) (LF)'>
 			<availability>MERC.WD:2,CLAN:8,BAN:2</availability>
 		</model>
-		<model name='(Standard)'>
+		<model name='(2832)'>
 			<availability>MERC.WD:8,CLAN:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Invader Jumpship' unitType='Jumpship'>
 		<availability>MOC:8,CC:9,HL:7,FRR:9,CLAN:9,IS:7,Periphery.Deep:7,WOB:9,FS:9,CIR:8,BAN:6,Periphery:8,TC:8,CS:9,OA:8,LA:9,PIR:5,FWL:9,NIOPS:9</availability>
-		<model name='(Clan)[PPC]'>
+		<model name='(2850)'>
 			<availability>CLAN:6</availability>
 		</model>
-		<model name='(Standard)'>
+		<model name='(2631)'>
 			<availability>General:6</availability>
 		</model>
-		<model name='(Clan)'>
+		<model name='(2631) (LF)'>
 			<availability>CLAN:6</availability>
 		</model>
-		<model name='(PPC)'>
+		<model name='(2631 PPC)'>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -16258,43 +16258,43 @@
 	</chassis>
 	<chassis name='Monolith Jumpship' unitType='Jumpship'>
 		<availability>CLAN:2,IS:2</availability>
-		<model name='(Standard)'>
+		<model name='(2776)'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Clan)'>
+		<model name='(2839)'>
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Odyssey Jumpship' unitType='Jumpship'>
 		<availability>CHH:3,CDS:3,CLAN:4,CCO:2,BAN:2,CGB:3</availability>
-		<model name='(Standard)'>
+		<model name='(2887)'>
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Scout JumpShip' unitType='Jumpship'>
 		<availability>MOC:3,CC:4,FRR:4,IS:5,WOB:5,FS:4,CIR:3,Periphery:2,TC:3,CS:5,OA:3,LA:4,FWL:4,NIOPS:5,DC:4</availability>
-		<model name='(Standard)'>
+		<model name='(2712)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Star Lord JumpShip' unitType='Jumpship'>
 		<availability>IS:5,MERC:2,Periphery:2</availability>
-		<model name='(Standard)'>
+		<model name='(2590)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tramp JumpShip' unitType='Jumpship'>
 		<availability>MOC:6,CC:3,HL:4,FRR:3,CLAN:5,IS:3,Periphery.Deep:6,WOB:6,MERC:6,FS:3,CIR:6,Periphery:5,BAN:3,CS:6,LA:3,FWL:5,NIOPS:6,DC:3</availability>
-		<model name='(Lithium-Fusion)'>
+		<model name='(2755) (LF)'>
 			<availability>CLAN:8</availability>
 		</model>
-		<model name='(Standard)'>
+		<model name='(2754)'>
 			<availability>General:8,BAN:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Aegis Heavy Cruiser' unitType='Warship'>
 		<availability>CCC:2,CSR:5,CSV:1,CGS:2,CWIE:2,CSA:2,CS:3,MERC.WD:1,CDS:1,CBS:1,CNC:5,FWL:2,CJF:5</availability>
-		<model name='(Clan)'>
+		<model name='(2843)'>
 			<roles>cruiser</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
 		</model>
@@ -16317,9 +16317,9 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Black Lion Battlecruiser' unitType='Warship'>
+	<chassis name='Black Lion II Battlecruiser' unitType='Warship'>
 		<availability>CSA:1,CS:1,CW:2,CBS:1,CNC:3,FWL:1,NIOPS:1,CJF:3,CWIE:1,CGB:1</availability>
-		<model name='(Clan)'>
+		<model name='(2843)'>
 			<roles>cruiser</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16330,7 +16330,7 @@
 	</chassis>
 	<chassis name='Cameron Battlecruiser' unitType='Warship'>
 		<availability>CS:1,CHH:1,CCC:1,CSR:2,CW:1,CSV:1,NIOPS:1,CGS:1,CCO:1,CJF:1,CWIE:1</availability>
-		<model name='(Clan)'>
+		<model name='(2851)'>
 			<roles>cruiser</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16345,7 +16345,7 @@
 			<roles>cargo</roles>
 			<availability>CLAN:8</availability>
 		</model>
-		<model name='(Merchant)'>
+		<model name='(Merchant 2985)'>
 			<roles>cargo</roles>
 			<availability>CSA:4,CDS:8,CNC:8,CJF:4,CGB:4</availability>
 		</model>
@@ -16356,7 +16356,7 @@
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Clan)'>
+		<model name='(2914)'>
 			<roles>frigate</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
 		</model>
@@ -16382,9 +16382,9 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Essex Destroyer' unitType='Warship'>
+	<chassis name='Essex II Destroyer' unitType='Warship'>
 		<availability>CSA:2,CS:4,CSR:1,CDS:2,CSV:1,FWL:1,WOB:2,CGS:1,CCO:1,DC:1</availability>
-		<model name='(Clan)'>
+		<model name='(2862)'>
 			<roles>destroyer</roles>
 			<availability>CS:4,CLAN:8,DC:8</availability>
 		</model>
@@ -16406,21 +16406,21 @@
 	</chassis>
 	<chassis name='Fox Corvette' unitType='Warship'>
 		<availability>LA:3,FS:5</availability>
-		<model name='(Standard)'>
+		<model name='(3057)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Fredasa Corvette Raider' unitType='Warship'>
 		<availability>CSA:2,CCC:2,CSR:1,CDS:1,CNC:1,CJF:1</availability>
-		<model name='(Standard)'>
+		<model name='(2962)'>
 			<roles>corvette</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Impavido Destroyer' unitType='Warship'>
 		<availability>CC:2,FWL:3,WOB:3</availability>
-		<model name='(Standard)'>
+		<model name='(3058)'>
 			<roles>destroyer</roles>
 			<availability>General:8</availability>
 		</model>
@@ -16434,14 +16434,14 @@
 	</chassis>
 	<chassis name='Kirishima Cruiser' unitType='Warship'>
 		<availability>DC:2</availability>
-		<model name='(Standard)'>
+		<model name='(3061)'>
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Kyushu Frigate' unitType='Warship'>
 		<availability>DC:4</availability>
-		<model name='(Standard)'>
+		<model name='(3057)'>
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>
@@ -16462,7 +16462,7 @@
 	</chassis>
 	<chassis name='Liberator Cruiser' unitType='Warship'>
 		<availability>CSA:1,CW:2,CCO:1,CJF:1</availability>
-		<model name='(Standard)'>
+		<model name='(3024)'>
 			<roles>cruiser</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16473,7 +16473,7 @@
 			<roles>destroyer</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Clan)'>
+		<model name='(2841)'>
 			<roles>destroyer</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
 		</model>
@@ -16484,7 +16484,7 @@
 			<roles>battleship</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Clan)'>
+		<model name='(2851)'>
 			<roles>battleship</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16505,14 +16505,14 @@
 	</chassis>
 	<chassis name='Nightlord Battleship' unitType='Warship'>
 		<availability>CSA:1,CSR:1,CDS:1,CSV:1,CGS:1,CCO:1,CJF:1,CGB:1</availability>
-		<model name='(Standard)'>
+		<model name='(2932)'>
 			<roles>battleship</roles>
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Potemkin Troop Cruiser' unitType='Warship'>
 		<availability>CSA:1,CS:1,CHH:1,CCC:2,CSR:5,CDS:5,CSV:2,NIOPS:1,CGS:3,CCO:2,CWIE:1</availability>
-		<model name='(Clan)'>
+		<model name='(2875)'>
 			<roles>cruiser</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16523,14 +16523,14 @@
 	</chassis>
 	<chassis name='Quixote Frigate' unitType='Warship'>
 		<availability>CDP:1,TC:1</availability>
-		<model name='(Standard)'>
+		<model name='(2350)'>
 			<roles>frigate</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Sovetskii Soyuz Heavy Cruiser' unitType='Warship'>
 		<availability>CSA:2,CS:1,MERC.WD:1,CSR:3,CDS:1,CW:1,CSV:1,NIOPS:1,CGS:1,CCO:2,CJF:1</availability>
-		<model name='(Clan)'>
+		<model name='(2845)'>
 			<roles>cruiser</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16555,7 +16555,7 @@
 	</chassis>
 	<chassis name='Texas Battleship' unitType='Warship'>
 		<availability>CSR:1,CW:1,CCO:1,CJF:1</availability>
-		<model name='(Clan)'>
+		<model name='(2835)'>
 			<roles>battleship</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16591,7 +16591,7 @@
 	</chassis>
 	<chassis name='Volga Transport' unitType='Warship'>
 		<availability>CSA:2,CS:1,CHH:1,CSR:1,CDS:2,CW:1,NIOPS:1,CSL:1,CGS:1,CCO:1,CGB:1</availability>
-		<model name='(Clan)'>
+		<model name='(2836)'>
 			<roles>cargo</roles>
 			<availability>CLAN:8</availability>
 		</model>
@@ -16606,14 +16606,14 @@
 			<roles>destroyer</roles>
 			<availability>IS:8</availability>
 		</model>
-		<model name='(Clan)'>
+		<model name='(2901)'>
 			<roles>destroyer</roles>
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='York Destroyer Carrier' unitType='Warship'>
 		<availability>CSA:4,CCC:3,CSR:1,CBS:1,CNC:1,CCO:1</availability>
-		<model name='(Standard)'>
+		<model name='(2947)'>
 			<roles>asf carrier,destroyer</roles>
 			<availability>CLAN:8</availability>
 		</model>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,77 +20,38 @@ Aquilla Transport Jumpship
 (Standard)
 </Model>
 
-<Tonnage>
-100000
-</Tonnage>
+<year>
+2148
+</year>
+
+<originalBuildYear>
+2148
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+None
+</motion_type>
+
+<transporters>
+smallcraftbay:8.0:4:1
+dropshuttlebay:2.0:1:2:f0
+1stclassquarters:120.0:0
+crewquarters:385.0:0
+2ndclassquarters:210.0:0
+cargobay:10100.0:1:3
+cargobay:10100.0:1:4
+</transporters>
 
 <SafeThrust>
 1
 </SafeThrust>
 
-<Armor>
-9
-7
-7
-6
-6
-5
-</Armor>
-
-<Nose Equipment>
-ISMG
-ISMG
-ISMG Ammo Full
-ISMG Ammo Full
-</Nose Equipment>
-
-<Front Left Side Equipment>
-ISAC5
-ISAC5 Ammo:60
-ISMG
-ISMG Ammo Full
-</Front Left Side Equipment>
-
-<Front Right Side Equipment>
-ISAC5
-ISAC5 Ammo:60
-ISMG
-ISMG Ammo Full
-</Front Right Side Equipment>
-
-<Left Broadside Equipment>
-ISMG
-ISMG Ammo Full
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-ISMG
-ISMG Ammo Full
-</Right Broadside Equipment>
-
-<Aft Left Side Equipment>
-ISMG
-ISMG Ammo Full
-</Aft Left Side Equipment>
-
-<Aft Right Side Equipment>
-ISMG
-ISMG Ammo Full
-</Aft Right Side Equipment>
-
-<Aft Equipment>
-ISMG
-ISMG
-ISMG Ammo Full
-ISMG Ammo Full
-</Aft Equipment>
-
-<structural_integrity>
-10
-</structural_integrity>
-
 <heatsinks>
-165
+154
 </heatsinks>
 
 <sink_type>
@@ -98,64 +59,110 @@ ISMG Ammo Full
 </sink_type>
 
 <fuel>
-25000
+12500
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-2148
-</year>
-
-<internal_type>
-0
-</internal_type>
-
 <armor_type>
-17
+40
 </armor_type>
 
-<engine_type>
+<armor_tech>
+5
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+9
+7
+7
+5
+6
+6
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Front Side Equipment>
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+</Right Front Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+
+<Left Broadsides Equipment>
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+</Right Broadsides Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+IO - Age of War
+</source>
+
+<tonnage>
+100000.0
+</tonnage>
+
+<kf_core>
+4
+</kf_core>
+
+<jump_range>
+15
+</jump_range>
+
+<sail>
 0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<transporters>
-SmallCraftBay:8:4
-CargoBay:18057:1
-CargoBay:18057:1
-2ndclassquarters:30:30
-</transporters>
-
-<docking_collar>
-0
-</docking_collar>
-
-<grav_deck>
-0
-</grav_deck>
-
-<escape_pod>
-20
-</escape_pod>
-
-<life_boat>
-20
-</life_boat>
+</sail>
 
 <crew>
-90
+107
 </crew>
+
+<officers>
+12
+</officers>
+
+<gunners>
+2
+</gunners>
 
 <passengers>
 30
 </passengers>
 
-<source>
-XTRO Primitives I - Age of War
-</source>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+20
+</escape_pod>
+
+<history>
+This ship has been rebuilt in accordance with the rules and example from IO.
+</history>

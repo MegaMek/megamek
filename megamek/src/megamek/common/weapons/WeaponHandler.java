@@ -1960,8 +1960,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (null != ae.getCrew()) {
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SANDBLASTER) && ae.getCrew()
-                    .getOptions().stringOption(OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(wtype.getName())) {
+            if (ae.hasAbility(OptionsConstants.GUNNERY_SANDBLASTER) && 
+                    ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
                 if (nRange > ranges[RangeType.RANGE_MEDIUM]) {
                     nMissilesModifier += 2;
                 } else if (nRange > ranges[RangeType.RANGE_SHORT]) {
@@ -1969,9 +1969,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 } else {
                     nMissilesModifier += 4;
                 }
-            } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_CLUSTER_MASTER)) {
+            } else if (ae.hasAbility(OptionsConstants.GUNNERY_CLUSTER_MASTER)) {
                 nMissilesModifier += 2;
-            } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_CLUSTER_HITTER)) {
+            } else if (ae.hasAbility(OptionsConstants.GUNNERY_CLUSTER_HITTER)) {
                 nMissilesModifier += 1;
             }
         }

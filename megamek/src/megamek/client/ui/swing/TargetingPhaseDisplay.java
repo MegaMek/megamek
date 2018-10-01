@@ -1093,10 +1093,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                                 + " ("
                                 + Compute.oddsAbove(
                                         toHit.getValue(),
-                                        ce().getCrew()
-                                                .getOptions()
-                                                .booleanOption(
-                                                        OptionsConstants.PILOT_APTITUDE_GUNNERY))
+                                        ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
                                 + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }

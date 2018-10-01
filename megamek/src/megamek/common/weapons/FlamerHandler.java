@@ -60,8 +60,7 @@ public class FlamerHandler extends WeaponHandler {
         int toReturn = super.calcDamagePerHit();
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             // pain shunted infantry get half damage
-            if (((Entity) target).getCrew().getOptions()
-                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
         } else if ((target instanceof BattleArmor)

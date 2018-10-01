@@ -6,3 +6,8 @@
 /logs/
 .DS_Store
 Thumbs.db
+/.gradle/
+/properties_local.gradle
+/.classpath
+/.project
+/build/

@@ -2187,7 +2187,7 @@ public class Compute {
         if (curInFrontArc || (attacker instanceof BattleArmor)) {
             mod--;
         }
-        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_MULTI_TASKER)) {
+        if (attacker.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER)) {
             mod--;
         }
         return new ToHitData(mod, "secondary target modifier");
@@ -2237,9 +2237,9 @@ public class Compute {
         } else if (movement == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(3, "attacker ran and skidded");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
-            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_JUMPING_JACK)) {
+            if (entity.hasAbility(OptionsConstants.PILOT_JUMPING_JACK)) {
                 toHit.addModifier(1, "attacker jumped");
-            } else if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOPPING_JACK)) {
+            } else if (entity.hasAbility(OptionsConstants.PILOT_HOPPING_JACK)) {
                 toHit.addModifier(2, "attacker jumped");
             } else {
                 toHit.addModifier(3, "attacker jumped");
@@ -2303,19 +2303,19 @@ public class Compute {
     public static void modifyPhysicalBTHForAdvantages(Entity attacker,
                                                       Entity target, ToHitData toHit, IGame game) {
 
-        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)
+        if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
                 && (attacker instanceof Mech)) {
             toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
         }
 
         IHex curHex = game.getBoard().getHex(attacker.getPosition());
-        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+        if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && ((attacker instanceof Mech) || (attacker instanceof Protomech))
                 && (curHex.terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
 
-        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING)) {
+        if (attacker.hasAbility(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING)) {
             toHit.addModifier(1, "clan pilot training");
         }
 
@@ -2323,8 +2323,7 @@ public class Compute {
 
         if ((target != null)
             && (target instanceof Mech)
-            && target.getCrew().getOptions()
-                     .booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
+            && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
             toHit.addModifier(2, "target is dodging");
         }
     }
@@ -2821,8 +2820,7 @@ public class Compute {
                 fChance = 1.0f;
             } else {
                 fChance = (float) Compute.oddsAbove(hitData.getValue(),
-                                                    attacker.getCrew().getOptions()
-                                                            .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY))
+                                                    attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
                           / 100.0f;
             }
         }
@@ -4365,7 +4363,7 @@ public class Compute {
         }
         
         //Apply Sensor Geek SPA, if present
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if (ae.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
             tn -= 2;
         }
         
@@ -4475,7 +4473,7 @@ public class Compute {
         }
         
         //Apply Sensor Geek SPA, if present
-        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if (ae.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
             tn -= 2;
         }
             
@@ -4653,7 +4651,7 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        if ((null != ae.getCrew()) && ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+        if ((null != ae.getCrew()) && ae.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
             check -= 2;
         }
         if (null != te) {
@@ -5344,7 +5342,7 @@ public class Compute {
         }
 
         // MD Infantry with grappler/magnets get bonus
-        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_ENHANCED)) {
+        if (attacker.hasAbility(OptionsConstants.MD_PL_ENHANCED)) {
             data.addModifier(-2, "MD Grapple/Magnet");
         }
 
@@ -5550,12 +5548,12 @@ public class Compute {
                                             Targetable target) {
 
         if (PunchAttackAction.toHit(game, entityId, target,
-                                    PunchAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE) {
+                                    PunchAttackAction.LEFT, false).getValue() != TargetRoll.IMPOSSIBLE) {
             return true;
         }
 
         if (PunchAttackAction.toHit(game, entityId, target,
-                                    PunchAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE) {
+                                    PunchAttackAction.RIGHT, false).getValue() != TargetRoll.IMPOSSIBLE) {
             return true;
         }
 
@@ -5620,7 +5618,7 @@ public class Compute {
         for (Mounted club : game.getEntity(entityId).getClubs()) {
             if (null != club) {
                 if (ClubAttackAction.toHit(game, entityId, target, club,
-                                           ToHitData.HIT_NORMAL).getValue() != TargetRoll.IMPOSSIBLE) {
+                                           ToHitData.HIT_NORMAL, false).getValue() != TargetRoll.IMPOSSIBLE) {
                     return true;
                 }
             }

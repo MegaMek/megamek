@@ -1445,7 +1445,7 @@
 		<!--The ProtoMek program was canceled in the mid 3060s and
 		the remaining units were transferred to garrisons where they
 		continued to see action at least to the Ice Hellion invasion.-->
-		<unitType ifUnitType="Mek" ifDateBetween="3060,">
+		<unitType ifUnitType="Mek" ifDateBetween="3060," ifTopLevel="0">
 			<option weight="6" />
 			<option ifDateBetween="3066," weight="2" />
 			<option ifDateBetween="3060,3065">ProtoMek</option>

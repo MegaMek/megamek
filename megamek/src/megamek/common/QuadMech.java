@@ -319,7 +319,7 @@ public class QuadMech extends Mech {
             roll.addModifier(-2, "Quad bonus");
         }
 
-        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+        if (hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
             roll.addModifier(-1, "Animal Mimicry");
         }
 

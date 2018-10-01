@@ -163,7 +163,7 @@ public class TestTank extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
         return false;
     }
 
@@ -284,6 +284,12 @@ public class TestTank extends TestEntity {
             if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
                 heat += 12;
             }
+            if (mtype.hasFlag(MiscType.F_NOVA)) {
+            	heat += 2;
+            }
+        }
+        if (tank.hasStealth()) {
+            heat += 10;
         }
         return heat;
     }
@@ -296,8 +302,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public int getCountHeatSinks() {
-        float heat = getTankCountHeatLaserWeapons();
-        return Math.round(heat);
+        return getTankCountHeatLaserWeapons();
     }
 
     @Override

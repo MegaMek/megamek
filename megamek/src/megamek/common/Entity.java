@@ -15001,7 +15001,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return "";
     }
     
-<<<<<<< HEAD
     //Tractors and trailers, tugs, etc
     
     /**
@@ -15310,7 +15309,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void removeTowedUnit(Entity e) {
         isTractorFor.remove(e);
-=======
+    }
+    
     /**
      * determine if an entity has an ability that is identified by its presence or absence only.
      * The entity may gain this ability from different places, not exclusively the crew.
@@ -15345,6 +15345,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         return 1;
->>>>>>> branch 'master' of https://github.com/MegaMek/megamek
     }
+    
 }

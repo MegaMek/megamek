@@ -5720,6 +5720,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
+        ammo.kgPerShot = 5;
         ammo.rulesRefs = "228,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
@@ -12995,6 +12996,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MG_HEAVY;
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 100;
+        ammo.kgPerShot = 10;
         ammo.bv = 1;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But MG Tech Base and Avail Ratings.
@@ -13025,6 +13027,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
+        ammo.kgPerShot = 5;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But MG Tech Base and Avail Ratings.
         ammo.rulesRefs = "228,TM";
@@ -13053,6 +13056,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
+        ammo.kgPerShot = 10;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But MG Tech Base and Avail Ratings.
         ammo.rulesRefs = "228,TM";

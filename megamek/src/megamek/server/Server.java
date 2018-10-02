@@ -9924,17 +9924,15 @@ public class Server implements Runnable {
         }
         
         //If the entity is towing trailers, update the position of those trailers
-        if (entity.getAllTowedUnits().size() > 0) {
-            ArrayList<Coords> trailerPath = new ArrayList<Coords>();
-            ArrayList<Entity> reversedTrailers = new ArrayList<Entity>();
-            //If I don't make a copy, my original gets reversed before movement is processed.
-            reversedTrailers = entity.getAllTowedUnits();
-            trailerPath = initializeTrailerCoordinates(entity, reversedTrailers);
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            ArrayList<Entity> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            Collections.reverse(reversedTrailers); // reverse in-place
+            ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
             for (Entity trailer : entity.getAllTowedUnits()) {
                 processTrailerMovement(entity, trailer, trailerPath);
                 entityUpdate(trailer.getId());
             }
-        }
+         }
 
         // Update the entitiy's position,
         // unless it is off the game map.
@@ -10043,7 +10041,7 @@ public class Server implements Runnable {
             trailer.setPosition(trailerPos);
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
-            trailerPositionOffset /= 2.0;
+            trailerPositionOffset =  (int) Math.ceil(trailerPositionOffset / 2.0);
             if (trailerPositionOffset == 1) {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
@@ -10068,7 +10066,6 @@ public class Server implements Runnable {
     public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, ArrayList<Entity> allTowedTrailers) {
         ArrayList<Coords> trainCoords = new ArrayList<Coords>();
         Coords position = null;
-        Collections.reverse(allTowedTrailers);
         for (Entity trailer : allTowedTrailers) {
             position = trailer.getPosition();
             //Duplicates foul up the works...

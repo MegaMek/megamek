@@ -38,7 +38,6 @@ import megamek.common.SpaceStation;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
-import megamek.common.verifier.TestEntity;
 
 public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
 
@@ -306,9 +305,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                     // first load the equipment
                     Mounted newmount;
                     try {
-                        if (!TestEntity.eqRequiresLocation(a, etype)) {
-                            newmount = a.addEquipment(etype, SpaceStation.LOC_HULL);
-                        } else if (nAmmo == 1) {
+                        if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
                             newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);

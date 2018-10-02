@@ -81,7 +81,6 @@ steeragequarters:20.0:0
 </armor>
 
 <Nose Equipment>
-ISBoobyTrap
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -92,6 +91,10 @@ ISBoobyTrap
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Hull Equipment>
+ISBoobyTrap
+</Hull Equipment>
 
 <structural_integrity>
 6
@@ -106,7 +109,7 @@ XTRO:Pirates - Jihad
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

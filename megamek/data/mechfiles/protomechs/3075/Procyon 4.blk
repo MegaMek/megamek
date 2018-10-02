@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,60 +16,88 @@ ProtoMech
 Procyon
 </Name>
 
-<model>
+<Model>
 4
-</model>
-
-<Tonnage>
-5
-</Tonnage>
-
-<cruiseMP>
-5
-</cruiseMP>
-
-<Armor>
-2
-8
-2
-2
-6
-</Armor>
-
-<Torso Equipment>
-CLStreakSRM3
-CLStreakSRM3 Ammo (5)
-</Torso Equipment>
-
-<Right Arm Equipment>
-CLMG
-CLMG Ammo (20)
-</Right Arm Equipment>
-
-<type>
-Clan Level 2
-</type>
+</Model>
 
 <year>
 3068
 </year>
 
-<internal_type>
-0
-</internal_type>
+<originalBuildYear>
+3068
+</originalBuildYear>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
+<type>
+Clan Level 2
+</type>
 
 <motion_type>
 Biped
 </motion_type>
 
+<transporters>
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+2
+8
+2
+2
+6
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 3 Ammo
+Clan Machine Gun Ammo - Proto
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLStreakSRM3
+</Torso Equipment>
+
+<Right Arm Equipment>
+CLMG
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
 <source>
 TRO 3075 - Jihad
 </source>
+
+<tonnage>
+5.0
+</tonnage>
+

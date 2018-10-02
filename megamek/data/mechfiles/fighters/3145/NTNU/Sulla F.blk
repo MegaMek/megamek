@@ -24,6 +24,10 @@ F
 3108
 </year>
 
+<originalBuildYear>
+3108
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
@@ -31,6 +35,9 @@ Clan Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -84,25 +91,23 @@ Aerodyne
 
 <Left Wing Equipment>
 CLImprovedHeavyLargeLaser:OMNI
-CLCASE:OMNI
-CLCASE:OMNI
-CLCASE
-CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLImprovedHeavyLargeLaser:OMNI
-CLCASE:OMNI
-CLCASE:OMNI
-CLCASE
-CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 WatchdogECMSuite:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3145 NTNU - Late Republic

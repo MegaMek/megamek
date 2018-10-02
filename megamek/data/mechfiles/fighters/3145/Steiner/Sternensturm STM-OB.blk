@@ -24,6 +24,10 @@ STM-OB
 3098
 </year>
 
+<originalBuildYear>
+3098
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -77,7 +84,6 @@ Aerodyne
 
 <Nose Equipment>
 BeagleActiveProbe:OMNI
-ISAMS Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,6 +103,13 @@ ISAntiMissileSystem:OMNI
 <Aft Equipment>
 ISGuardianECMSuite:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISAMS Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth - Early Republic

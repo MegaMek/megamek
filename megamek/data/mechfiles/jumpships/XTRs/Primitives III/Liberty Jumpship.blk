@@ -39,14 +39,14 @@ Aerodyne
 <transporters>
 smallcraftbay:2.0:2:1
 cargobay:566.5:1:2
-megamek.common.DockingCollar@219f0660
-megamek.common.DockingCollar@598e1748
-megamek.common.DockingCollar@41c677b7
-megamek.common.DockingCollar@29b4c0a9
 1stclassquarters:0.0:0
 crewquarters:49.0:0
 2ndclassquarters:0.0:0
 steeragequarters:300.0:0
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -104,6 +104,9 @@ steeragequarters:300.0:0
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
@@ -123,10 +126,6 @@ XTRO Primitives III - Age of War
 <grav_decks>
 45
 </grav_decks>
-
-<docking_collar>
-4
-</docking_collar>
 
 <crew>
 55

@@ -24,6 +24,10 @@ DFC-OA
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -86,8 +93,14 @@ ISERPPC:OMNI
 
 <Aft Equipment>
 SRM 2:OMNI
-IS Ammo SRM-2:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-2:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

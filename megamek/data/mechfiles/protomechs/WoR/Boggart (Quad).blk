@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Boggart
 </Name>
 
-<model>
+<Model>
 (Quad) 1
-</model>
+</Model>
 
-<Tonnage>
-13
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Quad
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -32,48 +47,64 @@ Boggart
 5
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 6
 16
 0
 0
 14
 3
-</Armor>
+</armor>
+
+<Body Equipment>
+CLPlasmaCannonAmmo
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <Main Gun Equipment>
 CLPlasmaCannon
-CLPlasmaCannon Ammo (10)
 </Main Gun Equipment>
-
-<type>
-Clan Level 3
-</type>
-
-<year>
-3072
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-quad
-</motion_type>
-
-<quad>
-true
-</quad>
 
 <source>
 Wars of Reaving - Jihad
 </source>
+
+<tonnage>
+13.0
+</tonnage>
+

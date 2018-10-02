@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,9 +20,24 @@ Hippogriff
 (Standard)
 </Model>
 
-<Tonnage>
-8
-</Tonnage>
+<year>
+3110
+</year>
+
+<originalBuildYear>
+3110
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -32,13 +47,42 @@ Hippogriff
 5
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 2
 10
 4
 4
 10
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo Protomech LRM-2
+Clan Ammo Protomech LRM-2
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 ProtoMechPartialWing
@@ -46,38 +90,20 @@ ProtoMechPartialWing
 
 <Right Arm Equipment>
 CLLRM2
-CLLRM2 Ammo (24)
 </Right Arm Equipment>
 
 <Left Arm Equipment>
 CLLRM2
-CLLRM2 Ammo (24)
 </Left Arm Equipment>
 
-<type>
-Clan Level 3
-</type>
-
-<year>
-3110
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3145 Mercenaries - Late Republic
 </source>
+
+<tonnage>
+8.0
+</tonnage>
+

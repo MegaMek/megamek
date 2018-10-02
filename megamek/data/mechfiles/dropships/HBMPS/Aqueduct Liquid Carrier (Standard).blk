@@ -44,10 +44,10 @@ cargobay:2850.0:2:7
 steeragequarters:100.0:0
 crewquarters:224.0:0
 1stclassquarters:60.0:0
-liquidcargobay:6500.0:0:2
-liquidcargobay:6500.0:0:3
-liquidcargobay:6500.0:0:4
-liquidcargobay:6500.0:0:5
+liquidcargobay:6500.0:0:8
+liquidcargobay:6500.0:0:9
+liquidcargobay:6500.0:0:10
+liquidcargobay:6500.0:0:11
 </transporters>
 
 <SafeThrust>
@@ -103,6 +103,9 @@ liquidcargobay:6500.0:0:5
 Machine Gun
 IS Ammo MG - Full:200
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 30

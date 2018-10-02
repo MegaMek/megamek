@@ -24,6 +24,10 @@ TRB-D46
 2724
 </year>
 
+<originalBuildYear>
+2724
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -72,8 +79,6 @@ ISERLargeLaser
 LRM 15
 ISArtemisIV
 Medium Laser
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -81,14 +86,22 @@ ISERLargeLaser
 LRM 15
 ISArtemisIV
 Medium Laser
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Star League

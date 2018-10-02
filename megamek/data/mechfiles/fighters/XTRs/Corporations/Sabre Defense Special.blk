@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,38 +20,32 @@ Sabre
 SB-31 'Defense Special'
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 11
 </SafeThrust>
 
-<Armor>
-22
-17
-17
-16
-</Armor>
-
-<Nose Equipment>
-ISERMediumLaser
-IS Laser AMS
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser
-IS Laser AMS
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISERMediumLaser
-IS Laser AMS
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -65,30 +59,46 @@ IS Laser AMS
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+2
+</engine_type>
 
-<year>
-3068
-</year>
+<armor>
+22
+17
+17
+16
+</armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISLaserAntiMissileSystem
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISLaserAntiMissileSystem
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISLaserAntiMissileSystem
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 XTRO Corporation - Jihad
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+25.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

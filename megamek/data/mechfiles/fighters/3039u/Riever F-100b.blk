@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,42 +20,32 @@ Riever
 F-100b
 </Model>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+2835
+</year>
+
+<originalBuildYear>
+2835
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-66
-57
-57
-44
-</Armor>
-
-<Nose Equipment>
-Autocannon/20
-LRM 10
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo LRM-10
-IS Ammo LRM-10
-</Nose Equipment>
-
-<Left Wing Equipment>
-Autocannon/5
-IS Ammo AC/5
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-Autocannon/5
-IS Ammo AC/5
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 28
@@ -69,30 +59,50 @@ IS Ammo AC/5
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-2835
-</year>
+<armor>
+66
+57
+57
+44
+</armor>
+
+<Nose Equipment>
+Autocannon/20
+LRM 10
+</Nose Equipment>
+
+<Left Wing Equipment>
+Autocannon/5
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Autocannon/5
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Ammo AC/5
+IS Ammo AC/5
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+100.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

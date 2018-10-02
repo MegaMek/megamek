@@ -24,6 +24,10 @@ ZRO-CX-3
 3073
 </year>
 
+<originalBuildYear>
+3073
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -77,6 +84,12 @@ Enhanced LRM 5
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 XTRO ComStar - Jihad

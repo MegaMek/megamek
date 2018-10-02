@@ -24,6 +24,10 @@ S-STR-OA Dominus
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -81,24 +88,30 @@ Heavy PPC:OMNI
 
 <Left Wing Equipment>
 ISRotaryAC5:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
 ISStreakSRM4:OMNI
-IS Streak SRM 4 Ammo:OMNI
-ISCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISRotaryAC5:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
-ISRotaryAC5 Ammo:OMNI
 ISStreakSRM4:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+IS Streak SRM 4 Ammo:OMNI
+ISCASE:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

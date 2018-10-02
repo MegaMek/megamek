@@ -173,7 +173,6 @@ ISApollo
 </Right Side Equipment>
 
 <Aft Equipment>
-ISNC3
 (B) Sub-Capital Laser (SCL/2)
 Sub-Capital Laser (SCL/2)
 (B) ISLargePulseLaser
@@ -192,6 +191,10 @@ ISApollo
 ISApollo
 </Aft Equipment>
 
+<Hull Equipment>
+ISNC3
+</Hull Equipment>
+
 <structural_integrity>
 16
 </structural_integrity>
@@ -203,6 +206,10 @@ TRO 3085 - Jihad
 <tonnage>
 16000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 260

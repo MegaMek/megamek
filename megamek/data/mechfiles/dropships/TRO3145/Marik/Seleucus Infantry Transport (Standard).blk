@@ -42,7 +42,7 @@ lightvehiclebay:12.0:1:2
 1stclassquarters:50.0:0
 2ndclassquarters:0.0:0
 crewquarters:112.0:0
-cargobay:205.0:1:3
+cargobay:205.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -148,6 +148,9 @@ ISArtemisIV
 ISArtemisIV
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>
@@ -159,6 +162,10 @@ TRO 3145 Free Worlds League - Early Republic
 <tonnage>
 2600.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 196

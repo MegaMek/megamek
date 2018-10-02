@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,52 +20,32 @@ Mustang Fighter
 (Standard)
 </Model>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+2463
+</year>
+
+<originalBuildYear>
+2463
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-28
-23
-23
-10
-</Armor>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<Nose Equipment>
-IS Auto Cannon/10 Primitive
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISSRM4
-ISSRM4
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISSRM4
-ISSRM4
-</Right Wing Equipment>
-
-<Body Equipment>
-Advanced Fire Control
-ISSRM4 Ammo
-ISSRM4 Ammo
-ISAC10p Ammo
-ISAC10p Ammo
-</Body Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<transporters>
-</transporters>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -79,34 +59,58 @@ ISAC10p Ammo
 320
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2463
-</year>
+<armor>
+28
+23
+23
+10
+</armor>
 
-<source>
-XTRO Primitives IV - Age of War
-</source>
+<Nose Equipment>
+Autocannon/10 Primitive
+</Nose Equipment>
 
-<internal_type>
-0				
-</internal_type>
+<Left Wing Equipment>
+SRM 4
+SRM 4
+</Left Wing Equipment>
 
-<armor_type>
-0
-</armor_type>
+<Right Wing Equipment>
+SRM 4
+SRM 4
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+IS Ammo SRM-4
+IS Ammo SRM-4
+IS Ammo AC/10 Primitive
+IS Ammo AC/10 Primitive
+</Body Equipment>
 
 <barrating>
 6
 </barrating>
 
-<engine_type>				
-1
-</engine_type>
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
-<motion_type>
-aerodyne
-</motion_type>
+<source>
+XTRO Primitives IV - Age of War
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

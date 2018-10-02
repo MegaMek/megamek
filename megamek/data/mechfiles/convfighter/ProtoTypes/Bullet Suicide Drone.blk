@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,64 +20,32 @@ Bullet Suicide Drone
 (Standard)
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+3080
+</year>
 
-<SafeThrust>
-6
-</SafeThrust>
-
-<Armor>
-7
-5
-5
-3
-</Armor>
-
-<Nose Equipment>
-ISSRM2
-ISSRM2 Ammo
-ISBoobyTrap
-ISDroneOperatingSystem
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<fuel>
-320
-</fuel>
+<originalBuildYear>
+3080
+</originalBuildYear>
 
 <type>
 IS Level 4
 </type>
 
-<year>
-3080
-</year>
+<motion_type>
+Aerodyne
+</motion_type>
 
-<source>
-TRO Prototypes - Jihad
-</source>
+<transporters>
+</transporters>
 
-<internal_type>
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
 0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-1
-</engine_type>
+</cockpit_type>
 
 <heatsinks>
 0
@@ -87,6 +55,48 @@ TRO Prototypes - Jihad
 0
 </sink_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<fuel>
+320
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+7
+5
+5
+3
+</armor>
+
+<Nose Equipment>
+SRM 2
+ISBoobyTrap
+ISDroneOperatingSystem
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-2
+</Fuselage Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+

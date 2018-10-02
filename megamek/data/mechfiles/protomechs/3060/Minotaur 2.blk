@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,52 +20,86 @@ Minotaur
 2
 </Model>
 
-<Tonnage>
-9
-</Tonnage>
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
 </cruiseMP>
 
-<Armor>
+<jumpingMP>
+0
+</jumpingMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 3
 7
 3
 3
 6
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan LB 2-X AC Ammo
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <Main Gun Equipment>
 CLLBXAC2
-CLLBXAC2 Ammo (20)
 </Main Gun Equipment>
-
-<type>
-Clan
-</type>
-
-<year>
-3062
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
 
 <source>
 TRO 3060 - Civil War
 </source>
+
+<tonnage>
+9.0
+</tonnage>
+

@@ -48,7 +48,7 @@ dockingcollar
 1stclassquarters:500.0:0
 crewquarters:1680.0:0
 steeragequarters:600.0:0
-cargobay:8464.0:1:3
+cargobay:8464.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -223,6 +223,9 @@ Machine Gun
 IS Ammo MG - Full:800
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) Naval Laser 55
 Naval Laser 55
@@ -325,8 +328,4 @@ FR2765-LCAF - Star League
 <escape_pod>
 30
 </escape_pod>
-
-<history>
-The ship from the TRO is unable to use the advanced armor as written. This is rebuilt with the correct armor type, but results in reduced armor values.  Also the cargo space has been increased by 8464 tons.
-</history>
 

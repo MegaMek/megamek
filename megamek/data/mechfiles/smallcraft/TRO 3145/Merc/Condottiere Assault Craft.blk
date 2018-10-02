@@ -110,6 +110,9 @@ ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 5
 </structural_integrity>
@@ -123,7 +126,7 @@ TRO 3145 Mercenaries - Late Republic
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

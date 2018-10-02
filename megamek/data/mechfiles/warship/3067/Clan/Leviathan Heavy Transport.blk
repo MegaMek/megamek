@@ -50,7 +50,7 @@ dockingcollar
 1stclassquarters:1660.0:0
 crewquarters:5838.0:0
 2ndclassquarters:1575.0:0
-smallcraftbay:20.0:12:2
+smallcraftbay:20.0:12:6
 </transporters>
 
 <SafeThrust>
@@ -261,7 +261,6 @@ Naval PPC (Medium)
 Ammo AR10 Barracuda:100
 Ammo AR10 White Shark:50
 Ammo AR10 Killer Whale:25
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -331,6 +330,10 @@ Ammo AR10 Barracuda:100
 Ammo AR10 White Shark:50
 Ammo AR10 Killer Whale:25
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) CLERLargeLaser

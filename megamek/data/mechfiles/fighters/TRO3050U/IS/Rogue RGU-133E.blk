@@ -24,6 +24,10 @@ RGU-133E
 2631
 </year>
 
+<originalBuildYear>
+2631
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -77,17 +84,23 @@ Medium Laser
 
 <Left Wing Equipment>
 LRM 15
-IS Ammo LRM-15
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 LRM 15
-IS Ammo LRM-15
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-15
+IS Ammo LRM-15
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

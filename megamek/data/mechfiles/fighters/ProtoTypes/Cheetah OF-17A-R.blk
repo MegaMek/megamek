@@ -24,6 +24,10 @@ OF-17A-R
 3080
 </year>
 
+<originalBuildYear>
+3080
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 12
@@ -84,9 +91,17 @@ ISHypersprectralImager
 
 <Aft Equipment>
 IS Vehicular Stealth
+IS Vehicular Stealth
+IS Vehicular Stealth
 Small Laser
 Small Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

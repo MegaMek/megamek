@@ -24,6 +24,10 @@ WKT-1S
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -72,9 +79,7 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Blazer Cannon
-IS Ammo MML-5 SRM
-IS Ammo MML-5 LRM
+Binary Laser (Blazer) Cannon
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -88,6 +93,14 @@ ISMML5
 <Aft Equipment>
 ISERMediumLaser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM
+</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

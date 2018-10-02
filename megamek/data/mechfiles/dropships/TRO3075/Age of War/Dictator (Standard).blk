@@ -139,6 +139,9 @@ IS Ammo AC/10:40
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>
@@ -150,6 +153,10 @@ TRO 3075 - Star League
 <tonnage>
 9000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 105

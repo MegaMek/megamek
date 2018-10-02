@@ -24,6 +24,10 @@ DARO-1B
 3062
 </year>
 
+<originalBuildYear>
+3062
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -77,8 +84,6 @@ Aerodyne
 
 <Nose Equipment>
 ISLBXAC10:OMNI
-IS LB 10-X Cluster Ammo:OMNI
-IS LB 10-X Cluster Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,6 +100,14 @@ ISERMediumLaser:OMNI
 ISERSmallLaser:OMNI
 ISERSmallLaser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

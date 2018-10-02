@@ -24,6 +24,10 @@ ZRO-114
 2703
 </year>
 
+<originalBuildYear>
+2703
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -65,7 +72,6 @@ Aerodyne
 
 <Nose Equipment>
 LRM 10
-IS Ammo LRM-10
 Large Laser
 Medium Laser
 </Nose Equipment>
@@ -78,6 +84,13 @@ Medium Laser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-10
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

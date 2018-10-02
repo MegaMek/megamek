@@ -24,6 +24,10 @@ HCT-213C
 2724
 </year>
 
+<originalBuildYear>
+2724
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -88,6 +95,12 @@ ISLargePulseLaser
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 H:Operation Klondyke - Star League

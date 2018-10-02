@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,63 @@ Stingray
 F-95
 </Model>
 
-<Tonnage>
-60
-</Tonnage>
+<year>
+3069
+</year>
+
+<originalBuildYear>
+3069
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+19
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 66
 51
 51
 38
-</Armor>
+</armor>
 
 <Nose Equipment>
 Heavy PPC
@@ -50,42 +93,17 @@ ISERLargeLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-19
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3069
-</year>
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+60.0
+</tonnage>
 
-<armor_type>
-19
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

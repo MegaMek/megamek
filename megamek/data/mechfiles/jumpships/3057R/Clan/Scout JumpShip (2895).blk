@@ -40,9 +40,9 @@ Aerodyne
 smallcraftbay:1.0:1:1
 cargobay:486.5:1:2
 cargobay:486.5:1:3
-megamek.common.DockingCollar@7bb658ac
 1stclassquarters:30.0:0
 crewquarters:126.0:0
+dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -83,7 +83,6 @@ crewquarters:126.0:0
 </armor>
 
 <Nose Equipment>
-ISMobileHPG
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -101,6 +100,10 @@ ISMobileHPG
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
@@ -116,10 +119,6 @@ TRO 3057R -
 <sail>
 1
 </sail>
-
-<docking_collar>
-1
-</docking_collar>
 
 <crew>
 26

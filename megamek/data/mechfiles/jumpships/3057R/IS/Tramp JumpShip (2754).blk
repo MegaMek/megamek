@@ -40,11 +40,11 @@ Aerodyne
 smallcraftbay:2.0:2:1
 cargobay:1414.0:1:2
 cargobay:1414.0:1:3
-megamek.common.DockingCollar@3e7f38be
-megamek.common.DockingCollar@1190ed1a
-megamek.common.DockingCollar@83a04c7
 1stclassquarters:40.0:0
 crewquarters:133.0:0
+dockingcollar
+dockingcollar
+dockingcollar
 </transporters>
 
 <SafeThrust>
@@ -128,6 +128,9 @@ ISAntiMissileSystem
 ISAMS Ammo:24
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
@@ -147,10 +150,6 @@ TRO 3057R - Star League
 <grav_decks>
 140
 </grav_decks>
-
-<docking_collar>
-3
-</docking_collar>
 
 <crew>
 33

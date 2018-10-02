@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Chrysaor
 </Name>
 
-<model>
+<Model>
 2
-</model>
+</Model>
 
-<Tonnage>
-6
-</Tonnage>
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 6
@@ -32,13 +47,40 @@ Chrysaor
 5
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 3
 10
 4
 4
 7
-</Armor>
+</armor>
+
+<Body Equipment>
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLMicroPulseLaser
@@ -48,30 +90,17 @@ CLMicroPulseLaser
 CLMicroPulseLaser
 </Right Arm Equipment>
 
-<type>
-Clan
-</type>
+<Left Arm Equipment>
+</Left Arm Equipment>
 
-<year>
-3067
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3075 - Civil War
 </source>
+
+<tonnage>
+6.0
+</tonnage>
+

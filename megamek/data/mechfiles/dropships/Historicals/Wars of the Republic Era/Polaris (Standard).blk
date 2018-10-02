@@ -42,7 +42,7 @@ battlearmorbay:10.0:2:2
 2ndclassquarters:0.0:0
 crewquarters:133.0:0
 1stclassquarters:30.0:0
-cargobay:210.0:1:3
+cargobay:210.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -187,6 +187,9 @@ CLAntiMissileSystem
 CLAMS Ammo:72
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 15
 </structural_integrity>
@@ -198,6 +201,10 @@ H:Wars of the Republic Era - Early Republic
 <tonnage>
 6000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 239

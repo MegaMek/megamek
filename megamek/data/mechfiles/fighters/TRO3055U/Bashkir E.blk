@@ -24,6 +24,10 @@ E
 3071
 </year>
 
+<originalBuildYear>
+3071
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 13
@@ -80,12 +87,6 @@ CLMG:OMNI
 CLMG:OMNI
 CLMG:OMNI
 CLMGA:OMNI
-Clan Machine Gun Ammo - Half:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -102,6 +103,14 @@ CLERSmallLaser:OMNI
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Machine Gun Ammo - Half:OMNI
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Jihad

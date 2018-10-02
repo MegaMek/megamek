@@ -463,17 +463,13 @@ public class BLKFile {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+                if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
+                }
             }
         }
 
         int numLocs = t.locations();
-        // Aeros have an extra special location called "wings" that we
-        //  don't want to consider, but Fixed Wing Support vehicles have a "Body" location that will
-        // not index right if the wings locations is removed.
-        if (t instanceof Aero && t.isFighter() && !(t instanceof FixedWingSupport)) {
-            numLocs--;
-        }
-
         if (!(t instanceof Infantry)) {
             if (t instanceof Aero){
                 if (t.isFighter()) {
@@ -521,7 +517,7 @@ public class BLKFile {
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
-                for (int i = 1; i < numLocs; i++) {
+                for (int i = 1; i < t.locations(); i++) {
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type",
                             t.getArmorType(i));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
@@ -534,14 +530,13 @@ public class BLKFile {
             if (t.isOmni()) {
                 blk.writeBlockData("omni", 1);
             }
+            
             int armor_array[];
-            if (t instanceof Aero){
-                if ((t instanceof FixedWingSupport)
-                        || (t instanceof Warship)) {
-                    //exclude body and wings on FWS and broadsides on warships
-                    armor_array = new int[numLocs - 2];
+            if (t.hasETypeFlag(Entity.ETYPE_AERO)) {
+                if (t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                    armor_array = new int[6];
                 } else {
-                    armor_array = new int[numLocs];
+                    armor_array = new int[4];
                 }
                 for (int i = 0; i < armor_array.length; i++) {
                     armor_array[i] = t.getOArmor(i);
@@ -555,7 +550,7 @@ public class BLKFile {
             blk.writeBlockData("armor", armor_array);
         }
         if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            numLocs = Protomech.LOC_UNALLOCATED + 1;
+            numLocs = Protomech.LOC_BODY + 1;
         }
 
         // Write out armor_type and armor_tech entries for BA
@@ -879,7 +874,7 @@ public class BLKFile {
             	// TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
-                    Double fsize = new Double(transporter.substring(11));
+                    Double fsize = Double.valueOf(transporter.substring(11));
                     e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,35 +20,32 @@ Sparrowhawk
 SPR-8H
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+2906
+</year>
+
+<originalBuildYear>
+2906
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
 </SafeThrust>
 
-<Armor>
-40
-26
-26
-36
-</Armor>
-
-<Nose Equipment>
-SRM 2
-Small Laser
-IS Ammo SRM-2
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -62,30 +59,43 @@ IS Ammo SRM-2
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-2906
-</year>
+<armor>
+40
+26
+26
+36
+</armor>
+
+<Nose Equipment>
+SRM 2
+Small Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-2
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+30.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

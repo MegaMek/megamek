@@ -59,16 +59,6 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             t.setModel("");
         }
 
-        if (dataFile.exists("quad") && dataFile.getDataAsString("quad")[0].equalsIgnoreCase("true")) {
-            t.setIsQuad(true);
-            t.setMovementMode(EntityMovementMode.QUAD);
-        }
-
-        if (dataFile.exists("glider") && dataFile.getDataAsString("glider")[0].equalsIgnoreCase("true")) {
-            t.setIsGlider(true);
-            t.setMovementMode(EntityMovementMode.WIGE);
-        }
-
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -93,6 +83,8 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
+        t.setIsQuad(nMotion == EntityMovementMode.QUAD);
+        t.setIsGlider(nMotion == EntityMovementMode.WIGE);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
@@ -116,9 +108,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int[] armor = dataFile.getDataAsInt("armor");
 
         boolean hasMainGun = false;
-        if (Protomech.NUM_PMECH_LOCATIONS == armor.length) {
+        int armorLocs = armor.length + t.firstArmorIndex();
+        if (Protomech.NUM_PMECH_LOCATIONS == armorLocs) {
             hasMainGun = true;
-        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armor.length) {
+        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armorLocs) {
             hasMainGun = false;
         } else {
             throw new EntityLoadingException("Incorrect armor array length");
@@ -140,7 +133,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {
-            t.initializeArmor(armor[x], x);
+            t.initializeArmor(armor[x], x + t.firstArmorIndex());
         }
 
         t.autoSetInternal();
@@ -202,11 +195,11 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
                     if (ammoIndex > 0) {
-                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED, false, shotsCount);
+                        t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
                     } else if (TestProtomech.requiresSlot(etype)) {
                         t.addEquipment(etype, nLoc);
                     } else {
-                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED);
+                        t.addEquipment(etype, Protomech.LOC_BODY);
                     }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());

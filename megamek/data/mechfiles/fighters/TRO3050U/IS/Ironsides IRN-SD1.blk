@@ -24,6 +24,10 @@ IRN-SD1
 2613
 </year>
 
+<originalBuildYear>
+2613
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -67,7 +74,6 @@ Aerodyne
 PPC
 PPC
 SRM 6
-IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -84,6 +90,13 @@ Medium Laser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Star League

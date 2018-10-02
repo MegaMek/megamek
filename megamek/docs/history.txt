@@ -7,6 +7,10 @@ v0.45.2-SNAPSHOT
 + PR #1132: Zweihander
 + Issue #1149: Force Generator switching from Mechs to Protomechs for Clans that deploy them
 + Data: Various fixes to unit names as a result of the Large Craft changes.
++ Data: New Sprites
++ PR #1152: Refactor of methods for getting pilot SPAs
++ Issue #1127: Fix for units not applying camo in certain circumstances
++ PR #1164: System wide equipment [Support for aerospace equipment in a generic, non-firing arc location]
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers

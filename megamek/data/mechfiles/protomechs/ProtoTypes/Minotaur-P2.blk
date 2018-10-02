@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,9 +20,24 @@ Minotaur
 P2
 </Model>
 
-<Tonnage>
-9
-</Tonnage>
+<year>
+3080
+</year>
+
+<originalBuildYear>
+3080
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -32,56 +47,62 @@ P2
 0
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 6
 18
 4
 4
 10
 3
-</Armor>
+</armor>
 
-<Main Gun Equipment>
-Clan SRM-4
-CLSRM4 Ammo (8)
-</Main Gun Equipment>
+<Body Equipment>
+Clan Ammo SRM-4
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 ProtoMagneticClamp
 </Torso Equipment>
 
 <Right Arm Equipment>
-CLImprovedHeavySmallLaser
+CLImprovedSmallHeavyLaser
 </Right Arm Equipment>
 
 <Left Arm Equipment>
-CLImprovedHeavySmallLaser
+CLImprovedSmallHeavyLaser
 </Left Arm Equipment>
 
-<type>
-Clan Level 3
-</type>
+<Legs Equipment>
+</Legs Equipment>
 
-<year>
-3080
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Main Gun Equipment>
+CLSRM4
+</Main Gun Equipment>
 
 <source>
 TRO Prototypes - Jihad
 </source>
+
+<tonnage>
+9.0
+</tonnage>
+

@@ -45,7 +45,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:737.0:0:3
+cargobay:737.0:0:5
 </transporters>
 
 <SafeThrust>
@@ -161,7 +161,6 @@ CLMediumPulseLaser
 (B) CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:48
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -195,6 +194,10 @@ Clan Streak SRM 6 Ammo:15
 CLAntiMissileSystem
 CLAMS Ammo:48
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <structural_integrity>
 1

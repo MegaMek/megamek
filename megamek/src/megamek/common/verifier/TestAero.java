@@ -313,6 +313,12 @@ public class TestAero extends TestEntity {
                 loc = Aero.LOC_AFT;
             }
         }
+        // Blue shield particle field dampener takes one slot in each arc.
+        if (a.hasMisc(MiscType.F_BLUE_SHIELD)) {
+            for (int i = 0; i < availSpace.length; i++) {
+                availSpace[i]--;
+            }
+        }
         
         // XXL engines take up extra space in the aft in conventional fighters
         if (((a.getEntityType() & Entity.ETYPE_CONV_FIGHTER) != 0)
@@ -1356,8 +1362,12 @@ public class TestAero extends TestEntity {
         int capitalWeapons = 0;
         int stdWeapons = 0;
         for (Mounted m : aero.getTotalWeaponList()) {
-            if ((m.getType() instanceof BayWeapon)
-                    || (((WeaponType)m.getType()).getLongRange() <= 1)) {
+            if (m.getType() instanceof BayWeapon) {
+                continue;
+            }
+            if ((((WeaponType)m.getType()).getLongRange() <= 1)
+                    // MML range depends on ammo, and getLongRange() returns 0
+                    && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
                 continue;
             }
             if (((WeaponType)m.getType()).isCapital()
@@ -1369,5 +1379,38 @@ public class TestAero extends TestEntity {
         }
         return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
     }
-    
+
+    /**
+     * Determines whether a piece of equipment should be mounted in a specific location, as opposed
+     * to the fuselage.
+     * 
+     * @param eq       The equipment
+     * @param fighter  If the aero is a fighter (including fixed wing support), the ammo is mounted in the
+     *                 fuselage. Otherwise it's in the location with the weapon.
+     * @return         Whether the equipment needs to be assigned to a location with a firing arc.
+     */
+    public static boolean eqRequiresLocation(EquipmentType eq, boolean fighter) {
+        if (!fighter) {
+            return (eq instanceof WeaponType)
+                    || (eq instanceof AmmoType)
+                    || ((eq instanceof MiscType)
+                            && (eq.hasFlag(MiscType.F_ARTEMIS)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                                    || eq.hasFlag(MiscType.F_APOLLO)
+                                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                                    || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
+        } else if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_CASE)) {
+                return eq.isClan();
+            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return !(eq instanceof AmmoType);
+        }
+    }
 }

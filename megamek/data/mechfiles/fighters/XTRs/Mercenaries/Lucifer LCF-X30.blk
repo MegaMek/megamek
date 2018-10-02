@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,38 +20,32 @@ Lucifer
 LCF-X30
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+3074
+</year>
+
+<originalBuildYear>
+3074
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-130
-82
-82
-82
-</Armor>
-
-<Nose Equipment>
-ISBinaryLaserCannon
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISExtendedLRM10
-ELRM 10 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISExtendedLRM10
-ELRM 10 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumXPulseLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 13
@@ -65,30 +59,54 @@ ISMediumXPulseLaser
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3074
-</year>
-
-<source>
-XTRO Mercenaries - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+130
+82
+82
+82
+</armor>
+
+<Nose Equipment>
+Binary Laser (Blazer) Cannon
+</Nose Equipment>
+
+<Left Wing Equipment>
+Extended LRM 10
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Extended LRM 10
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumXPulseLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+</Fuselage Equipment>
+
+<source>
+XTRO Mercenaries - Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

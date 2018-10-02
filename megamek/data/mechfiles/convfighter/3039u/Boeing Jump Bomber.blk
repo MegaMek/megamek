@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,32 @@ Boeing Jump Bomber
 (Standard)
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+3037
+</year>
+
+<originalBuildYear>
+3037
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
 </SafeThrust>
 
-<Armor>
-7
-3
-3
-3
-</Armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -59,30 +59,40 @@ Boeing Jump Bomber
 320
 </fuel>
 
-<type>
-IS Level 1
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-3037
-</year>
+<armor>
+7
+3
+3
+3
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+20.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

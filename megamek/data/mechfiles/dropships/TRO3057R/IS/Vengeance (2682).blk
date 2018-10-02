@@ -43,7 +43,7 @@ asfbay:20.0:3:4
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:70.0:0
-cargobay:218.5:0:2
+cargobay:218.5:0:7
 </transporters>
 
 <SafeThrust>
@@ -129,6 +129,9 @@ IS Ammo LRM-10:12
 (B) Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 11

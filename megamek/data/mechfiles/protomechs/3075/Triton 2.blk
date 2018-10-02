@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Triton
 </Name>
 
-<Tonnage>
-8
-</Tonnage>
-
-<model>
+<Model>
 2
-</model>
+</Model>
+
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -32,23 +47,45 @@ Triton
 4
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 6
 13
 4
 4
 8
 3
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo Protomech LRM-3
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLERSmallLaser
 </Torso Equipment>
-
-<Main Gun Equipment>
-CLLRM3
-CLLRM3 Ammo (12)
-</Main Gun Equipment>
 
 <Right Arm Equipment>
 CLERMicroLaser
@@ -58,30 +95,18 @@ CLERMicroLaser
 CLERMicroLaser
 </Left Arm Equipment>
 
-<type>
-Clan
-</type>
+<Legs Equipment>
+</Legs Equipment>
 
-<year>
-3067
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Main Gun Equipment>
+CLLRM3
+</Main Gun Equipment>
 
 <source>
 TRO 3075 - Civil War
 </source>
+
+<tonnage>
+8.0
+</tonnage>
+

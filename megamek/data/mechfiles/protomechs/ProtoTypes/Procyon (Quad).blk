@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,62 +16,89 @@ ProtoMech
 Procyon
 </Name>
 
-<model>
+<Model>
 (Quad)
-</model>
-
-<Tonnage>
-6
-</Tonnage>
-
-<cruiseMP>
-6
-</cruiseMP>
-
-<Armor>
-4
-12
-0
-0
-14
-</Armor>
-
-<Torso Equipment>
-CLAPGaussRifle
-CLAPGaussRifle
-CLSRM2
-CLSRM2 Ammo (5)
-CLAPGaussRifle Ammo (32)
-</Torso Equipment>
-
-<type>
-Clan
-</type>
+</Model>
 
 <year>
 3081
 </year>
 
-<internal_type>
-0
-</internal_type>
+<originalBuildYear>
+3081
+</originalBuildYear>
 
-<armor_type>
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Quad
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<jumpingMP>
 0
-</armor_type>
+</jumpingMP>
 
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-quad
-</motion_type>
+<armor_type>
+-1
+</armor_type>
 
-<quad>
-true
-</quad>
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+4
+12
+0
+0
+14
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-2
+CLAPGaussRifle Ammo
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLSRM2
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO Prototypes - Jihad
 </source>
+
+<tonnage>
+6.0
+</tonnage>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,34 +20,32 @@ Seydlitz
 SYD-45X 'Starling'
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 14
 </SafeThrust>
 
-<Armor>
-20
-17
-17
-15
-</Armor>
-
-<Nose Equipment>
-ISBombastLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISChaffPod
-</Aft Equipment>
+<cockpit_type>
+1
+</cockpit_type>
 
 <heatsinks>
 10
@@ -61,34 +59,50 @@ ISChaffPod
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3073
-</year>
-
-<source>
-XTRO Mercenaries - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+3
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
-3
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+20
+17
+17
+15
+</armor>
 
-<cockpit_type>
-1
-</cockpit_type>
+<Nose Equipment>
+Bombast Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISChaffPod
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+XTRO Mercenaries - Jihad
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

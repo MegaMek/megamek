@@ -43,7 +43,7 @@ asfbay:20.0:4:4
 1stclassquarters:30.0:0
 2ndclassquarters:0.0:0
 crewquarters:63.0:0
-cargobay:446.0:0:2
+cargobay:446.0:0:7
 </transporters>
 
 <SafeThrust>
@@ -132,6 +132,9 @@ ISArtemisIV
 (B) Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 11

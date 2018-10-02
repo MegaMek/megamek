@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,29 +20,69 @@ Lucifer
 LCF-R16
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 64
 39
 39
 37
-</Armor>
+</armor>
 
 <Nose Equipment>
 LRM 20
 ISArtemisIV
 ISERLargeLaser
 ISERLargeLaser
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Streak SRM 2 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -57,42 +97,20 @@ ISStreakSRM2
 ISMediumPulseLaser
 </Aft Equipment>
 
-<heatsinks>
-20
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3052
-</year>
+<Fuselage Equipment>
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Streak SRM 2 Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Clan Invasion
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+65.0
+</tonnage>
 
-<armor_type>
-19
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

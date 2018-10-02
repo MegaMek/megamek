@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,41 +20,32 @@ Shilone
 SL-17X
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+3075
+</year>
+
+<originalBuildYear>
+3075
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-60
-45
-45
-38
-</Armor>
-
-<Nose Equipment>
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo 
-ISImprovedHeavyGauss Ammo 
-ISLargeLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLMediumPulseLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLMediumPulseLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISChaffPod
-ISChaffPod
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -68,30 +59,57 @@ ISChaffPod
 320
 </fuel>
 
-<type>
-Mixed (IS Chassis) Experimental
-</type>
-
-<year>
-3075
-</year>
-
-<source>
-XTRO Kurita - Jihad
-</source>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+60
+45
+45
+38
+</armor>
+
+<Nose Equipment>
+ISImprovedHeavyGaussRifle
+Large Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+</Fuselage Equipment>
+
+<source>
+XTRO Kurita - Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

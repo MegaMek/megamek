@@ -24,6 +24,10 @@ VLC-5N
 2650
 </year>
 
+<originalBuildYear>
+2650
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -67,22 +74,28 @@ Aerodyne
 Large Laser
 Medium Laser
 SRM 6
-IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
 Autocannon/10
-IS Ammo AC/10
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Autocannon/10
-IS Ammo AC/10
 </Right Wing Equipment>
 
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+IS Ammo AC/10
+IS Ammo AC/10
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Star League

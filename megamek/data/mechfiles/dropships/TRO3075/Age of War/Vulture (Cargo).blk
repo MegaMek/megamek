@@ -40,7 +40,7 @@ Spheroid
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:77.0:0
-cargobay:1639.5:1:1
+cargobay:1639.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -115,6 +115,9 @@ IS Ammo AC/5:40
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 9
 </structural_integrity>
@@ -167,6 +170,3 @@ TRO 3075 - Age of War
 20
 </escape_pod>
 
-<history>
-The TRO has the ship constucted not using the current IO Primitive rules. Ship has been rebuild to those rules, loss of cargo space to become valid.
-</history>

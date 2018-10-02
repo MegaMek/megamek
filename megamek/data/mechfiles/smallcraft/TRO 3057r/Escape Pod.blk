@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,29 @@ Escape Pod
 (Standard)
 </Model>
 
-<Tonnage>
-5
-</Tonnage>
+<year>
+2647
+</year>
+
+<originalBuildYear>
+2647
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:0.48:0:1
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-1
-1
-1
-1
-</Armor>
-
-<Nose Equipment>
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment> 
-</Right Side Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
-
-<structural_integrity>
-1
-</structural_integrity>
 
 <heatsinks>
 0
@@ -63,42 +56,85 @@ Escape Pod
 10
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-2647
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-0
-</designtype>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-CargoBay:.48:0
-</transporters>
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+1
+1
+1
+1
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<tonnage>
+5.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 1
 </crew>
 
+<officers>
+0
+</officers>
+
+<gunners>
+0
+</gunners>
+
 <passengers>
-6
+0
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,26 +20,59 @@ Transgressor
 TR-14 'AC'
 </Model>
 
-<Tonnage>
-75
-</Tonnage>
+<year>
+2906
+</year>
+
+<originalBuildYear>
+2906
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+25
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 69
 50
 50
 39
-</Armor>
+</armor>
 
 <Nose Equipment>
 Autocannon/20
 Medium Laser
-IS Ammo AC/20
-IS Ammo AC/20
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -54,42 +87,19 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
-<heatsinks>
-25
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-2906
-</year>
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+75.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

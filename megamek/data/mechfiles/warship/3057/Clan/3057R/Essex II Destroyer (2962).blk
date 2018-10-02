@@ -114,7 +114,6 @@ Ammo NAC/20:40
 Ammo NAC/20:40
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -130,6 +129,10 @@ Naval Laser 35
 (B) Naval PPC (Medium)
 Naval PPC (Medium)
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 35

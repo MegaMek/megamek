@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,34 +20,32 @@ Cheetah
 OF-17
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3076
+</year>
+
+<originalBuildYear>
+3076
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<Armor>
-11
-11
-11
-7
-</Armor>
-
-<Nose Equipment>
-ISGuardianECMSuite
-ISHypersprectralImager
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -61,30 +59,52 @@ ISHypersprectralImager
 320
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3076
-</year>
-
-<source>
-XTRO Marik - Jihad
-</source>
-
-<internal_type>
-0				
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 22
 </armor_type>
 
-<engine_type>				
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+11
+11
+11
+7
+</armor>
+
+<Nose Equipment>
+ISGuardianECMSuite
+ISHypersprectralImager
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+IS Vehicular Stealth
+IS Vehicular Stealth
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+XTRO Marik - Jihad
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

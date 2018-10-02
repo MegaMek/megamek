@@ -24,6 +24,10 @@ SGT-2R
 3084
 </year>
 
+<originalBuildYear>
+3084
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -77,18 +84,24 @@ ISSNPPC
 
 <Left Wing Equipment>
 ISMML7
-IS Ammo MML-7 SRM
-IS Ammo MML-7 LRM
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISMML7
-IS Ammo MML-7 SRM
-IS Ammo MML-7 LRM
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-7 SRM
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+IS Ammo MML-7 LRM
+</Fuselage Equipment>
 
 <source>
 TRO 3085 - Jihad

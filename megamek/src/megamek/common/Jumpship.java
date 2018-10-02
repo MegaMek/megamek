@@ -37,6 +37,7 @@ public class Jumpship extends Aero {
     public static final int LOC_FRS = 2;
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
+    public static final int LOC_HULL = 6;
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
@@ -52,9 +53,9 @@ public class Jumpship extends Aero {
     // given for primitive assumes a 30ly range, but the final value has to be computed.
     private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
-            "Aft Right Side" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
@@ -98,10 +99,14 @@ public class Jumpship extends Aero {
 
     public Jumpship() {
         super();
-        damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0 };
     }
-    
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.JUMPSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
@@ -164,13 +169,19 @@ public class Jumpship extends Aero {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
     
     @Override
     public int locations() {
-        return 6;
+        return 7;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     /**

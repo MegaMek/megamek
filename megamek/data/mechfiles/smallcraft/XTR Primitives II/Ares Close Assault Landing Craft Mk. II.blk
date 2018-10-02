@@ -41,7 +41,7 @@ Aerodyne
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:25.0:0
-cargobay:12.0:1:4
+cargobay:12.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -104,6 +104,9 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 7
 </structural_integrity>
@@ -156,6 +159,3 @@ XTRO Primitives II - Age of War
 0
 </escape_pod>
 
-<history>
-The TRO weights for the engines are wrong per IO construction rules. Reduced cargo weight to bring them to legal.
-</history>

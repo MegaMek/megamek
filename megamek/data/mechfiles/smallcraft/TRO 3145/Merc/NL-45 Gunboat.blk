@@ -83,7 +83,6 @@ steeragequarters:20.0:0
 <Nose Equipment>
 CLERPPC
 CLERPPC
-CLActiveProbe
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -99,10 +98,14 @@ CLAMS Ammo
 </Right Side Equipment>
 
 <Aft Equipment>
-CLECMSuite
 CLERLargeLaser
 CLERLargeLaser
 </Aft Equipment>
+
+<Hull Equipment>
+CLActiveProbe
+CLECMSuite
+</Hull Equipment>
 
 <structural_integrity>
 8
@@ -117,7 +120,7 @@ TRO 3145 Mercenaries - Late Republic
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

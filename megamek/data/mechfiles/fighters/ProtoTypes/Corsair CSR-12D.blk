@@ -24,6 +24,10 @@ CSR-12D
 3081
 </year>
 
+<originalBuildYear>
+3081
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -87,6 +94,12 @@ ISERMediumLaser
 <Aft Equipment>
 ISMediumXPulseLaser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Jihad

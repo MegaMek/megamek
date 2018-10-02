@@ -44,7 +44,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:400.0:0
 crewquarters:1400.0:0
-cargobay:68293.5:0:4
+cargobay:68293.5:0:6
 </transporters>
 
 <SafeThrust>
@@ -153,7 +153,6 @@ Naval Laser 45
 Naval Laser 45
 Naval Laser 45
 Naval Laser 45
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -177,6 +176,10 @@ Naval Laser 35
 Naval Laser 45
 Naval Laser 45
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) CLLRM20

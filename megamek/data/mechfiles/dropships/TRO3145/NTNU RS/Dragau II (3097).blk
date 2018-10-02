@@ -41,7 +41,7 @@ battlearmorbay:1.0:1:2
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:70.0:0
-cargobay:98.0:1:1
+cargobay:98.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -92,7 +92,6 @@ Heavy PPC
 (B) ISAntiMissileSystem
 ISAntiMissileSystem
 ISAMS Ammo:48
-ISNC3
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -135,6 +134,10 @@ ISAntiMissileSystem
 ISAMS Ammo:72
 </Aft Equipment>
 
+<Hull Equipment>
+ISNC3
+</Hull Equipment>
+
 <structural_integrity>
 15
 </structural_integrity>
@@ -146,6 +149,10 @@ RS 3145 NTNU - Early Republic
 <tonnage>
 2500.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 16

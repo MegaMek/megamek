@@ -24,6 +24,10 @@ Hydaspes
 2840
 </year>
 
+<originalBuildYear>
+2840
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -80,31 +87,35 @@ CLMediumPulseLaser
 <Left Wing Equipment>
 CLERLargeLaser
 CLLRM15
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
 CLArtemisIV
 CLMediumPulseLaser
 CLMediumPulseLaser
-CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLERLargeLaser
 CLLRM15
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
 CLArtemisIV
 CLMediumPulseLaser
 CLMediumPulseLaser
-CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLStreakSRM6
 CLStreakSRM6
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
 Clan Streak SRM 6 Ammo
 CLCASE
-</Aft Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Succession Wars

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,9 +20,24 @@ Sprite
 2
 </Model>
 
-<Tonnage>
-15
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -32,48 +47,57 @@ Sprite
 3
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+-1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 9
 30
 6
 6
 15
-</Armor>
+</armor>
 
-<Right Arm Equipment>
-</Right Arm Equipment>
+<Body Equipment>
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLERLargeLaser
 </Torso Equipment>
 
-<type>
-Clan Level 4
-</type>
+<Right Arm Equipment>
+</Right Arm Equipment>
 
-<year>
-3072
-</year>
+<Left Arm Equipment>
+</Left Arm Equipment>
 
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 Wars of Reaving - Jihad
 </source>
-<history>
-The unit is overweight and will likely need the TAG removed.  Once we get an official ruling I'll change the unit.
-</history> 
+
+<tonnage>
+15.0
+</tonnage>
+

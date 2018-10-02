@@ -24,6 +24,10 @@ CSR-X12 Rigid Night
 3074
 </year>
 
+<originalBuildYear>
+3074
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis) Experimental
 </type>
@@ -31,6 +35,9 @@ Mixed (IS Chassis) Experimental
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -82,6 +89,12 @@ CLMediumPulseLaser
 CLSmallPulseLaser
 CLSmallPulseLaser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 XTRO Davion - Jihad

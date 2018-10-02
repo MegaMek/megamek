@@ -81,7 +81,6 @@ steeragequarters:15.0:0
 </armor>
 
 <Nose Equipment>
-ISAngelECMSuite
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -92,6 +91,10 @@ ISAngelECMSuite
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Hull Equipment>
+ISAngelECMSuite
+</Hull Equipment>
 
 <structural_integrity>
 6
@@ -106,7 +109,7 @@ XTRO Most Wanted - Jihad
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

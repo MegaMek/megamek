@@ -72,7 +72,6 @@ Aerodyne
 
 <Nose Equipment>
 ISLBXAC20
-IS LB 20-X Cluster Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -83,6 +82,13 @@ IS LB 20-X Cluster Ammo
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS LB 20-X Cluster Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Civil War

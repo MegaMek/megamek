@@ -47,7 +47,7 @@ dockingcollar
 1stclassquarters:350.0:0
 crewquarters:1015.0:0
 steeragequarters:500.0:0
-cargobay:36374.0:4:4
+cargobay:36374.0:4:7
 </transporters>
 
 <SafeThrust>
@@ -190,6 +190,9 @@ Machine Gun
 Machine Gun
 IS Ammo MG - Full:100
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Heavy)

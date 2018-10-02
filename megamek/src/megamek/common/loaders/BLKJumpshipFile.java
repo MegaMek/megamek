@@ -31,6 +31,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
@@ -44,6 +45,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Jumpship a = new Jumpship();
@@ -218,6 +220,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
+        a.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
 
         a.autoSetInternal();
         a.autoSetThresh();

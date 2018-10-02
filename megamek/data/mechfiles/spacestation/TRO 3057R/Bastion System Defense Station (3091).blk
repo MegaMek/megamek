@@ -41,9 +41,9 @@ smallcraftbay:12.0:2:1
 asfbay:30.0:5:2
 crewquarters:3521.0:0
 1stclassquarters:920.0:0
-navalrepairpressurized:30000.0:1:3:f0
-navalrepairpressurized:30000.0:1:4:f3
-cargobay:125589.5:1:5
+navalrepairpressurized:30000.0:1:5:f0
+navalrepairpressurized:30000.0:1:6:f3
+cargobay:125589.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -307,6 +307,9 @@ CLERSmallLaser
 CLERSmallLaser
 CLERSmallLaser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

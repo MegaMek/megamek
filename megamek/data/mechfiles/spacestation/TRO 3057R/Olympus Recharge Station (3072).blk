@@ -48,7 +48,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:944012.0:1:6
+cargobay:944012.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -261,6 +261,9 @@ ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

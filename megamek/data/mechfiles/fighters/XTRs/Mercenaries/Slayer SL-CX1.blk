@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,40 +20,32 @@ Slayer
 SL-CX1
 </Model>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+3075
+</year>
+
+<originalBuildYear>
+3075
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-80
-71
-71
-51
-</Armor>
-
-<Nose Equipment>
-ISRotaryAC5
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-</Nose Equipment>
-
-<Right Wing Equipment>
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
-</Right Wing Equipment>
-
-<Left Wing Equipment>
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
-</Left Wing Equipment>
-
-<Aft Equipment>
-Clan Laser AMS
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 16
@@ -67,30 +59,56 @@ Clan Laser AMS
 800
 </fuel>
 
-<type>
-Mixed (IS Chassis) Experimental
-</type>
-
-<year>
-3075
-</year>
-
-<source>
-XTRO Mercenaries - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+80
+71
+71
+51
+</armor>
+
+<Nose Equipment>
+ISRotaryAC5
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLLaserAntiMissileSystem
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Fuselage Equipment>
+
+<source>
+XTRO Mercenaries - Jihad
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

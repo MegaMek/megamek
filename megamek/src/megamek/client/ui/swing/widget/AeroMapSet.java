@@ -30,7 +30,6 @@ import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.FixedWingSupport;
 import megamek.common.SmallCraft;
 import megamek.common.util.MegaMekFile;
 
@@ -87,21 +86,24 @@ public class AeroMapSet implements DisplayMapSet {
     public void setRest() {
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Aero t = (Aero) e;
         int a = 1;
         int a0 = 1;
         // TODO: change this back to locations
         for (int i = 0; i < t.locations(); i++) {
-            if ((e instanceof FixedWingSupport) && (i == FixedWingSupport.LOC_BODY)) {
+            if (i == Aero.LOC_FUSELAGE) {
                 continue;
             }
             a = t.getArmor(i);

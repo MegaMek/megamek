@@ -24,6 +24,10 @@ EGL-R6b
 2765
 </year>
 
+<originalBuildYear>
+2765
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -91,6 +98,12 @@ ISMediumPulseLaser
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 H:Operation Klondyke - Star League

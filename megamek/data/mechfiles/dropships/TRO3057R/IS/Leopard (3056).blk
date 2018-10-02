@@ -115,6 +115,9 @@ ISERLargeLaser
 ISMediumPulseLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 7
 </structural_integrity>

@@ -109,7 +109,6 @@ Naval Laser 55
 Naval Laser 55
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -129,6 +128,10 @@ Naval Autocannon (NAC/10)
 Ammo NAC/10:100
 (B) Naval Laser 45
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)

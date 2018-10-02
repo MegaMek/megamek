@@ -82,7 +82,6 @@ crewquarters:637.0:0
 </armor>
 
 <Nose Equipment>
-ISLargeNavalCommScannerSuite
 (B) Sub-Capital Missile Launcher (Swordfish)
 Ammo Swordfish:20
 (B) ISERLargeLaser
@@ -104,7 +103,6 @@ ISAntiMissileSystem
 ISAMS Ammo:48
 (B) Screen Launcher
 Ammo Screen:20
-DirectTacticalAnalysisSystem
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -198,6 +196,11 @@ ISMediumPulseLaser
 (B) Screen Launcher
 Ammo Screen:20
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISLargeNavalCommScannerSuite
+DirectTacticalAnalysisSystem
+</Hull Equipment>
 
 <structural_integrity>
 1

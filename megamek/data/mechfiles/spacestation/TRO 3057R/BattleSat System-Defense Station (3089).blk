@@ -40,8 +40,8 @@ Aerodyne
 1stclassquarters:90.0:0
 crewquarters:308.0:0
 cargobay:182.0:1:3
-cargobay:182.5:1:1
-cargobay:181.5:1:2
+cargobay:182.5:1:4
+cargobay:181.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -104,6 +104,9 @@ Sub-Capital Laser (SCL/1)
 
 <Aft Right Side Equipment>
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 1

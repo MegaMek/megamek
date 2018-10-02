@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,44 +20,32 @@ Hurricane Conventional Fighter
 (Standard)
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+2297
+</year>
+
+<originalBuildYear>
+2297
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-10
-7
-7
-5
-</Armor>
-
-<Nose Equipment>
-ISMG
-ISPrimRL15
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Body Equipment>
-Basic Fire Control
-ISMG Ammo Half
-External Stores Hardpoint
-External Stores Hardpoint
-</Body Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
-
-<transporters>
-</transporters>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -71,25 +59,40 @@ External Stores Hardpoint
 320
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2297
-</year>
+<armor>
+10
+7
+7
+5
+</armor>
 
-<source>
-XTRO Primitives I - Age of War
-</source>
+<Nose Equipment>
+Machine Gun
+CLRocketLauncher15Prototype
+</Nose Equipment>
 
-<internal_type>
-0				
-</internal_type>
+<Left Wing Equipment>
+</Left Wing Equipment>
 
-<armor_type>
-0
-</armor_type>
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+Basic Fire Control
+IS Machine Gun Ammo - Half
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
 
 <barrating>
 5
@@ -99,14 +102,11 @@ XTRO Primitives I - Age of War
 3
 </structural_tech_rating>
 
-<engine_type>				
-1
-</engine_type>
+<source>
+XTRO Primitives I - Age of War
+</source>
 
-<motion_type>
-aerodyne
-</motion_type>
+<tonnage>
+25.0
+</tonnage>
 
-<vstol>
-1
-</vstol>

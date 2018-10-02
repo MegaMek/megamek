@@ -41,7 +41,7 @@ Aerodyne
 2ndclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:10.0:0
-cargobay:26.5:1:1
+cargobay:26.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -91,6 +91,9 @@ cargobay:26.5:1:1
 <Aft Equipment>
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
@@ -104,7 +107,7 @@ Handbook:Liao - Early Succesion Wars
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

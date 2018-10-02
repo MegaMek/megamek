@@ -109,7 +109,6 @@ Ammo Barracuda:10
 </Right Front Side Equipment>
 
 <Aft Equipment>
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -133,6 +132,10 @@ Naval PPC (Medium)
 (B) Capital Missile Launcher (Barracuda)
 Ammo Barracuda:10
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

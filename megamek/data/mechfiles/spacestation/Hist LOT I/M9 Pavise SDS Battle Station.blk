@@ -203,8 +203,6 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
-ImprovedCasparDroneControlSystem
-ISLargeNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -532,7 +530,6 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
-AutoTacticalAnalysisComputer
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -752,6 +749,12 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ImprovedCasparDroneControlSystem
+ISLargeNavalCommScannerSuite
+AutoTacticalAnalysisComputer
+</Hull Equipment>
 
 <structural_integrity>
 1

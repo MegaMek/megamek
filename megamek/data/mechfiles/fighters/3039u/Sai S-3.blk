@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,55 @@ Sai
 S-3
 </Model>
 
-<Tonnage>
-40
-</Tonnage>
+<year>
+3045
+</year>
+
+<originalBuildYear>
+3045
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+14
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 40
 30
 30
 20
-</Armor>
+</armor>
 
 <Nose Equipment>
 Large Laser
@@ -52,42 +87,17 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-14
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3045
-</year>
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+40.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

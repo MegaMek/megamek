@@ -24,6 +24,10 @@ B
 2987
 </year>
 
+<originalBuildYear>
+2987
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -95,6 +102,12 @@ CLMediumPulseLaser:OMNI
 <Aft Equipment>
 CLERMediumLaser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession Wars

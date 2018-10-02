@@ -455,7 +455,18 @@ public class AmmoType extends EquipmentType {
         return capital;
     }
 
+    /**
+     * Used by units that are constructed using per-shot weights (BA and protomechs). Some
+     * ammo is defined in the rules rounded to a set number of decimal places.
+     * @return
+     */
     public double getKgPerShot() {
+        // kgPerShot is initialized to -1. Some ammo types are set by the rules to round
+        // to a certain number of decimal places and can do that by setting the kgPerShot field.
+        // For those that are not set we calculate it.
+        if (kgPerShot < 0) {
+            return 1000.0 / shots;
+        }
         return kgPerShot;
     }
 

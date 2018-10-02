@@ -326,6 +326,11 @@ public class Tank extends Entity {
         }
         return 7;
     }
+    
+    @Override
+    public int getBodyLocation() {
+        return LOC_BODY;
+    }
 
     @Override
     public boolean canChangeSecondaryFacing() {
@@ -743,6 +748,11 @@ public class Tank extends Entity {
     @Override
     public boolean hasRearArmor(int loc) {
         return false;
+    }
+    
+    @Override
+    public int firstArmorIndex() {
+        return LOC_FRONT;
     }
 
     /**

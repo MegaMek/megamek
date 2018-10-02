@@ -30,6 +30,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
@@ -37,21 +38,15 @@ import megamek.common.SpaceStation;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
-
-    // armor locatioms
-    public static final int NOSE = 0;
-    public static final int FLS = 1;
-    public static final int FRS = 2;
-    public static final int ALS = 3;
-    public static final int ARS = 4;
-    public static final int AFT = 5;
 
     public BLKSpaceStationFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         SpaceStation a = new SpaceStation();
@@ -227,6 +222,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
+        a.initializeArmor(IArmorState.ARMOR_NA, SpaceStation.LOC_HULL);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -310,7 +306,9 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                     // first load the equipment
                     Mounted newmount;
                     try {
-                        if (nAmmo == 1) {
+                        if (!TestEntity.eqRequiresLocation(a, etype)) {
+                            newmount = a.addEquipment(etype, SpaceStation.LOC_HULL);
+                        } else if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
                             newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);

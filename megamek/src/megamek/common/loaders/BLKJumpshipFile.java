@@ -31,12 +31,14 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
@@ -44,6 +46,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Jumpship a = new Jumpship();
@@ -218,6 +221,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
+        a.initializeArmor(IArmorState.ARMOR_NA, Jumpship.LOC_HULL);
 
         a.autoSetInternal();
         a.autoSetThresh();
@@ -307,7 +311,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                     // first load the equipment
                     Mounted newmount;
                     try {
-                        if (nAmmo == 1) {
+                        if (!TestEntity.eqRequiresLocation(a, etype)) {
+                            newmount = a.addEquipment(etype, Jumpship.LOC_HULL);
+                        } else if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
                         } else {
                             newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);

@@ -644,11 +644,14 @@ public class BLKFile {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_TURRET){
                 name += ":TU";
             }
-            // For BattleArmor, we need to save how many shots are in this
-            //  location
+            // For BattleArmor and ProtoMechs, we need to save how many shots are in this
+            //  location but they have different formats, yay!
             if ((t instanceof BattleArmor)
                     && (m.getType() instanceof AmmoType)){
                 name += ":Shots" + m.getBaseShotsLeft() + "#";
+            } else if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                    && (m.getType() instanceof AmmoType)) {
+                name += " (" + m.getBaseShotsLeft() + ")";
             }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {

@@ -51,14 +51,6 @@ Biped
 0
 </engine_type>
 
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
 <internal_type>
 -1
 </internal_type>
@@ -73,14 +65,14 @@ Biped
 </armor>
 
 <Body Equipment>
-Clan Ammo SRM-4
+Clan Ammo SRM-4 (8)
 </Body Equipment>
 
 <Head Equipment>
 </Head Equipment>
 
 <Torso Equipment>
-BA-Magnetic Clamp
+ProtoMagneticClamp
 </Torso Equipment>
 
 <Right Arm Equipment>

@@ -51,14 +51,6 @@ Biped
 0
 </engine_type>
 
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
 <internal_type>
 -1
 </internal_type>
@@ -73,7 +65,7 @@ Biped
 </armor>
 
 <Body Equipment>
-Clan Ammo SRM-2
+Clan Ammo SRM-2 (10)
 ProtomechJumpJet
 ProtomechJumpJet
 ProtomechJumpJet

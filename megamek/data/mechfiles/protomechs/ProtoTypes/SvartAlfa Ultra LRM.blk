@@ -51,14 +51,6 @@ WiGE
 0
 </engine_type>
 
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
 <internal_type>
 -1
 </internal_type>
@@ -73,8 +65,8 @@ WiGE
 </armor>
 
 <Body Equipment>
-Clan Ammo LRM-15
-Clan Ammo LRM-15
+Clan Ammo LRM-15 (10)
+Clan Ammo LRM-15 (10)
 </Body Equipment>
 
 <Head Equipment>

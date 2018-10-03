@@ -51,14 +51,6 @@ Biped
 0
 </engine_type>
 
-<armor_type>
--1
-</armor_type>
-
-<armor_tech>
--1
-</armor_tech>
-
 <internal_type>
 -1
 </internal_type>
@@ -72,8 +64,8 @@ Biped
 </armor>
 
 <Body Equipment>
-Clan Ammo SRM-3
-Clan Machine Gun Ammo - Proto
+Clan Ammo SRM-3 (3)
+Clan Machine Gun Ammo - Proto (12)
 </Body Equipment>
 
 <Head Equipment>

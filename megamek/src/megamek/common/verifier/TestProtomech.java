@@ -37,7 +37,12 @@ import megamek.common.util.StringUtil;
  *
  */
 public class TestProtomech extends TestEntity {
-    
+
+    /**
+     * Minimum tonnage for a protomech
+     */
+    public static final double MIN_TONNAGE = 2.0;
+
     /**
      * Any protomech with a larger mass than this is ultra-heavy
      */
@@ -573,12 +578,25 @@ public class TestProtomech extends TestEntity {
      * @return      The engine rating required for the weight, speed, and configuration
      */
     public static int calcEngineRating(Protomech proto) {
-        int moveFactor = (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
+        return calcEngineRating(proto.getOriginalWalkMP(),
+                proto.getWeight(), proto.isQuad() || proto.isGlider());
+    }
+    
+    /**
+     * Computes the required engine rating
+     * 
+     * @param walkMP The base walking MP
+     * @param tonnage The weight of the protomech in tons
+     * @param quadOrGlider Whether the protomech is a quad or glider configuration
+     * @return      The engine rating required for the weight, speed, and configuration
+     */
+    public static int calcEngineRating(int walkMP, double tonnage, boolean quadOrGlider) {
+        int moveFactor = (int) Math.ceil(walkMP * 1.5);
         // More efficient engine use for gliders and quads
-        if (proto.isGlider() || proto.isQuad()) {
+        if (quadOrGlider) {
             moveFactor -= 2;
         }
-        return Math.max(1, (int)(moveFactor * proto.getWeight()));
+        return Math.max(1, (int)(moveFactor * tonnage));
     }
     
     /**

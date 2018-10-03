@@ -601,6 +601,12 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public double getArmorWeight() {
+        return EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
+                * getTotalOArmor();
+    }
+
+    @Override
     public boolean hasRearArmor(int loc) {
         return false;
     }

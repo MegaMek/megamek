@@ -53,6 +53,15 @@ public class TestProtomech extends TestEntity {
      */
     public static final double MAX_TONNAGE = 15.0;
     
+    /**
+     * Minimum walk MP for glider protomech
+     */
+    public static final int GLIDER_MIN_MP = 4;
+    /**
+     * Minimum walk MP for quad protomech
+     */
+    public static final int QUAD_MIN_MP = 3;
+    
     public enum ProtomechJumpJets {
         JJ_STANDARD ("ProtomechJumpJet", false),
         JJ_EXTENDED ("ExtendedJumpJetSystem", true),
@@ -159,6 +168,17 @@ public class TestProtomech extends TestEntity {
             return EquipmentType.getProtomechArmorWeightPerPoint(type);
         }
     }
+    
+    public static int maxJumpMP(Protomech proto) {
+        if (proto.getMisc().stream().map(Mounted::getType)
+                .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
+                        && eq.hasSubType(MiscType.S_IMPROVED))) {
+            return (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
+        }
+        return proto.getOriginalWalkMP();
+    }
+
+
 
     /**
      * Filters all protomech armor according to given tech constraints
@@ -501,16 +521,26 @@ public class TestProtomech extends TestEntity {
      * @return       Whether the MP is legal.
      */
     public boolean correctMovement(StringBuffer buffer) {
+        boolean correct = true;
         if (proto.isGlider()
-                && proto.getOriginalWalkMP() < 4) {
-            buffer.append("Glider protomechs have a minimum cruising MP of 4.\n");
-            return false;
+                && proto.getOriginalWalkMP() < GLIDER_MIN_MP) {
+            buffer.append("Glider protomechs have a minimum cruising MP of " + GLIDER_MIN_MP + ".\n");
+            correct = false;
         } else if (proto.isQuad()
-                && proto.getOriginalWalkMP() < 3) {
-            buffer.append("Quad protomechs have a minimum walk MP of 3.\n");
-            return false;
+                && proto.getOriginalWalkMP() < QUAD_MIN_MP) {
+            buffer.append("Quad protomechs have a minimum walk MP of " + QUAD_MIN_MP + ".\n");
+            correct = false;
         }
-        return true;
+        int maxJump = maxJumpMP(proto);
+        if (proto.getOriginalJumpMP() > maxJump) {
+            buffer.append("Exceeds maximum jump MP.\n");
+            correct = false;
+        }
+        if (proto.getAllUMUCount() > maxJump) { 
+            buffer.append("Exceeds maximum UMU MP.\n");
+            correct = false;
+        }
+        return correct;
     }
     
 

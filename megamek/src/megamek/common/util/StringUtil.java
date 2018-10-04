@@ -1,233 +1,349 @@
 /*
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ * MegaMek - Copyright (C) 2018 the MegaMek Team
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import megamek.common.preference.PreferenceManager;
 
+/**
+ * Inevitable string utility class.
+ */
 public class StringUtil {
 
-    // XML Escape Strings.
-    private static final String ESC_QUOTE = "&quote;";
-    private static final String ESC_APOSTROPHE = "&apos;";
-    private static final String ESC_AMPERSAND = "&amp;";
-    private static final String ESC_LESS_THAN = "&lt;";
-    private static final String ESC_GREATER_THAN = "&gt;";
-
-    public static Vector<String> splitString(String s, String divider) {
-        if (s == null || s.equals("")) { //$NON-NLS-1$
-            return new Vector<String>();
-        }
-
-        Vector<String> v = new Vector<String>();
-        int oldIndex = 0;
-        int newIndex = s.indexOf(divider);
-
-        while (newIndex != -1) {
-            String sub = s.substring(oldIndex, newIndex);
-            v.addElement(sub);
-            oldIndex = newIndex + 1;
-            newIndex = s.indexOf(divider, oldIndex);
-        }
-
-        if (oldIndex != s.length()) {
-            String sub = s.substring(oldIndex);
-            v.addElement(sub);
-        }
-
-        return v;
-    }
-
-    public static Comparator<String> stringComparator() {
-        return new Comparator<String>() {
-            public int compare(String s1, String s2) {
-                return s1.compareTo(s2);
-            }
-        };
+    private StringUtil() {
+        // no instances
     }
 
     /**
-     * Determine the <code>boolean</code> value of the given
-     * <code>String</code>. Treat all <code>null</code> values as
-     * <code>false</code>. The default is <code>false</code>. This ensures
-     * the <code>String</code> will always be parsed against the English
-     * "true"
-     * 
-     * @param input - the <code>String</code> to be evaluated. This value may
-     *            be <code>null</code>.
-     * @return The <code>boolean</code> equivalent of the input.
+     * Abbreviates the given string to the given maximum length, using the given
+     * ellipsis if possible.
      */
-    public static boolean parseBoolean(String input) {
-        if (null == input) {
-            return false;
-        } else if (input.equalsIgnoreCase("true")) { //$NON-NLS-1$
-            return true;
+    @SuppressWarnings("nls")
+    public static String abbr(String string, int length, String ellipsis) {
+        if (string.length() <= length) {
+            requireNonNull(ellipsis);
+            return string;
         }
-        return false;
-    }
-
-    private static final String SPACES = "                                                                     ";
-
-    public static String makeLength(String s, int n) {
-        return makeLength(s, n, false);
-    }
-
-    public static String makeLength(int s, int n) {
-        return makeLength(Integer.toString(s), n, true);
-    }
-
-    /**
-     * A utility for padding out a string with spaces.
-     * 
-     * @param s the string to pad
-     * @param n the desired length of the resultant string
-     * @param bRightJustify true if the string should be right justified
-     */
-    public static String makeLength(String s, int n, boolean bRightJustify) {
-        int l = s.length();
-        if (l == n) {
-            return s;
-        } else if (l < n) {
-            if (bRightJustify) {
-                return SPACES.substring(0, n - l) + s;
+        if (length <= 0) {
+            requireNonNull(ellipsis);
+            if (length == 0) {
+                return "";
+            } else {
+                throw new IllegalArgumentException("negative length");
             }
-            return s + SPACES.substring(0, n - l);
+        }
+        int remainingLen = length - ellipsis.length();
+        if (remainingLen >= 1) {
+            // there is space for at least 1 char of s (eg: "a...")
+            return string.substring(0, remainingLen) + ellipsis;
         } else {
-            return s.substring(0, n - 2) + "..";
-        }
-    }
-
-    /**
-     * Inserts a date/time stamp into the given filename string just before the
-     * last period. If there is no period in the filename, the stamp is added to
-     * the end. The format of the stamp is dictated by the client option
-     * "StampFormat", which must use the same formatting as Java's
-     * SimpleDateFormat class.
-     * 
-     * @param filename the String containing the filename (with extension)
-     * @return the filname with date/time stamp added
-     */
-    public static String addDateTimeStamp(String filename) {
-        SimpleDateFormat formatter = new SimpleDateFormat(PreferenceManager
-                .getClientPreferences().getStampFormat());
-        Date current = new Date();
-        if (filename.lastIndexOf(".") == -1) {
-            return filename + formatter.format(current);
-        }
-        return filename.substring(0, filename.lastIndexOf("."))
-                + formatter.format(current)
-                + filename.substring(filename.lastIndexOf("."));
-    }
-
-    /**
-     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
-     *
-     * @param text  The string to be evaluated.
-     */
-    public static boolean isNullOrEmpty(String text) {
-        return (text == null) || (text.trim().isEmpty());
-    }
-
-
-    /**
-     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
-     *
-     * @param text The string to be evaluated.
-     */
-    public static boolean isNullOrEmpty(StringBuilder text) {
-        return (text == null) || isNullOrEmpty(text.toString());
-    }
-
-    /**
-     * Takes in a string, and replaces all XML special characters with the approprate
-     * escape strings.
-     *
-     * @param text The text to be made XML safe.
-     * @return
-     */
-    public static String makeXmlSafe(String text) {
-        if (StringUtil.isNullOrEmpty(text)) return "";
-
-        text = text.replace(ESC_AMPERSAND, "&");
-        text = text.replace("\"", ESC_QUOTE);
-        text = text.replace("&", ESC_AMPERSAND);
-        text = text.replace("'", ESC_APOSTROPHE);
-        text = text.replace("<", ESC_LESS_THAN);
-        text = text.replace(">", ESC_GREATER_THAN);
-        text = text.replace("\u0000", " ");
-
-        return text;
-    } //public static String makeXmlSafe(String text)
-
-    /**
-     * Returns TRUE if the passed string is a valid number.
-     *
-     * @param number The {@link String} to be evaluated.
-     * @return TRUE if the value can be parsed to a {@link Double} without throwing a {@link NumberFormatException}.
-     */
-    public static boolean isNumeric(String number) {
-        if (isNullOrEmpty(number)) {
-            return false;
-        }
-        try {
-            Double.parseDouble(number);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        } //catch (NumberFormatException ex)
-    }
-
-    /**
-     * Returns TRUE if the passed string is a positive integer value.
-     *
-     * @param number The {@link String} to be evaluated.
-     * @return TRUE if the value can be parsed to an {@link Integer} without throwing a {@link NumberFormatException}
-     *         and the parsed value is greater than or equal to zero.
-     */
-    public static boolean isPositiveInteger(String number) {
-        if (isNullOrEmpty(number)) {
-            return false;
-        }
-        try {
-            return Integer.parseInt(number) >= 0;
-        } catch (NumberFormatException ex) {
-            return false;
+            // ellipsis doesn't leave space for any chars of s: omit it
+            return string.substring(0, length);
         }
     }
     
     /**
-     * Returns TRUE if the passed string is an integer value.
-     *
-     * @param number The {@link String} to be evaluated.
-     * @return TRUE if the value can be parsed to an {@link Integer} without throwing a {@link NumberFormatException}
-     *         and the parsed value is greater than or equal to zero.
+     * Convenience for {@code abbr(s, length, "..")}.
      */
-    public static boolean isInteger(String number) {
-        if (isNullOrEmpty(number)) {
+    @SuppressWarnings("nls")
+    public static String abbr(String string, int length) {
+        return abbr(string, length, "..");
+    }
+
+    private static void appendNTimes(StringBuilder sb, char c, int times) {
+        for (int i = 0; i < times; i++) {
+            sb.append(c);
+        }
+    }
+
+    /**
+     * Adds the given character to the left or to the right of the specified
+     * string until its length is at least equal to the specified one.
+     */
+    public static String pad(String string, int length, boolean left, char paddingChar) {
+        if (string.length() == length) {
+            return string;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            if (left)  {
+                appendNTimes(sb, paddingChar, length - string.length());
+                sb.append(string);
+            } else {
+                sb.append(string);
+                appendNTimes(sb, paddingChar, length - string.length());
+            }
+            return sb.toString();
+        }
+    }
+
+    /**
+     * Convenience for {@code pad(string, length, true, paddingChar)}.
+     */
+    public static String lpad(String string, int length, char paddingChar) {
+        return pad(string, length, true, paddingChar);
+    }
+
+    /**
+     * Convenience for {@code pad(string, length, false, paddingChar)}.
+     */
+    public static String rpad(String string, int length, char paddingChar) {
+        return pad(string, length, false, paddingChar);
+    }
+
+    /**
+     * Convenience for {@code lpad(string, length, ' ')}.
+     */
+    public static String lpad(String string, int length) {
+        return pad(string, length, true, ' ');
+    }
+
+    /**
+     * Convenience for {@code rpad(string, length, ' ')}.
+     */
+    public static String rpad(String string, int length) {
+        return pad(string, length, false, ' ');
+    }
+
+    /**
+     * Combines {@link #pad(String, int, boolean, char)} and
+     * {@link #abbr(String, int, String)} to yield a string of the specified
+     * length.  
+     */
+    public static String padAbbr(String string, int length, boolean left, String ellipsis, char paddingChar) {
+        return pad(abbr(string, length, ellipsis), length, left , paddingChar);
+    }
+
+    /**
+     * Convenience for {@code padAbbr(s, length, left, "..", ' ')}.
+     */
+    public static String padAbbr(String string, int length, boolean left) {
+        return padAbbr(string, length, left, "..", ' '); //$NON-NLS-1$
+    }
+
+    /**
+     * Convenience for {@code padAbbr(s, length, true)}.
+     */
+    public static String lpadAbbr(String string, int length) {
+        return padAbbr(string, length, true, "..", ' '); //$NON-NLS-1$
+    }
+
+    /**
+     * Convenience for {@code padAbbr(s, length, false)}. 
+     */
+    public static String rpadAbbr(String string, int length) {
+        return padAbbr(string, length, false, "..", ' '); //$NON-NLS-1$
+    }
+
+    private static final int[] NONBREAKING_SPACE_CHARS = {'\u00a0', '\u2007', '\u202f' };
+    static { Arrays.sort(NONBREAKING_SPACE_CHARS); }
+
+    /**
+     * Tests whether the given code point is whitespace or a non-breaking space.
+     * <p>
+     * This is equivalent to {@code Character.isWhitespace(codePoint) || Character.isSpaceChar(codePoint) }.
+     * 
+     * @return whether the given code point is whitespace or a non-breaking
+     *         space
+     * @see Character#isWhitespace(int)
+     * @see Character#isSpaceChar(int)
+     */
+    public static boolean isSpace(int codePoint) {
+        return Character.isWhitespace(codePoint)
+            || codePoint == 0x00a0
+            || codePoint == 0x2007
+            || codePoint == 0x202f;
+    }
+
+    /**
+     * @return whether the given character sequence is null or all spaces.
+     * 
+     * @see #isSpace(int)
+     */
+    public static boolean isNullOrBlank(CharSequence text) {
+        return text == null
+             ? true
+             : text.codePoints().allMatch(StringUtil::isSpace);
+    }
+
+    private static boolean isXml10AllowedCodePoint(int cp) {
+        return cp < 0x20 // control char?
+             ? cp == 0x09 || cp == 0x0A || cp == 0x0D // \t \n \r
+             : cp <= 0xD7FF || (cp >= 0xE000  && cp <= 0xFFFD)
+                            || (cp >= 0x10000 && cp <= 0x10FFFF);
+    }
+
+    private static final int[] SPECIAL_CHARS = {'&', '\'', '"', '<', '>' };
+    static { Arrays.sort(SPECIAL_CHARS); }
+
+    private static boolean isXml10SpecialCodePoint(int cp) {
+        return Arrays.binarySearch(SPECIAL_CHARS, cp) >= 0;
+    }
+
+    /**
+     * Escapes the characters in a {@code String} using XML entities and strips
+     * characters not in: 
+     * <pre>{@literal
+     * U+0009, U+000A, U+000D,
+     * U+0020  - U+D7FF,
+     * U+E000  - U+FFFD,
+     * U+10000 - U+10FFFF
+     * }</pre>
+     * that can't be represented in xml 1.0.
+     */
+    @SuppressWarnings("nls")
+    public static String escapeXml10(String string) {
+        int i = 0;
+        while (true) { // try avoiding copying the string if possible
+            if (i >= string.length()) {
+                return string;
+            }
+            char c = string.charAt(i);
+            if (!isXml10AllowedCodePoint(c) || isXml10SpecialCodePoint(c)) {
+                break;
+            }
+            i++;
+        }
+        StringBuilder sb = new StringBuilder(string.substring(0, i));
+        string.substring(i).codePoints().filter(StringUtil::isXml10AllowedCodePoint)
+        .forEach(cp -> {
+             switch (cp) {
+                 case '&':  sb.append("&amp;");  break;
+                 case '\'': sb.append("&apos;"); break;
+                 case '"':  sb.append("&quot;"); break;
+                 case '<':  sb.append("&lt;");   break;
+                 case '>':  sb.append("&gt;");   break;
+                 default:   sb.appendCodePoint(cp);
+             }
+        });
+        return sb.toString();
+    }
+
+    /**
+     * Adds the current timestamp formatted according to
+     * {@code PreferenceManager.getClientPreferences().getStampFormat()}
+     * to the given filename.
+     * <p> 
+     * If the filename has a dot, then the timestamp is inserted right before
+     * the last dot (with no separator, eg: "file2018-09-30.ext"), otherwise it
+     * is appended to the filename.
+     */
+    @SuppressWarnings("nls")
+    public static String addDateTimeStamp(String filename) {
+        String tstamp = new SimpleDateFormat(PreferenceManager.getClientPreferences().getStampFormat()).format(new Date());
+        int lastdot = filename.lastIndexOf(".");
+        return lastdot < 0
+             ? filename + tstamp
+             : filename.substring(0, lastdot) + tstamp + filename.substring(lastdot);
+    }
+
+    // hic sunt deprecata
+
+    /** @deprecated use {@link String#split(String)} in conjunction with {@link Pattern#quote(String)} instead */
+    @Deprecated
+    public static Vector<String> splitString(String s, String divider) {
+        return (s == null) || s.equals("") //$NON-NLS-1$
+             ? new Vector<>()
+             : new Vector<>(Arrays.asList(s.split(Pattern.quote(divider))));
+    }
+
+    /** @deprecated use {@link Comparator#naturalOrder()} instead */
+    @Deprecated
+    public static Comparator<String> stringComparator() {
+        return Comparator.naturalOrder();
+    }
+
+    /** @deprecated use {@link Boolean#parseBoolean(String)} instead */
+    @Deprecated
+    public static boolean parseBoolean(String input) {
+        return Boolean.parseBoolean(input);
+    }
+
+    /** @deprecated use {@link #padAbbr(String, int, boolean)} instead */
+    @Deprecated
+    public static String makeLength(String string, int n, boolean bRightJustify) {
+        return padAbbr(string, n, bRightJustify);
+    }
+
+    /** @deprecated use {@link #padAbbr(String, int, boolean)} instead */
+    @Deprecated
+    public static String makeLength(String string, int n) {
+        return makeLength(string, n, false);
+    }
+
+    /** @deprecated use {@link #padAbbr(String, int, boolean)} instead */
+    @Deprecated
+    public static String makeLength(int s, int n) {
+        return makeLength(Integer.toString(s), n, true);
+    }
+
+    /** @deprecated use {@link #isNullOrBlank(CharSequence)} */
+    @Deprecated
+    public static boolean isNullOrEmpty(String text) {
+        return isNullOrBlank(text);
+    }
+
+    /** @deprecated use {@link #isNullOrBlank(CharSequence)} */
+    @Deprecated
+    public static boolean isNullOrEmpty(StringBuilder text) {
+        return isNullOrBlank(text);
+    }
+
+    /**  @deprecated with no replacement (just try parsing with {@link Integer#parseInt(String)}, handle the {@linkplain NumberFormatException}) and validate the result */
+    @Deprecated
+    public static boolean isPositiveInteger(String number) {
+        try {
+            return Integer.parseInt(number) >= 0;
+        } catch (@SuppressWarnings("unused") NumberFormatException ex) {
             return false;
         }
+    }
+
+    /**  @deprecated with no replacement (just try parsing with {@link Integer#parseInt(String)} and handle the {@linkplain NumberFormatException}) */
+    @Deprecated
+    public static boolean isInteger(String number) {
         try {
             Integer.parseInt(number);
-            // If we parsed without exception, we are an int
             return  true;
-        } catch (NumberFormatException ex) {
+        } catch (@SuppressWarnings("unused") NumberFormatException ex) {
             return false;
         }
-    }    
+    }
+
+    /**  @deprecated with no replacement (just try parsing with {@link Double#parseDouble(String)}, handle the {@linkplain NumberFormatException} and validate the result through {@link Double#isFinite(double)}) */
+    @Deprecated
+    public static boolean isNumeric(String number) {
+        try {
+            return Double.isFinite(Double.parseDouble(number));
+        } catch (@SuppressWarnings("unused") NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    /**
+     * @deprecated use {@link #escapeXml10(String)} instead. */
+    @Deprecated
+    @SuppressWarnings("nls")
+    public static String makeXmlSafe(String text) {
+        return isNullOrBlank(text) ? "" : escapeXml10(text);
+    }
+
 }

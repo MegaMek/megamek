@@ -75,11 +75,17 @@ public class BoardsValidator {
         
         java.io.InputStream is = new FileInputStream(boardFile);
         StringBuffer errBuff = new StringBuffer();
-        Board b = new Board();
-        b.load(is, errBuff, false);
-        if (errBuff.length() > 0) {
+        try {
+            Board b = new Board();
+            b.load(is, errBuff, false);
+            if (errBuff.length() > 0) {
+                System.out.println("Found Invalid Board! Board: " + boardFile);
+                System.out.println(errBuff);
+                numBoardErrors++;
+            }
+        } catch (Exception e) {
             System.out.println("Found Invalid Board! Board: " + boardFile);
-            System.out.println(errBuff);
+            e.printStackTrace(System.out);
             numBoardErrors++;
         }
     }

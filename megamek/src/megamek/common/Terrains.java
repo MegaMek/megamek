@@ -75,8 +75,10 @@ public class Terrains implements ITerrainFactory {
                                                      // BasemenType, one of the
                                                      // values of the
                                                      // BasementType enum
-    public static final int BLDG_CLASS = 26; // 1: hangars 2: fortresses 3: gun
-                                             // emplacements
+    /**
+     * @see megamek.common.building.BuildingClass
+     */
+    public static final int BLDG_CLASS = 26;
     public static final int BLDG_ARMOR = 27;
     // leaving this empty will be interpreted as standard
     public static final int BRIDGE = 28;

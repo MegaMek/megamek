@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import megamek.common.building.Building;
 
 /**
  * Contains the to-hit number and a short description of how it was reached

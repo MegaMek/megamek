@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.common.Board;
-import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -18,6 +17,7 @@ import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.building.Building;
 import megamek.common.MoveStep;
 
 /**

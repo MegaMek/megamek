@@ -17,6 +17,8 @@ package megamek.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.building.Building;
+
 /**
  * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexes.
@@ -26,10 +28,10 @@ import java.util.Map;
  */
 public class BuildingTarget implements Targetable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6432766092407639630L;
+    
+    /** Magic value for uninitialized values */
+    public static final int UNKNOWN = -1;
 
     /**
      * The coordinates of the hex being targeted.
@@ -39,20 +41,20 @@ public class BuildingTarget implements Targetable {
     /**
      * The ID of the building being targeted.
      */
-    private int id = Building.UNKNOWN;
+    private int id = UNKNOWN;
 
     /**
      * The height of the building at the targeted position, used to indicate
      * the number of levels of the building.  A height 0 building is a 1-story
      * (level 1) building.  Bridges will always have a height of 0.
      */
-    private int height = Building.UNKNOWN;
+    private int height = UNKNOWN;
 
     /**
      * The elevation of the building at the targeted position, generally only
      * used by bridges but also for buildings on hexes with depth.
      */
-    private int elevation = Building.UNKNOWN;
+    private int elevation = UNKNOWN;
 
     /**
      * The name of this hex of the building.

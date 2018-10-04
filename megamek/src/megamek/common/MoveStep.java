@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 
 /**

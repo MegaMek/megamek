@@ -14,7 +14,12 @@
 
 package megamek.common;
 
+import java.util.Optional;
+
 import megamek.common.annotations.Nullable;
+import megamek.common.building.BuildingClass;
+import megamek.common.building.ConstructionType;
+import megamek.common.logging.DefaultMmLogger;
 
 /**
  * IHex represents a single hex on the board.
@@ -49,7 +54,7 @@ public interface IHex extends Cloneable {
      *
      * @param theme
      *            theme name
-     * @see getTheme
+     * @see #getTheme()
      */
     public abstract void setTheme(String theme);
 
@@ -222,6 +227,44 @@ public interface IHex extends Cloneable {
      */
     public abstract int terrainLevel(int type);
 
+    public default Optional<ConstructionType> getConstructionType(int structureType) {
+        // TODO use this in place of terrainLevel() whenever possible
+        //      eg: grep -r 'terrainLevel(Terrains.BUILDING)'  src/
+        //          grep -r 'terrainLevel(Terrains.BRIDGE)'    src/
+        //          grep -r 'terrainLevel(Terrains.FUEL_TANK)' src/
+        int id = terrainLevel(structureType);
+        if (id == ITerrain.LEVEL_NONE) return Optional.empty();
+        Optional<ConstructionType> ct = ConstructionType.ofId(id);
+        if (!ct.isPresent()) {
+            String msg =  String.format("Board contains an invalid construction type %s at %s", id, getCoords().getBoardNum()); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().warning(IHex.class, "getConstructionType", msg); //$NON-NLS-1$
+        }
+        return ct;
+    }
+
+    /**
+     * Retrieves the building class terrain level at this location (if any).
+     * 
+     * Note that maps do not always set the {@link Terrains#BLDG_CLASS}
+     * level when buildings are present. This method does _not_ default it
+     * to {@link BuildingClass#STANDARD} when a building is present at this hex:
+     * it's up to the caller to apply whatever logic it deems appropriate.
+     * 
+     * @return the building class terrainLevel at this location (if any)
+     */
+    public default Optional<BuildingClass> getBuildingClass() {
+        // TODO use this in place of terrainLevel() whenever possible
+        //      eg: grep -r 'terrainLevel(Terrains.BLDG_CLASS)' src/
+        int id = terrainLevel(Terrains.BLDG_CLASS);
+        if (id == ITerrain.LEVEL_NONE) return Optional.empty();
+        Optional<BuildingClass> bc = BuildingClass.ofId(id);
+        if (!bc.isPresent()) {
+            String msg =  String.format("Board contains an invalid building class %s at %s", id, getCoords().getBoardNum()); //$NON-NLS-1$
+            DefaultMmLogger.getInstance().warning(IHex.class, "getBuildingClass", msg); //$NON-NLS-1$
+        }
+        return bc;
+    }
+
     /**
      * @param type
      * @return the terrain of the specified type, or <code>null</code> if the
@@ -272,9 +315,6 @@ public interface IHex extends Cloneable {
      */
     public abstract IHex duplicate();
 
-    /**
-     * @return modifier to PSRs made in the hex
-     */
     public abstract void terrainPilotingModifier(EntityMovementMode moveType, PilotingRollData roll,
             boolean enteringRubble);
 

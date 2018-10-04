@@ -16,7 +16,6 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Dropship;
@@ -31,6 +30,7 @@ import megamek.common.Infantry;
 import megamek.common.LandAirMech;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.building.Building;
 import megamek.common.MoveStep;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;

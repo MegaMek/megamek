@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 

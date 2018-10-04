@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.IGame;
@@ -24,6 +23,7 @@ import megamek.common.TagInfo;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
 import megamek.server.Server;
 
 public class TAGHandler extends WeaponHandler {

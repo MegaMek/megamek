@@ -18,8 +18,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
+import megamek.common.building.BasementType;
+import megamek.common.building.Building;
 
 /**
  * Hex represents a single hex on the board.
@@ -318,7 +319,7 @@ public class Hex implements IHex, Serializable {
         }
         if (basement != null) {
             if (hidden) {
-                depth += BasementType.getType(basement.getLevel()).getDepth();
+                depth += BasementType.ofId(basement.getLevel()).map(BasementType::getDepth).orElse(0);
             }
         }
 

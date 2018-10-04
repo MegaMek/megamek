@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
@@ -42,6 +41,8 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.building.BasementType;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -5814,9 +5815,9 @@ public class Compute {
         int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
         int basement = 0;
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
-            basement = BasementType.getType(
-                    curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
-                                   .getDepth();
+            basement = BasementType.ofId(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
+                                   .map(BasementType::getDepth)
+                                   .orElse(0);
         }
 
         // Return true if the entity is in the range of building elevations.

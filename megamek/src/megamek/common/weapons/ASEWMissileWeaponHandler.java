@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Building;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -24,6 +23,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.Warship;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
 import megamek.server.Server;
 
 /**

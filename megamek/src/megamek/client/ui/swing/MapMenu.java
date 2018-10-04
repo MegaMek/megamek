@@ -35,8 +35,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
-import megamek.common.Building;
-import megamek.common.Building.DemolitionCharge;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -65,6 +63,8 @@ import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
+import megamek.common.building.DemolitionCharge;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
@@ -411,9 +411,9 @@ public class MapMenu extends JPopupMenu {
         Building bldg = client.getBoard().getBuildingAt(coords);
         if ((bldg != null)) {
             for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
-                if (charge.playerId == client.getLocalPlayer().getId()
-                        && coords.equals(charge.pos)) {
-                    JMenuItem item = new JMenuItem(charge.damage + " Damage");
+                if (charge.getPlayerId() == client.getLocalPlayer().getId()
+                        && coords.equals(charge.getPos())) {
+                    JMenuItem item = new JMenuItem(charge.getDamage() + " Damage");
                     item.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             client.sendExplodeBuilding(charge);

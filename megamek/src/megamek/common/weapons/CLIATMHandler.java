@@ -20,7 +20,6 @@ import java.util.Vector;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
@@ -38,6 +37,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 

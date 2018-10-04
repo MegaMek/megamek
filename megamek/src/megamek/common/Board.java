@@ -40,7 +40,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Building.BasementType;
+import megamek.common.building.BasementType;
+import megamek.common.building.Building;
+import megamek.common.building.Buildings;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.util.MegaMekFile;
@@ -345,8 +347,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BUILDING,
-                                    BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+                            Building bldg = Buildings.newBuildingAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -375,8 +376,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
-                            FuelTank bldg = new FuelTank(coords, this, Terrains.FUEL_TANK, magnitude);
+                            Building bldg = Buildings.newFuelTankAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -406,7 +406,7 @@ public class Board implements Serializable, IBoard {
 
                         // Nope. Try to create an object for the new building.
                         try {
-                            Building bldg = new Building(coords, this, Terrains.BRIDGE, BasementType.NONE);
+                            Building bldg = Buildings.newBridgeAt(coords, this);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -1375,8 +1375,7 @@ public class Board implements Serializable, IBoard {
                 bldg.setCurrentCF(other.getCurrentCF(coords), coords);
                 bldg.setPhaseCF(other.getPhaseCF(coords), coords);
                 bldg.setArmor(other.getArmor(coords), coords);
-                bldg.setBasement(coords,
-                        BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+                bldg.setBasement(coords, BasementType.ofId(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).orElse(BasementType.UNKNOWN));
                 bldg.setBasementCollapsed(coords, other.getBasementCollapsed(coords));
                 bldg.setDemolitionCharges(other.getDemolitionCharges());
             }

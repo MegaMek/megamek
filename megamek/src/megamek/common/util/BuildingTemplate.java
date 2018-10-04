@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import megamek.common.Building;
 import megamek.common.Coords;
+import megamek.common.building.Building;
 
 /**
  * Building template, for placing on the map during map generation. Currently
  * used by mekwars to place objective buildings. Could also be used by an RMG
  * town builder
- * 
+ *
  * @author coelocanth
  */
 public class BuildingTemplate implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -911419490135815472L;
 

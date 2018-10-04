@@ -81,9 +81,6 @@ import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.Building.BasementType;
-import megamek.common.Building.DemolitionCharge;
 import megamek.common.BuildingTarget;
 import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
@@ -107,7 +104,6 @@ import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.Flare;
-import megamek.common.FuelTank;
 import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
@@ -211,6 +207,9 @@ import megamek.common.actions.UnjamAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.building.BasementType;
+import megamek.common.building.Building;
+import megamek.common.building.DemolitionCharge;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -19214,7 +19213,7 @@ public class Server implements Runnable {
         // Check for touched-off explosives
         Vector<Building> updatedBuildings = new Vector<>();
         for (DemolitionCharge charge : explodingCharges) {
-            Building bldg = game.getBoard().getBuildingAt(charge.pos);
+            Building bldg = game.getBoard().getBuildingAt(charge.getPos());
             if (bldg == null) { // Shouldn't happen...
                 continue;
             }
@@ -19223,8 +19222,8 @@ public class Server implements Runnable {
             Report r = new Report(4272, Report.PUBLIC);
             r.add(bldg.getName());
             addReport(r);
-            Vector<Report> dmgReports = damageBuilding(bldg, charge.damage,
-                    " explodes for ", charge.pos);
+            Vector<Report> dmgReports = damageBuilding(bldg, charge.getDamage(),
+                    " explodes for ", charge.getPos());
             for (Report rep : dmgReports) {
                 rep.indent();
                 addReport(rep);
@@ -32274,7 +32273,7 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_BLDG_EXPLODE:
                 DemolitionCharge charge = (DemolitionCharge)packet.getData()[0];
-                if (charge.playerId == connId) {
+                if (charge.getPlayerId() == connId) {
                     if (!explodingCharges.contains(charge)) {
                         explodingCharges.add(charge);
                         IPlayer p = game.getPlayer(connId);
@@ -33704,7 +33703,7 @@ public class Server implements Runnable {
 
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
-                    if (bldg instanceof FuelTank) {
+                    if (bldg.getExplosionMagnitude().isPresent()) {
                         // If this is a fuel tank, we'll give it its own
                         // message.
                         r = new Report(3441);
@@ -33718,7 +33717,7 @@ public class Server implements Runnable {
                         r.newlines = 1;
                         vPhaseReport.add(r);
                         Vector<Report> vRep = new Vector<Report>();
-                        doExplosion(((FuelTank) bldg).getMagnitude(), 10,
+                        doExplosion(bldg.getExplosionMagnitude().getAsInt(), 10,
                                 false, bldg.getCoords().nextElement(), true,
                                 vRep, null, -1);
                         Report.indentAll(vRep, 2);
@@ -33887,7 +33886,7 @@ public class Server implements Runnable {
             vDesc.add(r);
             // If the CF is zero, the building should fall.
             if ((curCF == 0) && (bldg.getPhaseCF(coords) != 0)) {
-                if (bldg instanceof FuelTank) {
+                if (bldg.getExplosionMagnitude().isPresent()) {
                     // If this is a fuel tank, we'll give it its own
                     // message.
                     r = new Report(3441);
@@ -33901,7 +33900,7 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     vDesc.add(r);
                     Vector<Report> vRep = new Vector<Report>();
-                    doExplosion(((FuelTank) bldg).getMagnitude(), 10, false,
+                    doExplosion(bldg.getExplosionMagnitude().getAsInt(), 10, false,
                                 bldg.getCoords().nextElement(), true, vRep, null,
                                 -1);
                     Report.indentAll(vRep, 2);

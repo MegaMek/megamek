@@ -15,7 +15,6 @@
 package megamek.common.actions;
 
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
@@ -33,6 +32,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.building.Building;
 import megamek.common.options.OptionsConstants;
 
 public class PhysicalAttackAction extends AbstractAttackAction {

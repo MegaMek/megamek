@@ -232,14 +232,7 @@ public class Princess extends BotClient {
             LogLevel.INFO,
             "New behavior settings for " + getName() +
             "\n" + behaviorSettings.toLog());
-        try {
-            this.behaviorSettings = behaviorSettings.getCopy();
-        } catch (final PrincessException e) {
-            log(getClass(),
-                "setBehaviorSettings(BehaviorSettings)",
-                e);
-            return;
-        }
+        this.behaviorSettings = behaviorSettings.copy();
         getStrategicBuildingTargets().clear();
         setFallBack(behaviorSettings.shouldGoHome(),
                     "Fall Back Configuration.");

@@ -2205,6 +2205,29 @@ public class Server implements Runnable {
         return requestedTeam;
     }
 
+    private void processMapSettingsChange(Packet packet, String chatMessage) {
+        if (!game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)) {
+            return;
+        }
+        MapSettings newSettings = (MapSettings) packet.getObject(0);
+        if (!mapSettings.equalMapGenParameters(newSettings)) {
+            sendServerChat(chatMessage);
+        }
+        mapSettings = newSettings;
+        mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(mapSettings.getBoardWidth(), mapSettings.getBoardHeight())));
+        mapSettings.removeUnavailable();
+        mapSettings.setNullBoards(DEFAULT_BOARD);
+        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+        mapSettings.removeUnavailable();
+        // if still only nulls left, use BOARD_GENERATED
+        if (mapSettings.getBoardsSelected().next() == null) {
+            mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
+        }
+        resetPlayersDone();
+        transmitAllPlayerDones();
+        send(createMapSettingsPacket());
+    }
+
     private void processTeamChange() {
         if (playerChangingTeam != null) {
             playerChangingTeam.setTeam(requestedTeam);
@@ -32371,60 +32394,10 @@ public class Server implements Runnable {
                 }
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS:
-                if (game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)) {
-                    MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!mapSettings.equalMapGenParameters(newSettings)) {
-                        sendServerChat("Player " + player.getName()
-                                + " changed map settings");
-                    }
-                    mapSettings = newSettings;
-                    mapSettings
-                            .setBoardsAvailableVector(scanForBoards(new BoardDimensions(
-                                    mapSettings.getBoardWidth(), mapSettings
-                                            .getBoardHeight())));
-                    mapSettings.removeUnavailable();
-                    mapSettings.setNullBoards(DEFAULT_BOARD);
-                    mapSettings
-                            .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-                    mapSettings.removeUnavailable();
-                    // if still only nulls left, use BOARD_GENERATED
-                    if (mapSettings.getBoardsSelected().next() == null) {
-                        mapSettings
-                                .setNullBoards((MapSettings.BOARD_GENERATED));
-                    }
-                    newSettings = null;
-                    resetPlayersDone();
-                    transmitAllPlayerDones();
-                    send(createMapSettingsPacket());
-                }
+                processMapSettingsChange(packet, "Player " + player.getName() + " changed map settings");
                 break;
             case Packet.COMMAND_SENDING_MAP_DIMENSIONS:
-                if (game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)) {
-                    MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!mapSettings.equalMapGenParameters(newSettings)) {
-                        sendServerChat("Player " + player.getName()
-                                + " changed map dimensions");
-                    }
-                    mapSettings = newSettings;
-                    newSettings = null;
-                    mapSettings
-                            .setBoardsAvailableVector(scanForBoards(new BoardDimensions(
-                                    mapSettings.getBoardWidth(), mapSettings
-                                            .getBoardHeight())));
-                    mapSettings.removeUnavailable();
-                    mapSettings.setNullBoards(DEFAULT_BOARD);
-                    mapSettings
-                            .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-                    mapSettings.removeUnavailable();
-                    // if still only nulls left, use BOARD_GENERATED
-                    if (mapSettings.getBoardsSelected().next() == null) {
-                        mapSettings
-                                .setNullBoards((MapSettings.BOARD_GENERATED));
-                    }
-                    resetPlayersDone();
-                    transmitAllPlayerDones();
-                    send(createMapSettingsPacket());
-                }
+                processMapSettingsChange(packet, "Player " + player.getName() + " changed map dimensions");
                 break;
             case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
                 // MapSettings newSettings = (MapSettings) packet.getObject(0);

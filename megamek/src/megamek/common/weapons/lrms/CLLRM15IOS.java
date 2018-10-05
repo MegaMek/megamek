@@ -38,7 +38,7 @@ public class CLLRM15IOS extends LRMWeapon {
         tonnage = 3.0;
         criticals = 2;
         bv = 33;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 140000;
         shortAV = 9;
         medAV = 9;

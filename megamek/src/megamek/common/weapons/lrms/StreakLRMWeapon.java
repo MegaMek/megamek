@@ -37,6 +37,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     public StreakLRMWeapon() {
         super();
         this.ammoType = AmmoType.T_LRM_STREAK;
+        flags = flags.or(F_PROTO_WEAPON);
         clearModes();
     }
     

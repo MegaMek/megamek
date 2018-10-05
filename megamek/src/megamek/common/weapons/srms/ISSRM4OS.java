@@ -42,7 +42,7 @@ public class ISSRM4OS extends SRMWeapon {
         tonnage = 2.5;
         criticals = 1;
         bv = 8;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 30000;
         shortAV = 4;
         maxRange = RANGE_SHORT;

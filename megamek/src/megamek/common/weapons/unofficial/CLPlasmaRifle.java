@@ -15,10 +15,9 @@
  * Created on Sep 13, 2004
  *
  */
-package megamek.common.weapons.ppc;
+package megamek.common.weapons.unofficial;
 
 import megamek.common.BattleForceElement;
-import megamek.common.weapons.unofficial.PlasmaMFUKWeapon;
 
 /**
  * @author Sebastian Brocks

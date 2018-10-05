@@ -36,6 +36,7 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
     public StreakSRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM_STREAK;
+        flags = flags.or(F_PROTO_WEAPON);
     }
     
     @Override

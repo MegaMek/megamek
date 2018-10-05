@@ -42,7 +42,7 @@ public class CLSRT6IOS extends SRTWeapon {
         tonnage = 1;
         criticals = 1;
         bv = 12;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 64000;
         rulesRefs = "327,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)

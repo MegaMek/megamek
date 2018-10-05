@@ -51,6 +51,7 @@ public class CLStreakLRM5IOS extends StreakLRMWeapon {
         longAV = 5;
         maxRange = RANGE_LONG;
         rulesRefs = "327,TO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_B)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3058, 3081, 3088).setClanApproximate(false, true, false)

@@ -34,6 +34,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.ITechManager;
 import megamek.common.ITechnology;
@@ -1478,6 +1479,13 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getArmoredComponentWeight() {
         return 0.0f;
+    }
+
+    public static boolean usesKgStandard(Entity entity) {
+        return entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                || (EntityWeightClass.getWeightClass(entity.getWeight(), entity)
+                        == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }
 
 } // End class TestEntity

@@ -287,6 +287,7 @@ import megamek.common.weapons.mortars.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.CLAMS;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.CLFluidGun;
+import megamek.common.weapons.other.CLFussilade;
 import megamek.common.weapons.other.CLLaserAMS;
 import megamek.common.weapons.other.CLNarc;
 import megamek.common.weapons.other.CLNarcIOS;
@@ -1506,7 +1507,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLIATM6());
         EquipmentType.addType(new CLIATM9());
         EquipmentType.addType(new CLIATM12());
-//        EquipmentType.addType(new CLFussilade());
+        EquipmentType.addType(new CLFussilade());
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());

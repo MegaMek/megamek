@@ -167,12 +167,12 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             String equipName = element.trim();
 
             // ProtoMech Ammo comes in non-standard amounts.
-            int ammoIndex = equipName.indexOf("Ammo (");
+            int ammoIndex = equipName.indexOf(" (");
             int shotsCount = 0;
             if (ammoIndex > 0) {
                 // Try to get the number of shots.
                 try {
-                    String shots = equipName.substring(ammoIndex + 6, equipName.length() - 1);
+                    String shots = equipName.substring(ammoIndex + 2, equipName.length() - 1);
                     shotsCount = Integer.parseInt(shots);
                     if (shotsCount < 0) {
                         throw new EntityLoadingException("Invalid number of shots in: " + equipName + ".");
@@ -182,7 +182,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                 }
 
                 // Strip the shots out of the ammo name.
-                equipName = equipName.substring(0, ammoIndex + 4);
+                equipName = equipName.substring(0, ammoIndex);
             }
             EquipmentType etype = EquipmentType.get(equipName);
 

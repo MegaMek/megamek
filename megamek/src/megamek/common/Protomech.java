@@ -602,8 +602,8 @@ public class Protomech extends Entity {
 
     @Override
     public double getArmorWeight() {
-        return EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
-                * getTotalOArmor();
+        return Math.round(EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
+                * getTotalOArmor() * 1000.0) / 1000.0;
     }
 
     @Override

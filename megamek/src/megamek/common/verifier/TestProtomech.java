@@ -501,17 +501,22 @@ public class TestProtomech extends TestEntity {
     }
     
     /**
-     * Checks for exceeding the maximum number of armor points for the tonnage.
+     * Checks for exceeding the maximum number of armor points by location for the tonnage.
      * 
      * @param buffer  A string buffer for appending error messages.
      * @return        Whether the number of armor points is legal
      */
     public boolean correctArmor(StringBuffer buffer) {
-        if (proto.getTotalArmor() > maxArmorFactor(proto)) {
-            buffer.append("Exceeds maximum of ").append(maxArmorFactor(proto)).append(" armor points.\n");
-            return false;
+        boolean correct = true;
+        for (int loc = 0; loc < proto.locations(); loc++) {
+            if (proto.getOArmor(loc) > maxArmorFactor(proto, loc)) {
+                buffer.append(proto.getLocationAbbr(loc))
+                    .append(" exceeds maximum of ")
+                    .append(maxArmorFactor(proto, loc)).append(" armor points.\n");
+                correct = false;
+            }
         }
-        return true;
+        return correct;
     }
     
     /**
@@ -759,4 +764,31 @@ public class TestProtomech extends TestEntity {
         }
         return base;
     }
+    /**
+     * Determine the maximum amount of armor in a location based on unit weight.
+     * 
+     * @param proto   The protomech
+     * @param location The location index
+     * @return        The maximum total number of armor points
+     */
+    public static int maxArmorFactor(Protomech proto, int location) {
+        if (location == Protomech.LOC_HEAD) {
+            return 2 + (int) proto.getWeight() / 2;
+        } else if (location == Protomech.LOC_MAINGUN) {
+            if (proto.hasMainGun()) {
+                return proto.getOInternal(location) * 3;
+            } else {
+                return 0;
+            }
+        } else if ((location == Protomech.LOC_LARM)
+                || (location == Protomech.LOC_RARM)) {
+            if (proto.isQuad()) {
+                return 0;
+            }
+            return Math.min(proto.getOInternal(location) * 2, 6);
+        } else {
+            return proto.getOInternal(location) * 2;
+        }
+    }
+    
 }

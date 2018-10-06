@@ -67,7 +67,7 @@
     0
     </maxOverweight>
     <showUnderweighted>
-    true
+    false
     </showUnderweighted>
     <minUnderweight>
     0

@@ -51,6 +51,7 @@ public class ISFlamer extends FlamerWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
+        flags = flags.andNot(F_PROTO_WEAPON);
         rulesRefs = "218,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)

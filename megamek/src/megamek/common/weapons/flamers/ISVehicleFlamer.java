@@ -56,6 +56,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "218,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(true)
     	.setUnofficial(false)

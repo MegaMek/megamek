@@ -6081,7 +6081,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
-        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         ;
         misc.bv = 12;
@@ -6177,7 +6177,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
-        misc.flags = misc.flags.or(F_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+        misc.flags = misc.flags.or(F_ECM).or(F_MECH_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).andNot(F_WS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_SS_EQUIPMENT);
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });
@@ -6206,9 +6206,10 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).andNot(F_WS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_SS_EQUIPMENT);
-        misc.bv = 100;
+		misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+				.or(F_PROTOMECH_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
+				.andNot(F_WS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_SS_EQUIPMENT);
+		misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.rulesRefs = "279,TO";
@@ -6280,9 +6281,9 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.5f;
         misc.criticals = 2;
         misc.cost = 500000;
-		misc.flags = misc.flags.or(F_WATCHDOG).or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-				.or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).andNot(F_WS_EQUIPMENT)
-				.andNot(F_JS_EQUIPMENT).andNot(F_SS_EQUIPMENT);
+		misc.flags = misc.flags.or(F_WATCHDOG).or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT)
+				.or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
+				.andNot(F_WS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_SS_EQUIPMENT);
         misc.bv = 68;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -6330,7 +6331,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 10000;
-        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_RECON_CAMERA);
         misc.rulesRefs = "337,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -10504,7 +10505,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.25;
         misc.criticals = 2;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "252,TM";

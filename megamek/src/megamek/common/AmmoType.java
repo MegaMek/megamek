@@ -5147,7 +5147,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.rulesRefs = "218,TM";
-        ammo.kgPerShot = 5;
+        ammo.kgPerShot = 50;
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
         .setIntroLevel(true)
         .setUnofficial(false)

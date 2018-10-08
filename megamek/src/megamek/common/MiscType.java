@@ -864,7 +864,15 @@ public class MiscType extends EquipmentType {
             } else {
                 return Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
             }
-        } 
+        }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            if (entity.getWeight() < 6) {
+                return 0.25;
+            } else if (entity.getWeight() < 10) {
+                return 0.5;
+            } else {
+                return 1.0;
+            }
+        }
        // okay, I'm out of ideas
         return 1.0f;
     }
@@ -9326,7 +9334,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Magnetic Clamps System";
         misc.setInternalName("ProtoMagneticClamp");
         misc.addLookupName("Proto Magnetic Clamp");
-        misc.tonnage = 0; // see IO pg 66
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 25000;
         misc.hittable = false;

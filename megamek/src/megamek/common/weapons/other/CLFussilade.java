@@ -34,7 +34,8 @@ public class CLFussilade extends ATMWeapon {
         //TODO Game Rules.
         this.name = "Fussilade";
         this.setInternalName("Fussilade");
-        flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE);
+        flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
+                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT);
         rackSize = 3;
         minimumRange = 4;
         shortRange = 5;

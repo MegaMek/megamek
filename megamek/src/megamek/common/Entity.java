@@ -3508,6 +3508,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
                     shots = getTotalInternal();
                 }
+                // Fusillade gets two rounds.
+                if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+                    shots = 2;
+                }
                 m.setShotsLeft(shots);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location

@@ -36,7 +36,7 @@ public abstract class TAGWeapon extends Weapon {
 
     public TAGWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
                 .or(F_TAG).or(F_NO_FIRES);
         setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
     }

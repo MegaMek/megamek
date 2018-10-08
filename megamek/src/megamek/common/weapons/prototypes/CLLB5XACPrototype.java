@@ -51,6 +51,7 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
         longAV = 5;
         maxRange = RANGE_LONG;
         rulesRefs = "97, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
         .setTechRating(RATING_F)

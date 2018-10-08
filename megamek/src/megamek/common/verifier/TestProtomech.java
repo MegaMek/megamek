@@ -156,6 +156,11 @@ public class TestProtomech extends TestEntity {
             return type;
         }
         
+        public int getArmorTech() {
+            EquipmentType eq = getArmorEqType();
+            return eq.getStaticTechLevel().getCompoundTechLevel(isClan);
+        }
+        
         public boolean isClan() {
             return isClan;
         }

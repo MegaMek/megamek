@@ -551,9 +551,6 @@ public class BLKFile {
             }
             blk.writeBlockData("armor", armor_array);
         }
-        if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            numLocs = Protomech.LOC_BODY + 1;
-        }
 
         // Write out armor_type and armor_tech entries for BA
         if (t instanceof BattleArmor){

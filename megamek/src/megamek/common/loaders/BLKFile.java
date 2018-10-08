@@ -465,6 +465,8 @@ public class BLKFile {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
                 if (t.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                     blk.writeBlockData("jumpingMP", t.getOriginalJumpMP());
+                    blk.writeBlockData("interface_cockpit",
+                            String.valueOf(((Protomech) t).hasInterfaceCockpit()));
                 }
             }
         }

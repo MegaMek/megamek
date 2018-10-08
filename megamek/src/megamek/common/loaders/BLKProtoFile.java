@@ -100,6 +100,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("jumpingMP")) {
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
         }
+        
+        if (dataFile.exists("interface_cockpit")) {
+            t.setInterfaceCockpit(Boolean.parseBoolean(dataFile.getDataAsString("interface_cockpit")[0]));
+        }
 
         if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");

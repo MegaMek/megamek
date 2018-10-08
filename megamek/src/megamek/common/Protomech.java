@@ -123,6 +123,7 @@ public class Protomech extends Entity {
 
     private boolean isQuad = false;
     private boolean isGlider = false;
+    private boolean interfaceCockpit = false;
     private int wingHits = 0;
 
     // for MHQ
@@ -389,6 +390,11 @@ public class Protomech extends Entity {
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3071, DATE_NONE, DATE_NONE, 3085).setISApproximate(true).setPrototypeFactions(F_WB)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -400,6 +406,13 @@ public class Protomech extends Entity {
             return TA_ULTRA;
         } else {
             return TA_STANDARD_PROTOMECH;
+        }
+    }
+
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        if (interfaceCockpit) {
+            ctl.addComponent(TA_INTERFACE_COCKPIT);
         }
     }
 
@@ -2363,6 +2376,27 @@ public class Protomech extends Entity {
     
     public void setIsGlider(boolean isGlider) {
         this.isGlider = isGlider;
+    }
+    
+    /**
+     * WoB protomech interface allows it to be piloted by a quadruple amputee with a VDNI implant.
+     * No effect on game play.
+     * 
+     * @return Whether the protomech is equipped with an Inner Sphere Protomech Interface.
+     */
+    public boolean hasInterfaceCockpit() {
+        return interfaceCockpit;
+    }
+    
+    /**
+     * Sets whether the protomech has an Inner Sphere Protomech Interface. This will also determine
+     * whether it is a mixed tech unit.
+     * 
+     * @param interfaceCockpit Whether the protomech has an IS interface
+     */
+    public void setInterfaceCockpit(boolean interfaceCockpit) {
+        this.interfaceCockpit = interfaceCockpit;
+        mixedTech = interfaceCockpit;
     }
 
     @Override

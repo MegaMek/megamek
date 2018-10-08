@@ -3226,7 +3226,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createElectricDischargeArmor() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
-        misc.name = "Protomech Electric Discharge Armor";
+        misc.name = EquipmentType.getArmorTypeName(T_ARMOR_EDP);
         misc.setInternalName("CLEDPArmor");
         misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP, true));
         misc.tonnage = TONNAGE_VARIABLE;

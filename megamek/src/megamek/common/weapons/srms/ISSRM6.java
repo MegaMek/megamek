@@ -46,6 +46,7 @@ public class ISSRM6 extends SRMWeapon {
         this.shortAV = 8;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "229,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

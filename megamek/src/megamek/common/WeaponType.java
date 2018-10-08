@@ -379,12 +379,18 @@ import megamek.common.weapons.srms.CLSRM5OS;
 import megamek.common.weapons.srms.CLSRM6;
 import megamek.common.weapons.srms.CLSRM6IOS;
 import megamek.common.weapons.srms.CLSRM6OS;
+import megamek.common.weapons.srms.CLSRT1;
+import megamek.common.weapons.srms.CLSRT1OS;
 import megamek.common.weapons.srms.CLSRT2;
 import megamek.common.weapons.srms.CLSRT2IOS;
 import megamek.common.weapons.srms.CLSRT2OS;
+import megamek.common.weapons.srms.CLSRT3;
+import megamek.common.weapons.srms.CLSRT3OS;
 import megamek.common.weapons.srms.CLSRT4;
 import megamek.common.weapons.srms.CLSRT4IOS;
 import megamek.common.weapons.srms.CLSRT4OS;
+import megamek.common.weapons.srms.CLSRT5;
+import megamek.common.weapons.srms.CLSRT5OS;
 import megamek.common.weapons.srms.CLSRT6;
 import megamek.common.weapons.srms.CLSRT6IOS;
 import megamek.common.weapons.srms.CLSRT6OS;
@@ -1475,11 +1481,17 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISSRT2OS());
         EquipmentType.addType(new ISSRT4OS());
         EquipmentType.addType(new ISSRT6OS());
+        EquipmentType.addType(new CLSRT1());
         EquipmentType.addType(new CLSRT2());
+        EquipmentType.addType(new CLSRT3());
         EquipmentType.addType(new CLSRT4());
+        EquipmentType.addType(new CLSRT5());
         EquipmentType.addType(new CLSRT6());
+        EquipmentType.addType(new CLSRT1OS());        
         EquipmentType.addType(new CLSRT2OS());
+        EquipmentType.addType(new CLSRT3OS());
         EquipmentType.addType(new CLSRT4OS());
+        EquipmentType.addType(new CLSRT5OS());
         EquipmentType.addType(new CLSRT6OS());
         // RLs
         /*

@@ -601,8 +601,10 @@ public class TestProtomech extends TestEntity {
     public double getWeightAmmo() {
         double weight = 0.0;
         for (Mounted m : getEntity().getAmmo()) {
-            AmmoType mt = (AmmoType) m.getType();
-            weight += ceil(mt.getKgPerShot() * m.getBaseShotsLeft() / 1000, Ceil.KILO);
+            if (!m.isOneShotAmmo()) {
+                AmmoType mt = (AmmoType) m.getType();
+                weight += ceil(mt.getKgPerShot() * m.getBaseShotsLeft() / 1000, Ceil.KILO);
+            }
         }
         return weight;
     }

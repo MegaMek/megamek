@@ -1785,6 +1785,17 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean isOneShot(){
         return getType().hasFlag(WeaponType.F_ONESHOT);
     }
+    
+    /**
+     * Check for whether this mount is linked by a one-shot weapon
+     * 
+     * @return {@code true} if this is one-shot ammo
+     */
+    public boolean isOneShotAmmo() {
+        return (getType() instanceof AmmoType)
+                && (getLinkedBy() != null)
+                && getLinkedBy().isOneShot();
+    }
 
     public boolean isSquadSupportWeapon() {
         return squadSupportWeapon;

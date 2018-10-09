@@ -13,19 +13,19 @@ ProtoMech
 </UnitType>
 
 <Name>
-Sprite
+Boggart Ultraheavy ProtoMech
 </Name>
 
 <Model>
-(Standard)
+2
 </Model>
 
 <year>
-3072
+3075
 </year>
 
 <originalBuildYear>
-3072
+3075
 </originalBuildYear>
 
 <type>
@@ -33,18 +33,18 @@ Clan Level 3
 </type>
 
 <motion_type>
-Biped
+Quad
 </motion_type>
 
 <transporters>
 </transporters>
 
 <cruiseMP>
-3
+5
 </cruiseMP>
 
 <jumpingMP>
-5
+7
 </jumpingMP>
 
 <interface_cockpit>
@@ -60,11 +60,12 @@ false
 </internal_type>
 
 <armor>
-9
-30
-6
-6
-14
+5
+25
+0
+0
+23
+3
 </armor>
 
 <Body Equipment>
@@ -73,33 +74,34 @@ ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
-Clan Ammo LRM-5 (48)
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
 </Body Equipment>
 
 <Head Equipment>
 </Head Equipment>
 
 <Torso Equipment>
-CLLRM5
-CLLRM5
 </Torso Equipment>
 
 <Right Arm Equipment>
-CLLRM5
 </Right Arm Equipment>
 
 <Left Arm Equipment>
-CLLRM5
 </Left Arm Equipment>
 
 <Legs Equipment>
 </Legs Equipment>
+
+<Main Gun Equipment>
+CLMediumPulseLaser
+</Main Gun Equipment>
 
 <source>
 Wars of Reaving - Jihad
 </source>
 
 <tonnage>
-15.0
+13.0
 </tonnage>
 

@@ -17,19 +17,19 @@ Sprite
 </Name>
 
 <Model>
-(Standard)
+3
 </Model>
 
 <year>
-3072
+3075
 </year>
 
 <originalBuildYear>
-3072
+3075
 </originalBuildYear>
 
 <type>
-Clan Level 3
+Clan Level 4
 </type>
 
 <motion_type>
@@ -44,7 +44,7 @@ Biped
 </cruiseMP>
 
 <jumpingMP>
-5
+3
 </jumpingMP>
 
 <interface_cockpit>
@@ -64,32 +64,30 @@ false
 30
 6
 6
-14
+15
 </armor>
 
 <Body Equipment>
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-Clan Ammo LRM-5 (48)
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+CLMediumChemLaserAmmo (30)
 </Body Equipment>
 
 <Head Equipment>
 </Head Equipment>
 
 <Torso Equipment>
-CLLRM5
-CLLRM5
+Fussilade
+Fussilade
 </Torso Equipment>
 
 <Right Arm Equipment>
-CLLRM5
+CLMediumChemLaser
 </Right Arm Equipment>
 
 <Left Arm Equipment>
-CLLRM5
+CLMediumChemLaser
 </Left Arm Equipment>
 
 <Legs Equipment>

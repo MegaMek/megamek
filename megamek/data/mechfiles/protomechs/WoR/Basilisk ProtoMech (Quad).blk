@@ -13,7 +13,7 @@ ProtoMech
 </UnitType>
 
 <Name>
-Sprite
+Basilisk ProtoMech (Quad)
 </Name>
 
 <Model>
@@ -21,30 +21,30 @@ Sprite
 </Model>
 
 <year>
-3072
+3075
 </year>
 
 <originalBuildYear>
-3072
+3075
 </originalBuildYear>
 
 <type>
-Clan Level 3
+Clan Level 4
 </type>
 
 <motion_type>
-Biped
+Quad
 </motion_type>
 
 <transporters>
 </transporters>
 
 <cruiseMP>
-3
+5
 </cruiseMP>
 
 <jumpingMP>
-5
+0
 </jumpingMP>
 
 <interface_cockpit>
@@ -60,46 +60,39 @@ false
 </internal_type>
 
 <armor>
-9
-30
-6
-6
+5
 14
+0
+0
+13
 </armor>
 
 <Body Equipment>
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-Clan Ammo LRM-5 (48)
+Clan Ammo SRM-4 (10)
+ProtoQuadMeleeSystem
 </Body Equipment>
 
 <Head Equipment>
 </Head Equipment>
 
 <Torso Equipment>
-CLLRM5
-CLLRM5
+CLSRM4
 </Torso Equipment>
 
 <Right Arm Equipment>
-CLLRM5
 </Right Arm Equipment>
 
 <Left Arm Equipment>
-CLLRM5
 </Left Arm Equipment>
 
 <Legs Equipment>
 </Legs Equipment>
 
 <source>
-Wars of Reaving - Jihad
+WoRS - Jihad
 </source>
 
 <tonnage>
-15.0
+7.0
 </tonnage>
 

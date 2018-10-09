@@ -2781,7 +2781,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public void setThresh(int val, int loc) {
-        if (loc < damThresh.hashCode()) {
+        if (loc < damThresh.length) {
             damThresh[loc] = val;
         }
     }

@@ -13,11 +13,11 @@ ProtoMech
 </UnitType>
 
 <Name>
-Sprite
+Centaur
 </Name>
 
 <Model>
-(Standard)
+Z
 </Model>
 
 <year>
@@ -29,7 +29,7 @@ Sprite
 </originalBuildYear>
 
 <type>
-Clan Level 3
+Clan Level 4
 </type>
 
 <motion_type>
@@ -40,11 +40,11 @@ Biped
 </transporters>
 
 <cruiseMP>
-3
+6
 </cruiseMP>
 
 <jumpingMP>
-5
+0
 </jumpingMP>
 
 <interface_cockpit>
@@ -60,46 +60,44 @@ false
 </internal_type>
 
 <armor>
-9
-30
-6
-6
-14
+3
+7
+2
+2
+5
+2
 </armor>
 
 <Body Equipment>
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-ExtendedJumpJetSystem
-Clan Ammo LRM-5 (48)
+Clan Ammo Protomech LRM-4 (10)
 </Body Equipment>
 
 <Head Equipment>
 </Head Equipment>
 
 <Torso Equipment>
-CLLRM5
-CLLRM5
+ProtoMagneticClamp
+CLLRM4
 </Torso Equipment>
 
 <Right Arm Equipment>
-CLLRM5
 </Right Arm Equipment>
 
 <Left Arm Equipment>
-CLLRM5
 </Left Arm Equipment>
 
 <Legs Equipment>
 </Legs Equipment>
 
+<Main Gun Equipment>
+CLERMicroLaser
+</Main Gun Equipment>
+
 <source>
-Wars of Reaving - Jihad
+WoRS - Jihad
 </source>
 
 <tonnage>
-15.0
+5.0
 </tonnage>
 

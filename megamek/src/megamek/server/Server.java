@@ -3638,6 +3638,11 @@ public class Server implements Runnable {
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings
                 .getMapHeight()); i++) {
             sheetBoards[i] = new Board();
+            if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
+                continue;
+            }
+            
             String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
@@ -3647,8 +3652,7 @@ public class Server implements Runnable {
                 }
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
             }
-            if (name.startsWith(MapSettings.BOARD_GENERATED)
-                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
+            if (name.startsWith(MapSettings.BOARD_GENERATED)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
@@ -4277,25 +4281,28 @@ public class Server implements Runnable {
 
         }
         if (!abbreviatedReport) {
-            // Wind direction and strength
-            Report rWindDir = new Report(1025, Report.PUBLIC);
-            rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
-            rWindDir.newlines = 0;
-            Report rWindStr = new Report(1030, Report.PUBLIC);
-            rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
-            rWindStr.newlines = 0;
-            Report rWeather = new Report(1031, Report.PUBLIC);
-            rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
-            rWeather.newlines = 0;
-            Report rLight = new Report(1032, Report.PUBLIC);
-            rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
-            Report rVis = new Report(1033, Report.PUBLIC);
-            rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
-            addReport(rWindDir);
-            addReport(rWindStr);
-            addReport(rWeather);
-            addReport(rLight);
-            addReport(rVis);
+            // we don't much care about wind direction and such in a hard vacuum
+            if(!game.getBoard().inSpace()) {
+                // Wind direction and strength
+                Report rWindDir = new Report(1025, Report.PUBLIC);
+                rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
+                rWindDir.newlines = 0;
+                Report rWindStr = new Report(1030, Report.PUBLIC);
+                rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
+                rWindStr.newlines = 0;
+                Report rWeather = new Report(1031, Report.PUBLIC);
+                rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
+                rWeather.newlines = 0;
+                Report rLight = new Report(1032, Report.PUBLIC);
+                rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
+                Report rVis = new Report(1033, Report.PUBLIC);
+                rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
+                addReport(rWindDir);
+                addReport(rWindStr);
+                addReport(rWeather);
+                addReport(rLight);
+                addReport(rVis);
+            }
 
             if (deployment) {
                 addNewLines();
@@ -32388,7 +32395,7 @@ public class Server implements Runnable {
                             .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
-                    if (mapSettings.getBoardsSelected().next() == null) {
+                    if (!mapSettings.getBoardsSelected().hasNext()) {
                         mapSettings
                                 .setNullBoards((MapSettings.BOARD_GENERATED));
                     }

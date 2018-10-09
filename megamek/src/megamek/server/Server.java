@@ -3638,11 +3638,6 @@ public class Server implements Runnable {
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings
                 .getMapHeight()); i++) {
             sheetBoards[i] = new Board();
-            if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
-                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
-                continue;
-            }
-            
             String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
@@ -3652,7 +3647,8 @@ public class Server implements Runnable {
                 }
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
             }
-            if (name.startsWith(MapSettings.BOARD_GENERATED)) {
+            if (name.startsWith(MapSettings.BOARD_GENERATED)
+                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name

@@ -281,7 +281,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SDS_DESTRUCT = BigInteger.valueOf(1).shiftLeft(219);
     public static final BigInteger F_SDS_JAMMER = BigInteger.valueOf(1).shiftLeft(220);
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
-    public static final BigInteger F_PROTOQMS = BigInteger.valueOf(1).shiftLeft(200);
     
 
     // Secondary Flags for Physical Weapons
@@ -315,6 +314,8 @@ public class MiscType extends EquipmentType {
     public static final long S_CHAIN_WHIP = 1L << 24;
     public static final long S_SPOT_WELDER = 1L << 25; // TODO: add game rules
     public static final long S_MINING_DRILL = 1L << 26; // Miniatures
+    public static final long S_PROTOMECH_WEAPON = 1L << 27;
+    public static final long S_PROTO_QMS = 1L << 28;
 
     public static final String S_ACTIVE_SHIELD = "Active";
     public static final String S_PASSIVE_SHIELD = "Passive";
@@ -1792,6 +1793,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCASEPrototype());
         EquipmentType.addType(MiscType.createElectricDischargeArmor());
         EquipmentType.addType(MiscType.createProtoMagneticClamp());
+        EquipmentType.addType(MiscType.createProtomechMeleeWeapon());
         EquipmentType.addType(MiscType.createProtoQuadMeleeSystem());
 
         // Drone and Robotic Systems
@@ -9353,6 +9355,25 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createProtomechMeleeWeapon() {
+        MiscType misc = new MiscType();
+        // TODO Game Rules
+        misc.name = "ProtoMech Melee Weapon";
+        misc.setInternalName("ProtoMeleeWeapon");
+        misc.tonnage = 0.5;
+        misc.criticals = 1;
+        misc.cost = 50000;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_CLUB).or(F_PROTOMECH_EQUIPMENT);
+        misc.subType = S_PROTOMECH_WEAPON;
+        misc.bv = 1;
+        misc.rulesRefs = "337,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+                .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setClanAdvancement(3067, 3077, 3085).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
     public static MiscType createProtoQuadMeleeSystem() {
         MiscType misc = new MiscType();
         // TODO Game Rules
@@ -9362,27 +9383,18 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 70000;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_PROTOQMS).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_CLUB).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT);
+        misc.subType = S_PROTO_QMS;
         misc.bv = 1;
         misc.rulesRefs = "67,IO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                 .setClanAdvancement(3066, 3072, 3085, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CCC)
-                .setProductionFactions(F_CHH);
+                .setProductionFactions(F_CHH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
-
-    /*
-     * I've done the Tech Progression for them but nothing else. TODO ProtoMech
-     * Melee Weapon - IO 45 misc.rulesRefs = "370,TO";
-     * misc.techAdvancement.setTechBase(TECH_BASE_CLAN) .setIntroLevel(false)
-     * .setUnofficial(false) .setTechRating(RATING_F) .setAvailability(RATING_X,
-     * RATING_X, RATING_E, RATING_D) .setClanAdvancement(3067, 3077, 3085,
-     * DATE_NONE, DATE_NONE) .setClanApproximate(false, false, false,false, false)
-     * .setPrototypeFactions(F_CLAN) .setProductionFactions(F_CLAN).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-     */
 
     // Mobile Hyperpulse Generators
     public static MiscType createISMobileHPG() {

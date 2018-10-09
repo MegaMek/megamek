@@ -437,6 +437,7 @@ public class TestProtomech extends TestEntity {
         boolean illegal = false;
         Map<Integer, Integer> slotsByLoc = new HashMap<>();
         Map<Integer, Double> weightByLoc = new HashMap<>();
+        int meleeWeapons = 0;
         for (Mounted mount : proto.getEquipment()) {
             if (!requiresSlot(mount.getType())) {
                 continue;
@@ -467,13 +468,29 @@ public class TestProtomech extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOQMS)) {
-                if (!proto.isQuad()) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_CLUB)) {
+                meleeWeapons++;
+                if (meleeWeapons == 2) {
+                    buff.append("Cannot mount multiple melee weapons.\n");
+                    illegal = true;
+                }
+                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS) && !proto.isQuad()) {
                     buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
                     illegal = true;
                 }
-                if (mount.getLocation() != Protomech.LOC_TORSO) {
+                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS)
+                        && (mount.getLocation() != Protomech.LOC_TORSO)) {
                     buff.append(mount.getType().getName() + " must be mounted in the torso.\n");
+                    illegal = true;
+                }
+                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON) && proto.isQuad()) {
+                    buff.append(mount.getType().getName() + "cannot be used by quad protomechs.\n");
+                    illegal = true;
+                }
+                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON)
+                        && (mount.getLocation() != Protomech.LOC_LARM)
+                        && (mount.getLocation() != Protomech.LOC_RARM)) {
+                    buff.append(mount.getType().getName() + " must be mounted in an arm.\n");
                     illegal = true;
                 }
             }

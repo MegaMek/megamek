@@ -3442,14 +3442,18 @@ public class Server implements Runnable {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
+        GameTurn nextTurn = null;
+        Entity nextEntity = null;
+        while (game.hasMoreTurns() && (null == nextEntity)) {
+            nextTurn = game.changeToNextTurn();
+            nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
+        }
+        
         // if there aren't any more turns, end the phase
         if (!game.hasMoreTurns()) {
             endCurrentPhase();
             return;
         }
-
-        // okay, well next turn then!
-        GameTurn nextTurn = game.changeToNextTurn();
 
         IPlayer player = getPlayer(nextTurn.getPlayerNum());
 

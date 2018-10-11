@@ -3449,8 +3449,8 @@ public class Server implements Runnable {
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
         }
         
-        // if there aren't any more turns, end the phase
-        if (!game.hasMoreTurns()) {
+        // if there aren't any more valid turns, end the phase
+        if (null == nextEntity) {
             endCurrentPhase();
             return;
         }

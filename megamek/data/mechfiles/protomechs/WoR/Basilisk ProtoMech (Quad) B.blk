@@ -77,7 +77,6 @@ false
 
 <Body Equipment>
 CLMyomerBooster
-ProtoQuadMeleeSystem
 </Body Equipment>
 
 <Head Equipment>
@@ -85,6 +84,7 @@ ProtoQuadMeleeSystem
 
 <Torso Equipment>
 CLEDPArmor
+ProtoQuadMeleeSystem
 </Torso Equipment>
 
 <Right Arm Equipment>

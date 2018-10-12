@@ -3052,7 +3052,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final IGame game = clientgui.getClient().getGame();
         Entity choice = null;
 
-        ArrayList<Entity> choices = new ArrayList<Entity>();
+        List<Entity> choices = new ArrayList<Entity>();
         
         //We have to account for the positions of the whole train when looking to add new trailers
         for (Coords pos : ce().getHitchLocations()) {

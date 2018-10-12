@@ -217,6 +217,11 @@ public class CLIATMHandler extends ATMHandler {
                 nMissilesModifier -= 1;
             }
         }
+        // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the ATM.
+        if (weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
+            nMissilesModifier += 2;
+        }
+        
         // //////
         // This applies even with streaks.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
@@ -240,7 +245,7 @@ public class CLIATMHandler extends ATMHandler {
         // we can only do glancing blows if we IDF. They don't occur even if
         // streak is deactivated by AECM - at least if the Streak Handler is
         // correct.
-        if (bGlancing && weapon.curMode().equals("Indirect")) {
+        if (bGlancing && streakInactive()) {
             nMissilesModifier -= 4;
         }
 
@@ -346,7 +351,7 @@ public class CLIATMHandler extends ATMHandler {
     @Override
     protected boolean allShotsHit() {
         // If we IDF, we don't get the streak bonus
-        if (weapon.curMode().equals("Indirect")) {
+        if (streakInactive()) {
             return super.allShotsHit();
         }
         // If we DF, we get the streak bonus if not in AECM
@@ -362,7 +367,7 @@ public class CLIATMHandler extends ATMHandler {
     protected void addHeat() {
         // call super function if we are in IDF mode since we don't have streak
         // there.
-        if (weapon.curMode().equals("Indirect")) {
+        if (streakInactive()) {
             super.addHeat();
             return;
         }
@@ -382,7 +387,7 @@ public class CLIATMHandler extends ATMHandler {
     protected void useAmmo() {
         // call super function if we are in IDF mode, since we don't have streak
         // there.
-        if (weapon.curMode().equals("Indirect")) {
+        if (streakInactive()) {
             super.useAmmo();
             return;
         }
@@ -412,7 +417,7 @@ public class CLIATMHandler extends ATMHandler {
     @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
         // again, call super if we are in IDF mode.
-        if (weapon.curMode().equals("Indirect")) {
+        if (streakInactive()) {
             super.reportMiss(vPhaseReport);
             return;
         }
@@ -438,11 +443,19 @@ public class CLIATMHandler extends ATMHandler {
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean bldgDamagedOnMiss, Building bldg,
             Vector<Report> vPhaseReport) {
-        if (weapon.curMode().equals("Indirect")) {
+        if (streakInactive()) {
             return super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss,
                     bldg, vPhaseReport);
         }
         return false;
+    }
+    
+    /**
+     * Streak effect only works for iATM when not firing indirectly, and not at all for fusillade.
+     */
+    private boolean streakInactive() {
+        return weapon.curMode().equals("Indirect")
+                || weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON); 
     }
 
     /*

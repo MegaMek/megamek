@@ -1711,7 +1711,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void useAmmo() {
-        if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+        if (wtype.hasFlag(WeaponType.F_ONESHOT)
+                && !wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             weapon.setFired(true);
         }
         setDone();

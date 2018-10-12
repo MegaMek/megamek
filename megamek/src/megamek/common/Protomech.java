@@ -978,14 +978,6 @@ public class Protomech extends Entity {
         }
 
         if (mounted.getType().isHittable()) {
-            if (mounted.getType() instanceof WeaponType) {
-                weaponList.add(mounted);
-                totalWeaponList.add(mounted);
-            } else if (mounted.getType() instanceof MiscType) {
-                miscList.add(mounted);
-            }
-            equipmentList.add(mounted);
-            mounted.setLocation(loc, rearMounted);
             switch (loc) {
                 case LOC_HEAD:
                 case LOC_LEG:
@@ -1109,8 +1101,6 @@ public class Protomech extends Entity {
                         }
                     }
             }
-            addTechComponent(mounted.getType());
-        } else {
             super.addEquipment(mounted, loc, rearMounted);
         }
     }

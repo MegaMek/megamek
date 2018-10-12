@@ -856,6 +856,7 @@ public class Protomech extends Entity {
      *            main gun
      */
     public void setInternal(int head, int torso, int arm, int legs, int mainGun) {
+        initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
         initializeInternal(head, LOC_HEAD);
         initializeInternal(torso, LOC_TORSO);
         initializeInternal(arm, LOC_RARM);

@@ -9363,7 +9363,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 50000;
-        misc.hittable = false;
+        misc.hittable = true;
         misc.flags = misc.flags.or(F_CLUB).or(F_PROTOMECH_EQUIPMENT);
         misc.subType = S_PROTOMECH_WEAPON;
         misc.bv = 1;
@@ -9382,7 +9382,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 70000;
-        misc.hittable = false;
+        misc.hittable = true;
         misc.flags = misc.flags.or(F_CLUB).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT);
         misc.subType = S_PROTO_QMS;

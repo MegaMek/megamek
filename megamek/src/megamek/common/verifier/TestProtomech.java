@@ -810,6 +810,8 @@ public class TestProtomech extends TestEntity {
                 return 0;
             }
             return Math.min(proto.getOInternal(location) * 2, 6);
+        } else if (location == Protomech.LOC_BODY) {
+            return 0;
         } else {
             return proto.getOInternal(location) * 2;
         }

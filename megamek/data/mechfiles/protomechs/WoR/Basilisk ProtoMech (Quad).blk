@@ -69,7 +69,6 @@ false
 
 <Body Equipment>
 Clan Ammo SRM-4 (10)
-ProtoQuadMeleeSystem
 </Body Equipment>
 
 <Head Equipment>
@@ -77,6 +76,7 @@ ProtoQuadMeleeSystem
 
 <Torso Equipment>
 CLSRM4
+ProtoQuadMeleeSystem
 </Torso Equipment>
 
 <Right Arm Equipment>

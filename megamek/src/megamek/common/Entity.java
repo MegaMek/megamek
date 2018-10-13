@@ -3820,6 +3820,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
+        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                && (mountedAmmo.getLocation() == Entity.LOC_NONE)) {
+            // Make sure this ammo is in the chain, then move it to the head.
+            for (Mounted current = mounted; current != null; current = current.getLinked()) {
+                if (current == mountedAmmo) {
+                    current.getLinkedBy().setLinked(current.getLinked());
+                    current.setLinked(mounted.getLinked());
+                    mounted.setLinked(current);
+                    return true;
+                }
+            }
         }
         return success;
     }

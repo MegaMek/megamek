@@ -31353,7 +31353,8 @@ public class Server implements Runnable {
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
-        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)
+                && !((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             logError(METHOD_NAME, "item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;

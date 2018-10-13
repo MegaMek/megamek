@@ -118,7 +118,9 @@ public class Jumpship extends Aero {
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
+        if (arc < asewAffectedTurns.length) {
+            asewAffectedTurns[arc] = turns;
+        }
     }
     
     /*
@@ -126,7 +128,10 @@ public class Jumpship extends Aero {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+        if (arc < asewAffectedTurns.length) {
+            return asewAffectedTurns[arc];
+        }
+        return 0;
     }
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)

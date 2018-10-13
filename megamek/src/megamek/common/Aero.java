@@ -2781,7 +2781,9 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public void setThresh(int val, int loc) {
-        damThresh[loc] = val;
+        if (loc < damThresh.length) {
+            damThresh[loc] = val;
+        }
     }
 
     public void initializeThresh(int loc) {
@@ -2801,8 +2803,10 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 2;
             }
+        } else if (loc < damThresh.length) {
+            return damThresh[loc];
         }
-        return damThresh[loc];
+        return 0;
     }
 
     /**

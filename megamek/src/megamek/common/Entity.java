@@ -3508,15 +3508,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
                     shots = getTotalInternal();
                 }
-                // Fusillade gets two rounds.
-                if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
-                    shots = 2;
-                }
                 m.setShotsLeft(shots);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location
                 // of null. Other areas in the code will rely on this.
                 addEquipment(m, Entity.LOC_NONE, false);
+                // Fusillade gets a second round, which can be a different munition type so
+                // need to allow for two separate mounts.
+                if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+                    Mounted m2 = new Mounted(this, m.getType());
+                    m2.setOmniPodMounted(mounted.isOmniPodMounted());
+                    m2.setShotsLeft(shots);
+                    m.setLinked(m2);
+                    addEquipment(m2, Entity.LOC_NONE, false);
+                }
             }
         }
         if (mounted.getType() instanceof AmmoType) {

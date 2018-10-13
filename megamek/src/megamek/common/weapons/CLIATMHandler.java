@@ -217,10 +217,6 @@ public class CLIATMHandler extends ATMHandler {
                 nMissilesModifier -= 1;
             }
         }
-        // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the ATM.
-        if (weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
-            nMissilesModifier += 2;
-        }
         
         // //////
         // This applies even with streaks.
@@ -241,6 +237,18 @@ public class CLIATMHandler extends ATMHandler {
         // the Artemis bonus too, but since it also has Streak and Artemis
         // doesn't work with IDF, I can skip the Artemis part here.
         // Also, I don't think iATM missiles are narc enabled.
+
+        // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the ATM.
+        if (weapon.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
+            if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+                Report r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else {
+                nMissilesModifier += 2;
+            }
+        }
 
         // we can only do glancing blows if we IDF. They don't occur even if
         // streak is deactivated by AECM - at least if the Streak Handler is

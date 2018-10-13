@@ -1119,11 +1119,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     }});
 
 
-                int loc;
+                int loc = m.getLocation();
                 boolean isOneShot = false;
-                if (m.getLocation() == Entity.LOC_NONE) {
+                if (loc == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
+                    // some weapons (e.g. fusillade) use the one-shot mechanic but have an extra reload
+                    // which is chained to the first
                     Mounted linkedBy = m.getLinkedBy();
+                    while (linkedBy.getLinkedBy() != null) {
+                        linkedBy = linkedBy.getLinkedBy();
+                    }
                     loc = linkedBy.getLocation();
                     isOneShot = linkedBy.isOneShot();
                 } else {

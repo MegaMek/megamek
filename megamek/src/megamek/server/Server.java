@@ -9922,17 +9922,6 @@ public class Server implements Runnable {
             }
             entityUpdate(swarmerId);
         }
-        
-        //If the entity is towing trailers, update the position of those trailers
-        if (!entity.getAllTowedUnits().isEmpty()) {
-            ArrayList<Entity> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
-            Collections.reverse(reversedTrailers); // reverse in-place
-            ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
-            for (Entity trailer : entity.getAllTowedUnits()) {
-                processTrailerMovement(entity, trailer, trailerPath);
-                entityUpdate(trailer.getId());
-            }
-         }
 
         // Update the entitiy's position,
         // unless it is off the game map.
@@ -9943,6 +9932,18 @@ public class Server implements Runnable {
                         entity.getRemovalCondition()));
             }
         }
+        
+        //let's try handling this after the tractor has officially moved
+        //If the entity is towing trailers, update the position of those trailers
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            ArrayList<Entity> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            Collections.reverse(reversedTrailers); // reverse in-place
+            ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
+            for (Entity trailer : entity.getAllTowedUnits()) {
+                processTrailerMovement(entity, trailer, trailerPath);
+                entityUpdate(trailer.getId());
+            }
+         }
 
         // recovered units should now be recovered and dealt with
         if (entity.isAero() && recovered && (loader != null)) {

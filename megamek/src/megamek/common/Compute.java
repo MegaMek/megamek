@@ -2337,6 +2337,11 @@ public class Compute {
         if (entity.isAero()) {
             return new ToHitData();
         }
+        
+        //If we're a trailer and being towed, return data for the tractor
+        if (entity.isTrailer() && entity.getTractor() != null) {
+            return getTargetMovementModifier(game, entity.getTractor().getId());
+        }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
             && (entity.mpUsed == 0)

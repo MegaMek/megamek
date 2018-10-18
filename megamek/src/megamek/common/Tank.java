@@ -469,6 +469,10 @@ public class Tank extends Entity {
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile();
         }
+        //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && getTractor() != null) {
+            return getTractor().isImmobile();
+        }
         return super.isImmobile() || m_bImmobile;
     }
     
@@ -659,6 +663,12 @@ public class Tank extends Entity {
     @Override
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
+        //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && getTractor() != null && getTractor().hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank Tractor = (Tank) getTractor();
+            m_bImmobile = Tractor.m_bImmobile;
+            m_bImmobileHit= Tractor.m_bImmobileHit;
+        }
         super.applyDamage();
     }
 
@@ -3202,6 +3212,33 @@ public class Tank extends Entity {
             addTransporter(new ClampMountTank());
         }
     }
+    
+    /**
+     * Add a transporter for each trailer hitch the unit is equipped with
+     */
+    public void setTrailerHitches() {
+        if (hasTrailerHitch()) {
+            return;
+        }
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                addTransporter(new TankTrailerHitch());
+            }
+        }
+    }
+    
+    /**
+     * Check to see if the unit has a trailer hitch transporter already
+     * We need this to prevent duplicate transporters being created
+     */
+    protected boolean hasTrailerHitch() {
+        for (Transporter t : getTransports()) {
+            if (t instanceof TankTrailerHitch) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Tanks can't spot when stunned.
@@ -4070,4 +4107,39 @@ public class Tank extends Entity {
     public int getSpriteDrawPriority() {
         return 4;
     }
+    
+    //Specific road/rail train rules
+    
+    /**
+     * Used to determine if this vehicle can be towed by a tractor
+     * 
+     * @return
+     */
+    @Override
+    public boolean isTrailer() {
+        if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
+            return true;
+        }
+        //Maybe an exploit here if it starts returning true for vehicles that get disabled
+        //but maybe we want to be able to tow those off the field too?
+        if (hasMisc(MiscType.F_HITCH) && getWalkMP() == 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Used to determine if this vehicle can be the engine/tractor 
+     * for a bunch of trailers
+     * 
+     * @return
+     */
+    @Override
+    public boolean isTractor() {
+        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
+            return true;
+        }
+        return false;
+    }
+    
 }

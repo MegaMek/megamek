@@ -78,6 +78,7 @@ import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
+import megamek.common.TankTrailerHitch;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.TeleMissile;
@@ -104,7 +105,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      *
      */
     private static final long serialVersionUID = -7246715124042905688L;
-
+    
     // Defines for the different flags
     public static final int CMD_NONE = 0;
     public static final int CMD_MECH = 1;
@@ -151,6 +152,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_LOAD("moveLoad", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_UNLOAD("moveUnload", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_MOUNT("moveMount", CMD_GROUND), //$NON-NLS-1$
+        MOVE_TOW("moveTow", CMD_TANK), //$NON-NLS-1$
+        MOVE_DISCONNECT("moveDisconnect", CMD_TANK), //$NON-NLS-1$
         MOVE_UNJAM("moveUnjam", CMD_NON_INF), //$NON-NLS-1$
         MOVE_CLEAR("moveClear", CMD_INF), //$NON-NLS-1$
         MOVE_CANCEL("moveCancel", CMD_NONE), //$NON-NLS-1$
@@ -1086,7 +1089,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
+        setTowEnabled(false);
         setUnloadEnabled(false);
+        setDisconnectEnabled(false);
         setClearEnabled(false);
         setHullDownEnabled(false);
         setSwimEnabled(false);
@@ -2816,6 +2821,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 break;
             }
         }
+        //TODO: Trailer Disconnect
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
         if (!legalGear || (loadedUnits.size() == 0) || (cen == Entity.NONE)
@@ -2824,9 +2830,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             setUnloadEnabled(true);
         }
-        // If the current entity has moved, disable "Load" button.
+        // If the current entity has moved, disable "Load" and "Tow" buttons.
         if ((cmd.length() > 0) || (cen == Entity.NONE)) {
             setLoadEnabled(false);
+            setTowEnabled(false);
         } else {
             // Check the other entities in the current hex for friendly units.
             boolean isGood = false;
@@ -2834,9 +2841,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // If the other unit is friendly and not the current entity
                 // and the current entity has at least 1 MP, if it can
                 // transport the other unit, and if the other hasn't moved
-                // then enable the "Load" button.
+                // then enable the "Load" button. Towing gets handled later,
+                // and we don't want both buttons enabled.
                 if ((ce.getWalkMP() > 0) && ce.canLoad(other)
-                    && other.isLoadableThisTurn()) {
+                    && other.isLoadableThisTurn() && !ce.canTow(other)) {
                     setLoadEnabled(true);
                     isGood = true;
 
@@ -2848,6 +2856,27 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             } // Check the next entity in this position.
             if (!isGood) {
                 setLoadEnabled(false);
+            }
+            //Now check all eligible hexes for towable trailers
+            isGood = false;
+            for (Coords c : ce.getHitchLocations()) {
+                for (Entity other : game.getEntitiesVector(c)) {
+                    // If the other unit is friendly and not the current entity
+                    // if it can tow the other unit, and if the other hasn't moved
+                    // then enable the "Tow" button.
+                    if (ce.canTow(other)) {
+                        setTowEnabled(true);
+                        isGood = true;
+
+                        // We can stop looking.
+                        break;
+                    }
+                    // Nope. Discard it.
+                    other = null;
+                } // Check the next entity.
+            }
+            if (!isGood) {
+                setTowEnabled(false);
             }
         } // End ce-hasn't-moved
     } // private void updateLoadButtons
@@ -3006,6 +3035,107 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             choice.setTargetBay(-1); // Safety set!
         }
+
+        // Return the chosen unit.
+        return choice;
+    }
+    
+    /**
+     * Get the unit (trailer) that the player wants to connect. This method will add the
+     * trailer to our local copy of loaded units.
+     *
+     * @return The <code>Entity</code> that the player wants to tow. This
+     * value may be null if there are no eligible targets
+     */
+    private Entity getTowedUnit() {
+        final String METHOD_NAME = "getTowedUnit()";
+        final IGame game = clientgui.getClient().getGame();
+        Entity choice = null;
+
+        List<Entity> choices = new ArrayList<Entity>();
+        
+        //We have to account for the positions of the whole train when looking to add new trailers
+        for (Coords pos : ce().getHitchLocations()) {
+            for (Entity other : game.getEntitiesVector(pos)) {
+                if (ce() != null && ce().canTow(other)) {
+                    choices.add(other);
+                }
+            }
+        }
+        
+        // Handle error condition.
+        if (choices.size() == 0) {
+            logDebug(METHOD_NAME, "Method called without towable units.");
+            return null;
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        if (choices.size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(clientgui,
+                                     Messages.getString(
+                                             "DeploymentDisplay.towUnitDialog.message",
+                                             new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                                     Messages.getString("DeploymentDisplay.towUnitDialog.title"), //$NON-NLS-1$
+                                     JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(choices), null);
+            choice = (Entity) SharedUtility.getTargetPicked(choices, input);
+        } // End have-choices
+
+        // Only one choice.
+        else {
+            choice = choices.get(0);
+        }
+        
+        //Set up the correct hitch/transporter to use
+        HashMap<Integer, Integer> hitchChoices = new HashMap<Integer, Integer>();
+        //First, set up a list of all the entities in this train
+        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        thisTrain.add(ce());
+        for (Entity tr : ce().getAllTowedUnits()) {
+            thisTrain.add(tr);
+        }
+        for (Entity e : thisTrain) {
+            for (Transporter t : e.getTransports()) {
+                if (t.canLoad(choice) && (t instanceof TankTrailerHitch)) {
+                    hitchChoices.put(e.getId(), e.getTransports().indexOf(t));
+                }
+            }
+        }
+        String[] retVal = new String[hitchChoices.size()];
+        int i = 0;
+        for (Integer id : hitchChoices.keySet()) {
+            Entity e = game.getEntity(id);
+            retVal[i++] = e.getShortName() + " Id:" + "<" + id + ">" + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
+        }
+        //Gah, multiple choice test!
+        if (hitchChoices.size() > 1) {
+            String hitchString = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages.getString(
+                                    "MovementDisplay.loadUnitHitchDialog.message",
+                                    new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                            Messages.getString("MovementDisplay.loadUnitHitchDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, retVal,
+                            null);
+            //We need to pull the chosen transporter number out of the string
+            int start = hitchString.indexOf("#[");
+            choice.setTargetBay(Integer.parseInt(hitchString.substring((start + 2), hitchString.indexOf("]"))));
+            //and then the Entity id the transporter is attached to...
+            start = hitchString.indexOf("<");
+            choice.setTowedBy(Integer.parseInt(hitchString.substring((start + 1), hitchString.indexOf(">"))));
+        } else {
+            //and in case there's just one choice...
+            choice.setTowedBy(hitchChoices.keySet().iterator().next());
+            choice.setTargetBay(hitchChoices.get(hitchChoices.keySet().iterator().next()));
+        }
+
+        // We need to update the entities here so that the server knows
+        // about our changes
+        ce().setTowing(choice.getId());
+        clientgui.getClient().sendUpdateEntity(ce());
+        clientgui.getClient().sendUpdateEntity(choice);
 
         // Return the chosen unit.
         return choice;
@@ -4503,6 +4633,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clientgui.bv.drawMovementData(ce(), cmd);
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
+        } else if (actionCmd.equals(MoveCommand.MOVE_TOW.getCmd())) {
+            // Find the other friendly unit in our hex, add it
+            // to our local list of loaded units, and then stop.
+            Entity other = getTowedUnit();
+            if (other != null) {
+                cmd.addStep(MoveStepType.TOW);
+                clientgui.bv.drawMovementData(ce(), cmd);
+            } // else - didn't find a unit to tow
         } else if (actionCmd.equals(MoveCommand.MOVE_MOUNT.getCmd())) {
             Entity other = getMountedUnit();
             if (other != null) {
@@ -5112,10 +5250,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         getBtn(MoveCommand.MOVE_MOUNT).setEnabled(enabled);
         // clientgui.getMenuBar().setMoveMountEnabled(enabled);
     }
+    
+    private void setTowEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_TOW).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveTowEnabled(enabled);
+    }
 
     private void setUnloadEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNLOAD).setEnabled(enabled);
         clientgui.getMenuBar().setMoveUnloadEnabled(enabled);
+    }
+    
+    private void setDisconnectEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_DISCONNECT).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveDisconnectEnabled(enabled);
     }
 
     private void setJumpEnabled(boolean enabled) {

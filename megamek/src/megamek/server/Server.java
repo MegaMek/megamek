@@ -4550,6 +4550,32 @@ public class Server implements Runnable {
         // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
+    
+    /**
+     * Have the loader tow the indicated unit. The unit being towed loses its
+     * turn.
+     *
+     * @param loader - the <code>Entity</code> that is towing the unit.
+     * @param unit   - the <code>Entity</code> being towed.
+     */
+    private void towUnit(Entity loader, Entity unit) {
+
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+            // Remove the *last* friendly turn (removing the *first* penalizes
+            // the opponent too much, and re-calculating moves is too hard).
+            game.removeTurnFor(unit);
+            send(createTurnVectorPacket());
+        }
+        
+        loader.towUnit(unit);
+
+        // set deployment round of the loadee to equal that of the loader
+        unit.setDeployRound(loader.getDeployRound());
+
+        // Update the loader and towed units.
+        entityUpdate(unit.getId());
+        entityUpdate(loader.getId());
+    }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
                                Coords pos, int facing, int elevation) {
@@ -8766,6 +8792,35 @@ public class Server implements Runnable {
                 }
 
             } // End STEP_LOAD
+            
+         // Handle towing units.
+            if (step.getType() == MoveStepType.TOW) {
+
+                // Find the unit being loaded.
+                Entity loaded = null;
+                loaded = game.getEntity(entity.getTowing());
+
+                // This should never ever happen, but just in case...
+                if (loaded == null) {
+                    logError(METHOD_NAME,
+                        "Could not find unit for " + entity.getShortName() + " to tow.");
+                    continue;
+                }
+
+                // The moving unit should be able to tow the other
+                // unit and the other should be able to have a turn.
+                //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
+                //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
+                //Do we need it here for safety, client/server sync or can this be further streamlined?
+                if (!entity.canTow(loaded)) {
+                    // Something is fishy in Denmark.
+                    logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
+                    loaded = null;
+                } else {
+                    // Have the deployed unit load the indicated unit.
+                    towUnit(entity, loaded);
+                }
+            } // End STEP_TOW
 
             // Handle mounting units to small craft/dropship
             if (step.getType() == MoveStepType.MOUNT) {
@@ -9884,6 +9939,18 @@ public class Server implements Runnable {
                         entity.getRemovalCondition()));
             }
         }
+        
+        //let's try handling this after the tractor has officially moved
+        //If the entity is towing trailers, update the position of those trailers
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            ArrayList<Entity> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            Collections.reverse(reversedTrailers); // reverse in-place
+            ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
+            for (Entity trailer : entity.getAllTowedUnits()) {
+                processTrailerMovement(entity, trailer, trailerPath);
+                entityUpdate(trailer.getId());
+            }
+         }
 
         // recovered units should now be recovered and dealt with
         if (entity.isAero() && recovered && (loader != null)) {
@@ -9962,6 +10029,64 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+    
+    /**
+     * Updates the position of any towed trailers.
+     *
+     * @param tractor    The Entity that is moving
+     * @param trailer    The current trailer being updated
+     */
+    private void processTrailerMovement(Entity tractor, Entity trailer, ArrayList<Coords> trainPath) {
+        double trailerPositionOffset = 0;
+        int stepNumber = 0;
+        Coords trailerPos = null;
+        trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer) + 2); //Offset so we get the right position index
+        //Place large trailers in their own hexes behind the tractor
+        if (trailer.getWeight() > 100) {
+            stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+            trailerPos = trainPath.get(stepNumber);
+            trailer.setPosition(trailerPos);
+        } else {
+        //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
+            trailerPositionOffset =  (int) Math.ceil(trailerPositionOffset / 2.0);
+            if (trailerPositionOffset == 1) {
+                trailer.setPosition(tractor.getPosition());
+                trailer.setFacing(tractor.getFacing());
+            } else {
+                stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                trailerPos = trainPath.get(stepNumber);
+                trailer.setPosition(trailerPos);
+                trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
+            }
+        }
+        //trailers are immobile by default. Match the tractor's movement here
+        trailer.delta_distance = tractor.delta_distance;
+        trailer.moved = tractor.moved;
+    }
+    
+    /**
+     * Flips the order of a tractor's towed trailers list by index and
+     * adds their starting coordinates to a list of hexes the tractor passed through 
+     * 
+     * @return  Returns the properly sorted list of all train coordinates
+     */
+    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, ArrayList<Entity> allTowedTrailers) {
+        ArrayList<Coords> trainCoords = new ArrayList<Coords>();
+        Coords position = null;
+        for (Entity trailer : allTowedTrailers) {
+            position = trailer.getPosition();
+            //Duplicates foul up the works...
+            if (!trainCoords.contains(position)) {
+                trainCoords.add(position);
+            }
+        }
+        for (Coords c : tractor.getPassedThrough() ) {
+            if (!trainCoords.contains(c)) {
+                trainCoords.add(c);
+            }
+        }
+        return trainCoords;    
     }
 
     /**

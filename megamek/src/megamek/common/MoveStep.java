@@ -375,6 +375,10 @@ public class MoveStep implements Serializable {
                 return "Evade";
             case CONVERT_MODE:
                 return "ConvMode";
+            case TOW:
+                return "Tow";
+            case DISCONNECT:
+                return "Disconnect";
             case THRUST:
                 return "Thrust";
             case YAW:
@@ -754,6 +758,7 @@ public class MoveStep implements Serializable {
                 setMp(0);
                 break;
             case LOAD:
+            case TOW:
                 setMp(1);
                 break;
             case MOUNT:
@@ -3222,6 +3227,23 @@ public class MoveStep implements Serializable {
             }
 
         } // End STEP_LOAD-checks
+        
+        // The entity is trying to tow. Check for a valid move.
+        if (type == MoveStepType.TOW) {
+
+            // Vehicles can't tow after the first step.
+            if (!firstStep) {
+                return false;
+            }
+
+            // Find the unit being towed.
+            Entity other = game.getEntity(entity.getTowing());
+
+            // The moving unit should be able to tow the other unit.
+            if (!entity.canTow(other)) {
+                return false;
+            }
+        } // End STEP_TOW-checks
 
         // mechs dumping ammo can't run
         boolean bDumping = false;

@@ -3442,14 +3442,18 @@ public class Server implements Runnable {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
-        // if there aren't any more turns, end the phase
-        if (!game.hasMoreTurns()) {
+        GameTurn nextTurn = null;
+        Entity nextEntity = null;
+        while (game.hasMoreTurns() && (null == nextEntity)) {
+            nextTurn = game.changeToNextTurn();
+            nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
+        }
+        
+        // if there aren't any more valid turns, end the phase
+        if (null == nextEntity) {
             endCurrentPhase();
             return;
         }
-
-        // okay, well next turn then!
-        GameTurn nextTurn = game.changeToNextTurn();
 
         IPlayer player = getPlayer(nextTurn.getPlayerNum());
 
@@ -4277,25 +4281,28 @@ public class Server implements Runnable {
 
         }
         if (!abbreviatedReport) {
-            // Wind direction and strength
-            Report rWindDir = new Report(1025, Report.PUBLIC);
-            rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
-            rWindDir.newlines = 0;
-            Report rWindStr = new Report(1030, Report.PUBLIC);
-            rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
-            rWindStr.newlines = 0;
-            Report rWeather = new Report(1031, Report.PUBLIC);
-            rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
-            rWeather.newlines = 0;
-            Report rLight = new Report(1032, Report.PUBLIC);
-            rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
-            Report rVis = new Report(1033, Report.PUBLIC);
-            rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
-            addReport(rWindDir);
-            addReport(rWindStr);
-            addReport(rWeather);
-            addReport(rLight);
-            addReport(rVis);
+            // we don't much care about wind direction and such in a hard vacuum
+            if(!game.getBoard().inSpace()) {
+                // Wind direction and strength
+                Report rWindDir = new Report(1025, Report.PUBLIC);
+                rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
+                rWindDir.newlines = 0;
+                Report rWindStr = new Report(1030, Report.PUBLIC);
+                rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
+                rWindStr.newlines = 0;
+                Report rWeather = new Report(1031, Report.PUBLIC);
+                rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
+                rWeather.newlines = 0;
+                Report rLight = new Report(1032, Report.PUBLIC);
+                rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
+                Report rVis = new Report(1033, Report.PUBLIC);
+                rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
+                addReport(rWindDir);
+                addReport(rWindStr);
+                addReport(rWeather);
+                addReport(rLight);
+                addReport(rVis);
+            }
 
             if (deployment) {
                 addNewLines();
@@ -32389,7 +32396,7 @@ public class Server implements Runnable {
                             .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
-                    if (mapSettings.getBoardsSelected().next() == null) {
+                    if (!mapSettings.getBoardsSelected().hasNext()) {
                         mapSettings
                                 .setNullBoards((MapSettings.BOARD_GENERATED));
                     }

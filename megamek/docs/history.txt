@@ -11,6 +11,9 @@ v0.45.2-SNAPSHOT
 + PR #1152: Refactor of methods for getting pilot SPAs
 + Issue #1127: Fix for units not applying camo in certain circumstances
 + PR #1164: System wide equipment [Support for aerospace equipment in a generic, non-firing arc location]
++ Issue #1172: Game Non-Responsive
++ Data: New Sprites
++ PR #1170: Bullet-proofing various edge cases for space maps; weather related info no longer displayed in space
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers

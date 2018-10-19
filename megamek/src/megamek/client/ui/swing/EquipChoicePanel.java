@@ -1293,9 +1293,15 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 ammoBins = new JComboBox<>();
                 matchingAmmoBins = new ArrayList<>();
                 
-                for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
-                    if(((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
-                        matchingAmmoBins.add(ammoBin);
+                if (m_mounted.isOneShot()) {
+                    // One-shot weapons can only access their own bin
+                    matchingAmmoBins.add(m_mounted.getLinked());
+                } else {
+                    for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
+                        if((ammoBin.getLocation() != Entity.LOC_NONE)
+                            && ((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
+                            matchingAmmoBins.add(ammoBin);
+                        }
                     }
                 }
                 

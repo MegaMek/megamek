@@ -145,7 +145,7 @@ public abstract class PathRanker implements IPathRanker {
         CardinalEdge homeEdge = getOwner().getHomeEdge(mover);
         boolean fleeing = getOwner().isFallingBack(mover);
         
-        boolean isAirborneAeroOnAtmosphericGroundMap = mover.isAirborne() && mover.isOnAtmosphericGroundMap();
+        boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         
         for (MovePath path : startingPathList) {
             // just in case
@@ -157,7 +157,7 @@ public abstract class PathRanker implements IPathRanker {
 
             try {
                 // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
-            	if(isAirborneAeroOnAtmosphericGroundMap) {
+            	if(isAirborneAeroOnGroundMap) {
             		// if we have no bombs, we want to make sure our altitude is above 1
             		// if we do have bombs, we may consider altitude bombing (in the future)
             		if((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
@@ -178,7 +178,7 @@ public abstract class PathRanker implements IPathRanker {
 
                 // Make sure I'm trying to get/stay in range of a target.
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
-                if(!isAirborneAeroOnAtmosphericGroundMap) {
+                if(!isAirborneAeroOnGroundMap) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
                     if (!StringUtil.isNullOrEmpty(validation)) {
@@ -261,7 +261,7 @@ public abstract class PathRanker implements IPathRanker {
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
                 // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-                if ((e.isAero() && e.isAirborne()) || 
+                if (e.isAirborneAeroOnGroundMap() || 
                         getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
                     continue;
                 }

@@ -164,10 +164,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 
-            //Airborne aeros always move after other units, and would require an 
+            //Airborne aeros on ground maps always move after other units, and would require an 
             // entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy.isAero() && enemy.isAirborne()) {
+            if (enemy.isAirborneAeroOnGroundMap()) {
                 return returnResponse;
             }
             
@@ -669,7 +669,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     protected boolean evaluateAsMoved(Entity enemy) {
         // Aerospace units on ground maps can go pretty much anywhere they want, so it's
         // somewhat pointless to try to predict their movement.
-        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || (enemy.isAero() && enemy.isAirborne());
+        return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAirborneAeroOnGroundMap();
     }
     
     /**

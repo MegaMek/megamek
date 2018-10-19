@@ -2296,6 +2296,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Convenience method to determine whether this entity should be treated as an airborne aero on a ground map.
+     * @return True if this is an airborne aircraft on a ground map.
+     */
+    public boolean isAirborneAeroOnGroundMap() {
+        return isAero() && isAirborne() && getGame().getBoard().onGround();
+    }
+    
+    /**
      * Returns the display name for this entity.
      */
     @Override

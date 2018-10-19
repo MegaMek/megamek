@@ -39,6 +39,7 @@ import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
@@ -250,7 +251,12 @@ public class PathEnumerator {
                 apf.run(new MovePath(game, mover));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
             // this handles the case of the mover being an infantry unit of some kind
-            } else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            } else if(mover.isAero() && game.getBoard().inAtmosphere()) {
+                AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
+                apf.run(new MovePath(game, mover));
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+            // this handles the case of the mover being an infantry unit of some kind
+            }else if(mover.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
                 ipf.run(new MovePath(game, mover));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());

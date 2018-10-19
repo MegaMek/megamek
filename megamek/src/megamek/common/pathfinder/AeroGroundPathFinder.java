@@ -33,6 +33,14 @@ public class AeroGroundPathFinder {
     public static final int OPTIMAL_STRAFE_ALTITUDE = 3; // future use
     private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroGroundPathFinder";
     
+    protected int getMinimumVelocity(IAero mover) {
+        return 1;
+    }
+    
+    protected int getMaximumVelocity(IAero mover) {
+        return 3;
+    }
+    
     private IGame game;
     private List<MovePath> aeroGroundPaths;
     protected int maxThrust;
@@ -72,8 +80,8 @@ public class AeroGroundPathFinder {
             // and at least 3 so we don't pointlessly fly around in circles or consume all available memory
             IAero aero = (IAero) startingEdge.getEntity();
             int maxThrust = AeroPathUtil.calculateMaxSafeThrust(aero);  
-            int maxVelocity = Math.min(3, aero.getCurrentVelocity() + maxThrust);
-            int minVelocity = Math.max(1, aero.getCurrentVelocity() - maxThrust);
+            int maxVelocity = Math.min(getMaximumVelocity(aero), aero.getCurrentVelocity() + maxThrust);
+            int minVelocity = Math.max(getMinimumVelocity(aero), aero.getCurrentVelocity() - maxThrust);
             Collection<MovePath> validAccelerations = AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity, maxVelocity);
             
             for(MovePath acceleratedPath : validAccelerations) {
@@ -248,7 +256,7 @@ public class AeroGroundPathFinder {
         for(MovePath path : generateSidePaths(mp, MoveStepType.TURN_RIGHT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if(path.fliesOffBoard() || newHexVisited(path)) {
+            if(path.fliesOffBoard() || !pathIsRedundant(path)) {
                 retval.add(path);
             }
         }
@@ -256,13 +264,13 @@ public class AeroGroundPathFinder {
         for(MovePath path : generateSidePaths(mp, MoveStepType.TURN_LEFT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if(path.fliesOffBoard() || newHexVisited(path)) {
+            if(path.fliesOffBoard() || !pathIsRedundant(path)) {
                 retval.add(path);
             }
         }
         
         ForwardToTheEnd(mp);
-        if(mp.fliesOffBoard() || newHexVisited(mp)) {
+        if(mp.fliesOffBoard() || !pathIsRedundant(mp)) {
             retval.add(mp);
         }
         
@@ -372,10 +380,16 @@ public class AeroGroundPathFinder {
     }
     
     private Map<Coords, MovePath> visitedCoords = new HashMap<Coords, MovePath>();
+    /**
+     * Determines if the given move path is "redundant".
+     * In this case, it means that the path has not visited any new hexes.
+     * @param mp The move path to examine.
+     * @return Whether or not the move path is redundant.
+     */
     // goes through a path.
     // if it does not take us off-board, records the coordinates it visits
     // returns true if this path visits hexes that have not been visited before
-    private boolean newHexVisited(MovePath mp) {
+    protected boolean pathIsRedundant(MovePath mp) {
         boolean newHexVisited = false;
         
         if(!mp.fliesOffBoard()) {

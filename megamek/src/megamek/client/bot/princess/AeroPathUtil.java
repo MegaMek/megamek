@@ -2,6 +2,7 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import megamek.common.IAero;
 import megamek.common.MovePath;
@@ -10,7 +11,7 @@ import megamek.common.MovePath.MoveStepType;
 
 /**
  * Helper class that contains functionality relating exclusively to aero unit paths.
- * @author Andrew
+ * @author NickAragua
  *
  */
 public class AeroPathUtil 
@@ -79,8 +80,8 @@ public class AeroPathUtil
 
 	/**
      * Generates paths that begin with all valid acceleration sequences for this aircraft.
-     * @param startingPath
-     * @return
+     * @param startingPath The initial path, hopefully empty.
+     * @return The child paths with all the accelerations this unit possibly can undertake.
      */
     public static Collection<MovePath> generateValidAccelerations(MovePath startingPath, int lowerBound, int upperBound) {
         Collection<MovePath> paths = new ArrayList<MovePath>();
@@ -132,5 +133,50 @@ public class AeroPathUtil
     public static int calculateMaxSafeThrust(IAero aero) {
         int maxThrust = Math.min(aero.getCurrentThrust(), aero.getSI());    // we should only thrust up to our SI
         return maxThrust;
+    }
+    
+    /**
+     * Given a move path, generate all possible increases and decreases in elevation.
+     * @param path The move path to process.
+     * @return Collection of generated paths.
+     */
+    public static List<MovePath> generateValidAltitudeChanges(MovePath path) {
+        List<MovePath> paths = new ArrayList<MovePath>();
+        
+        // clone path add UP
+        // if path uses more MP than entity has available or altitude higher than 10, stop
+        for(int altChange = 0; ; altChange++) {
+            MovePath childPath = path.clone();
+            
+            for(int numSteps = 0; numSteps < altChange; numSteps++) {
+                childPath.addStep(MoveStepType.UP);
+            }
+            
+            if((childPath.getFinalAltitude() > 10) ||
+                    childPath.getMpUsed() > path.getEntity().getRunMP()) {
+                break;
+            }
+            
+            paths.add(childPath);
+        }
+        
+        // clone path add DOWN
+        // if path uses more MP than entity has available or altitude lower than 1, stop
+        for(int altChange = 1; ; altChange++) {
+            MovePath childPath = path.clone();
+            
+            for(int numSteps = 0; numSteps < altChange; numSteps++) {
+                childPath.addStep(MoveStepType.DOWN);
+            }
+            
+            if((childPath.getFinalAltitude() < 1) ||
+                    childPath.getMpUsed() > path.getEntity().getRunMP()) {
+                break;
+            }
+            
+            paths.add(childPath);
+        }
+        
+        return paths;
     }
 }

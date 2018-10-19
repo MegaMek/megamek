@@ -149,7 +149,7 @@ public abstract class PathRanker implements IPathRanker {
         
         for (MovePath path : startingPathList) {
             // just in case
-            if(path == null) {
+            if((path == null) || !path.isMoveLegal()) {
                 continue;
             }
 

@@ -622,12 +622,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                    .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
             utility += braveryMod;
 
-            //noinspection StatementWithEmptyBody
-            if (path.getEntity().isAero() && !path.getEntity().isSpaceborne()) {
-                // No idea what original implementation was meant to be.
-
-            } else {
-
+            // the only critters not subject to aggression and herding mods are
+            // airborne aeros on ground maps, as they move incredibly fast
+            if (!path.getEntity().isAirborneAeroOnGroundMap()) {
                 // The further I am from a target, the lower this path ranks 
                 // (weighted by Hyper Aggression.
                 utility -= calculateAggressionMod(movingUnit, pathCopy, game,

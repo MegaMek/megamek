@@ -3240,7 +3240,7 @@ public class MoveStep implements Serializable {
             Entity other = game.getEntity(entity.getTowing());
 
             // The moving unit should be able to tow the other unit.
-            if (!entity.canTow(other)) {
+            if (!entity.canTow(other.getId())) {
                 return false;
             }
         } // End STEP_TOW-checks

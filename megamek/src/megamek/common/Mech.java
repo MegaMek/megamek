@@ -504,6 +504,40 @@ public abstract class Mech extends Entity {
             addTransporter(new ClampMountMech());
         }
     }
+    
+    public void setProtomechClampMounts() {
+        boolean front = false;
+        boolean rear = false;
+        for (Transporter t: getTransports()) {
+            if (t instanceof ProtomechClampMount) {
+                front |= !((ProtomechClampMount) t).isRear();
+                rear |= ((ProtomechClampMount) t).isRear();
+            }
+        }
+        if (!front) {
+            addTransporter(new ProtomechClampMount(false));
+        }
+        if (!rear) {
+            addTransporter(new ProtomechClampMount(true));
+        }
+    }
+    
+    @Override
+    public void load(Entity unit, boolean checkElev, int bayNumber) {
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            boolean rear = bayNumber > 0;
+            for (Transporter t : getTransports()) {
+                if ((t instanceof ProtomechClampMount)
+                        && t.canLoad(unit)
+                        && (!checkElev || (unit.getElevation() == getElevation()))
+                        && (((ProtomechClampMount) t).isRear() == rear)) {
+                    t.load(unit);
+                    return;
+                }
+            }
+        }
+        super.load(unit, checkElev, bayNumber);
+    }
 
     /**
      * Returns the number of locations in the entity

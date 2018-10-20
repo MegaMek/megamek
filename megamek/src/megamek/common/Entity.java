@@ -2513,7 +2513,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!ignoreheat) {
             mp = Math.max(0, mp - getHeatMPReduction());
         }
-        mp = Math.max(mp - getCargoMpReduction(), 0);
+        mp = Math.max(mp - getCargoMpReduction(this), 0);
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
                                  .getMovementMods(this);
@@ -7814,13 +7814,31 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // one can only load one's own team's units!
         if (!unit.isEnemyOf(this)) {
-            // Walk through this entity's transport components;
-            // if one of them can load the unit, we can.
-            Enumeration<Transporter> iter = transports.elements();
-            while (iter.hasMoreElements()) {
-                Transporter next = iter.nextElement();
-                if (next.canLoad(unit)
-                    && (!checkElev || (unit.getElevation() == getElevation()))) {
+            
+            /* Mechanized BA and protomechs occupy the same space, and if one is already
+             * present the other cannot be loaded. It is still possible for a support vee
+             * to carry mechanized BA externally and protos in a bay, so we need to check for
+             * external units first then check for conflicts only for other external mounts. */ 
+            boolean hasExternalBA = false;
+            boolean hasExternalProtos = false;
+            if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                    || unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                for (Transporter t : transports) {
+                    // ProtomechClampMount is a subclass of BattleArmorHandles so we need to check it first
+                    if (t instanceof ProtomechClampMount) {
+                        hasExternalProtos |= t.getUnused() == 0;
+                    } else if (t instanceof BattleArmorHandles) {
+                        hasExternalBA |= t.getUnused() == 0;
+                    }
+                }
+            }
+            boolean noExternalMount = (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR) && hasExternalProtos)
+                    || (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalBA);
+            
+            for (Transporter t : transports) {
+                if (t.canLoad(unit)
+                        && (!checkElev || unit.getElevation() == getElevation())
+                        && !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;
                 }
             }
@@ -8626,10 +8644,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         int rv = 0;
         for (Transporter t : transports) {
-            rv += t.getCargoMpReduction();
+            rv += t.getCargoMpReduction(carrier);
         }
         return rv;
     }

@@ -1101,8 +1101,8 @@ public class Protomech extends Entity {
                         }
                     }
             }
-            super.addEquipment(mounted, loc, rearMounted);
         }
+        super.addEquipment(mounted, loc, rearMounted);
     }
 
     /*

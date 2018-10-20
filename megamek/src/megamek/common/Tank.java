@@ -258,7 +258,7 @@ public class Tank extends Entity {
             return 0;
         }
         j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
                     .getMovementMods(this);

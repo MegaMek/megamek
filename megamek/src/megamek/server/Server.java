@@ -745,6 +745,7 @@ public class Server implements Runnable {
             ent.setGame(game);
             if (ent instanceof Mech) {
                 ((Mech) ent).setBAGrabBars();
+                ((Mech) ent).setProtomechClampMounts();
             }
             if (ent instanceof Tank) {
                 ((Tank) ent).setBAGrabBars();

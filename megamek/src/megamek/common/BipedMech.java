@@ -168,7 +168,7 @@ public class BipedMech extends Mech {
                 wmp += 2;
             }
         }
-        wmp = Math.max(wmp - getCargoMpReduction(), 0);
+        wmp = Math.max(wmp - getCargoMpReduction(this), 0);
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {

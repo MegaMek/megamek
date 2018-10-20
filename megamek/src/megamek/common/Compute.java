@@ -2339,8 +2339,8 @@ public class Compute {
         }
         
         //If we're a trailer and being towed, return data for the tractor
-        if (entity.isTrailer() && entity.getTractor() != null) {
-            return getTargetMovementModifier(game, entity.getTractor().getId());
+        if (entity.isTrailer() && entity.getTractor() != Entity.NONE) {
+            return getTargetMovementModifier(game, entity.getTractor());
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)

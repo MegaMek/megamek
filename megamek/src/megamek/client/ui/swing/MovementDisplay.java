@@ -2844,7 +2844,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // then enable the "Load" button. Towing gets handled later,
                 // and we don't want both buttons enabled.
                 if ((ce.getWalkMP() > 0) && ce.canLoad(other)
-                    && other.isLoadableThisTurn() && !ce.canTow(other)) {
+                    && other.isLoadableThisTurn() && !ce.canTow(other.getId())) {
                     setLoadEnabled(true);
                     isGood = true;
 
@@ -2864,7 +2864,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // If the other unit is friendly and not the current entity
                     // if it can tow the other unit, and if the other hasn't moved
                     // then enable the "Tow" button.
-                    if (ce.canTow(other)) {
+                    if (ce.canTow(other.getId())) {
                         setTowEnabled(true);
                         isGood = true;
 
@@ -3057,7 +3057,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         //We have to account for the positions of the whole train when looking to add new trailers
         for (Coords pos : ce().getHitchLocations()) {
             for (Entity other : game.getEntitiesVector(pos)) {
-                if (ce() != null && ce().canTow(other)) {
+                if (ce() != null && ce().canTow(other.getId())) {
                     choices.add(other);
                 }
             }
@@ -3092,7 +3092,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         //First, set up a list of all the entities in this train
         ArrayList<Entity> thisTrain = new ArrayList<Entity>();
         thisTrain.add(ce());
-        for (Entity tr : ce().getAllTowedUnits()) {
+        for (int id : ce().getAllTowedUnits()) {
+            Entity tr = game.getEntity(id);
             thisTrain.add(tr);
         }
         for (Entity e : thisTrain) {

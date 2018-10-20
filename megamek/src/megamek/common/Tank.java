@@ -457,8 +457,8 @@ public class Tank extends Entity {
             return super.isImmobile();
         }
         //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
-        if (isTrailer() && getTractor() != null) {
-            return getTractor().isImmobile();
+        if (isTrailer() && getTractor() != Entity.NONE) {
+            return game.getEntity(getTractor()).isImmobile();
         }
         return super.isImmobile() || m_bImmobile;
     }
@@ -651,8 +651,8 @@ public class Tank extends Entity {
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
         //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
-        if (isTrailer() && getTractor() != null && getTractor().hasETypeFlag(Entity.ETYPE_TANK)) {
-            Tank Tractor = (Tank) getTractor();
+        if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
             m_bImmobileHit= Tractor.m_bImmobileHit;
         }

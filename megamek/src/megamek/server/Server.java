@@ -4560,7 +4560,7 @@ public class Server implements Runnable {
             send(createTurnVectorPacket());
         }
         
-        loader.towUnit(unit);
+        loader.towUnit(unit.getId());
 
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
@@ -8805,7 +8805,7 @@ public class Server implements Runnable {
                 //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
                 //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
                 //Do we need it here for safety, client/server sync or can this be further streamlined?
-                if (!entity.canTow(loaded)) {
+                if (!entity.canTow(loaded.getId())) {
                     // Something is fishy in Denmark.
                     logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
                     loaded = null;
@@ -9936,10 +9936,11 @@ public class Server implements Runnable {
         //let's try handling this after the tractor has officially moved
         //If the entity is towing trailers, update the position of those trailers
         if (!entity.getAllTowedUnits().isEmpty()) {
-            ArrayList<Entity> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
             Collections.reverse(reversedTrailers); // reverse in-place
             ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
-            for (Entity trailer : entity.getAllTowedUnits()) {
+            for (int eId : entity.getAllTowedUnits()) {
+                Entity trailer = game.getEntity(eId);
                 processTrailerMovement(entity, trailer, trailerPath);
                 entityUpdate(trailer.getId());
             }
@@ -10034,7 +10035,7 @@ public class Server implements Runnable {
         double trailerPositionOffset = 0;
         int stepNumber = 0;
         Coords trailerPos = null;
-        trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer) + 2); //Offset so we get the right position index
+        trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer.getId()) + 2); //Offset so we get the right position index
         //Place large trailers in their own hexes behind the tractor
         if (trailer.getWeight() > 100) {
             stepNumber = (trainPath.size() - (int) trailerPositionOffset);
@@ -10064,10 +10065,11 @@ public class Server implements Runnable {
      * 
      * @return  Returns the properly sorted list of all train coordinates
      */
-    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, ArrayList<Entity> allTowedTrailers) {
+    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
         ArrayList<Coords> trainCoords = new ArrayList<Coords>();
         Coords position = null;
-        for (Entity trailer : allTowedTrailers) {
+        for (int trId : allTowedTrailers) {
+            Entity trailer = game.getEntity(trId);
             position = trailer.getPosition();
             //Duplicates foul up the works...
             if (!trainCoords.contains(position)) {

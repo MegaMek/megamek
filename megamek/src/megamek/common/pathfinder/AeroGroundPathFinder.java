@@ -79,7 +79,7 @@ public class AeroGroundPathFinder {
             // in the case of aerospace units on ground maps, we want a velocity of at least 1 so we don't stall
             // and at least 3 so we don't pointlessly fly around in circles or consume all available memory
             IAero aero = (IAero) startingEdge.getEntity();
-            int maxThrust = AeroPathUtil.calculateMaxSafeThrust(aero);  
+            maxThrust = AeroPathUtil.calculateMaxSafeThrust(aero);  
             int maxVelocity = Math.min(getMaximumVelocity(aero), aero.getCurrentVelocity() + maxThrust);
             int minVelocity = Math.max(getMinimumVelocity(aero), aero.getCurrentVelocity() - maxThrust);
             Collection<MovePath> validAccelerations = AeroPathUtil.generateValidAccelerations(startingEdge, minVelocity, maxVelocity);

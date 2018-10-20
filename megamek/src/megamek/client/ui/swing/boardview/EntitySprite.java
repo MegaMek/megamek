@@ -1053,7 +1053,8 @@ class EntitySprite extends Sprite {
         // Towing
         if (entity.getAllTowedUnits().size() > 0) {
             StringBuffer unitList = new StringBuffer();
-            for (Entity towed : entity.getAllTowedUnits()) {
+            for (int id : entity.getAllTowedUnits()) {
+                Entity towed = entity.getGame().getEntity(id);
                 unitList.append(towed.getDisplayName());
                 unitList.append(", ");
             }

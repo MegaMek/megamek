@@ -7821,19 +7821,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
              * external units first then check for conflicts only for other external mounts. */ 
             boolean hasExternalBA = false;
             boolean hasExternalProtos = false;
+            boolean hasExternalUltraheavy = false;
             if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
                     || unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                 for (Transporter t : transports) {
                     // ProtomechClampMount is a subclass of BattleArmorHandles so we need to check it first
                     if (t instanceof ProtomechClampMount) {
                         hasExternalProtos |= t.getUnused() == 0;
+                        hasExternalUltraheavy |= t.getLoadedUnits().stream()
+                                .anyMatch(e -> e.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
                     } else if (t instanceof BattleArmorHandles) {
                         hasExternalBA |= t.getUnused() == 0;
                     }
                 }
             }
+            // We can't mix BA and protos, and we can't mount an ultraheavy proto if already carrying another.
             boolean noExternalMount = (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR) && hasExternalProtos)
                     || (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalBA);
+                    
+            if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalProtos) {
+                noExternalMount |= hasExternalUltraheavy
+                        || (unit.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+            }
             
             for (Transporter t : transports) {
                 if (t.canLoad(unit)

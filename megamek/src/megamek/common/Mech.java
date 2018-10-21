@@ -532,6 +532,7 @@ public abstract class Mech extends Entity {
                         && (!checkElev || (unit.getElevation() == getElevation()))
                         && (((ProtomechClampMount) t).isRear() == rear)) {
                     t.load(unit);
+                    unit.setTargetBay(-1);
                     return;
                 }
             }

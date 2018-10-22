@@ -10036,11 +10036,12 @@ public class Server implements Runnable {
         int stepNumber = 0;
         Coords trailerPos = null;
         trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer.getId()) + 2); //Offset so we get the right position index
-        //Place large trailers in their own hexes behind the tractor
+        //If the trailer is superheavy, place it in the next available hex
         if (trailer.getWeight() > 100) {
             stepNumber = (trainPath.size() - (int) trailerPositionOffset);
             trailerPos = trainPath.get(stepNumber);
             trailer.setPosition(trailerPos);
+            trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
             trailerPositionOffset =  (int) Math.ceil(trailerPositionOffset / 2.0);

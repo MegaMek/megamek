@@ -8667,6 +8667,7 @@ public abstract class Mech extends Entity {
         return super.getInternal(loc);
     }
 
+    @Override
     public boolean isSuperHeavy() {
         return weight > 100;
     }

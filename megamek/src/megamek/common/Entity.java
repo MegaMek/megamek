@@ -1378,6 +1378,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getWeightClassName() {
         return EntityWeightClass.getClassName(getWeightClass(), this);
     }
+    
+    //Since this varies by unit type, it will be defined as overrides in each relevant class
+    public boolean isSuperHeavy() {
+        return false;
+    }
 
     public void setWeight(double weight) {
         this.weight = weight;

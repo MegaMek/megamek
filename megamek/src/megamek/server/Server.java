@@ -9942,6 +9942,7 @@ public class Server implements Runnable {
             for (int eId : entity.getAllTowedUnits()) {
                 Entity trailer = game.getEntity(eId);
                 processTrailerMovement(entity, trailer, trailerPath);
+                trailer.setDone(true);
                 entityUpdate(trailer.getId());
             }
          }
@@ -10037,22 +10038,32 @@ public class Server implements Runnable {
         Coords trailerPos = null;
         trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer.getId()) + 2); //Offset so we get the right position index
         //If the trailer is superheavy, place it in the next available hex
-        if (trailer.getWeight() > 100) {
+        if (trailer.isSuperHeavy()) {
             stepNumber = (trainPath.size() - (int) trailerPositionOffset);
             trailerPos = trainPath.get(stepNumber);
             trailer.setPosition(trailerPos);
             trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
+        //unless the tractor is superheavy, where we start in the hex behind it.
+            if (tractor.isSuperHeavy()) {
+                trailerPositionOffset --;
+            }
             trailerPositionOffset =  (int) Math.ceil(trailerPositionOffset / 2.0);
-            if (trailerPositionOffset == 1) {
+            if (trailerPositionOffset == 1 && !tractor.isSuperHeavy()) {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
+            } else if (trailerPositionOffset == 1 && tractor.isSuperHeavy()) {
+                stepNumber = (trainPath.size() - 1);
+                trailerPos = trainPath.get(stepNumber);
+                trailer.setPosition(trailerPos);
+                //This should return the hex behind the tractor's final hex, or its starting hex if it didn't move
+                trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - 1));
             } else {
                 stepNumber = (trainPath.size() - (int) trailerPositionOffset);
                 trailerPos = trainPath.get(stepNumber);
                 trailer.setPosition(trailerPos);
-                trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
+                trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - 1));
             }
         }
         //trailers are immobile by default. Match the tractor's movement here

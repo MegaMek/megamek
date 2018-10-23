@@ -15,6 +15,7 @@ v0.45.2-SNAPSHOT
 + Data: New Sprites
 + PR #1170: Bullet-proofing various edge cases for space maps; weather related info no longer displayed in space
 + Issue #1177: Rocket Launcher bug after configuring unit
++ PR #1185: Protomech validation and construction rules
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers

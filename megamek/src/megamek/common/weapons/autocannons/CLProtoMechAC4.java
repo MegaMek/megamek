@@ -46,7 +46,7 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
         mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
-        tonnage = 4.5f;
+        tonnage = 4.5;
         criticals = 3;
         bv = 49;
         cost = 133000;

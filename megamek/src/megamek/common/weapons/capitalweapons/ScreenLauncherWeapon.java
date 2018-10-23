@@ -49,7 +49,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.tonnage = 40.0f;
+        this.tonnage = 40.0;
         this.bv = 160;
         this.cost = 250000;
         this.shortAV = 15;

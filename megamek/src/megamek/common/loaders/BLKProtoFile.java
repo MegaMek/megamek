@@ -34,7 +34,7 @@ import megamek.common.LocationFullException;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
 import megamek.common.util.BuildingBlock;
-import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestProtomech;
 
 public class BLKProtoFile extends BLKFile implements IMechLoader {
 
@@ -94,12 +94,15 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int engineCode = BLKFile.FUSION;
         int engineFlags = Engine.NORMAL_ENGINE;
         engineFlags |= Engine.CLAN_ENGINE;
-
-        int engineRating = (int) Math.round(dataFile.getDataAsInt("cruiseMP")[0] * 1.5) * (int) t.getWeight();
+        int engineRating = TestProtomech.calcEngineRating(t);
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
+        }
+        
+        if (dataFile.exists("interface_cockpit")) {
+            t.setInterfaceCockpit(Boolean.parseBoolean(dataFile.getDataAsString("interface_cockpit")[0]));
         }
 
         if (!dataFile.exists("armor")) {
@@ -197,7 +200,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     // the indicated number of shots.
                     if (ammoIndex > 0) {
                         t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
-                    } else if (TestEntity.eqRequiresLocation(t, etype)) {
+                    } else if (TestProtomech.requiresSlot(etype)) {
                         t.addEquipment(etype, nLoc);
                     } else {
                         t.addEquipment(etype, Protomech.LOC_BODY);

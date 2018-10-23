@@ -44,7 +44,7 @@ public class ISERPPC extends PPCWeapon {
         waterMediumRange = 10;
         waterLongRange = 16;
         waterExtremeRange = 20;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 3;
         bv = 229;
         cost = 300000;
@@ -55,6 +55,7 @@ public class ISERPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
 		.setIntroLevel(false)
 		.setUnofficial(false)

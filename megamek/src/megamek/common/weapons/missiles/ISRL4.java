@@ -52,3 +52,6 @@ public class ISRL4 extends RLWeapon {
             .setProductionFactions(F_MH);
     }
 }
+
+//Duplicate of IS BA RL, not available to mechs at this rack size
+//Commented out in Weapontype

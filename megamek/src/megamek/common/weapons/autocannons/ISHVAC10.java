@@ -43,7 +43,7 @@ public class ISHVAC10 extends HVACWeapon {
         mediumRange = 12;
         longRange = 20;
         extremeRange = 24;
-        tonnage = 14.0f;
+        tonnage = 14.0;
         criticals = 6;
         bv = 158;
         cost = 230000;

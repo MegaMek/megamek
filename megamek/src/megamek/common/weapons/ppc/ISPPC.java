@@ -47,7 +47,7 @@ public class ISPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 3;
         bv = 176;
         cost = 200000;
@@ -57,6 +57,7 @@ public class ISPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

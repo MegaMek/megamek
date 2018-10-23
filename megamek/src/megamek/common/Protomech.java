@@ -123,6 +123,7 @@ public class Protomech extends Entity {
 
     private boolean isQuad = false;
     private boolean isGlider = false;
+    private boolean interfaceCockpit = false;
     private int wingHits = 0;
 
     // for MHQ
@@ -365,30 +366,35 @@ public class Protomech extends Entity {
         return 0;
     }
     
-    private static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
             .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCC)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCY)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3084, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CSR)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3071, DATE_NONE, DATE_NONE, 3085).setISApproximate(true).setPrototypeFactions(F_WB)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -400,6 +406,13 @@ public class Protomech extends Entity {
             return TA_ULTRA;
         } else {
             return TA_STANDARD_PROTOMECH;
+        }
+    }
+
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        if (interfaceCockpit) {
+            ctl.addComponent(TA_INTERFACE_COCKPIT);
         }
     }
 
@@ -598,6 +611,12 @@ public class Protomech extends Entity {
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
+    }
+
+    @Override
+    public double getArmorWeight() {
+        return Math.round(EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
+                * getTotalOArmor() * 1000.0) / 1000.0;
     }
 
     @Override
@@ -837,6 +856,7 @@ public class Protomech extends Entity {
      *            main gun
      */
     public void setInternal(int head, int torso, int arm, int legs, int mainGun) {
+        initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
         initializeInternal(head, LOC_HEAD);
         initializeInternal(torso, LOC_TORSO);
         initializeInternal(arm, LOC_RARM);
@@ -2357,6 +2377,27 @@ public class Protomech extends Entity {
     
     public void setIsGlider(boolean isGlider) {
         this.isGlider = isGlider;
+    }
+    
+    /**
+     * WoB protomech interface allows it to be piloted by a quadruple amputee with a VDNI implant.
+     * No effect on game play.
+     * 
+     * @return Whether the protomech is equipped with an Inner Sphere Protomech Interface.
+     */
+    public boolean hasInterfaceCockpit() {
+        return interfaceCockpit;
+    }
+    
+    /**
+     * Sets whether the protomech has an Inner Sphere Protomech Interface. This will also determine
+     * whether it is a mixed tech unit.
+     * 
+     * @param interfaceCockpit Whether the protomech has an IS interface
+     */
+    public void setInterfaceCockpit(boolean interfaceCockpit) {
+        this.interfaceCockpit = interfaceCockpit;
+        mixedTech = interfaceCockpit;
     }
 
     @Override

@@ -39,7 +39,7 @@ public class CLLRT7 extends LRTWeapon {
         this.waterMediumRange = 14;
         this.waterLongRange = 21;
         this.waterExtremeRange = 28;
-        this.tonnage = 1.4f;
+        this.tonnage = 1.4;
         this.criticals = 0;
         this.bv = 82;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 

@@ -42,7 +42,7 @@ public class ISImprovedNarcOS extends NarcWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        tonnage = 5.5f;
+        tonnage = 5.5;
         criticals = 2;
         bv = 15;
         flags = flags.or(F_ONESHOT);

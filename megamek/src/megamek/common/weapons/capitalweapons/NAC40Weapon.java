@@ -40,7 +40,7 @@ public class NAC40Weapon extends NavalACWeapon {
         this.mediumRange = 12;
         this.longRange = 18;
         this.extremeRange = 24;
-        this.tonnage = 4500.0f;
+        this.tonnage = 4500.0;
         this.bv = 5664;
         this.cost = 18000000;
         this.shortAV = 40;

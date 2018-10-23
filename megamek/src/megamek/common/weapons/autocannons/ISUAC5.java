@@ -43,7 +43,7 @@ public class ISUAC5 extends UACWeapon {
         mediumRange = 13;
         longRange = 20;
         extremeRange = 26;
-        tonnage = 9.0f;
+        tonnage = 9.0;
         criticals = 5;
         bv = 112;
         cost = 200000;
@@ -52,6 +52,7 @@ public class ISUAC5 extends UACWeapon {
         longAV = 7;
         maxRange = RANGE_LONG;
         rulesRefs = "208,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

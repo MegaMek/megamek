@@ -39,6 +39,8 @@ public class ISRL5 extends RLWeapon {
         longRange = 12;
         extremeRange = 14;
         bv = 6;
+        tonnage = 7.0;
+        criticals = 2;
         rulesRefs = "229,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)
@@ -54,3 +56,5 @@ public class ISRL5 extends RLWeapon {
 }
 
 //No Ammo listed in Ammotype for this guy.
+//Duplicate of IS BA RL, not available to mechs at this rack size
+//Commented out in Weapontype

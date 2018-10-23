@@ -46,7 +46,7 @@ public class ISTHBUAC2 extends UACWeapon {
         this.mediumRange = 20;
         this.longRange = 32;
         this.extremeRange = 40;
-        this.tonnage = 7.0f;
+        this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 67;
         this.cost = 150000;

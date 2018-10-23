@@ -50,7 +50,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 1.0f;
+        tonnage = 1.0;
         criticals = 1;
         flags = flags.or(F_ONESHOT).or(F_B_POD).or(F_BALLISTIC)
                 .or(F_MECH_WEAPON).or(F_TANK_WEAPON);

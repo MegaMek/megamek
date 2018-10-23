@@ -38,7 +38,7 @@ public class CLATM3 extends ATMWeapon {
         mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 2;
         bv = 53;
         cost = 50000;

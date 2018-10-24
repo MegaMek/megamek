@@ -26217,6 +26217,15 @@ public class Server implements Runnable {
                                 break;
                             }
                     }
+                    // A magnetic clamp system is destroyed by any torso critical.
+                    Mounted magClamp = pm.getMisc().stream().filter(m -> m.getType()
+                            .hasFlag(MiscType.F_MAGNETIC_CLAMP)).findFirst().orElse(null);
+                    if ((magClamp != null) && !magClamp.isHit()) {
+                        magClamp.setHit(true);
+                        r = new Report(6252);
+                        r.subject = pm.getId();
+                        reports.addElement(r);
+                    }
                 }
                 break;
             case Protomech.SYSTEM_TORSO_WEAPON_A:
@@ -26233,7 +26242,7 @@ public class Server implements Runnable {
                 Mounted weaponB = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponB) {
                     weaponB.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6246);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26243,7 +26252,7 @@ public class Server implements Runnable {
                 Mounted weaponC = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponC) {
                     weaponC.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6247);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26253,7 +26262,7 @@ public class Server implements Runnable {
                 Mounted weaponD = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponD) {
                     weaponD.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6248);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26263,7 +26272,7 @@ public class Server implements Runnable {
                 Mounted weaponE = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponE) {
                     weaponE.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6249);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);

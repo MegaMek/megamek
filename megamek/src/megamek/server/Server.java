@@ -4504,8 +4504,19 @@ public class Server implements Runnable {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     private void loadUnit(Entity loader, Entity unit, int bayNumber) {
+        // Protomechs share a single turn for a Point. When loading one we don't remove its turn
+        // unless it's the last unit in the Point to act.
+        int remainingProtos = 0;
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            remainingProtos = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                    && en.getId() != unit.getId()
+                    && en.isSelectableThisTurn()
+                    && en.getOwnerId() == unit.getOwnerId()
+                    && en.getUnitNumber() == unit.getUnitNumber());
+        }
 
-        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()
+                && (remainingProtos == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);

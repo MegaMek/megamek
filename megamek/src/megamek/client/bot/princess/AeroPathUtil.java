@@ -146,6 +146,14 @@ public class AeroPathUtil
         // clone path add UP
         // if path uses more MP than entity has available or altitude higher than 10, stop
         for(int altChange = 0; ; altChange++) {
+            int altChangeCost = altChange * 2;
+            
+            // if we are going to attempt to change altitude but won't actually be able to, break out.
+            if((path.getFinalAltitude() + altChange > 10) ||
+                    path.getMpUsed() + altChangeCost > path.getEntity().getRunMP()) {
+                break;
+            }
+            
             MovePath childPath = path.clone();
             
             for(int numSteps = 0; numSteps < altChange; numSteps++) {
@@ -161,20 +169,23 @@ public class AeroPathUtil
         }
         
         // clone path add DOWN
+        // if the path is already at minimum altitude, skip this
         // if path uses more MP than entity has available or altitude lower than 1, stop
-        for(int altChange = 1; ; altChange++) {
-            MovePath childPath = path.clone();
-            
-            for(int numSteps = 0; numSteps < altChange; numSteps++) {
-                childPath.addStep(MoveStepType.DOWN);
+        if(path.getFinalAltitude() > 1) {
+            for(int altChange = 1; ; altChange++) {
+                MovePath childPath = path.clone();
+                
+                for(int numSteps = 0; numSteps < altChange; numSteps++) {
+                    childPath.addStep(MoveStepType.DOWN);
+                }
+                
+                if((childPath.getFinalAltitude() < 1) ||
+                        childPath.getMpUsed() > path.getEntity().getRunMP()) {
+                    break;
+                }
+                
+                paths.add(childPath);
             }
-            
-            if((childPath.getFinalAltitude() < 1) ||
-                    childPath.getMpUsed() > path.getEntity().getRunMP()) {
-                break;
-            }
-            
-            paths.add(childPath);
         }
         
         return paths;

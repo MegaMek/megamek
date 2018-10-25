@@ -23412,98 +23412,10 @@ public class Server implements Runnable {
                 int nLoc = hit.getLocation();
                 Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
                 // Does an exterior passenger absorb some of the damage?
-                int avoidRoll = Compute.d6();
-                if (!ammoExplosion && (null != passenger) && (avoidRoll >= 5)
-                    && !passenger.isDoomed()
-                    && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Yup. Roll up some hit data for that passenger.
-                    r = new Report(6075);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-
-                    HitData passHit = passenger.getTrooperAtLocation(hit, te);
-                    passHit.setGeneralDamageType(hit.getGeneralDamageType());
-
-
-                    // How much damage will the passenger absorb?
-                    int absorb = 0;
-                    HitData nextPassHit = passHit;
-                    do {
-                        int armorType = passenger.getArmorType(nextPassHit
-                                                                       .getLocation());
-                        boolean armorDamageReduction = false;
-                        if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
-                             && ((hit.getGeneralDamageType() ==
-                                  HitData.DAMAGE_MISSILE)))
-                            || (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                            armorDamageReduction = true;
-                        }
-                        // Check for reflective armor
-                        if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
-                            && (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ENERGY)) {
-                            armorDamageReduction = true;
-                        }
-                        if (0 < passenger.getArmor(nextPassHit)) {
-                            absorb += passenger.getArmor(nextPassHit);
-                            if (armorDamageReduction) {
-                                absorb *= 2;
-                            }
-                        }
-                        if (0 < passenger.getInternal(nextPassHit)) {
-                            absorb += passenger.getInternal(nextPassHit);
-                            // Armor damage reduction, like for reflective or
-                            // reactive armor will divide the whole damage
-                            // total by 2 and round down. If we have an odd
-                            // damage total, need to add 1 to make this
-                            // evenly divisible by 2
-                            if (((absorb % 2) != 0) && armorDamageReduction) {
-                                absorb++;
-                            }
-                        }
-                        nextPassHit = passenger
-                                .getTransferLocation(nextPassHit);
-                    } while ((damage > absorb)
-                             && (nextPassHit.getLocation() >= 0));
-
-                    // Damage the passenger.
-                    int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = damageEntity(passenger,
-                                                             passHit, absorbedDamage);
-                    for (Report newReport : newReports) {
-                        newReport.indent(2);
-                    }
-                    vDesc.addAll(newReports);
-
-                    // Did some damage pass on?
-                    if (damage > absorb) {
-                        // Yup. Remove the absorbed damage.
-                        damage -= absorb;
-                        r = new Report(6080);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        r.addDesc(te);
-                        vDesc.addElement(r);
-                    } else {
-                        // Nope. Return our description.
-                        return vDesc;
-                    }
-
-                } else if (!ammoExplosion && (null != passenger)
-                           && (avoidRoll < 5) && !passenger.isDoomed()
-                           && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Report that a passenger that could've been missed
-                    // narrowly avoids damage
-                    r = new Report(6084);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-                } // End nLoc-has-exterior-passenger
+                if (!ammoExplosion && (null != passenger) && !passenger.isDoomed()
+                        && (bFrag != DamageType.IGNORE_PASSENGER)) {
+                    damage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
+                }
 
                 boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT)
                                  || (nLoc == Mech.LOC_LT);
@@ -24703,6 +24615,121 @@ public class Server implements Runnable {
             Report.addNewline(vDesc);
         }
         return vDesc;
+    }
+
+    /**
+     * Apply damage to an Entity carrying external battlearmor or protomech
+     * when a location with a trooper present is hit.
+     * 
+     * @param te             The carrying Entity
+     * @param hit            The hit to resolve
+     * @param damage         The amount of damage to be allocated
+     * @param vDesc          The report vector
+     * @param passenger      The BA squad
+     * @return               The amount of damage remaining
+     */
+    private int damageExternalPassenger(Entity te, HitData hit, int damage,
+            Vector<Report> vDesc, Entity passenger) {
+        Report r;
+        int passengerDamage = damage;
+        int avoidRoll = Compute.d6();
+        HitData passHit = passenger.getTrooperAtLocation(hit, te);
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            passengerDamage -= damage / 2;
+            passHit = passenger.rollHitLocation(ToHitData.HIT_SPECIAL_PROTO, ToHitData.SIDE_FRONT);
+        } else if (avoidRoll < 5) {
+            passengerDamage = 0;
+        }
+        passHit.setGeneralDamageType(hit.getGeneralDamageType());
+        
+        if (passengerDamage > 0) {
+            // Yup. Roll up some hit data for that passenger.
+            r = new Report(6075);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+
+            // How much damage will the passenger absorb?
+            int absorb = 0;
+            HitData nextPassHit = passHit;
+            do {
+                int armorType = passenger.getArmorType(nextPassHit
+                                                               .getLocation());
+                boolean armorDamageReduction = false;
+                if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                     && ((hit.getGeneralDamageType() ==
+                          HitData.DAMAGE_MISSILE)))
+                    || (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    armorDamageReduction = true;
+                }
+                // Check for reflective armor
+                if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
+                    && (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ENERGY)) {
+                    armorDamageReduction = true;
+                }
+                if (0 < passenger.getArmor(nextPassHit)) {
+                    absorb += passenger.getArmor(nextPassHit);
+                    if (armorDamageReduction) {
+                        absorb *= 2;
+                    }
+                }
+                if (0 < passenger.getInternal(nextPassHit)) {
+                    absorb += passenger.getInternal(nextPassHit);
+                    // Armor damage reduction, like for reflective or
+                    // reactive armor will divide the whole damage
+                    // total by 2 and round down. If we have an odd
+                    // damage total, need to add 1 to make this
+                    // evenly divisible by 2
+                    if (((absorb % 2) != 0) && armorDamageReduction) {
+                        absorb++;
+                    }
+                }
+                nextPassHit = passenger
+                        .getTransferLocation(nextPassHit);
+            } while ((damage > absorb)
+                     && (nextPassHit.getLocation() >= 0));
+
+            // Damage the passenger.
+            absorb = Math.min(passengerDamage, absorb);
+            Vector<Report> newReports = damageEntity(passenger,
+                                                     passHit, absorb);
+            for (Report newReport : newReports) {
+                newReport.indent(2);
+            }
+            vDesc.addAll(newReports);
+
+            // Did some damage pass on?
+            if (damage > absorb) {
+                // Yup. Remove the absorbed damage.
+                damage -= absorb;
+                r = new Report(6080);
+                r.subject = te.getId();
+                r.indent(2);
+                r.add(damage);
+                r.addDesc(te);
+                vDesc.addElement(r);
+            } else {
+                // Nope. Return our description.
+                return 0;
+            }
+
+        } else {
+            // Report that a passenger that could've been missed
+            // narrowly avoids damage
+            r = new Report(6084);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+        } // End nLoc-has-exterior-passenger
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                && (passengerDamage > 0) && !passenger.isDoomed() && !passenger.isDestroyed()) {
+            //TODO: drop
+        }
+        return damage;
     }
 
     /**

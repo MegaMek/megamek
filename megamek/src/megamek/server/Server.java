@@ -24727,7 +24727,29 @@ public class Server implements Runnable {
         } // End nLoc-has-exterior-passenger
         if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)
                 && (passengerDamage > 0) && !passenger.isDoomed() && !passenger.isDestroyed()) {
-            //TODO: drop
+            r = new Report(3850);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+            int facing = te.getFacing();
+            // We're going to assume that it's mounted facing the mech
+            Coords position = te.getPosition();
+            if (!hit.isRear()) {
+                facing = (facing + 3) % 6;
+            }
+            unloadUnit(te, passenger, position, facing, te.getElevation(),
+                    false, false);
+            Entity violation = Compute.stackingViolation(game,
+                    passenger.getId(), position);
+            if (violation != null) {
+                Coords targetDest = Compute.getValidDisplacement(game,
+                        passenger.getId(), position, Compute.d6() - 1);
+                addReport(doEntityDisplacement(violation, position,
+                        targetDest, null));
+                // Update the violating entity's postion on the client.
+                entityUpdate(violation.getId());
+            }
         }
         return damage;
     }

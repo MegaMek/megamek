@@ -1,30 +1,36 @@
 package megamek.common.net;
 
-import megamek.common.IPlayer;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
-import megamek.server.ConnectionHandler;
-import megamek.server.Server;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Hashtable;
 
 public class SocketServer implements Runnable {
     private MMLogger logger = null;
     private ServerSocket serverSocket = null;
     private Thread listenThread = null;
+    private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
+
     private ConnectionListener connectionListener = new ConnectionListener() {
         @Override
         public void connected(ConnectedEvent e) {
-            onConnectionOpen(e.getConnection());
         }
 
         @Override
         public void disconnected(DisconnectedEvent e) {
-            onConnectionClose(e.getConnection());
+            IConnection conn = e.getConnection();
+            onConnectionClose(conn);
+
+            ConnectionHandler ch = connectionHandlers.get(conn.getId());
+            if (ch != null) {
+                ch.signalStop();
+                connectionHandlers.remove(conn.getId());
+            }
         }
 
         @Override
@@ -101,9 +107,15 @@ public class SocketServer implements Runnable {
                 IConnection connection = ConnectionFactory.getInstance()
                         .createServerConnection(s, 0);
 
+                // call out to subclass; this should set a valid ID on the connection
+                onConnectionOpen(connection);
+
                 connection.addConnectionListener(connectionListener);
 
-                onConnectionOpen(connection);
+                ConnectionHandler ch = new ConnectionHandler(connection);
+                Thread newConnThread = new Thread(ch, "Connection " + connection.getId());
+                newConnThread.start();
+                connectionHandlers.put(connection.getId(), ch);
             } catch (InterruptedIOException iioe) {
                 // ignore , just SOTimeout blowing..
             } catch (IOException ex) {

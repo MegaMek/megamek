@@ -12,9 +12,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.server;
-
-import megamek.common.net.IConnection;
+package megamek.common.net;
 
 /**
  * Thread that runs and checks to see if there's any incoming packets from a 

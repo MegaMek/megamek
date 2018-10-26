@@ -24,25 +24,25 @@ public interface IConnection {
      * 
      * @return <code>true</code> on success, <code>false</code> otherwise
      */
-    public boolean open();
+    boolean open();
 
     /**
      * Closes the socket and releases resources
      */
-    public void close();
+    void close();
     
     /**
      * Returns true if the socket for this connection has been closed.
      * @return
      */
-    public boolean isClosed();
+    boolean isClosed();
 
     /**
      * Returns the connection ID
      * 
      * @return the connection ID
      */
-    public int getId();
+    int getId();
 
     /**
      * Sets the connection ID
@@ -51,50 +51,50 @@ public interface IConnection {
      *            cannot be moved to constructor,so should be moved to a
      *            separate interface
      */
-    public void setId(int id);
+    void setId(int id);
 
     /**
      * @return what?
      */
-    public String getInetAddress();
+    String getInetAddress();
 
     /**
      * Process all incoming data, blocking on the input stream until new input
      * is available.
      */
-    public void update();
+    void update();
 
     /**
      * Sibling of the update() method, will not read anything, will just flush
      * the pending packets from the queue.
      */
-    public void flush();
+    void flush();
 
     /**
      * Adds a packet to the send queue to be send on a seperate thread.
      */
-    public void send(Packet packet);
+    void send(Packet packet);
 
     /**
      * Returns <code>true</code> if there are (send)pending packets
      * 
      * @return <code>true</code> if there are pending packets
      */
-    public boolean hasPending();
+    boolean hasPending();
 
     /**
      * Returns a very approximate count of how many bytes were sent
      * 
      * @return a very approximate count of how many bytes were sent
      */
-    public long bytesSent();
+    long bytesSent();
 
     /**
      * Returns a very approximate count of how many bytes were received
      * 
      * @return a very approximate count of how many bytes were received
      */
-    public long bytesReceived();
+    long bytesReceived();
 
     /**
      * Adds the specified connection listener to receive connection events from
@@ -102,12 +102,5 @@ public interface IConnection {
      * 
      * @param listener the connection listener.
      */
-    public void addConnectionListener(ConnectionListener listener);
-
-    /**
-     * Removes the specified connection listener.
-     * 
-     * @param listener the connection listener.
-     */
-    public void removeConnectionListener(ConnectionListener listener);
+    void addConnectionListener(ConnectionListener listener);
 }

@@ -25,13 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -376,8 +373,6 @@ public class Server extends SocketServer {
 
     // game info
     private Vector<IConnection> connections = new Vector<>(4);
-
-    private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
 
@@ -32445,10 +32440,6 @@ public class Server extends SocketServer {
             connection.setId(id);
             connection.open();
             connectionsPending.addElement(connection);
-            ConnectionHandler ch = new ConnectionHandler(connection);
-            Thread newConnThread = new Thread(ch, "Connection " + id);
-            newConnThread.start();
-            connectionHandlers.put(id, ch);
 
             greeting(id);
             ConnectionWatchdog w = new ConnectionWatchdog(this, id);
@@ -32468,11 +32459,6 @@ public class Server extends SocketServer {
             connections.removeElement(conn);
             connectionsPending.removeElement(conn);
             connectionIds.remove(conn.getId());
-            ConnectionHandler ch = connectionHandlers.get(conn.getId());
-            if (ch != null) {
-                ch.signalStop();
-                connectionHandlers.remove(conn.getId());
-            }
 
             // if there's a player for this connection, remove it too
             IPlayer player = getPlayer(conn.getId());

@@ -33,19 +33,19 @@ public interface ConnectionListener extends java.util.EventListener {
      * 
      * @param e connection event
      */
-    public void connected(ConnectedEvent e);
+    void connected(ConnectedEvent e);
 
     /**
      * Called when connection is closed
      * 
      * @param e connection event
      */
-    public void disconnected(DisconnectedEvent e);
+    void disconnected(DisconnectedEvent e);
 
     /**
      * Called when packed received
      * 
      * @param e connection event
      */
-    public void packetReceived(PacketReceivedEvent e);
+    void packetReceived(PacketReceivedEvent e);
 }

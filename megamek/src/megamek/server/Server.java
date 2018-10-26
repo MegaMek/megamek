@@ -217,12 +217,7 @@ import megamek.common.event.GameVictoryEvent;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.MMLogger;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListenerAdapter;
-import megamek.common.net.DisconnectedEvent;
-import megamek.common.net.IConnection;
-import megamek.common.net.Packet;
-import megamek.common.net.PacketReceivedEvent;
+import megamek.common.net.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -286,7 +281,7 @@ import megamek.server.victory.VictoryResult;
 /**
  * @author Ben Mazur
  */
-public class Server implements Runnable {
+public class Server extends SocketServer {
     private static class EntityTargetPair {
         Entity ent;
 
@@ -331,8 +326,6 @@ public class Server implements Runnable {
     private String password;
 
     private final String metaServerUrl;
-
-    private ServerSocket serverSocket;
 
     private String motd;
 
@@ -412,9 +405,6 @@ public class Server implements Runnable {
     // commands
     private Hashtable<String, ServerCommand> commandsHash = new Hashtable<>();
 
-    // listens for and connects players
-    private Thread connector;
-
     private PacketPump packetPump;
     private Thread packetPumpThread;
 
@@ -464,63 +454,6 @@ public class Server implements Runnable {
     
     private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
-
-        /**
-         * Called when it is sensed that a connection has terminated.
-         */
-        @Override
-        public void disconnected(DisconnectedEvent e) {
-            synchronized (serverLock) {
-                IConnection conn = e.getConnection();
-
-                // write something in the log
-                logInfo("disconnected(DisconnectedEvent)", "s: connection " + conn.getId() + " disconnectd");
-
-                connections.removeElement(conn);
-                connectionsPending.removeElement(conn);
-                connectionIds.remove(conn.getId());
-                ConnectionHandler ch = connectionHandlers.get(conn.getId());
-                if (ch != null) {
-                    ch.signalStop();
-                    connectionHandlers.remove(conn.getId());
-                }
-
-                // if there's a player for this connection, remove it too
-                IPlayer player = getPlayer(conn.getId());
-                if (null != player) {
-                    Server.this.disconnected(player);
-                }
-            }
-        }
-
-        @Override
-        public void packetReceived(PacketReceivedEvent e) {
-            ReceivedPacket rp = new ReceivedPacket(e.getConnection().getId(),
-                    e.getPacket());
-            int cmd = e.getPacket().getCommand();
-            // Handled CFR packets specially
-            if (cmd == Packet.COMMAND_CLIENT_FEEDBACK_REQUEST) {
-                synchronized (cfrPacketQueue) {
-                    cfrPacketQueue.add(rp);
-                    cfrPacketQueue.notifyAll();
-                }
-            // Some packets should be handled immediately
-            } else if ((cmd == Packet.COMMAND_CLOSE_CONNECTION)
-                    || (cmd == Packet.COMMAND_CLIENT_NAME)
-                    || (cmd == Packet.COMMAND_CLIENT_VERSIONS)
-                    || (cmd == Packet.COMMAND_CHAT)) {
-                handle(rp.connId, rp.packet);
-            } else {
-                synchronized (packetQueue) {
-                    packetQueue.add(rp);
-                    packetQueue.notifyAll();
-                }
-            }
-        }
-
-    };
-
     /**
      * Used to ensure only one thread at a time is accessing this particular
      * instance of the server.
@@ -542,11 +475,10 @@ public class Server implements Runnable {
      */
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl) throws IOException {
+
         final String METHOD_NAME = "Server(String,int,boolean,String)";
         this.metaServerUrl = metaServerUrl;
         this.password = password.length() > 0 ? password : null;
-        // initialize server socket
-        serverSocket = new ServerSocket(port);
 
         motd = createMotd();
 
@@ -564,7 +496,7 @@ public class Server implements Runnable {
             sb.append("s: hostname = '");
             sb.append(host);
             sb.append("' port = ");
-            sb.append(serverSocket.getLocalPort());
+            sb.append(getLocalPort());
             sb.append("\n");
             InetAddress[] addresses = InetAddress.getAllByName(host);
             for (InetAddress addresse : addresses) {
@@ -640,8 +572,7 @@ public class Server implements Runnable {
         }
 
         // Fully initialised, now accept connections
-        connector = new Thread(this, "Connection Listener");
-        connector.start();
+        listen(port);
 
         serverInstance = this;
     }
@@ -829,15 +760,14 @@ public class Server implements Runnable {
         watchdogTimer.cancel();
 
         // kill thread accepting new connections
-        connector = null;
         packetPump.signalEnd();
         packetPumpThread.interrupt();
         packetPumpThread = null;
 
-        // close socket
+        // shutdown network
         try {
-            serverSocket.close();
-        } catch (IOException ex) {
+            stopNetwork();
+        } catch (Exception ex) {
         }
 
         // kill pending connnections
@@ -1106,7 +1036,7 @@ public class Server implements Runnable {
         // Send the port we're listening on. Only useful for the player
         // on the server machine to check.
         sendServerChat(connId,
-                       "Listening on port " + serverSocket.getLocalPort());
+                       "Listening on port " + getLocalPort());
 
         // Get the player *again*, because they may have disconnected.
         player = getPlayer(connId);
@@ -32493,54 +32423,90 @@ public class Server implements Runnable {
     }
 
     /**
-     * Listen for incoming clients.
+     * Fired when base class successfully begins listening for connections
      */
-    public void run() {
-        final String METHOD_NAME = "run()";
-        Thread currentThread = Thread.currentThread();
+    @Override
+    protected void onListen() {
+        final String METHOD_NAME = "onListen()";
         logInfo(METHOD_NAME, "s: listening for clients...");
-        // HashSet<IConnection> toUpdate = new HashSet<IConnection>();
-        while (connector == currentThread) {
-            try {
-                Socket s = serverSocket.accept();
-                synchronized (serverLock) {
-                    int id = getFreeConnectionId();
-                    logInfo(METHOD_NAME, "s: accepting player connection #" + id + "...");
+    }
 
-                    IConnection c = ConnectionFactory.getInstance()
-                            .createServerConnection(s, id);
-                    c.addConnectionListener(connectionListener);
-                    c.open();
-                    connectionsPending.addElement(c);
-                    ConnectionHandler ch = new ConnectionHandler(c);
-                    Thread newConnThread = new Thread(ch, "Connection " + id);
-                    newConnThread.start();
-                    connectionHandlers.put(id, ch);
+    /**
+     * Fired when base class detects a new incoming network connection
+     */
+    @Override
+    protected void onConnectionOpen(IConnection connection) {
+        // this method is probably called from another thread, so synchronize
+        synchronized(serverLock) {
+            final String METHOD_NAME = "onConnectionOpen()";
+            int id = getFreeConnectionId();
+            logInfo(METHOD_NAME, "s: accepting player connection #" + id + "...");
 
-                    greeting(id);
-                    ConnectionWatchdog w = new ConnectionWatchdog(this, id);
-                    watchdogTimer.schedule(w, 1000, 500);
-                }
-            } catch (InterruptedIOException iioe) {
-                // ignore , just SOTimeout blowing..
-            } catch (IOException ex) {
+            connection.setId(id);
+            connection.open();
+            connectionsPending.addElement(connection);
+            ConnectionHandler ch = new ConnectionHandler(connection);
+            Thread newConnThread = new Thread(ch, "Connection " + id);
+            newConnThread.start();
+            connectionHandlers.put(id, ch);
 
+            greeting(id);
+            ConnectionWatchdog w = new ConnectionWatchdog(this, id);
+            watchdogTimer.schedule(w, 1000, 500);
+        }
+    }
+
+    /**
+     * Fired when it is sensed that a connection has terminated.
+     */
+    @Override
+    public void onConnectionClose(IConnection conn) {
+        synchronized (serverLock) {
+            // write something in the log
+            logInfo("disconnected(DisconnectedEvent)", "s: connection " + conn.getId() + " disconnectd");
+
+            connections.removeElement(conn);
+            connectionsPending.removeElement(conn);
+            connectionIds.remove(conn.getId());
+            ConnectionHandler ch = connectionHandlers.get(conn.getId());
+            if (ch != null) {
+                ch.signalStop();
+                connectionHandlers.remove(conn.getId());
             }
-            /* update all connections */
-            // Changed method to using clones of the connections &
-            // connectionsPending in order to avoid
-            // ConcurrentModificationExceptions.
-            /*
-             * toUpdate.clear(); Vector<IConnection> clone =
-             * (Vector<IConnection>) connections .clone(); Vector<IConnection>
-             * connectionsClone = clone; toUpdate.addAll(connectionsClone);
-             * connectionsClone = (Vector<IConnection>)
-             * connectionsPending.clone(); toUpdate.addAll(connectionsClone); //
-             * process stuff Iterator<IConnection> it = toUpdate.iterator();
-             * while (it.hasNext()) { it.next().update(); } // then make sure
-             * stuff is sent away it = toUpdate.iterator(); while (it.hasNext())
-             * { it.next().flush(); }
-             */
+
+            // if there's a player for this connection, remove it too
+            IPlayer player = getPlayer(conn.getId());
+            if (null != player) {
+                Server.this.disconnected(player);
+            }
+        }
+    }
+
+    /**
+     * Fired when a packet is received from a remote client
+     */
+    @Override
+    public void onPacketReceived(IConnection conn, Packet packet) {
+        ReceivedPacket rp = new ReceivedPacket(conn.getId(), packet);
+        int cmd = packet.getCommand();
+
+        // Handled CFR packets specially
+        if (cmd == Packet.COMMAND_CLIENT_FEEDBACK_REQUEST) {
+            synchronized (cfrPacketQueue) {
+                cfrPacketQueue.add(rp);
+                cfrPacketQueue.notifyAll();
+            }
+            // Some packets should be handled immediately
+        } else if ((cmd == Packet.COMMAND_CLOSE_CONNECTION)
+                || (cmd == Packet.COMMAND_CLIENT_NAME)
+                || (cmd == Packet.COMMAND_CLIENT_VERSIONS)
+                || (cmd == Packet.COMMAND_CHAT)) {
+            handle(rp.connId, rp.packet);
+        } else {
+            synchronized (packetQueue) {
+                packetQueue.add(rp);
+                packetQueue.notifyAll();
+            }
         }
     }
 
@@ -36493,7 +36459,7 @@ public class Server implements Runnable {
      * @return the <code>int</code> this server is listening on
      */
     public int getPort() {
-        return serverSocket.getLocalPort();
+        return getLocalPort();
     }
 
     /**
@@ -36775,7 +36741,7 @@ public class Server implements Runnable {
             String content = "";
             content = "port="
                       + URLEncoder.encode(
-                    Integer.toString(serverSocket.getLocalPort()),
+                    Integer.toString(getLocalPort()),
                     "UTF-8");
             if (register) {
                 for (IConnection iconn : connections) {

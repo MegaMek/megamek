@@ -16,7 +16,7 @@ package megamek.common.net;
 
 /**
  * interface for connections between client and server refactored from the
- * original Connection class which was moved to AbstractConnection
+ * original Connection class which was moved to AbstractSocketConnection
  */
 public interface IConnection {
     /**

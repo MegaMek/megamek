@@ -27,7 +27,7 @@ import java.net.SocketException;
  * <code>DataInputStream</code> and <code>DataOutputStream</code> to
  * send/receive data.
  */
-class DataStreamConnection extends AbstractConnection {
+class DataStreamConnection extends AbstractSocketConnection {
 
     /**
      * Input stream

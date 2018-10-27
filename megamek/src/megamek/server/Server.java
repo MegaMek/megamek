@@ -10033,11 +10033,17 @@ public class Server implements Runnable {
      * @param trailer    The current trailer being updated
      */
     private void processTrailerMovement(Entity tractor, Entity trailer, ArrayList<Coords> trainPath) {
-        double trailerPositionOffset = 0;
+        //if the Tractor didn't move anywhere, stay where we are
+        if (tractor.delta_distance == 0) {
+            trailer.delta_distance = tractor.delta_distance;
+            trailer.moved = tractor.moved;
+            return;
+        }
         int stepNumber = 0;
         Coords trailerPos = null;
-        trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer.getId()) + 2); //Offset so we get the right position index
-        //If the trailer is superheavy, place it in the next available hex
+        int trailerNumber = tractor.getAllTowedUnits().indexOf(trailer.getId());
+        double trailerPositionOffset = (trailerNumber + 1); //Offset so we get the right position index
+        //If the trailer is superheavy, place it in a hex by itself
         if (trailer.isSuperHeavy()) {
             stepNumber = (trainPath.size() - (int) trailerPositionOffset);
             trailerPos = trainPath.get(stepNumber);
@@ -10046,25 +10052,23 @@ public class Server implements Runnable {
         } else {
         //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
         //unless the tractor is superheavy, where we start in the hex behind it.
-            if (tractor.isSuperHeavy()) {
-                trailerPositionOffset --;
-            }
-            trailerPositionOffset =  (int) Math.ceil(trailerPositionOffset / 2.0);
-            if (trailerPositionOffset == 1 && !tractor.isSuperHeavy()) {
+            trailerPositionOffset = ((Math.ceil(trailerPositionOffset / 2.0)) + 1);
+            if (trailerNumber == 0 && !tractor.isSuperHeavy()) {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
-            } else if (trailerPositionOffset == 1 && tractor.isSuperHeavy()) {
-                stepNumber = (trainPath.size() - 1);
-                trailerPos = trainPath.get(stepNumber);
-                trailer.setPosition(trailerPos);
-                //This should return the hex behind the tractor's final hex, or its starting hex if it didn't move
-                trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - 1));
             } else {
                 stepNumber = (trainPath.size() - (int) trailerPositionOffset);
                 trailerPos = trainPath.get(stepNumber);
                 trailer.setPosition(trailerPos);
-                trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - 1));
+                trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
             }
+            //Now, set the facing of the trailers (ugh)
+            //Trailers in the first hex behind the tractor start turning
+            /* if (tractor.isSuperHeavy()) {
+                trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - 1));
+            } else {
+                else if ((trailerNumber <= 1 && ) || ((trailerNumber > 0 && trailerNumber < 3) && !tractor.isSuperHeavy())) 
+            } */
         }
         //trailers are immobile by default. Match the tractor's movement here
         trailer.delta_distance = tractor.delta_distance;

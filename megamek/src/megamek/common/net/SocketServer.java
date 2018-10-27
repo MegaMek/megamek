@@ -55,6 +55,7 @@ public class SocketServer implements Runnable {
         serverSocket = new ServerSocket(port);
 
         listenThread = new Thread(this, "Socket Server");
+        listenThread.start();
         onListen();
     }
 
@@ -67,7 +68,8 @@ public class SocketServer implements Runnable {
     }
 
     protected void stopNetwork() throws Exception {
-
+        serverSocket.close();
+        onListenEnded();
     }
 
     protected void onListen() {

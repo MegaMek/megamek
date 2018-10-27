@@ -291,6 +291,7 @@ ${project.ext.jvmOptions.join('\n')}
 
 windowsDistZip {
     description = 'Creates Windows distribution packaged as a zip archive'
+    dependsOn stageFiles
     dependsOn createExe
 }
 

@@ -98,12 +98,7 @@ import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListenerAdapter;
-import megamek.common.net.DisconnectedEvent;
-import megamek.common.net.IConnection;
-import megamek.common.net.Packet;
-import megamek.common.net.PacketReceivedEvent;
+import megamek.common.net.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
@@ -114,19 +109,17 @@ import megamek.server.SmokeCloud;
  * This class is instanciated for each client and for each bot running on that
  * client. non-local clients are not also instantiated on the local server.
  */
-public class Client implements IClientCommandHandler {
+public class Client extends SocketClient implements IClientCommandHandler {
     public static final String CLIENT_COMMAND = "#";
 
     // we need these to communicate with the server
     private String name;
 
-    private IConnection connection;
 
     // the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
 
     // some info about us and the server
-    private boolean connected = false;
     protected int localPlayerNumber = -1;
     private String host;
     private int port;
@@ -156,71 +149,6 @@ public class Client implements IClientCommandHandler {
     private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
 
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
-
-    ConnectionHandler packetUpdate;
-
-    private class ConnectionHandler implements Runnable {
-
-        boolean shouldStop = false;
-
-        public void signalStop() {
-            shouldStop = true;
-        }
-
-        public void run() {
-            while (!shouldStop) {
-                // Write any queued packets
-                flushConn();
-                // Wait for new input
-                updateConnection();
-                if ((connection == null) || connection.isClosed()) {
-                    shouldStop = true;
-                }
-            }
-        }
-    }
-
-    private Thread connThread;
-
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
-
-        /**
-         * Called when it is sensed that a connection has terminated.
-         */
-        @Override
-        public void disconnected(DisconnectedEvent e) {
-            // We can't just run this directly, otherwise we open up all sorts
-            // of concurrency issues with the AWT event dispatch thread.
-            // Instead, if we will have the event dispatch thread handle it,
-            // by using SwingUtilities.invokeLater
-            // Not running this on the AWT EDT can lead to dead-lock
-            Runnable handlePacketEvent = new Runnable() {
-                public void run() {
-                    Client.this.disconnected();
-                }
-            };
-            SwingUtilities.invokeLater(handlePacketEvent);
-        }
-
-        @Override
-        public void packetReceived(final PacketReceivedEvent e) {
-            // We can't just run this directly, otherwise we open up all sorts
-            // of concurrency issues with the AWT event dispatch thread.
-            // Instead, if we will have the event dispatch thread handle it,
-            // by using SwingUtilities.invokeLater
-            // TODO: I don't think this is really what we should do: ideally
-            // Client.handlePacket should play well with the AWT event queue,
-            // but nothing appears to really be designed to be thread safe, so
-            // this is a reasonable hack for now
-            Runnable handlePacketEvent = new Runnable() {
-                public void run() {
-                    handlePacket(e.getPacket());
-                }
-            };
-            SwingUtilities.invokeLater(handlePacketEvent);
-        }
-
-    };
 
     /**
      * Construct a client which will try to connect. If the connection fails, it
@@ -260,48 +188,51 @@ public class Client implements IClientCommandHandler {
         this.localPlayerNumber = localPlayerNumber;
     }
 
-    /**
-     * call this once to update the connection
-     */
-    protected void updateConnection() {
-        if (connection != null && !connection.isClosed()) {
-            connection.update();
-        }
+    @Override
+    protected void onPacketReceived(Packet packet) {
+        // We can't just run this directly, otherwise we open up all sorts
+        // of concurrency issues with the AWT event dispatch thread.
+        // Instead, if we will have the event dispatch thread handle it,
+        // by using SwingUtilities.invokeLater
+        // TODO: I don't think this is really what we should do: ideally
+        // Client.handlePacket should play well with the AWT event queue,
+        // but nothing appears to really be designed to be thread safe, so
+        // this is a reasonable hack for now
+        Runnable handlePacketEvent = new Runnable() {
+            public void run() {
+                handlePacket(packet);
+            }
+        };
+        SwingUtilities.invokeLater(handlePacketEvent);
+    }
+
+    @Override
+    protected void onRemoteDisconnection() {
+        // We can't just run this directly, otherwise we open up all sorts
+        // of concurrency issues with the AWT event dispatch thread.
+        // Instead, if we will have the event dispatch thread handle it,
+        // by using SwingUtilities.invokeLater
+        // Not running this on the AWT EDT can lead to dead-lock
+        Runnable handlePacketEvent = new Runnable() {
+            public void run() {
+                Client.this.disconnected();
+            }
+        };
+        SwingUtilities.invokeLater(handlePacketEvent);
     }
 
     /**
      * Attempt to connect to the specified host
      */
     public boolean connect() {
-        connection = ConnectionFactory.getInstance().createClientConnection(host, port, 1);
-        boolean result = connection.open();
-        if (result) {
-            connection.addConnectionListener(connectionListener);
-            packetUpdate = new ConnectionHandler();
-            connThread = new Thread(packetUpdate, "Client Connection, Player " + name);
-            connThread.start();
-        }
-        return result;
+        return connect(host, port);
     }
 
     /**
      * Shuts down threads and sockets
      */
     public synchronized void die() {
-        // If we're still connected, tell the server that we're going down.
-        if (connected) {
-            // Stop listening for in coming packets, this should be done before
-            // sending the close connection command
-            packetUpdate.signalStop();
-            connThread.interrupt();
-            send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
-            flushConn();
-        }
-        connected = false;
-
-        if (connection != null) {
-            connection.close();
-        }
+        disconnect();
 
         for (int i = 0; i < closeClientListeners.size(); i++) {
             closeClientListeners.elementAt(i).clientClosed();
@@ -325,7 +256,7 @@ public class Client implements IClientCommandHandler {
     protected void disconnected() {
         if (!disconnectFlag) {
             disconnectFlag = true;
-            if (connected) {
+            if (isConnected()) {
                 die();
             }
             if (!host.equals("localhost")) { //$NON-NLS-1$
@@ -451,7 +382,7 @@ public class Client implements IClientCommandHandler {
      * give the initiative to the next player on the team.
      */
     public void sendNextPlayer() {
-        connection.send(new Packet(Packet.COMMAND_FORWARD_INITIATIVE));
+        send(new Packet(Packet.COMMAND_FORWARD_INITIATIVE));
     }
 
     /**
@@ -1155,15 +1086,6 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * send the message to the server
-     */
-    protected void send(Packet packet) {
-        if (connection != null) {
-            connection.send(packet);
-        }
-    }
-
-    /**
      * Send a Nova CEWS update packet
      *
      * @param ID
@@ -1187,18 +1109,6 @@ public class Client implements IClientCommandHandler {
         send(packet);
     }
 
-    /**
-     * send all buffered packets on their way this should be called after
-     * everything which causes us to wait for a reply. For example "done" button
-     * presses etc. to make stuff more efficient, this should only be called
-     * after a batch of packets is sent,not separately for each packet
-     */
-    protected void flushConn() {
-        if (connection != null) {
-            connection.flush();
-        }
-    }
-
     @SuppressWarnings("unchecked")
     protected void handlePacket(Packet c) {
         if (c == null) {
@@ -1210,7 +1120,7 @@ public class Client implements IClientCommandHandler {
             disconnected();
             break;
         case Packet.COMMAND_SERVER_GREETING:
-            connected = true;
+            serverHandshakeCompleted();
             send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
             Object[] versionData = new Object[2];
             versionData[0] = MegaMek.VERSION;
@@ -1553,6 +1463,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+    @Override
     public String getName() {
         return name;
     }

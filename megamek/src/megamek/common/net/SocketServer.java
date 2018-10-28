@@ -16,6 +16,61 @@ public class SocketServer implements Runnable {
     private Thread listenThread = null;
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
+    /**
+     * Called after the server is in a state ready to accept new incoming connections.
+     * @Note: This method is a stub and is intended to be overridden by subclasses that
+     *        wish to be notified of this event
+     */
+    protected void onListen() {
+    }
+
+    /**
+     * Called after the server is no longer in a condition to accept new incoming connections (typically
+     * when the server is being shut down).
+     * @Note: This method is a stub and is intended to be overridden by subclasses that
+     *        wish to be notified of this event
+     */
+    protected void onListenEnded() {
+    }
+
+    /**
+     * Called when a new incoming connection has been accepted. At the time this method is invoked, the
+     * connection is not fully initialized (for example, any unique connection ID should be set by the
+     * subclass override of this method).
+     * @param connection The new incoming connection.
+     * @Note: This method is a stub and is intended to be overridden by subclasses that
+     *        wish to be notified of this event
+     * @Note: This method will be invoked from a different thread and it is the responsibility
+     *        of the subclass to manage any cross-thread synchronization needed.
+     */
+    protected void onConnectionOpen(IConnection connection) {
+    }
+
+    /**
+     * Called when an existing connection has closed (when the remote client initiates the disconnection). At
+     * the time that this method is invoked, the connection has been closed and any messages sent on the connection
+     * will fail to reach the intended destination.
+     * @param connection The connection that has been closed.
+     * @Note: This method is a stub and is intended to be overridden by subclasses that
+     *        wish to be notified of this event
+     * @Note: This method will be invoked from a different thread and it is the responsibility
+     *        of the subclass to manage any cross-thread synchronization needed.
+     */
+    protected void onConnectionClose(IConnection connection) {
+    }
+
+    /**
+     * Called when a packet arrives on an existing connection.
+     * @param connection The connection receiving the packet.
+     * @param packet The packet that arrived on the connection.
+     * @Note: This method is a stub and is intended to be overridden by subclasses that
+     *        wish to be notified of this event
+     * @Note: This method will be invoked from a different thread and it is the responsibility
+     *        of the subclass to manage any cross-thread synchronization needed.
+     */
+    protected void onPacketReceived(IConnection connection, Packet packet) {
+    }
+
     private ConnectionListener connectionListener = new ConnectionListener() {
         @Override
         public void connected(ConnectedEvent e) {
@@ -70,30 +125,6 @@ public class SocketServer implements Runnable {
     protected void stopNetwork() throws Exception {
         serverSocket.close();
         onListenEnded();
-    }
-
-    protected void onListen() {
-
-    }
-
-    protected void onListenEnded() {
-
-    }
-
-    protected void onConnectionOpen(IConnection connection) {
-
-    }
-
-    protected void onConnectionClose(IConnection connection) {
-
-    }
-
-    protected void onPacketReceived(IConnection connection, Packet packet) {
-
-    }
-
-    protected void onError(IConnection connection, Exception exception) {
-
     }
 
     @Override

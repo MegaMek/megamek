@@ -269,6 +269,22 @@ public class Tank extends Entity {
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
         }
+        
+        //If the unit is towing trailers, adjust its walkMP, TW p205
+        if (!getAllTowedUnits().isEmpty()) {
+            double tractorWeight = getWeight();
+            double trailerWeight = 0;
+            //Add up the trailers
+            for (int id : getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                trailerWeight += tr.getWeight();
+            }
+            if (trailerWeight <= (tractorWeight / 4)) {
+                j = Math.max((j - 3), (j / 2));
+            } else {
+                j = (j / 2);
+            }
+        }
 
         return j;
 

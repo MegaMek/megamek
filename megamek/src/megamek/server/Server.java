@@ -10045,6 +10045,7 @@ public class Server implements Runnable {
         double trailerPositionOffset = (trailerNumber + 1); //Offset so we get the right position index
         //If the trailer is superheavy, place it in a hex by itself
         if (trailer.isSuperHeavy()) {
+            trailerPositionOffset ++;
             stepNumber = (trainPath.size() - (int) trailerPositionOffset);
             trailerPos = trainPath.get(stepNumber);
             trailer.setPosition(trailerPos);

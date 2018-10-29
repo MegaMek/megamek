@@ -3391,19 +3391,6 @@ public class MoveStep implements Serializable {
             // System.err.println("can't jump over too-high terrain");
             return false;
         }
-        
-        //If we're a land train with mixed motive types, use the most restrictive type
-        if (!entity.getAllTowedUnits().isEmpty()) {
-            boolean prohibitedByTrailer = false;
-            //Add up the trailers
-            for (int id : entity.getAllTowedUnits()) {
-                Entity tr = game.getEntity(id);
-                prohibitedByTrailer = tr.isLocationProhibited(dest, getElevation());
-                if (prohibitedByTrailer) {
-                    return false;
-                }
-            }
-        }
 
         // Certain movement types have terrain restrictions; terrain
         // restrictions are lifted when moving along a road or bridge,
@@ -3444,6 +3431,23 @@ public class MoveStep implements Serializable {
                 Coords secondaryCoords = dest.translated(dir);
                 IHex secondaryHex = game.getBoard().getHex(secondaryCoords);
                 if (!secondaryHex.hasPavement()) {
+                    return false;
+                }
+            }
+        }
+        
+        //If we're a land train with mixed motive types, use the most restrictive type
+        if (!entity.getAllTowedUnits().isEmpty()
+                && (type != MoveStepType.LOAD
+                    && type != MoveStepType.UNLOAD
+                    && type != MoveStepType.TOW
+                    && type != MoveStepType.DISCONNECT)) {
+            boolean prohibitedByTrailer = false;
+            //Add up the trailers
+            for (int id : entity.getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                prohibitedByTrailer = tr.isLocationProhibited(dest, getElevation());
+                if (prohibitedByTrailer) {
                     return false;
                 }
             }

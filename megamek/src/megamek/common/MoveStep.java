@@ -3358,7 +3358,7 @@ public class MoveStep implements Serializable {
             }
 
             // cant move through a hex with a LargeSupportTank or a grounded
-            // Dropship unless infantry
+            // Dropship or a tractor towing trailers unless infantry
             // or a VTOL at high enough elevation
             if (!(entity instanceof Infantry)) {
                 for (Entity inHex : game.getEntitiesVector(src)) {
@@ -3366,6 +3366,8 @@ public class MoveStep implements Serializable {
                         continue;
                     }
                     if ((inHex instanceof LargeSupportTank)
+                            || (!entity.getAllTowedUnits().isEmpty())
+                            || (!inHex.getAllTowedUnits().isEmpty())
                             || ((inHex instanceof Dropship)
                             && !inHex.isAirborne() && !inHex
                             .isSpaceborne())) {

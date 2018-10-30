@@ -317,6 +317,7 @@ public class Compute {
                 || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
                 || (entering instanceof Dropship)
+                || (!entering.getAllTowedUnits().isEmpty())
                 || ((entering instanceof Mech) && ((Mech) entering)
                         .isSuperHeavy());
 
@@ -393,6 +394,7 @@ public class Compute {
                     // only inf can be in the same hex as a large support vee
                     // grounded dropships are treated as large support vees,
                     // ditto for superheavy mechs
+                    // also for tractors with attached trailers
                     if (isLargeSupport && !(inHex instanceof Infantry)) {
                         return inHex;
                     }

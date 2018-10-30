@@ -3231,11 +3231,6 @@ public class MoveStep implements Serializable {
         // The entity is trying to tow. Check for a valid move.
         if (type == MoveStepType.TOW) {
 
-            // Vehicles can't tow after the first step.
-            if (!firstStep) {
-                return false;
-            }
-
             // Find the unit being towed.
             Entity other = game.getEntity(entity.getTowing());
 

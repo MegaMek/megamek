@@ -323,6 +323,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * A local copy of the current entity's loaded units.
      */
     private List<Entity> loadedUnits = null;
+    
+    /**
+     * A local copy of the current entity's towed trailers.
+     */
+    private List<Entity> towedUnits = null;
 
     public static final int GEAR_LAND = 0;
     public static final int GEAR_BACKUP = 1;
@@ -1207,6 +1212,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             }
         }
+        towedUnits = ce.getLoadedTrailers();
 
         updateLoadButtons();
         updateJoinButton();
@@ -3141,6 +3147,48 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Return the chosen unit.
         return choice;
     }
+    
+    /**
+     * Get the unit that the player wants to unload. This method will remove the
+     * unit from our local copy of loaded units.
+     *
+     * @return The <code>Entity</code> that the player wants to unload. This
+     * value will not be <code>null</code>.
+     */
+    private Entity getDisconnectedUnit() {
+        final String METHOD_NAME = "getDisconnectedUnit()";
+        Entity ce = ce();
+        Entity choice = null;
+        
+        // Handle error condition.
+        if (ce.getAllTowedUnits().isEmpty()) {
+            logDebug(METHOD_NAME, "Method called without any towed units.");
+            return null;
+        }
+        
+        // If we have multiple choices, display a selection dialog.
+        else if (ce.getAllTowedUnits().size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages.getString(
+                                    "MovementDisplay.DisconnectUnitDialog.message", new Object[]{//$NON-NLS-1$
+                                                                                             ce.getShortName(), ce.getUnusedString()}),
+                            Messages.getString("MovementDisplay.DisconnectUnitDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(towedUnits), null);
+            choice = (Entity) SharedUtility.getTargetPicked(towedUnits, input);
+        } // End have-choices
+
+        // Only one choice.
+        else {
+            choice = towedUnits.get(0);
+            towedUnits.remove(0);
+        }
+
+        // Return the chosen unit.
+        return choice;
+    }
 
     /**
      * Get the unit that the player wants to unload. This method will remove the
@@ -4640,6 +4688,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Entity other = getTowedUnit();
             if (other != null) {
                 cmd.addStep(MoveStepType.TOW);
+                clientgui.bv.drawMovementData(ce(), cmd);
+            } // else - didn't find a unit to tow
+        } else if (actionCmd.equals(MoveCommand.MOVE_DISCONNECT.getCmd())) {
+            // Ask the user if we're carrying multiple units.
+            Entity other = getDisconnectedUnit();
+            if (other != null) {
+                cmd.addStep(MoveStepType.DISCONNECT);
                 clientgui.bv.drawMovementData(ce(), cmd);
             } // else - didn't find a unit to tow
         } else if (actionCmd.equals(MoveCommand.MOVE_MOUNT.getCmd())) {

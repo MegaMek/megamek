@@ -2827,7 +2827,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 break;
             }
         }
-        //TODO: Trailer Disconnect
+        
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.
         if (!legalGear || (loadedUnits.size() == 0) || (cen == Entity.NONE)
@@ -2836,6 +2836,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             setUnloadEnabled(true);
         }
+        
+        boolean canDropTrailerHere = false;
+        for (Entity en : towedUnits) {
+            if (en.isElevationValid(unloadEl, hex)) {
+                canDropTrailerHere = true;
+                break;
+            }
+        }
+        // Disable the "Disconnect" button if we're in the wrong
+        // gear or if the entity is not transporting units.
+        if (!legalGear || (towedUnits.size() == 0) || (cen == Entity.NONE)
+            || (!canDropTrailerHere)) {
+            setDisconnectEnabled(false);
+        } else {
+            setDisconnectEnabled(true);
+        }
+        
         // If the current entity has moved, disable "Load" and "Tow" buttons.
         if ((cmd.length() > 0) || (cen == Entity.NONE)) {
             setLoadEnabled(false);

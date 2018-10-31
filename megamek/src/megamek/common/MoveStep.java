@@ -185,7 +185,8 @@ public class MoveStep implements Serializable {
             isCarefulPath = path.isCareful();
         }
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -208,7 +209,8 @@ public class MoveStep implements Serializable {
         targetType = target.getTargetType();
         targetPos = pos;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -228,7 +230,8 @@ public class MoveStep implements Serializable {
         targetId = target.getTargetId();
         targetType = target.getTargetType();
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -262,7 +265,8 @@ public class MoveStep implements Serializable {
         this(path, type);
         launched = targets;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
+                || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -752,8 +756,10 @@ public class MoveStep implements Serializable {
         }
         switch (getType()) {
             case UNLOAD:
+            case DISCONNECT:
                 // Infantry in immobilized transporters get
                 // a special "unload stranded" game turn.
+                // So do trailers on an immobilized tractor
                 hasEverUnloaded = true;
                 setMp(0);
                 break;
@@ -1514,7 +1520,7 @@ public class MoveStep implements Serializable {
             legal = false;
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
-                && (type != MoveStepType.UNDOCK)
+                && (type != MoveStepType.UNDOCK) && (type != MoveStepType.DISCONNECT)
                 && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
@@ -2620,6 +2626,35 @@ public class MoveStep implements Serializable {
                 }
             }
         }
+        
+        // Is the entity trying to drop a trailer?
+        if (stepType == MoveStepType.DISCONNECT) {
+
+            if (isFirstStep()) {
+                if (getMpUsed() <= entity.getRunMP()) {
+                    movementType = EntityMovementType.MOVE_RUN;
+                    if (getMpUsed() <= entity.getWalkMP()) {
+                        movementType = EntityMovementType.MOVE_WALK;
+                    }
+                }
+            } else {
+                movementType = prev.getMovementType(false);
+            }
+
+            // Can't unload units into prohibited terrain
+            // or into stacking violation.
+            Targetable target = getTarget(game);
+            if (target instanceof Entity) {
+                Entity other = (Entity) target;
+                if ((null != Compute.stackingViolation(game, other, curPos,
+                        entity)) || other.isLocationProhibited(curPos, getElevation())) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }
+            } else {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+        
+        }
 
         if (stepType == MoveStepType.SHAKE_OFF_SWARMERS) {
             if ((getMp() == 0) || !(entity instanceof Tank)) {
@@ -2784,6 +2819,7 @@ public class MoveStep implements Serializable {
                 setTurning(true);
                 break;
             case UNLOAD:
+            case DISCONNECT:
                 // Unloading must be the last step.
                 setUnloaded(true);
                 break;

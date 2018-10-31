@@ -15330,6 +15330,33 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Get a <code>List</code> of the trailers currently loaded into this payload.
+     *
+     * @return A <code>List</code> of loaded <code>Entity</code> units. This
+     * list will never be <code>null</code>, but it may be empty. The
+     * returned <code>List</code> is independant from the under- lying
+     * data structure; modifying one does not affect the other.
+     * 
+     * This will only return loaded trailers
+     */
+    public List<Entity> getLoadedTrailers() {
+        List<Entity> result = new ArrayList<Entity>();
+
+        // Walk through this entity's transport components;
+        // add any trailers we find there
+        for (Transporter next : transports) {
+            for (Entity e : next.getLoadedUnits()) {
+                if (e.isTrailer()) {
+                    result.add(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+    /**
      * determine if an entity has an ability that is identified by its presence or absence only.
      * The entity may gain this ability from different places, not exclusively the crew.
      * @param name - name of the ability as recorded in the options

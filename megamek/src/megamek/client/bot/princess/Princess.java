@@ -1860,6 +1860,11 @@ public class Princess extends BotClient {
         // loop through all entities carried by the current entity
         for(Transporter transport : movingEntity.getTransports()) {
             for(Entity loadedEntity : transport.getLoadedUnits()) {
+                // there's really no good reason for Princess to disconnect trailers.
+                // Let's skip those for now. We don't want to create a bogus 'unload' step for them anyhow.
+                if (loadedEntity.isTrailer() && loadedEntity.getTowedBy() != Entity.NONE) {
+                    continue;
+                }
                 // favorable conditions include: 
                 // - the loaded entity should be able to enter the current terrain
                 // - the loaded entity should be within max weapons range + movement range of an enemy

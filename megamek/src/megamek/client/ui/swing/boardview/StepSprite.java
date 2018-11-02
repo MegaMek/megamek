@@ -310,6 +310,23 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 graph.drawString(tow, towX - 1, stepPos.y + 38);
                 break;
+            case DISCONNECT:
+                // Announce unload.
+                String disconnect = Messages.getString("BoardView1.Disconnect"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    disconnect = "(" + disconnect + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int disconnectX = (stepPos.x + 42)
+                        - (graph.getFontMetrics(graph.getFont())
+                                .stringWidth(disconnect) / 2);
+                int unloadY = stepPos.y + 38
+                        + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(disconnect, disconnectX, unloadY + 1);
+                graph.setColor(col);
+                graph.drawString(disconnect, disconnectX - 1, unloadY);
+                break;
             case LAUNCH:
             case UNDOCK:
                 // announce launch

@@ -281,6 +281,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SDS_DESTRUCT = BigInteger.valueOf(1).shiftLeft(219);
     public static final BigInteger F_SDS_JAMMER = BigInteger.valueOf(1).shiftLeft(220);
     public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
+    public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(200);
     
 
     // Secondary Flags for Physical Weapons
@@ -314,8 +315,10 @@ public class MiscType extends EquipmentType {
     public static final long S_CHAIN_WHIP = 1L << 24;
     public static final long S_SPOT_WELDER = 1L << 25; // TODO: add game rules
     public static final long S_MINING_DRILL = 1L << 26; // Miniatures
-    public static final long S_PROTOMECH_WEAPON = 1L << 27;
-    public static final long S_PROTO_QMS = 1L << 28;
+    
+    // Protomech physical weapons
+    public static final long S_PROTOMECH_WEAPON = 1L << 0;
+    public static final long S_PROTO_QMS = 1L << 1;
 
     public static final String S_ACTIVE_SHIELD = "Active";
     public static final String S_PASSIVE_SHIELD = "Passive";
@@ -9363,8 +9366,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.criticals = 1;
         misc.cost = 50000;
-        misc.hittable = true;
-        misc.flags = misc.flags.or(F_CLUB).or(F_PROTOMECH_EQUIPMENT);
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_PROTOMECH_MELEE).or(F_PROTOMECH_EQUIPMENT);
         misc.subType = S_PROTOMECH_WEAPON;
         misc.bv = 1;
         misc.rulesRefs = "337,TO";
@@ -9383,7 +9386,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 70000;
         misc.hittable = true;
-        misc.flags = misc.flags.or(F_CLUB).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_PROTOMECH_MELEE).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT);
         misc.subType = S_PROTO_QMS;
         misc.bv = 1;

@@ -62,9 +62,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             toReturn = 3;
         }
         // Protomech weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
-        if (entity.hasWorkingMisc(MiscType.F_CLUB, MiscType.S_PROTO_QMS)) {
+        if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE, MiscType.S_PROTO_QMS)) {
             toReturn += Math.ceil(entity.getWeight() / 5.0) * 2;
-        } else if (entity.hasWorkingMisc(MiscType.F_CLUB)) {
+        } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
             toReturn += Math.ceil(entity.getWeight() / 5.0);
         }
         if (((Protomech) entity).isEDPCharged() && (target instanceof Infantry)

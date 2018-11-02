@@ -320,12 +320,12 @@ class StepSprite extends Sprite {
                 int disconnectX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont())
                                 .stringWidth(disconnect) / 2);
-                int unloadY = stepPos.y + 38
+                int DisconnectY = stepPos.y + 38
                         + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
-                graph.drawString(disconnect, disconnectX, unloadY + 1);
+                graph.drawString(disconnect, disconnectX, DisconnectY + 1);
                 graph.setColor(col);
-                graph.drawString(disconnect, disconnectX - 1, unloadY);
+                graph.drawString(disconnect, disconnectX - 1, DisconnectY);
                 break;
             case LAUNCH:
             case UNDOCK:

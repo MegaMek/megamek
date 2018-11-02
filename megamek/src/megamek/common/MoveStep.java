@@ -3389,7 +3389,7 @@ public class MoveStep implements Serializable {
                     && (type != MoveStepType.TURN_LEFT)
                     && (type != MoveStepType.TURN_RIGHT)
                     && (type != MoveStepType.UNLOAD)
-                    && (type != MoveStepType.UNLOAD)
+                    && (type != MoveStepType.DISCONNECT)
                     && (type != MoveStepType.GO_PRONE)) {
                 return false;
             }

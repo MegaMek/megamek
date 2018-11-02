@@ -1711,7 +1711,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void useAmmo() {
-        if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+        if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            ArrayList<Mounted> chain = new ArrayList<>();
+            for (Mounted current = weapon.getLinked(); current != null; current = current.getLinked()) {
+                chain.add(current);
+            }
+            if (!chain.isEmpty()) {
+                chain.sort((m1, m2) -> Integer.compare(m2.getUsableShotsLeft(), m1.getUsableShotsLeft()));
+                weapon.setLinked(chain.get(0));
+                for (int i = 0; i < chain.size() - 1; i++) {
+                    chain.get(i).setLinked(chain.get(i + 1));
+                }
+                chain.get(chain.size() - 1).setLinked(null);
+                if (weapon.getLinked().getUsableShotsLeft() == 0) {
+                    weapon.setFired(true);
+                }
+            }
+        } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             weapon.setFired(true);
         }
         setDone();

@@ -1082,6 +1082,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     } else {
                         shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                     }
+                    // Protomechs are limited to the number of shots allocated in construction
+                } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    shotsPerTon = m.getBaseShotsLeft();
                 }
                 for (int i = 0; i <= shotsPerTon; i += stepSize){
                     m_num_shots.addItem(i);
@@ -1100,6 +1103,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         // BA always have a certain number of shots per slot
                         if (entity instanceof BattleArmor){
                             shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
+                            // Protomechs are limited to number of shots added during construction
+                        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                            shotsPerTon = m.getBaseShotsLeft();
                         }
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
@@ -1119,11 +1125,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     }});
 
 
-                int loc;
+                int loc = m.getLocation();
                 boolean isOneShot = false;
-                if (m.getLocation() == Entity.LOC_NONE) {
+                if (loc == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
+                    // some weapons (e.g. fusillade) use the one-shot mechanic but have an extra reload
+                    // which is chained to the first
                     Mounted linkedBy = m.getLinkedBy();
+                    while (linkedBy.getLinkedBy() != null) {
+                        linkedBy = linkedBy.getLinkedBy();
+                    }
                     loc = linkedBy.getLocation();
                     isOneShot = linkedBy.isOneShot();
                 } else {
@@ -1368,7 +1379,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              * Common functionality that applies the panel's current ammo bin choice to the panel's weapon.
              */
             public void applyChoice() {
-                m_mounted.setLinked(matchingAmmoBins.get(ammoBins.getSelectedIndex()));
+                entity.loadWeapon(m_mounted, matchingAmmoBins.get(ammoBins.getSelectedIndex()));
             }
         }
 

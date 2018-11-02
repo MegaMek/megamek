@@ -328,7 +328,7 @@ public class Aero extends Entity implements IAero, IBomber {
             engineLoss = 1;
         }
         j = Math.max(0, j - (engineHits * engineLoss));
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if ((null != game) && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -365,7 +365,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getCurrentThrust() {
         int j = getOriginalWalkMP();
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {

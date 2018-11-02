@@ -535,7 +535,7 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // Can't move out of a hex with an enemy unit unless we started
-        // there, BUT we're allowed to turn, unload, or go prone.
+        // there, BUT we're allowed to turn, unload/disconnect, or go prone.
         Coords pos = getEntity().getPosition();
         boolean isMech = getEntity() instanceof Mech;
         int elev = getEntity().getElevation();
@@ -562,10 +562,11 @@ public class MovePath implements Cloneable, Serializable {
                     }
                     continue;
                 }
-                // We've returned, only following 4 types are legal
+                // We've returned, only following 5 types are legal
                 if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
                         && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
                         && (step.getType() != MovePath.MoveStepType.UNLOAD)
+                        && (step.getType() != MovePath.MoveStepType.DISCONNECT)
                         && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
                     // we only need to identify the first illegal move
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);

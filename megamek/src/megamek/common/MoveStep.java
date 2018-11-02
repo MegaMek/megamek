@@ -3431,8 +3431,9 @@ public class MoveStep implements Serializable {
         // or when flying. Naval movement does not have the pavement
         // exemption.
         if (entity.isLocationProhibited(dest, getElevation())
-                // Units in prohibited terran should still be able to unload
+                // Units in prohibited terran should still be able to unload/disconnect
                 && (type != MoveStepType.UNLOAD)
+                && (type != MoveStepType.DISCONNECT)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
                 // QuadVees can convert to vehicle mode even if they cannot enter the terrain

@@ -186,7 +186,7 @@ public class MoveStep implements Serializable {
         }
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
                 || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
-                || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -231,7 +231,7 @@ public class MoveStep implements Serializable {
         targetType = target.getTargetType();
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
                 || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
-                || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -266,7 +266,7 @@ public class MoveStep implements Serializable {
         launched = targets;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
                 || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
-                || (type == MoveStepType.UNDOCK)) {
+                || (type == MoveStepType.DISCONNECT)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -3472,6 +3472,7 @@ public class MoveStep implements Serializable {
         }
         
         //If we're a land train with mixed motive types, use the most restrictive type
+        //to determine terrain restrictions
         if (!entity.getAllTowedUnits().isEmpty()
                 && (type != MoveStepType.LOAD
                     && type != MoveStepType.UNLOAD
@@ -3504,14 +3505,15 @@ public class MoveStep implements Serializable {
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
                 && (movementType != EntityMovementType.MOVE_VTOL_SPRINT)
-                // Units in prohibited terran should still be able to unload
+                // Units in prohibited terran should still be able to unload/disconnect
                 && (type != MoveStepType.UNLOAD)
+                && (type != MoveStepType.DISCONNECT)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
                 // QuadVees can still convert to vehicle mode in prohibited terrain, but cannot leave
                 && (type != MoveStepType.CONVERT_MODE)
                 && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
-            // System.err.println("in restriced terrain");
+            // System.err.println("in restricted terrain");
             return false;
         }
         if (type == MoveStepType.UP) {

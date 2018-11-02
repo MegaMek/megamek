@@ -4711,7 +4711,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Ask the user if we're carrying multiple units.
             Entity other = getDisconnectedUnit();
             if (other != null) {
-                cmd.addStep(MoveStepType.DISCONNECT);
+                cmd.addStep(MoveStepType.DISCONNECT, other);
                 clientgui.bv.drawMovementData(ce(), cmd);
             } // else - didn't find a unit to tow
         } else if (actionCmd.equals(MoveCommand.MOVE_MOUNT.getCmd())) {

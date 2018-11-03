@@ -47,6 +47,10 @@ Biped
 5
 </jumpingMP>
 
+<interface_cockpit>
+false
+</interface_cockpit>
+
 <engine_type>
 0
 </engine_type>
@@ -64,14 +68,12 @@ Biped
 </armor>
 
 <Body Equipment>
-Clan Ammo LRM-5 (24)
-Clan Ammo LRM-5 (12)
-Clan Ammo LRM-5 (12)
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
 ExtendedJumpJetSystem
+Clan Ammo LRM-5 (48)
 </Body Equipment>
 
 <Head Equipment>

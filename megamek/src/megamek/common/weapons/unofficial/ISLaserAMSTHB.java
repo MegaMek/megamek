@@ -49,7 +49,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         maxRange = RANGE_SHORT;
         shortAV = 3;
         ammoType = AmmoType.T_NA;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 2;
         bv = 105;
         atClass = CLASS_AMS;

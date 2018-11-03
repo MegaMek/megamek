@@ -44,7 +44,7 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         this.mediumRange = 2;
         this.longRange = 150;
         this.extremeRange = 150; // No extreme range.
-        this.tonnage = 135f;
+        this.tonnage = 135;
         this.criticals = 120;
         this.flags = flags.or(F_CRUISE_MISSILE);
         this.bv = 2281;

@@ -49,7 +49,7 @@ public class ISGAC4 extends ACWeapon {
         mediumRange = 16;
         longRange = 24;
         extremeRange = 32;
-        tonnage = 12.0f;
+        tonnage = 12.0;
         criticals = 4;
         bv = 175;
         cost = 200000;

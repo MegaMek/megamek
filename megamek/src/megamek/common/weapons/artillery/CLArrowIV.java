@@ -48,7 +48,7 @@ public class CLArrowIV extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 9;
         extremeRange = 9; // No extreme range.
-        tonnage = 12f;
+        tonnage = 12;
         criticals = 12;
         bv = 240;
         cost = 450000;

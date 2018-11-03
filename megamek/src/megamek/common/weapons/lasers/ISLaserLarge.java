@@ -43,7 +43,7 @@ public class ISLaserLarge extends LaserWeapon {
         this.waterMediumRange = 6;
         this.waterLongRange = 9;
         this.waterExtremeRange = 12;
-        this.tonnage = 5.0f;
+        this.tonnage = 5.0;
         this.criticals = 2;
         this.bv = 123;
         this.cost = 100000;
@@ -51,6 +51,7 @@ public class ISLaserLarge extends LaserWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         rulesRefs = "227,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

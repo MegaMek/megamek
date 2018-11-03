@@ -29,7 +29,7 @@ Sprite
 </originalBuildYear>
 
 <type>
-Clan Level 4
+Clan Level 3
 </type>
 
 <motion_type>
@@ -46,6 +46,10 @@ Biped
 <jumpingMP>
 3
 </jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
 
 <engine_type>
 0

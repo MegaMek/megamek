@@ -49,7 +49,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
-        tonnage = 6.0f;
+        tonnage = 6.0;
         criticals = 2;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);

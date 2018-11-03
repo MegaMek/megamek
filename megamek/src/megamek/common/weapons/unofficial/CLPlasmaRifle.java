@@ -15,10 +15,9 @@
  * Created on Sep 13, 2004
  *
  */
-package megamek.common.weapons.ppc;
+package megamek.common.weapons.unofficial;
 
 import megamek.common.BattleForceElement;
-import megamek.common.weapons.unofficial.PlasmaMFUKWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -48,7 +47,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         mediumRange = 14;
         longRange = 22;
         extremeRange = 28;
-        tonnage = 6.0f;
+        tonnage = 6.0;
         criticals = 2;
         bv = 400;
         cost = 300000;

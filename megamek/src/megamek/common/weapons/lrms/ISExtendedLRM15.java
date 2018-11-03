@@ -38,7 +38,7 @@ public class ISExtendedLRM15 extends ExtendedLRMWeapon {
         addLookupName("ELRM-15 (THB)");
         heat = 8;
         rackSize = 15;
-        tonnage = 12.0f;
+        tonnage = 12.0;
         criticals = 6;
         bv = 200;
         cost = 350000;

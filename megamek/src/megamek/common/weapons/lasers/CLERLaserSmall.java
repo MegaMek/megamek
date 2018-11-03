@@ -45,7 +45,7 @@ public class CLERLaserSmall extends LaserWeapon {
         waterMediumRange = 2;
         waterLongRange = 4;
         waterExtremeRange = 4;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
         bv = 31;

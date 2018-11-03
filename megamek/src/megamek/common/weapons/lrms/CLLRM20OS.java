@@ -35,10 +35,10 @@ public class CLLRM20OS extends LRMWeapon {
         heat = 6;
         rackSize = 20;
         minimumRange = WEAPON_NA;
-        tonnage = 5.5f;
+        tonnage = 5.5;
         criticals = 4;
         bv = 44;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 125000;
         shortAV = 12;
         medAV = 12;

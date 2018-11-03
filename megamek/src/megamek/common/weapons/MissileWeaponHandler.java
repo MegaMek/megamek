@@ -672,7 +672,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.add(wtype.getName() + number);
         if (entityTarget != null) {
             if (wtype.getAmmoType() != AmmoType.T_NA){
-                AmmoType atype = (AmmoType) weapon.getLinked().getType();
+                AmmoType atype = (AmmoType) ammo.getType();
                 if (atype.getMunitionType() != AmmoType.M_STANDARD){
                     r.messageId = 3116;
                     r.add(atype.getSubMunitionName());

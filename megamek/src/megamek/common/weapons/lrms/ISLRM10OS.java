@@ -36,10 +36,10 @@ public class ISLRM10OS extends LRMWeapon {
         heat = 4;
         rackSize = 10;
         minimumRange = 6;
-        tonnage = 5.5f;
+        tonnage = 5.5;
         criticals = 2;
         bv = 18;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 50000;
         shortAV = 6;
         medAV = 6;

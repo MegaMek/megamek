@@ -47,12 +47,13 @@ public class ISPulseLaserMedium extends PulseLaserWeapon {
         this.waterMediumRange = 3;
         this.waterLongRange = 4;
         this.waterExtremeRange = 6;
-        this.tonnage = 2.0f;
+        this.tonnage = 2.0;
         this.criticals = 1;
         this.bv = 48;
         this.cost = 60000;
         this.shortAV = 6;
         this.maxRange = RANGE_SHORT;
+        flags = flags.andNot(F_PROTO_WEAPON);
         rulesRefs = "226,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)

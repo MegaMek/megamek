@@ -42,7 +42,7 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         mediumRange = 18;
         longRange = 27;
         extremeRange = 36;
-        tonnage = 6.0f;
+        tonnage = 6.0;
         criticals = 5;
         bv = 42;
         cost = 150000;
@@ -52,6 +52,7 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         extAV = 2;
         maxRange = RANGE_EXT;
         rulesRefs = "97, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
         .setTechRating(RATING_F)

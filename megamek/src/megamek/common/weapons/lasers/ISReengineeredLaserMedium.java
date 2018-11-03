@@ -45,7 +45,7 @@ public class ISReengineeredLaserMedium extends ReengineeredLaserWeapon {
         waterMediumRange = 4;
         waterLongRange = 6;
         waterExtremeRange = 8;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         criticals = 2;
         bv = 65;
         cost = 10000;

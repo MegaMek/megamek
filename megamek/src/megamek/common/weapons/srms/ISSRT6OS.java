@@ -39,10 +39,10 @@ public class ISSRT6OS extends SRTWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 3.5f;
+        tonnage = 3.5;
         criticals = 2;
         bv = 12;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 40000;
         rulesRefs = "230,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

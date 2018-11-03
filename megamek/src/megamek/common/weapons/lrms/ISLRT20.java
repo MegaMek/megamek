@@ -42,7 +42,7 @@ public class ISLRT20 extends LRTWeapon {
         this.waterMediumRange = 14;
         this.waterLongRange = 21;
         this.waterExtremeRange = 28;
-        this.tonnage = 10.0f;
+        this.tonnage = 10.0;
         this.criticals = 5;
         this.bv = 181;
         this.cost = 250000;

@@ -74,6 +74,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.ProtomechClampMount;
 import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.SmallCraft;
@@ -1302,7 +1303,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                         Messages.getString(
                                 "MovementDisplay.ConfirmMoveRoll",
-                                new Object[] { new Integer(ce().getMASCTarget()) }), //$NON-NLS-1$
+                                new Object[] { Integer.valueOf(ce().getMASCTarget()) }), //$NON-NLS-1$
                         true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
@@ -1841,14 +1842,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                     Messages.getString(
                                             "MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$
                                                     toHit.getValueAsString(),
-                                                    new Double(
+                                                    Double.valueOf(
                                                             Compute.oddsAbove(
                                                                     toHit.getValue(),
                                                                     ce().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))),
                                                     toHit.getDesc(),
-                                                    new Integer(toDefender),
+                                                    Integer.valueOf(toDefender),
                                                     toHit.getTableDesc(),
-                                                    new Integer(toAttacker) }))) {
+                                                    Integer.valueOf(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1929,13 +1930,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             .doYesNoDialog(Messages.getString(title, new Object[] { target.getDisplayName() }), //$NON-NLS-1$
                                     Messages.getString(msg,new Object[] {//$NON-NLS-1$
                                             toHit.getValueAsString(),
-                                            new Double(
+                                            Double.valueOf(
                                                     Compute.oddsAbove(toHit
                                                             .getValue())),
                                             toHit.getDesc(),
                                             toDefender,
                                             toHit.getTableDesc(),
-                                            new Integer(toAttacker) }))) {
+                                            Integer.valueOf(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1978,18 +1979,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                     Messages.getString(
                                             "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
                                                     toHit.getValueAsString(),
-                                                    new Double(
+                                                    Double.valueOf(
                                                             Compute.oddsAbove(toHit
                                                                     .getValue())),
                                                     toHit.getDesc(),
-                                                    new Integer(
+                                                    Integer.valueOf(
                                                             DfaAttackAction
                                                                     .getDamageFor(
                                                                             ce,
                                                                             (target instanceof Infantry)
                                                                                     && !(target instanceof BattleArmor))),
                                                     toHit.getTableDesc(),
-                                                    new Integer(
+                                                    Integer.valueOf(
                                                             DfaAttackAction
                                                                     .getDamageTakenBy(ce)) }))) {
                         // if they answer yes, DFA the target
@@ -2973,19 +2974,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!(choice instanceof Infantry)) {
-            Vector<Integer> bayChoices = new Vector<Integer>();
+            List<Integer> bayChoices = new ArrayList<>();
             for (Transporter t : ce().getTransports()) {
                 if (t.canLoad(choice) && (t instanceof Bay)) {
                     bayChoices.add(((Bay) t).getBayNumber());
                 }
             }
-            String[] retVal = new String[bayChoices.size()];
-            int i = 0;
-            for (Integer bn : bayChoices) {
-                retVal[i++] = bn.toString() + " (Free Slots: "
-                              + (int) ce().getBayById(bn).getUnused() + ")";
-            }
             if (bayChoices.size() > 1) {
+                String[] retVal = new String[bayChoices.size()];
+                int i = 0;
+                for (Integer bn : bayChoices) {
+                    retVal[i++] = bn.toString() + " (Free Slots: "
+                            + (int) ce().getBayById(bn).getUnused() + ")";
+                }
                 String bayString = (String) JOptionPane
                         .showInputDialog(
                                 clientgui,
@@ -2996,12 +2997,43 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                 JOptionPane.QUESTION_MESSAGE, null, retVal,
                                 null);
                 choice.setTargetBay(Integer.parseInt(bayString.substring(0,
-                                                                         bayString.indexOf(" "))));
+                        bayString.indexOf(" "))));
                 // We need to update the entity here so that the server knows
                 // about our target bay
                 clientgui.getClient().sendUpdateEntity(choice);
-            } else {
-                choice.setTargetBay(-1); // Safety set!
+            } else if (choice.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                bayChoices = new ArrayList<>();
+                for (Transporter t : ce().getTransports()) {
+                    if ((t instanceof ProtomechClampMount)
+                                && t.canLoad(choice)) {
+                        bayChoices.add(((ProtomechClampMount) t).isRear()? 1 : 0);
+                    }
+                }
+                if (bayChoices.size() > 1) {
+                    String[] retVal = new String[bayChoices.size()];
+                    int i = 0;
+                    for (Integer bn : bayChoices) {
+                        retVal[i++] = bn > 0?
+                                Messages.getString("MovementDisplay.loadProtoClampMountDialog.rear") :
+                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.front");
+                    }
+                    String bayString = (String) JOptionPane
+                            .showInputDialog(
+                                    clientgui,
+                                    Messages.getString(
+                                            "MovementDisplay.loadProtoClampMountDialog.message",
+                                            new Object[]{ce().getShortName()}), //$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.loadProtoClampMountDialog.title"), //$NON-NLS-1$
+                                    JOptionPane.QUESTION_MESSAGE, null, retVal,
+                                    null);
+                    choice.setTargetBay(bayString.equals(Messages
+                            .getString("MovementDisplay.loadProtoClampMountDialog.front"))? 0 : 1);
+                    // We need to update the entity here so that the server knows
+                    // about our target bay
+                    clientgui.getClient().sendUpdateEntity(choice);
+                } else {
+                    choice.setTargetBay(-1); // Safety set!
+                }
             }
         } else {
             choice.setTargetBay(-1); // Safety set!
@@ -4372,7 +4404,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String msg = Messages.getString(
                     "MovementDisplay.ClearMinefieldDialog.message", //$NON-NLS-1$
                     new Object[] {
-                    new Integer(clear), new Integer(boom) });
+                    Integer.valueOf(clear), Integer.valueOf(boom) });
             if ((null != mf) && clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();

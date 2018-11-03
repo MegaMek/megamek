@@ -42,7 +42,7 @@ public class ISLB10XAC extends LBXACWeapon {
         this.mediumRange = 12;
         this.longRange = 18;
         this.extremeRange = 24;
-        this.tonnage = 11.0f;
+        this.tonnage = 11.0;
         this.criticals = 6;
         this.bv = 148;
         this.cost = 400000;
@@ -50,6 +50,7 @@ public class ISLB10XAC extends LBXACWeapon {
         this.medAV = 10;
         this.maxRange = RANGE_MED;
         rulesRefs = "207,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

@@ -33,7 +33,7 @@ public class ISMML5 extends MMLWeapon {
         addLookupName("IS MML-5");
         heat = 3;
         rackSize = 5;
-        tonnage = 3f;
+        tonnage = 3;
         criticals = 3;
         bv = 45;
         cost = 75000;

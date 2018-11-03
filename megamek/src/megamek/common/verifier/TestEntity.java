@@ -34,6 +34,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.ITechManager;
 import megamek.common.ITechnology;
@@ -82,6 +83,8 @@ public abstract class TestEntity implements TestEntityOption {
     public abstract boolean isSmallCraft();
     
     public abstract boolean isAdvancedAerospace();
+    
+    public abstract boolean isProtomech();
 
     public abstract double getWeightControls();
 
@@ -376,12 +379,7 @@ public abstract class TestEntity implements TestEntityOption {
         if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
             return TestAero.eqRequiresLocation(eq, entity.isFighter());
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            // TODO: Move to TestProtomech
-            return !(eq instanceof AmmoType)
-                    && !((eq instanceof MiscType)
-                            && (eq.hasFlag(MiscType.F_JUMP_JET)
-                                    || eq.hasFlag(MiscType.F_UMU)
-                                    || eq.hasFlag(MiscType.F_MASC)));
+            return TestProtomech.requiresSlot(eq);
         }
         return true;
     }
@@ -527,6 +525,7 @@ public abstract class TestEntity implements TestEntityOption {
                     || mt.hasFlag(MiscType.F_HEAT_DISSIPATING)
                     || mt.hasFlag(MiscType.F_IMPACT_RESISTANT)
                     || mt.hasFlag(MiscType.F_BALLISTIC_REINFORCED)
+                    || mt.hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
                     || mt.hasFlag(MiscType.F_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
@@ -818,6 +817,62 @@ public abstract class TestEntity implements TestEntityOption {
             return 10;
         }
         return mt.getCriticals(getEntity());
+    }
+
+    /**
+     * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
+     * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
+     * equipment.
+     * 
+     * @return The number of heat sinks required in construction
+     */
+    protected int heatNeutralHSRequirement() {
+        int heat = 0;
+        for (Mounted m : getEntity().getWeaponList()) {
+            WeaponType wt = (WeaponType) m.getType();
+            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
+                    || wt.hasFlag(WeaponType.F_PPC)
+                    || wt.hasFlag(WeaponType.F_PLASMA)
+                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                heat += wt.getHeat();
+            }
+            // laser insulator reduce heat by 1, to a minimum of 1
+            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
+                    && !m.getLinkedBy().isInoperable()
+                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                heat -= 1;
+                if (heat == 0) {
+                    heat++;
+                }
+            }
+
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                    MiscType) && m.getLinkedBy().getType().
+                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                heat += 5;
+            }
+        }
+        for (Mounted m : getEntity().getMisc()) {
+            MiscType mtype = (MiscType)m.getType();
+            // mobile HPGs count as energy weapons for construction purposes
+            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
+                heat += 20;
+            }
+            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                heat += 2;
+            }
+            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+                heat += 12;
+            }
+            if (mtype.hasFlag(MiscType.F_NOVA)) {
+                heat += 2;
+            }
+        }
+        if (getEntity().hasStealth()) {
+            heat += 10;
+        }
+        return heat;
     }
 
     public double calculateWeight() {
@@ -1425,6 +1480,13 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getArmoredComponentWeight() {
         return 0.0f;
+    }
+
+    public static boolean usesKgStandard(Entity entity) {
+        return entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                || (EntityWeightClass.getWeightClass(entity.getWeight(), entity)
+                        == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }
 
 } // End class TestEntity

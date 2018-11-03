@@ -48,7 +48,7 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 100.0f;
+        tonnage = 100.0;
         bv = 670;
         cost = 75000;
         shortAV = 3;

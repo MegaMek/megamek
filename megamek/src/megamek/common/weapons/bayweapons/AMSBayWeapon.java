@@ -44,7 +44,7 @@ public class AMSBayWeapon extends AmmoBayWeapon {
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 1;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_AMS;

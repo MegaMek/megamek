@@ -45,6 +45,7 @@ public class CLTAG extends TAGWeapon {
         bv = 0;
         cost = 50000;
         rulesRefs = "238,TM";
+        flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

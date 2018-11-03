@@ -54,7 +54,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         mediumRange = 15;
         longRange = 22;
         extremeRange = 30;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         criticals = 7;
         bv = 198;
         cost = 350000;

@@ -47,7 +47,7 @@ public class ISArrowIV extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 8;
         extremeRange = 8; // No extreme range.
-        tonnage = 15f;
+        tonnage = 15;
         criticals = 15;
         bv = 240;
         cost = 450000;

@@ -808,8 +808,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         attackValue = calcAttackValue();
         CounterAV = getCounterAV();
-        
-        //This is for all other targets in atmosphere
         nDamPerHit = calcDamagePerHit();
         
         // Do we need some sort of special resolution (minefields, artillery,

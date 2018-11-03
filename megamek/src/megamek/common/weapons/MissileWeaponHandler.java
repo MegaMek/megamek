@@ -809,17 +809,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         attackValue = calcAttackValue();
         CounterAV = getCounterAV();
         
-        //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
-        //It's also rare but possible for two hostile grounded dropships to shoot at each other with individual weapons
-        //with this handler. They'll use the cluster table too.
-        if (entityTarget != null 
-                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
-                && waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays())) {
-            nDamPerHit = attackValue;
-        } else {
-            //This is for all other targets in atmosphere
-            nDamPerHit = calcDamagePerHit();
-        } 
+        //This is for all other targets in atmosphere
+        nDamPerHit = calcDamagePerHit();
         
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {

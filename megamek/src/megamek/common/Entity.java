@@ -15288,14 +15288,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void disconnectUnit(int id) {
         Entity towed = game.getEntity(id);
         Entity tractor = game.getEntity(towed.getTractor());
-        connectedUnits.remove(id);
-        towed.setTowedBy(Entity.NONE);
+        //Remove the designated trailer from the tractor's carried units
+        removeTowedUnit(id);
+        connectedUnits.remove(connectedUnits.indexOf(id));
+        //Now, find and empty the transporter on the actual towing entity (trailer or tractor)
+        Entity towingEnt = game.getEntity(towed.towedBy);
+        if (towingEnt != null) {
+            Transporter hitch = towingEnt.getHitchById(towed.getTargetBay());
+            if (hitch != null) {
+                hitch.unload(towed);
+            }
+        }
+        //If there are other trailers behind the one being dropped, disconnect all of them
+        //from the tractor and from each other, so they can be picked up again later
         for (int i : towed.getConnectedUnits()) {
             Entity trailer = game.getEntity(i);
             trailer.setTractor(Entity.NONE);
             tractor.removeTowedUnit(i);
+            towingEnt = game.getEntity(trailer.towedBy);
+            if (towingEnt != null) {
+                Transporter hitch = towingEnt.getHitchById(towed.getTargetBay());
+                if (hitch != null) {
+                    hitch.unload(trailer);
+                }
+            }
+            trailer.setTowedBy(Entity.NONE);
+            trailer.connectedUnits.clear();
         }
+        //Update these last, or we get concurrency issues
         towed.setTractor(Entity.NONE);
+        towed.setTowedBy(Entity.NONE);
+        towed.connectedUnits.clear();
     }
     
     /**
@@ -15326,7 +15349,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Removes an entity from this tractor's train
      */
     public void removeTowedUnit(int id) {
-        isTractorFor.remove(id);
+        isTractorFor.remove(isTractorFor.indexOf(id));
     }
     
     /**
@@ -15348,6 +15371,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             for (Entity e : next.getLoadedUnits()) {
                 if (e.isTrailer()) {
                     result.add(e);
+                }
+            }
+        }
+        
+        //Now do the same for any additional trailers being carried by those trailers
+        for (int id : getAllTowedUnits()) {
+            Entity trailer = game.getEntity(id);
+            for (Transporter next : trailer.transports) {
+                for (Entity e : next.getLoadedUnits()) {
+                    if (e.isTrailer()) {
+                        result.add(e);
+                    }
                 }
             }
         }

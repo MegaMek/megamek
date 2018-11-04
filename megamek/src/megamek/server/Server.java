@@ -4569,6 +4569,49 @@ public class Server implements Runnable {
         entityUpdate(unit.getId());
         entityUpdate(loader.getId());
     }
+    
+    private boolean disconnectUnit(Entity tractor, Targetable unloaded,
+            Coords pos) {
+        return disconnectUnit(tractor, unloaded, pos, false);
+    }
+    
+    /**
+     * Have the tractor drop the indicated trailer. This will also disconnect all
+     * trailers that follow the one dropped.
+     *
+     * @param tractor
+     *            - the <code>Entity</code> that is disconnecting the trailer.
+     * @param unloaded
+     *            - the <code>Targetable</code> unit being unloaded.
+     * @param pos
+     *            - the <code>Coords</code> for the unloaded unit.
+     * @param evacuation
+     *            - a <code>boolean</code> indicating whether this trailer is being
+     *            unloaded as a result of its carrying unit's destruction
+     * @return <code>true</code> if the unit was successfully unloaded,
+     *         <code>false</code> if the trailer isn't carried by tractor.
+     */
+    private boolean disconnectUnit(Entity tractor, Targetable unloaded,
+            Coords pos, boolean evacuation) {
+        
+        // We can only unload Entities.
+        Entity trailer = null;
+        if (unloaded instanceof Entity) {
+            trailer = (Entity) unloaded;
+        } else {
+            return false;
+        }
+
+        // Unload the unit.
+        tractor.disconnectUnit(trailer.getId());
+        
+        // Update the tractor and unloaded unit.
+        entityUpdate(trailer.getId());
+        entityUpdate(tractor.getId());
+
+        // Unloaded successfully.
+        return true;
+    }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
                                Coords pos, int facing, int elevation) {
@@ -4637,12 +4680,12 @@ public class Server implements Runnable {
             unit.setElevation(elevation);
         } else if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
             if (unit.getMovementMode() == EntityMovementMode.VTOL) {
-                // Flying units onload to the same elevation as the flying
+                // Flying units unload to the same elevation as the flying
                 // transport
                 unit.setElevation(elevation);
             } else if (game.getBoard().getBuildingAt(pos) != null) {
-                // non-flying unit onloaded from a flying onto a building
-                // -> sit on the roff
+                // non-flying unit unloaded from a flying onto a building
+                // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             } else {
                 while (elevation >= -hex.depth()) {
@@ -8962,6 +9005,23 @@ public class Server implements Runnable {
                     send(createTurnVectorPacket());
                 }
             }
+            
+            // Handle disconnecting trailers.
+            if (step.getType() == MoveStepType.DISCONNECT) {
+                Targetable unloaded = step.getTarget(game);
+                Coords unloadPos = curPos;
+                if (null != step.getTargetPosition()) {
+                    unloadPos = step.getTargetPosition();
+                }
+                if (!disconnectUnit(entity, unloaded, unloadPos)) {
+                    logError(METHOD_NAME,
+                            "Server was told to disconnect "
+                                    + unloaded.getDisplayName() + " from "
+                                    + entity.getDisplayName() + " into "
+                                    + curPos.getBoardNum());
+                }
+            }
+            
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)

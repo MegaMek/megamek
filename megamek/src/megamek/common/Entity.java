@@ -15092,8 +15092,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Tractor chassis mod that doesn't already have one
      */
     public void addTrailerHitchEquipment() {
-        //See Tank
-        return;
+        
     }
     
     /**

@@ -15088,6 +15088,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
+     * Tractor chassis mod that doesn't already have one
+     */
+    public void addTrailerHitchEquipment() {
+        //See Tank
+        return;
+    }
+    
+    /**
      * Determines if this vehicle is currently able to tow designated trailer. 
      *
      * @param trailerId - the ID of the <code>Entity</code> to be towed.

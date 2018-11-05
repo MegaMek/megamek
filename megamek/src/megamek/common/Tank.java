@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;
@@ -3212,10 +3213,50 @@ public class Tank extends Entity {
     }
     
     /**
+     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
+     * Tractor chassis mod that doesn't already have one
+     */
+    @Override
+    public void addTrailerHitchEquipment() {
+        //If we already have a hitch, don't add a new one
+        if (hasWorkingMisc(MiscType.F_HITCH)) {
+            return;
+        }
+        boolean hitchNeeded = false;
+        //Only support vees designed as Tractors should have a hitch
+        if (isSupportVehicle()) {
+            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+                hitchNeeded = true;
+            }
+        } else {
+            //but all tracked and wheeled military vees should get one
+            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
+                hitchNeeded = true;
+            }
+        }
+        if (hitchNeeded) {
+            //Add hitch to the rear by default
+            if (isSuperHeavy()) {
+                try {
+                    addEquipment(EquipmentType.get("Hitch"), SuperHeavyTank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //For vehicles, this shouldn't happen
+               }
+            } else {
+                try {
+                    addEquipment(EquipmentType.get("Hitch"), Tank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //ditto
+               }
+            }
+        }
+    }
+    
+    /**
      * Add a transporter for each trailer hitch the unit is equipped with
      */
     public void setTrailerHitches() {
-        if (hasTrailerHitch()) {
+        if (hasTrailerHitchTransporter()) {
             return;
         }
         for (Mounted m : getMisc()) {
@@ -3229,7 +3270,7 @@ public class Tank extends Entity {
      * Check to see if the unit has a trailer hitch transporter already
      * We need this to prevent duplicate transporters being created
      */
-    protected boolean hasTrailerHitch() {
+    protected boolean hasTrailerHitchTransporter() {
         for (Transporter t : getTransports()) {
             if (t instanceof TankTrailerHitch) {
                 return true;

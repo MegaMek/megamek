@@ -2631,7 +2631,7 @@ public class MoveStep implements Serializable {
         if (stepType == MoveStepType.DISCONNECT) {
             
             // If this isn't the first step, trailer position isn't updated by Server.processTrailerMovement()
-            // before this step
+            // before this step, so they don't drop off in the right place
             if (!isFirstStep()) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             } else {

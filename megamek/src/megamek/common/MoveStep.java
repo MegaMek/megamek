@@ -2629,16 +2629,13 @@ public class MoveStep implements Serializable {
         
         // Is the entity trying to drop a trailer?
         if (stepType == MoveStepType.DISCONNECT) {
-
-            if (isFirstStep()) {
-                if (getMpUsed() <= entity.getRunMP()) {
-                    movementType = EntityMovementType.MOVE_RUN;
-                    if (getMpUsed() <= entity.getWalkMP()) {
-                        movementType = EntityMovementType.MOVE_WALK;
-                    }
-                }
+            
+            // If this isn't the first step, trailer position isn't updated by Server.processTrailerMovement()
+            // before this step
+            if (!isFirstStep()) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
             } else {
-                movementType = prev.getMovementType(false);
+                movementType = EntityMovementType.MOVE_WALK;
             }
 
             // Can't unload units into prohibited terrain

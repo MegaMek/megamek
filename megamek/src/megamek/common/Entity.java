@@ -8006,6 +8006,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         for (Transporter next : transports) {
+            //Don't look at trailer hitches here, that's separate
+            if (next instanceof TankTrailerHitch) {
+                continue;
+            }
             for (Entity e : next.getLoadedUnits()) {
                 result.add(e);
             }

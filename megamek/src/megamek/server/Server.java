@@ -4570,11 +4570,6 @@ public class Server implements Runnable {
         entityUpdate(loader.getId());
     }
     
-    private boolean disconnectUnit(Entity tractor, Targetable unloaded,
-            Coords pos) {
-        return disconnectUnit(tractor, unloaded, pos, false);
-    }
-    
     /**
      * Have the tractor drop the indicated trailer. This will also disconnect all
      * trailers that follow the one dropped.
@@ -4592,7 +4587,7 @@ public class Server implements Runnable {
      *         <code>false</code> if the trailer isn't carried by tractor.
      */
     private boolean disconnectUnit(Entity tractor, Targetable unloaded,
-            Coords pos, boolean evacuation) {
+            Coords pos) {
         
         // We can only unload Entities.
         Entity trailer = null;

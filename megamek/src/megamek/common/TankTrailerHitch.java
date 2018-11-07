@@ -34,6 +34,15 @@ public class TankTrailerHitch implements Transporter {
     private static final long serialVersionUID = 1193349063084937973L;
     
     /**
+     * Is this transporter associated with a front or rear-mounted hitch equipment?
+     */
+    private boolean rearMounted = false;
+    
+    public boolean getRearMounted() {
+        return rearMounted;
+    }
+    
+    /**
      * The entity being towed by this hitch.
      */
     protected int towed = Entity.NONE;
@@ -102,9 +111,10 @@ public class TankTrailerHitch implements Transporter {
     // Public constructors and methods.
 
     /**
-     * Create a new hitch.
+     * Create a new hitch, specified as a (front) or rear mount.
      */
-    public TankTrailerHitch() {
+    public TankTrailerHitch(boolean rear) {
+        rearMounted = rear;
     }
 
     /**

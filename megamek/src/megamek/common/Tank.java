@@ -3258,9 +3258,13 @@ public class Tank extends Entity {
         if (hasTrailerHitchTransporter()) {
             return;
         }
+        boolean rearMounted = false;
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_HITCH)) {
-                addTransporter(new TankTrailerHitch());
+                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
+                    rearMounted = true;
+                }
+                addTransporter(new TankTrailerHitch(rearMounted));
             }
         }
     }

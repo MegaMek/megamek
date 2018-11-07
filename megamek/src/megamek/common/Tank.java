@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;

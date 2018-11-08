@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -3143,29 +3144,65 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         //Set up the correct hitch/transporter to use
-        HashMap<Integer, Integer> hitchChoices = new HashMap<Integer, Integer>();
-        //First, set up a list of all the entities in this train
+        //We need lots of data about the hitch to store in different places. Save that here
+        final class HitchChoice {
+            private final int id;
+            private final int number;
+
+            private HitchChoice(int id, int number) {
+                this.id = id;
+                this.number = number;
+            }
+
+            private int getId() {
+                return id;
+            }
+
+            private int getNumber() {
+                return number;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("%s Id:<%d> Trailer Hitch #[%d]", game.getEntity(id).getShortName(), getId(), getNumber());
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(id, number);
+            }
+        }
+        //Create a collection to keep my choices in
+        List<HitchChoice> hitchChoices = new ArrayList<HitchChoice>();
+        
+        //next, set up a list of all the entities in this train
         ArrayList<Entity> thisTrain = new ArrayList<Entity>();
         thisTrain.add(ce());
         for (int id : ce().getAllTowedUnits()) {
             Entity tr = game.getEntity(id);
             thisTrain.add(tr);
         }
+        //and store all the valid Hitch transporters that each one has
+        //really, there shouldn't be but one per entity. "Towing" front and rear with the
+        //tractor in the center isn't going to work well...
         for (Entity e : thisTrain) {
             for (Transporter t : e.getTransports()) {
                 if (t.canLoad(choice) && (t instanceof TankTrailerHitch)) {
-                    hitchChoices.put(e.getId(), e.getTransports().indexOf(t));
+                    HitchChoice hitch = new HitchChoice(e.getId(), e.getTransports().indexOf(t));
+                    hitchChoices.add(hitch);
                 }
             }
         }
-        String[] retVal = new String[hitchChoices.size()];
-        int i = 0;
-        for (Integer id : hitchChoices.keySet()) {
-            Entity e = game.getEntity(id);
-            retVal[i++] = e.getShortName() + " Id:" + "<" + id + ">" + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
-        }
-        //Gah, multiple choice test!
+        
+        //Gah, multiple choice test! 
         if (hitchChoices.size() > 1) {
+            //Set up a dialog box for the hitch options
+            String[] retVal = new String[hitchChoices.size()];
+            int i = 0;
+            for (HitchChoice hc : hitchChoices) {
+                Entity e = game.getEntity(hc.getId());
+                retVal[i++] = e.getShortName() + " Id:" + "<" + id + ">" + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
+            }
             String hitchString = (String) JOptionPane
                     .showInputDialog(
                             clientgui,

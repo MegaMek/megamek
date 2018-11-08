@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,39 +20,32 @@ Aquila
 AQA-1M
 </Model>
 
-<Tonnage>
-55
-</Tonnage>
+<year>
+3104
+</year>
+
+<originalBuildYear>
+3104
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-60
-48
-48
-41
-</Armor>
-
-<Nose Equipment>
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle Ammo
-ISLightGaussRifle Ammo
-ISLightGaussRifle Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -66,38 +59,55 @@ ISERMediumLaser
 320
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3104
-</year>
-
-<source>
-TRO 3145 Free Worlds League - Late Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+60
+48
+48
+41
+</armor>
 
-<history>
-</history>
+<Nose Equipment>
+ISLightGaussRifle
+ISLightGaussRifle
+</Nose Equipment>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+</Fuselage Equipment>
+
+<source>
+TRO 3145 Free Worlds League - Late Republic
+</source>
+
+<tonnage>
+55.0
+</tonnage>
 

@@ -52,7 +52,7 @@ public class CapMissTeleKillerWhaleWeapon extends CapitalMissileWeapon {
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 160.0f;
+        this.tonnage = 160.0;
         this.bv = 923;
         this.cost = 165000;
         this.flags = flags.or(F_MISSILE);

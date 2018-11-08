@@ -413,7 +413,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 

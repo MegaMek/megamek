@@ -20,6 +20,7 @@ package megamek.common;
  * 
  * @author James Damour (suvarov454@users.sourceforge.net)
  */
+@FunctionalInterface
 public interface EntitySelector {
     /**
      * Determine if the given <code>Entity</code> meets the selection

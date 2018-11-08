@@ -106,6 +106,14 @@ public class Tank extends Entity {
             300, 400, 500, 625 };
 
     @Override
+    public int getUnitType() {
+        EntityMovementMode mm = getMovementMode();
+        return (mm == EntityMovementMode.NAVAL) || (mm == EntityMovementMode.HYDROFOIL) || (mm == EntityMovementMode.SUBMARINE)
+             ? UnitType.NAVAL
+             : UnitType.TANK;
+    }
+
+    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
@@ -250,7 +258,7 @@ public class Tank extends Entity {
             return 0;
         }
         j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
                     .getMovementMods(this);
@@ -333,6 +341,11 @@ public class Tank extends Entity {
             return m_bHasNoTurret ? 5 : 6;
         }
         return 7;
+    }
+    
+    @Override
+    public int getBodyLocation() {
+        return LOC_BODY;
     }
 
     @Override
@@ -761,6 +774,11 @@ public class Tank extends Entity {
     @Override
     public boolean hasRearArmor(int loc) {
         return false;
+    }
+    
+    @Override
+    public int firstArmorIndex() {
+        return LOC_FRONT;
     }
 
     /**

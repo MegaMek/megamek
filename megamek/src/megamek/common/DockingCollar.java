@@ -91,6 +91,7 @@ public class DockingCollar implements Transporter {
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
         boolean result = false;
@@ -128,6 +129,7 @@ public class DockingCollar implements Transporter {
      *            <code>IllegalArgumentException</code> exception will be
      *            thrown.
      */
+    @Override
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
@@ -166,6 +168,7 @@ public class DockingCollar implements Transporter {
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
+    @Override
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
@@ -206,6 +209,7 @@ public class DockingCollar implements Transporter {
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
      */
+    @Override
     public boolean unload(Entity unit) {
 
         // can we unload?
@@ -230,10 +234,12 @@ public class DockingCollar implements Transporter {
      *
      * @return A <code>String</code> meant for a human.
      */
+    @Override
     public String getUnusedString() {
         return "Dropship - " + currentSpace + " units";
     }
 
+    @Override
     public double getUnused() {
         return currentSpace;
     }
@@ -251,6 +257,7 @@ public class DockingCollar implements Transporter {
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         return false;
     }
@@ -271,16 +278,18 @@ public class DockingCollar implements Transporter {
      *         location. This value will be <code>null</code> if no unit is
      *         transported on the outside at that location.
      */
+    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
 
+    @Override
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
         return rv;
     }
 
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 
@@ -292,14 +301,17 @@ public class DockingCollar implements Transporter {
         damaged = b;
     }
     
+    @Override
     public int hardpointCost() {
         return 1;
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }
     
+    @Override
     public void resetTransporter() {
         troops = new Vector<Integer>();
         currentSpace = totalSpace;

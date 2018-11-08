@@ -24,6 +24,10 @@ RPR-300
 3074
 </year>
 
+<originalBuildYear>
+3074
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -73,10 +80,6 @@ Aerodyne
 
 <Nose Equipment>
 ISHeavyGaussRifle
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
 PPC
 PPC
 </Nose Equipment>
@@ -89,6 +92,16 @@ PPC
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Jihad

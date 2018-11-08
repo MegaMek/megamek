@@ -149,7 +149,6 @@ Ammo NAC/40:40
 Ammo NAC/40:40
 (B) Naval Autocannon (NAC/40)
 Ammo NAC/40:40
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -181,6 +180,10 @@ Naval PPC (Heavy)
 Naval PPC (Heavy)
 Naval PPC (Heavy)
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Heavy)

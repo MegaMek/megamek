@@ -50,7 +50,7 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
         this.waterExtremeRange = 20;
-        this.tonnage = 7.0f;
+        this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 329;
         this.cost = 300000;
@@ -59,6 +59,7 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.longAV = 12;
         this.maxRange = RANGE_LONG;
         rulesRefs = "95,IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
             .setClanAdvancement(2822, 2823, DATE_NONE, 2831, 3080)

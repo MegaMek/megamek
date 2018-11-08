@@ -41,7 +41,7 @@ public class ISLRT5IOS extends LRTWeapon {
         waterMediumRange = 14;
         waterLongRange = 21;
         waterExtremeRange = 28;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         bv = 9;
         flags = flags.or(F_ONESHOT);

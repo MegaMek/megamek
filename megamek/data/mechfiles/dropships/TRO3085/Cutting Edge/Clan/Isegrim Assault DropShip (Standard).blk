@@ -42,7 +42,7 @@ smallcraftbay:1.0:1:2
 steeragequarters:50.0:0
 1stclassquarters:50.0:0
 crewquarters:147.0:0
-cargobay:418.0:2:1
+cargobay:418.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -164,6 +164,9 @@ Clan Ammo ATM-12 ER:30
 Clan Ammo ATM-12 HE:30
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 21
 </structural_integrity>
@@ -175,6 +178,10 @@ TRO 3085 - Jihad
 <tonnage>
 8500.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 26

@@ -49,13 +49,14 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
         this.bv = 5;
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "218,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(true)
     	.setUnofficial(false)

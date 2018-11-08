@@ -43,7 +43,7 @@ heavyvehiclebay:36.0:3:3
 2ndclassquarters:0.0:0
 1stclassquarters:80.0:0
 crewquarters:273.0:0
-cargobay:5752.0:1:4
+cargobay:5752.0:1:7
 </transporters>
 
 <SafeThrust>
@@ -128,6 +128,9 @@ Medium Laser
 IS Ammo LRM-20 Artemis-capable:12
 ISArtemisIV
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 10

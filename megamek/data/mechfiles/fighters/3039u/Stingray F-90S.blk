@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,24 +20,58 @@ Stingray
 F-90S
 </Model>
 
-<Tonnage>
-60
-</Tonnage>
+<year>
+2911
+</year>
+
+<originalBuildYear>
+2911
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+19
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 50
 42
 42
 34
-</Armor>
+</armor>
 
 <Nose Equipment>
 Autocannon/5
-IS Ammo AC/5
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -53,42 +87,18 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-19
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-2911
-</year>
+<Fuselage Equipment>
+IS Ammo AC/5
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+60.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

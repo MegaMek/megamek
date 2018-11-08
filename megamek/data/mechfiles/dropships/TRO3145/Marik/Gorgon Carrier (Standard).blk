@@ -41,7 +41,7 @@ asfbay:18.0:3:1
 2ndclassquarters:0.0:0
 1stclassquarters:30.0:0
 crewquarters:70.0:0
-cargobay:981.0:1:2
+cargobay:981.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -129,6 +129,9 @@ ISAntiMissileSystem
 ISAMS Ammo:72
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>
@@ -140,6 +143,10 @@ TRO 3145 Free Worlds League - Early Republic
 <tonnage>
 6800.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 46

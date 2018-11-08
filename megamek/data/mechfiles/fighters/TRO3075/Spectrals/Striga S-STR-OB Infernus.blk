@@ -24,6 +24,10 @@ S-STR-OB Infernus
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -98,6 +105,12 @@ ISMediumPulseLaser:OMNI
 ISMediumPulseLaser:OMNI
 ISERSmallLaser:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

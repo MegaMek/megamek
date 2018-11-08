@@ -313,6 +313,12 @@ public class TestAero extends TestEntity {
                 loc = Aero.LOC_AFT;
             }
         }
+        // Blue shield particle field dampener takes one slot in each arc.
+        if (a.hasMisc(MiscType.F_BLUE_SHIELD)) {
+            for (int i = 0; i < availSpace.length; i++) {
+                availSpace[i]--;
+            }
+        }
         
         // XXL engines take up extra space in the aft in conventional fighters
         if (((a.getEntityType() & Entity.ETYPE_CONV_FIGHTER) != 0)
@@ -548,6 +554,11 @@ public class TestAero extends TestEntity {
     public boolean isAdvancedAerospace() {
         return false;
     }
+    
+    @Override
+    public boolean isProtomech() {
+        return false;
+    }
 
     @Override
     public double getWeightMisc() {
@@ -625,62 +636,10 @@ public class TestAero extends TestEntity {
         return aero.getFuelTonnage();
     }
 
-    /**
-     * @return The number of heat sinks required by conventional fighters
-     */
-    private int getConventionalCountHeatLaserWeapons() {
-        int heat = 0;
-        for (Mounted m : aero.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                    || wt.hasFlag(WeaponType.F_PPC)
-                    || wt.hasFlag(WeaponType.F_PLASMA)
-                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
-                    && !m.getLinkedBy().isInoperable()
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
-                    MiscType) && m.getLinkedBy().getType().
-                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                heat += 5;
-            }
-        }
-        for (Mounted m : aero.getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                heat += 2;
-            }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
-                heat += 12;
-            }
-            if (mtype.hasFlag(MiscType.F_NOVA)) {
-            	heat += 2;
-            }
-        }
-        if (aero.hasStealth()) {
-            heat += 10;
-        }
-        return heat;
-    }
-
     @Override
     public int getCountHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            return getConventionalCountHeatLaserWeapons();
+            return heatNeutralHSRequirement();
         }
         return aero.getHeatSinks();
     }
@@ -688,7 +647,7 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            int required = getConventionalCountHeatLaserWeapons();
+            int required = heatNeutralHSRequirement();
             return Math.max(0, required - engine.getWeightFreeEngineHeatSinks());
         } else {
             return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);
@@ -1420,5 +1379,38 @@ public class TestAero extends TestEntity {
         }
         return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
     }
-    
+
+    /**
+     * Determines whether a piece of equipment should be mounted in a specific location, as opposed
+     * to the fuselage.
+     * 
+     * @param eq       The equipment
+     * @param fighter  If the aero is a fighter (including fixed wing support), the ammo is mounted in the
+     *                 fuselage. Otherwise it's in the location with the weapon.
+     * @return         Whether the equipment needs to be assigned to a location with a firing arc.
+     */
+    public static boolean eqRequiresLocation(EquipmentType eq, boolean fighter) {
+        if (!fighter) {
+            return (eq instanceof WeaponType)
+                    || (eq instanceof AmmoType)
+                    || ((eq instanceof MiscType)
+                            && (eq.hasFlag(MiscType.F_ARTEMIS)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                                    || eq.hasFlag(MiscType.F_APOLLO)
+                                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                                    || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
+        } else if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_CASE)) {
+                return eq.isClan();
+            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return !(eq instanceof AmmoType);
+        }
+    }
 }

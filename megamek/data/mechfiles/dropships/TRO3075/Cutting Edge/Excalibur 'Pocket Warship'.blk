@@ -41,7 +41,7 @@ Spheroid
 asfbay:6.0:2:2
 crewquarters:287.0:0
 steeragequarters:140.0:0
-cargobay:419.0:1:1
+cargobay:419.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -179,6 +179,9 @@ ISAMS Ammo:72
 Ammo Screen:20
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 14
 </structural_integrity>
@@ -190,6 +193,10 @@ TRO 3075 - Civil War
 <tonnage>
 16000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 53

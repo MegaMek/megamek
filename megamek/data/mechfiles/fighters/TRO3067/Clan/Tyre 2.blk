@@ -72,14 +72,9 @@ Aerodyne
 
 <Nose Equipment>
 CLUltraAC10
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
 CLMediumPulseLaser
 CLMediumPulseLaser
 CLMediumPulseLaser
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -93,6 +88,16 @@ CLERLargeLaser
 <Aft Equipment>
 CLERSmallLaser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Succession Wars

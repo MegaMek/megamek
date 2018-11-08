@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,26 +20,66 @@ Transit
 TR-13X 'Glare'
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3077
+</year>
+
+<originalBuildYear>
+3077
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 65
 35
 35
 33
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISImprovedHeavyGaussRifle
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
 ISERMediumLaser
 ISERMediumLaser
 </Nose Equipment>
@@ -55,42 +95,20 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-10
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 4
-</type>
-
-<year>
-3077
-</year>
+<Fuselage Equipment>
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+</Fuselage Equipment>
 
 <source>
 XTRO Liao - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-3
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

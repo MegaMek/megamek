@@ -38,7 +38,7 @@ Spheroid
 
 <transporters>
 heavyvehiclebay:36.0:2:1
-infantrybay:12.0:2:2
+infantrybay:12.0:2:2:Foot
 cargobay:1381.0:2:3
 2ndclassquarters:0.0:0
 1stclassquarters:50.0:0
@@ -135,6 +135,9 @@ Medium Laser
 IS Ammo LRM-15 Artemis-capable:16
 ISArtemisIV
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 9

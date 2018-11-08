@@ -33,6 +33,7 @@ public abstract class NGaussWeapon extends GaussWeapon {
         super();
         this.atClass = CLASS_CAPITAL_GAUSS;
         this.capital = true;
+        flags = flags.andNot(F_PROTO_WEAPON);
     }
     
     @Override

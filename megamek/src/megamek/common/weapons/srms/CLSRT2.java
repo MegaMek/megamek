@@ -39,7 +39,7 @@ public class CLSRT2 extends SRTWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         bv = 21;
         flags = flags.or(F_NO_FIRES);

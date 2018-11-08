@@ -44,7 +44,10 @@ public class Aero extends Entity implements IAero, IBomber {
     public static final int LOC_LWING = 1;
     public static final int LOC_RWING = 2;
     public static final int LOC_AFT = 3;
+    /** Location used for capital fighters and squadrons **/
     public static final int LOC_WINGS = 4;
+    /** Location used for equipment not allocated to a firing arc **/
+    public static final int LOC_FUSELAGE = 5;
 
     // ramming angles
     public static final int RAM_TOWARD_DIR = 0;
@@ -94,10 +97,10 @@ public class Aero extends Entity implements IAero, IBomber {
     // this needs to be larger, it is too easy to go over when you get to
     // warships
     // and bombs and such
-    private static final int[] NUM_OF_SLOTS = { 100, 100, 100, 100, 100, 100 };
+    private static final int[] NUM_OF_SLOTS = { 100, 100, 100, 100, 100, 100, 100 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "FSLG" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -118,7 +121,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int structIntegrity;
     private int orig_structIntegrity;
     // set up damage threshold
-    protected int damThresh[] = { 0, 0, 0, 0, 0 };
+    protected int damThresh[] = { 0, 0, 0, 0, 0, 0 };
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
 
@@ -212,7 +215,12 @@ public class Aero extends Entity implements IAero, IBomber {
         // need to set altitude to something different than entity
         altitude = 5;
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.AERO;
+    }
+
     protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
@@ -320,7 +328,7 @@ public class Aero extends Entity implements IAero, IBomber {
             engineLoss = 1;
         }
         j = Math.max(0, j - (engineHits * engineLoss));
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if ((null != game) && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -357,7 +365,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getCurrentThrust() {
         int j = getOriginalWalkMP();
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -378,7 +386,12 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public int locations() {
-        return 5;
+        return 6;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_FUSELAGE;
     }
 
     @Override
@@ -2768,7 +2781,9 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public void setThresh(int val, int loc) {
-        damThresh[loc] = val;
+        if (loc < damThresh.length) {
+            damThresh[loc] = val;
+        }
     }
 
     public void initializeThresh(int loc) {
@@ -2788,8 +2803,10 @@ public class Aero extends Entity implements IAero, IBomber {
             } else {
                 return 2;
             }
+        } else if (loc < damThresh.length) {
+            return damThresh[loc];
         }
-        return damThresh[loc];
+        return 0;
     }
 
     /**

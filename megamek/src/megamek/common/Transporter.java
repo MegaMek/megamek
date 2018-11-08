@@ -119,7 +119,7 @@ public interface Transporter extends Serializable {
     /**
      * @return the MP reduction due to cargo carried by this transporter
      */
-    public int getCargoMpReduction();
+    public int getCargoMpReduction(Entity carrier);
 
     public void setGame(IGame game);
     

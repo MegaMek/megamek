@@ -43,7 +43,7 @@ battlearmorbay:27.0:2:3
 2ndclassquarters:168.0:0
 1stclassquarters:180.0:0
 crewquarters:336.0:0
-cargobay:642.5:2:4
+cargobay:642.5:2:7
 </transporters>
 
 <SafeThrust>
@@ -101,7 +101,6 @@ ISStreakSRM6
 ISStreakSRM6
 ISStreakSRM6
 IS Streak SRM 6 Ammo:60
-ISNC3
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -186,9 +185,13 @@ ISLargePulseLaser
 ISLargePulseLaser
 ISLargePulseLaser
 ISLargePulseLaser
+</Aft Equipment>
+
+<Hull Equipment>
+ISNC3
 Communications Equipment (12 ton)
 ISLargeNavalCommScannerSuite
-</Aft Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 16

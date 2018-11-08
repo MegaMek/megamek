@@ -36,6 +36,7 @@ import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKConvFighterFile extends BLKFile implements IMechLoader {
 
@@ -149,10 +150,9 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Wing", Aero.LOC_RWING);
-        loadEquipment(a, "Left Wing", Aero.LOC_LWING);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
 
         if (dataFile.exists("omni")) {
             a.setOmni(true);
@@ -228,7 +228,8 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {

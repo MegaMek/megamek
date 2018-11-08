@@ -25,30 +25,26 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
-
-    // armor locatioms
-    public static final int NOSE = 0;
-    public static final int RW = 1;
-    public static final int LW = 2;
-    public static final int AFT = 3;
 
     public BLKSmallCraftFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         SmallCraft a = new SmallCraft();
@@ -187,20 +183,20 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
+        a.initializeArmor(armor[BLKAeroFile.NOSE], SmallCraft.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroFile.RW], SmallCraft.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroFile.LW], SmallCraft.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroFile.AFT], SmallCraft.LOC_AFT);
+        a.initializeArmor(IArmorState.ARMOR_NA, SmallCraft.LOC_HULL);
 
         a.autoSetInternal();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
         a.recalculateTechAdvancement();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Side", Aero.LOC_RWING);
-        loadEquipment(a, "Left Side", Aero.LOC_LWING);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
 
         addTransports(a);
         a.setArmorTonnage(a.getArmorWeight());
@@ -265,7 +261,8 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : SmallCraft.LOC_HULL;
+                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {

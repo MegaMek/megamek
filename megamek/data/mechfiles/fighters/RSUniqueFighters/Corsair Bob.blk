@@ -24,6 +24,10 @@ Corsair
 3070
 </year>
 
+<originalBuildYear>
+3070
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -66,11 +73,6 @@ Aerodyne
 <Nose Equipment>
 ISRotaryAC5
 ISStreakSRM6
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-IS Streak SRM 6 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -81,6 +83,17 @@ IS Streak SRM 6 Ammo
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+IS Streak SRM 6 Ammo
+</Fuselage Equipment>
 
 <source>
 RS Unique Fighters - Jihad

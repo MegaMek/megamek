@@ -24,6 +24,10 @@ Hydaspes
 3064
 </year>
 
+<originalBuildYear>
+3064
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -81,24 +88,29 @@ CLTargeting Computer
 CLHeavyLargeLaser
 CLATM9
 CLATM9
-Clan Ammo ATM-9
-Clan Ammo ATM-9
-Clan Ammo ATM-9
-CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLHeavyLargeLaser
 CLATM9
 CLATM9
-Clan Ammo ATM-9
-Clan Ammo ATM-9
-Clan Ammo ATM-9
-CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

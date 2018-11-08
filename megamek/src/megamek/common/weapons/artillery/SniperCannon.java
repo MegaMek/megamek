@@ -48,7 +48,7 @@ public class SniperCannon extends ArtilleryCannonWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 15f;
+        tonnage = 15;
         criticals = 10;
         bv = 77;
         cost = 475000;

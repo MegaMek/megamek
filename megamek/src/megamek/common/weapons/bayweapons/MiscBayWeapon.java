@@ -39,7 +39,7 @@ public class MiscBayWeapon extends BayWeapon {
         this.mediumRange = 0;
         this.longRange = 0;
         this.extremeRange = 0;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_NONE;

@@ -145,6 +145,9 @@ CLLaserAntiMissileSystem
 CLLaserAntiMissileSystem
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 20
 </structural_integrity>
@@ -156,6 +159,10 @@ TRO 3145 Mercenaries - Late Republic
 <tonnage>
 3000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 15

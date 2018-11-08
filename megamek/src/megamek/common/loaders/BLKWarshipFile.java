@@ -31,6 +31,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
@@ -44,6 +45,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Warship a = new Warship();
@@ -250,8 +252,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         for (int i = 0; i < armor.length; i++) {
             a.initializeArmor(armor[i], i);
         }
-        a.initializeArmor(0, Warship.LOC_LBS);
-        a.initializeArmor(0, Warship.LOC_RBS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_HULL);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_LBS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Warship.LOC_RBS);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();

@@ -52,7 +52,7 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         this.mediumRange = 15;
         this.longRange = 22;
         this.extremeRange = 30;
-        this.tonnage = 13.0f;
+        this.tonnage = 13.0;
         this.criticals = 6;
         this.bv = 320;
         this.cost = 300000;

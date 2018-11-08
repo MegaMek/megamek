@@ -24,6 +24,10 @@ SGT-3R
 3085
 </year>
 
+<originalBuildYear>
+3085
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -77,17 +84,23 @@ Heavy PPC
 
 <Left Wing Equipment>
 ISMML5
-IS Ammo MML-5 LRM
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISMML5
-IS Ammo MML-5 LRM
 </Right Wing Equipment>
 
 <Aft Equipment>
-IS Ammo MML-5 SRM
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-5 LRM
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+</Fuselage Equipment>
 
 <source>
 TRO 3085 - Jihad

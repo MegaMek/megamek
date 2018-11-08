@@ -140,7 +140,6 @@ Ammo NAC/25:40
 (B) Naval PPC (Medium)
 (B) Naval Gauss (Medium)
 Ammo Medium N-Gauss:30
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -174,6 +173,10 @@ Naval Laser 55
 (B) Naval Gauss (Medium)
 Ammo Medium N-Gauss:30
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) CLERLargeLaser

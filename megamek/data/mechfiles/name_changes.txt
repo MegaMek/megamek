@@ -68,6 +68,10 @@ Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 #Mechs
 Jagermech JM6-DG|JagerMech JM6-DG
 
+#Protomechs
+Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
+Boggart (Quad) 2|Boggart Ultraheavy ProtoMech 2
+
 #Space Stations
 Bastion System Defense Station (Standard)|Bastion System Defense Station (2584)
 BattleSat System Defense Station (Standard|BattleSat System Defense Station (3056)

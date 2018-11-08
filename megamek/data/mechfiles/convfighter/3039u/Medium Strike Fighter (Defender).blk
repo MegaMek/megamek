@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,39 +17,35 @@ Medium Strike Fighter Defender
 </Name>
 
 <Model>
+
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+2701
+</year>
+
+<originalBuildYear>
+2701
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-7
-6
-6
-5
-</Armor>
-
-<Nose Equipment>
-SRM 2
-IS Ammo SRM-2
-IS Ammo LRM-5
-</Nose Equipment>
-
-<Left Wing Equipment>
-LRM 5
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-LRM 5
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -63,30 +59,45 @@ LRM 5
 480
 </fuel>
 
-<type>
-IS Level 1
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2701
-</year>
+<armor>
+7
+6
+6
+5
+</armor>
+
+<Nose Equipment>
+SRM 2
+</Nose Equipment>
+
+<Left Wing Equipment>
+LRM 5
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 5
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-2
+IS Ammo LRM-5
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Star League
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+25.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

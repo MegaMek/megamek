@@ -745,6 +745,7 @@ public class Server implements Runnable {
             ent.setGame(game);
             if (ent instanceof Mech) {
                 ((Mech) ent).setBAGrabBars();
+                ((Mech) ent).setProtomechClampMounts();
             }
             if (ent instanceof Tank) {
                 ((Tank) ent).setBAGrabBars();
@@ -3442,14 +3443,18 @@ public class Server implements Runnable {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
-        // if there aren't any more turns, end the phase
-        if (!game.hasMoreTurns()) {
+        GameTurn nextTurn = null;
+        Entity nextEntity = null;
+        while (game.hasMoreTurns() && (null == nextEntity)) {
+            nextTurn = game.changeToNextTurn();
+            nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
+        }
+        
+        // if there aren't any more valid turns, end the phase
+        if (null == nextEntity) {
             endCurrentPhase();
             return;
         }
-
-        // okay, well next turn then!
-        GameTurn nextTurn = game.changeToNextTurn();
 
         IPlayer player = getPlayer(nextTurn.getPlayerNum());
 
@@ -4277,25 +4282,28 @@ public class Server implements Runnable {
 
         }
         if (!abbreviatedReport) {
-            // Wind direction and strength
-            Report rWindDir = new Report(1025, Report.PUBLIC);
-            rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
-            rWindDir.newlines = 0;
-            Report rWindStr = new Report(1030, Report.PUBLIC);
-            rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
-            rWindStr.newlines = 0;
-            Report rWeather = new Report(1031, Report.PUBLIC);
-            rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
-            rWeather.newlines = 0;
-            Report rLight = new Report(1032, Report.PUBLIC);
-            rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
-            Report rVis = new Report(1033, Report.PUBLIC);
-            rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
-            addReport(rWindDir);
-            addReport(rWindStr);
-            addReport(rWeather);
-            addReport(rLight);
-            addReport(rVis);
+            // we don't much care about wind direction and such in a hard vacuum
+            if(!game.getBoard().inSpace()) {
+                // Wind direction and strength
+                Report rWindDir = new Report(1025, Report.PUBLIC);
+                rWindDir.add(game.getPlanetaryConditions().getWindDirDisplayableName());
+                rWindDir.newlines = 0;
+                Report rWindStr = new Report(1030, Report.PUBLIC);
+                rWindStr.add(game.getPlanetaryConditions().getWindDisplayableName());
+                rWindStr.newlines = 0;
+                Report rWeather = new Report(1031, Report.PUBLIC);
+                rWeather.add(game.getPlanetaryConditions().getWeatherDisplayableName());
+                rWeather.newlines = 0;
+                Report rLight = new Report(1032, Report.PUBLIC);
+                rLight.add(game.getPlanetaryConditions().getLightDisplayableName());
+                Report rVis = new Report(1033, Report.PUBLIC);
+                rVis.add(game.getPlanetaryConditions().getFogDisplayableName());
+                addReport(rWindDir);
+                addReport(rWindStr);
+                addReport(rWeather);
+                addReport(rLight);
+                addReport(rVis);
+            }
 
             if (deployment) {
                 addNewLines();
@@ -4496,8 +4504,19 @@ public class Server implements Runnable {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     private void loadUnit(Entity loader, Entity unit, int bayNumber) {
+        // Protomechs share a single turn for a Point. When loading one we don't remove its turn
+        // unless it's the last unit in the Point to act.
+        int remainingProtos = 0;
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            remainingProtos = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                    && en.getId() != unit.getId()
+                    && en.isSelectableThisTurn()
+                    && en.getOwnerId() == unit.getOwnerId()
+                    && en.getUnitNumber() == unit.getUnitNumber());
+        }
 
-        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()
+                && (remainingProtos == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -23597,98 +23616,10 @@ public class Server implements Runnable {
                 int nLoc = hit.getLocation();
                 Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
                 // Does an exterior passenger absorb some of the damage?
-                int avoidRoll = Compute.d6();
-                if (!ammoExplosion && (null != passenger) && (avoidRoll >= 5)
-                    && !passenger.isDoomed()
-                    && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Yup. Roll up some hit data for that passenger.
-                    r = new Report(6075);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-
-                    HitData passHit = passenger.getTrooperAtLocation(hit, te);
-                    passHit.setGeneralDamageType(hit.getGeneralDamageType());
-
-
-                    // How much damage will the passenger absorb?
-                    int absorb = 0;
-                    HitData nextPassHit = passHit;
-                    do {
-                        int armorType = passenger.getArmorType(nextPassHit
-                                                                       .getLocation());
-                        boolean armorDamageReduction = false;
-                        if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
-                             && ((hit.getGeneralDamageType() ==
-                                  HitData.DAMAGE_MISSILE)))
-                            || (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                            armorDamageReduction = true;
-                        }
-                        // Check for reflective armor
-                        if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
-                            && (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ENERGY)) {
-                            armorDamageReduction = true;
-                        }
-                        if (0 < passenger.getArmor(nextPassHit)) {
-                            absorb += passenger.getArmor(nextPassHit);
-                            if (armorDamageReduction) {
-                                absorb *= 2;
-                            }
-                        }
-                        if (0 < passenger.getInternal(nextPassHit)) {
-                            absorb += passenger.getInternal(nextPassHit);
-                            // Armor damage reduction, like for reflective or
-                            // reactive armor will divide the whole damage
-                            // total by 2 and round down. If we have an odd
-                            // damage total, need to add 1 to make this
-                            // evenly divisible by 2
-                            if (((absorb % 2) != 0) && armorDamageReduction) {
-                                absorb++;
-                            }
-                        }
-                        nextPassHit = passenger
-                                .getTransferLocation(nextPassHit);
-                    } while ((damage > absorb)
-                             && (nextPassHit.getLocation() >= 0));
-
-                    // Damage the passenger.
-                    int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = damageEntity(passenger,
-                                                             passHit, absorbedDamage);
-                    for (Report newReport : newReports) {
-                        newReport.indent(2);
-                    }
-                    vDesc.addAll(newReports);
-
-                    // Did some damage pass on?
-                    if (damage > absorb) {
-                        // Yup. Remove the absorbed damage.
-                        damage -= absorb;
-                        r = new Report(6080);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        r.addDesc(te);
-                        vDesc.addElement(r);
-                    } else {
-                        // Nope. Return our description.
-                        return vDesc;
-                    }
-
-                } else if (!ammoExplosion && (null != passenger)
-                           && (avoidRoll < 5) && !passenger.isDoomed()
-                           && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Report that a passenger that could've been missed
-                    // narrowly avoids damage
-                    r = new Report(6084);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-                } // End nLoc-has-exterior-passenger
+                if (!ammoExplosion && (null != passenger) && !passenger.isDoomed()
+                        && (bFrag != DamageType.IGNORE_PASSENGER)) {
+                    damage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
+                }
 
                 boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT)
                                  || (nLoc == Mech.LOC_LT);
@@ -24888,6 +24819,143 @@ public class Server implements Runnable {
             Report.addNewline(vDesc);
         }
         return vDesc;
+    }
+
+    /**
+     * Apply damage to an Entity carrying external battlearmor or protomech
+     * when a location with a trooper present is hit.
+     * 
+     * @param te             The carrying Entity
+     * @param hit            The hit to resolve
+     * @param damage         The amount of damage to be allocated
+     * @param vDesc          The report vector
+     * @param passenger      The BA squad
+     * @return               The amount of damage remaining
+     */
+    private int damageExternalPassenger(Entity te, HitData hit, int damage,
+            Vector<Report> vDesc, Entity passenger) {
+        Report r;
+        int passengerDamage = damage;
+        int avoidRoll = Compute.d6();
+        HitData passHit = passenger.getTrooperAtLocation(hit, te);
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            passengerDamage -= damage / 2;
+            passHit = passenger.rollHitLocation(ToHitData.HIT_SPECIAL_PROTO, ToHitData.SIDE_FRONT);
+        } else if (avoidRoll < 5) {
+            passengerDamage = 0;
+        }
+        passHit.setGeneralDamageType(hit.getGeneralDamageType());
+        
+        if (passengerDamage > 0) {
+            // Yup. Roll up some hit data for that passenger.
+            r = new Report(6075);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+
+            // How much damage will the passenger absorb?
+            int absorb = 0;
+            HitData nextPassHit = passHit;
+            do {
+                int armorType = passenger.getArmorType(nextPassHit
+                                                               .getLocation());
+                boolean armorDamageReduction = false;
+                if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                     && ((hit.getGeneralDamageType() ==
+                          HitData.DAMAGE_MISSILE)))
+                    || (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    armorDamageReduction = true;
+                }
+                // Check for reflective armor
+                if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
+                    && (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ENERGY)) {
+                    armorDamageReduction = true;
+                }
+                if (0 < passenger.getArmor(nextPassHit)) {
+                    absorb += passenger.getArmor(nextPassHit);
+                    if (armorDamageReduction) {
+                        absorb *= 2;
+                    }
+                }
+                if (0 < passenger.getInternal(nextPassHit)) {
+                    absorb += passenger.getInternal(nextPassHit);
+                    // Armor damage reduction, like for reflective or
+                    // reactive armor will divide the whole damage
+                    // total by 2 and round down. If we have an odd
+                    // damage total, need to add 1 to make this
+                    // evenly divisible by 2
+                    if (((absorb % 2) != 0) && armorDamageReduction) {
+                        absorb++;
+                    }
+                }
+                nextPassHit = passenger
+                        .getTransferLocation(nextPassHit);
+            } while ((damage > absorb)
+                     && (nextPassHit.getLocation() >= 0));
+
+            // Damage the passenger.
+            absorb = Math.min(passengerDamage, absorb);
+            Vector<Report> newReports = damageEntity(passenger,
+                                                     passHit, absorb);
+            for (Report newReport : newReports) {
+                newReport.indent(2);
+            }
+            vDesc.addAll(newReports);
+
+            // Did some damage pass on?
+            if (damage > absorb) {
+                // Yup. Remove the absorbed damage.
+                damage -= absorb;
+                r = new Report(6080);
+                r.subject = te.getId();
+                r.indent(2);
+                r.add(damage);
+                r.addDesc(te);
+                vDesc.addElement(r);
+            } else {
+                // Nope. Return our description.
+                return 0;
+            }
+
+        } else {
+            // Report that a passenger that could've been missed
+            // narrowly avoids damage
+            r = new Report(6084);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+        } // End nLoc-has-exterior-passenger
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                && (passengerDamage > 0) && !passenger.isDoomed() && !passenger.isDestroyed()) {
+            r = new Report(3850);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+            int facing = te.getFacing();
+            // We're going to assume that it's mounted facing the mech
+            Coords position = te.getPosition();
+            if (!hit.isRear()) {
+                facing = (facing + 3) % 6;
+            }
+            unloadUnit(te, passenger, position, facing, te.getElevation(),
+                    false, false);
+            Entity violation = Compute.stackingViolation(game,
+                    passenger.getId(), position);
+            if (violation != null) {
+                Coords targetDest = Compute.getValidDisplacement(game,
+                        passenger.getId(), position, Compute.d6() - 1);
+                addReport(doEntityDisplacement(violation, position,
+                        targetDest, null));
+                // Update the violating entity's postion on the client.
+                entityUpdate(violation.getId());
+            }
+        }
+        return damage;
     }
 
     /**
@@ -26402,6 +26470,15 @@ public class Server implements Runnable {
                                 break;
                             }
                     }
+                    // A magnetic clamp system is destroyed by any torso critical.
+                    Mounted magClamp = pm.getMisc().stream().filter(m -> m.getType()
+                            .hasFlag(MiscType.F_MAGNETIC_CLAMP)).findFirst().orElse(null);
+                    if ((magClamp != null) && !magClamp.isHit()) {
+                        magClamp.setHit(true);
+                        r = new Report(6252);
+                        r.subject = pm.getId();
+                        reports.addElement(r);
+                    }
                 }
                 break;
             case Protomech.SYSTEM_TORSO_WEAPON_A:
@@ -26418,7 +26495,7 @@ public class Server implements Runnable {
                 Mounted weaponB = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponB) {
                     weaponB.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6246);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26428,7 +26505,7 @@ public class Server implements Runnable {
                 Mounted weaponC = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponC) {
                     weaponC.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6247);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26438,7 +26515,7 @@ public class Server implements Runnable {
                 Mounted weaponD = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponD) {
                     weaponD.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6248);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26448,7 +26525,7 @@ public class Server implements Runnable {
                 Mounted weaponE = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponE) {
                     weaponE.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6249);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -31566,7 +31643,8 @@ public class Server implements Runnable {
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
-        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)
+                && !((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             logError(METHOD_NAME, "item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;
@@ -32601,7 +32679,7 @@ public class Server implements Runnable {
                             .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
-                    if (mapSettings.getBoardsSelected().next() == null) {
+                    if (!mapSettings.getBoardsSelected().hasNext()) {
                         mapSettings
                                 .setNullBoards((MapSettings.BOARD_GENERATED));
                     }

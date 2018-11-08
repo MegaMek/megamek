@@ -49,14 +49,14 @@ public class ISPulseLaserSmall extends PulseLaserWeapon {
         this.waterMediumRange = 2;
         this.waterLongRange = 2;
         this.waterExtremeRange = 4;
-        this.tonnage = 1.0f;
+        this.tonnage = 1.0;
         this.criticals = 1;
         this.bv = 12;
         this.cost = 16000;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
-        this.flags = flags.or(F_BURST_FIRE);
+        this.flags = flags.or(F_BURST_FIRE).andNot(F_PROTO_WEAPON);
         rulesRefs = "226,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)

@@ -43,7 +43,7 @@ public class CLUAC20 extends UACWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 12.0f;
+        tonnage = 12.0;
         criticals = 8;
         bv = 335;
         cost = 480000;
@@ -52,6 +52,7 @@ public class CLUAC20 extends UACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "208,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

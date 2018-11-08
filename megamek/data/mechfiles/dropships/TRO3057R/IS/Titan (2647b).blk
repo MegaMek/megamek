@@ -42,10 +42,10 @@ asfbay:6.0:3:3
 2ndclassquarters:0.0:0
 1stclassquarters:70.0:0
 crewquarters:217.0:0
-asfbay:5.0:2:5
-cargobay:994.0:0:2
-cargobay:993.0:0:4
-cargobay:993.0:0:6
+asfbay:5.0:2:6
+cargobay:994.0:0:7
+cargobay:993.0:0:8
+cargobay:993.0:0:9
 </transporters>
 
 <SafeThrust>
@@ -148,6 +148,9 @@ IS Ammo LRM-20:12
 (B) ISMediumPulseLaser
 ISMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 18

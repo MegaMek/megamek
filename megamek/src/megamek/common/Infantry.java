@@ -210,7 +210,12 @@ public class Infantry extends Entity {
         // Determine the number of MPs.
         setOriginalWalkMP(1);
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.INFANTRY;
+    }
+
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }

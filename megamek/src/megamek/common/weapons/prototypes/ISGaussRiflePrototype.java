@@ -51,7 +51,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         mediumRange = 15;
         longRange = 22;
         extremeRange = 30;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         bv = 320;
         cost = 1200000;
         criticals = 8;

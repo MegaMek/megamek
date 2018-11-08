@@ -33,7 +33,7 @@ public abstract class SubCapMissileWeapon extends AmmoWeapon {
         atClass = CLASS_CAPITAL_MISSILE;
         capital = true;
         subCapital = true;
-        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
+        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE).andNot(F_PROTO_WEAPON);;
     }
     
     @Override

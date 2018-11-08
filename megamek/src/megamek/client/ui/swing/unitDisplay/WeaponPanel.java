@@ -281,6 +281,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wn.append('/'); //$NON-NLS-1$
                 wn.append(totalShotsLeft);
                 wn.append(')'); //$NON-NLS-1$
+            } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+                int shotsLeft = 0;
+                int totalShots = 0;
+                for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                    shotsLeft += current.getUsableShotsLeft();
+                    totalShots++;
+                }
+                wn.append(" (").append(shotsLeft) //$NON-NLS-1$
+                    .append("/").append(totalShots).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             // MG rapidfire
@@ -1867,7 +1876,23 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
-        
+        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            int count = 0;
+            vAmmo = new ArrayList<>();
+            for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                if (current.getUsableShotsLeft() > 0) {
+                    vAmmo.add(current);
+                    m_chAmmo.addItem(formatAmmo(current));
+                    count++;
+                }
+            }
+            // If there is no remaining ammo, show the last one linked and disable
+            if (count == 0) {
+                m_chAmmo.addItem(formatAmmo(mounted.getLinked()));
+            }
+            m_chAmmo.setSelectedIndex(0);
+            m_chAmmo.setEnabled(count > 0);
+
         // this is the situation where there's some kind of ammo but it's not changeable
         } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             m_chAmmo.setEnabled(false);

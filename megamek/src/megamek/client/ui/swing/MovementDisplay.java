@@ -3213,7 +3213,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             for (HitchChoice hc : hitchChoices) {
                 retVal[i++] = hc.toString();
             }
-            HitchChoice selection = (HitchChoice) JOptionPane
+            String selection = (String) JOptionPane
                     .showInputDialog(
                             clientgui,
                             Messages.getString(
@@ -3222,10 +3222,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             Messages.getString("MovementDisplay.loadUnitHitchDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, retVal,
                             null);
+            HitchChoice hc = null;
+            if (selection != null) {
+                for (int loop = 0; loop < hitchChoices.size(); loop++) {
+                    if (selection.equals(hitchChoices.get(loop).toString())) {
+                        hc = hitchChoices.get(loop);
+                        break;
+                    }
+                }
+            }
             //Set the transporter number in the towed entity from the selection
-            choice.setTargetBay(selection.getNumber());
+            choice.setTargetBay(hc.getNumber());
             //and then the Entity id the transporter is attached to...
-            choice.setTowedBy(selection.getId());
+            choice.setTowedBy(hc.getId());
         } else {
             //and in case there's just one choice...
             choice.setTargetBay(hitchChoices.get(0).getNumber());

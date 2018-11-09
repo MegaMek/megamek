@@ -281,7 +281,7 @@ public class TankTrailerHitch implements Transporter {
         return rv;
     }
 
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
     

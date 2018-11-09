@@ -3148,10 +3148,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final class HitchChoice {
             private final int id;
             private final int number;
+            private final TankTrailerHitch hitch;
 
-            private HitchChoice(int id, int number) {
+            private HitchChoice(int id, int number, TankTrailerHitch t) {
                 this.id = id;
                 this.number = number;
+                this.hitch = t;
             }
 
             private int getId() {
@@ -3161,15 +3163,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             private int getNumber() {
                 return number;
             }
+            
+            private TankTrailerHitch getHitch() {
+                return hitch;
+            }
 
             @Override
             public String toString() {
-                return String.format("%s Id:<%d> Trailer Hitch #[%d]", game.getEntity(id).getShortName(), getId(), getNumber());
+                // the string should tell the user if the hitch is mounted front or rear
+                if (getHitch().getRearMounted()) {
+                    return String.format("%s Trailer Hitch #[%d] (rear)", game.getEntity(id).getShortName(), getNumber());
+                }
+                return String.format("%s Trailer Hitch #[%d] (front)", game.getEntity(id).getShortName(), getNumber());
             }
 
             @Override
             public int hashCode() {
-                return Objects.hash(id, number);
+                return Objects.hash(id, number, hitch);
             }
         }
         //Create a collection to keep my choices in
@@ -3188,7 +3198,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         for (Entity e : thisTrain) {
             for (Transporter t : e.getTransports()) {
                 if (t.canLoad(choice) && (t instanceof TankTrailerHitch)) {
-                    HitchChoice hitch = new HitchChoice(e.getId(), e.getTransports().indexOf(t));
+                    TankTrailerHitch h = (TankTrailerHitch) t;
+                    HitchChoice hitch = new HitchChoice(e.getId(), e.getTransports().indexOf(t), h);
                     hitchChoices.add(hitch);
                 }
             }
@@ -3200,10 +3211,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String[] retVal = new String[hitchChoices.size()];
             int i = 0;
             for (HitchChoice hc : hitchChoices) {
-                Entity e = game.getEntity(hc.getId());
-                retVal[i++] = e.getShortName() + " Id:" + "<" + id + ">" + " Trailer Hitch " + "#[" + hitchChoices.get(id) + "]";
+                retVal[i++] = hc.toString();
             }
-            String hitchString = (String) JOptionPane
+            HitchChoice selection = (HitchChoice) JOptionPane
                     .showInputDialog(
                             clientgui,
                             Messages.getString(
@@ -3212,16 +3222,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             Messages.getString("MovementDisplay.loadUnitHitchDialog.title"), //$NON-NLS-1$
                             JOptionPane.QUESTION_MESSAGE, null, retVal,
                             null);
-            //We need to pull the chosen transporter number out of the string
-            int start = hitchString.indexOf("#[");
-            choice.setTargetBay(Integer.parseInt(hitchString.substring((start + 2), hitchString.indexOf("]"))));
+            //Set the transporter number in the towed entity from the selection
+            choice.setTargetBay(selection.getNumber());
             //and then the Entity id the transporter is attached to...
-            start = hitchString.indexOf("<");
-            choice.setTowedBy(Integer.parseInt(hitchString.substring((start + 1), hitchString.indexOf(">"))));
+            choice.setTowedBy(selection.getId());
         } else {
             //and in case there's just one choice...
-            choice.setTowedBy(hitchChoices.keySet().iterator().next());
-            choice.setTargetBay(hitchChoices.get(hitchChoices.keySet().iterator().next()));
+            choice.setTargetBay(hitchChoices.get(0).getNumber());
+            choice.setTowedBy(hitchChoices.get(0).getId());
         }
 
         // We need to update the entities here so that the server knows

@@ -15478,6 +15478,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Determine if a connected tractor/trailer prevents a weapon in the given location
+     * from firing.
+     *
+     * @param loc    - the <code>int</code> location attempting to fire.
+     * @param secondaryFacing    - the <code>int</code> direction the turret is facing if the weapon is mounted there.
+     * @param isRear - a <code>boolean</code> value stating if the given location
+     *               is rear facing; if <code>false</code>, the location is front
+     *               facing.
+     * @return <code>true</code> if a tractor/trailer unit is in the way,
+     * <code>false</code> if the weapon can fire.
+     */
+    public boolean isWeaponBlockedByTowing(int loc, int secondaryFacing, boolean isRear) {
+        //Assume our trailer is being towed from the front. There's no actual tracking of which
+        //end of a trailer is attached, only where the towing hitch is located. 
+    }
+    
+    /**
      * determine if an entity has an ability that is identified by its presence or absence only.
      * The entity may gain this ability from different places, not exclusively the crew.
      * @param name - name of the ability as recorded in the options

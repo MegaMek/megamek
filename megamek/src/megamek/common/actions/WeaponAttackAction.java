@@ -3303,6 +3303,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
             return "Weapon blocked by passenger.";
         }
+        
+        //...or by a tractor/trailer?
+        if (ae.isWeaponBlockedByTowing(weapon.getLocation(), ae.getSecondaryFacing(), weapon.isRearMounted())) {
+            return "Weapon blocked by tractor/trailer.";
+        }
 
         // Can't target an entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {

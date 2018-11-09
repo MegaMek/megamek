@@ -243,7 +243,13 @@ public class TankTrailerHitch implements Transporter {
         // The weapon can only be blocked if we are carrying a trailer.
         Entity trailer = game.getEntity(towed);
         if (null != trailer) {
-            result = true;
+            //If we're using a front-mounted hitch, can't fire straight forward
+            if (!getRearMounted() && loc == Tank.LOC_FRONT) {
+                result = true;
+            //and if we're using a rear-mounted hitch, can't fire straight backward
+            } else if (getRearMounted() && (loc == Tank.LOC_REAR)) {
+                result = true;
+            }
         }
         
         // Return our result.

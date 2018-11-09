@@ -43,7 +43,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     
     @Override
     public double getTonnage(Entity entity, int location) {
-        if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             return getRackSize() * 0.4;
         } else {
             return super.getTonnage(entity, location);

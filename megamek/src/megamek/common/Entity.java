@@ -15490,8 +15490,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * <code>false</code> if the weapon can fire.
      */
     public boolean isWeaponBlockedByTowing(int loc, int secondaryFacing, boolean isRear) {
-        //Assume our trailer is being towed from the front. There's no actual tracking of which
-        //end of a trailer is attached, only where the towing hitch is located. 
+        //Per TW p205, assume our trailer is being towed from the front.
+        if (getTowedBy() != Entity.NONE) {
+            if (loc == Tank.LOC_FRONT || 
+                    ((loc == Tank.LOC_TURRET 
+                            || loc == Tank.LOC_TURRET_2
+                            || loc == SuperHeavyTank.LOC_TURRET
+                            || loc == SuperHeavyTank.LOC_TURRET_2)
+                            && (secondaryFacing == getFacing()))) {
+                return true;
+            }
+        } else if (getTowing() != Entity.NONE) {
+            //If we're towing something, check for a front or rear hitch
+            Entity towed = game.getEntity(getTowing());
+            TankTrailerHitch hitch = getHitchById(towed.getTargetBay());
+            if (hitch != null) {
+                if ((hitch.getRearMounted()) && loc == Tank.LOC_REAR
+                        || isRear
+                        || loc == SuperHeavyTank.LOC_REAR ||
+                        ((loc == Tank.LOC_TURRET 
+                                || loc == Tank.LOC_TURRET_2
+                                || loc == SuperHeavyTank.LOC_TURRET
+                                || loc == SuperHeavyTank.LOC_TURRET_2)
+                                && (secondaryFacing == ((getFacing() + 3) % 6)))) {
+                    return true;
+                } else if ((!hitch.getRearMounted()) && loc == Tank.LOC_FRONT || 
+                        ((loc == Tank.LOC_TURRET 
+                        || loc == Tank.LOC_TURRET_2
+                        || loc == SuperHeavyTank.LOC_TURRET
+                        || loc == SuperHeavyTank.LOC_TURRET_2)
+                        && (secondaryFacing == getFacing()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     /**

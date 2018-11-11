@@ -3298,15 +3298,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         } else if (wtype.hasModes() && weapon.curMode().equals("Point Defense")) {
             return "Weapon in Point Defense Mode";
         }
-
+        
+        // Is the weapon blocked by a tractor/trailer?
+        if (ae.getTowing() != Entity.NONE || ae.getTowedBy() != Entity.NONE) {
+            if (ae.isWeaponBlockedByTowing(weapon.getLocation(), ae.getSecondaryFacing(), weapon.isRearMounted())) {
+                return "Weapon blocked by tractor/trailer.";
+            }
+        }
+        
         // Is the weapon blocked by a passenger?
         if (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
             return "Weapon blocked by passenger.";
-        }
-        
-        //...or by a tractor/trailer?
-        if (ae.isWeaponBlockedByTowing(weapon.getLocation(), ae.getSecondaryFacing(), weapon.isRearMounted())) {
-            return "Weapon blocked by tractor/trailer.";
         }
 
         // Can't target an entity conducting a swarm attack.

@@ -6936,8 +6936,14 @@ public class Server implements Runnable {
             return vReport;
         }
 
-        // Is the unit carrying passengers?
-        final List<Entity> passengers = entity.getLoadedUnits();
+        // Is the unit carrying passengers or trailers?
+        final List<Entity> passengers = new ArrayList<Entity>(entity.getLoadedUnits());
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            for (int id : entity.getAllTowedUnits()) {
+                Entity towed = game.getEntity(id);
+                passengers.add(towed);
+            }
+        }
         if (!passengers.isEmpty()) {
             for (Entity passenger : passengers) {
                 // Unit has fled the battlefield.

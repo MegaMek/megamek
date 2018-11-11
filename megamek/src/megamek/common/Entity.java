@@ -15162,6 +15162,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Finds the trailer hitch transporter that is carrying a given entityId
+     * Hitches move around in Transports on loading a saved game
+     *
+     * @param id - the id of the loaded Entity we're trying to find
+     * @returns the trailerhitch corresponding to the passed-in value
+     */
+    public TankTrailerHitch getHitchCarrying(int id) {
+        for (Transporter next : transports) {
+            if (next instanceof TankTrailerHitch) {
+                if (next.getLoadedUnits().contains(game.getEntity(id))) {
+                    return (TankTrailerHitch) next;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
      * Tractor chassis mod that doesn't already have one
      */
@@ -15500,10 +15518,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (secondaryFacing == getFacing()))) {
                 return true;
             }
-        } else if (getTowing() != Entity.NONE) {
+        }
+        if (!getAllTowedUnits().isEmpty() || !getConnectedUnits().isEmpty()) {
             //If we're towing something, check for a front or rear hitch
-            Entity towed = game.getEntity(getTowing());
-            TankTrailerHitch hitch = getHitchById(towed.getTargetBay());
+            Entity towed = null;
+            if (!getAllTowedUnits().isEmpty()) {
+                towed = game.getEntity(getAllTowedUnits().get(0));
+            } else {
+                towed = game.getEntity(getConnectedUnits().get(0));
+            }
+            if (towed == null) {
+                //shouldn't happen, but just in case
+                return false;
+            }
+            TankTrailerHitch hitch = getHitchCarrying(towed.getId());
             if (hitch != null) {
                 if ((hitch.getRearMounted()) && loc == Tank.LOC_REAR
                         || isRear
@@ -15514,12 +15542,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 || loc == SuperHeavyTank.LOC_TURRET_2)
                                 && (secondaryFacing == ((getFacing() + 3) % 6)))) {
                     return true;
-                } else if ((!hitch.getRearMounted()) && loc == Tank.LOC_FRONT || 
+                } else if (!hitch.getRearMounted() && (loc == Tank.LOC_FRONT || 
                         ((loc == Tank.LOC_TURRET 
                         || loc == Tank.LOC_TURRET_2
                         || loc == SuperHeavyTank.LOC_TURRET
                         || loc == SuperHeavyTank.LOC_TURRET_2)
-                        && (secondaryFacing == getFacing()))) {
+                        && (secondaryFacing == getFacing())))) {
                     return true;
                 }
             }

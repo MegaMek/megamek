@@ -24,6 +24,10 @@ TRB-D50
 3065
 </year>
 
+<originalBuildYear>
+3065
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -74,8 +81,6 @@ Aerodyne
 <Nose Equipment>
 Autocannon/10
 Large Laser
-IS Ammo AC/10
-IS Ammo AC/10
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -93,6 +98,14 @@ Medium Laser
 <Aft Equipment>
 Small Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/10
+IS Ammo AC/10
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Civil War

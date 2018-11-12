@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,28 +20,61 @@ Lucifer II
 LCF-R16K
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+2993
+</year>
+
+<originalBuildYear>
+2993
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 30
 24
 24
 26
-</Armor>
+</armor>
 
 <Nose Equipment>
 LRM 20
 Large Laser
 Large Laser
 SRM 6
-IS Ammo LRM-20
-IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -58,42 +91,19 @@ Small Laser
 Medium Laser
 </Aft Equipment>
 
-<heatsinks>
-20
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-0
-</sink_type>
-
-<fuel>
-320
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-2993
-</year>
+<Fuselage Equipment>
+IS Ammo LRM-20
+IS Ammo SRM-6
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+65.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

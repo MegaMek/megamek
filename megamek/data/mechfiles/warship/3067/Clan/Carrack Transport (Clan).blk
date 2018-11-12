@@ -161,7 +161,6 @@ CLAntiMissileSystem
 CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:1488
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -199,6 +198,10 @@ CLAntiMissileSystem
 CLAntiMissileSystem
 CLAMS Ammo:1488
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Laser 35

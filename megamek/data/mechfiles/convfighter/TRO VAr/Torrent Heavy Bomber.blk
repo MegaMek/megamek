@@ -24,6 +24,10 @@ Torrent Heavy Bomber
 2597
 </year>
 
+<originalBuildYear>
+2597
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 4
@@ -60,22 +67,14 @@ Aerodyne
 20
 20
 20
-12	
+12
 </armor>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
 <Nose Equipment>
-ISMG
-ISMG
-ISMG
-ISMG
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -84,12 +83,19 @@ ISMG
 <Right Wing Equipment>
 </Right Wing Equipment>
 
+<Aft Equipment>
+SRM 6
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
 <Body Equipment>
 Advanced Fire Control
 STOLChassisMod
-ISGuardianECM
-ISMG Ammo Half
-ISSRM6 Ammo
+ISGuardianECMSuite
+IS Machine Gun Ammo - Half
+IS Ammo SRM-6
 External Stores Hardpoint
 External Stores Hardpoint
 External Stores Hardpoint
@@ -107,23 +113,19 @@ External Stores Hardpoint
 External Stores Hardpoint
 </Body Equipment>
 
-<Aft Equipment>
-ISSRM6
-</Aft Equipment>
+<barrating>
+6
+</barrating>
 
-<transporters>
-cargospace:15:2
-</transporters>
+<structural_tech_rating>
+2
+</structural_tech_rating>
 
 <source>
 TRO Vehicle Annex (r) - Star League
 </source>
 
 <tonnage>
-200
+200.0
 </tonnage>
 
-<history>
-MUL shows the unit introdate as 2093, which is about 500 years before Guardian ECM, so I've made the unit date the same as the introdate for ECM.
-Basically its a "modern" version of the Torrent
-</history>

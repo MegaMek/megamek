@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ public class Jumpship extends Aero {
     public static final int LOC_FRS = 2;
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
+    public static final int LOC_HULL = 6;
 
     public static final int GRAV_DECK_STANDARD_MAX = 100;
     public static final int GRAV_DECK_LARGE_MAX = 250;
@@ -52,9 +54,9 @@ public class Jumpship extends Aero {
     // given for primitive assumes a 30ly range, but the final value has to be computed.
     private static double[] DRIVE_CORE_WEIGHT_PCT = { 0.95, 0.4525, 0.5, 0.0, 0.95 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
-            "Aft Right Side" };
+    private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "HULL" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side",
+            "Aft", "Aft Left Side", "Aft Right Side", "Hull" };
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
@@ -98,10 +100,14 @@ public class Jumpship extends Aero {
 
     public Jumpship() {
         super();
-        damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0, 0 };
     }
-    
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.JUMPSHIP;
+    }
+
     //ASEW Missile Effects, per location
     //Values correspond to Locations: NOS,FLS,FRS,AFT,ALS,ARS
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
@@ -113,7 +119,9 @@ public class Jumpship extends Aero {
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
+        if (arc < asewAffectedTurns.length) {
+            asewAffectedTurns[arc] = turns;
+        }
     }
     
     /*
@@ -121,7 +129,10 @@ public class Jumpship extends Aero {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+        if (arc < asewAffectedTurns.length) {
+            return asewAffectedTurns[arc];
+        }
+        return 0;
     }
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
@@ -164,13 +175,19 @@ public class Jumpship extends Aero {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }
     
     @Override
     public int locations() {
-        return 6;
+        return 7;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     /**
@@ -1811,9 +1828,73 @@ public class Jumpship extends Aero {
 
         costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
         cost = Math.round(cost * weightMultiplier);
-
+        addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Engine", "Engine Control Unit",
+                "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 20) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     @Override

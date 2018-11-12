@@ -47,6 +47,11 @@ public class GunEmplacement extends Tank {
         setEngine(new Engine(0, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
     }
 
+    @Override
+    public int getUnitType() {
+        return UnitType.GUN_EMPLACEMENT;
+    }
+
     public boolean isTurret() {
         return !hasNoTurret();
     }

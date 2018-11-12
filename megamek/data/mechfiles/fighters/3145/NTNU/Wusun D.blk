@@ -24,6 +24,10 @@ D
 3121
 </year>
 
+<originalBuildYear>
+3121
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -79,12 +86,6 @@ Aerodyne
 CLGaussRifle:OMNI
 CLImprovedHeavyLargeLaser:OMNI
 CLTargeting Computer:OMNI
-Clan Gauss Ammo:OMNI
-Clan Gauss Ammo:OMNI
-CLCASE:OMNI
-CLCASE:OMNI
-CLCASE
-CLCASE
 CLCASE
 </Nose Equipment>
 
@@ -97,6 +98,14 @@ CLCASE
 <Aft Equipment>
 CLECMSuite:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3145 NTNU - Late Republic

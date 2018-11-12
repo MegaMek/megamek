@@ -50,6 +50,7 @@ public class ISLB10XAC extends LBXACWeapon {
         this.medAV = 10;
         this.maxRange = RANGE_MED;
         rulesRefs = "207,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

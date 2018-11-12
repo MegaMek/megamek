@@ -50,6 +50,7 @@ public class CLRAC20 extends RACWeapon {
         bv = 823;
         cost = 960000;
         rulesRefs = "Unofficial";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(true)

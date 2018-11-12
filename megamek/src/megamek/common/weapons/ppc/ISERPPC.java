@@ -55,6 +55,7 @@ public class ISERPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "234,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
 		.setIntroLevel(false)
 		.setUnofficial(false)

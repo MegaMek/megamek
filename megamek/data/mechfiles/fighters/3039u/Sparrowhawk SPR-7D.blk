@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,20 +20,63 @@ Sparrowhawk
 SPR-7D
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+560
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 50
 27
 27
 39
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISMediumPulseLaser
@@ -51,42 +94,17 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-10
-</heatsinks>
+<Wings Equipment>
+</Wings Equipment>
 
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-560
-</fuel>
-
-<type>
-IS Level 2
-</type>
-
-<year>
-3062
-</year>
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Civil War
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+30.0
+</tonnage>
 
-<armor_type>
-19
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

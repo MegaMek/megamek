@@ -23,14 +23,14 @@ import megamek.common.options.OptionsConstants;
  */
 public class SmallCraft extends Aero {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6708788176436555036L;
+    
+    public static final int LOC_HULL = 4;
+    
     private static String[] LOCATION_ABBRS =
-        { "NOS", "LS", "RS", "AFT" };
+        { "NOS", "LS", "RS", "AFT", "HULL" };
     private static String[] LOCATION_NAMES =
-        { "Nose", "Left Side", "Right Side", "Aft" };
+        { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nCrew = 0;
@@ -56,6 +56,11 @@ public class SmallCraft extends Aero {
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
+
+    @Override
+    public int getUnitType() {
+        return UnitType.SMALL_CRAFT;
+    }
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -191,7 +196,12 @@ public class SmallCraft extends Aero {
 
     @Override
     public int locations() {
-        return 4;
+        return 5;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     // what is different - hit table is about it

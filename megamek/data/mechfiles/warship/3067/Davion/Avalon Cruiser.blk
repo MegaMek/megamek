@@ -48,7 +48,7 @@ dockingcollar
 2ndclassquarters:448.0:0
 1stclassquarters:590.0:0
 crewquarters:1484.0:0
-cargobay:13859.5:4:3
+cargobay:13859.5:4:6
 </transporters>
 
 <SafeThrust>
@@ -245,6 +245,9 @@ ISArtemisIV
 ISArtemisIV
 ISArtemisIV
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/20)

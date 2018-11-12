@@ -41,7 +41,7 @@ asfbay:6.0:1:1
 1stclassquarters:50.0:0
 2ndclassquarters:0.0:0
 crewquarters:154.0:0
-cargobay:413.5:1:2
+cargobay:413.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -127,6 +127,9 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 10
 </structural_integrity>
@@ -138,6 +141,10 @@ TRO 3075 - Star League
 <tonnage>
 11200.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 34

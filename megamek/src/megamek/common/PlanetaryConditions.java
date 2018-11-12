@@ -161,7 +161,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public static String getWindDirDisplayableName(int type) {
-        if ((type >= 0) && (type < WI_SIZE)) {
+        if ((type >= 0) && (type < DIR_SIZE)) {
             return Messages.getString("PlanetaryConditions." + dirNames[type]);
         }
         throw new IllegalArgumentException("Unknown wind direction");

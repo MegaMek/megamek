@@ -80,10 +80,7 @@ Aerodyne
 
 <Nose Equipment>
 Light Auto Cannon/5
-IS Ammo LAC/5
 ISMML3
-IS Ammo MML-3 LRM
-IS Ammo MML-3 SRM
 ISMML3
 </Nose Equipment>
 
@@ -95,8 +92,19 @@ ISMML3
 
 <Aft Equipment>
 IS Vehicular Stealth
+IS Vehicular Stealth
+IS Vehicular Stealth
 ISGuardianECMSuite
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LAC/5
+IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
+</Fuselage Equipment>
 
 <source>
 TRO Prototypes - Early Republic

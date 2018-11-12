@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,42 +20,32 @@ Rondel
 RDL-01C
 </Model>
 
-<Tonnage>
-55
-</Tonnage>
+<year>
+3095
+</year>
+
+<originalBuildYear>
+3095
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-71
-54
-54
-53
-</Armor>
-
-<Nose Equipment>
-ISRAC5
-ISRAC5 Ammo
-ISRAC5 Ammo
-ISRAC5 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment> 
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 11
@@ -69,38 +59,58 @@ ISERMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3095
-</year>
-
-<source>
-TRO 3145 Federated Suns - Early Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 3
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+71
+54
+54
+53
+</armor>
 
-<history>
-</history>
+<Nose Equipment>
+ISRotaryAC5
+</Nose Equipment>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Fuselage Equipment>
+
+<source>
+TRO 3145 Federated Suns - Early Republic
+</source>
+
+<tonnage>
+55.0
+</tonnage>
 

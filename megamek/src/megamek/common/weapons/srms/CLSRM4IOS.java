@@ -41,7 +41,7 @@ public class CLSRM4IOS extends SRMWeapon {
         tonnage = 0.5;
         criticals = 1;
         bv = 8;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 48000;
         shortAV = 4;
         maxRange = RANGE_SHORT;

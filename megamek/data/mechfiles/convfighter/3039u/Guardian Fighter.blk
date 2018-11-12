@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,34 +20,32 @@ Guardian Fighter
 (Standard)
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+2831
+</year>
+
+<originalBuildYear>
+2831
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-6
-3
-3
-4
-</Armor>
-
-<Nose Equipment>
-SRM 6
-IS Ammo SRM-6
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -61,35 +59,42 @@ IS Ammo SRM-6
 320
 </fuel>
 
-<type>
-IS Level 1
-</type>
+<engine_type>
+1
+</engine_type>
 
-<year>
-2831
-</year>
+<armor>
+6
+3
+3
+4
+</armor>
+
+<Nose Equipment>
+SRM 6
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+20.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-1
-</engine_type>
-
-<motion_type>
-Aerodyne
-</motion_type>
-
-<vstol>
-
-1
-</vstol>

@@ -24,6 +24,10 @@ Issus
 3080
 </year>
 
+<originalBuildYear>
+3080
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
@@ -31,6 +35,9 @@ Clan Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -73,8 +80,8 @@ Aerodyne
 
 <Nose Equipment>
 CLERLargeLaser
-CLHighResImager
-CLInfraredImager
+ISHighResImager
+ISInfraredImager
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -87,6 +94,12 @@ CLERMediumLaser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Jihad

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
-import megamek.common.verifier.TestEntity;
 
 /**
  * Protomechs. Level 2 Clan equipment.
@@ -33,13 +32,13 @@ public class Protomech extends Entity {
      */
     private static final long serialVersionUID = -1376410042751538158L;
 
-    public static final int NUM_PMECH_LOCATIONS = 6;
+    public static final int NUM_PMECH_LOCATIONS = 7;
 
-    private static final String[] LOCATION_NAMES = { "Head", "Torso",
-            "Right Arm", "Left Arm", "Legs", "Main Gun", "Unallocated" };
+    private static final String[] LOCATION_NAMES = { "Body", "Head", "Torso",
+            "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
-    private static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA",
-            "L", "MG", "-" };
+    private static final String[] LOCATION_ABBRS = { "BD", "HD", "T", "RA", "LA",
+            "L", "MG" };
 
     // weapon bools
     private boolean bHasMainGun;
@@ -75,16 +74,17 @@ public class Protomech extends Entity {
      */
     private boolean m_bHasNoMainGun = false;
 
-    public static final int LOC_HEAD = 0;
-    public static final int LOC_TORSO = 1;
+    public static final int LOC_BODY = 0;
 
-    public static final int LOC_RARM = 2;
-    public static final int LOC_LARM = 3;
+    public static final int LOC_HEAD = 1;
+    public static final int LOC_TORSO = 2;
 
-    public static final int LOC_LEG = 4;
-    public static final int LOC_MAINGUN = 5;
+    public static final int LOC_RARM = 3;
+    public static final int LOC_LARM = 4;
 
-    public static final int LOC_UNALLOCATED = 6;
+    public static final int LOC_LEG = 5;
+    public static final int LOC_MAINGUN = 6;
+
     // Near miss reprs.
     public static final int LOC_NMISS = 7;
 
@@ -104,9 +104,9 @@ public class Protomech extends Entity {
     public static final int SYSTEM_TORSO_WEAPON_E = 8;
     public static final int SYSTEM_TORSO_WEAPON_F = 9;
 
-    private static final int[] NUM_OF_SLOTS = { 2, 3, 2, 2, 3, 0 };
+    private static final int[] NUM_OF_SLOTS = { 0, 2, 3, 2, 2, 3, 0 };
 
-    public static final int[] POSSIBLE_PILOT_DAMAGE = { 1, 3, 1, 1, 1, 0 };
+    public static final int[] POSSIBLE_PILOT_DAMAGE = { 0, 1, 3, 1, 1, 1, 0 };
 
     public static final String systemNames[] = { "Arm", "Leg", "Head", "Torso" };
 
@@ -123,6 +123,7 @@ public class Protomech extends Entity {
 
     private boolean isQuad = false;
     private boolean isGlider = false;
+    private boolean interfaceCockpit = false;
     private int wingHits = 0;
 
     // for MHQ
@@ -168,6 +169,11 @@ public class Protomech extends Entity {
         bHasTorsoEGun = false;
         bHasTorsoFGun = false;
         m_bHasNoMainGun = true;
+    }
+
+    @Override
+    public int getUnitType() {
+        return UnitType.PROTOMEK;
     }
 
     @Override
@@ -353,34 +359,42 @@ public class Protomech extends Entity {
             case LOC_LEG:
             case LOC_TORSO:
                 return 3;
+            case LOC_BODY:
+                // This is needed to keep everything ordered in the unit display system tab
+                return 1;
         }
         return 0;
     }
     
-    private static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
             .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    private static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCC)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCY)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    private static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
+    public static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3084, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CSR)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    public static final TechAdvancement TA_INTERFACE_COCKPIT = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3071, DATE_NONE, DATE_NONE, 3085).setISApproximate(true).setPrototypeFactions(F_WB)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
@@ -392,6 +406,13 @@ public class Protomech extends Entity {
             return TA_ULTRA;
         } else {
             return TA_STANDARD_PROTOMECH;
+        }
+    }
+
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        if (interfaceCockpit) {
+            ctl.addComponent(TA_INTERFACE_COCKPIT);
         }
     }
 
@@ -593,19 +614,16 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public double getArmorWeight() {
+        return Math.round(EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(LOC_TORSO))
+                * getTotalOArmor() * 1000.0) / 1000.0;
+    }
+
+    @Override
     public boolean hasRearArmor(int loc) {
         return false;
     }
 
-    @Override
-    public double getArmorWeight() {
-        double weight = 0.0;
-        for (int loc = 0; loc < locations(); loc++) {
-            weight += getArmor(loc)
-                    * EquipmentType.getProtomechArmorWeightPerPoint(getArmorType(loc));
-        }
-        return TestEntity.round(weight, TestEntity.Ceil.KILO);
-    }
     /**
      * get this ProtoMech's run MP without factoring in a possible myomer
      * booster
@@ -817,6 +835,11 @@ public class Protomech extends Entity {
 
         return LOC_NONE;
     }
+    
+    @Override
+    public int firstArmorIndex() {
+        return LOC_HEAD;
+    }
 
     /**
      * Sets the internal structure for the pmech.
@@ -833,6 +856,7 @@ public class Protomech extends Entity {
      *            main gun
      */
     public void setInternal(int head, int torso, int arm, int legs, int mainGun) {
+        initializeInternal(IArmorState.ARMOR_NA, LOC_BODY);
         initializeInternal(head, LOC_HEAD);
         initializeInternal(torso, LOC_TORSO);
         initializeInternal(arm, LOC_RARM);
@@ -953,7 +977,7 @@ public class Protomech extends Entity {
             }
         }
 
-        if (mounted.getType() instanceof WeaponType) {
+        if (mounted.getType().isHittable()) {
             switch (loc) {
                 case LOC_HEAD:
                 case LOC_LEG:
@@ -968,38 +992,23 @@ public class Protomech extends Entity {
                                     "Already has Main Gun");
                         } else {
                             bHas2ndMainGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             break;
                         }
                     }
                     bHasMainGun = true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.add(mounted);
-                    weaponList.add(mounted);
-                    totalWeaponList.add(mounted);
                     break;
                 case LOC_LARM:
                     if (bHasLArmGun) {
                         throw new LocationFullException("Already has LArm Gun");
                     }
                     bHasLArmGun = true;
-                    mounted.setLocation(loc, rearMounted);
-                    equipmentList.add(mounted);
-                    weaponList.add(mounted);
-                    totalWeaponList.add(mounted);
                     break;
                 case LOC_RARM:
                     if (bHasRArmGun) {
                         throw new LocationFullException("Already has RArm Gun");
                     }
                     bHasRArmGun = true;
-                    mounted.setLocation(loc, rearMounted);
-                    equipmentList.add(mounted);
-                    weaponList.add(mounted);
-                    totalWeaponList.add(mounted);
                     break;
                 case LOC_TORSO:
                     if ((getWeight() < 10) && !isQuad()) {
@@ -1009,17 +1018,9 @@ public class Protomech extends Entity {
                                         "Already has both torso guns");
                             }
                             bHasTorsoBGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoBGunNum = getEquipmentNum(mounted);
                         } else {
                             bHasTorsoAGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoAGunNum = getEquipmentNum(mounted);
                         }
                         break;
@@ -1034,33 +1035,17 @@ public class Protomech extends Entity {
                                                     "Already has all four torso guns");
                                         }
                                         bHasTorsoDGun = true;
-                                        mounted.setLocation(loc, rearMounted);
-                                        equipmentList.add(mounted);
-                                        weaponList.add(mounted);
-                                        totalWeaponList.add(mounted);
                                         torsoDGunNum = getEquipmentNum(mounted);
                                     } else {
                                         bHasTorsoCGun = true;
-                                        mounted.setLocation(loc, rearMounted);
-                                        equipmentList.add(mounted);
-                                        weaponList.add(mounted);
-                                        totalWeaponList.add(mounted);
                                         torsoCGunNum = getEquipmentNum(mounted);
                                     }
                                 } else {
                                     bHasTorsoBGun = true;
-                                    mounted.setLocation(loc, rearMounted);
-                                    equipmentList.add(mounted);
-                                    weaponList.add(mounted);
-                                    totalWeaponList.add(mounted);
                                     torsoBGunNum = getEquipmentNum(mounted);
                                 }
                             } else {
                                 bHasTorsoAGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
                                 torsoAGunNum = getEquipmentNum(mounted);
                             }
                         } else {
@@ -1075,52 +1060,25 @@ public class Protomech extends Entity {
                                                             "Already has all six torso guns");
                                                 }
                                                 bHasTorsoFGun = true;
-                                                mounted.setLocation(loc,
-                                                        rearMounted);
-                                                equipmentList.add(mounted);
-                                                weaponList.add(mounted);
-                                                totalWeaponList.add(mounted);
                                                 torsoFGunNum = getEquipmentNum(mounted);
                                             } else {
                                                 bHasTorsoEGun = true;
-                                                mounted.setLocation(loc,
-                                                        rearMounted);
-                                                equipmentList.add(mounted);
-                                                weaponList.add(mounted);
-                                                totalWeaponList.add(mounted);
                                                 torsoEGunNum = getEquipmentNum(mounted);
                                             }
                                         } else {
                                             bHasTorsoDGun = true;
-                                            mounted.setLocation(loc,
-                                                    rearMounted);
-                                            equipmentList.add(mounted);
-                                            weaponList.add(mounted);
-                                            totalWeaponList.add(mounted);
                                             torsoDGunNum = getEquipmentNum(mounted);
                                         }
                                     } else {
                                         bHasTorsoCGun = true;
-                                        mounted.setLocation(loc, rearMounted);
-                                        equipmentList.add(mounted);
-                                        weaponList.add(mounted);
-                                        totalWeaponList.add(mounted);
                                         torsoCGunNum = getEquipmentNum(mounted);
                                     }
                                 } else {
                                     bHasTorsoBGun = true;
-                                    mounted.setLocation(loc, rearMounted);
-                                    equipmentList.add(mounted);
-                                    weaponList.add(mounted);
-                                    totalWeaponList.add(mounted);
                                     torsoBGunNum = getEquipmentNum(mounted);
                                 }
                             } else {
                                 bHasTorsoAGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
                                 torsoAGunNum = getEquipmentNum(mounted);
                             }
                         }
@@ -1133,32 +1091,18 @@ public class Protomech extends Entity {
                                             "Already has all three torso guns");
                                 }
                                 bHasTorsoCGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
                                 torsoCGunNum = getEquipmentNum(mounted);
                             }
                             bHasTorsoBGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoBGunNum = getEquipmentNum(mounted);
                         } else {
                             bHasTorsoAGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoAGunNum = getEquipmentNum(mounted);
                         }
                     }
             }
-            addTechComponent(mounted.getType());
-        } else {
-            super.addEquipment(mounted, loc, rearMounted);
         }
+        super.addEquipment(mounted, loc, rearMounted);
     }
 
     /*
@@ -1941,7 +1885,8 @@ public class Protomech extends Entity {
 
     @Override
     public int getArmor(int loc, boolean rear) {
-        if (loc == LOC_NMISS) {
+        if ((loc == LOC_BODY)
+                || (loc == LOC_NMISS)) {
             return IArmorState.ARMOR_NA;
         }
         return super.getArmor(loc, rear);
@@ -1949,7 +1894,8 @@ public class Protomech extends Entity {
 
     @Override
     public int getInternal(int loc) {
-        if (loc == LOC_NMISS) {
+        if ((loc == LOC_BODY)
+                || (loc == LOC_NMISS)) {
             return IArmorState.ARMOR_NA;
         }
         return super.getInternal(loc);
@@ -1991,6 +1937,11 @@ public class Protomech extends Entity {
             return NUM_PMECH_LOCATIONS - 1;
         }
         return NUM_PMECH_LOCATIONS;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_BODY;
     }
 
     /**
@@ -2346,6 +2297,27 @@ public class Protomech extends Entity {
     
     public void setIsGlider(boolean isGlider) {
         this.isGlider = isGlider;
+    }
+    
+    /**
+     * WoB protomech interface allows it to be piloted by a quadruple amputee with a VDNI implant.
+     * No effect on game play.
+     * 
+     * @return Whether the protomech is equipped with an Inner Sphere Protomech Interface.
+     */
+    public boolean hasInterfaceCockpit() {
+        return interfaceCockpit;
+    }
+    
+    /**
+     * Sets whether the protomech has an Inner Sphere Protomech Interface. This will also determine
+     * whether it is a mixed tech unit.
+     * 
+     * @param interfaceCockpit Whether the protomech has an IS interface
+     */
+    public void setInterfaceCockpit(boolean interfaceCockpit) {
+        this.interfaceCockpit = interfaceCockpit;
+        mixedTech = interfaceCockpit;
     }
 
     @Override

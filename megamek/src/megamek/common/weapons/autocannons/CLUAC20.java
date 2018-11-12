@@ -52,6 +52,7 @@ public class CLUAC20 extends UACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "208,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

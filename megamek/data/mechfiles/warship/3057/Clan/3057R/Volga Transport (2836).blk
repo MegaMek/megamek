@@ -150,7 +150,6 @@ CLMediumPulseLaser
 (B) Naval Autocannon (NAC/20)
 Naval Autocannon (NAC/20)
 Ammo NAC/20:200
-ISMobileHPG
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -178,6 +177,10 @@ CLLargePulseLaser
 (B) Naval Laser 45
 Naval Laser 45
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) CLERPPC

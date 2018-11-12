@@ -352,7 +352,12 @@ public class BattleArmor extends Infantry {
         // Construction complete.
         isInitialized = true;
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.BATTLE_ARMOR;
+    }
+
     protected static final TechAdvancement[] TA_BATTLEARMOR = {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                 .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)

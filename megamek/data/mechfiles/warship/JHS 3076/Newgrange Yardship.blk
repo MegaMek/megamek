@@ -51,7 +51,7 @@ crewquarters:3157.0:0
 2ndclassquarters:14000.0:0
 1stclassquarters:2690.0:0
 steeragequarters:25600.0:0
-cargobay:469192.0:1:6
+cargobay:469192.0:1:11
 </transporters>
 
 <SafeThrust>
@@ -175,6 +175,9 @@ ISAntiMissileSystem
 ISAMS Ammo:240
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) Naval Laser 55
 Naval Laser 55
@@ -278,6 +281,3 @@ JHS3076 - Star League
 600
 </escape_pod>
 
-<History>
-The TRO miscalculates the crew requirements which are corrected here. The ship as built in the TRO is underweight. Increasing Cargo space to use all available weight.
-</history>

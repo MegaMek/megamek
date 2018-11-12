@@ -43,7 +43,7 @@ mechbay:1.0:1
 mechbay:1.0:1
 1stclassquarters:20.0:0
 crewquarters:49.0:0
-cargobay:140.0:1:5
+cargobay:140.0:1:7
 </transporters>
 
 <SafeThrust>
@@ -61,6 +61,10 @@ cargobay:140.0:1:5
 <fuel>
 5000
 </fuel>
+
+<engine_type>
+1
+</engine_type>
 
 <armor_type>
 19
@@ -107,6 +111,9 @@ IS Gauss Ammo:40
 ISLargePulseLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 8
 </structural_integrity>
@@ -118,6 +125,10 @@ TRO 3075 - Civil War
 <tonnage>
 1600.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 15

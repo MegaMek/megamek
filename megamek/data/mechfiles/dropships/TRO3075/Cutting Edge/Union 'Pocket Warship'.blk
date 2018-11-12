@@ -40,9 +40,9 @@ Spheroid
 battlearmorbay:4.0:1:2
 1stclassquarters:30.0:0
 crewquarters:91.0:0
-smallcraftbay:2.0:2:3
-asfbay:2.0:2:4
-cargobay:175.5:3:1
+smallcraftbay:2.0:2:4
+asfbay:2.0:2:5
+cargobay:175.5:3:6
 </transporters>
 
 <SafeThrust>
@@ -145,6 +145,9 @@ ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 11
 </structural_integrity>
@@ -156,6 +159,10 @@ TRO 3075 - Jihad
 <tonnage>
 3600.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 51

@@ -44,7 +44,7 @@ public class CLLightTAG extends TAGWeapon {
         extremeRange = 12;
         bv = 0;
         cost = 40000;
-        flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
+        flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
         rulesRefs = "238,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)

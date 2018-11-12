@@ -52,6 +52,7 @@ public class CLChemicalLaserLarge extends CLChemicalLaserWeapon {
         medAV = 8;
         maxRange = RANGE_MED;
         rulesRefs = "320,TO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setClanAdvancement(3059, 3083, 3145).setPrototypeFactions(F_CHH)

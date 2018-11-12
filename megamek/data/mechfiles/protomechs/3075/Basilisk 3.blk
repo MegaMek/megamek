@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,13 +16,28 @@ ProtoMech
 Basilisk
 </Name>
 
-<model>
+<Model>
 3
-</model>
+</Model>
 
-<Tonnage>
-7
-</Tonnage>
+<year>
+3072
+</year>
+
+<originalBuildYear>
+3072
+</originalBuildYear>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -30,44 +45,53 @@ Basilisk
 
 <jumpingMP>
 5
-</JumpingMP>
-
-<Armor>
-5
-12
-4
-4
-6
-</Armor>
-
-<Torso Equipment>
-CLERMediumLaser
-</Torso Equipment>
-
-<type>
-Clan Level 4
-</type>
-
-<year>
-3072
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
+</jumpingMP>
 
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-Biped
-</motion_type>
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+5
+12
+4
+4
+6
+</armor>
+
+<Body Equipment>
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+ExtendedJumpJetSystem
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLERMediumLaser
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
 
 <source>
 TRO 3075 - Jihad
 </source>
+
+<tonnage>
+7.0
+</tonnage>
+

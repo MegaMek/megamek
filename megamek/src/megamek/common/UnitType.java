@@ -42,10 +42,12 @@ public class UnitType {
 
     public static final int SIZE = names.length;
 
+    /** @deprecated use {@code UnitType.getTypeName(e.getUnitType())} instead */
+    @Deprecated
     public static String determineUnitType(Entity e) {
-        return names[determineUnitTypeCode(e)];
+        return getTypeName(e.getUnitType());
     }
-    
+
     /**
      * Reverse lookup for type integer constant from name
      * 
@@ -61,43 +63,10 @@ public class UnitType {
         return -1;
     }
 
+    /** @deprecated use {@link Entity#getUnitType()} instead */
+    @Deprecated
     public static int determineUnitTypeCode(Entity e) {
-        EntityMovementMode mm = e.getMovementMode();
-        if (e instanceof BattleArmor) {
-            return BATTLE_ARMOR;
-        } else if (e instanceof Infantry) {
-            return INFANTRY;
-        } else if (e instanceof VTOL) {
-            return VTOL;
-        } else if ((mm == EntityMovementMode.NAVAL)
-                || (mm == EntityMovementMode.HYDROFOIL)
-                || (mm == EntityMovementMode.SUBMARINE)) {
-            return NAVAL;
-        } else if (e instanceof GunEmplacement) {
-            return GUN_EMPLACEMENT;
-        } else if (e instanceof Tank) {
-            return TANK;
-        } else if (e instanceof Mech) {
-            return MEK;
-        } else if (e instanceof Protomech) {
-            return PROTOMEK;
-        } else if (e instanceof Warship) {
-            return WARSHIP;
-        } else if (e instanceof SpaceStation) {
-            return SPACE_STATION;
-        } else if (e instanceof Jumpship) {
-            return JUMPSHIP;
-        } else if (e instanceof Dropship) {
-            return DROPSHIP;
-        } else if (e instanceof SmallCraft) {
-            return SMALL_CRAFT;
-        } else if (e instanceof ConvFighter) {
-            return CONV_FIGHTER;
-        } else if (e instanceof Aero) {
-            return AERO;
-        }else {
-            throw new IllegalArgumentException("Unknown unit type");
-        }
+        return e.getUnitType();
     }
 
     public static String getTypeName(int type) {

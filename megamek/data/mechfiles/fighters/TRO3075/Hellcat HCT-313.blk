@@ -24,6 +24,10 @@ HCT-313
 3073
 </year>
 
+<originalBuildYear>
+3073
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -90,6 +97,12 @@ ISERMediumLaser
 <Aft Equipment>
 ISERMediumLaser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Jihad

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,37 +20,32 @@ Deathstalker
 XF-78
 </Model>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-74
-61
-61
-52
-</Armor>
-
-<Nose Equipment>
-ISImprovedHeavyGaussRifle
-ISCASEII
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISGuardianECM
-</Nose Equipment>
-
-<Left Wing Equipment>
-IS X-Pulse Large Laser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-IS X-Pulse Large Laser
-</Right Wing Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 18
@@ -64,30 +59,58 @@ IS X-Pulse Large Laser
 640
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3068
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 22
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+74
+61
+61
+52
+</armor>
+
+<Nose Equipment>
+ISImprovedHeavyGaussRifle
+ISCASEII
+ISGuardianECMSuite
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargeXPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargeXPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+IS Vehicular Stealth
+IS Vehicular Stealth
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+</Fuselage Equipment>
 
 <source>
 XTRO Phantoms - Jihad
 </source>
+
+<tonnage>
+80.0
+</tonnage>
+

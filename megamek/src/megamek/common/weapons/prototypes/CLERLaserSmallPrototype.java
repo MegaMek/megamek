@@ -48,7 +48,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         waterExtremeRange = 4;
         tonnage = 0.5;
         criticals = 1;
-        flags = flags.or(F_NO_FIRES);
+        flags = flags.or(F_NO_FIRES).andNot(F_PROTO_WEAPON);
         bv = 17;
         cost = 11250;
         shortAV = 3;

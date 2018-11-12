@@ -59,16 +59,6 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             t.setModel("");
         }
 
-        if (dataFile.exists("quad") && dataFile.getDataAsString("quad")[0].equalsIgnoreCase("true")) {
-            t.setIsQuad(true);
-            t.setMovementMode(EntityMovementMode.QUAD);
-        }
-
-        if (dataFile.exists("glider") && dataFile.getDataAsString("glider")[0].equalsIgnoreCase("true")) {
-            t.setIsGlider(true);
-            t.setMovementMode(EntityMovementMode.WIGE);
-        }
-
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -93,6 +83,8 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
+        t.setIsQuad(nMotion == EntityMovementMode.QUAD);
+        t.setIsGlider(nMotion == EntityMovementMode.WIGE);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
@@ -108,6 +100,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("jumpingMP")) {
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
         }
+        
+        if (dataFile.exists("interface_cockpit")) {
+            t.setInterfaceCockpit(Boolean.parseBoolean(dataFile.getDataAsString("interface_cockpit")[0]));
+        }
 
         if (!dataFile.exists("armor")) {
             throw new EntityLoadingException("Could not find armor block.");
@@ -116,9 +112,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int[] armor = dataFile.getDataAsInt("armor");
 
         boolean hasMainGun = false;
-        if (Protomech.NUM_PMECH_LOCATIONS == armor.length) {
+        int armorLocs = armor.length + t.firstArmorIndex();
+        if (Protomech.NUM_PMECH_LOCATIONS == armorLocs) {
             hasMainGun = true;
-        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armor.length) {
+        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armorLocs) {
             hasMainGun = false;
         } else {
             throw new EntityLoadingException("Incorrect armor array length");
@@ -140,7 +137,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {
-            t.initializeArmor(armor[x], x);
+            t.initializeArmor(armor[x], x + t.firstArmorIndex());
         }
 
         t.autoSetInternal();
@@ -173,12 +170,12 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             String equipName = element.trim();
 
             // ProtoMech Ammo comes in non-standard amounts.
-            int ammoIndex = equipName.indexOf("Ammo (");
+            int ammoIndex = equipName.indexOf(" (");
             int shotsCount = 0;
             if (ammoIndex > 0) {
                 // Try to get the number of shots.
                 try {
-                    String shots = equipName.substring(ammoIndex + 6, equipName.length() - 1);
+                    String shots = equipName.substring(ammoIndex + 2, equipName.length() - 1);
                     shotsCount = Integer.parseInt(shots);
                     if (shotsCount < 0) {
                         throw new EntityLoadingException("Invalid number of shots in: " + equipName + ".");
@@ -188,7 +185,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                 }
 
                 // Strip the shots out of the ammo name.
-                equipName = equipName.substring(0, ammoIndex + 4);
+                equipName = equipName.substring(0, ammoIndex);
             }
             EquipmentType etype = EquipmentType.get(equipName);
 
@@ -202,11 +199,11 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
                     if (ammoIndex > 0) {
-                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED, false, shotsCount);
+                        t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
                     } else if (TestProtomech.requiresSlot(etype)) {
                         t.addEquipment(etype, nLoc);
                     } else {
-                        t.addEquipment(etype, Protomech.LOC_UNALLOCATED);
+                        t.addEquipment(etype, Protomech.LOC_BODY);
                     }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());

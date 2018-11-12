@@ -24,6 +24,10 @@ PGD-Y3
 3083
 </year>
 
+<originalBuildYear>
+3083
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -73,7 +80,6 @@ Aerodyne
 
 <Nose Equipment>
 Light Auto Cannon/5
-IS Ammo LAC/5
 ISSmallPulseLaser
 </Nose Equipment>
 
@@ -89,6 +95,13 @@ ISERMediumLaser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LAC/5
+</Fuselage Equipment>
 
 <source>
 TRO 3085 - Jihad

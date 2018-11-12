@@ -34,14 +34,18 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.ITechManager;
 import megamek.common.ITechnology;
+import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SmallCraft;
+import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.WeaponType;
@@ -360,6 +364,48 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return 0;
     }
+    
+    /**
+     * Determines whether a type of equipment requires a particular location on an {@link Entity}.
+     * What this means depends on the type of unit, but typically it does not take up a slot or
+     * is not assigned a firing arc.
+     * 
+     * @param entity The Entity the equipment is to be placed on
+     * @param eq     The equipment to place on the Entity
+     * @return       Whether the equipment requires a location
+     * @see #getSystemWideLocation(Entity)
+     */
+    public static boolean eqRequiresLocation(Entity entity, EquipmentType eq) {
+        if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
+            return TestAero.eqRequiresLocation(eq, entity.isFighter());
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            return TestProtomech.requiresSlot(eq);
+        }
+        return true;
+    }
+
+    /**
+     * Determines where to place equipment that does not require a specific location. What
+     * this means varies by {@link Entity} type.
+     * 
+     * @param entity  The Entity to place the equipment in
+     * @return        The location to place equipment that is not required to be assigned a location,
+     *                defaulting to Entity.LOC_NONE for unit types that do not have such a location.
+     */
+    public static int getSystemWideLocation(Entity entity) {
+        if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return Jumpship.LOC_HULL;
+        } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return SmallCraft.LOC_HULL;
+        } else if (entity.hasETypeFlag(Entity.ETYPE_AERO)) {
+            return Aero.LOC_FUSELAGE;
+        } else if (entity.hasETypeFlag(Entity.ETYPE_TANK)) {
+            return Tank.LOC_BODY;
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            return Protomech.LOC_BODY;
+        }
+        return Entity.LOC_NONE;
+    }
 
     private boolean hasMASC() {
         if (getEntity() instanceof Mech) {
@@ -479,6 +525,7 @@ public abstract class TestEntity implements TestEntityOption {
                     || mt.hasFlag(MiscType.F_HEAT_DISSIPATING)
                     || mt.hasFlag(MiscType.F_IMPACT_RESISTANT)
                     || mt.hasFlag(MiscType.F_BALLISTIC_REINFORCED)
+                    || mt.hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
                     || mt.hasFlag(MiscType.F_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
@@ -1433,6 +1480,13 @@ public abstract class TestEntity implements TestEntityOption {
 
     public double getArmoredComponentWeight() {
         return 0.0f;
+    }
+
+    public static boolean usesKgStandard(Entity entity) {
+        return entity.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                || entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                || (EntityWeightClass.getWeightClass(entity.getWeight(), entity)
+                        == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
     }
 
 } // End class TestEntity

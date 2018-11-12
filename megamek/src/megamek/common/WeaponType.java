@@ -287,6 +287,7 @@ import megamek.common.weapons.mortars.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.CLAMS;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.CLFluidGun;
+import megamek.common.weapons.other.CLFussilade;
 import megamek.common.weapons.other.CLLaserAMS;
 import megamek.common.weapons.other.CLNarc;
 import megamek.common.weapons.other.CLNarcIOS;
@@ -313,7 +314,6 @@ import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.CLEnhancedPPC;
 import megamek.common.weapons.ppc.CLImprovedPPC;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
-import megamek.common.weapons.ppc.CLPlasmaRifle;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -379,12 +379,18 @@ import megamek.common.weapons.srms.CLSRM5OS;
 import megamek.common.weapons.srms.CLSRM6;
 import megamek.common.weapons.srms.CLSRM6IOS;
 import megamek.common.weapons.srms.CLSRM6OS;
+import megamek.common.weapons.srms.CLSRT1;
+import megamek.common.weapons.srms.CLSRT1OS;
 import megamek.common.weapons.srms.CLSRT2;
 import megamek.common.weapons.srms.CLSRT2IOS;
 import megamek.common.weapons.srms.CLSRT2OS;
+import megamek.common.weapons.srms.CLSRT3;
+import megamek.common.weapons.srms.CLSRT3OS;
 import megamek.common.weapons.srms.CLSRT4;
 import megamek.common.weapons.srms.CLSRT4IOS;
 import megamek.common.weapons.srms.CLSRT4OS;
+import megamek.common.weapons.srms.CLSRT5;
+import megamek.common.weapons.srms.CLSRT5OS;
 import megamek.common.weapons.srms.CLSRT6;
 import megamek.common.weapons.srms.CLSRT6IOS;
 import megamek.common.weapons.srms.CLSRT6OS;
@@ -431,6 +437,7 @@ import megamek.common.weapons.tag.CLLightTAG;
 import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISLightTAG;
 import megamek.common.weapons.tag.ISTAG;
+import megamek.common.weapons.unofficial.CLPlasmaRifle;
 import megamek.common.weapons.unofficial.CLRAC10;
 import megamek.common.weapons.unofficial.CLRAC20;
 import megamek.common.weapons.unofficial.ISAC10i;
@@ -595,6 +602,9 @@ public class WeaponType extends EquipmentType {
     
     //Hyper-Laser
     public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
+    
+    // Fusillade works like a one-shot weapon but has a second round.
+    public static final BigInteger F_DOUBLE_ONESHOT = BigInteger.valueOf(1).shiftLeft(68);
     
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
@@ -1474,11 +1484,17 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISSRT2OS());
         EquipmentType.addType(new ISSRT4OS());
         EquipmentType.addType(new ISSRT6OS());
+        EquipmentType.addType(new CLSRT1());
         EquipmentType.addType(new CLSRT2());
+        EquipmentType.addType(new CLSRT3());
         EquipmentType.addType(new CLSRT4());
+        EquipmentType.addType(new CLSRT5());
         EquipmentType.addType(new CLSRT6());
+        EquipmentType.addType(new CLSRT1OS());        
         EquipmentType.addType(new CLSRT2OS());
+        EquipmentType.addType(new CLSRT3OS());
         EquipmentType.addType(new CLSRT4OS());
+        EquipmentType.addType(new CLSRT5OS());
         EquipmentType.addType(new CLSRT6OS());
         // RLs
         /*
@@ -1506,7 +1522,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLIATM6());
         EquipmentType.addType(new CLIATM9());
         EquipmentType.addType(new CLIATM12());
-//        EquipmentType.addType(new CLFussilade());
+        EquipmentType.addType(new CLFussilade());
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());

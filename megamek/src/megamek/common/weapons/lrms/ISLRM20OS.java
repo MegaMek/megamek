@@ -39,7 +39,7 @@ public class ISLRM20OS extends LRMWeapon {
         tonnage = 10.5;
         criticals = 5;
         bv = 36;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 125000;
         shortAV = 12;
         medAV = 12;

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,34 +20,32 @@ Light Strike Fighter
 Owl
 </Model>
 
-<Tonnage>
-10
-</Tonnage>
+<year>
+2673
+</year>
+
+<originalBuildYear>
+2673
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
 </SafeThrust>
 
-<Armor>
-2
-2
-2
-2
-</Armor>
-
-<Nose Equipment>
-SRM 4
-IS Ammo SRM-4
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -61,30 +59,42 @@ IS Ammo SRM-4
 160
 </fuel>
 
-<type>
-IS Level 1
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-2673
-</year>
+<armor>
+2
+2
+2
+2
+</armor>
+
+<Nose Equipment>
+SRM 4
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-4
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Star League
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+10.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

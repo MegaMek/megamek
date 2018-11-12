@@ -52,6 +52,7 @@ public abstract class LRMWeapon extends MissileWeapon {
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
+        flags = flags.or(F_PROTO_WEAPON);
     }
 
     

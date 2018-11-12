@@ -41,7 +41,7 @@ Aerodyne
 steeragequarters:65.0:0
 crewquarters:21.0:0
 1stclassquarters:0.0:0
-cargobay:145.0:1:1
+cargobay:145.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -134,6 +134,9 @@ ISAntiMissileSystem
 ISAMS Ammo:72
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 15
 </structural_integrity>
@@ -149,6 +152,10 @@ TRO 3085S - Jihad
 <bv>
 14254
 </bv>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 13

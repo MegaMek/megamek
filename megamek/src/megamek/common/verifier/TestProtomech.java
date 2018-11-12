@@ -37,7 +37,12 @@ import megamek.common.util.StringUtil;
  *
  */
 public class TestProtomech extends TestEntity {
-    
+
+    /**
+     * Minimum tonnage for a protomech
+     */
+    public static final double MIN_TONNAGE = 2.0;
+
     /**
      * Any protomech with a larger mass than this is ultra-heavy
      */
@@ -47,6 +52,15 @@ public class TestProtomech extends TestEntity {
      * Maximum weight for a protomech
      */
     public static final double MAX_TONNAGE = 15.0;
+    
+    /**
+     * Minimum walk MP for glider protomech
+     */
+    public static final int GLIDER_MIN_MP = 4;
+    /**
+     * Minimum walk MP for quad protomech
+     */
+    public static final int QUAD_MIN_MP = 3;
     
     public enum ProtomechJumpJets {
         JJ_STANDARD ("ProtomechJumpJet", false),
@@ -142,6 +156,11 @@ public class TestProtomech extends TestEntity {
             return type;
         }
         
+        public int getArmorTech() {
+            EquipmentType eq = getArmorEqType();
+            return eq.getStaticTechLevel().getCompoundTechLevel(isClan);
+        }
+        
         public boolean isClan() {
             return isClan;
         }
@@ -154,6 +173,17 @@ public class TestProtomech extends TestEntity {
             return EquipmentType.getProtomechArmorWeightPerPoint(type);
         }
     }
+    
+    public static int maxJumpMP(Protomech proto) {
+        if (proto.getMisc().stream().map(Mounted::getType)
+                .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
+                        && eq.hasSubType(MiscType.S_IMPROVED))) {
+            return (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
+        }
+        return proto.getOriginalWalkMP();
+    }
+
+
 
     /**
      * Filters all protomech armor according to given tech constraints
@@ -407,6 +437,7 @@ public class TestProtomech extends TestEntity {
         boolean illegal = false;
         Map<Integer, Integer> slotsByLoc = new HashMap<>();
         Map<Integer, Double> weightByLoc = new HashMap<>();
+        int meleeWeapons = 0;
         for (Mounted mount : proto.getEquipment()) {
             if (!requiresSlot(mount.getType())) {
                 continue;
@@ -437,13 +468,29 @@ public class TestProtomech extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOQMS)) {
-                if (!proto.isQuad()) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMECH_MELEE)) {
+                meleeWeapons++;
+                if (meleeWeapons == 2) {
+                    buff.append("Cannot mount multiple melee weapons.\n");
+                    illegal = true;
+                }
+                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS) && !proto.isQuad()) {
                     buff.append(mount.getType().getName() + "can only be used by quad protomechs.\n");
                     illegal = true;
                 }
-                if (mount.getLocation() != Protomech.LOC_TORSO) {
+                if (mount.getType().hasSubType(MiscType.S_PROTO_QMS)
+                        && (mount.getLocation() != Protomech.LOC_TORSO)) {
                     buff.append(mount.getType().getName() + " must be mounted in the torso.\n");
+                    illegal = true;
+                }
+                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON) && proto.isQuad()) {
+                    buff.append(mount.getType().getName() + "cannot be used by quad protomechs.\n");
+                    illegal = true;
+                }
+                if (mount.getType().hasSubType(MiscType.S_PROTOMECH_WEAPON)
+                        && (mount.getLocation() != Protomech.LOC_LARM)
+                        && (mount.getLocation() != Protomech.LOC_RARM)) {
+                    buff.append(mount.getType().getName() + " must be mounted in an arm.\n");
                     illegal = true;
                 }
             }
@@ -476,17 +523,22 @@ public class TestProtomech extends TestEntity {
     }
     
     /**
-     * Checks for exceeding the maximum number of armor points for the tonnage.
+     * Checks for exceeding the maximum number of armor points by location for the tonnage.
      * 
      * @param buffer  A string buffer for appending error messages.
      * @return        Whether the number of armor points is legal
      */
     public boolean correctArmor(StringBuffer buffer) {
-        if (proto.getTotalArmor() > maxArmorFactor(proto)) {
-            buffer.append("Exceeds maximum of ").append(maxArmorFactor(proto)).append(" armor points.\n");
-            return false;
+        boolean correct = true;
+        for (int loc = 0; loc < proto.locations(); loc++) {
+            if (proto.getOArmor(loc) > maxArmorFactor(proto, loc)) {
+                buffer.append(proto.getLocationAbbr(loc))
+                    .append(" exceeds maximum of ")
+                    .append(maxArmorFactor(proto, loc)).append(" armor points.\n");
+                correct = false;
+            }
         }
-        return true;
+        return correct;
     }
     
     /**
@@ -496,16 +548,26 @@ public class TestProtomech extends TestEntity {
      * @return       Whether the MP is legal.
      */
     public boolean correctMovement(StringBuffer buffer) {
+        boolean correct = true;
         if (proto.isGlider()
-                && proto.getOriginalWalkMP() < 4) {
-            buffer.append("Glider protomechs have a minimum cruising MP of 4.\n");
-            return false;
+                && proto.getOriginalWalkMP() < GLIDER_MIN_MP) {
+            buffer.append("Glider protomechs have a minimum cruising MP of " + GLIDER_MIN_MP + ".\n");
+            correct = false;
         } else if (proto.isQuad()
-                && proto.getOriginalWalkMP() < 3) {
-            buffer.append("Quad protomechs have a minimum walk MP of 3.\n");
-            return false;
+                && proto.getOriginalWalkMP() < QUAD_MIN_MP) {
+            buffer.append("Quad protomechs have a minimum walk MP of " + QUAD_MIN_MP + ".\n");
+            correct = false;
         }
-        return true;
+        int maxJump = maxJumpMP(proto);
+        if (proto.getOriginalJumpMP() > maxJump) {
+            buffer.append("Exceeds maximum jump MP.\n");
+            correct = false;
+        }
+        if (proto.getAllUMUCount() > maxJump) { 
+            buffer.append("Exceeds maximum UMU MP.\n");
+            correct = false;
+        }
+        return correct;
     }
     
 
@@ -539,8 +601,10 @@ public class TestProtomech extends TestEntity {
     public double getWeightAmmo() {
         double weight = 0.0;
         for (Mounted m : getEntity().getAmmo()) {
-            AmmoType mt = (AmmoType) m.getType();
-            weight += Math.ceil(mt.getKgPerShot() * m.getBaseShotsLeft()) / 1000.0;
+            if (!m.isOneShotAmmo()) {
+                AmmoType mt = (AmmoType) m.getType();
+                weight += ceil(mt.getKgPerShot() * m.getBaseShotsLeft() / 1000, Ceil.KILO);
+            }
         }
         return weight;
     }
@@ -573,12 +637,25 @@ public class TestProtomech extends TestEntity {
      * @return      The engine rating required for the weight, speed, and configuration
      */
     public static int calcEngineRating(Protomech proto) {
-        int moveFactor = (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
+        return calcEngineRating(proto.getOriginalWalkMP(),
+                proto.getWeight(), proto.isQuad() || proto.isGlider());
+    }
+    
+    /**
+     * Computes the required engine rating
+     * 
+     * @param walkMP The base walking MP
+     * @param tonnage The weight of the protomech in tons
+     * @param quadOrGlider Whether the protomech is a quad or glider configuration
+     * @return      The engine rating required for the weight, speed, and configuration
+     */
+    public static int calcEngineRating(int walkMP, double tonnage, boolean quadOrGlider) {
+        int moveFactor = (int) Math.ceil(walkMP * 1.5);
         // More efficient engine use for gliders and quads
-        if (proto.isGlider() || proto.isQuad()) {
+        if (quadOrGlider) {
             moveFactor -= 2;
         }
-        return Math.max(1, (int)(moveFactor * proto.getWeight()));
+        return Math.max(1, (int)(moveFactor * tonnage));
     }
     
     /**
@@ -711,4 +788,33 @@ public class TestProtomech extends TestEntity {
         }
         return base;
     }
+    /**
+     * Determine the maximum amount of armor in a location based on unit weight.
+     * 
+     * @param proto   The protomech
+     * @param location The location index
+     * @return        The maximum total number of armor points
+     */
+    public static int maxArmorFactor(Protomech proto, int location) {
+        if (location == Protomech.LOC_HEAD) {
+            return 2 + (int) proto.getWeight() / 2;
+        } else if (location == Protomech.LOC_MAINGUN) {
+            if (proto.hasMainGun()) {
+                return proto.getOInternal(location) * 3;
+            } else {
+                return 0;
+            }
+        } else if ((location == Protomech.LOC_LARM)
+                || (location == Protomech.LOC_RARM)) {
+            if (proto.isQuad()) {
+                return 0;
+            }
+            return Math.min(proto.getOInternal(location) * 2, 6);
+        } else if (location == Protomech.LOC_BODY) {
+            return 0;
+        } else {
+            return proto.getOInternal(location) * 2;
+        }
+    }
+    
 }

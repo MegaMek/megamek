@@ -44,7 +44,7 @@ public class ISLRT5OS extends LRTWeapon {
         tonnage = 2.5;
         criticals = 1;
         bv = 9;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 15000;
         rulesRefs = "230,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

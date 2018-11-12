@@ -42,7 +42,7 @@ asfbay:6.0:6:1
 steeragequarters:180.0:0
 crewquarters:364.0:0
 1stclassquarters:110.0:0
-cargobay:2082.0:1:2
+cargobay:2082.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -224,6 +224,9 @@ ISLaserAntiMissileSystem
 Ammo Screen:20
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 75
 </structural_integrity>
@@ -235,6 +238,10 @@ Jihad Hot Spots: Terra - Jihad
 <tonnage>
 36000.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 64

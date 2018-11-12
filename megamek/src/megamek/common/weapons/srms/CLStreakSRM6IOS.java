@@ -40,7 +40,7 @@ public class CLStreakSRM6IOS extends StreakSRMWeapon {
         extremeRange = 16;
         tonnage = 2.5;
         criticals = 2;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         bv = 24;
         cost = 96000;
         shortAV = 12;

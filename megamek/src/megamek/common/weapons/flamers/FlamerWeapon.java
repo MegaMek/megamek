@@ -37,9 +37,9 @@ public abstract class FlamerWeapon extends EnergyWeapon {
      */
     private static final long serialVersionUID = -8198014543155920036L;
 
-    public FlamerWeapon() {
+	public FlamerWeapon() {
         super();
-        flags = flags.or(F_FLAMER).or(F_BURST_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_FLAMER).or(F_BURST_FIRE);
         ammoType = AmmoType.T_NA;
         atClass = CLASS_POINT_DEFENSE;
     }

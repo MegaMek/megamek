@@ -24,6 +24,10 @@ C
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -90,7 +94,7 @@ Searchlight:OMNI
 <Body Equipment>
 ISMobileFieldBase:OMNI
 ISMobileFieldBase:OMNI
-Lift Hoist:OMNI
+Lift Hoist/Arresting Hoist:OMNI
 ISCASE:OMNI
 Advanced Fire Control
 Armored Chassis

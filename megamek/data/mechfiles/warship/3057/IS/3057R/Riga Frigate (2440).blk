@@ -114,7 +114,6 @@ Ammo NAC/25:100
 (B) Naval PPC (Light)
 (B) Naval Laser 45
 Naval Laser 45
-ISSmallNavalCommScannerSuite
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -134,6 +133,10 @@ Naval Laser 45
 Naval Autocannon (NAC/25)
 Ammo NAC/25:100
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval PPC (Heavy)

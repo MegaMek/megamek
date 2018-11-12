@@ -50,6 +50,7 @@ public class CLUAC20Prototype extends CLPrototypeUACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         rulesRefs = "97, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

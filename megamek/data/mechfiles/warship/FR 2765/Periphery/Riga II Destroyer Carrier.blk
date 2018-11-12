@@ -44,7 +44,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:400.0:0
 crewquarters:1400.0:0
-cargobay:73888.0:1:4
+cargobay:73888.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -130,6 +130,9 @@ Naval Laser 35
 Naval Laser 35
 </Aft Right Side Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/30)
 Naval Autocannon (NAC/30)
@@ -202,8 +205,4 @@ FR2765-P - Star League
 <escape_pod>
 20
 </escape_pod>
-
-<history>
-The ship as built in the TRO is 3392 tons underweight. Increasing Cargo space to use all available weight.
-</history>
 

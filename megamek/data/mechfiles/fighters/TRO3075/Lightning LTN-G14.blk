@@ -24,6 +24,10 @@ LTN-G14
 2465
 </year>
 
+<originalBuildYear>
+2465
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -74,8 +81,6 @@ Aerodyne
 <Nose Equipment>
 Medium Laser
 Autocannon/10
-IS Ammo AC/10
-IS Ammo AC/10
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -89,6 +94,14 @@ Medium Laser
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/10
+IS Ammo AC/10
+</Fuselage Equipment>
 
 <source>
 TRO 3075 - Age of War

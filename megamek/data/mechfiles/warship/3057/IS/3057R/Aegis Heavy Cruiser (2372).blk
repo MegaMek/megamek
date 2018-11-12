@@ -45,7 +45,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:650.0:0
 crewquarters:2275.0:0
-cargobay:128089.5:1:3
+cargobay:128089.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -161,6 +161,9 @@ Naval Autocannon (NAC/10)
 Naval Autocannon (NAC/10)
 Ammo NAC/10:100
 </Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <Left Broadsides Equipment>
 (B) Naval Autocannon (NAC/10)

@@ -16,13 +16,13 @@ package megamek.common.weapons.other;
 import megamek.common.BattleForceElement;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
-import megamek.common.weapons.missiles.ATMWeapon;
+import megamek.common.weapons.CLIATMWeapon;
 
 /**
  * @author beerockxs
  * 
  */
-public class CLFussilade extends ATMWeapon {
+public class CLFussilade extends CLIATMWeapon {
 
     /**
      *
@@ -32,9 +32,11 @@ public class CLFussilade extends ATMWeapon {
     public CLFussilade() {
         super();
         //TODO Game Rules.
-        this.name = "Fussilade";
-        this.setInternalName("Fussilade");
-        flags = flags.or(WeaponType.F_PROTO_WEAPON);
+        this.name = "Fusillade";
+        setInternalName("Fusillade");
+        addLookupName("Fussilade");
+        flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
+                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT);
         rackSize = 3;
         minimumRange = 4;
         shortRange = 5;

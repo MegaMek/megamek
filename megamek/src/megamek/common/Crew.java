@@ -1099,7 +1099,7 @@ public class Crew implements Serializable {
     /**
      * Sets crew state fields back to defaults. Used by MekHQ to clear game state.
      */
-    public void resetCrewState() {
+    public void resetGameState() {
         fatigueCount = 0;
         doomed = false;
         ejected = false;

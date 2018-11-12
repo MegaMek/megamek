@@ -459,8 +459,6 @@ public class Compute {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
-        final boolean isPavementStep = Compute.canMoveOnPavement(game, src,
-                dest, moveStep);
         int delta_alt = (destElevation + destHex.getLevel())
                         - (srcElevation + srcHex.getLevel());
 
@@ -476,6 +474,9 @@ public class Compute {
         if (src.equals(dest)) {
             return false;
         }
+        
+        // airborne aircraft do not require pavement-related checks
+        final boolean isPavementStep = entity.isAirborne() ? false : Compute.canMoveOnPavement(game, src, dest, moveStep);
 
         // check for rubble
         if ((movementType != EntityMovementType.MOVE_JUMP)

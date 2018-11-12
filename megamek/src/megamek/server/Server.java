@@ -29050,6 +29050,12 @@ public class Server implements Runnable {
                 Entity leadTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
                 disconnectUnit(entity, leadTrailer, entity.getPosition());
             }
+            
+            // Is this unit a trailer being towed? If so, disconnect it from its tractor
+            if (entity.getTractor() != Entity.NONE) {
+                Entity tractor = game.getEntity(entity.getTractor());
+                disconnectUnit(tractor, entity, tractor.getPosition());
+            }
 
             // Is this unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();

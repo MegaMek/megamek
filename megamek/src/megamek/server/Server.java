@@ -10170,10 +10170,9 @@ public class Server implements Runnable {
      */
     public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
         ArrayList<Coords> trainCoords = new ArrayList<Coords>();
-        Coords position = null;
         for (int trId : allTowedTrailers) {
             Entity trailer = game.getEntity(trId);
-            position = trailer.getPosition();
+            Coords position = trailer.getPosition();
             //Duplicates foul up the works...
             if (!trainCoords.contains(position)) {
                 trainCoords.add(position);

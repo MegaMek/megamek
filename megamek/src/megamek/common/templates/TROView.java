@@ -297,6 +297,9 @@ public class TROView {
 		String name = EquipmentType.getArmorTypeName(at);
 		if (trim) {
 			name = name.replace("-Fibrous", "").replace("-Aluminum", "");
+			if (at == EquipmentType.T_ARMOR_EDP) {
+			    name = "EDP";
+			}
 		}
 		return name;
 	}

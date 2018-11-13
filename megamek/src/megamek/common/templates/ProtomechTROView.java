@@ -61,9 +61,10 @@ public class ProtomechTROView extends TROView {
         addArmorAndStructure();
         int nameWidth = addEquipment(proto);
         setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 10},
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER}));
+                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.RIGHT}));
         addFluff();
         setModelData("isGlider", proto.isGlider());
+        setModelData("isQuad", proto.isQuad());
         TestProtomech testproto = new TestProtomech(proto, verifier.protomechOption, null);
         setModelData("isMass", NumberFormat.getInstance().format(testproto.getWeightStructure() * 1000));
         setModelData("engineRating", proto.getEngine().getRating());

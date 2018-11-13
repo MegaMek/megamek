@@ -50,11 +50,13 @@
 			<td align="center">${structureValues.T}</td>
 			<td align="center">${armorValues.T}</td>
 		</tr>
+		<#if !isQuad>
 		<tr>
 			<td>R/L Arm</td>
 			<td align="center">${structureValues.RA}</td>
 			<td align="center">${armorValues.RA}</td>
 		</tr>
+		</#if>
 		<tr>
 			<td>Legs</td>
 			<td align="center">${structureValues.L}</td>

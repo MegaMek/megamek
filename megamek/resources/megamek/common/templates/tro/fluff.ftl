@@ -11,7 +11,7 @@ Frame: ${frameDesc}
 Power Plant: ${engineDesc}
 Cruising Speed: ${cruisingSpeed} kph
 Maximum Speed: ${maxSpeed} kph
-<#if jumpMP??>
+<#if jumpMP?? && jjDesc??>
 Jump Jets: ${jjDesc}
      Jump Capacity: ${jumpCapacity} meters
 </#if>

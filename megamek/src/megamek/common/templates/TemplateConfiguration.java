@@ -19,28 +19,28 @@ import freemarker.template.TemplateExceptionHandler;
 
 /**
  * Configuration for FreeMarker templates
- * 
+ *
  * @author Neoancient
  *
  */
 public final class TemplateConfiguration {
-	
-	private static Configuration configuration = null;
-	
-	public static Configuration getInstance() {
-		if (null == configuration) {
-			configuration = createConfiguration();
-		}
-		return configuration;
-	}
 
-	private static Configuration createConfiguration() {
-		Configuration cfg = new Configuration(Configuration.getVersion());
-		cfg.setClassForTemplateLoading(TemplateConfiguration.class, ".");
-		cfg.setDefaultEncoding("UTF-8");
-		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-		cfg.setLogTemplateExceptions(false);
-		cfg.setWrapUncheckedExceptions(true);		
-		return cfg;
-	}
+    private static Configuration configuration = null;
+
+    public static Configuration getInstance() {
+        if (null == configuration) {
+            configuration = createConfiguration();
+        }
+        return configuration;
+    }
+
+    private static Configuration createConfiguration() {
+        final Configuration cfg = new Configuration(Configuration.getVersion());
+        cfg.setClassForTemplateLoading(TemplateConfiguration.class, ".");
+        cfg.setDefaultEncoding("UTF-8");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        cfg.setLogTemplateExceptions(false);
+        cfg.setWrapUncheckedExceptions(true);
+        return cfg;
+    }
 }

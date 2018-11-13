@@ -33,7 +33,7 @@ import megamek.common.verifier.TestProtomech;
 
 /**
  * Creates a TRO template model for Protomechs.
- * 
+ *
  * @author Neoancient
  *
  */
@@ -55,37 +55,38 @@ public class ProtomechTROView extends TROView {
 
     @Override
     protected void initModel(EntityVerifier verifier) {
-        setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10},
+        setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
                 new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
         addBasicData(proto);
         addArmorAndStructure();
-        int nameWidth = addEquipment(proto);
-        setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 10},
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.RIGHT}));
+        final int nameWidth = addEquipment(proto);
+        setModelData("formatEquipmentRow", new FormatTableRowMethod(new int[] { nameWidth, 12, 10 },
+                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.RIGHT }));
         addFluff();
         setModelData("isGlider", proto.isGlider());
         setModelData("isQuad", proto.isQuad());
-        TestProtomech testproto = new TestProtomech(proto, verifier.protomechOption, null);
+        final TestProtomech testproto = new TestProtomech(proto, verifier.protomechOption, null);
         setModelData("isMass", NumberFormat.getInstance().format(testproto.getWeightStructure() * 1000));
         setModelData("engineRating", proto.getEngine().getRating());
         setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
         setModelData("walkMP", proto.getWalkMP());
         setModelData("runMP", proto.getRunMPasString());
-        List<Mounted> umu = proto.getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_UMU)).collect(Collectors.toList());
+        final List<Mounted> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_UMU))
+                .collect(Collectors.toList());
         if (umu.isEmpty()) {
             setModelData("jumpMP", proto.getOriginalJumpMP());
-            setModelData("jumpMass", Math.round(1000 * proto.getMisc().stream()
-                    .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
-                    .mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
+            setModelData("jumpMass",
+                    Math.round(1000 * proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                            .mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
         } else {
             setModelData("umuMP", umu.size());
-            setModelData("umuMass", Math.round(1000 * umu.stream().mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
+            setModelData("umuMass",
+                    Math.round(1000 * umu.stream().mapToDouble(m -> m.getType().getTonnage(proto)).sum()));
         }
         setModelData("hsCount", testproto.getCountHeatSinks());
         setModelData("hsMass", NumberFormat.getInstance().format(testproto.getWeightHeatSinks() * 1000));
         setModelData("cockpitMass", NumberFormat.getInstance().format(testproto.getWeightControls() * 1000));
-        String atName = formatArmorType(proto, true);
+        final String atName = formatArmorType(proto, true);
         if (atName.length() > 0) {
             setModelData("armorType", " (" + atName + ")");
         } else {
@@ -98,12 +99,10 @@ public class ProtomechTROView extends TROView {
     private void addFluff() {
         addMechVeeAeroFluff(proto);
         if (proto.getOriginalJumpMP() > 0) {
-            setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS,
-                    proto.getFluff(), () -> ""));
+            setModelData("chassisDesc", formatSystemFluff(EntityFluff.System.CHASSIS, proto.getFluff(), () -> ""));
         }
         if (!proto.isGlider()) {
-            setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET,
-                    proto.getFluff(), () -> ""));
+            setModelData("jjDesc", formatSystemFluff(EntityFluff.System.JUMPJET, proto.getFluff(), () -> ""));
             setModelData("jumpCapacity", proto.getJumpMP() * 30);
         }
         if (proto.isGlider()) {
@@ -112,35 +111,29 @@ public class ProtomechTROView extends TROView {
             setModelData("configurationDesc", Messages.getString("TROView.ProtoQuad"));
         }
     }
-    private static final int[][] PROTO_ARMOR_LOCS = {
-            {Protomech.LOC_HEAD}, {Protomech.LOC_TORSO}, {Protomech.LOC_RARM, Protomech.LOC_LARM},
-            {Protomech.LOC_LEG}, {Protomech.LOC_MAINGUN}
-    };
+
+    private static final int[][] PROTO_ARMOR_LOCS = { { Protomech.LOC_HEAD }, { Protomech.LOC_TORSO },
+            { Protomech.LOC_RARM, Protomech.LOC_LARM }, { Protomech.LOC_LEG }, { Protomech.LOC_MAINGUN } };
 
     private void addArmorAndStructure() {
-        setModelData("structureValues", addArmorStructureEntries(proto,
-                (en, loc) -> en.getOInternal(loc),
-                PROTO_ARMOR_LOCS));
-        setModelData("armorValues", addArmorStructureEntries(proto,
-                (en, loc) -> en.getOArmor(loc),
-                PROTO_ARMOR_LOCS));
+        setModelData("structureValues",
+                addArmorStructureEntries(proto, (en, loc) -> en.getOInternal(loc), PROTO_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(proto, (en, loc) -> en.getOArmor(loc), PROTO_ARMOR_LOCS));
     }
 
     @Override
     protected int addEquipment(Entity entity, boolean includeAmmo) {
         final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
-        for (Mounted m : entity.getEquipment()) {
-            if ((m.getLocation() < 0) || m.isWeaponGroup()
-                    || (!includeAmmo && (m.getType() instanceof AmmoType))) {
+        for (final Mounted m : entity.getEquipment()) {
+            if ((m.getLocation() < 0) || m.isWeaponGroup() || (!includeAmmo && (m.getType() instanceof AmmoType))) {
                 continue;
             }
             if ((m.getType() instanceof MiscType)
-                    && (m.getType().hasFlag(MiscType.F_JUMP_JET)
-                            || m.getType().hasFlag(MiscType.F_UMU))) {
+                    && (m.getType().hasFlag(MiscType.F_JUMP_JET) || m.getType().hasFlag(MiscType.F_UMU))) {
                 continue;
             }
-            String loc = formatLocationTableEntry(entity, m);
+            final String loc = formatLocationTableEntry(entity, m);
             equipment.putIfAbsent(loc, new HashMap<>());
             if (m.getType() instanceof AmmoType) {
                 equipment.get(loc).merge(m.getType(), m.getBaseShotsLeft(), Integer::sum);
@@ -149,8 +142,8 @@ public class ProtomechTROView extends TROView {
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
-        for (String loc : equipment.keySet()) {
-            for (Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
+        for (final String loc : equipment.keySet()) {
+            for (final Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
                 final EquipmentType eq = entry.getKey();
                 final int count = equipment.get(loc).get(eq);
                 String name = stripNotes(eq.getName());
@@ -159,7 +152,7 @@ public class ProtomechTROView extends TROView {
                 } else if (count > 1) {
                     name = String.format("%d %ss", count, eq.getName());
                 }
-                Map<String, Object> fields = new HashMap<>();
+                final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;

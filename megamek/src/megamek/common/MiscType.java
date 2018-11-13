@@ -868,7 +868,7 @@ public class MiscType extends EquipmentType {
             } else {
                 return Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
             }
-        }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
             if (entity.getWeight() < 6) {
                 return 0.25;
             } else if (entity.getWeight() < 10) {

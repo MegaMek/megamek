@@ -4617,8 +4617,9 @@ public class Server implements Runnable {
         }
         // disconnectUnit() updates anything behind 'trailer' too, so copy
         // the list of trailers before we alter it so entityUpdate() can be
-        // run on all of them
+        // run on all of them. Also, add the entity towing Trailer to the list
         List<Integer> trailerList = new ArrayList<>(trailer.getConnectedUnits());
+        trailerList.add(trailer.getTowedBy());
 
         // Unload the unit.
         tractor.disconnectUnit(trailer.getId());

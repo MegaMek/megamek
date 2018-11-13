@@ -15398,7 +15398,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Entity towingEnt = game.getEntity(towed.towedBy);
         towingEnt.connectedUnits.clear();
         if (towingEnt != null) {
-            Transporter hitch = towingEnt.getHitchById(towed.getTargetBay());
+            Transporter hitch = towingEnt.getHitchCarrying(id);
             if (hitch != null) {
                 hitch.unload(towed);
             }
@@ -15411,7 +15411,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             tractor.removeTowedUnit(i);
             towingEnt = game.getEntity(trailer.towedBy);
             if (towingEnt != null) {
-                Transporter hitch = towingEnt.getHitchById(trailer.getTargetBay());
+                Transporter hitch = towingEnt.getHitchCarrying(i);
                 if (hitch != null) {
                     hitch.unload(trailer);
                 }

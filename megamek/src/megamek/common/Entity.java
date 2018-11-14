@@ -15202,6 +15202,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
         
+        //Can't tow if we aren't a tractor
+        if (!isTractor()) {
+            return false;
+        }
+        
         //If this entity is in a transport bay, it can't tow another
         if (this.getTransportId() != Entity.NONE) {
             return false;

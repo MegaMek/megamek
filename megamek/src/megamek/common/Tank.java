@@ -285,6 +285,10 @@ public class Tank extends Entity {
             //Add up the trailers
             for (int id : getAllTowedUnits()) {
                 Entity tr = game.getEntity(id);
+                if (tr == null) {
+                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                    continue;
+                }
                 trailerWeight += tr.getWeight();
             }
             if (trailerWeight <= (tractorWeight / 4)) {

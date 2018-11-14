@@ -3392,15 +3392,26 @@ public class MoveStep implements Serializable {
             }
 
             // cant move through a hex with a LargeSupportTank or a grounded
-            // Dropship or a tractor towing trailers unless infantry
+            // Dropship unless infantry
             // or a VTOL at high enough elevation
             if (!(entity instanceof Infantry)) {
+                boolean validRoadTrain = false;
                 for (Entity inHex : game.getEntitiesVector(src)) {
                     if (inHex.equals(entity)) {
                         continue;
                     }
+                    
+                    //ignore the first trailer behind a non-superheavy tractor
+                    //which can be in the same hex
+                    if (!entity.getAllTowedUnits().isEmpty() && !entity.isSuperHeavy()) {
+                        Entity firstTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
+                        if (inHex.equals(firstTrailer)) {
+                            validRoadTrain = true;
+                        }
+                    }
+                    
                     if ((inHex instanceof LargeSupportTank)
-                            || (!entity.getAllTowedUnits().isEmpty())
+                            || (!entity.getAllTowedUnits().isEmpty() && !validRoadTrain)
                             || (!inHex.getAllTowedUnits().isEmpty())
                             || ((inHex instanceof Dropship)
                             && !inHex.isAirborne() && !inHex

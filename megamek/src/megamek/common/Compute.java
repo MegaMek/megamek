@@ -317,10 +317,10 @@ public class Compute {
                 || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
                 || (entering instanceof Dropship)
-                || (!entering.getAllTowedUnits().isEmpty())
                 || ((entering instanceof Mech) && ((Mech) entering)
                         .isSuperHeavy());
-
+        
+        boolean isTrain = (!entering.getAllTowedUnits().isEmpty());
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
@@ -373,6 +373,15 @@ public class Compute {
                     if (inHex.equals(transport)) {
                         continue;
                     }
+                    
+                    //ignore the first trailer behind a non-superheavy tractor
+                    //which can be in the same hex
+                    if (isTrain && !entering.isSuperHeavy()) {
+                        Entity firstTrailer = game.getEntity(entering.getAllTowedUnits().get(0));
+                        if (inHex.equals(firstTrailer)) {
+                            continue;
+                        }
+                    }
 
                     // DFAing units don't count towards stacking
                     if (inHex.isMakingDfa()) {
@@ -394,7 +403,6 @@ public class Compute {
                     // only inf can be in the same hex as a large support vee
                     // grounded dropships are treated as large support vees,
                     // ditto for superheavy mechs
-                    // also for tractors with attached trailers
                     if (isLargeSupport && !(inHex instanceof Infantry)) {
                         return inHex;
                     }

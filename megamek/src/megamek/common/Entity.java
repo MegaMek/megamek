@@ -15202,6 +15202,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
         
+        //Shouldn't be using this method if Trailer isn't a trailer
+        if (!trailer.isTrailer()) {
+            return false;
+        }
+        
         //Can't tow if we aren't a tractor
         if (!isTractor()) {
             return false;

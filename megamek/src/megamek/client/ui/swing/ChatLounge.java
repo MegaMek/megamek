@@ -125,6 +125,7 @@ import megamek.common.ProtomechClampMount;
 import megamek.common.QuirksHandler;
 import megamek.common.RangeType;
 import megamek.common.Tank;
+import megamek.common.TankTrailerHitch;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.WeaponType;
@@ -3696,6 +3697,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                                 // transporters....
                                 boolean hasTroopSpace = false;
                                 for (Transporter t : loadingEntity.getTransports()) {
+                                    if (t instanceof TankTrailerHitch) {
+                                        continue;
+                                    }
                                     double loadWeight = e.getWeight();
                                     if (potentialLoad.containsKey(t)) {
                                         loadWeight += potentialLoad.get(t);
@@ -4105,7 +4109,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                         }
                         boolean loadable = true;
                         for (Entity en : entities) {
-                            if (!loader.canLoad(en, false) || (loader.getId() == en.getId())) {
+                            if (!loader.canLoad(en, false) 
+                                    || (loader.getId() == en.getId())
+                                    || (loader.canTow(en.getId()))) {
                                 loadable = false;
                                 break;
                             }

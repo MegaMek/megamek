@@ -18,6 +18,7 @@ v0.45.2-SNAPSHOT
 + PR #1185: Protomech validation, updates to protomech unit files from errata and addition of Wars of Reaving units.
 + PR #1186: Protomech equipment (implentation of melee weapon, quad melee system, fusillade, and magnetic clamps) 
 + PR #1184: Bot handling for aerospace units on low-atmospheric maps and on space maps using non-advanced flight rules
++ PR #1193: TRO style summary
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers

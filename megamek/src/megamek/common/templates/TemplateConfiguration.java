@@ -36,7 +36,7 @@ public final class TemplateConfiguration {
 
     private static Configuration createConfiguration() {
         final Configuration cfg = new Configuration(Configuration.getVersion());
-        cfg.setClassForTemplateLoading(TemplateConfiguration.class, ".");
+        cfg.setClassForTemplateLoading(TemplateConfiguration.class, "/megamek/common/templates");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);

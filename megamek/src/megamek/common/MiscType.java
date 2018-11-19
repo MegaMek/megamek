@@ -868,7 +868,7 @@ public class MiscType extends EquipmentType {
             } else {
                 return Math.ceil((entity.getWeight() * 0.02) * 2) / 2.0;
             }
-        }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        }  else if (hasFlag(MiscType.F_MAGNETIC_CLAMP) && hasFlag(MiscType.F_PROTOMECH_EQUIPMENT)) {
             if (entity.getWeight() < 6) {
                 return 0.25;
             } else if (entity.getWeight() < 10) {
@@ -2484,7 +2484,7 @@ public class MiscType extends EquipmentType {
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, DATE_PS);
         misc.techAdvancement.setIntroLevel(true);
         misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
         return misc;
     }
 

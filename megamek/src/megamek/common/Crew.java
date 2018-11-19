@@ -738,7 +738,7 @@ public class Crew implements Serializable {
         s = s.trim();
         int index = s.indexOf(" ");
         if (index == -1) {
-            return new Boolean(true);
+            return Boolean.TRUE;
         }
         String t = s.substring(index + 1, s.length());
         Object result;
@@ -1097,10 +1097,17 @@ public class Crew implements Serializable {
     }
     
     /**
-     * Sets fatigue counter back to zero.
+     * Sets crew state fields back to defaults. Used by MekHQ to clear game state.
      */
-    public void resetFatigue() {
+    public void resetGameState() {
         fatigueCount = 0;
+        doomed = false;
+        ejected = false;
+        for (int i = 0; i < crewType.getCrewSlots(); i++) {
+            unconscious[i] = false;
+            dead[i] = false;
+            missing[i] = false;
+        }
     }
 
     public int rollGunnerySkill() {

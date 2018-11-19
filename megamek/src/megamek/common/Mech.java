@@ -6730,12 +6730,44 @@ public abstract class Mech extends Entity {
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
-
-
+        
+        if (getFluff().getManufacturer().trim().length() > 0) {
+            sb.append("manufacturer:");
+            sb.append(getFluff().getManufacturer());
+            sb.append(newLine);
+        }
+        
+        if (getFluff().getPrimaryFactory().trim().length() > 0) {
+            sb.append("primaryFactory:");
+            sb.append(getFluff().getPrimaryFactory());
+            sb.append(newLine);
+        }
+        
+        if (getFluff().getNotes().trim().length() > 0) {
+            sb.append("notes:");
+            sb.append(getFluff().getNotes());
+            sb.append(newLine);
+        }
+        
         if (getFluff().getMMLImagePath().trim().length() > 0) {
             sb.append("imagefile:");
             sb.append(getFluff().getMMLImagePath());
             sb.append(newLine);
+        }
+        
+        for (EntityFluff.System system : EntityFluff.System.values()) {
+        	if (getFluff().getSystemManufacturer(system).length() > 0) {
+        		sb.append("systemmanufacturer:");
+        		sb.append(system.toString()).append(":");
+        		sb.append(getFluff().getSystemManufacturer(system));
+        		sb.append(newLine);
+        	}
+        	if (getFluff().getSystemModel(system).length() > 0) {
+        		sb.append("systemmodel:");
+        		sb.append(system.toString()).append(":");
+        		sb.append(getFluff().getSystemModel(system));
+        		sb.append(newLine);
+        	}
         }
 
         if (getUseManualBV()) {

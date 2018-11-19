@@ -498,8 +498,10 @@ public class Engine implements Serializable, ITechnology {
                 break;
             case BATTERY:
                 sb.append(" Battery"); //$NON-NLS-1$
+                break;
             case SOLAR:
                 sb.append(" Solar");  //$NON-NLS-1$
+                break;
             case NONE:
                 sb.append(" NONE"); //$NON-NLS-1$
                 break;

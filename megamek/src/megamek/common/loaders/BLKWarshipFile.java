@@ -225,7 +225,11 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         }
         
         //Warships should always be military craft
-        a.setDesignType(Aero.MILITARY);
+        if (dataFile.exists("designtype")) {
+            a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
+        } else {
+            a.setDesignType(Aero.MILITARY);
+        }
 
         if (dataFile.exists("overview")) {
             a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);

@@ -4263,7 +4263,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public List<Entity> getEntitiesFlyingOver(Coords c) {
         List<Entity> entities = new ArrayList<Entity>();
         for (FlyOverSprite fsprite : flyOverSprites) {
-            if (fsprite.getEntity().getPassedThrough().contains(c)) {
+            //Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
+            if (fsprite.getEntity().getPassedThrough().contains(c) && !fsprite.getEntity().isSpaceborne()) {
                 entities.add(fsprite.getEntity());
             }
         }

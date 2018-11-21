@@ -25,6 +25,7 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
@@ -222,6 +223,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
+        
+        //Warships should always be military craft
+        a.setDesignType(Aero.MILITARY);
 
         if (dataFile.exists("overview")) {
             a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);

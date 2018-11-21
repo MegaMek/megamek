@@ -32,6 +32,10 @@ Unpressurized Yard - Small
 IS Level 3
 </type>
 
+<designtype>
+0
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>

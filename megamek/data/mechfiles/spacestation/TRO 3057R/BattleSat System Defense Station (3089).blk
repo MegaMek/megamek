@@ -13,19 +13,19 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Small
+BattleSat System Defense Station
 </Name>
 
 <Model>
-(2300)
+(3089)
 </Model>
 
 <year>
-2300
+3089
 </year>
 
 <originalBuildYear>
-2300
+3089
 </originalBuildYear>
 
 <type>
@@ -33,7 +33,7 @@ IS Level 3
 </type>
 
 <designtype>
-0
+1
 </designtype>
 
 <motion_type>
@@ -41,10 +41,11 @@ Aerodyne
 </motion_type>
 
 <transporters>
-smallcraftbay:2.0:2:1
-crewquarters:329.0:0
-1stclassquarters:240.0:0
-cargobay:1197.5:1:4
+1stclassquarters:90.0:0
+crewquarters:308.0:0
+cargobay:182.0:1:3
+cargobay:182.5:1:4
+cargobay:182.5:1:5
 </transporters>
 
 <SafeThrust>
@@ -52,15 +53,15 @@ cargobay:1197.5:1:4
 </SafeThrust>
 
 <heatsinks>
-52
+72
 </heatsinks>
 
 <sink_type>
-0
+1
 </sink_type>
 
 <fuel>
-1000
+200
 </fuel>
 
 <engine_type>
@@ -68,7 +69,7 @@ cargobay:1197.5:1:4
 </engine_type>
 
 <armor_type>
-40
+13
 </armor_type>
 
 <armor_tech>
@@ -76,12 +77,12 @@ cargobay:1197.5:1:4
 </armor_tech>
 
 <armor>
-9
-9
-9
-9
-9
-9
+10
+10
+10
+10
+10
+10
 </armor>
 
 <Nose Equipment>
@@ -94,6 +95,12 @@ cargobay:1197.5:1:4
 </Right Front Side Equipment>
 
 <Aft Equipment>
+(B) Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
+Sub-Capital Laser (SCL/1)
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -110,23 +117,19 @@ cargobay:1197.5:1:4
 </structural_integrity>
 
 <source>
-TRO3057r -
+TRO3057U - Early Republic
 </source>
 
 <tonnage>
-2500.0
+2000.0
 </tonnage>
 
 <sail>
 0
 </sail>
 
-<grav_decks>
-65
-</grav_decks>
-
 <crew>
-66
+53
 </crew>
 
 <officers>
@@ -134,11 +137,11 @@ TRO3057r -
 </officers>
 
 <gunners>
-0
+6
 </gunners>
 
 <passengers>
-15
+0
 </passengers>
 
 <marines>
@@ -150,10 +153,10 @@ TRO3057r -
 </battlearmor>
 
 <life_boat>
-4
+1
 </life_boat>
 
 <escape_pod>
-4
+0
 </escape_pod>
 

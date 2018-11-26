@@ -76,7 +76,7 @@ cargobay:942601.0:1:8
 </engine_type>
 
 <armor_type>
-42
+13
 </armor_type>
 
 <armor_tech>
@@ -84,12 +84,12 @@ cargobay:942601.0:1:8
 </armor_tech>
 
 <armor>
-10
-10
-10
-10
-10
-10
+14
+14
+14
+14
+14
+14
 </armor>
 
 <Nose Equipment>

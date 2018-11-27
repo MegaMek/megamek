@@ -1,6 +1,9 @@
 
 VERSION HISTORY:
 ----------------
+v0.45.3
++ PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.
+
 v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.
 + Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]

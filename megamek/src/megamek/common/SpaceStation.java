@@ -33,36 +33,9 @@ public class SpaceStation extends Jumpship {
     // This only affects cost, but may have an effect in a large-scale strategic setting.
     private boolean modular = false;
     
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
-
     @Override
     public int getUnitType() {
         return UnitType.SPACE_STATION;
-    }
-
-    /*
-     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * @param turns - integer specifying the number of end phases that the effects last through
-     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
-     * Space Stations should use the same method as Jumpships, but because Warships have a different number of arcs
-     * we run into problems if this isn't explicitly specified here.
-     */
-    @Override
-    public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
-    }
-    
-    /*
-     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * Also an override to prevent issues with Warships having a different number of arcs
-     */
-    @Override
-    public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
     }
     
     public SpaceStation() {

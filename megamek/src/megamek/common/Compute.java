@@ -319,7 +319,8 @@ public class Compute {
                 || (entering instanceof Dropship)
                 || ((entering instanceof Mech) && ((Mech) entering)
                         .isSuperHeavy());
-
+        
+        boolean isTrain = (!entering.getAllTowedUnits().isEmpty());
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
@@ -371,6 +372,15 @@ public class Compute {
                     // Ignore the transport of the entering entity.
                     if (inHex.equals(transport)) {
                         continue;
+                    }
+                    
+                    //ignore the first trailer behind a non-superheavy tractor
+                    //which can be in the same hex
+                    if (isTrain && !entering.isSuperHeavy()) {
+                        Entity firstTrailer = game.getEntity(entering.getAllTowedUnits().get(0));
+                        if (inHex.equals(firstTrailer)) {
+                            continue;
+                        }
                     }
 
                     // DFAing units don't count towards stacking
@@ -2339,8 +2349,8 @@ public class Compute {
         }
         
         //If we're a trailer and being towed, return data for the tractor
-        if (entity.isTrailer() && entity.getTractor() != null) {
-            return getTargetMovementModifier(game, entity.getTractor().getId());
+        if (entity.isTrailer() && entity.getTractor() != Entity.NONE) {
+            return getTargetMovementModifier(game, entity.getTractor());
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)

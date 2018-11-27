@@ -39,7 +39,7 @@ public class CLImprovedLRM10 extends LRMWeapon {
         heat = 4;
         rackSize = 10;
         minimumRange = 6;
-        tonnage = 2.5f;
+        tonnage = 2.5;
         criticals = 1;
         bv = 90;
         cost = 100000;
@@ -49,6 +49,7 @@ public class CLImprovedLRM10 extends LRMWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_LRM_IMP;
         rulesRefs = "96, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2815, 2818, 2820, 2831, 3080)

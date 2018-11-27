@@ -34,6 +34,15 @@ public class TankTrailerHitch implements Transporter {
     private static final long serialVersionUID = 1193349063084937973L;
     
     /**
+     * Is this transporter associated with a front or rear-mounted hitch equipment?
+     */
+    private boolean rearMounted = false;
+    
+    public boolean getRearMounted() {
+        return rearMounted;
+    }
+    
+    /**
      * The entity being towed by this hitch.
      */
     protected int towed = Entity.NONE;
@@ -102,9 +111,10 @@ public class TankTrailerHitch implements Transporter {
     // Public constructors and methods.
 
     /**
-     * Create a new hitch.
+     * Create a new hitch, specified as a (front) or rear mount.
      */
-    public TankTrailerHitch() {
+    public TankTrailerHitch(boolean rear) {
+        rearMounted = rear;
     }
 
     /**
@@ -224,20 +234,10 @@ public class TankTrailerHitch implements Transporter {
      *            facing.
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
-     * @see megamek.common.TankTrailerHitch#getBlockedLocs(boolean)
      */
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        // Assume that the weapon is not blocked.
-        boolean result = false;
-
-        // The weapon can only be blocked if we are carrying a trailer.
-        Entity trailer = game.getEntity(towed);
-        if (null != trailer) {
-            result = true;
-        }
-        
-        // Return our result.
-        return result;
+        // Assume that the weapon is not blocked. See Entity.isWeaponBlockedByTowing() instead.
+        return false;
     }
 
     /**
@@ -271,7 +271,7 @@ public class TankTrailerHitch implements Transporter {
         return rv;
     }
 
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
     

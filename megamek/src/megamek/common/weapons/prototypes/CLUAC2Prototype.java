@@ -43,7 +43,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         mediumRange = 17;
         longRange = 25;
         extremeRange = 34;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 4;
         bv = 56;
         cost = 120000;
@@ -54,6 +54,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = damage;
         rulesRefs = "97, IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

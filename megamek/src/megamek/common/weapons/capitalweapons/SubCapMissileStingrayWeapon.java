@@ -49,7 +49,7 @@ public class SubCapMissileStingrayWeapon extends SubCapMissileWeapon {
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 120.0f;
+        this.tonnage = 120.0;
         this.bv = 496;
         this.cost = 85000;
         this.flags = flags.or(F_MISSILE);

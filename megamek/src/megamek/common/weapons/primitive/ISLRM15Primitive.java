@@ -43,7 +43,7 @@ public class ISLRM15Primitive extends LRMWeapon {
         heat = 5;
         rackSize = 15;
         minimumRange = 6;
-        tonnage = 7.0f;
+        tonnage = 7.0;
         criticals = 3;
         bv = 136;
         cost = 175000;

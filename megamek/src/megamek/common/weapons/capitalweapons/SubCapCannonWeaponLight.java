@@ -42,7 +42,7 @@ public class SubCapCannonWeaponLight extends SubCapCannonWeapon {
         this.mediumRange = 22;
         this.longRange = 33;
         this.extremeRange = 44;
-        this.tonnage = 200.0f;
+        this.tonnage = 200.0;
         this.bv = 379;
         this.cost = 330000;
         this.shortAV = 2;

@@ -32,6 +32,7 @@ public abstract class NLWeapon extends EnergyWeapon {
         super();
         this.atClass = CLASS_CAPITAL_LASER;
         this.capital = true;
+        flags = flags.andNot(F_PROTO_WEAPON);
     }
     
     @Override

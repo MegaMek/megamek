@@ -39,7 +39,7 @@ public class ISStreakSRM6IOS extends StreakSRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 4.0f;
+        tonnage = 4.0;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         bv = 18;

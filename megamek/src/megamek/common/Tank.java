@@ -258,7 +258,7 @@ public class Tank extends Entity {
             return 0;
         }
         j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
                     .getMovementMods(this);
@@ -276,6 +276,26 @@ public class Tank extends Entity {
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
+        }
+        
+        //If the unit is towing trailers, adjust its walkMP, TW p205
+        if (!getAllTowedUnits().isEmpty()) {
+            double tractorWeight = getWeight();
+            double trailerWeight = 0;
+            //Add up the trailers
+            for (int id : getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                if (tr == null) {
+                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                    continue;
+                }
+                trailerWeight += tr.getWeight();
+            }
+            if (trailerWeight <= (tractorWeight / 4)) {
+                j = Math.max((j - 3), (j / 2));
+            } else {
+                j = (j / 2);
+            }
         }
 
         return j;
@@ -470,8 +490,8 @@ public class Tank extends Entity {
             return super.isImmobile();
         }
         //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
-        if (isTrailer() && getTractor() != null) {
-            return getTractor().isImmobile();
+        if (isTrailer() && getTractor() != Entity.NONE) {
+            return game.getEntity(getTractor()).isImmobile();
         }
         return super.isImmobile() || m_bImmobile;
     }
@@ -664,8 +684,8 @@ public class Tank extends Entity {
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
         //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
-        if (isTrailer() && getTractor() != null && getTractor().hasETypeFlag(Entity.ETYPE_TANK)) {
-            Tank Tractor = (Tank) getTractor();
+        if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
             m_bImmobileHit= Tractor.m_bImmobileHit;
         }
@@ -3214,15 +3234,59 @@ public class Tank extends Entity {
     }
     
     /**
+     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
+     * Tractor chassis mod that doesn't already have one
+     */
+    @Override
+    public void addTrailerHitchEquipment() {
+        //If we already have a hitch, don't add a new one
+        if (hasWorkingMisc(MiscType.F_HITCH)) {
+            return;
+        }
+        boolean hitchNeeded = false;
+        //Only support vees designed as Tractors should have a hitch
+        if (isSupportVehicle()) {
+            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+                hitchNeeded = true;
+            }
+        } else {
+            //but all tracked and wheeled military vees should get one
+            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
+                hitchNeeded = true;
+            }
+        }
+        if (hitchNeeded) {
+            //Add hitch to the rear by default
+            if (isSuperHeavy()) {
+                try {
+                    addEquipment(EquipmentType.get("Hitch"), SuperHeavyTank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //For vehicles, this shouldn't happen
+               }
+            } else {
+                try {
+                    addEquipment(EquipmentType.get("Hitch"), Tank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //ditto
+               }
+            }
+        }
+    }
+    
+    /**
      * Add a transporter for each trailer hitch the unit is equipped with
      */
     public void setTrailerHitches() {
-        if (hasTrailerHitch()) {
+        if (hasTrailerHitchTransporter()) {
             return;
         }
+        boolean rearMounted = false;
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_HITCH)) {
-                addTransporter(new TankTrailerHitch());
+                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
+                    rearMounted = true;
+                }
+                addTransporter(new TankTrailerHitch(rearMounted));
             }
         }
     }
@@ -3231,7 +3295,7 @@ public class Tank extends Entity {
      * Check to see if the unit has a trailer hitch transporter already
      * We need this to prevent duplicate transporters being created
      */
-    protected boolean hasTrailerHitch() {
+    protected boolean hasTrailerHitchTransporter() {
         for (Transporter t : getTransports()) {
             if (t instanceof TankTrailerHitch) {
                 return true;
@@ -4021,7 +4085,8 @@ public class Tank extends Entity {
 
         return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
-
+    
+    @Override
     public boolean isSuperHeavy() {
         return false;
     }

@@ -46,7 +46,7 @@ public class ISLaserSmall extends LaserWeapon {
         waterMediumRange = 2;
         waterLongRange = 2;
         waterExtremeRange = 4;
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
         bv = 9;
@@ -55,6 +55,7 @@ public class ISLaserSmall extends LaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "227,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

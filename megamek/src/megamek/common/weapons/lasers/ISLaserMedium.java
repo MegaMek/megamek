@@ -43,13 +43,14 @@ public class ISLaserMedium extends LaserWeapon {
         this.waterMediumRange = 4;
         this.waterLongRange = 6;
         this.waterExtremeRange = 8;
-        this.tonnage = 1.0f;
+        this.tonnage = 1.0;
         this.criticals = 1;
         this.bv = 46;
         this.cost = 40000;
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "227,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

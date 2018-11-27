@@ -49,7 +49,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 9.0f;
+        tonnage = 9.0;
         criticals = 4;
         bv = 222;
         cost = 200000;

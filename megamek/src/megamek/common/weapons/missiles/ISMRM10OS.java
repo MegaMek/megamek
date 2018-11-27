@@ -40,7 +40,7 @@ public class ISMRM10OS extends MRMWeapon {
         mediumRange = 8;
         longRange = 15;
         extremeRange = 16;
-        tonnage = 3.5f;
+        tonnage = 3.5;
         criticals = 2;
         bv = 11;
         flags = flags.or(F_ONESHOT);

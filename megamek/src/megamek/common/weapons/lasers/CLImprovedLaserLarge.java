@@ -45,7 +45,7 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         this.waterMediumRange = 6;
         this.waterLongRange = 9;
         this.waterExtremeRange = 12;
-        this.tonnage = 4.0f;
+        this.tonnage = 4.0;
         this.criticals = 1;
         this.bv = 123;
         this.cost = 100000;
@@ -53,6 +53,7 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         rulesRefs = "95,IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2812, 2815, 2818, 2830, 3080)

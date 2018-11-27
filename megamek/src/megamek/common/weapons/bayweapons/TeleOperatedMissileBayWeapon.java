@@ -55,7 +55,7 @@ public class TeleOperatedMissileBayWeapon extends AmmoBayWeapon {
         this.mediumRange = 24;
         this.longRange = 40;
         this.extremeRange = 50;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);

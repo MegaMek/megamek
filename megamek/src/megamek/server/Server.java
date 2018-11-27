@@ -745,6 +745,7 @@ public class Server implements Runnable {
             ent.setGame(game);
             if (ent instanceof Mech) {
                 ((Mech) ent).setBAGrabBars();
+                ((Mech) ent).setProtomechClampMounts();
             }
             if (ent instanceof Tank) {
                 ((Tank) ent).setBAGrabBars();
@@ -4503,8 +4504,19 @@ public class Server implements Runnable {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     private void loadUnit(Entity loader, Entity unit, int bayNumber) {
+        // Protomechs share a single turn for a Point. When loading one we don't remove its turn
+        // unless it's the last unit in the Point to act.
+        int remainingProtos = 0;
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            remainingProtos = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                    && en.getId() != unit.getId()
+                    && en.isSelectableThisTurn()
+                    && en.getOwnerId() == unit.getOwnerId()
+                    && en.getUnitNumber() == unit.getUnitNumber());
+        }
 
-        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()
+                && (remainingProtos == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -4567,7 +4579,7 @@ public class Server implements Runnable {
             send(createTurnVectorPacket());
         }
         
-        loader.towUnit(unit);
+        loader.towUnit(unit.getId());
 
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
@@ -4575,6 +4587,52 @@ public class Server implements Runnable {
         // Update the loader and towed units.
         entityUpdate(unit.getId());
         entityUpdate(loader.getId());
+    }
+    
+    /**
+     * Have the tractor drop the indicated trailer. This will also disconnect all
+     * trailers that follow the one dropped.
+     *
+     * @param tractor
+     *            - the <code>Entity</code> that is disconnecting the trailer.
+     * @param unloaded
+     *            - the <code>Targetable</code> unit being unloaded.
+     * @param pos
+     *            - the <code>Coords</code> for the unloaded unit.
+     * @param evacuation
+     *            - a <code>boolean</code> indicating whether this trailer is being
+     *            unloaded as a result of its carrying unit's destruction
+     * @return <code>true</code> if the unit was successfully unloaded,
+     *         <code>false</code> if the trailer isn't carried by tractor.
+     */
+    private boolean disconnectUnit(Entity tractor, Targetable unloaded,
+            Coords pos) {
+        
+        // We can only unload Entities.
+        Entity trailer = null;
+        if (unloaded instanceof Entity) {
+            trailer = (Entity) unloaded;
+        } else {
+            return false;
+        }
+        // disconnectUnit() updates anything behind 'trailer' too, so copy
+        // the list of trailers before we alter it so entityUpdate() can be
+        // run on all of them. Also, add the entity towing Trailer to the list
+        List<Integer> trailerList = new ArrayList<>(trailer.getConnectedUnits());
+        trailerList.add(trailer.getTowedBy());
+
+        // Unload the unit.
+        tractor.disconnectUnit(trailer.getId());
+        
+        // Update the tractor and all affected trailers.
+        for (int id : trailerList) {
+            entityUpdate(id);
+        }
+        entityUpdate(trailer.getId());
+        entityUpdate(tractor.getId());
+
+        // Unloaded successfully.
+        return true;
     }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
@@ -4644,12 +4702,12 @@ public class Server implements Runnable {
             unit.setElevation(elevation);
         } else if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
             if (unit.getMovementMode() == EntityMovementMode.VTOL) {
-                // Flying units onload to the same elevation as the flying
+                // Flying units unload to the same elevation as the flying
                 // transport
                 unit.setElevation(elevation);
             } else if (game.getBoard().getBuildingAt(pos) != null) {
-                // non-flying unit onloaded from a flying onto a building
-                // -> sit on the roff
+                // non-flying unit unloaded from a flying onto a building
+                // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             } else {
                 while (elevation >= -hex.depth()) {
@@ -6879,8 +6937,14 @@ public class Server implements Runnable {
             return vReport;
         }
 
-        // Is the unit carrying passengers?
-        final List<Entity> passengers = entity.getLoadedUnits();
+        // Is the unit carrying passengers or trailers?
+        final List<Entity> passengers = new ArrayList<Entity>(entity.getLoadedUnits());
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            for (int id : entity.getAllTowedUnits()) {
+                Entity towed = game.getEntity(id);
+                passengers.add(towed);
+            }
+        }
         if (!passengers.isEmpty()) {
             for (Entity passenger : passengers) {
                 // Unit has fled the battlefield.
@@ -8812,7 +8876,7 @@ public class Server implements Runnable {
                 //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
                 //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
                 //Do we need it here for safety, client/server sync or can this be further streamlined?
-                if (!entity.canTow(loaded)) {
+                if (!entity.canTow(loaded.getId())) {
                     // Something is fishy in Denmark.
                     logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
                     loaded = null;
@@ -8969,6 +9033,23 @@ public class Server implements Runnable {
                     send(createTurnVectorPacket());
                 }
             }
+            
+            // Handle disconnecting trailers.
+            if (step.getType() == MoveStepType.DISCONNECT) {
+                Targetable unloaded = step.getTarget(game);
+                Coords unloadPos = curPos;
+                if (null != step.getTargetPosition()) {
+                    unloadPos = step.getTargetPosition();
+                }
+                if (!disconnectUnit(entity, unloaded, unloadPos)) {
+                    logError(METHOD_NAME,
+                            "Server was told to disconnect "
+                                    + unloaded.getDisplayName() + " from "
+                                    + entity.getDisplayName() + " into "
+                                    + curPos.getBoardNum());
+                }
+            }
+            
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
@@ -9940,16 +10021,12 @@ public class Server implements Runnable {
             }
         }
         
-        //let's try handling this after the tractor has officially moved
         //If the entity is towing trailers, update the position of those trailers
         if (!entity.getAllTowedUnits().isEmpty()) {
-            ArrayList<Entity> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
             Collections.reverse(reversedTrailers); // reverse in-place
             ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
-            for (Entity trailer : entity.getAllTowedUnits()) {
-                processTrailerMovement(entity, trailer, trailerPath);
-                entityUpdate(trailer.getId());
-            }
+            processTrailerMovement(entity, trailerPath);
          }
 
         // recovered units should now be recovered and dealt with
@@ -10037,32 +10114,67 @@ public class Server implements Runnable {
      * @param tractor    The Entity that is moving
      * @param trailer    The current trailer being updated
      */
-    private void processTrailerMovement(Entity tractor, Entity trailer, ArrayList<Coords> trainPath) {
-        double trailerPositionOffset = 0;
-        int stepNumber = 0;
-        Coords trailerPos = null;
-        trailerPositionOffset = (tractor.getAllTowedUnits().indexOf(trailer) + 2); //Offset so we get the right position index
-        //Place large trailers in their own hexes behind the tractor
-        if (trailer.getWeight() > 100) {
-            stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-            trailerPos = trainPath.get(stepNumber);
-            trailer.setPosition(trailerPos);
-        } else {
-        //Otherwise, we can put two trailers in each hex, starting with 1 in the tractor's hex
-            trailerPositionOffset =  (int) Math.ceil(trailerPositionOffset / 2.0);
-            if (trailerPositionOffset == 1) {
+    private void processTrailerMovement(Entity tractor, ArrayList<Coords> trainPath) {
+        for (int eId : tractor.getAllTowedUnits()) {
+            Entity trailer = game.getEntity(eId);
+            // if the Tractor didn't move anywhere, stay where we are
+            if (tractor.delta_distance == 0) {
+                trailer.delta_distance = tractor.delta_distance;
+                trailer.moved = tractor.moved;
+                trailer.setSecondaryFacing(trailer.getFacing());
+                trailer.setDone(true);
+                entityUpdate(eId);
+                continue;
+            }
+            int stepNumber = 0; // The Coords in trainPath that this trailer should move to
+            Coords trailerPos = null;
+            int trailerNumber = tractor.getAllTowedUnits().indexOf(eId);
+            double trailerPositionOffset = (trailerNumber + 1); //Offset so we get the right position index
+            // Unless the tractor is superheavy, put the first trailer in its hex.
+            // Technically this would be true for a superheavy trailer too, but only a superheavy tractor can tow one.
+            if (trailerNumber == 0 && !tractor.isSuperHeavy()) {
                 trailer.setPosition(tractor.getPosition());
                 trailer.setFacing(tractor.getFacing());
             } else {
-                stepNumber = (trainPath.size() - (int) trailerPositionOffset);
-                trailerPos = trainPath.get(stepNumber);
-                trailer.setPosition(trailerPos);
-                trailer.setFacing(tractor.getPassedThroughFacing().get(stepNumber));
+                // If the trailer is superheavy, place it in a hex by itself
+                if (trailer.isSuperHeavy()) {
+                    trailerPositionOffset ++;
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                } else if (tractor.isSuperHeavy()) {
+                    // If the tractor is superheavy, we can put two trailers in each hex
+                    // starting trailer 0 in the hex behind the tractor
+                    trailerPositionOffset = (Math.ceil((trailerPositionOffset /= 2.0)) + 1);
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                } else {
+                    // Otherwise, we can put two trailers in each hex
+                    // starting trailer 1 in the hex behind the tractor
+                    trailerPositionOffset ++;
+                    trailerPositionOffset = Math.ceil((trailerPositionOffset /= 2.0));
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                }
             }
+            // trailers are immobile by default. Match the tractor's movement here
+            trailer.delta_distance = tractor.delta_distance;
+            trailer.moved = tractor.moved;
+            trailer.setSecondaryFacing(trailer.getFacing());
+            trailer.setDone(true);
+            entityUpdate(eId);
         }
-        //trailers are immobile by default. Match the tractor's movement here
-        trailer.delta_distance = tractor.delta_distance;
-        trailer.moved = tractor.moved;
     }
     
     /**
@@ -10071,11 +10183,11 @@ public class Server implements Runnable {
      * 
      * @return  Returns the properly sorted list of all train coordinates
      */
-    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, ArrayList<Entity> allTowedTrailers) {
+    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
         ArrayList<Coords> trainCoords = new ArrayList<Coords>();
-        Coords position = null;
-        for (Entity trailer : allTowedTrailers) {
-            position = trailer.getPosition();
+        for (int trId : allTowedTrailers) {
+            Entity trailer = game.getEntity(trId);
+            Coords position = trailer.getPosition();
             //Duplicates foul up the works...
             if (!trainCoords.contains(position)) {
                 trainCoords.add(position);
@@ -23525,98 +23637,10 @@ public class Server implements Runnable {
                 int nLoc = hit.getLocation();
                 Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
                 // Does an exterior passenger absorb some of the damage?
-                int avoidRoll = Compute.d6();
-                if (!ammoExplosion && (null != passenger) && (avoidRoll >= 5)
-                    && !passenger.isDoomed()
-                    && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Yup. Roll up some hit data for that passenger.
-                    r = new Report(6075);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-
-                    HitData passHit = passenger.getTrooperAtLocation(hit, te);
-                    passHit.setGeneralDamageType(hit.getGeneralDamageType());
-
-
-                    // How much damage will the passenger absorb?
-                    int absorb = 0;
-                    HitData nextPassHit = passHit;
-                    do {
-                        int armorType = passenger.getArmorType(nextPassHit
-                                                                       .getLocation());
-                        boolean armorDamageReduction = false;
-                        if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
-                             && ((hit.getGeneralDamageType() ==
-                                  HitData.DAMAGE_MISSILE)))
-                            || (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                            armorDamageReduction = true;
-                        }
-                        // Check for reflective armor
-                        if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
-                            && (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ENERGY)) {
-                            armorDamageReduction = true;
-                        }
-                        if (0 < passenger.getArmor(nextPassHit)) {
-                            absorb += passenger.getArmor(nextPassHit);
-                            if (armorDamageReduction) {
-                                absorb *= 2;
-                            }
-                        }
-                        if (0 < passenger.getInternal(nextPassHit)) {
-                            absorb += passenger.getInternal(nextPassHit);
-                            // Armor damage reduction, like for reflective or
-                            // reactive armor will divide the whole damage
-                            // total by 2 and round down. If we have an odd
-                            // damage total, need to add 1 to make this
-                            // evenly divisible by 2
-                            if (((absorb % 2) != 0) && armorDamageReduction) {
-                                absorb++;
-                            }
-                        }
-                        nextPassHit = passenger
-                                .getTransferLocation(nextPassHit);
-                    } while ((damage > absorb)
-                             && (nextPassHit.getLocation() >= 0));
-
-                    // Damage the passenger.
-                    int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = damageEntity(passenger,
-                                                             passHit, absorbedDamage);
-                    for (Report newReport : newReports) {
-                        newReport.indent(2);
-                    }
-                    vDesc.addAll(newReports);
-
-                    // Did some damage pass on?
-                    if (damage > absorb) {
-                        // Yup. Remove the absorbed damage.
-                        damage -= absorb;
-                        r = new Report(6080);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        r.addDesc(te);
-                        vDesc.addElement(r);
-                    } else {
-                        // Nope. Return our description.
-                        return vDesc;
-                    }
-
-                } else if (!ammoExplosion && (null != passenger)
-                           && (avoidRoll < 5) && !passenger.isDoomed()
-                           && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Report that a passenger that could've been missed
-                    // narrowly avoids damage
-                    r = new Report(6084);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-                } // End nLoc-has-exterior-passenger
+                if (!ammoExplosion && (null != passenger) && !passenger.isDoomed()
+                        && (bFrag != DamageType.IGNORE_PASSENGER)) {
+                    damage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
+                }
 
                 boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT)
                                  || (nLoc == Mech.LOC_LT);
@@ -24816,6 +24840,143 @@ public class Server implements Runnable {
             Report.addNewline(vDesc);
         }
         return vDesc;
+    }
+
+    /**
+     * Apply damage to an Entity carrying external battlearmor or protomech
+     * when a location with a trooper present is hit.
+     * 
+     * @param te             The carrying Entity
+     * @param hit            The hit to resolve
+     * @param damage         The amount of damage to be allocated
+     * @param vDesc          The report vector
+     * @param passenger      The BA squad
+     * @return               The amount of damage remaining
+     */
+    private int damageExternalPassenger(Entity te, HitData hit, int damage,
+            Vector<Report> vDesc, Entity passenger) {
+        Report r;
+        int passengerDamage = damage;
+        int avoidRoll = Compute.d6();
+        HitData passHit = passenger.getTrooperAtLocation(hit, te);
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            passengerDamage -= damage / 2;
+            passHit = passenger.rollHitLocation(ToHitData.HIT_SPECIAL_PROTO, ToHitData.SIDE_FRONT);
+        } else if (avoidRoll < 5) {
+            passengerDamage = 0;
+        }
+        passHit.setGeneralDamageType(hit.getGeneralDamageType());
+        
+        if (passengerDamage > 0) {
+            // Yup. Roll up some hit data for that passenger.
+            r = new Report(6075);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+
+            // How much damage will the passenger absorb?
+            int absorb = 0;
+            HitData nextPassHit = passHit;
+            do {
+                int armorType = passenger.getArmorType(nextPassHit
+                                                               .getLocation());
+                boolean armorDamageReduction = false;
+                if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                     && ((hit.getGeneralDamageType() ==
+                          HitData.DAMAGE_MISSILE)))
+                    || (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    armorDamageReduction = true;
+                }
+                // Check for reflective armor
+                if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
+                    && (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ENERGY)) {
+                    armorDamageReduction = true;
+                }
+                if (0 < passenger.getArmor(nextPassHit)) {
+                    absorb += passenger.getArmor(nextPassHit);
+                    if (armorDamageReduction) {
+                        absorb *= 2;
+                    }
+                }
+                if (0 < passenger.getInternal(nextPassHit)) {
+                    absorb += passenger.getInternal(nextPassHit);
+                    // Armor damage reduction, like for reflective or
+                    // reactive armor will divide the whole damage
+                    // total by 2 and round down. If we have an odd
+                    // damage total, need to add 1 to make this
+                    // evenly divisible by 2
+                    if (((absorb % 2) != 0) && armorDamageReduction) {
+                        absorb++;
+                    }
+                }
+                nextPassHit = passenger
+                        .getTransferLocation(nextPassHit);
+            } while ((damage > absorb)
+                     && (nextPassHit.getLocation() >= 0));
+
+            // Damage the passenger.
+            absorb = Math.min(passengerDamage, absorb);
+            Vector<Report> newReports = damageEntity(passenger,
+                                                     passHit, absorb);
+            for (Report newReport : newReports) {
+                newReport.indent(2);
+            }
+            vDesc.addAll(newReports);
+
+            // Did some damage pass on?
+            if (damage > absorb) {
+                // Yup. Remove the absorbed damage.
+                damage -= absorb;
+                r = new Report(6080);
+                r.subject = te.getId();
+                r.indent(2);
+                r.add(damage);
+                r.addDesc(te);
+                vDesc.addElement(r);
+            } else {
+                // Nope. Return our description.
+                return 0;
+            }
+
+        } else {
+            // Report that a passenger that could've been missed
+            // narrowly avoids damage
+            r = new Report(6084);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+        } // End nLoc-has-exterior-passenger
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                && (passengerDamage > 0) && !passenger.isDoomed() && !passenger.isDestroyed()) {
+            r = new Report(3850);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+            int facing = te.getFacing();
+            // We're going to assume that it's mounted facing the mech
+            Coords position = te.getPosition();
+            if (!hit.isRear()) {
+                facing = (facing + 3) % 6;
+            }
+            unloadUnit(te, passenger, position, facing, te.getElevation(),
+                    false, false);
+            Entity violation = Compute.stackingViolation(game,
+                    passenger.getId(), position);
+            if (violation != null) {
+                Coords targetDest = Compute.getValidDisplacement(game,
+                        passenger.getId(), position, Compute.d6() - 1);
+                addReport(doEntityDisplacement(violation, position,
+                        targetDest, null));
+                // Update the violating entity's postion on the client.
+                entityUpdate(violation.getId());
+            }
+        }
+        return damage;
     }
 
     /**
@@ -26330,6 +26491,15 @@ public class Server implements Runnable {
                                 break;
                             }
                     }
+                    // A magnetic clamp system is destroyed by any torso critical.
+                    Mounted magClamp = pm.getMisc().stream().filter(m -> m.getType()
+                            .hasFlag(MiscType.F_MAGNETIC_CLAMP)).findFirst().orElse(null);
+                    if ((magClamp != null) && !magClamp.isHit()) {
+                        magClamp.setHit(true);
+                        r = new Report(6252);
+                        r.subject = pm.getId();
+                        reports.addElement(r);
+                    }
                 }
                 break;
             case Protomech.SYSTEM_TORSO_WEAPON_A:
@@ -26346,7 +26516,7 @@ public class Server implements Runnable {
                 Mounted weaponB = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponB) {
                     weaponB.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6246);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26356,7 +26526,7 @@ public class Server implements Runnable {
                 Mounted weaponC = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponC) {
                     weaponC.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6247);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26366,7 +26536,7 @@ public class Server implements Runnable {
                 Mounted weaponD = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponD) {
                     weaponD.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6248);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26376,7 +26546,7 @@ public class Server implements Runnable {
                 Mounted weaponE = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponE) {
                     weaponE.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6249);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -28886,6 +29056,21 @@ public class Server implements Runnable {
                 }
 
             } // End unit-is-transported
+            
+            // Is this unit towing some trailers?
+            // If so, disconnect them
+            if (!entity.getAllTowedUnits().isEmpty()) {
+                //Find the first trailer in the list and drop it
+                //this will disconnect all that follow too
+                Entity leadTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
+                disconnectUnit(entity, leadTrailer, entity.getPosition());
+            }
+            
+            // Is this unit a trailer being towed? If so, disconnect it from its tractor
+            if (entity.getTractor() != Entity.NONE) {
+                Entity tractor = game.getEntity(entity.getTractor());
+                disconnectUnit(tractor, entity, tractor.getPosition());
+            }
 
             // Is this unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();
@@ -31485,7 +31670,8 @@ public class Server implements Runnable {
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
-        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)
+                && !((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             logError(METHOD_NAME, "item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;

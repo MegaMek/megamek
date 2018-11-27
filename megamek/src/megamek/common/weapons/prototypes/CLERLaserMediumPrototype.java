@@ -46,7 +46,7 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         waterMediumRange = 5;
         waterLongRange = 8;
         waterExtremeRange = 10;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         bv = 62;
         cost = 80000;
@@ -54,6 +54,7 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
         medAV = 5;
         maxRange = RANGE_MED;
         rulesRefs = "97,IO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setIntroLevel(false)
             .setUnofficial(false)

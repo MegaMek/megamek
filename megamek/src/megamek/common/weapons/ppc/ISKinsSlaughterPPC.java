@@ -44,7 +44,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
         this.waterExtremeRange = 20;
-        this.tonnage = 7.0f;
+        this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 229;
         this.cost = 450000;
@@ -52,6 +52,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         //This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
         //for IS factions
         rulesRefs = "Unofficial";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(false)
     	.setUnofficial(true)

@@ -13,23 +13,23 @@ ProtoMech
 </UnitType>
 
 <Name>
-Boggart
+Basilisk ProtoMech (Quad)
 </Name>
 
 <Model>
-(Quad) 1
+B
 </Model>
 
 <year>
-3072
+3075
 </year>
 
 <originalBuildYear>
-3072
+3075
 </originalBuildYear>
 
 <type>
-Clan Level 3
+Clan Level 4
 </type>
 
 <motion_type>
@@ -40,43 +40,51 @@ Quad
 </transporters>
 
 <cruiseMP>
-5
+8
 </cruiseMP>
 
 <jumpingMP>
-5
+0
 </jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
 
 <engine_type>
 0
 </engine_type>
+
+<armor_type>
+18
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
 
 <internal_type>
 -1
 </internal_type>
 
 <armor>
-6
-16
-0
-0
+5
 14
-3
+0
+0
+13
 </armor>
 
 <Body Equipment>
-CLPlasmaCannonAmmo (10)
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
-ProtomechJumpJet
+CLMyomerBooster
 </Body Equipment>
 
 <Head Equipment>
 </Head Equipment>
 
 <Torso Equipment>
+CLEDPArmor
+ProtoQuadMeleeSystem
 </Torso Equipment>
 
 <Right Arm Equipment>
@@ -88,15 +96,11 @@ ProtomechJumpJet
 <Legs Equipment>
 </Legs Equipment>
 
-<Main Gun Equipment>
-CLPlasmaCannon
-</Main Gun Equipment>
-
 <source>
-Wars of Reaving - Jihad
+WoRS - Jihad
 </source>
 
 <tonnage>
-13.0
+7.0
 </tonnage>
 

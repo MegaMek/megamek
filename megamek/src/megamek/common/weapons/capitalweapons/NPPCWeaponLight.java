@@ -42,7 +42,7 @@ public class NPPCWeaponLight extends NPPCWeapon {
         this.mediumRange = 22;
         this.longRange = 33;
         this.extremeRange = 44;
-        this.tonnage = 1400.0f;
+        this.tonnage = 1400.0;
         this.bv = 1659;
         this.cost = 2000000;
         this.shortAV = 7;

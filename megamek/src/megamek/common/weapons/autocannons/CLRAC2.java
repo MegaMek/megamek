@@ -47,7 +47,7 @@ public class CLRAC2 extends RACWeapon {
         mediumRange = 17;
         longRange = 25;
         extremeRange = 34;
-        tonnage = 8.0f;
+        tonnage = 8.0;
         criticals = 4;
         bv = 161;
         cost = 175000;
@@ -57,6 +57,7 @@ public class CLRAC2 extends RACWeapon {
         extAV = 8;
         maxRange = RANGE_EXT;
         rulesRefs = "286,TO";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3073, 3104, 3145).setClanApproximate(false, false, false)

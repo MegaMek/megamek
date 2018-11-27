@@ -36,7 +36,7 @@ public class ISLRM10 extends LRMWeapon {
         heat = 4;
         rackSize = 10;
         minimumRange = 6;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 90;
         cost = 100000;
@@ -45,6 +45,7 @@ public class ISLRM10 extends LRMWeapon {
         longAV = 6;
         maxRange = RANGE_LONG;
         rulesRefs = "229,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

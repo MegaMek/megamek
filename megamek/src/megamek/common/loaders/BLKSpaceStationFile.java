@@ -25,6 +25,7 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -206,6 +207,13 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
             a.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
+        }
+        
+        // Affects number of facing changes allowed in a turn. Default to Civilian
+        if (dataFile.exists("designtype")) {
+            a.setDesignType(dataFile.getDataAsInt("designtype")[0]);
+        } else {
+            a.setDesignType(Aero.CIVILIAN);
         }
 
         if (!dataFile.exists("armor")) {

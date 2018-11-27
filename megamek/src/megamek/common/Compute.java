@@ -4083,6 +4083,7 @@ public class Compute {
     public static boolean isSensorContact(IGame game, Entity target) {
         for (Entity detector : game.getEntitiesVector()) {
             if (detector.sensorContacts.contains(target)) {
+                target.addBeenDetectedBy(detector.getOwner());
                 return true;
             }
         }
@@ -4113,6 +4114,7 @@ public class Compute {
     public static boolean hasAnyFiringSolution(IGame game, Entity target) {
         for (Entity detector : game.getEntitiesVector()) {
             if (detector.firingSolutions.contains(target)) {
+                target.addBeenSeenBy(detector.getOwner());
                 return true;
             }
         }

@@ -32,6 +32,10 @@ Pressurized Yard - Large
 IS Level 3
 </type>
 
+<designtype>
+0
+</designtype>
+
 <motion_type>
 Aerodyne
 </motion_type>
@@ -47,7 +51,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:76939.0:1:7
+cargobay:76940.0:1:7
 </transporters>
 
 <SafeThrust>

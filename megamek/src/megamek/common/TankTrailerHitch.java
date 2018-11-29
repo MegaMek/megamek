@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2018 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -49,16 +49,6 @@ public class TankTrailerHitch implements Transporter {
     transient IGame game;
 
     /**
-     * The front location that loads trailers externally.
-     */
-    private static final int EXTERIOR_LOCATIONS_FRONT = Tank.LOC_FRONT;
-
-    /**
-     * The rear location that loads trailers externally.
-     */
-    private static final int EXTERIOR_LOCATIONS_REAR = Tank.LOC_REAR;
-
-    /**
      * The <code>String</code> reported when the hitch is in use.
      */
     private static final String NO_VACANCY_STRING = "A trailer is attached";
@@ -69,24 +59,6 @@ public class TankTrailerHitch implements Transporter {
     private static final String HAVE_VACANCY_STRING = "One trailer";
 
     // Protected constructors and methods.
-
-    /**
-     * Get the exterior locations that a trailer covers.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return an array of <code>int</code> listing the exterior locations.
-     */
-    protected int getExteriorLocs(boolean isRear) {
-        if (isRear) {
-            return TankTrailerHitch.EXTERIOR_LOCATIONS_REAR;
-        }
-        return TankTrailerHitch.EXTERIOR_LOCATIONS_FRONT;
-    }
 
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of a
@@ -127,6 +99,7 @@ public class TankTrailerHitch implements Transporter {
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean canLoad(Entity unit) {
         // Only trailers can be towed.
         if (!(unit.isTrailer())) {
@@ -150,6 +123,7 @@ public class TankTrailerHitch implements Transporter {
      *                <code>IllegalArgumentException</code> exception will be
      *                thrown.
      */
+    @Override
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
@@ -163,11 +137,12 @@ public class TankTrailerHitch implements Transporter {
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
-     * @return A <code>List</code> of loaded <code>Entity</code> units. This
+     * @return A <code>Vector</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
      *         returned <code>List</code> is independent from the under- lying
      *         data structure; modifying one does not affect the other.
      */
+    @Override
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
@@ -185,6 +160,7 @@ public class TankTrailerHitch implements Transporter {
      * @return <code>true</code> if the unit was contain is loadeded in this
      *         space, <code>false</code> otherwise.
      */
+    @Override
     public final boolean unload(Entity unit) {
         // Are we carrying the unit?
         Entity trailer = game.getEntity(towed);
@@ -206,10 +182,12 @@ public class TankTrailerHitch implements Transporter {
      * @return A <code>String</code> meant for a human.
      * @see megamek.common.TankTrailerHitch#getUnusedString()
      */
+    @Override
     public final String getUnusedString() {
         return getVacancyString(towed != Entity.NONE);
     }
 
+    @Override
     public double getUnused(){
         if (towed == Entity.NONE){
             return 1;
@@ -218,6 +196,7 @@ public class TankTrailerHitch implements Transporter {
         }
     }
 
+    @Override
     public void resetTransporter() {
         towed = Entity.NONE;
     }
@@ -235,6 +214,7 @@ public class TankTrailerHitch implements Transporter {
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         // Assume that the weapon is not blocked. See Entity.isWeaponBlockedByTowing() instead.
         return false;
@@ -259,10 +239,12 @@ public class TankTrailerHitch implements Transporter {
      *         transported on the outside at that location.
      * @see megamek.common.TankTrailerHitch#getExteriorLocs(boolean)
      */
+    @Override
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
         return game.getEntity(towed);
     }
 
+    @Override
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
         if (towed != Entity.NONE) {
@@ -271,6 +253,7 @@ public class TankTrailerHitch implements Transporter {
         return rv;
     }
 
+    @Override
     public int getCargoMpReduction(Entity carrier) {
         return 0;
     }

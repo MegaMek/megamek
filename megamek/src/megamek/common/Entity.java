@@ -15108,8 +15108,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @return
      */
-    public ArrayList<Coords> getHitchLocations() {
-        ArrayList<Coords> trailerPos = new ArrayList<Coords>();
+    public HashSet<Coords> getHitchLocations() {
+        HashSet<Coords> trailerPos = new HashSet<Coords>();
         //First, set up a list of all the entities in this train
         ArrayList<Entity> thisTrain = new ArrayList<Entity>();
         thisTrain.add(this);
@@ -15121,10 +15121,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Entity e : thisTrain) {
             for (Mounted m : e.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
-                    //Add the coords of the unit with the empty hitch, if it isn't already listed
-                    if (!trailerPos.contains(e.getPosition())) {
-                        trailerPos.add(e.getPosition());
-                    }
+                    //Add the coords of the unit with the empty hitch
+                    trailerPos.add(e.getPosition());
+                    
                     //Now, check the location of the hitch (which should just be front or rear)
                     //and add the hex adjacent to the entity in the appropriate direction
                     //Offset the location value to match the directions in Coords.
@@ -15135,9 +15134,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             || m.getLocation() == SuperHeavyTank.LOC_REAR) {
                         dir = ((e.getFacing() + 3) % 6);
                     }
-                    if (!trailerPos.contains(e.getPosition().translated(dir))) {
-                        trailerPos.add(e.getPosition().translated(dir));
-                    }
+                    trailerPos.add(e.getPosition().translated(dir));
                 }
             }
         }

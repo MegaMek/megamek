@@ -4085,11 +4085,6 @@ public class Tank extends Entity {
 
         return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
-    
-    @Override
-    public boolean isSuperHeavy() {
-        return false;
-    }
 
     /**
      * Returns a Support units fuel allotment.

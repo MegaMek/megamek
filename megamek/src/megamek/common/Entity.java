@@ -15243,9 +15243,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         
         //Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
-        double tractorWeight = 0;
-        double trailerWeight = 0;
-        tractorWeight = getWeight();
+        double tractorWeight = getWeight();
+        double trailerWeight = 0;       
         //Add up what the tractor's already towing
         for (int id : getAllTowedUnits()) {
             Entity tr = game.getEntity(id);

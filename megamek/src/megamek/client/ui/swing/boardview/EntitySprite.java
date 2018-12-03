@@ -422,11 +422,11 @@ class EntitySprite extends Sprite {
             }
 
             // Transporting
-            if ((entity.getLoadedUnits()).size() > 0) {
+            if (entity.getLoadedUnits().size() > 0) {
                 stStr.add(new Status(Color.YELLOW, "T", SMALL));
             }
             
-            if ((entity.getAllTowedUnits()).size() > 0) {
+            if (entity.getAllTowedUnits().size() > 0) {
                 stStr.add(new Status(Color.YELLOW, "TOWING"));
             }
 

@@ -15148,12 +15148,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @returns the trailerhitch corresponding to the passed-in value
      */
     public TankTrailerHitch getHitchById(int bayNumber) {
-        for (Transporter next : transports) {
-            if (next instanceof TankTrailerHitch) {
-                if (transports.indexOf(next) == bayNumber) {
-                    return (TankTrailerHitch) next;
-                }
-            }
+        Transporter transporter = transports.get(bayNumber);
+        if (transporter instanceof TankTrailerHitch) {
+            return (TankTrailerHitch) transporter;
         }
         return null;
     }
@@ -15210,7 +15207,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         
         //If this entity is in a transport bay, it can't tow another
-        if (this.getTransportId() != Entity.NONE) {
+        if (getTransportId() != Entity.NONE) {
             return false;
         }
         
@@ -15254,7 +15251,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Entity tr = game.getEntity(id);
             trailerWeight += tr.getWeight();
         }
-        result = (trailerWeight + trailer.getWeight()) <= tractorWeight;
+        if (trailerWeight + trailer.getWeight() > tractorWeight) {
+            return false;
+        }
         
         //Next, look for an empty hitch somewhere in the train
         boolean hitchFound = false;

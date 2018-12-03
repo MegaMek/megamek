@@ -490,8 +490,9 @@ public class Tank extends Entity {
             return super.isImmobile();
         }
         //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
+        //We do run into some double-blind entityList differences though, so include a null check
         if (isTrailer() && getTractor() != Entity.NONE) {
-            return game.getEntity(getTractor()).isImmobile();
+            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile() : super.isImmobile() || m_bImmobile);
         }
         return super.isImmobile() || m_bImmobile;
     }

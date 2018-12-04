@@ -15444,7 +15444,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public List<Integer> getAllTowedUnits() {
-        return isTractorFor;
+        return Collections.unmodifiableList(isTractorFor);
     }
     
     /**

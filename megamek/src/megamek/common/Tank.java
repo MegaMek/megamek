@@ -688,7 +688,7 @@ public class Tank extends Entity {
         if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
             Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
-            m_bImmobileHit= Tractor.m_bImmobileHit;
+            m_bImmobileHit = Tractor.m_bImmobileHit;
         }
         super.applyDamage();
     }

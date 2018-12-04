@@ -15360,7 +15360,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public List<Integer> getConnectedUnits() {
-        return connectedUnits;
+        return Collections.unmodifiableList(connectedUnits);
     }
     
     /**

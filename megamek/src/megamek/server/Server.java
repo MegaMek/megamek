@@ -10025,7 +10025,7 @@ public class Server implements Runnable {
         if (!entity.getAllTowedUnits().isEmpty()) {
             List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
             Collections.reverse(reversedTrailers); // reverse in-place
-            ArrayList<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
+            List<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
             processTrailerMovement(entity, trailerPath);
          }
 
@@ -10114,7 +10114,7 @@ public class Server implements Runnable {
      * @param tractor    The Entity that is moving
      * @param trailer    The current trailer being updated
      */
-    private void processTrailerMovement(Entity tractor, ArrayList<Coords> trainPath) {
+    private void processTrailerMovement(Entity tractor, List<Coords> trainPath) {
         for (int eId : tractor.getAllTowedUnits()) {
             Entity trailer = game.getEntity(eId);
             // if the Tractor didn't move anywhere, stay where we are
@@ -10183,8 +10183,8 @@ public class Server implements Runnable {
      * 
      * @return  Returns the properly sorted list of all train coordinates
      */
-    public ArrayList<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
-        ArrayList<Coords> trainCoords = new ArrayList<Coords>();
+    public List<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
+        List<Coords> trainCoords = new ArrayList<Coords>();
         for (int trId : allTowedTrailers) {
             Entity trailer = game.getEntity(trId);
             Coords position = trailer.getPosition();

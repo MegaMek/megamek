@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,7 +47,7 @@ public class TankTrailerHitch implements Transporter {
      * The entity being towed by this hitch.
      */
     protected int towed = Entity.NONE;
-    transient IGame game;
+    private transient IGame game;
 
     /**
      * The <code>String</code> reported when the hitch is in use.
@@ -102,7 +103,7 @@ public class TankTrailerHitch implements Transporter {
     @Override
     public boolean canLoad(Entity unit) {
         // Only trailers can be towed.
-        if (!(unit.isTrailer())) {
+        if (!unit.isTrailer()) {
             return false;
         }
 
@@ -188,7 +189,7 @@ public class TankTrailerHitch implements Transporter {
     }
 
     @Override
-    public double getUnused(){
+    public double getUnused() {
         if (towed == Entity.NONE){
             return 1;
         } else {
@@ -250,7 +251,7 @@ public class TankTrailerHitch implements Transporter {
         if (towed != Entity.NONE) {
             rv.add(game.getEntity(towed));
         }
-        return rv;
+        return Collections.unmodifiableList(rv);
     }
 
     @Override

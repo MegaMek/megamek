@@ -4562,6 +4562,78 @@ public class Server implements Runnable {
         // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
+    
+    /**
+     * Have the loader tow the indicated unit. The unit being towed loses its
+     * turn.
+     *
+     * @param loader - the <code>Entity</code> that is towing the unit.
+     * @param unit   - the <code>Entity</code> being towed.
+     */
+    private void towUnit(Entity loader, Entity unit) {
+
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+            // Remove the *last* friendly turn (removing the *first* penalizes
+            // the opponent too much, and re-calculating moves is too hard).
+            game.removeTurnFor(unit);
+            send(createTurnVectorPacket());
+        }
+        
+        loader.towUnit(unit.getId());
+
+        // set deployment round of the loadee to equal that of the loader
+        unit.setDeployRound(loader.getDeployRound());
+
+        // Update the loader and towed units.
+        entityUpdate(unit.getId());
+        entityUpdate(loader.getId());
+    }
+    
+    /**
+     * Have the tractor drop the indicated trailer. This will also disconnect all
+     * trailers that follow the one dropped.
+     *
+     * @param tractor
+     *            - the <code>Entity</code> that is disconnecting the trailer.
+     * @param unloaded
+     *            - the <code>Targetable</code> unit being unloaded.
+     * @param pos
+     *            - the <code>Coords</code> for the unloaded unit.
+     * @param evacuation
+     *            - a <code>boolean</code> indicating whether this trailer is being
+     *            unloaded as a result of its carrying unit's destruction
+     * @return <code>true</code> if the unit was successfully unloaded,
+     *         <code>false</code> if the trailer isn't carried by tractor.
+     */
+    private boolean disconnectUnit(Entity tractor, Targetable unloaded,
+            Coords pos) {
+        
+        // We can only unload Entities.
+        Entity trailer = null;
+        if (unloaded instanceof Entity) {
+            trailer = (Entity) unloaded;
+        } else {
+            return false;
+        }
+        // disconnectUnit() updates anything behind 'trailer' too, so copy
+        // the list of trailers before we alter it so entityUpdate() can be
+        // run on all of them. Also, add the entity towing Trailer to the list
+        List<Integer> trailerList = new ArrayList<>(trailer.getConnectedUnits());
+        trailerList.add(trailer.getTowedBy());
+
+        // Unload the unit.
+        tractor.disconnectUnit(trailer.getId());
+        
+        // Update the tractor and all affected trailers.
+        for (int id : trailerList) {
+            entityUpdate(id);
+        }
+        entityUpdate(trailer.getId());
+        entityUpdate(tractor.getId());
+
+        // Unloaded successfully.
+        return true;
+    }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
                                Coords pos, int facing, int elevation) {
@@ -4630,12 +4702,12 @@ public class Server implements Runnable {
             unit.setElevation(elevation);
         } else if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
             if (unit.getMovementMode() == EntityMovementMode.VTOL) {
-                // Flying units onload to the same elevation as the flying
+                // Flying units unload to the same elevation as the flying
                 // transport
                 unit.setElevation(elevation);
             } else if (game.getBoard().getBuildingAt(pos) != null) {
-                // non-flying unit onloaded from a flying onto a building
-                // -> sit on the roff
+                // non-flying unit unloaded from a flying onto a building
+                // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             } else {
                 while (elevation >= -hex.depth()) {
@@ -6865,8 +6937,14 @@ public class Server implements Runnable {
             return vReport;
         }
 
-        // Is the unit carrying passengers?
-        final List<Entity> passengers = entity.getLoadedUnits();
+        // Is the unit carrying passengers or trailers?
+        final List<Entity> passengers = new ArrayList<Entity>(entity.getLoadedUnits());
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            for (int id : entity.getAllTowedUnits()) {
+                Entity towed = game.getEntity(id);
+                passengers.add(towed);
+            }
+        }
         if (!passengers.isEmpty()) {
             for (Entity passenger : passengers) {
                 // Unit has fled the battlefield.
@@ -8778,6 +8856,35 @@ public class Server implements Runnable {
                 }
 
             } // End STEP_LOAD
+            
+         // Handle towing units.
+            if (step.getType() == MoveStepType.TOW) {
+
+                // Find the unit being loaded.
+                Entity loaded = null;
+                loaded = game.getEntity(entity.getTowing());
+
+                // This should never ever happen, but just in case...
+                if (loaded == null) {
+                    logError(METHOD_NAME,
+                        "Could not find unit for " + entity.getShortName() + " to tow.");
+                    continue;
+                }
+
+                // The moving unit should be able to tow the other
+                // unit and the other should be able to have a turn.
+                //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
+                //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
+                //Do we need it here for safety, client/server sync or can this be further streamlined?
+                if (!entity.canTow(loaded.getId())) {
+                    // Something is fishy in Denmark.
+                    logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
+                    loaded = null;
+                } else {
+                    // Have the deployed unit load the indicated unit.
+                    towUnit(entity, loaded);
+                }
+            } // End STEP_TOW
 
             // Handle mounting units to small craft/dropship
             if (step.getType() == MoveStepType.MOUNT) {
@@ -8926,6 +9033,23 @@ public class Server implements Runnable {
                     send(createTurnVectorPacket());
                 }
             }
+            
+            // Handle disconnecting trailers.
+            if (step.getType() == MoveStepType.DISCONNECT) {
+                Targetable unloaded = step.getTarget(game);
+                Coords unloadPos = curPos;
+                if (null != step.getTargetPosition()) {
+                    unloadPos = step.getTargetPosition();
+                }
+                if (!disconnectUnit(entity, unloaded, unloadPos)) {
+                    logError(METHOD_NAME,
+                            "Server was told to disconnect "
+                                    + unloaded.getDisplayName() + " from "
+                                    + entity.getDisplayName() + " into "
+                                    + curPos.getBoardNum());
+                }
+            }
+            
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
@@ -9896,6 +10020,14 @@ public class Server implements Runnable {
                         entity.getRemovalCondition()));
             }
         }
+        
+        //If the entity is towing trailers, update the position of those trailers
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            Collections.reverse(reversedTrailers); // reverse in-place
+            List<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
+            processTrailerMovement(entity, trailerPath);
+         }
 
         // recovered units should now be recovered and dealt with
         if (entity.isAero() && recovered && (loader != null)) {
@@ -9974,6 +10106,99 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+    
+    /**
+     * Updates the position of any towed trailers.
+     *
+     * @param tractor    The Entity that is moving
+     * @param trailer    The current trailer being updated
+     */
+    private void processTrailerMovement(Entity tractor, List<Coords> trainPath) {
+        for (int eId : tractor.getAllTowedUnits()) {
+            Entity trailer = game.getEntity(eId);
+            // if the Tractor didn't move anywhere, stay where we are
+            if (tractor.delta_distance == 0) {
+                trailer.delta_distance = tractor.delta_distance;
+                trailer.moved = tractor.moved;
+                trailer.setSecondaryFacing(trailer.getFacing());
+                trailer.setDone(true);
+                entityUpdate(eId);
+                continue;
+            }
+            int stepNumber = 0; // The Coords in trainPath that this trailer should move to
+            Coords trailerPos = null;
+            int trailerNumber = tractor.getAllTowedUnits().indexOf(eId);
+            double trailerPositionOffset = (trailerNumber + 1); //Offset so we get the right position index
+            // Unless the tractor is superheavy, put the first trailer in its hex.
+            // Technically this would be true for a superheavy trailer too, but only a superheavy tractor can tow one.
+            if (trailerNumber == 0 && !tractor.isSuperHeavy()) {
+                trailer.setPosition(tractor.getPosition());
+                trailer.setFacing(tractor.getFacing());
+            } else {
+                // If the trailer is superheavy, place it in a hex by itself
+                if (trailer.isSuperHeavy()) {
+                    trailerPositionOffset ++;
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                } else if (tractor.isSuperHeavy()) {
+                    // If the tractor is superheavy, we can put two trailers in each hex
+                    // starting trailer 0 in the hex behind the tractor
+                    trailerPositionOffset = (Math.ceil((trailerPositionOffset /= 2.0)) + 1);
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                } else {
+                    // Otherwise, we can put two trailers in each hex
+                    // starting trailer 1 in the hex behind the tractor
+                    trailerPositionOffset ++;
+                    trailerPositionOffset = Math.ceil((trailerPositionOffset /= 2.0));
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                }
+            }
+            // trailers are immobile by default. Match the tractor's movement here
+            trailer.delta_distance = tractor.delta_distance;
+            trailer.moved = tractor.moved;
+            trailer.setSecondaryFacing(trailer.getFacing());
+            trailer.setDone(true);
+            entityUpdate(eId);
+        }
+    }
+    
+    /**
+     * Flips the order of a tractor's towed trailers list by index and
+     * adds their starting coordinates to a list of hexes the tractor passed through 
+     * 
+     * @return  Returns the properly sorted list of all train coordinates
+     */
+    public List<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
+        List<Coords> trainCoords = new ArrayList<Coords>();
+        for (int trId : allTowedTrailers) {
+            Entity trailer = game.getEntity(trId);
+            Coords position = trailer.getPosition();
+            //Duplicates foul up the works...
+            if (!trainCoords.contains(position)) {
+                trainCoords.add(position);
+            }
+        }
+        for (Coords c : tractor.getPassedThrough() ) {
+            if (!trainCoords.contains(c)) {
+                trainCoords.add(c);
+            }
+        }
+        return trainCoords;    
     }
 
     /**
@@ -28831,6 +29056,21 @@ public class Server implements Runnable {
                 }
 
             } // End unit-is-transported
+            
+            // Is this unit towing some trailers?
+            // If so, disconnect them
+            if (!entity.getAllTowedUnits().isEmpty()) {
+                //Find the first trailer in the list and drop it
+                //this will disconnect all that follow too
+                Entity leadTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
+                disconnectUnit(entity, leadTrailer, entity.getPosition());
+            }
+            
+            // Is this unit a trailer being towed? If so, disconnect it from its tractor
+            if (entity.getTractor() != Entity.NONE) {
+                Entity tractor = game.getEntity(entity.getTractor());
+                disconnectUnit(tractor, entity, tractor.getPosition());
+            }
 
             // Is this unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();

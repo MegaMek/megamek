@@ -277,6 +277,26 @@ public class Tank extends Entity {
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
         }
+        
+        //If the unit is towing trailers, adjust its walkMP, TW p205
+        if (!getAllTowedUnits().isEmpty()) {
+            double tractorWeight = getWeight();
+            double trailerWeight = 0;
+            //Add up the trailers
+            for (int id : getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                if (tr == null) {
+                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                    continue;
+                }
+                trailerWeight += tr.getWeight();
+            }
+            if (trailerWeight <= (tractorWeight / 4)) {
+                j = Math.max((j - 3), (j / 2));
+            } else {
+                j = (j / 2);
+            }
+        }
 
         return j;
 
@@ -469,6 +489,11 @@ public class Tank extends Entity {
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile();
         }
+        //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
+        //We do run into some double-blind entityList differences though, so include a null check
+        if (isTrailer() && getTractor() != Entity.NONE) {
+            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile() : super.isImmobile() || m_bImmobile);
+        }
         return super.isImmobile() || m_bImmobile;
     }
     
@@ -659,6 +684,12 @@ public class Tank extends Entity {
     @Override
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
+        //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank Tractor = (Tank) game.getEntity(getTractor());
+            m_bImmobile = Tractor.m_bImmobile;
+            m_bImmobileHit = Tractor.m_bImmobileHit;
+        }
         super.applyDamage();
     }
 
@@ -3202,6 +3233,77 @@ public class Tank extends Entity {
             addTransporter(new ClampMountTank());
         }
     }
+    
+    /**
+     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
+     * Tractor chassis mod that doesn't already have one
+     */
+    @Override
+    public void addTrailerHitchEquipment() {
+        //If we already have a hitch, don't add a new one
+        if (hasWorkingMisc(MiscType.F_HITCH)) {
+            return;
+        }
+        boolean hitchNeeded = false;
+        //Only support vees designed as Tractors should have a hitch
+        if (isSupportVehicle()) {
+            if (hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+                hitchNeeded = true;
+            }
+        } else {
+            //but all tracked and wheeled military vees should get one
+            if (getMovementMode() == EntityMovementMode.TRACKED || getMovementMode() == EntityMovementMode.WHEELED) {
+                hitchNeeded = true;
+            }
+        }
+        if (hitchNeeded) {
+            //Add hitch to the rear by default
+            if (isSuperHeavy()) {
+                try {
+                    addEquipment(EquipmentType.get("Hitch"), SuperHeavyTank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //For vehicles, this shouldn't happen
+               }
+            } else {
+                try {
+                    addEquipment(EquipmentType.get("Hitch"), Tank.LOC_REAR);
+               } catch (LocationFullException ex) {
+                   //ditto
+               }
+            }
+        }
+    }
+    
+    /**
+     * Add a transporter for each trailer hitch the unit is equipped with
+     */
+    public void setTrailerHitches() {
+        if (hasTrailerHitchTransporter()) {
+            return;
+        }
+        boolean rearMounted = false;
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                if (m.getLocation() == Tank.LOC_REAR || (isSuperHeavy() && m.getLocation() == SuperHeavyTank.LOC_REAR)) {
+                    rearMounted = true;
+                }
+                addTransporter(new TankTrailerHitch(rearMounted));
+            }
+        }
+    }
+    
+    /**
+     * Check to see if the unit has a trailer hitch transporter already
+     * We need this to prevent duplicate transporters being created
+     */
+    protected boolean hasTrailerHitchTransporter() {
+        for (Transporter t : getTransports()) {
+            if (t instanceof TankTrailerHitch) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Tanks can't spot when stunned.
@@ -3985,10 +4087,6 @@ public class Tank extends Entity {
         return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
 
-    public boolean isSuperHeavy() {
-        return false;
-    }
-
     /**
      * Returns a Support units fuel allotment.
      * 
@@ -4070,4 +4168,39 @@ public class Tank extends Entity {
     public int getSpriteDrawPriority() {
         return 4;
     }
+    
+    //Specific road/rail train rules
+    
+    /**
+     * Used to determine if this vehicle can be towed by a tractor
+     * 
+     * @return
+     */
+    @Override
+    public boolean isTrailer() {
+        if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
+            return true;
+        }
+        //Maybe an exploit here if it starts returning true for vehicles that get disabled
+        //but maybe we want to be able to tow those off the field too?
+        if (hasMisc(MiscType.F_HITCH) && getWalkMP() == 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Used to determine if this vehicle can be the engine/tractor 
+     * for a bunch of trailers
+     * 
+     * @return
+     */
+    @Override
+    public boolean isTractor() {
+        if (hasWorkingMisc(MiscType.F_HITCH) && !isTrailer()) {
+            return true;
+        }
+        return false;
+    }
+    
 }

@@ -1806,6 +1806,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 if (current.isOneShotWeapon()) {
                     return true;
                 }
+                checked.add(current);
             }
         }
         return false;

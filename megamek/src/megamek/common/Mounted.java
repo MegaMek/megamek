@@ -22,7 +22,9 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.actions.WeaponAttackAction;
@@ -1791,8 +1793,22 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return
      */
     public boolean isOneShot(){
-        return (isOneShotWeapon()
-                || ((getLinkedBy() != null) && getLinkedBy().isOneShot()));
+        if (isOneShotWeapon()) {
+            return true;
+        } else if ((getType() instanceof AmmoType) && getLinkedBy() != null) {
+            // There should not be any circular references, but we should track where we've been just in case.
+            // Do a couple checks first to avoid instantiating a set unnecessarily.
+            Set<Mounted> checked = new HashSet<>();
+            for (Mounted current = getLinkedBy(); current != null; current = current.getLinkedBy()) {
+                if (checked.contains(current)) {
+                    return false;
+                }
+                if (current.isOneShotWeapon()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     /**

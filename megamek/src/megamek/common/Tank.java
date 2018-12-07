@@ -490,8 +490,9 @@ public class Tank extends Entity {
             return super.isImmobile();
         }
         //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
+        //We do run into some double-blind entityList differences though, so include a null check
         if (isTrailer() && getTractor() != Entity.NONE) {
-            return game.getEntity(getTractor()).isImmobile();
+            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile() : super.isImmobile() || m_bImmobile);
         }
         return super.isImmobile() || m_bImmobile;
     }
@@ -687,7 +688,7 @@ public class Tank extends Entity {
         if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
             Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
-            m_bImmobileHit= Tractor.m_bImmobileHit;
+            m_bImmobileHit = Tractor.m_bImmobileHit;
         }
         super.applyDamage();
     }
@@ -4084,11 +4085,6 @@ public class Tank extends Entity {
         }
 
         return ((double) totalInoperable / totalWeapons) >= 0.25;
-    }
-    
-    @Override
-    public boolean isSuperHeavy() {
-        return false;
     }
 
     /**

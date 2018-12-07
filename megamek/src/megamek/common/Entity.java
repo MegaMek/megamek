@@ -15108,8 +15108,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @return
      */
-    public ArrayList<Coords> getHitchLocations() {
-        ArrayList<Coords> trailerPos = new ArrayList<Coords>();
+    public HashSet<Coords> getHitchLocations() {
+        HashSet<Coords> trailerPos = new HashSet<Coords>();
         //First, set up a list of all the entities in this train
         ArrayList<Entity> thisTrain = new ArrayList<Entity>();
         thisTrain.add(this);
@@ -15121,10 +15121,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Entity e : thisTrain) {
             for (Mounted m : e.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
-                    //Add the coords of the unit with the empty hitch, if it isn't already listed
-                    if (!trailerPos.contains(e.getPosition())) {
-                        trailerPos.add(e.getPosition());
-                    }
+                    //Add the coords of the unit with the empty hitch
+                    trailerPos.add(e.getPosition());
+                    
                     //Now, check the location of the hitch (which should just be front or rear)
                     //and add the hex adjacent to the entity in the appropriate direction
                     //Offset the location value to match the directions in Coords.
@@ -15135,9 +15134,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             || m.getLocation() == SuperHeavyTank.LOC_REAR) {
                         dir = ((e.getFacing() + 3) % 6);
                     }
-                    if (!trailerPos.contains(e.getPosition().translated(dir))) {
-                        trailerPos.add(e.getPosition().translated(dir));
-                    }
+                    trailerPos.add(e.getPosition().translated(dir));
                 }
             }
         }
@@ -15151,12 +15148,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @returns the trailerhitch corresponding to the passed-in value
      */
     public TankTrailerHitch getHitchById(int bayNumber) {
-        for (Transporter next : transports) {
-            if (next instanceof TankTrailerHitch) {
-                if (transports.indexOf(next) == bayNumber) {
-                    return (TankTrailerHitch) next;
-                }
-            }
+        Transporter transporter = transports.get(bayNumber);
+        if (transporter instanceof TankTrailerHitch) {
+            return (TankTrailerHitch) transporter;
         }
         return null;
     }
@@ -15213,7 +15207,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         
         //If this entity is in a transport bay, it can't tow another
-        if (this.getTransportId() != Entity.NONE) {
+        if (getTransportId() != Entity.NONE) {
             return false;
         }
         
@@ -15249,15 +15243,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         
         //Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
-        double tractorWeight = 0;
-        double trailerWeight = 0;
-        tractorWeight = getWeight();
+        double tractorWeight = getWeight();
+        double trailerWeight = 0;       
         //Add up what the tractor's already towing
         for (int id : getAllTowedUnits()) {
             Entity tr = game.getEntity(id);
             trailerWeight += tr.getWeight();
         }
-        result = (trailerWeight + trailer.getWeight()) <= tractorWeight;
+        if (trailerWeight + trailer.getWeight() > tractorWeight) {
+            return false;
+        }
         
         //Next, look for an empty hitch somewhere in the train
         boolean hitchFound = false;
@@ -15365,7 +15360,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public List<Integer> getConnectedUnits() {
-        return connectedUnits;
+        return Collections.unmodifiableList(connectedUnits);
     }
     
     /**
@@ -15449,7 +15444,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public List<Integer> getAllTowedUnits() {
-        return isTractorFor;
+        return Collections.unmodifiableList(isTractorFor);
     }
     
     /**

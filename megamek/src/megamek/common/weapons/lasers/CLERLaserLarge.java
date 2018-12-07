@@ -55,7 +55,6 @@ public class CLERLaserLarge extends LaserWeapon {
         this.extAV = 10;
         this.maxRange = RANGE_EXT;
         rulesRefs = "226,TM";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)

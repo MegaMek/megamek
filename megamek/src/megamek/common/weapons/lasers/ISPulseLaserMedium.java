@@ -53,7 +53,6 @@ public class ISPulseLaserMedium extends PulseLaserWeapon {
         this.cost = 60000;
         this.shortAV = 6;
         this.maxRange = RANGE_SHORT;
-        flags = flags.andNot(F_PROTO_WEAPON);
         rulesRefs = "226,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)

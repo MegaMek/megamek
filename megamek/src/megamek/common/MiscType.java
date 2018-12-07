@@ -10530,7 +10530,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.25;
         misc.criticals = 2;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+        misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_FIGHTER_EQUIPMENT);
         misc.bv = 0;
         misc.rulesRefs = "252,TM";

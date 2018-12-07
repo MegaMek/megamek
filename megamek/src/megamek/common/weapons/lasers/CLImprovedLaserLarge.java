@@ -53,7 +53,6 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         rulesRefs = "95,IO";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2812, 2815, 2818, 2830, 3080)

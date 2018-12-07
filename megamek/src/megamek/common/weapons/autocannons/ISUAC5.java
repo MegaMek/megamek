@@ -52,7 +52,6 @@ public class ISUAC5 extends UACWeapon {
         longAV = 7;
         maxRange = RANGE_LONG;
         rulesRefs = "208,TM";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)

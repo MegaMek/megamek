@@ -3183,10 +3183,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         //Create a collection to keep my choices in
-        List<HitchChoice> hitchChoices = new ArrayList<HitchChoice>();
+        List<HitchChoice> hitchChoices = new ArrayList<>();
         
         //next, set up a list of all the entities in this train
-        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(ce());
         for (int id : ce().getAllTowedUnits()) {
             Entity tr = game.getEntity(id);

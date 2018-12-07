@@ -269,6 +269,7 @@ public class TankTrailerHitch implements Transporter {
         return "Trailer Hitch:" + getUnused();
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }

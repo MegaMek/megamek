@@ -4111,6 +4111,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         for (Entity en : entities) {
                             if (!loader.canLoad(en, false) 
                                     || (loader.getId() == en.getId())
+                                    //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
                                     || (loader.canTow(en.getId()))) {
                                 loadable = false;
                                 break;

@@ -320,7 +320,7 @@ public class Compute {
                 || ((entering instanceof Mech) && ((Mech) entering)
                         .isSuperHeavy());
         
-        boolean isTrain = (!entering.getAllTowedUnits().isEmpty());
+        boolean isTrain = !entering.getAllTowedUnits().isEmpty();
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
@@ -1009,7 +1009,7 @@ public class Compute {
 
         // allow naval units on surface to be attacked from above or below
         if ((null != te) && (targBottom == 0)
-            && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)) {
+            && (te.getUnitType() == UnitType.NAVAL)) {
             targetInPartialWater = true;
         }
 
@@ -1018,7 +1018,7 @@ public class Compute {
         if ((targetUnderwater
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO) || (wtype
                 .getAmmoType() == AmmoType.T_SRM_TORPEDO))
-            && (UnitType.determineUnitTypeCode(ae) == UnitType.NAVAL)) {
+            && (ae.getUnitType() == UnitType.NAVAL)) {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
@@ -1060,7 +1060,7 @@ public class Compute {
             // special case: mechs can only fire upper body weapons at surface
             // naval
             if ((te != null)
-                && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)
+                && (te.getUnitType() == UnitType.NAVAL)
                 && (ae instanceof Mech) && (ae.height() > 0)
                 && (ae.getElevation() == -1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -4840,8 +4840,7 @@ public class Compute {
             return 0;
         }
 
-        int retVal = UnitType.determineUnitTypeCode(e1) -
-                UnitType.determineUnitTypeCode(e2);
+        int retVal = e1.getUnitType() - e2.getUnitType();
         if (retVal == 0) {
             retVal = ((IAero)e2).getCurrentVelocity() -
                     ((IAero)e1).getCurrentVelocity();
@@ -5055,19 +5054,19 @@ public class Compute {
             if (ent.isEnemyOf(ae) && ent.hasGhostTargets(true)
                 && (entPos != null)) {
                 vEnemyGTCoords.addElement(entPos);
-                vEnemyGTRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyGTId.addElement(new Integer(ent.getId()));
+                vEnemyGTRanges.addElement(ent.getECMRange());
+                vEnemyGTId.addElement(ent.getId());
                 hEnemyGTCrossed.put(ent.getId(), false);
                 hEnemyGTMods.put(ent.getId(), ent.getGhostTargetRollMoS());
             }
             if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
                 vEnemyECCMCoords.addElement(entPos);
-                vEnemyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECCMRanges.addElement(ent.getECMRange());
                 vEnemyECCMStrengths.add(ent.getECCMStrength());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
                 vFriendlyECMCoords.addElement(entPos);
-                vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECMRanges.addElement(ent.getECMRange());
                 vFriendlyECMStrengths.add(ent.getECMStrength());
             }
 
@@ -5076,8 +5075,8 @@ public class Compute {
                 if (other.isEnemyOf(ae) && other.hasGhostTargets(true)
                     && (entPos != null)) {
                     vEnemyGTCoords.addElement(entPos);
-                    vEnemyGTRanges.addElement(new Integer(other.getECMRange()));
-                    vEnemyGTId.addElement(new Integer(ent.getId()));
+                    vEnemyGTRanges.addElement(other.getECMRange());
+                    vEnemyGTId.addElement(ent.getId());
                     hEnemyGTCrossed.put(ent.getId(), false);
                     hEnemyGTMods.put(ent.getId(), ent.getGhostTargetRollMoS());
                 }
@@ -5085,14 +5084,14 @@ public class Compute {
                     && (entPos != null)) {
                     vEnemyECCMCoords.addElement(entPos);
                     vEnemyECCMRanges
-                            .addElement(new Integer(other.getECMRange()));
+                            .addElement(other.getECMRange());
                     vEnemyECCMStrengths.add(ent.getECCMStrength());
                 }
                 if (!other.isEnemyOf(ae) && ent.hasActiveECM()
                     && (entPos != null)) {
                     vFriendlyECMCoords.addElement(entPos);
                     vFriendlyECMRanges
-                            .addElement(new Integer(ent.getECMRange()));
+                            .addElement(ent.getECMRange());
                     vFriendlyECMStrengths.add(ent.getECMStrength());
                 }
             }

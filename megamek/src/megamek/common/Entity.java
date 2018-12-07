@@ -8058,7 +8058,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void pickUp(MechWarrior mw) {
-        pickedUpMechWarriors.addElement(new Integer(mw.getId()));
+        pickedUpMechWarriors.addElement(mw.getId());
     }
 
     /**
@@ -10200,8 +10200,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param weaponId The <code>int</code> id of the shooting lrm launcher
      */
     public void addTargetedBySwarm(int entityId, int weaponId) {
-        hitBySwarmsEntity.addElement(new Integer(entityId));
-        hitBySwarmsWeapon.addElement(new Integer(weaponId));
+        hitBySwarmsEntity.addElement(entityId);
+        hitBySwarmsWeapon.addElement(weaponId);
     }
 
     /**
@@ -13882,14 +13882,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         vDesc.addElement(r);
                     }
                     if (this instanceof Mech) {
-                        vCriticals.put(new Integer(Mech.LOC_CT),
+                        vCriticals.put(Mech.LOC_CT,
                                        new LinkedList<CriticalSlot>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
                             CriticalSlot cs = getCritical(Mech.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                                 && (cs.getIndex() == Mech.SYSTEM_ENGINE)
                                 && cs.isHittable()) {
-                                vCriticals.get(new Integer(Mech.LOC_CT))
+                                vCriticals.get(Mech.LOC_CT)
                                           .add(cs);
                                 hits--;
                             }
@@ -13905,33 +13905,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 .hasModerateMovementDamage();
                         boolean heavyMovementDamage = tank
                                 .hasHeavyMovementDamage();
-                        vCriticals.put(new Integer(Tank.LOC_BODY),
-                                       new LinkedList<CriticalSlot>());
-                        vCriticals.put(new Integer(-1),
-                                       new LinkedList<CriticalSlot>());
+                        vCriticals.put(Tank.LOC_BODY, new LinkedList<>());
+                        vCriticals.put(-1, new LinkedList<>());
                         if (tank instanceof VTOL) {
-                            vCriticals.put(new Integer(VTOL.LOC_ROTOR),
-                                           new LinkedList<CriticalSlot>());
+                            vCriticals.put(VTOL.LOC_ROTOR, new LinkedList<>());
                         }
                         for (int i = 0; i < hits; i++) {
                             if (tank instanceof VTOL) {
                                 if (vtolStabilizerHit) {
-                                    vCriticals.get(new Integer(Tank.LOC_BODY))
-                                              .add(new CriticalSlot(
+                                    vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
                                                       CriticalSlot.TYPE_SYSTEM,
                                                       Tank.CRIT_ENGINE));
                                 } else {
                                     vCriticals
-                                            .get(new Integer(VTOL.LOC_ROTOR))
-                                            .add(new CriticalSlot(
+                                            .get(VTOL.LOC_ROTOR).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM,
                                                     VTOL.CRIT_FLIGHT_STABILIZER));
                                     vtolStabilizerHit = true;
                                 }
                             } else {
                                 if (heavyMovementDamage) {
-                                    vCriticals.get(new Integer(Tank.LOC_BODY))
-                                              .add(new CriticalSlot(
+                                    vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
                                                       CriticalSlot.TYPE_SYSTEM,
                                                       Tank.CRIT_ENGINE));
                                 } else if (moderateMovementDamage) {
@@ -13939,8 +13933,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // signify the calling function to deal
                                     // movement damage
                                     vCriticals
-                                            .get(new Integer(-1))
-                                            .add(new CriticalSlot(
+                                            .get(-1).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM, 3));
                                     heavyMovementDamage = true;
                                 } else if (minorMovementDamage) {
@@ -13948,8 +13941,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // signify the calling function to deal
                                     // movement damage
                                     vCriticals
-                                            .get(new Integer(-1))
-                                            .add(new CriticalSlot(
+                                            .get(-1).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM, 2));
                                     moderateMovementDamage = true;
                                 } else {
@@ -13957,8 +13949,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // signify the calling function to deal
                                     // movement damage
                                     vCriticals
-                                            .get(new Integer(-1))
-                                            .add(new CriticalSlot(
+                                            .get(-1).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM, 1));
                                     minorMovementDamage = true;
                                 }
@@ -13978,9 +13969,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                         .randomInt(getNumberOfCriticals(loc));
                                 slot = getCritical(loc, slotIndex);
                             } while ((slot == null) || !slot.isHittable());
-                            vCriticals.put(new Integer(loc),
-                                           new LinkedList<CriticalSlot>());
-                            vCriticals.get(new Integer(loc)).add(slot);
+                            vCriticals.put(loc, new LinkedList<>());
+                            vCriticals.get(loc).add(slot);
                         }
                     }
                 }
@@ -15108,10 +15098,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @return
      */
-    public HashSet<Coords> getHitchLocations() {
-        HashSet<Coords> trailerPos = new HashSet<Coords>();
+    public Set<Coords> getHitchLocations() {
+        Set<Coords> trailerPos = new HashSet<Coords>();
         //First, set up a list of all the entities in this train
-        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        ArrayList<Entity> thisTrain = new ArrayList<>();
         thisTrain.add(this);
         for (int id : getAllTowedUnits()) {
             Entity trailer = game.getEntity(id);
@@ -15127,12 +15117,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     //Now, check the location of the hitch (which should just be front or rear)
                     //and add the hex adjacent to the entity in the appropriate direction
                     //Offset the location value to match the directions in Coords.
-                    int dir = 0;
-                    if (m.getLocation() == Tank.LOC_FRONT) {
-                        dir = (e.getFacing() % 6);
-                    } else if (m.getLocation() == Tank.LOC_REAR
+                    int dir = e.getFacing();
+                    if (m.getLocation() == Tank.LOC_REAR
                             || m.getLocation() == SuperHeavyTank.LOC_REAR) {
-                        dir = ((e.getFacing() + 3) % 6);
+                        dir = ((dir + 3) % 6);
                     }
                     trailerPos.add(e.getPosition().translated(dir));
                 }

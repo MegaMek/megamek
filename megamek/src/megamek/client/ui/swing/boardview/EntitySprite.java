@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -1052,15 +1053,11 @@ class EntitySprite extends Sprite {
         
         // Towing
         if (entity.getAllTowedUnits().size() > 0) {
-            StringBuffer unitList = new StringBuffer();
-            for (int id : entity.getAllTowedUnits()) {
-                Entity towed = entity.getGame().getEntity(id);
-                unitList.append(towed.getDisplayName());
-                unitList.append(", ");
-            }
+            String unitList = entity.getAllTowedUnits().stream()
+                    .map(id -> entity.getGame().getEntity(id).getDisplayName())
+                    .collect(Collectors.joining(", "));
             if (unitList.length() > 1) {
-                unitList.delete(unitList.length() - 2, unitList.length());
-                addToTT("Towing", BR, unitList.toString());
+                addToTT("Towing", BR, unitList);
             }
         }
 

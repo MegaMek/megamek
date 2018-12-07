@@ -334,7 +334,7 @@ public class TestAdvancedAerospace extends TestAero {
      * @return       The maximum number of docking hardpoints (collars) that can be mounted on the ship.
      */
     public static int getMaxDockingHardpoints(Jumpship vessel) {
-        int max = (int) Math.floor(vessel.getWeight() / 5000);
+        int max = (int) Math.floor(vessel.getWeight() / 50000);
         for (Bay bay : vessel.getTransportBays()) {
             max -= bay.hardpointCost();
         }

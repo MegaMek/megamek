@@ -1646,7 +1646,9 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooterState.isAero());
         
-        if(shooter.isAero()) {
+        // if we're in a position to drop bombs because we're an aircraft on a ground map, then
+        // the "alpha strike" may be a bombing plan.
+        if(shooter.isAirborneAeroOnGroundMap()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             

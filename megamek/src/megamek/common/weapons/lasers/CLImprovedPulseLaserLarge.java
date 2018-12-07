@@ -57,7 +57,6 @@ public class CLImprovedPulseLaserLarge extends PulseLaserWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         rulesRefs = "95,IO";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
             .setClanAdvancement(2815, 2818, 2820, 2826, 3080)

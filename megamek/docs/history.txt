@@ -1,7 +1,11 @@
 
 VERSION HISTORY:
 ----------------
-v0.45.2-SNAPSHOT
+v0.45.3
++ PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.
++ PR #1196: Fix "ASEW"-related soft lock at end phase when warships or space stations are on the board.
+
+v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.
 + Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
 + PR #1132: Zweihander
@@ -17,6 +21,9 @@ v0.45.2-SNAPSHOT
 + Issue #1177: Rocket Launcher bug after configuring unit
 + PR #1185: Protomech validation, updates to protomech unit files from errata and addition of Wars of Reaving units.
 + PR #1186: Protomech equipment (implentation of melee weapon, quad melee system, fusillade, and magnetic clamps) 
++ PR #1184: Bot handling for aerospace units on low-atmospheric maps and on space maps using non-advanced flight rules
++ PR #1193: TRO style summary
++ Data: New Sprites
 
 v0.45.1 (2018-09-03 2300 UTC)
 + PR #1096: Security - address XXE vulnerabilities in XML parsers

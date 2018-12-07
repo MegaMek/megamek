@@ -473,8 +473,7 @@ public class MoveStep implements Serializable {
         IHex destHex = game.getBoard().getHex(getPosition());
 
         // Check for pavement movement.
-        if (Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(),
-                this)) {
+        if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
             setPavementStep(true);
         } else {
             setPavementStep(false);
@@ -773,8 +772,7 @@ public class MoveStep implements Serializable {
             case TURN_LEFT:
             case TURN_RIGHT:
                 // Check for pavement movement.
-                if (Compute.canMoveOnPavement(game, prev.getPosition(),
-                        getPosition(), this)) {
+                if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
                     setPavementStep(true);
                 } else {
                     setPavementStep(false);

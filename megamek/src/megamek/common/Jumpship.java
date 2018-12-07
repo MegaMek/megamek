@@ -113,14 +113,21 @@ public class Jumpship extends Aero {
     private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
     
     /*
+     * Accessor for the asewAffectedTurns array, which may be different for inheriting classes.
+     */
+    protected int[] getAsewAffectedTurns() {
+        return asewAffectedTurns;
+    }
+    
+    /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW missile
      * @param arc - integer representing the desired firing arc
      * @param turns - integer specifying the number of end phases that the effects last through
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        if (arc < asewAffectedTurns.length) {
-            asewAffectedTurns[arc] = turns;
+        if (arc < getAsewAffectedTurns().length) {
+            getAsewAffectedTurns()[arc] = turns;
         }
     }
     
@@ -129,8 +136,8 @@ public class Jumpship extends Aero {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        if (arc < asewAffectedTurns.length) {
-            return asewAffectedTurns[arc];
+        if (arc < getAsewAffectedTurns().length) {
+            return getAsewAffectedTurns()[arc];
         }
         return 0;
     }

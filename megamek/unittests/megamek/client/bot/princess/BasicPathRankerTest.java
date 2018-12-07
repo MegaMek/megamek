@@ -204,6 +204,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockAero.getId()).thenReturn(2);
         Mockito.when(mockAero.isAero()).thenReturn(true);
         Mockito.when(mockAero.isAirborne()).thenReturn(true);
+        Mockito.when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
         EntityEvaluationResponse expected = new EntityEvaluationResponse();
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -1049,6 +1050,7 @@ public class BasicPathRankerTest {
         final Entity mockAero = Mockito.mock(ConvFighter.class);
         Mockito.when(mockAero.isAero()).thenReturn(true);
         Mockito.when(mockAero.isAirborne()).thenReturn(true);
+        Mockito.when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
         Mockito.when(mockAero.getPosition()).thenReturn(new Coords(1, 1)); // Right on top of me, but being an aero, it
         // shouldn't count.
         Mockito.when(mockAero.isSelectableThisTurn()).thenReturn(false);

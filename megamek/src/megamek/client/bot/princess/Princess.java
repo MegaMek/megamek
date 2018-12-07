@@ -1826,7 +1826,7 @@ public class Princess extends BotClient {
         // then evade
         if(pathEntity.isAirborne() &&
            !possibleToInflictDamage &&
-           (path.getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+           (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
             path.addStep(MoveStepType.EVADE);
         }
     }

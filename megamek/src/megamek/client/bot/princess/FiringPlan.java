@@ -18,6 +18,7 @@ import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.util.StringUtil;
 
@@ -41,11 +42,17 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
     private double utility; // calculated elsewhere
     private Targetable target;
     private int twist;
+    private boolean flipArms;
 
     FiringPlan(Targetable target) {
         setTwist(0);
         setUtility(0);
         this.target = target;
+    }
+    
+    FiringPlan(Targetable target, boolean flipArms) {
+        this(target);
+        this.flipArms = flipArms;
     }
 
     /**
@@ -132,6 +139,10 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
         
+        if(flipArms) {
+            actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
+        }
+        
         for (WeaponFireInfo weaponFireInfo : this) {
             actionVector.add(weaponFireInfo.getWeaponAttackAction());
         }
@@ -177,6 +188,14 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
 
     public void setTwist(int twist) {
         this.twist = twist;
+    }
+    
+    public boolean getFlipArms() {
+        return flipArms;
+    }
+    
+    public void setFlipArms(boolean flipArms) {
+        this.flipArms = flipArms;
     }
 
     /**

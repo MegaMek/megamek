@@ -2040,7 +2040,7 @@ public class FireControl {
 
         // Start with an alpha strike.
         FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
-                                                         ammoConservation, game);
+                                                    ammoConservation, game);
         
         if(shooter.canFlipArms()) {
             shooter.setArmsFlipped(true);
@@ -2103,12 +2103,12 @@ public class FireControl {
 
         // Start with an alpha strike. If it falls under our heat limit, use it.
         FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
-                                                           target, targetState, game);
+                                                       target, targetState, game);
         
         if(shooter.canFlipArms()) {
             shooter.setArmsFlipped(true);
             FiringPlan betaStrike = guessFullFiringPlan(shooter, shooterState,
-                    target, targetState, game);
+                                                        target, targetState, game);
             betaStrike.setFlipArms(true);
             if(betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;

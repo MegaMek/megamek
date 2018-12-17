@@ -227,6 +227,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.MegaMekFile;
@@ -22466,13 +22467,29 @@ public class Server implements Runnable {
                                 if (!a.isSpaceborne()
                                         && a.isAirborne()) {
                                     int loss = Compute.d6(1);
+                                    int origAltitude = e.getAltitude();
+                                    e.setAltitude(e.getAltitude() - loss);
+                                    //Reroll altitude loss with edge if the new altitude would result in a crash
+                                    if (e.getAltitude() <= 0 
+                                            //Don't waste the edge if it won't help
+                                            && origAltitude > 1
+                                            && e.getCrew().hasEdgeRemaining() 
+                                            && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
+                                        loss = Compute.d6(1);
+                                        //Report the edge use
+                                        r = new Report(9367);
+                                        r.newlines = 1;
+                                        r.subject = e.getId();
+                                        vReport.add(r);
+                                        e.setAltitude(origAltitude - loss);
+                                    }
+                                    //Report the altitude loss
                                     r = new Report(9366);
                                     r.newlines = 0;
                                     r.subject = e.getId();
                                     r.addDesc(e);
                                     r.add(loss);
                                     vReport.add(r);
-                                    e.setAltitude(e.getAltitude() - loss);
                                     // check for crash
                                     if (checkCrash(e, e.getPosition(),
                                             e.getAltitude())) {

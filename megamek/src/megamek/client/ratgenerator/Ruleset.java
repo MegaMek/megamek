@@ -166,11 +166,16 @@ public class Ruleset {
 
         buildForceTree(fd, l, 0.05);
         fd.generateUnits(l, 0.5);
-        l.updateProgress(0, "Finalizing formation");
+        if (null != l) {
+            l.updateProgress(0, "Finalizing formation");
+        }
         fd.recalcWeightClass();
         fd.assignCommanders();
         fd.assignPositions();
-        l.updateProgress(0.05, "Finalizing formation");
+        
+        if (null != l) {
+            l.updateProgress(0.05, "Finalizing formation");
+        }
         fd.loadEntities(l, 0.4);
         //      fd.assignBloodnames();
 

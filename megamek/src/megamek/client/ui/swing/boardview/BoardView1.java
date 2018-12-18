@@ -89,6 +89,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.BotGeometry;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
@@ -1396,7 +1397,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // debugging method that renders the bounding box of a unit's movement envelope.
-        //renderMovementBoundingBox((Graphics2D) g);
+        renderMovementBoundingBox((Graphics2D) g);
     }
     
     /** 
@@ -1406,7 +1407,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
-        if(selectedEntity != null) {
+        Set<Coords> donut = BotGeometry.getHexDonut(new Coords(10, 10), 3);
+        
+        for(Coords coords : donut) {
+            Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
+            p.translate(HEX_W  / 2, HEX_H  / 2);
+            drawHexBorder(g, p, Color.PINK, 0, 6);
+        }
+        
+        /*if(selectedEntity != null) {
             Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
@@ -1439,7 +1448,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 String s = x.toString();
                 this.drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
             }
-        }
+        }*/
     }
     
     /**

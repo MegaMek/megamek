@@ -55,6 +55,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.EntityAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -594,6 +595,21 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Calculates the targeting/offboard turn
+     * This includes firing TAG and non-direct-fire artillery
+     */
+    @Override
+    protected void calculateTargetingOffBoardTurn() {
+        ArtilleryTargetingControl atc = new ArtilleryTargetingControl();
+        atc.initializeForTargetingPhase();
+        Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+        
+        sendAttackData(entityToFire.getId(),
+                atc.calculateIndirectArtilleryPlan(entityToFire, getGame(), this));
+        sendDone(true);
+    }
+    
     private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
         final String METHOD_NAME = "calcAmmoConservation(Entity)";
         final double aggroFactor =
@@ -1021,6 +1037,8 @@ public class Princess extends BotClient {
         }
     }
 
+    protected
+    
     boolean wantsToFallBack(final Entity entity) {
         return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
@@ -1890,7 +1908,7 @@ public class Princess extends BotClient {
             }
         }
     }
-
+    
     public void sendChat(final String message,
                          final LogLevel logLevel) {
         if (getVerbosity().willLog(logLevel)) {

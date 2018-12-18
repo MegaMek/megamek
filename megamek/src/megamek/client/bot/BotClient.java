@@ -235,6 +235,17 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment();
 
+    /**
+     * Calculates the targeting/offboard turn
+     * This includes firing TAG and non-direct-fire artillery
+     * Does nothing in this implementation.
+     */
+    protected void calculateTargetingOffBoardTurn() {
+        sendAttackData(game.getFirstEntityNum(getMyTurn()),
+                new Vector<>(0));
+        sendDone(true);
+    }
+    
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
     
@@ -494,9 +505,7 @@ public abstract class BotClient extends Client {
                        || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
-                sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                               new Vector<>(0));
-                sendDone(true);
+                calculateTargetingOffBoardTurn();
             }
         } catch (Throwable t) {
             t.printStackTrace();

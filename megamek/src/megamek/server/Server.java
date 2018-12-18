@@ -22482,6 +22482,8 @@ public class Server implements Runnable {
                                         r.subject = e.getId();
                                         vReport.add(r);
                                         e.setAltitude(origAltitude - loss);
+                                        // and spend the edge point
+                                        e.getCrew().decreaseEdge();
                                     }
                                     //Report the altitude loss
                                     r = new Report(9366);

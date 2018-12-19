@@ -26674,8 +26674,6 @@ public class Server implements Runnable {
                 break;
             case Aero.CRIT_FUEL_TANK:
                 // fuel tank
-                r = new Report(9120);
-                r.subject = aero.getId();
                 int boomTarget = 9;
                 if (aero.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                     boomTarget = 7;
@@ -26686,7 +26684,24 @@ public class Server implements Runnable {
                 }
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
+                r = new Report(9120);
+                r.subject = aero.getId();
                 if (fuelroll > boomTarget) {
+                    // A chance to reroll the explosion with edge
+                    if (aero.getCrew().hasEdgeRemaining() 
+                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                        // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
+                        r = new Report(9123);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                        aero.getCrew().decreaseEdge();
+                        fuelroll = Compute.d6(2);
+                        // To explode, or not to explode
+                        if (fuelroll > boomTarget) {
+                            r = new Report(9124);
+                            r.subject = aero.getId();
+                        }
+                    }
                     r.choose(true);
                     reports.add(r);
                     reports.addAll(destroyEntity(aero, "fuel explosion", false,

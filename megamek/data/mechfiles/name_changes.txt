@@ -47,6 +47,10 @@ Vampire II|Vampire II (Standard)
 Vengeance Danai Centrella|Vengeance (Danai Centrella)
 Vulture (Standard)|Vulture (2312)
 
+#Infantry
+Clan Motorized Combat Engineers|Clan Motorized Point (Rifle)
+Motorized Combat Engineers|Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT
+
 #Jumpships
 Comitatus JumpShip (Standard)|Comitatus JumpShip (2995)
 Hunter Jumpship (Standard)|Hunter Jumpship (2832)

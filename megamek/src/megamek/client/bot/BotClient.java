@@ -235,6 +235,8 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment();
 
+    protected void initTargeting() { }
+    
     /**
      * Calculates the targeting/offboard turn
      * This includes firing TAG and non-direct-fire artillery
@@ -389,8 +391,10 @@ public abstract class BotClient extends Client {
                     // can't do this
                     toggleStealth();
                     endOfTurnProcessing();
-                case PHASE_INITIATIVE_REPORT:
+                case PHASE_TARGETING:
+                    initTargeting();
                 case PHASE_TARGETING_REPORT:
+                case PHASE_INITIATIVE_REPORT:
                 case PHASE_MOVEMENT_REPORT:
                 case PHASE_OFFBOARD_REPORT:
                 case PHASE_FIRING_REPORT:

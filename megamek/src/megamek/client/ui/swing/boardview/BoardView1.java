@@ -1397,7 +1397,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // debugging method that renders the bounding box of a unit's movement envelope.
-        renderMovementBoundingBox((Graphics2D) g);
+        //renderMovementBoundingBox((Graphics2D) g);
+        //renderDonut(g, new Coords(10, 10), 2);
     }
     
     /** 
@@ -1407,15 +1408,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
-        Set<Coords> donut = BotGeometry.getHexDonut(new Coords(10, 10), 3);
-        
-        for(Coords coords : donut) {
-            Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
-            p.translate(HEX_W  / 2, HEX_H  / 2);
-            drawHexBorder(g, p, Color.PINK, 0, 6);
-        }
-        
-        /*if(selectedEntity != null) {
+        if(selectedEntity != null) {
             Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
             princess.getGame().setBoard(this.game.getBoard());
             PathEnumerator pathEnum = new PathEnumerator(princess, this.game);
@@ -1448,9 +1441,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 String s = x.toString();
                 this.drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
             }
-        }*/
+        }
     }
     
+    /** 
+     * Debugging method that renders a hex donut around the given coordinates, with the given radius.
+     * @param g Graphics object on which to draw.
+     */
+    private void renderDonut(Graphics2D g, Coords coords, int radius) {
+        Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
+        
+        for(Coords donutCoords : donut) {
+            Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
+            p.translate(HEX_W  / 2, HEX_H  / 2);
+            drawHexBorder(g, p, Color.PINK, 0, 6);
+        }
+    }
     /**
      *  Returns a list of Coords of all hexes on the board.
      *  Returns ONLY hexes where board.getHex != null.

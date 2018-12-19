@@ -55,7 +55,6 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.EntityAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
-import megamek.common.PlanetaryConditions;
 import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -69,7 +68,6 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -91,6 +89,7 @@ public class Princess extends BotClient {
     
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
+    private ArtilleryTargetingControl atc;
     
     
     private BehaviorSettings behaviorSettings;
@@ -331,6 +330,15 @@ public class Princess extends BotClient {
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    @Override
+    protected void initTargeting() {
+        if(atc == null) {
+            atc = new ArtilleryTargetingControl();
+        }
+        
+        atc.initializeForTargetingPhase();
     }
 
     @Override
@@ -601,12 +609,10 @@ public class Princess extends BotClient {
      */
     @Override
     protected void calculateTargetingOffBoardTurn() {
-        ArtilleryTargetingControl atc = new ArtilleryTargetingControl();
-        atc.initializeForTargetingPhase();
         Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+        FiringPlan firingPlan = atc.calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
         
-        sendAttackData(entityToFire.getId(),
-                atc.calculateIndirectArtilleryPlan(entityToFire, getGame(), this));
+        sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
         sendDone(true);
     }
     

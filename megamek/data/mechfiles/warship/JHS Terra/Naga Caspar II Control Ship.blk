@@ -42,8 +42,8 @@ smallcraftbay:6.0:1:2
 navalrepairpressurized:82500.0:9:3:f0
 1stclassquarters:510.0:0
 2ndclassquarters:252.0:0
-crewquarters:2275.0:0
-cargobay:51513.5:1:7
+crewquarters:2310.0:0
+cargobay:51478.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -78,8 +78,8 @@ cargobay:51513.5:1:7
 28
 32
 32
-32
 28
+32
 32
 </armor>
 
@@ -340,7 +340,7 @@ JHSTerra - Civil War
 </grav_decks>
 
 <crew>
-478
+483
 </crew>
 
 <officers>
@@ -348,7 +348,7 @@ JHSTerra - Civil War
 </officers>
 
 <gunners>
-75
+80
 </gunners>
 
 <passengers>

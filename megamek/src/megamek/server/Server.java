@@ -26693,6 +26693,7 @@ public class Server implements Runnable {
                         // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
                         r = new Report(9123);
                         r.subject = aero.getId();
+                        r.newlines = 0;
                         reports.add(r);
                         aero.getCrew().decreaseEdge();
                         fuelroll = Compute.d6(2);
@@ -26700,6 +26701,11 @@ public class Server implements Runnable {
                         if (fuelroll > boomTarget) {
                             r = new Report(9124);
                             r.subject = aero.getId();
+                        } else {
+                            r = new Report(9122);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            break;
                         }
                     }
                     r.choose(true);

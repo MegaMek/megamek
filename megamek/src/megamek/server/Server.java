@@ -26906,10 +26906,7 @@ public class Server implements Runnable {
                                     ammoRoll = Compute.d6(2);
                                     // To explode, or not to explode
                                     if (ammoRoll >= boomTarget) {
-                                        r = new Report(9121);
-                                        r.subject = aero.getId();
                                         reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
-                                        reports.add(r);
                                     } else {
                                         r = new Report(9157);
                                         r.subject = aero.getId();

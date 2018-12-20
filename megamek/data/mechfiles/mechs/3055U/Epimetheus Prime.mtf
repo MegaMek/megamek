@@ -4,8 +4,8 @@ Prime
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)
-Era:3145
-Source:3053
+Era:3053
+Source:Unbound - Clan Invasion
 Rules Level:4
 
 Mass:80
@@ -33,11 +33,11 @@ RTR Armor:13
 RTC Armor:14
 
 Weapons:5
-Ultra AC/10, Head
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
-Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Left Arm
+ER Large Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Ultra AC/10, Head
 
 Left Arm:
 Shoulder

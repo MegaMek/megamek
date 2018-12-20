@@ -26892,9 +26892,35 @@ public class Server implements Runnable {
                                 int ammoRoll = Compute.d6(2);
                                 boomTarget = 10;
                                 r.choose(ammoRoll >= boomTarget);
-                                reports.add(r);
-                                if (ammoRoll >= boomTarget) {
-                                    reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                // A chance to reroll an explosion with edge
+                                if (aero.getCrew().hasEdgeRemaining() 
+                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                                        && ammoRoll >= boomTarget) {
+                                    // Report 9156 doesn't offer the right choices. Replace it.
+                                    r = new Report(9158);
+                                    r.subject = aero.getId();
+                                    r.newlines = 0;
+                                    r.indent(2);
+                                    reports.add(r);
+                                    aero.getCrew().decreaseEdge();
+                                    ammoRoll = Compute.d6(2);
+                                    // To explode, or not to explode
+                                    if (ammoRoll >= boomTarget) {
+                                        r = new Report(9121);
+                                        r.subject = aero.getId();
+                                        reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                        reports.add(r);
+                                    } else {
+                                        r = new Report(9157);
+                                        r.subject = aero.getId();
+                                        reports.add(r);
+                                    }
+                                } else {
+                                    //Finish handling report 9156
+                                    reports.add(r);
+                                    if (ammoRoll >= boomTarget) {
+                                        reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                    }
                                 }
                             }
                             //Hit the weapon then also hit all the other weapons in the bay

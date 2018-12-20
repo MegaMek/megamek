@@ -1063,6 +1063,15 @@ public class Princess extends BotClient {
                 (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true));
     }
 
+    /**
+     * Logic to determine if this entity is in a state where it can shoot due to being attacked while fleeing.
+     * @param entity Entity to check.
+     * @return Whether or not this entity can shoot while falling back.
+     */
+    boolean canShootWhileFallingBack(Entity entity) {
+        return attackedWhileFleeing.contains(entity.getId());
+    }
+    
     boolean mustFleeBoard(final Entity entity) {
         if (!isFallingBack(entity)) {
             return false;

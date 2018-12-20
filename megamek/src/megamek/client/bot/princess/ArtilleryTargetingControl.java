@@ -1,13 +1,13 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
@@ -19,8 +19,7 @@ import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 
 /**
  * This class handles the creation of firing plans for indirect-fire artillery and other weapons that get used during the
@@ -30,7 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
  */
 public class ArtilleryTargetingControl {
     private static final int NO_AMMO = -1;
-    private static final int MAX_ARTILLERY_BLAST_RADIUS = 1; // biggest known kaboom is the 120 cruise missile with a 4-hex radius
+    private static final int MAX_ARTILLERY_BLAST_RADIUS = 2; // biggest known kaboom is the 120 cruise missile with a 4-hex radius
     
     // The main principle here isn't to try to anticipate enemy movement: that's unlikely, especially for faster or jump-capable units.
     // The main principle instead is to put down fire that a) may land on enemy units
@@ -105,11 +104,15 @@ public class ArtilleryTargetingControl {
             int friendlyMultiplier = -1;
             
             // try to avoid shooting at friendlies
-            // ignore routed enemies
+            // ignore routed enemies who haven't resumed fire
             if(entity.isEnemyOf(shooter)) {
-                if(!owner.getHonorUtil().isEnemyBroken(entity.getId(), 
-                            shooter.getOwnerId(), 
-                            owner.getBehaviorSettings().isForcedWithdrawal())) {
+                boolean enemyUnitBroken = owner.getHonorUtil().isEnemyBroken(entity.getId(), 
+                        shooter.getOwnerId(), 
+                        owner.getBehaviorSettings().isForcedWithdrawal());
+                
+                boolean enemyDishonored = owner.getHonorUtil().isEnemyDishonored(entity.getOwnerId());
+                
+                if(!enemyUnitBroken || enemyDishonored) {
                     friendlyMultiplier = 1;
                 } else {
                     friendlyMultiplier = 0;
@@ -182,11 +185,7 @@ public class ArtilleryTargetingControl {
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
                 // of the entity. 
-                for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
-                    for(Coords donutHex : BotGeometry.getHexDonut(e.getPosition(), radius)) {
-                        targetList.add(new HexTarget(donutHex, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
-                    }
-                }
+                addHexDonuts(e.getPosition(), targetList, game);
             }
         }
         
@@ -194,9 +193,25 @@ public class ArtilleryTargetingControl {
             targetList.add(new HexTarget(coords, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
             
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
-            // of the entity. 
-            for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
-                for(Coords donutHex : BotGeometry.getHexDonut(coords, radius)) {
+            // of the strategic targets.
+            addHexDonuts(coords, targetList, game);
+        }
+    }
+    
+    /**
+     * Adds on-board HexTargets within the MAX_ARTILLERY_BLAST_RADIUS of the given coordinates
+     * to the given HexTarget set. 
+     * @param coords Center coordinates
+     * @param targetList List of target hexes
+     * @param game game pointer
+     */
+    private void addHexDonuts(Coords coords, Set<Targetable> targetList, IGame game) {
+        // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
+        // of the designated coordinates 
+        for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
+            for(Coords donutHex : BotGeometry.getHexDonut(coords, radius)) {
+                // don't bother adding off-board donuts.
+                if(game.getBoard().contains(donutHex)) {
                     targetList.add(new HexTarget(donutHex, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
                 }
             }
@@ -235,6 +250,11 @@ public class ArtilleryTargetingControl {
      */
     private FiringPlan calculateIndirectArtilleryPlan(Entity shooter, IGame game, Princess owner, int facingChange) {
         FiringPlan retval = new FiringPlan();
+        
+        // if we're fleeing and haven't been shot at, then try not to agitate guys that may pursue us.
+        if(owner.isFallingBack(shooter) && !owner.canShootWhileFallingBack(shooter)) {
+            return retval;
+        }
         
         // set the plan's torso twist/turret rotation
         // also set the 
@@ -303,6 +323,7 @@ public class ArtilleryTargetingControl {
                 
                 if(tagInfo != null) {
                     retval.add(tagInfo);
+                    retval.setUtility(retval.getUtility() + tagInfo.getProbabilityToHit());
                 }
             }
         }
@@ -359,5 +380,54 @@ public class ArtilleryTargetingControl {
         }
         
         return ammoEquipmentNum;
+    }
+
+    /**
+     * Function that calculates the potential damage if an artillery attack
+     * were to land on target. 
+     * @param coords
+     * @param operator
+     * @return
+     */
+    public static double evaluateIncomingArtilleryDamage(Coords coords, Princess operator) {
+        double sum = 0;
+        
+        for(Enumeration<ArtilleryAttackAction> attackEnum = operator.getGame().getArtilleryAttacks(); attackEnum.hasMoreElements();) {
+            ArtilleryAttackAction aaa = attackEnum.nextElement();
+            
+            // calculate damage: damage - (10 * distance to me), floored at 0
+            // we only say that it will actually be damage if the attack coming in is landing right after the movement phase
+            double actualDamage = 0.0;
+            
+            if(aaa.getTurnsTilHit() == 0) {
+                // damage for artillery weapons is, for some reason, derived from the weapon type's rack size
+                Mounted weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
+                int damage = ((WeaponType) weapon.getType()).getRackSize();
+                
+                // distance from given coordinates reduces damage
+                Coords attackDestination = aaa.getTarget(operator.getGame()).getPosition();
+                int distance = coords.distance(attackDestination);
+                
+                // calculate odds of attack actually hitting
+                // artillery skill may be gunnery or artillery depending on game options
+                int artySkill = aaa.getEntity(operator.getGame()).getCrew().getGunnery();
+                if(operator.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+                    artySkill = aaa.getEntity(operator.getGame()).getCrew().getArtillery();
+                }
+                
+                double hitOdds = 0.0;
+                if(operator.getArtilleryAutoHit().contains(coords)) {
+                    hitOdds = 1.0;
+                } else {
+                    hitOdds = Compute.oddsAbove(artySkill + 7);
+                }
+            
+                actualDamage = Math.max(damage - (10 * distance), 0) * hitOdds;
+            }
+            
+            sum += actualDamage;
+        }
+        
+        return sum;
     }
 }

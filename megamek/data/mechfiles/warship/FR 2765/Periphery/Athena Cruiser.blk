@@ -76,9 +76,9 @@ cargobay:11937.0:1:5
 70
 68
 68
-68
-68
 70
+68
+68
 </armor>
 
 <Nose Equipment>
@@ -234,7 +234,7 @@ Naval Laser 55
 </structural_integrity>
 
 <source>
-FR2765-P - Star League
+FR2765:Periphery- Star League
 </source>
 
 <tonnage>

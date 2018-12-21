@@ -1043,8 +1043,6 @@ public class Princess extends BotClient {
         }
     }
 
-    protected
-    
     boolean wantsToFallBack(final Entity entity) {
         return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }

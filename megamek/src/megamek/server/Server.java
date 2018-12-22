@@ -26950,15 +26950,47 @@ public class Server implements Runnable {
                             Mounted m = weapon.getLinked();
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
-                                r = new Report(9151);
-                                r.subject = aero.getId();
-                                r.add(m.getName());
-                                r.newlines = 0;
-                                reports.add(r);
-                                reports.addAll(explodeEquipment(aero, loc, m));
-                                break;
+                                // A chance to reroll an explosion with edge
+                                if (aero.getCrew().hasEdgeRemaining() 
+                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                                    aero.getCrew().decreaseEdge();
+                                    r = new Report(6530);
+                                    r.subject = aero.getId();
+                                    r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                                    reports.add(r);
+                                    ammoroll = Compute.d6(2);
+                                    if (ammoroll >= 10) {
+                                        reports.addAll(explodeEquipment(aero, loc, m));
+                                        break;
+                                    } else {
+                                        //Crisis averted, set report 9150 back up
+                                        r = new Report(9150);
+                                        r.subject = aero.getId();
+                                    }
+                                } else {
+                                    r = new Report(9151);
+                                    r.subject = aero.getId();
+                                    r.add(m.getName());
+                                    r.newlines = 0;
+                                    reports.add(r);
+                                    reports.addAll(explodeEquipment(aero, loc, m));
+                                    break;
+                                }
                             }
                         }
+                    }
+                    // If the weapon is explosive, use edge to roll up a new one
+                    if (aero.getCrew().hasEdgeRemaining() 
+                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                            && (weapon.getType().isExplosive(weapon) && !weapon.isHit()
+                                    && !weapon.isDestroyed())) {
+                        aero.getCrew().decreaseEdge();
+                        //Try something new for an interrupting report. r is still 9150.
+                        Report r1 = new Report(6530);
+                        r1.subject = aero.getId();
+                        r1.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                        reports.add(r1);
+                        weapon = weapons.get(Compute.randomInt(weapons.size()));
                     }
                     r.add(weapon.getName());
                     reports.add(r);

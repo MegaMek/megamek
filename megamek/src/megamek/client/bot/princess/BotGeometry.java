@@ -553,6 +553,10 @@ public class BotGeometry {
     public static Set<Coords> getHexDonut(Coords coords, int radius) { 
         Set<Coords> retval = new HashSet<>();
         
+        // algorithm outline: travel to the southwest a number of hexes equal to the radius
+        // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
+        // then rotating clockwise and moving northeast to draw the northwest side and so on, until we circle around. 
+        // the length of a hex side is equivalent to the radius
         Coords currentHex = coords.translated(4, radius);
         retval.add(currentHex);
         

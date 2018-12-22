@@ -1,3 +1,17 @@
+/*  
+* MegaMek - Copyright (C) 2018 - The MegaMek Team  
+*  
+* This program is free software; you can redistribute it and/or modify it under  
+* the terms of the GNU General Public License as published by the Free Software  
+* Foundation; either version 2 of the License, or (at your option) any later  
+* version.  
+*  
+* This program is distributed in the hope that it will be useful, but WITHOUT  
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
+* details.  
+*/  
+
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
@@ -29,7 +43,12 @@ import megamek.common.options.OptionsConstants;
  */
 public class ArtilleryTargetingControl {
     private static final int NO_AMMO = -1;
-    private static final int MAX_ARTILLERY_BLAST_RADIUS = 2; // biggest known kaboom is the 120 cruise missile with a 4-hex radius
+    // biggest known kaboom is the 120 cruise missile with a 4-hex radius, but it's not very common
+    // and greatly increases the number of spaces we need to check
+    private static final int MAX_ARTILLERY_BLAST_RADIUS = 2; 
+    
+    // per TacOps, this is the to-hit modifier for indirect artillery attacks.
+    private static final int ARTILLERY_ATTACK_MODIFIER = 7;
     
     // The main principle here isn't to try to anticipate enemy movement: that's unlikely, especially for faster or jump-capable units.
     // The main principle instead is to put down fire that a) may land on enemy units
@@ -38,14 +57,13 @@ public class ArtilleryTargetingControl {
     // Each potential hex is evaluated as follows:
     // (summed over all units within blast radius of hex) (1/unit run speed + 1) * odds of hitting hex * unit friendliness factor (1 for enemy, -1 for ally)
     // repeat and sum over all hexes within scatter pattern
-    // for simplicity, all artillery weapons on the 
     
     // this is a data structure that maps artillery damage value (which directly correlates with blast radius)
     // to a dictionary containing sets of coordinates and the damage value if one of those coordinates were hit by a shell
     // does not take into account hit odds or anything like that
     private Map<Integer, HashMap<Coords, Double>> damageValues;
     
-    private Set<Targetable> targetList;
+    private Set<Targetable> targetSet;
     
     /**
      * Worker function that calculates the total damage that would be done if a shot with the given damage value
@@ -159,11 +177,8 @@ public class ArtilleryTargetingControl {
      */
     public void initializeForTargetingPhase() {
         damageValues = new HashMap<>();
-        targetList = new HashSet<>();
+        targetSet = null;
     }
-    
-    //TODO: Add code to BasicPathRanker.RankPath() to take into account known incoming artillery shots and add them to the expectedDamageTaken
-    // value. Do so via function "evaluateIncomingArtillery".
     
     /**
      * Builds a list of eligible targets for artillery strikes.
@@ -174,27 +189,27 @@ public class ArtilleryTargetingControl {
      * @param owner Bot pointer
      */
     private void buildTargetList(Entity shooter, IGame game, Princess owner) {
-        targetList = new HashSet<>();
+        targetSet = new HashSet<>();
         
         for(Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
             
             // skip airborne entities
             if(!e.isAirborne() && !e.isAirborneVTOLorWIGE()) {
-                targetList.add(new HexTarget(e.getPosition(), game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+                targetSet.add(new HexTarget(e.getPosition(), game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
                 // of the entity. 
-                addHexDonuts(e.getPosition(), targetList, game);
+                addHexDonuts(e.getPosition(), targetSet, game);
             }
         }
         
         for(Coords coords : owner.getStrategicBuildingTargets()) {
-            targetList.add(new HexTarget(coords, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+            targetSet.add(new HexTarget(coords, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
             
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
             // of the strategic targets.
-            addHexDonuts(coords, targetList, game);
+            addHexDonuts(coords, targetSet, game);
         }
     }
     
@@ -265,7 +280,7 @@ public class ArtilleryTargetingControl {
         
         // if we haven't built a target list yet, do so now.
         // potential target list is the same regardless of the entity doing the shooting
-        if(targetList == null || targetList.size() == 0) {
+        if(targetSet == null) {
             buildTargetList(shooter, game, owner);
         }
         
@@ -283,7 +298,7 @@ public class ArtilleryTargetingControl {
                 
                 // for each enemy unit, evaluate damage value of firing at its hex.
                 // keep track of top target hexes with the same value and fire at them
-                for(Targetable hexTarget : targetList) {                    
+                for(Targetable hexTarget : targetSet) {                    
                     double damageValue = calculateDamageValue(damage, hexTarget.getPosition(), shooter, game, owner);
                     WeaponFireInfo wfi = new WeaponFireInfo(shooter, hexTarget,
                             currentWeapon, game, false, owner);
@@ -345,10 +360,10 @@ public class ArtilleryTargetingControl {
         double hitOdds = 0.0;
         
         // pretty simple logic here: take the best shot that you have
-        // if multiple best shots, pick randomly
         for(Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game, owner.getFireControlState())) {
             WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
             if(wfi.getProbabilityToHit() > hitOdds) {
+                hitOdds = wfi.getProbabilityToHit();
                 retval = wfi;
             }
         }
@@ -416,10 +431,11 @@ public class ArtilleryTargetingControl {
                 }
                 
                 double hitOdds = 0.0;
-                if(operator.getArtilleryAutoHit().contains(coords)) {
+                if(operator.getArtilleryAutoHit() != null &&
+                        operator.getArtilleryAutoHit().contains(coords)) {
                     hitOdds = 1.0;
                 } else {
-                    hitOdds = Compute.oddsAbove(artySkill + 7);
+                    hitOdds = Compute.oddsAbove(artySkill + ARTILLERY_ATTACK_MODIFIER);
                 }
             
                 actualDamage = Math.max(damage - (10 * distance), 0) * hitOdds;

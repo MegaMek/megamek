@@ -385,14 +385,16 @@ public abstract class BotClient extends Client {
                     break;
                 case PHASE_PHYSICAL:
                     break;
+                case PHASE_TARGETING:
+                    initTargeting();
+                    break;
                 case PHASE_END_REPORT:
                     // Check if stealth armor should be switched on/off
                     // Kinda cheap leaving this until the end phase, players
                     // can't do this
                     toggleStealth();
                     endOfTurnProcessing();
-                case PHASE_TARGETING:
-                    initTargeting();
+                    // intentional fallthrough: all reports must click "done", otherwise the game never moves on.
                 case PHASE_TARGETING_REPORT:
                 case PHASE_INITIATIVE_REPORT:
                 case PHASE_MOVEMENT_REPORT:

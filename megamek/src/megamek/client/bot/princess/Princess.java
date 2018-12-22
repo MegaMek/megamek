@@ -163,6 +163,18 @@ public class Princess extends BotClient {
     public LogLevel getVerbosity() {
         return getBehaviorSettings().getVerbosity();
     }
+    
+    /**
+     * Lazy-loading accessor for the artillery targeting control.
+     * @return
+     */
+    public ArtilleryTargetingControl getArtilleryTargetingControl() {
+        if(atc == null) {
+            atc = new ArtilleryTargetingControl();
+        }
+        
+        return atc;
+    }
 
     /**
      * Gets the appropriate path ranker instance given an entity
@@ -334,11 +346,7 @@ public class Princess extends BotClient {
     
     @Override
     protected void initTargeting() {
-        if(atc == null) {
-            atc = new ArtilleryTargetingControl();
-        }
-        
-        atc.initializeForTargetingPhase();
+        getArtilleryTargetingControl().initializeForTargetingPhase();
     }
 
     @Override
@@ -610,7 +618,7 @@ public class Princess extends BotClient {
     @Override
     protected void calculateTargetingOffBoardTurn() {
         Entity entityToFire = getGame().getFirstEntity(getMyTurn());
-        FiringPlan firingPlan = atc.calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
+        FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
         
         sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
         sendDone(true);

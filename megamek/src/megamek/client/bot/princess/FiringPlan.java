@@ -43,10 +43,14 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
     private Targetable target;
     private int twist;
     private boolean flipArms;
-
-    FiringPlan(Targetable target) {
+    
+    FiringPlan() {
         setTwist(0);
         setUtility(0);
+    }
+    
+    FiringPlan(Targetable target) {
+        this();
         this.target = target;
     }
     

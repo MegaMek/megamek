@@ -71,11 +71,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     // the best damage enemies could expect were I not here. Used to determine 
     // whether they will target me.
     private Map<Integer, Double> bestDamageByEnemies;
-
+    
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         final String METHOD_NAME = "BasicPathRanker(Princess)";
+        
         bestDamageByEnemies = new TreeMap<>();
+        
         getOwner().log(
                 getClass(),
                 METHOD_NAME,
@@ -589,6 +591,21 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 expectedDamageTaken += eval.getEstimatedEnemyDamage();
             }
 
+            // if we're not in the air, we may get hit by friendly artillery
+            if(!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
+                double friendlyArtilleryDamage = 0;
+                Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
+                
+                if(!artyDamage.containsKey(path.getFinalCoords())) {
+                    friendlyArtilleryDamage = ArtilleryTargetingControl.evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
+                    artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
+                } else {
+                    friendlyArtilleryDamage = artyDamage.get(path.getFinalCoords());
+                }
+                
+                expectedDamageTaken += friendlyArtilleryDamage;
+            }
+            
             calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
             // If I cannot kick because I am a clan unit and "No physical 

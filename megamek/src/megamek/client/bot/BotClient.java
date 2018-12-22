@@ -235,6 +235,19 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateDeployment();
 
+    protected void initTargeting() { }
+    
+    /**
+     * Calculates the targeting/offboard turn
+     * This includes firing TAG and non-direct-fire artillery
+     * Does nothing in this implementation.
+     */
+    protected void calculateTargetingOffBoardTurn() {
+        sendAttackData(game.getFirstEntityNum(getMyTurn()),
+                new Vector<>(0));
+        sendDone(true);
+    }
+    
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
     
@@ -372,14 +385,18 @@ public abstract class BotClient extends Client {
                     break;
                 case PHASE_PHYSICAL:
                     break;
+                case PHASE_TARGETING:
+                    initTargeting();
+                    break;
                 case PHASE_END_REPORT:
                     // Check if stealth armor should be switched on/off
                     // Kinda cheap leaving this until the end phase, players
                     // can't do this
                     toggleStealth();
                     endOfTurnProcessing();
-                case PHASE_INITIATIVE_REPORT:
+                    // intentional fallthrough: all reports must click "done", otherwise the game never moves on.
                 case PHASE_TARGETING_REPORT:
+                case PHASE_INITIATIVE_REPORT:
                 case PHASE_MOVEMENT_REPORT:
                 case PHASE_OFFBOARD_REPORT:
                 case PHASE_FIRING_REPORT:
@@ -494,9 +511,7 @@ public abstract class BotClient extends Client {
                        || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
-                sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                               new Vector<>(0));
-                sendDone(true);
+                calculateTargetingOffBoardTurn();
             }
         } catch (Throwable t) {
             t.printStackTrace();

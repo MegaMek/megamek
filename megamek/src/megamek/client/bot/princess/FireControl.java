@@ -3013,7 +3013,7 @@ public class FireControl {
     }
 
     // Helper method that figures out the valid facing changes for the given shooter
-    private List<Integer> getValidFacingChanges(final Entity shooter) {
+    public static List<Integer> getValidFacingChanges(final Entity shooter) {
         // figure out all valid twists or turret turns
         // mechs can turn:
         //		one left, one right unless he has "no torso twist" quirk or is on the ground

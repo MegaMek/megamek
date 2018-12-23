@@ -4,7 +4,7 @@ VERSION HISTORY:
 ----------------
 v0.45.3
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.
-+ PR #1196: Fix "ASEW"-related soft lock at end phase when warships or space stations are on the board.
++ PR #1197: Fix "ASEW"-related soft lock at end phase when warships or space stations are on the board.
 + PR #1173: Trailers [Partial implementation; trailers can be connected on the field but not in the lounge yet.]
 + PR #1205: Enable Princess to use the "flip arms" functionality for mechs that have it (e.g. Jenner, Rifleman).
 + Data: Removing two unsupported infantry giving loading errors. Unit names pointed to replacements.

@@ -22745,8 +22745,9 @@ public class Server implements Runnable {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
                     if (e.getCrew().hasEdgeRemaining()
-                        && e.getCrew().getOptions()
-                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)) {
+                        && (e.getCrew().getOptions()
+                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)
+                            || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO))) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
@@ -22760,7 +22761,8 @@ public class Server implements Runnable {
                 vDesc.add(r);
             } while (e.getCrew().hasEdgeRemaining()
                      && e.getCrew().isKoThisRound(crewPos)
-                     && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
+                     && (e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO)
+                         || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO)));
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;

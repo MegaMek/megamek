@@ -28185,6 +28185,30 @@ public class Server implements Runnable {
             r.add(nukeroll);
             vDesc.add(r);
             if (nukeroll >= capitalMissile) {
+                // Allow a reroll with edge
+                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT)
+                        && a.getCrew().hasEdgeRemaining()) {
+                    a.getCrew().decreaseEdge();
+                    r = new Report(9148);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    vDesc.add(r);
+                    // Reroll
+                    nukeroll = Compute.d6(2);
+                    // and report the new results
+                    r = new Report(9149);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(capitalMissile);
+                    r.add(nukeroll);
+                    r.choose(nukeroll >= capitalMissile);
+                    vDesc.add(r);
+                    if (nukeroll < capitalMissile) {
+                        // We might be vaporized by the damage itself, but no additional effect
+                        return;
+                    }
+                }
                 int nukeDamage = damage_orig;
                 a.setSI(a.getSI() - (nukeDamage * 10));
                 a.damageThisPhase += (nukeDamage * 10);

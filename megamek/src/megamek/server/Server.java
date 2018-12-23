@@ -28215,6 +28215,18 @@ public class Server implements Runnable {
         // apply crits
         if (hit.rolledBoxCars()) {
             if (hit.isFirstHit()) {
+                // Allow edge use to ignore the critical roll
+                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT)
+                        && a.getCrew().hasEdgeRemaining()) {
+                    a.getCrew().decreaseEdge();
+                    r = new Report(9103);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    vDesc.addElement(r);
+                    // Skip the critical roll
+                    return;
+                }
                 vDesc.addAll(criticalAero(a, hit.getLocation(),
                         hit.glancingMod(), "12 to hit", 8, damage_orig,
                         isCapital));

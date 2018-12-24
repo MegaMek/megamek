@@ -27191,6 +27191,19 @@ public class Server implements Runnable {
         double destroyed = 0;
         // did it hit cargo or units
         int roll = Compute.d6(1);
+        // A hit on a bay filled with transported units is devastating
+        // allow a reroll with edge
+        if (aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST)
+                && aero.getCrew().hasEdgeRemaining()
+                && roll > 3) {
+            aero.getCrew().decreaseEdge();
+            r = new Report(9172);
+            r.subject = aero.getId();
+            r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            reports.add(r);
+            //Reroll. Maybe we'll hit cargo.
+            roll = Compute.d6(1);
+        }
         if (roll < 4) {
             bays = aero.getTransportBays().stream()
                     .filter(Bay::isCargo).collect(Collectors.toList());

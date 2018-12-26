@@ -2815,18 +2815,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                              || (gear == MovementDisplay.GEAR_JUMP));
         int unloadEl = cmd.getFinalElevation();
         IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
+        
+        boolean finalCoordinatesOnBoard = ce.getGame().getBoard().contains(cmd.getFinalCoords());
         boolean canUnloadHere = false;
-        for (Entity en : loadedUnits) {
-            if (en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0)) {
-                canUnloadHere = true;
-                break;
-            }
-            // Zip lines, TO pg 219
-            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
-                    && (ce() instanceof VTOL) && (en instanceof Infantry) 
-                    && !((Infantry)en).isMechanized()) {
-                canUnloadHere = true;
-                break;
+        
+        // if the path's final coordinate are off-board (as could be the case on space maps with advanced movement)
+        // we will say that it is not possible to unload units in such a situation.
+        if(finalCoordinatesOnBoard) {
+            for (Entity en : loadedUnits) {
+                if (en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0)) {
+                    canUnloadHere = true;
+                    break;
+                }
+                // Zip lines, TO pg 219
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
+                        && (ce() instanceof VTOL) && (en instanceof Infantry) 
+                        && !((Infantry)en).isMechanized()) {
+                    canUnloadHere = true;
+                    break;
+                }
             }
         }
         
@@ -2840,12 +2847,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         boolean canDropTrailerHere = false;
-        for (Entity en : towedUnits) {
-            if (en.isElevationValid(unloadEl, hex)) {
-                canDropTrailerHere = true;
-                break;
+        if(finalCoordinatesOnBoard) {
+            for (Entity en : towedUnits) {
+                if (en.isElevationValid(unloadEl, hex)) {
+                    canDropTrailerHere = true;
+                    break;
+                }
             }
         }
+        
         // Disable the "Disconnect" button if we're in the wrong
         // gear or if the entity is not transporting units.
         if (!legalGear || (towedUnits.size() == 0) || (cen == Entity.NONE)

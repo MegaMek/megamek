@@ -26675,19 +26675,19 @@ public class Server implements Runnable {
                 break;
             case Aero.CRIT_FUEL_TANK:
                 // fuel tank
-                int boomTarget = 9;
+                int boomTarget = 10;
                 if (aero.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
-                    boomTarget = 7;
+                    boomTarget = 8;
                 }
                 if (aero.isLargeCraft() && aero.isClan()
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
-                    boomTarget = 11;
+                    boomTarget = 12;
                 }
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
                 r = new Report(9120);
                 r.subject = aero.getId();
-                if (fuelroll > boomTarget) {
+                if (fuelroll >= boomTarget) {
                     // A chance to reroll the explosion with edge
                     if (aero.getCrew().hasEdgeRemaining() 
                             && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
@@ -26699,7 +26699,7 @@ public class Server implements Runnable {
                         aero.getCrew().decreaseEdge();
                         fuelroll = Compute.d6(2);
                         // To explode, or not to explode
-                        if (fuelroll > boomTarget) {
+                        if (fuelroll >= boomTarget) {
                             r = new Report(9124);
                             r.subject = aero.getId();
                         } else {
@@ -29335,11 +29335,11 @@ public class Server implements Runnable {
                     && mounted.getType().hasFlag(MiscType.F_FUEL)) {
                 Report r = new Report(9120);
                 r.subject = en.getId();
-                int boomTarget = 9;
+                int boomTarget = 10;
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
-                r.choose(fuelroll > boomTarget);
-                if (fuelroll > boomTarget) {
+                r.choose(fuelroll >= boomTarget);
+                if (fuelroll >= boomTarget) {
                     r.choose(true);
                     vDesc.add(r);
                 } else {

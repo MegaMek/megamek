@@ -24,7 +24,7 @@ import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 public class NewtonianAerospacePathFinder {
     private IGame game;
     protected List<MovePath> aerospacePaths;
-    private MovePath offBoardPath;
+    protected MovePath offBoardPath;
     private MMLogger logger;
     protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.NewtonianAerospacePathFinder";
     

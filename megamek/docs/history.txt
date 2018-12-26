@@ -11,6 +11,7 @@ v0.45.3
 + Issue #1183: Armor not correct on some Warships
 + Data: Resolving Issues #1207,1206,1199,1198
 + PR #1208: Enable Princess to fire artillery and use TAG.
++ PR #1214: Prevent players from being able to control their out-of-control spacecraft when the default flight path would take the spacecraft off board.
 
 v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.

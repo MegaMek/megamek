@@ -22466,13 +22466,31 @@ public class Server implements Runnable {
                                 if (!a.isSpaceborne()
                                         && a.isAirborne()) {
                                     int loss = Compute.d6(1);
+                                    int origAltitude = e.getAltitude();
+                                    e.setAltitude(e.getAltitude() - loss);
+                                    //Reroll altitude loss with edge if the new altitude would result in a crash
+                                    if (e.getAltitude() <= 0 
+                                            //Don't waste the edge if it won't help
+                                            && origAltitude > 1
+                                            && e.getCrew().hasEdgeRemaining() 
+                                            && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
+                                        loss = Compute.d6(1);
+                                        //Report the edge use
+                                        r = new Report(9367);
+                                        r.newlines = 1;
+                                        r.subject = e.getId();
+                                        vReport.add(r);
+                                        e.setAltitude(origAltitude - loss);
+                                        // and spend the edge point
+                                        e.getCrew().decreaseEdge();
+                                    }
+                                    //Report the altitude loss
                                     r = new Report(9366);
                                     r.newlines = 0;
                                     r.subject = e.getId();
                                     r.addDesc(e);
                                     r.add(loss);
                                     vReport.add(r);
-                                    e.setAltitude(e.getAltitude() - loss);
                                     // check for crash
                                     if (checkCrash(e, e.getPosition(),
                                             e.getAltitude())) {
@@ -22727,8 +22745,9 @@ public class Server implements Runnable {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
                     if (e.getCrew().hasEdgeRemaining()
-                        && e.getCrew().getOptions()
-                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)) {
+                        && (e.getCrew().getOptions()
+                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)
+                            || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO))) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
@@ -22742,7 +22761,8 @@ public class Server implements Runnable {
                 vDesc.add(r);
             } while (e.getCrew().hasEdgeRemaining()
                      && e.getCrew().isKoThisRound(crewPos)
-                     && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
+                     && (e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO)
+                         || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO)));
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
@@ -26655,19 +26675,40 @@ public class Server implements Runnable {
                 break;
             case Aero.CRIT_FUEL_TANK:
                 // fuel tank
-                r = new Report(9120);
-                r.subject = aero.getId();
-                int boomTarget = 9;
+                int boomTarget = 10;
                 if (aero.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
-                    boomTarget = 7;
+                    boomTarget = 8;
                 }
                 if (aero.isLargeCraft() && aero.isClan()
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
-                    boomTarget = 11;
+                    boomTarget = 12;
                 }
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
-                if (fuelroll > boomTarget) {
+                r = new Report(9120);
+                r.subject = aero.getId();
+                if (fuelroll >= boomTarget) {
+                    // A chance to reroll the explosion with edge
+                    if (aero.getCrew().hasEdgeRemaining() 
+                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                        // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
+                        r = new Report(9123);
+                        r.subject = aero.getId();
+                        r.newlines = 0;
+                        reports.add(r);
+                        aero.getCrew().decreaseEdge();
+                        fuelroll = Compute.d6(2);
+                        // To explode, or not to explode
+                        if (fuelroll >= boomTarget) {
+                            r = new Report(9124);
+                            r.subject = aero.getId();
+                        } else {
+                            r = new Report(9122);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            break;
+                        }
+                    }
                     r.choose(true);
                     reports.add(r);
                     reports.addAll(destroyEntity(aero, "fuel explosion", false,
@@ -26852,9 +26893,32 @@ public class Server implements Runnable {
                                 int ammoRoll = Compute.d6(2);
                                 boomTarget = 10;
                                 r.choose(ammoRoll >= boomTarget);
-                                reports.add(r);
-                                if (ammoRoll >= boomTarget) {
-                                    reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                // A chance to reroll an explosion with edge
+                                if (aero.getCrew().hasEdgeRemaining() 
+                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                                        && ammoRoll >= boomTarget) {
+                                    // Report 9156 doesn't offer the right choices. Replace it.
+                                    r = new Report(9158);
+                                    r.subject = aero.getId();
+                                    r.newlines = 0;
+                                    r.indent(2);
+                                    reports.add(r);
+                                    aero.getCrew().decreaseEdge();
+                                    ammoRoll = Compute.d6(2);
+                                    // To explode, or not to explode
+                                    if (ammoRoll >= boomTarget) {
+                                        reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                    } else {
+                                        r = new Report(9157);
+                                        r.subject = aero.getId();
+                                        reports.add(r);
+                                    }
+                                } else {
+                                    //Finish handling report 9156
+                                    reports.add(r);
+                                    if (ammoRoll >= boomTarget) {
+                                        reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                    }
                                 }
                             }
                             //Hit the weapon then also hit all the other weapons in the bay
@@ -26888,15 +26952,47 @@ public class Server implements Runnable {
                             Mounted m = weapon.getLinked();
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
-                                r = new Report(9151);
-                                r.subject = aero.getId();
-                                r.add(m.getName());
-                                r.newlines = 0;
-                                reports.add(r);
-                                reports.addAll(explodeEquipment(aero, loc, m));
-                                break;
+                                // A chance to reroll an explosion with edge
+                                if (aero.getCrew().hasEdgeRemaining() 
+                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                                    aero.getCrew().decreaseEdge();
+                                    r = new Report(6530);
+                                    r.subject = aero.getId();
+                                    r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                                    reports.add(r);
+                                    ammoroll = Compute.d6(2);
+                                    if (ammoroll >= 10) {
+                                        reports.addAll(explodeEquipment(aero, loc, m));
+                                        break;
+                                    } else {
+                                        //Crisis averted, set report 9150 back up
+                                        r = new Report(9150);
+                                        r.subject = aero.getId();
+                                    }
+                                } else {
+                                    r = new Report(9151);
+                                    r.subject = aero.getId();
+                                    r.add(m.getName());
+                                    r.newlines = 0;
+                                    reports.add(r);
+                                    reports.addAll(explodeEquipment(aero, loc, m));
+                                    break;
+                                }
                             }
                         }
+                    }
+                    // If the weapon is explosive, use edge to roll up a new one
+                    if (aero.getCrew().hasEdgeRemaining() 
+                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                            && (weapon.getType().isExplosive(weapon) && !weapon.isHit()
+                                    && !weapon.isDestroyed())) {
+                        aero.getCrew().decreaseEdge();
+                        //Try something new for an interrupting report. r is still 9150.
+                        Report r1 = new Report(6530);
+                        r1.subject = aero.getId();
+                        r1.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                        reports.add(r1);
+                        weapon = weapons.get(Compute.randomInt(weapons.size()));
                     }
                     r.add(weapon.getName());
                     reports.add(r);
@@ -27095,6 +27191,19 @@ public class Server implements Runnable {
         double destroyed = 0;
         // did it hit cargo or units
         int roll = Compute.d6(1);
+        // A hit on a bay filled with transported units is devastating
+        // allow a reroll with edge
+        if (aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST)
+                && aero.getCrew().hasEdgeRemaining()
+                && roll > 3) {
+            aero.getCrew().decreaseEdge();
+            r = new Report(9172);
+            r.subject = aero.getId();
+            r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            reports.add(r);
+            //Reroll. Maybe we'll hit cargo.
+            roll = Compute.d6(1);
+        }
         if (roll < 4) {
             bays = aero.getTransportBays().stream()
                     .filter(Bay::isCargo).collect(Collectors.toList());
@@ -28089,6 +28198,30 @@ public class Server implements Runnable {
             r.add(nukeroll);
             vDesc.add(r);
             if (nukeroll >= capitalMissile) {
+                // Allow a reroll with edge
+                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT)
+                        && a.getCrew().hasEdgeRemaining()) {
+                    a.getCrew().decreaseEdge();
+                    r = new Report(9148);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    vDesc.add(r);
+                    // Reroll
+                    nukeroll = Compute.d6(2);
+                    // and report the new results
+                    r = new Report(9149);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(capitalMissile);
+                    r.add(nukeroll);
+                    r.choose(nukeroll >= capitalMissile);
+                    vDesc.add(r);
+                    if (nukeroll < capitalMissile) {
+                        // We might be vaporized by the damage itself, but no additional effect
+                        return;
+                    }
+                }
                 int nukeDamage = damage_orig;
                 a.setSI(a.getSI() - (nukeDamage * 10));
                 a.damageThisPhase += (nukeDamage * 10);
@@ -28119,6 +28252,18 @@ public class Server implements Runnable {
         // apply crits
         if (hit.rolledBoxCars()) {
             if (hit.isFirstHit()) {
+                // Allow edge use to ignore the critical roll
+                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT)
+                        && a.getCrew().hasEdgeRemaining()) {
+                    a.getCrew().decreaseEdge();
+                    r = new Report(9103);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    vDesc.addElement(r);
+                    // Skip the critical roll
+                    return;
+                }
                 vDesc.addAll(criticalAero(a, hit.getLocation(),
                         hit.glancingMod(), "12 to hit", 8, damage_orig,
                         isCapital));
@@ -29190,11 +29335,11 @@ public class Server implements Runnable {
                     && mounted.getType().hasFlag(MiscType.F_FUEL)) {
                 Report r = new Report(9120);
                 r.subject = en.getId();
-                int boomTarget = 9;
+                int boomTarget = 10;
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
-                r.choose(fuelroll > boomTarget);
-                if (fuelroll > boomTarget) {
+                r.choose(fuelroll >= boomTarget);
+                if (fuelroll >= boomTarget) {
                     r.choose(true);
                     vDesc.add(r);
                 } else {

@@ -14,6 +14,7 @@ v0.45.3
 + PR #1214: Prevent players from being able to control their out-of-control spacecraft when the default flight path would take the spacecraft off board.
 + Data: New Sprites
 + PR #1212: Adds new Edge options for Aerospace units
++ Issue #1218: Fixed protomech-related game-stopping server crash
 
 v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.

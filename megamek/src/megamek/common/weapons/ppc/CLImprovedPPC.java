@@ -58,7 +58,6 @@ public class CLImprovedPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         rulesRefs = "95,IO";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2819, 2820, DATE_NONE, 2832, 3080)

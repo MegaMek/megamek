@@ -2316,12 +2316,14 @@ public class Infantry extends Entity {
     
     @Override
     public String getMovementModeAsString() {
-    	if (getMovementMode().equals(EntityMovementMode.VTOL)) {
-    		return hasMicrolite()? "Microlite" : "Microcopter";
-    	}
-    	if (getMovementMode() == EntityMovementMode.INF_UMU) {
-    		return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
-    	}
+        if (!hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+            if (getMovementMode().equals(EntityMovementMode.VTOL)) {
+                return hasMicrolite()? "Microlite" : "Microcopter";
+            }
+            if (getMovementMode() == EntityMovementMode.INF_UMU) {
+                return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
+            }
+        }
     	return super.getMovementModeAsString();
     }
 

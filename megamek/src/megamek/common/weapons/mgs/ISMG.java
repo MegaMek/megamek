@@ -52,7 +52,6 @@ public class ISMG extends MGWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228,TM";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

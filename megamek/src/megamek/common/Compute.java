@@ -319,7 +319,8 @@ public class Compute {
                 || (entering instanceof Dropship)
                 || ((entering instanceof Mech) && ((Mech) entering)
                         .isSuperHeavy());
-
+        
+        boolean isTrain = !entering.getAllTowedUnits().isEmpty();
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
@@ -371,6 +372,15 @@ public class Compute {
                     // Ignore the transport of the entering entity.
                     if (inHex.equals(transport)) {
                         continue;
+                    }
+                    
+                    //ignore the first trailer behind a non-superheavy tractor
+                    //which can be in the same hex
+                    if (isTrain && !entering.isSuperHeavy()) {
+                        Entity firstTrailer = game.getEntity(entering.getAllTowedUnits().get(0));
+                        if (inHex.equals(firstTrailer)) {
+                            continue;
+                        }
                     }
 
                     // DFAing units don't count towards stacking
@@ -459,8 +469,6 @@ public class Compute {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
-        final boolean isPavementStep = Compute.canMoveOnPavement(game, src,
-                dest, moveStep);
         int delta_alt = (destElevation + destHex.getLevel())
                         - (srcElevation + srcHex.getLevel());
 
@@ -476,6 +484,9 @@ public class Compute {
         if (src.equals(dest)) {
             return false;
         }
+        
+        // airborne aircraft do not require pavement-related checks
+        final boolean isPavementStep = entity.isAirborne() ? false : Compute.canMoveOnPavement(game, src, dest, moveStep);
 
         // check for rubble
         if ((movementType != EntityMovementType.MOVE_JUMP)
@@ -999,7 +1010,7 @@ public class Compute {
 
         // allow naval units on surface to be attacked from above or below
         if ((null != te) && (targBottom == 0)
-            && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)) {
+            && (te.getUnitType() == UnitType.NAVAL)) {
             targetInPartialWater = true;
         }
 
@@ -1008,7 +1019,7 @@ public class Compute {
         if ((targetUnderwater
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO) || (wtype
                 .getAmmoType() == AmmoType.T_SRM_TORPEDO))
-            && (UnitType.determineUnitTypeCode(ae) == UnitType.NAVAL)) {
+            && (ae.getUnitType() == UnitType.NAVAL)) {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
@@ -1050,7 +1061,7 @@ public class Compute {
             // special case: mechs can only fire upper body weapons at surface
             // naval
             if ((te != null)
-                && (UnitType.determineUnitTypeCode(te) == UnitType.NAVAL)
+                && (te.getUnitType() == UnitType.NAVAL)
                 && (ae instanceof Mech) && (ae.height() > 0)
                 && (ae.getElevation() == -1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -2336,6 +2347,11 @@ public class Compute {
 
         if (entity.isAero()) {
             return new ToHitData();
+        }
+        
+        //If we're a trailer and being towed, return data for the tractor
+        if (entity.isTrailer() && entity.getTractor() != Entity.NONE) {
+            return getTargetMovementModifier(game, entity.getTractor());
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
@@ -4082,6 +4098,7 @@ public class Compute {
     public static boolean isSensorContact(IGame game, Entity target) {
         for (Entity detector : game.getEntitiesVector()) {
             if (detector.sensorContacts.contains(target)) {
+                target.addBeenDetectedBy(detector.getOwner());
                 return true;
             }
         }
@@ -4112,6 +4129,7 @@ public class Compute {
     public static boolean hasAnyFiringSolution(IGame game, Entity target) {
         for (Entity detector : game.getEntitiesVector()) {
             if (detector.firingSolutions.contains(target)) {
+                target.addBeenSeenBy(detector.getOwner());
                 return true;
             }
         }
@@ -4825,8 +4843,7 @@ public class Compute {
             return 0;
         }
 
-        int retVal = UnitType.determineUnitTypeCode(e1) -
-                UnitType.determineUnitTypeCode(e2);
+        int retVal = e1.getUnitType() - e2.getUnitType();
         if (retVal == 0) {
             retVal = ((IAero)e2).getCurrentVelocity() -
                     ((IAero)e1).getCurrentVelocity();
@@ -5040,19 +5057,19 @@ public class Compute {
             if (ent.isEnemyOf(ae) && ent.hasGhostTargets(true)
                 && (entPos != null)) {
                 vEnemyGTCoords.addElement(entPos);
-                vEnemyGTRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyGTId.addElement(new Integer(ent.getId()));
+                vEnemyGTRanges.addElement(ent.getECMRange());
+                vEnemyGTId.addElement(ent.getId());
                 hEnemyGTCrossed.put(ent.getId(), false);
                 hEnemyGTMods.put(ent.getId(), ent.getGhostTargetRollMoS());
             }
             if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
                 vEnemyECCMCoords.addElement(entPos);
-                vEnemyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECCMRanges.addElement(ent.getECMRange());
                 vEnemyECCMStrengths.add(ent.getECCMStrength());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
                 vFriendlyECMCoords.addElement(entPos);
-                vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
+                vFriendlyECMRanges.addElement(ent.getECMRange());
                 vFriendlyECMStrengths.add(ent.getECMStrength());
             }
 
@@ -5061,8 +5078,8 @@ public class Compute {
                 if (other.isEnemyOf(ae) && other.hasGhostTargets(true)
                     && (entPos != null)) {
                     vEnemyGTCoords.addElement(entPos);
-                    vEnemyGTRanges.addElement(new Integer(other.getECMRange()));
-                    vEnemyGTId.addElement(new Integer(ent.getId()));
+                    vEnemyGTRanges.addElement(other.getECMRange());
+                    vEnemyGTId.addElement(ent.getId());
                     hEnemyGTCrossed.put(ent.getId(), false);
                     hEnemyGTMods.put(ent.getId(), ent.getGhostTargetRollMoS());
                 }
@@ -5070,14 +5087,14 @@ public class Compute {
                     && (entPos != null)) {
                     vEnemyECCMCoords.addElement(entPos);
                     vEnemyECCMRanges
-                            .addElement(new Integer(other.getECMRange()));
+                            .addElement(other.getECMRange());
                     vEnemyECCMStrengths.add(ent.getECCMStrength());
                 }
                 if (!other.isEnemyOf(ae) && ent.hasActiveECM()
                     && (entPos != null)) {
                     vFriendlyECMCoords.addElement(entPos);
                     vFriendlyECMRanges
-                            .addElement(new Integer(ent.getECMRange()));
+                            .addElement(ent.getECMRange());
                     vFriendlyECMStrengths.add(ent.getECMStrength());
                 }
             }

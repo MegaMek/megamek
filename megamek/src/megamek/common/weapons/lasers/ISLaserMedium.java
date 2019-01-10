@@ -50,7 +50,6 @@ public class ISLaserMedium extends LaserWeapon {
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "227,TM";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

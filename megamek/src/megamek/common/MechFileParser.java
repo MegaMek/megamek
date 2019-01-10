@@ -254,11 +254,8 @@ public class MechFileParser {
         ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
         ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
             //Only military craft get ESM, which detects active radar
-            //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
             Aero lc = (Aero) ent;
-            if (lc.getDesignType() == Aero.MILITARY 
-                    || lc.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
-                    || lc.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+            if (lc.getDesignType() == Aero.MILITARY) {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
             }
         ent.setNextSensor(ent.getSensors().firstElement());
@@ -895,6 +892,11 @@ public class MechFileParser {
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
+        }
+        
+        // If we're a tank, add a rear-mounted trailer hitch if one should be there and isn't
+        if (ent.hasETypeFlag(Entity.ETYPE_TANK)) {
+            ((Tank) ent).addTrailerHitchEquipment();
         }
 
         // Check if it's canon; if it is, mark it as such.

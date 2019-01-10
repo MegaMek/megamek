@@ -671,6 +671,7 @@ public class Server extends SocketServer {
             ent.setGame(game);
             if (ent instanceof Mech) {
                 ((Mech) ent).setBAGrabBars();
+                ((Mech) ent).setProtomechClampMounts();
             }
             if (ent instanceof Tank) {
                 ((Tank) ent).setBAGrabBars();
@@ -4428,8 +4429,19 @@ public class Server extends SocketServer {
      * @param unit   - the <code>Entity</code> being loaded.
      */
     private void loadUnit(Entity loader, Entity unit, int bayNumber) {
+        // Protomechs share a single turn for a Point. When loading one we don't remove its turn
+        // unless it's the last unit in the Point to act.
+        int remainingProtos = 0;
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            remainingProtos = game.getSelectedEntityCount(en -> en.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                    && en.getId() != unit.getId()
+                    && en.isSelectableThisTurn()
+                    && en.getOwnerId() == unit.getOwnerId()
+                    && en.getUnitNumber() == unit.getUnitNumber());
+        }
 
-        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()
+                && (remainingProtos == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -4474,6 +4486,78 @@ public class Server extends SocketServer {
         // here, but if we get
         // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
+    }
+    
+    /**
+     * Have the loader tow the indicated unit. The unit being towed loses its
+     * turn.
+     *
+     * @param loader - the <code>Entity</code> that is towing the unit.
+     * @param unit   - the <code>Entity</code> being towed.
+     */
+    private void towUnit(Entity loader, Entity unit) {
+
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
+            // Remove the *last* friendly turn (removing the *first* penalizes
+            // the opponent too much, and re-calculating moves is too hard).
+            game.removeTurnFor(unit);
+            send(createTurnVectorPacket());
+        }
+        
+        loader.towUnit(unit.getId());
+
+        // set deployment round of the loadee to equal that of the loader
+        unit.setDeployRound(loader.getDeployRound());
+
+        // Update the loader and towed units.
+        entityUpdate(unit.getId());
+        entityUpdate(loader.getId());
+    }
+    
+    /**
+     * Have the tractor drop the indicated trailer. This will also disconnect all
+     * trailers that follow the one dropped.
+     *
+     * @param tractor
+     *            - the <code>Entity</code> that is disconnecting the trailer.
+     * @param unloaded
+     *            - the <code>Targetable</code> unit being unloaded.
+     * @param pos
+     *            - the <code>Coords</code> for the unloaded unit.
+     * @param evacuation
+     *            - a <code>boolean</code> indicating whether this trailer is being
+     *            unloaded as a result of its carrying unit's destruction
+     * @return <code>true</code> if the unit was successfully unloaded,
+     *         <code>false</code> if the trailer isn't carried by tractor.
+     */
+    private boolean disconnectUnit(Entity tractor, Targetable unloaded,
+            Coords pos) {
+        
+        // We can only unload Entities.
+        Entity trailer = null;
+        if (unloaded instanceof Entity) {
+            trailer = (Entity) unloaded;
+        } else {
+            return false;
+        }
+        // disconnectUnit() updates anything behind 'trailer' too, so copy
+        // the list of trailers before we alter it so entityUpdate() can be
+        // run on all of them. Also, add the entity towing Trailer to the list
+        List<Integer> trailerList = new ArrayList<>(trailer.getConnectedUnits());
+        trailerList.add(trailer.getTowedBy());
+
+        // Unload the unit.
+        tractor.disconnectUnit(trailer.getId());
+        
+        // Update the tractor and all affected trailers.
+        for (int id : trailerList) {
+            entityUpdate(id);
+        }
+        entityUpdate(trailer.getId());
+        entityUpdate(tractor.getId());
+
+        // Unloaded successfully.
+        return true;
     }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
@@ -4543,12 +4627,12 @@ public class Server extends SocketServer {
             unit.setElevation(elevation);
         } else if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
             if (unit.getMovementMode() == EntityMovementMode.VTOL) {
-                // Flying units onload to the same elevation as the flying
+                // Flying units unload to the same elevation as the flying
                 // transport
                 unit.setElevation(elevation);
             } else if (game.getBoard().getBuildingAt(pos) != null) {
-                // non-flying unit onloaded from a flying onto a building
-                // -> sit on the roff
+                // non-flying unit unloaded from a flying onto a building
+                // -> sit on the roof
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             } else {
                 while (elevation >= -hex.depth()) {
@@ -6778,8 +6862,14 @@ public class Server extends SocketServer {
             return vReport;
         }
 
-        // Is the unit carrying passengers?
-        final List<Entity> passengers = entity.getLoadedUnits();
+        // Is the unit carrying passengers or trailers?
+        final List<Entity> passengers = new ArrayList<Entity>(entity.getLoadedUnits());
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            for (int id : entity.getAllTowedUnits()) {
+                Entity towed = game.getEntity(id);
+                passengers.add(towed);
+            }
+        }
         if (!passengers.isEmpty()) {
             for (Entity passenger : passengers) {
                 // Unit has fled the battlefield.
@@ -8691,6 +8781,35 @@ public class Server extends SocketServer {
                 }
 
             } // End STEP_LOAD
+            
+         // Handle towing units.
+            if (step.getType() == MoveStepType.TOW) {
+
+                // Find the unit being loaded.
+                Entity loaded = null;
+                loaded = game.getEntity(entity.getTowing());
+
+                // This should never ever happen, but just in case...
+                if (loaded == null) {
+                    logError(METHOD_NAME,
+                        "Could not find unit for " + entity.getShortName() + " to tow.");
+                    continue;
+                }
+
+                // The moving unit should be able to tow the other
+                // unit and the other should be able to have a turn.
+                //FIXME: I know this check duplicates functions already performed when enabling the Tow button.
+                //This code made more sense as borrowed from "Load" where we actually rechecked the hex for the target unit. 
+                //Do we need it here for safety, client/server sync or can this be further streamlined?
+                if (!entity.canTow(loaded.getId())) {
+                    // Something is fishy in Denmark.
+                    logError(METHOD_NAME, entity.getShortName() + " can not tow " + loaded.getShortName());
+                    loaded = null;
+                } else {
+                    // Have the deployed unit load the indicated unit.
+                    towUnit(entity, loaded);
+                }
+            } // End STEP_TOW
 
             // Handle mounting units to small craft/dropship
             if (step.getType() == MoveStepType.MOUNT) {
@@ -8839,6 +8958,23 @@ public class Server extends SocketServer {
                     send(createTurnVectorPacket());
                 }
             }
+            
+            // Handle disconnecting trailers.
+            if (step.getType() == MoveStepType.DISCONNECT) {
+                Targetable unloaded = step.getTarget(game);
+                Coords unloadPos = curPos;
+                if (null != step.getTargetPosition()) {
+                    unloadPos = step.getTargetPosition();
+                }
+                if (!disconnectUnit(entity, unloaded, unloadPos)) {
+                    logError(METHOD_NAME,
+                            "Server was told to disconnect "
+                                    + unloaded.getDisplayName() + " from "
+                                    + entity.getDisplayName() + " into "
+                                    + curPos.getBoardNum());
+                }
+            }
+            
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
@@ -9809,6 +9945,14 @@ public class Server extends SocketServer {
                         entity.getRemovalCondition()));
             }
         }
+        
+        //If the entity is towing trailers, update the position of those trailers
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            List<Integer> reversedTrailers = new ArrayList<>(entity.getAllTowedUnits()); // initialize with a copy (no need to initialize to an empty list first)
+            Collections.reverse(reversedTrailers); // reverse in-place
+            List<Coords> trailerPath = initializeTrailerCoordinates(entity, reversedTrailers); // no need to initialize to an empty list first
+            processTrailerMovement(entity, trailerPath);
+         }
 
         // recovered units should now be recovered and dealt with
         if (entity.isAero() && recovered && (loader != null)) {
@@ -9887,6 +10031,99 @@ public class Server extends SocketServer {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+    
+    /**
+     * Updates the position of any towed trailers.
+     *
+     * @param tractor    The Entity that is moving
+     * @param trailer    The current trailer being updated
+     */
+    private void processTrailerMovement(Entity tractor, List<Coords> trainPath) {
+        for (int eId : tractor.getAllTowedUnits()) {
+            Entity trailer = game.getEntity(eId);
+            // if the Tractor didn't move anywhere, stay where we are
+            if (tractor.delta_distance == 0) {
+                trailer.delta_distance = tractor.delta_distance;
+                trailer.moved = tractor.moved;
+                trailer.setSecondaryFacing(trailer.getFacing());
+                trailer.setDone(true);
+                entityUpdate(eId);
+                continue;
+            }
+            int stepNumber = 0; // The Coords in trainPath that this trailer should move to
+            Coords trailerPos = null;
+            int trailerNumber = tractor.getAllTowedUnits().indexOf(eId);
+            double trailerPositionOffset = (trailerNumber + 1); //Offset so we get the right position index
+            // Unless the tractor is superheavy, put the first trailer in its hex.
+            // Technically this would be true for a superheavy trailer too, but only a superheavy tractor can tow one.
+            if (trailerNumber == 0 && !tractor.isSuperHeavy()) {
+                trailer.setPosition(tractor.getPosition());
+                trailer.setFacing(tractor.getFacing());
+            } else {
+                // If the trailer is superheavy, place it in a hex by itself
+                if (trailer.isSuperHeavy()) {
+                    trailerPositionOffset ++;
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                } else if (tractor.isSuperHeavy()) {
+                    // If the tractor is superheavy, we can put two trailers in each hex
+                    // starting trailer 0 in the hex behind the tractor
+                    trailerPositionOffset = (Math.ceil((trailerPositionOffset /= 2.0)) + 1);
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                } else {
+                    // Otherwise, we can put two trailers in each hex
+                    // starting trailer 1 in the hex behind the tractor
+                    trailerPositionOffset ++;
+                    trailerPositionOffset = Math.ceil((trailerPositionOffset /= 2.0));
+                    stepNumber = (trainPath.size() - (int) trailerPositionOffset);
+                    trailerPos = trainPath.get(stepNumber);
+                    trailer.setPosition(trailerPos);
+                    if ((tractor.getPassedThroughFacing().size() - trailerPositionOffset) >= 0) {
+                        trailer.setFacing(tractor.getPassedThroughFacing().get(tractor.getPassedThroughFacing().size() - (int) trailerPositionOffset));
+                    }
+                }
+            }
+            // trailers are immobile by default. Match the tractor's movement here
+            trailer.delta_distance = tractor.delta_distance;
+            trailer.moved = tractor.moved;
+            trailer.setSecondaryFacing(trailer.getFacing());
+            trailer.setDone(true);
+            entityUpdate(eId);
+        }
+    }
+    
+    /**
+     * Flips the order of a tractor's towed trailers list by index and
+     * adds their starting coordinates to a list of hexes the tractor passed through 
+     * 
+     * @return  Returns the properly sorted list of all train coordinates
+     */
+    public List<Coords> initializeTrailerCoordinates(Entity tractor, List<Integer> allTowedTrailers) {
+        List<Coords> trainCoords = new ArrayList<Coords>();
+        for (int trId : allTowedTrailers) {
+            Entity trailer = game.getEntity(trId);
+            Coords position = trailer.getPosition();
+            //Duplicates foul up the works...
+            if (!trainCoords.contains(position)) {
+                trainCoords.add(position);
+            }
+        }
+        for (Coords c : tractor.getPassedThrough() ) {
+            if (!trainCoords.contains(c)) {
+                trainCoords.add(c);
+            }
+        }
+        return trainCoords;    
     }
 
     /**
@@ -22154,13 +22391,31 @@ public class Server extends SocketServer {
                                 if (!a.isSpaceborne()
                                         && a.isAirborne()) {
                                     int loss = Compute.d6(1);
+                                    int origAltitude = e.getAltitude();
+                                    e.setAltitude(e.getAltitude() - loss);
+                                    //Reroll altitude loss with edge if the new altitude would result in a crash
+                                    if (e.getAltitude() <= 0 
+                                            //Don't waste the edge if it won't help
+                                            && origAltitude > 1
+                                            && e.getCrew().hasEdgeRemaining() 
+                                            && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
+                                        loss = Compute.d6(1);
+                                        //Report the edge use
+                                        r = new Report(9367);
+                                        r.newlines = 1;
+                                        r.subject = e.getId();
+                                        vReport.add(r);
+                                        e.setAltitude(origAltitude - loss);
+                                        // and spend the edge point
+                                        e.getCrew().decreaseEdge();
+                                    }
+                                    //Report the altitude loss
                                     r = new Report(9366);
                                     r.newlines = 0;
                                     r.subject = e.getId();
                                     r.addDesc(e);
                                     r.add(loss);
                                     vReport.add(r);
-                                    e.setAltitude(e.getAltitude() - loss);
                                     // check for crash
                                     if (checkCrash(e, e.getPosition(),
                                             e.getAltitude())) {
@@ -22415,8 +22670,9 @@ public class Server extends SocketServer {
                     e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
                     if (e.getCrew().hasEdgeRemaining()
-                        && e.getCrew().getOptions()
-                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)) {
+                        && (e.getCrew().getOptions()
+                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)
+                            || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO))) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
@@ -22430,7 +22686,8 @@ public class Server extends SocketServer {
                 vDesc.add(r);
             } while (e.getCrew().hasEdgeRemaining()
                      && e.getCrew().isKoThisRound(crewPos)
-                     && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
+                     && (e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO)
+                         || e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_KO)));
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
@@ -23325,98 +23582,10 @@ public class Server extends SocketServer {
                 int nLoc = hit.getLocation();
                 Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
                 // Does an exterior passenger absorb some of the damage?
-                int avoidRoll = Compute.d6();
-                if (!ammoExplosion && (null != passenger) && (avoidRoll >= 5)
-                    && !passenger.isDoomed()
-                    && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Yup. Roll up some hit data for that passenger.
-                    r = new Report(6075);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-
-                    HitData passHit = passenger.getTrooperAtLocation(hit, te);
-                    passHit.setGeneralDamageType(hit.getGeneralDamageType());
-
-
-                    // How much damage will the passenger absorb?
-                    int absorb = 0;
-                    HitData nextPassHit = passHit;
-                    do {
-                        int armorType = passenger.getArmorType(nextPassHit
-                                                                       .getLocation());
-                        boolean armorDamageReduction = false;
-                        if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
-                             && ((hit.getGeneralDamageType() ==
-                                  HitData.DAMAGE_MISSILE)))
-                            || (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                            armorDamageReduction = true;
-                        }
-                        // Check for reflective armor
-                        if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
-                            && (hit.getGeneralDamageType() ==
-                                HitData.DAMAGE_ENERGY)) {
-                            armorDamageReduction = true;
-                        }
-                        if (0 < passenger.getArmor(nextPassHit)) {
-                            absorb += passenger.getArmor(nextPassHit);
-                            if (armorDamageReduction) {
-                                absorb *= 2;
-                            }
-                        }
-                        if (0 < passenger.getInternal(nextPassHit)) {
-                            absorb += passenger.getInternal(nextPassHit);
-                            // Armor damage reduction, like for reflective or
-                            // reactive armor will divide the whole damage
-                            // total by 2 and round down. If we have an odd
-                            // damage total, need to add 1 to make this
-                            // evenly divisible by 2
-                            if (((absorb % 2) != 0) && armorDamageReduction) {
-                                absorb++;
-                            }
-                        }
-                        nextPassHit = passenger
-                                .getTransferLocation(nextPassHit);
-                    } while ((damage > absorb)
-                             && (nextPassHit.getLocation() >= 0));
-
-                    // Damage the passenger.
-                    int absorbedDamage = Math.min(damage, absorb);
-                    Vector<Report> newReports = damageEntity(passenger,
-                                                             passHit, absorbedDamage);
-                    for (Report newReport : newReports) {
-                        newReport.indent(2);
-                    }
-                    vDesc.addAll(newReports);
-
-                    // Did some damage pass on?
-                    if (damage > absorb) {
-                        // Yup. Remove the absorbed damage.
-                        damage -= absorb;
-                        r = new Report(6080);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        r.addDesc(te);
-                        vDesc.addElement(r);
-                    } else {
-                        // Nope. Return our description.
-                        return vDesc;
-                    }
-
-                } else if (!ammoExplosion && (null != passenger)
-                           && (avoidRoll < 5) && !passenger.isDoomed()
-                           && (bFrag != DamageType.IGNORE_PASSENGER)) {
-                    // Report that a passenger that could've been missed
-                    // narrowly avoids damage
-                    r = new Report(6084);
-                    r.subject = passenger.getId();
-                    r.indent(3);
-                    r.addDesc(passenger);
-                    vDesc.addElement(r);
-                } // End nLoc-has-exterior-passenger
+                if (!ammoExplosion && (null != passenger) && !passenger.isDoomed()
+                        && (bFrag != DamageType.IGNORE_PASSENGER)) {
+                    damage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
+                }
 
                 boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT)
                                  || (nLoc == Mech.LOC_LT);
@@ -24616,6 +24785,143 @@ public class Server extends SocketServer {
             Report.addNewline(vDesc);
         }
         return vDesc;
+    }
+
+    /**
+     * Apply damage to an Entity carrying external battlearmor or protomech
+     * when a location with a trooper present is hit.
+     * 
+     * @param te             The carrying Entity
+     * @param hit            The hit to resolve
+     * @param damage         The amount of damage to be allocated
+     * @param vDesc          The report vector
+     * @param passenger      The BA squad
+     * @return               The amount of damage remaining
+     */
+    private int damageExternalPassenger(Entity te, HitData hit, int damage,
+            Vector<Report> vDesc, Entity passenger) {
+        Report r;
+        int passengerDamage = damage;
+        int avoidRoll = Compute.d6();
+        HitData passHit = passenger.getTrooperAtLocation(hit, te);
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            passengerDamage -= damage / 2;
+            passHit = passenger.rollHitLocation(ToHitData.HIT_SPECIAL_PROTO, ToHitData.SIDE_FRONT);
+        } else if (avoidRoll < 5) {
+            passengerDamage = 0;
+        }
+        passHit.setGeneralDamageType(hit.getGeneralDamageType());
+        
+        if (passengerDamage > 0) {
+            // Yup. Roll up some hit data for that passenger.
+            r = new Report(6075);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+
+            // How much damage will the passenger absorb?
+            int absorb = 0;
+            HitData nextPassHit = passHit;
+            do {
+                int armorType = passenger.getArmorType(nextPassHit
+                                                               .getLocation());
+                boolean armorDamageReduction = false;
+                if (((armorType == EquipmentType.T_ARMOR_BA_REACTIVE)
+                     && ((hit.getGeneralDamageType() ==
+                          HitData.DAMAGE_MISSILE)))
+                    || (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    armorDamageReduction = true;
+                }
+                // Check for reflective armor
+                if ((armorType == EquipmentType.T_ARMOR_BA_REFLECTIVE)
+                    && (hit.getGeneralDamageType() ==
+                        HitData.DAMAGE_ENERGY)) {
+                    armorDamageReduction = true;
+                }
+                if (0 < passenger.getArmor(nextPassHit)) {
+                    absorb += passenger.getArmor(nextPassHit);
+                    if (armorDamageReduction) {
+                        absorb *= 2;
+                    }
+                }
+                if (0 < passenger.getInternal(nextPassHit)) {
+                    absorb += passenger.getInternal(nextPassHit);
+                    // Armor damage reduction, like for reflective or
+                    // reactive armor will divide the whole damage
+                    // total by 2 and round down. If we have an odd
+                    // damage total, need to add 1 to make this
+                    // evenly divisible by 2
+                    if (((absorb % 2) != 0) && armorDamageReduction) {
+                        absorb++;
+                    }
+                }
+                nextPassHit = passenger
+                        .getTransferLocation(nextPassHit);
+            } while ((damage > absorb)
+                     && (nextPassHit.getLocation() >= 0));
+
+            // Damage the passenger.
+            absorb = Math.min(passengerDamage, absorb);
+            Vector<Report> newReports = damageEntity(passenger,
+                                                     passHit, absorb);
+            for (Report newReport : newReports) {
+                newReport.indent(2);
+            }
+            vDesc.addAll(newReports);
+
+            // Did some damage pass on?
+            if (damage > absorb) {
+                // Yup. Remove the absorbed damage.
+                damage -= absorb;
+                r = new Report(6080);
+                r.subject = te.getId();
+                r.indent(2);
+                r.add(damage);
+                r.addDesc(te);
+                vDesc.addElement(r);
+            } else {
+                // Nope. Return our description.
+                return 0;
+            }
+
+        } else {
+            // Report that a passenger that could've been missed
+            // narrowly avoids damage
+            r = new Report(6084);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+        } // End nLoc-has-exterior-passenger
+        if (passenger.hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                && (passengerDamage > 0) && !passenger.isDoomed() && !passenger.isDestroyed()) {
+            r = new Report(3850);
+            r.subject = passenger.getId();
+            r.indent(3);
+            r.addDesc(passenger);
+            vDesc.addElement(r);
+            int facing = te.getFacing();
+            // We're going to assume that it's mounted facing the mech
+            Coords position = te.getPosition();
+            if (!hit.isRear()) {
+                facing = (facing + 3) % 6;
+            }
+            unloadUnit(te, passenger, position, facing, te.getElevation(),
+                    false, false);
+            Entity violation = Compute.stackingViolation(game,
+                    passenger.getId(), position);
+            if (violation != null) {
+                Coords targetDest = Compute.getValidDisplacement(game,
+                        passenger.getId(), position, Compute.d6() - 1);
+                addReport(doEntityDisplacement(violation, position,
+                        targetDest, null));
+                // Update the violating entity's postion on the client.
+                entityUpdate(violation.getId());
+            }
+        }
+        return damage;
     }
 
     /**
@@ -26130,6 +26436,15 @@ public class Server extends SocketServer {
                                 break;
                             }
                     }
+                    // A magnetic clamp system is destroyed by any torso critical.
+                    Mounted magClamp = pm.getMisc().stream().filter(m -> m.getType()
+                            .hasFlag(MiscType.F_MAGNETIC_CLAMP)).findFirst().orElse(null);
+                    if ((magClamp != null) && !magClamp.isHit()) {
+                        magClamp.setHit(true);
+                        r = new Report(6252);
+                        r.subject = pm.getId();
+                        reports.addElement(r);
+                    }
                 }
                 break;
             case Protomech.SYSTEM_TORSO_WEAPON_A:
@@ -26146,7 +26461,7 @@ public class Server extends SocketServer {
                 Mounted weaponB = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponB) {
                     weaponB.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6246);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26156,7 +26471,7 @@ public class Server extends SocketServer {
                 Mounted weaponC = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponC) {
                     weaponC.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6247);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26166,7 +26481,7 @@ public class Server extends SocketServer {
                 Mounted weaponD = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponD) {
                     weaponD.setHit(true);
-                    r = new Report(6250);
+                    r = new Report(6248);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26176,7 +26491,7 @@ public class Server extends SocketServer {
                 Mounted weaponE = pm.getTorsoWeapon(cs.getIndex());
                 if (null != weaponE) {
                     weaponE.setHit(true);
-                    r = new Report(6245);
+                    r = new Report(6249);
                     r.subject = pm.getId();
                     r.newlines = 0;
                     reports.addElement(r);
@@ -26285,19 +26600,40 @@ public class Server extends SocketServer {
                 break;
             case Aero.CRIT_FUEL_TANK:
                 // fuel tank
-                r = new Report(9120);
-                r.subject = aero.getId();
-                int boomTarget = 9;
+                int boomTarget = 10;
                 if (aero.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
-                    boomTarget = 7;
+                    boomTarget = 8;
                 }
                 if (aero.isLargeCraft() && aero.isClan()
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
-                    boomTarget = 11;
+                    boomTarget = 12;
                 }
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
-                if (fuelroll > boomTarget) {
+                r = new Report(9120);
+                r.subject = aero.getId();
+                if (fuelroll >= boomTarget) {
+                    // A chance to reroll the explosion with edge
+                    if (aero.getCrew().hasEdgeRemaining() 
+                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                        // Reporting this is funky because 9120 only has room for 2 choices. Replace it.
+                        r = new Report(9123);
+                        r.subject = aero.getId();
+                        r.newlines = 0;
+                        reports.add(r);
+                        aero.getCrew().decreaseEdge();
+                        fuelroll = Compute.d6(2);
+                        // To explode, or not to explode
+                        if (fuelroll >= boomTarget) {
+                            r = new Report(9124);
+                            r.subject = aero.getId();
+                        } else {
+                            r = new Report(9122);
+                            r.subject = aero.getId();
+                            reports.add(r);
+                            break;
+                        }
+                    }
                     r.choose(true);
                     reports.add(r);
                     reports.addAll(destroyEntity(aero, "fuel explosion", false,
@@ -26482,9 +26818,32 @@ public class Server extends SocketServer {
                                 int ammoRoll = Compute.d6(2);
                                 boomTarget = 10;
                                 r.choose(ammoRoll >= boomTarget);
-                                reports.add(r);
-                                if (ammoRoll >= boomTarget) {
-                                    reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                // A chance to reroll an explosion with edge
+                                if (aero.getCrew().hasEdgeRemaining() 
+                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                                        && ammoRoll >= boomTarget) {
+                                    // Report 9156 doesn't offer the right choices. Replace it.
+                                    r = new Report(9158);
+                                    r.subject = aero.getId();
+                                    r.newlines = 0;
+                                    r.indent(2);
+                                    reports.add(r);
+                                    aero.getCrew().decreaseEdge();
+                                    ammoRoll = Compute.d6(2);
+                                    // To explode, or not to explode
+                                    if (ammoRoll >= boomTarget) {
+                                        reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                    } else {
+                                        r = new Report(9157);
+                                        r.subject = aero.getId();
+                                        reports.add(r);
+                                    }
+                                } else {
+                                    //Finish handling report 9156
+                                    reports.add(r);
+                                    if (ammoRoll >= boomTarget) {
+                                        reports.addAll(explodeEquipment(aero, loc, bayWAmmo));
+                                    }
                                 }
                             }
                             //Hit the weapon then also hit all the other weapons in the bay
@@ -26518,15 +26877,47 @@ public class Server extends SocketServer {
                             Mounted m = weapon.getLinked();
                             int ammoroll = Compute.d6(2);
                             if (ammoroll >= 10) {
-                                r = new Report(9151);
-                                r.subject = aero.getId();
-                                r.add(m.getName());
-                                r.newlines = 0;
-                                reports.add(r);
-                                reports.addAll(explodeEquipment(aero, loc, m));
-                                break;
+                                // A chance to reroll an explosion with edge
+                                if (aero.getCrew().hasEdgeRemaining() 
+                                        && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)) {
+                                    aero.getCrew().decreaseEdge();
+                                    r = new Report(6530);
+                                    r.subject = aero.getId();
+                                    r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                                    reports.add(r);
+                                    ammoroll = Compute.d6(2);
+                                    if (ammoroll >= 10) {
+                                        reports.addAll(explodeEquipment(aero, loc, m));
+                                        break;
+                                    } else {
+                                        //Crisis averted, set report 9150 back up
+                                        r = new Report(9150);
+                                        r.subject = aero.getId();
+                                    }
+                                } else {
+                                    r = new Report(9151);
+                                    r.subject = aero.getId();
+                                    r.add(m.getName());
+                                    r.newlines = 0;
+                                    reports.add(r);
+                                    reports.addAll(explodeEquipment(aero, loc, m));
+                                    break;
+                                }
                             }
                         }
+                    }
+                    // If the weapon is explosive, use edge to roll up a new one
+                    if (aero.getCrew().hasEdgeRemaining() 
+                            && aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION)
+                            && (weapon.getType().isExplosive(weapon) && !weapon.isHit()
+                                    && !weapon.isDestroyed())) {
+                        aero.getCrew().decreaseEdge();
+                        //Try something new for an interrupting report. r is still 9150.
+                        Report r1 = new Report(6530);
+                        r1.subject = aero.getId();
+                        r1.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                        reports.add(r1);
+                        weapon = weapons.get(Compute.randomInt(weapons.size()));
                     }
                     r.add(weapon.getName());
                     reports.add(r);
@@ -26725,6 +27116,19 @@ public class Server extends SocketServer {
         double destroyed = 0;
         // did it hit cargo or units
         int roll = Compute.d6(1);
+        // A hit on a bay filled with transported units is devastating
+        // allow a reroll with edge
+        if (aero.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST)
+                && aero.getCrew().hasEdgeRemaining()
+                && roll > 3) {
+            aero.getCrew().decreaseEdge();
+            r = new Report(9172);
+            r.subject = aero.getId();
+            r.add(aero.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+            reports.add(r);
+            //Reroll. Maybe we'll hit cargo.
+            roll = Compute.d6(1);
+        }
         if (roll < 4) {
             bays = aero.getTransportBays().stream()
                     .filter(Bay::isCargo).collect(Collectors.toList());
@@ -27719,6 +28123,30 @@ public class Server extends SocketServer {
             r.add(nukeroll);
             vDesc.add(r);
             if (nukeroll >= capitalMissile) {
+                // Allow a reroll with edge
+                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT)
+                        && a.getCrew().hasEdgeRemaining()) {
+                    a.getCrew().decreaseEdge();
+                    r = new Report(9148);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    vDesc.add(r);
+                    // Reroll
+                    nukeroll = Compute.d6(2);
+                    // and report the new results
+                    r = new Report(9149);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(capitalMissile);
+                    r.add(nukeroll);
+                    r.choose(nukeroll >= capitalMissile);
+                    vDesc.add(r);
+                    if (nukeroll < capitalMissile) {
+                        // We might be vaporized by the damage itself, but no additional effect
+                        return;
+                    }
+                }
                 int nukeDamage = damage_orig;
                 a.setSI(a.getSI() - (nukeDamage * 10));
                 a.damageThisPhase += (nukeDamage * 10);
@@ -27749,6 +28177,18 @@ public class Server extends SocketServer {
         // apply crits
         if (hit.rolledBoxCars()) {
             if (hit.isFirstHit()) {
+                // Allow edge use to ignore the critical roll
+                if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT)
+                        && a.getCrew().hasEdgeRemaining()) {
+                    a.getCrew().decreaseEdge();
+                    r = new Report(9103);
+                    r.subject = a.getId();
+                    r.indent(3);
+                    r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
+                    vDesc.addElement(r);
+                    // Skip the critical roll
+                    return;
+                }
                 vDesc.addAll(criticalAero(a, hit.getLocation(),
                         hit.glancingMod(), "12 to hit", 8, damage_orig,
                         isCapital));
@@ -28686,6 +29126,21 @@ public class Server extends SocketServer {
                 }
 
             } // End unit-is-transported
+            
+            // Is this unit towing some trailers?
+            // If so, disconnect them
+            if (!entity.getAllTowedUnits().isEmpty()) {
+                //Find the first trailer in the list and drop it
+                //this will disconnect all that follow too
+                Entity leadTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
+                disconnectUnit(entity, leadTrailer, entity.getPosition());
+            }
+            
+            // Is this unit a trailer being towed? If so, disconnect it from its tractor
+            if (entity.getTractor() != Entity.NONE) {
+                Entity tractor = game.getEntity(entity.getTractor());
+                disconnectUnit(tractor, entity, tractor.getPosition());
+            }
 
             // Is this unit being swarmed?
             final int swarmerId = entity.getSwarmAttackerId();
@@ -28805,11 +29260,11 @@ public class Server extends SocketServer {
                     && mounted.getType().hasFlag(MiscType.F_FUEL)) {
                 Report r = new Report(9120);
                 r.subject = en.getId();
-                int boomTarget = 9;
+                int boomTarget = 10;
                 // check for possible explosion
                 int fuelroll = Compute.d6(2);
-                r.choose(fuelroll > boomTarget);
-                if (fuelroll > boomTarget) {
+                r.choose(fuelroll >= boomTarget);
+                if (fuelroll >= boomTarget) {
                     r.choose(true);
                     vDesc.add(r);
                 } else {
@@ -31285,7 +31740,8 @@ public class Server extends SocketServer {
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
-        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+        if (((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_ONESHOT)
+                && !((WeaponType) mWeap.getType()).hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
             logError(METHOD_NAME, "item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;

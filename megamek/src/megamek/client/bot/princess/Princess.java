@@ -68,7 +68,6 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -90,6 +89,7 @@ public class Princess extends BotClient {
     
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
+    private ArtilleryTargetingControl atc;
     
     
     private BehaviorSettings behaviorSettings;
@@ -162,6 +162,18 @@ public class Princess extends BotClient {
 
     public LogLevel getVerbosity() {
         return getBehaviorSettings().getVerbosity();
+    }
+    
+    /**
+     * Lazy-loading accessor for the artillery targeting control.
+     * @return
+     */
+    public ArtilleryTargetingControl getArtilleryTargetingControl() {
+        if(atc == null) {
+            atc = new ArtilleryTargetingControl();
+        }
+        
+        return atc;
     }
 
     /**
@@ -330,6 +342,11 @@ public class Princess extends BotClient {
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    @Override
+    protected void initTargeting() {
+        getArtilleryTargetingControl().initializeForTargetingPhase();
     }
 
     @Override
@@ -594,6 +611,19 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Calculates the targeting/offboard turn
+     * This includes firing TAG and non-direct-fire artillery
+     */
+    @Override
+    protected void calculateTargetingOffBoardTurn() {
+        Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+        FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
+        
+        sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
+        sendDone(true);
+    }
+    
     private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
         final String METHOD_NAME = "calcAmmoConservation(Entity)";
         final double aggroFactor =
@@ -1039,6 +1069,15 @@ public class Princess extends BotClient {
                 (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true));
     }
 
+    /**
+     * Logic to determine if this entity is in a state where it can shoot due to being attacked while fleeing.
+     * @param entity Entity to check.
+     * @return Whether or not this entity can shoot while falling back.
+     */
+    boolean canShootWhileFallingBack(Entity entity) {
+        return attackedWhileFleeing.contains(entity.getId());
+    }
+    
     boolean mustFleeBoard(final Entity entity) {
         if (!isFallingBack(entity)) {
             return false;
@@ -1826,7 +1865,7 @@ public class Princess extends BotClient {
         // then evade
         if(pathEntity.isAirborne() &&
            !possibleToInflictDamage &&
-           (path.getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+           (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
             path.addStep(MoveStepType.EVADE);
         }
     }
@@ -1860,6 +1899,11 @@ public class Princess extends BotClient {
         // loop through all entities carried by the current entity
         for(Transporter transport : movingEntity.getTransports()) {
             for(Entity loadedEntity : transport.getLoadedUnits()) {
+                // there's really no good reason for Princess to disconnect trailers.
+                // Let's skip those for now. We don't want to create a bogus 'unload' step for them anyhow.
+                if (loadedEntity.isTrailer() && loadedEntity.getTowedBy() != Entity.NONE) {
+                    continue;
+                }
                 // favorable conditions include: 
                 // - the loaded entity should be able to enter the current terrain
                 // - the loaded entity should be within max weapons range + movement range of an enemy
@@ -1885,7 +1929,7 @@ public class Princess extends BotClient {
             }
         }
     }
-
+    
     public void sendChat(final String message,
                          final LogLevel logLevel) {
         if (getVerbosity().willLog(logLevel)) {

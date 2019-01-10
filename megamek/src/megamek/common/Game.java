@@ -1277,9 +1277,11 @@ public class Game implements Serializable, IGame {
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
+            ((Mech) entity).setProtomechClampMounts();
         }
         if (entity instanceof Tank) {
             ((Tank) entity).setBAGrabBars();
+            ((Tank) entity).setTrailerHitches();
         }
 
         // Add magnetic clamp mounts

@@ -328,7 +328,7 @@ public class Aero extends Entity implements IAero, IBomber {
             engineLoss = 1;
         }
         j = Math.max(0, j - (engineHits * engineLoss));
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if ((null != game) && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -365,7 +365,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getCurrentThrust() {
         int j = getOriginalWalkMP();
-        j = Math.max(0, j - getCargoMpReduction());
+        j = Math.max(0, j - getCargoMpReduction(this));
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -4309,10 +4309,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     hasSpacecraftThermal = true;
                 }
                 //Only military craft get ESM, which detects active radar
-                //FIXME: Since JS/WS/SS construction is not yet implemented, this is hacked together.
-                if (getDesignType() == Aero.MILITARY 
-                        || hasETypeFlag(Entity.ETYPE_SPACE_STATION)
-                        || hasETypeFlag(Entity.ETYPE_WARSHIP)) {
+                if (getDesignType() == Aero.MILITARY) {
                     if (!hasESM) {
                         getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
                         hasESM = true;

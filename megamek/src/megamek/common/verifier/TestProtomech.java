@@ -468,7 +468,7 @@ public class TestProtomech extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_CLUB)) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMECH_MELEE)) {
                 meleeWeapons++;
                 if (meleeWeapons == 2) {
                     buff.append("Cannot mount multiple melee weapons.\n");

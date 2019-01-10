@@ -64,7 +64,7 @@ public class Protomech extends Entity {
 
     // Crew damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
-    private int pilotDamageTaken[] = { 0, 0, 0, 0, 0, 0 };
+    private int pilotDamageTaken[] = { 0, 0, 0, 0, 0, 0, 0 };
 
     /**
      * Not every Protomech has a main gun. N.B. Regardless of the value set
@@ -977,7 +977,7 @@ public class Protomech extends Entity {
             }
         }
 
-        if (mounted.getType() instanceof WeaponType) {
+        if (mounted.getType().isHittable()) {
             switch (loc) {
                 case LOC_HEAD:
                 case LOC_LEG:
@@ -992,38 +992,23 @@ public class Protomech extends Entity {
                                     "Already has Main Gun");
                         } else {
                             bHas2ndMainGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             break;
                         }
                     }
                     bHasMainGun = true;
                     mounted.setLocation(loc, rearMounted);
-                    equipmentList.add(mounted);
-                    weaponList.add(mounted);
-                    totalWeaponList.add(mounted);
                     break;
                 case LOC_LARM:
                     if (bHasLArmGun) {
                         throw new LocationFullException("Already has LArm Gun");
                     }
                     bHasLArmGun = true;
-                    mounted.setLocation(loc, rearMounted);
-                    equipmentList.add(mounted);
-                    weaponList.add(mounted);
-                    totalWeaponList.add(mounted);
                     break;
                 case LOC_RARM:
                     if (bHasRArmGun) {
                         throw new LocationFullException("Already has RArm Gun");
                     }
                     bHasRArmGun = true;
-                    mounted.setLocation(loc, rearMounted);
-                    equipmentList.add(mounted);
-                    weaponList.add(mounted);
-                    totalWeaponList.add(mounted);
                     break;
                 case LOC_TORSO:
                     if ((getWeight() < 10) && !isQuad()) {
@@ -1033,17 +1018,9 @@ public class Protomech extends Entity {
                                         "Already has both torso guns");
                             }
                             bHasTorsoBGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoBGunNum = getEquipmentNum(mounted);
                         } else {
                             bHasTorsoAGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoAGunNum = getEquipmentNum(mounted);
                         }
                         break;
@@ -1058,33 +1035,17 @@ public class Protomech extends Entity {
                                                     "Already has all four torso guns");
                                         }
                                         bHasTorsoDGun = true;
-                                        mounted.setLocation(loc, rearMounted);
-                                        equipmentList.add(mounted);
-                                        weaponList.add(mounted);
-                                        totalWeaponList.add(mounted);
                                         torsoDGunNum = getEquipmentNum(mounted);
                                     } else {
                                         bHasTorsoCGun = true;
-                                        mounted.setLocation(loc, rearMounted);
-                                        equipmentList.add(mounted);
-                                        weaponList.add(mounted);
-                                        totalWeaponList.add(mounted);
                                         torsoCGunNum = getEquipmentNum(mounted);
                                     }
                                 } else {
                                     bHasTorsoBGun = true;
-                                    mounted.setLocation(loc, rearMounted);
-                                    equipmentList.add(mounted);
-                                    weaponList.add(mounted);
-                                    totalWeaponList.add(mounted);
                                     torsoBGunNum = getEquipmentNum(mounted);
                                 }
                             } else {
                                 bHasTorsoAGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
                                 torsoAGunNum = getEquipmentNum(mounted);
                             }
                         } else {
@@ -1099,52 +1060,25 @@ public class Protomech extends Entity {
                                                             "Already has all six torso guns");
                                                 }
                                                 bHasTorsoFGun = true;
-                                                mounted.setLocation(loc,
-                                                        rearMounted);
-                                                equipmentList.add(mounted);
-                                                weaponList.add(mounted);
-                                                totalWeaponList.add(mounted);
                                                 torsoFGunNum = getEquipmentNum(mounted);
                                             } else {
                                                 bHasTorsoEGun = true;
-                                                mounted.setLocation(loc,
-                                                        rearMounted);
-                                                equipmentList.add(mounted);
-                                                weaponList.add(mounted);
-                                                totalWeaponList.add(mounted);
                                                 torsoEGunNum = getEquipmentNum(mounted);
                                             }
                                         } else {
                                             bHasTorsoDGun = true;
-                                            mounted.setLocation(loc,
-                                                    rearMounted);
-                                            equipmentList.add(mounted);
-                                            weaponList.add(mounted);
-                                            totalWeaponList.add(mounted);
                                             torsoDGunNum = getEquipmentNum(mounted);
                                         }
                                     } else {
                                         bHasTorsoCGun = true;
-                                        mounted.setLocation(loc, rearMounted);
-                                        equipmentList.add(mounted);
-                                        weaponList.add(mounted);
-                                        totalWeaponList.add(mounted);
                                         torsoCGunNum = getEquipmentNum(mounted);
                                     }
                                 } else {
                                     bHasTorsoBGun = true;
-                                    mounted.setLocation(loc, rearMounted);
-                                    equipmentList.add(mounted);
-                                    weaponList.add(mounted);
-                                    totalWeaponList.add(mounted);
                                     torsoBGunNum = getEquipmentNum(mounted);
                                 }
                             } else {
                                 bHasTorsoAGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
                                 torsoAGunNum = getEquipmentNum(mounted);
                             }
                         }
@@ -1157,32 +1091,18 @@ public class Protomech extends Entity {
                                             "Already has all three torso guns");
                                 }
                                 bHasTorsoCGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
                                 torsoCGunNum = getEquipmentNum(mounted);
                             }
                             bHasTorsoBGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoBGunNum = getEquipmentNum(mounted);
                         } else {
                             bHasTorsoAGun = true;
-                            mounted.setLocation(loc, rearMounted);
-                            equipmentList.add(mounted);
-                            weaponList.add(mounted);
-                            totalWeaponList.add(mounted);
                             torsoAGunNum = getEquipmentNum(mounted);
                         }
                     }
             }
-            addTechComponent(mounted.getType());
-        } else {
-            super.addEquipment(mounted, loc, rearMounted);
         }
+        super.addEquipment(mounted, loc, rearMounted);
     }
 
     /*

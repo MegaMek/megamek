@@ -51,7 +51,6 @@ public class ISLaserLarge extends LaserWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         rulesRefs = "227,TM";
-        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(true)
         	.setUnofficial(false)

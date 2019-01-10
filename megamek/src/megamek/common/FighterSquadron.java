@@ -33,7 +33,7 @@ import megamek.common.options.OptionsConstants;
  * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
  *         of fighters.
  */
-public class FighterSquadron extends Aero {
+public class FighterSquadron extends Aero implements IAero {
     private static final long serialVersionUID = 3491212296982370726L;
 
     public static int MAX_SIZE = 6;
@@ -139,6 +139,14 @@ public class FighterSquadron extends Aero {
         return fighters.stream().map(fid -> game.getEntity(fid))
                 .filter(ACTIVE_CHECK)
                 .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat)).min()
+                .orElse(0);
+    }
+    
+    @Override
+    public int getCurrentThrust() {
+        return fighters.stream().map(fid -> game.getEntity(fid))
+                .filter(ACTIVE_CHECK)
+                .mapToInt(ent -> ((IAero) ent).getCurrentThrust()).min()
                 .orElse(0);
     }
 
@@ -886,7 +894,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 

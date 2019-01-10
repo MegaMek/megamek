@@ -23,20 +23,27 @@ import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
  */
 public class NewtonianAerospacePathFinder {
     private IGame game;
-    private List<MovePath> aerospacePaths;
-    private MovePath offBoardPath;
+    protected List<MovePath> aerospacePaths;
+    protected MovePath offBoardPath;
     private MMLogger logger;
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.NewtonianAerospacePathFinder";
+    protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.NewtonianAerospacePathFinder";
     
     // This is a map containing coordinates-with-facing, and the length of the path it took to get there
-    private Map<CoordsWithFacing, Integer> visitedCoords = new HashMap<>();
-    private List<MoveStepType> moves;
+    protected Map<CoordsWithFacing, Integer> visitedCoords = new HashMap<>();
+    // This is a list of all possible moves
+    protected List<MoveStepType> moves;
     
-    private NewtonianAerospacePathFinder(IGame game) {
+    protected NewtonianAerospacePathFinder(IGame game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
         
-        // put together a pre-defined array of possible moves
+        initializeMoveList();
+    }
+    
+    /**
+     * Worker method to put together a pre-defined array of possible moves
+     */
+    protected void initializeMoveList() {
         moves = new ArrayList<>();
         moves.add(MoveStepType.TURN_RIGHT);
         moves.add(MoveStepType.TURN_LEFT);
@@ -61,20 +68,15 @@ public class NewtonianAerospacePathFinder {
         
         try {
             aerospacePaths = new ArrayList<MovePath>();
-            // add an option to stand still
-            aerospacePaths.add(startingEdge);
             
             // can't do anything if the unit is out of control.
             if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
                 return;
             }
             
-            aerospacePaths.addAll(generateChildren(startingEdge));
-            
-            MovePath reverseEdge = startingEdge.clone();
-            reverseEdge.addStep(MoveStepType.YAW);
-            aerospacePaths.add(reverseEdge);
-            aerospacePaths.addAll(generateChildren(reverseEdge));
+            for(MovePath path : generateStartingPaths(startingEdge)) {
+                aerospacePaths.addAll(generateChildren(path));
+            }
             
             // it's possible that we generated some number of paths that go off-board
             // now is the time to clean those out.
@@ -107,6 +109,28 @@ public class NewtonianAerospacePathFinder {
 
         return npf;
     }
+        
+    /** 
+     * Generates a list of possible step combinations that should be done at the beginning of a path
+     * Has side effect of updating the visited coordinates map and adding it to the list of generated paths
+     * @return List of all possible "starting" paths
+     */
+    protected List<MovePath> generateStartingPaths(MovePath startingEdge) {
+        List<MovePath> startingPaths = new ArrayList<>();
+        
+        MovePath defaultPath = startingEdge.clone();
+        aerospacePaths.add(defaultPath);
+        visitedCoords.put(new CoordsWithFacing(defaultPath), defaultPath.getMpUsed());
+        startingPaths.add(defaultPath);
+        
+        MovePath reverseEdge = startingEdge.clone();
+        reverseEdge.addStep(MoveStepType.YAW);
+        aerospacePaths.add(reverseEdge);
+        visitedCoords.put(new CoordsWithFacing(reverseEdge), reverseEdge.getMpUsed());
+        startingPaths.add(defaultPath);
+        
+        return startingPaths;
+    }
     
     /**
      * Recursive method that generates the possible child paths from the given path.
@@ -136,21 +160,8 @@ public class NewtonianAerospacePathFinder {
             
             childPath.addStep(nextStepType);
             
-            boolean maxMPUsed = childPath.getMpUsed() >= childPath.getEntity().getRunMP();
-            
-            // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
-            // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on
-            if(!childPath.isMoveLegal() && maxMPUsed) {
-                continue;
-            }
-            
             CoordsWithFacing pathDestination = new CoordsWithFacing(childPath);
-            
-            // terminator conditions:
-            // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
-            // OR we have used all our MP
-            if((visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < childPath.getMpUsed()) 
-                    || maxMPUsed) {
+            if(discardPath(childPath, pathDestination)) {
                 continue;
             }
             
@@ -161,15 +172,62 @@ public class NewtonianAerospacePathFinder {
                 offBoardPath = childPath;
             }
             
-            visitedCoords.put(pathDestination, childPath.getMpUsed());
+            if(!isIntermediatePath(childPath)) {
+                visitedCoords.put(pathDestination, childPath.getMpUsed());
             
-            retval.add(childPath.clone());
+                retval.add(childPath.clone());
+            }
+            
             retval.addAll(generateChildren(childPath));
         }
                 
         return retval;
     }
     
+    /**
+     * "Worker" function to determine whether the path being examined is an intermediate path.
+     * This means that the path, as is, is not a valid path, but its children may be.
+     * This mainly applies to aero paths that have not used all their velocity.
+     * For newtonian space flight, it is never an intermediate path.
+     * @param path The move path to consider.
+     * @return Whether it is an intermediate path or not.
+     */
+    protected boolean isIntermediatePath(MovePath path) {
+        return false;
+    }
+    
+    /**
+     * Worker function to determine whether we should discard the current path 
+     * (due to it being illegal or redundant) or keep generating child nodes
+     * @param path The move path to consider
+     * @return Whether to keep or dicsard.
+     */
+    protected boolean discardPath(MovePath path, CoordsWithFacing pathDestination) {
+        boolean maxMPExceeded = path.getMpUsed() > path.getEntity().getRunMP();
+        
+        // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
+        // unless it is illegal or exceeds max MP, in which case we discard it
+        // (max mp is maybe redundant)?
+        if(!path.isMoveLegal() || maxMPExceeded) {
+            return true;
+        }
+        
+        // terminator conditions:
+        // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
+        if(visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < path.getMpUsed()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Worker function to calculate whether, if the given move step is added to the given move path, there will be
+     * "too much turning", where a turn of 180 degrees or more is considered too much (we can yaw instead)
+     * @param path The move path to consider
+     * @param stepType The step type to consider
+     * @return Whether we're turning too much
+     */
     private boolean tooMuchTurning(MovePath path, MoveStepType stepType) {
         if(path.getLastStep() == null || path.getSecondLastStep() == null) {
             return false;

@@ -295,6 +295,38 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 graph.drawString(load, loadX - 1, stepPos.y + 38);
                 break;
+            case TOW:
+                // Announce tow.
+                String tow = Messages.getString("BoardView1.Tow"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    tow = "(" + tow + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int towX = (stepPos.x + 42)
+                        - (graph.getFontMetrics(graph.getFont())
+                                .stringWidth(tow) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(tow, towX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(tow, towX - 1, stepPos.y + 38);
+                break;
+            case DISCONNECT:
+                // Announce unload.
+                String disconnect = Messages.getString("BoardView1.Disconnect"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    disconnect = "(" + disconnect + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int disconnectX = (stepPos.x + 42)
+                        - (graph.getFontMetrics(graph.getFont())
+                                .stringWidth(disconnect) / 2);
+                int DisconnectY = stepPos.y + 38
+                        + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(disconnect, disconnectX, DisconnectY + 1);
+                graph.setColor(col);
+                graph.drawString(disconnect, disconnectX - 1, DisconnectY);
+                break;
             case LAUNCH:
             case UNDOCK:
                 // announce launch

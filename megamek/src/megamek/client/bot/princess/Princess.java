@@ -543,7 +543,14 @@ public class Princess extends BotClient {
             // get the first entity that can act this turn make sure weapons 
             // are loaded
             final Entity shooter = game.getFirstEntity(getMyTurn());
-
+            
+            // if I have jammed weapons, I am going to consider unjamming them instead of firing
+            Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+            if(unjamPlan != null) {
+                sendAttackData(shooter.getId(), unjamPlan);
+                return;
+            }
+            
             // If my unit is forced to withdraw, don't fire unless I've been 
             // fired on.
             if (getForcedWithdrawal() && shooter.isCrippled()) {

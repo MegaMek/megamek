@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -58,6 +59,8 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
@@ -65,6 +68,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
@@ -3040,5 +3044,51 @@ public class FireControl {
         }
         
         return validFacingChanges;
+    }
+    
+    /**
+     * This function evaluates whether or not a unit should spend its time
+     * unjamming weapons instead of firing, and returns the appropriate firing plan if that's the case.
+     * @param shooter Entity being considered.
+     * @return Unjam action plan, if we conclude that we should spend time unjamming weapons.
+     */
+    public Vector<EntityAction> getUnjamWeaponPlan(Entity shooter) {
+        int jammedDamage = 0;
+        int unjammedDamage = 0;
+        int maxJammedDamage = 0;
+        int maxDamageWeaponID = -1;
+        
+        // step 1: loop through all the unit's weapons to determine proportion of jammed to unjammed weapons.
+        for(Mounted mounted : shooter.getWeaponList()) {
+            int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
+            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                weaponDamage = ((WeaponType) mounted.getType()).rackSize;
+            }
+            
+            if(mounted.isJammed()) {
+                jammedDamage += weaponDamage;
+                
+                // while we're looping through weapons, keep track of the highest-damage weapon that's jammed.
+                if(weaponDamage > maxJammedDamage) {
+                    maxDamageWeaponID = shooter.getEquipmentNum(mounted);
+                    maxJammedDamage = weaponDamage;
+                }
+            } else {
+                unjammedDamage += weaponDamage;
+            }
+        }
+        
+        // if most of the unit's weapons are jammed, unjam the biggest one.
+        // we can only unjam one per turn.
+        if(jammedDamage > unjammedDamage) {
+            RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
+                    shooter.getId(), maxDamageWeaponID);
+            
+            Vector<EntityAction> repairVector =  new Vector<>();
+            repairVector.add(rwma);
+            return repairVector;
+        }
+        
+        return null;
     }
 }

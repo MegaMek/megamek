@@ -5535,7 +5535,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         if ((this instanceof Infantry) && (null != crew)
-            && hasAbility(OptionsConstants.MD_MM_IMPLANTS)
+                //Fix for Bug Report #1194
+            && hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS)
             && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return true;
         }

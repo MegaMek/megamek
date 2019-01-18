@@ -61,6 +61,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
+import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
@@ -3053,10 +3054,9 @@ public class FireControl {
      * @return Unjam action plan, if we conclude that we should spend time unjamming weapons.
      */
     public Vector<EntityAction> getUnjamWeaponPlan(Entity shooter) {
-        int jammedDamage = 0;
-        int unjammedDamage = 0;
         int maxJammedDamage = 0;
         int maxDamageWeaponID = -1;
+        Vector<EntityAction> unjamVector = new Vector<>();
         
         // step 1: loop through all the unit's weapons to determine proportion of jammed to unjammed weapons.
         for(Mounted mounted : shooter.getWeaponList()) {
@@ -3065,30 +3065,29 @@ public class FireControl {
                 weaponDamage = ((WeaponType) mounted.getType()).rackSize;
             }
             
-            if(mounted.isJammed()) {
-                jammedDamage += weaponDamage;
-                
-                // while we're looping through weapons, keep track of the highest-damage weapon that's jammed.
-                if(weaponDamage > maxJammedDamage) {
+            if(mounted.isJammed() && (weaponDamage > maxJammedDamage)) {
                     maxDamageWeaponID = shooter.getEquipmentNum(mounted);
                     maxJammedDamage = weaponDamage;
-                }
-            } else {
-                unjammedDamage += weaponDamage;
             }
         }
-        
-        // if most of the unit's weapons are jammed, unjam the biggest one.
+                
+        // if any of the unit's weapons are jammed, unjam the biggest one.
         // we can only unjam one per turn.
-        if(jammedDamage > unjammedDamage) {
+        if(maxDamageWeaponID >= 0) {
             RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
                     shooter.getId(), maxDamageWeaponID);
             
-            Vector<EntityAction> repairVector =  new Vector<>();
-            repairVector.add(rwma);
-            return repairVector;
+            unjamVector.add(rwma);
+        // if the unit has a jammed turret, attempt to clear it
+        } else if(shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
+            Tank tankShooter = (Tank) shooter;
+            if(tankShooter.isTurretJammed(tankShooter.getLocTurret()) ||
+                    tankShooter.isTurretJammed(tankShooter.getLocTurret2())) {
+                UnjamTurretAction uta = new UnjamTurretAction(shooter.getId());
+                unjamVector.add(uta);
+            }
         }
         
-        return null;
+        return unjamVector;
     }
 }

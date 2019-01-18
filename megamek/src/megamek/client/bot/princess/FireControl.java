@@ -3058,14 +3058,26 @@ public class FireControl {
         int maxDamageWeaponID = -1;
         Vector<EntityAction> unjamVector = new Vector<>();
         
-        // step 1: loop through all the unit's weapons to determine proportion of jammed to unjammed weapons.
-        for(Mounted mounted : shooter.getWeaponList()) {
+        // apparently, only tank type units can unjam weapons/clear turrets
+        if(!shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
+            return unjamVector;
+        }
+        
+        Tank tankShooter = (Tank) shooter;
+        
+        // can't unjam if crew is stunned. Skip the rest of the logic to save time. 
+        if(tankShooter.getStunnedTurns() > 0) {
+            return unjamVector;
+        }
+        
+        // step 1: loop through all the unit's jammed weapons to determine the biggest one
+        for(Mounted mounted : tankShooter.getJammedWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
             if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).rackSize;
             }
             
-            if(mounted.isJammed() && (weaponDamage > maxJammedDamage)) {
+            if(weaponDamage > maxJammedDamage) {
                     maxDamageWeaponID = shooter.getEquipmentNum(mounted);
                     maxJammedDamage = weaponDamage;
             }
@@ -3079,13 +3091,9 @@ public class FireControl {
             
             unjamVector.add(rwma);
         // if the unit has a jammed turret, attempt to clear it
-        } else if(shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
-            Tank tankShooter = (Tank) shooter;
-            if(tankShooter.isTurretJammed(tankShooter.getLocTurret()) ||
-                    tankShooter.isTurretJammed(tankShooter.getLocTurret2())) {
-                UnjamTurretAction uta = new UnjamTurretAction(shooter.getId());
-                unjamVector.add(uta);
-            }
+        } else if(tankShooter.canClearTurret()) {
+            UnjamTurretAction uta = new UnjamTurretAction(shooter.getId());
+            unjamVector.add(uta);
         }
         
         return unjamVector;

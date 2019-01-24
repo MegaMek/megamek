@@ -146,6 +146,8 @@ public abstract class PathRanker implements IPathRanker {
         boolean fleeing = getOwner().isFallingBack(mover);
         
         boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
+        boolean needToUnjamRAC = mover.canUnjamRAC();
+        int walkMP = mover.getWalkMP();
         
         for (MovePath path : startingPathList) {
             // just in case
@@ -202,6 +204,13 @@ public abstract class PathRanker implements IPathRanker {
                     continue;
                 }
 
+                // first crack at logic involving unjamming RACs: just do it
+                if(needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
+                    logLevel = LogLevel.INFO;
+                    msg.append("\n\tINADVISABLE: Want to unjam autocannon but path involves running or jumping");
+                    continue;
+                }
+                
                 // If all the above checks have passed, this is a valid path.
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);

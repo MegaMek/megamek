@@ -1853,6 +1853,7 @@ public class Princess extends BotClient {
         MovePath retval = path;
         evadeIfNotFiring(retval, expectedDamage >= 0);
         unloadTransportedInfantry(retval);
+        unjamRAC(retval);
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
@@ -1861,6 +1862,18 @@ public class Princess extends BotClient {
         }
         
         return retval;
+    }
+    
+    /**
+     * Helper function that appends an unjam RAC command to the end of a qualifying path.
+     * @param path The path to process.
+     */
+    private void unjamRAC(MovePath path) { 
+        if(path.getEntity().canUnjamRAC() && 
+                (path.getMpUsed() <= path.getEntity().getWalkMP()) &&
+                !path.isJumping()) {
+            path.addStep(MoveStepType.UNJAM_RAC);
+        }
     }
     
     /**

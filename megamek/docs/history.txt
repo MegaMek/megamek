@@ -17,6 +17,7 @@ v0.45.3
 + Issue #1218: Fixed protomech-related game-stopping server crash
 + Data: Adding the Saxarba HQ Tileset.
 + Issue #1194: C3i function should apply to boosted cyber comm and enhanced multi model sensor (not standard multimodal sensor) implants per IO
++ PR #1227: Enable Princess to unjam weapons, turrets and rapid-fire autocannons (RACs, etc).
 
 v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.

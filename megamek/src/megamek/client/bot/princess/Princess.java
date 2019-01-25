@@ -544,21 +544,26 @@ public class Princess extends BotClient {
             // are loaded
             final Entity shooter = game.getFirstEntity(getMyTurn());
 
-            // If my unit is forced to withdraw, don't fire unless I've been 
-            // fired on.
+            // Forego firing if 
+            // a) hidden, 
+            // b) under "peaceful" forced withdrawal, 
+            // c) majority firepower is jammed 
+            // d) best firing plan comes up as crap (no expected damage/null)
+            //
+            // If foregoing firing, unjam highest-damage weapons first, then turret
+            
+            boolean skipFiring = false;
+            
+            // If my unit is forced to withdraw, don't fire unless I've been fired on.
             if (getForcedWithdrawal() && shooter.isCrippled()) {
                 final StringBuilder msg = new StringBuilder(shooter.getDisplayName())
                         .append(" is crippled and withdrawing.");
                 try {
                     if (attackedWhileFleeing.contains(shooter.getId())) {
-                        msg.append("\n\tBut I was fired on, so I will return " +
-                                   "fire.");
+                        msg.append("\n\tBut I was fired on, so I will return fire.");
                     } else {
-                        msg.append("\n\tI will not fire so long as I'm not " +
-                                   "fired on.");
-                        sendAttackData(shooter.getId(),
-                                       new Vector<>(0));
-                        return;
+                        msg.append("\n\tI will not fire so long as I'm not fired on.");
+                        skipFiring = true;
                     }
                 } finally {
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
@@ -567,45 +572,56 @@ public class Princess extends BotClient {
             
             // TODO: Make hidden units spot since they can't do anything else
             if(shooter.isHidden()) {
-                sendAttackData(shooter.getId(), new Vector<>(0));
+                skipFiring = true;
                 log(getClass(), METHOD_NAME, LogLevel.INFO, "Hidden unit skips firing.");
+            }
+
+            // calculating a firing plan is somewhat expensive, so 
+            // we skip this step if we have already decided not to fire due to being hidden or under "peaceful forced withdrawal"
+            if(!skipFiring) {
+                // Set up ammo conservation.
+                final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
+    
+                // entity that can act this turn make sure weapons are loaded
+                final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
+                                                                      getHonorUtil(),
+                                                                      game,
+                                                                      ammoConservation);
+                if ((null != plan) && (plan.getExpectedDamage() > 0)) {
+                    getFireControl(shooter).loadAmmo(shooter, plan);
+                    plan.sortPlan();
+    
+                    log(getClass(),
+                        METHOD_NAME,
+                        LogLevel.INFO,
+                        shooter.getDisplayName() +
+                        " - Best Firing Plan: " +
+                        plan.getDebugDescription(LogLevel.DEBUG ==
+                                                 getVerbosity()));
+    
+                    // Add expected damage from the chosen FiringPlan to the 
+                    // damageMap for the target enemy.
+                    final Integer targetId = plan.getTarget().getTargetId();
+                    final Double newDamage = damageMap.get(targetId) + plan.getExpectedDamage();
+                    damageMap.replace(targetId,newDamage);
+    
+                    // tell the game I want to fire
+                    sendAttackData(shooter.getId(), plan.getEntityActionVector());
+                    return;
+                } else {
+                    log(getClass(), METHOD_NAME, LogLevel.INFO,
+                        "No best firing plan for " + shooter.getDisplayName());
+                    skipFiring = true;
+                }
+            }
+            
+            // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
+            if(skipFiring) {
+                Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+                sendAttackData(shooter.getId(), unjamPlan);
                 return;
             }
-
-            // Set up ammo conservation.
-            final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
-
-            // entity that can act this turn make sure weapons are loaded
-            final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
-                                                                  getHonorUtil(),
-                                                                  game,
-                                                                  ammoConservation);
-            if (null != plan) {
-                getFireControl(shooter).loadAmmo(shooter, plan);
-                plan.sortPlan();
-
-                log(getClass(),
-                    METHOD_NAME,
-                    LogLevel.INFO,
-                    shooter.getDisplayName() +
-                    " - Best Firing Plan: " +
-                    plan.getDebugDescription(LogLevel.DEBUG ==
-                                             getVerbosity()));
-
-                // Add expected damage from the chosen FiringPlan to the 
-                // damageMap for the target enemy.
-                final Integer targetId = plan.getTarget().getTargetId();
-                final Double newDamage = damageMap.get(targetId) + plan.getExpectedDamage();
-                damageMap.replace(targetId,newDamage);
-
-                // tell the game I want to fire
-                sendAttackData(shooter.getId(), plan.getEntityActionVector());
-
-            } else {
-                log(getClass(), METHOD_NAME, LogLevel.INFO,
-                    "No best firing plan for " + shooter.getDisplayName());
-                sendAttackData(shooter.getId(), new Vector<>(0));
-            }
+            
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -1837,6 +1853,7 @@ public class Princess extends BotClient {
         MovePath retval = path;
         evadeIfNotFiring(retval, expectedDamage >= 0);
         unloadTransportedInfantry(retval);
+        unjamRAC(retval);
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
@@ -1845,6 +1862,18 @@ public class Princess extends BotClient {
         }
         
         return retval;
+    }
+    
+    /**
+     * Helper function that appends an unjam RAC command to the end of a qualifying path.
+     * @param path The path to process.
+     */
+    private void unjamRAC(MovePath path) { 
+        if(path.getEntity().canUnjamRAC() && 
+                (path.getMpUsed() <= path.getEntity().getWalkMP()) &&
+                !path.isJumping()) {
+            path.addStep(MoveStepType.UNJAM_RAC);
+        }
     }
     
     /**

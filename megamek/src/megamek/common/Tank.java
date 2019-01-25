@@ -3312,6 +3312,22 @@ public class Tank extends Entity {
     public boolean canSpot() {
         return super.canSpot() && (getStunnedTurns() == 0);
     }
+    
+    /**
+     * Convenience function that determines if this tank can issue an "unjam weapon" command.
+     * @return True if there are any jammed weapons and the crew isn't stunned
+     */
+    public boolean canUnjamWeapon() {
+        return getJammedWeapons().size() > 0 && getStunnedTurns() <= 0;
+    }
+    
+    /** 
+     * Convenience function that determines if this tank can issue a "clear turret" command.
+     * @return True if there are any jammed turrets and the crew isn't stunned
+     */
+    public boolean canClearTurret() {
+        return (m_bTurretJammed || m_bDualTurretJammed) && getStunnedTurns() <= 0;
+    }
 
     public void addJammedWeapon(Mounted weapon) {
         jammedWeapons.add(weapon);

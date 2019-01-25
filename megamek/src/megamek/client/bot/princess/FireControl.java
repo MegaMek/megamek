@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -58,6 +59,9 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.RepairWeaponMalfunctionAction;
+import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
@@ -3040,5 +3044,57 @@ public class FireControl {
         }
         
         return validFacingChanges;
+    }
+    
+    /**
+     * This function evaluates whether or not a unit should spend its time
+     * unjamming weapons instead of firing, and returns the appropriate firing plan if that's the case.
+     * @param shooter Entity being considered.
+     * @return Unjam action plan, if we conclude that we should spend time unjamming weapons.
+     */
+    public Vector<EntityAction> getUnjamWeaponPlan(Entity shooter) {
+        int maxJammedDamage = 0;
+        int maxDamageWeaponID = -1;
+        Vector<EntityAction> unjamVector = new Vector<>();
+        
+        // apparently, only tank type units can unjam weapons/clear turrets
+        if(!shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
+            return unjamVector;
+        }
+        
+        Tank tankShooter = (Tank) shooter;
+        
+        // can't unjam if crew is stunned. Skip the rest of the logic to save time. 
+        if(tankShooter.getStunnedTurns() > 0) {
+            return unjamVector;
+        }
+        
+        // step 1: loop through all the unit's jammed weapons to determine the biggest one
+        for(Mounted mounted : tankShooter.getJammedWeapons()) {
+            int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
+            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
+            }
+            
+            if(weaponDamage > maxJammedDamage) {
+                    maxDamageWeaponID = shooter.getEquipmentNum(mounted);
+                    maxJammedDamage = weaponDamage;
+            }
+        }
+                
+        // if any of the unit's weapons are jammed, unjam the biggest one.
+        // we can only unjam one per turn.
+        if(maxDamageWeaponID >= 0) {
+            RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
+                    shooter.getId(), maxDamageWeaponID);
+            
+            unjamVector.add(rwma);
+        // if the unit has a jammed turret, attempt to clear it
+        } else if(tankShooter.canClearTurret()) {
+            UnjamTurretAction uta = new UnjamTurretAction(shooter.getId());
+            unjamVector.add(uta);
+        }
+        
+        return unjamVector;
     }
 }

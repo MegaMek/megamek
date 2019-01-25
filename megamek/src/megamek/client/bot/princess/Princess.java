@@ -550,7 +550,7 @@ public class Princess extends BotClient {
             // c) majority firepower is jammed 
             // d) best firing plan comes up as crap (no expected damage/null)
             //
-            // If foregoing firing, highest-damage weapons, then turret
+            // If foregoing firing, unjam highest-damage weapons first, then turret
             
             boolean skipFiring = false;
             

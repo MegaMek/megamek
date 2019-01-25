@@ -69,7 +69,6 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
-import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
@@ -3074,7 +3073,7 @@ public class FireControl {
         for(Mounted mounted : tankShooter.getJammedWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
             if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
-                weaponDamage = ((WeaponType) mounted.getType()).rackSize;
+                weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
             }
             
             if(weaponDamage > maxJammedDamage) {

@@ -1,5 +1,12 @@
 ##BUILDINGS WITH NON-STANDARD CLASS, NO ARMOR##
 
+#GUN EMPLACEMENT
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/gun_emplacement/gun_emplacement_light_01.png"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/gun_emplacement/gun_emplacement_medium_01.png"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/gun_emplacement/gun_emplacement_heavy_01.png"
+super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/gun_emplacement/gun_emplacement_hard_01.png"
+super * "building:*;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/gun_emplacement/gun_emplacement_light_01.png"
+
 #LIGHT HANGAR
 super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_class:1" "" "saxarba/hangar_light/hangar_light_00.png"
 super * "building:1:01;bldg_elev:*;bldg_cf:*;bldg_class:1" "" "saxarba/hangar_light/hangar_light_01.png"
@@ -567,13 +574,6 @@ super * "building:4:65;bldg_elev:*;bldg_cf:*;bldg_class:2" "" "saxarba/fortress_
 super * "building:4:66;bldg_elev:*;bldg_cf:*;bldg_class:2" "" "saxarba/fortress_hard/fortress_hard_66.png"
 super * "building:4:67;bldg_elev:*;bldg_cf:*;bldg_class:2" "" "saxarba/fortress_hard/fortress_hard_67.png"
 super * "building:4:68;bldg_elev:*;bldg_cf:*;bldg_class:2" "" "saxarba/fortress_hard/fortress_hard_68.png"
-
-#GUN EMPLACEMENT
-super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/fortress_light/gun_emplacement_light_01.png"
-super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/fortress_medium/gun_emplacement_medium_01.png"
-super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/fortress_heavy/gun_emplacement_heavy_01.png"
-super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/fortress_hard/gun_emplacement_hard_01.png"
-super * "building:*;bldg_elev:*;bldg_cf:*;bldg_class:3" "" "saxarba/fortress_light/gun_emplacement_light_01.png"
 
 super * "building:4:69;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "saxarba/dropship/dropship_01.png"
 super * "building:4:70;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "saxarba/dropship/dropship_02.png"

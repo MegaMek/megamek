@@ -3450,12 +3450,13 @@ public class Server implements Runnable {
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
         }
         
-        boolean nonEntityPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
+        boolean minefieldPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
+        boolean artyPhase = game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
         
         // if there aren't any more valid turns, end the phase
         // note that some phases don't use entities
-        if (((null == nextEntity) && !nonEntityPhase) ||
-                ((null == nextTurn) && nonEntityPhase)) {
+        if (((null == nextEntity) && !minefieldPhase) ||
+                ((null == nextTurn) && minefieldPhase)) {
             endCurrentPhase();
             return;
         }
@@ -3477,7 +3478,7 @@ public class Server implements Runnable {
             sendGhostSkipMessage(player);
         } else if ((null == game.getFirstEntity())
                 && (null != player)
-                && !nonEntityPhase) {
+                && !minefieldPhase && !artyPhase) {
             sendTurnErrorSkipMessage(player);
         }
     }

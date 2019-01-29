@@ -3450,8 +3450,7 @@ public class Server implements Runnable {
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
         }
         
-        boolean nonEntityPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS ||
-                game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
+        boolean nonEntityPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
         
         // if there aren't any more valid turns, end the phase
         // note that some phases don't use entities

@@ -551,9 +551,11 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             setPrincessFields();
         } else if (destinationEdgeCombo.equals(e.getSource())) {
             if (CardinalEdge.getCardinalEdge(destinationEdgeCombo.getSelectedIndex()) == CardinalEdge.NEAREST_OR_NONE) {
+                autoFleeCheck.setSelected(false);
                 autoFleeCheck.setEnabled(false);
             } else {
                 autoFleeCheck.setEnabled(true);
+                autoFleeCheck.setSelected(true);
             }
         } else if (princessHelpButton.equals(e.getSource())) {
             launchPrincessHelp();

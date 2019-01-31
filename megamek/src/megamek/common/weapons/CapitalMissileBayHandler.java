@@ -65,6 +65,10 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return true;
         }
         
+        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            return handleAeroSanity(phase, vPhaseReport);
+        }
+        
         int numAttacks = 1;
                 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
@@ -120,7 +124,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         //This has to be up here so that we don't screw up glancing/direct blow reports
         attackValue = calcAttackValue();
         //Needed for Aero Sanity to work
-        nDamPerHit = attackValue;
+        nDamPerHit = calcDamagePerHit();
         
         //CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();

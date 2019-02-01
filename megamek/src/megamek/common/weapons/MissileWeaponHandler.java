@@ -812,9 +812,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         //This is for firing ATM/LRM/MML/MRM/SRMs at a dropship, but is ignored for ground-to-air fire
         //It's also rare but possible for two hostile grounded dropships to shoot at each other with individual weapons
         //with this handler. They'll use the cluster table too.
+        //Don't use this if Aero Sanity is on...
         if (entityTarget != null 
-                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
-                && waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays())) {
+                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && (waa.isAirToAir(game) || (waa.isAirToGround(game) && !ae.usesWeaponBays()))) {
             nDamPerHit = attackValue;
         } else {
             //This is for all other targets in atmosphere

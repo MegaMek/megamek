@@ -214,6 +214,10 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
    
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        
+        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            return handleAeroSanity(phase, vPhaseReport);
+        }
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;

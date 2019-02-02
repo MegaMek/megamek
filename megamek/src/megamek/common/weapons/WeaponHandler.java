@@ -368,6 +368,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
     
     /**
+     * Sets the attack value of point defense weapons used against a missile bay attack
+     * Used with Aero Sanity to pass counterAV through to the individual missile handler from the bay handler
+     * 
+     * @param av - A <code>int</code> representing point defense bay damage.
+     */ 
+    protected void setCounterAV(int av) {
+        CounterAV = av;
+    }
+    
+    /**
      * Calculates the to-hit penalty inflicted on a capital missile attack by point defense fire
      * this should return 0 unless this is a capital missile attack (otherwise, reporting and to-hit get screwed up)
      */    

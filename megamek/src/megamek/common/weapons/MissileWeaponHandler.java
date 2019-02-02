@@ -245,6 +245,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        // Aero sanity reduces effectiveness of AMS bays with default cluster mods.
+        // This attempts to account for that, but might need some balancing...
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
+            double counterAVMod = (getCounterAV() / 10.0);
+            nMissilesModifier -= counterAVMod;
+        }
 
         if (allShotsHit()) {
             missilesHit = wtype.getRackSize();

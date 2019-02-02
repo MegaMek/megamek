@@ -462,7 +462,25 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-       //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        
+        // Report any AMS bay action against standard missiles.
+        // This only gets used in atmosphere/ground battles
+        // Non AMS point defenses only work in space
+        CounterAV = calcCounterAV();
+        //use this if counterfire destroys all the missiles
+        if (amsBayEngaged && (attackValue <= 0)) {
+            r = new Report(3356);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        } else if (amsBayEngaged) {
+            r = new Report(3354);
+            r.indent();
+            r.add(CounterAV);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
         
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -500,6 +518,10 @@ public class BayWeaponHandler extends WeaponHandler {
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
                     AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
+                    if (bayWHandler instanceof MissileWeaponHandler || bayWHandler instanceof CapitalMissileHandler) {
+                        WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                        wHandler.setCounterAV(CounterAV);
+                    }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {
                         //fix the reporting - is there a better way to do this

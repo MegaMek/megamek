@@ -131,6 +131,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean amsBayEngagedMissile = false; //true if one or more AMS bays engages this attack. Used for reporting if this is a single large missile (thunderbolt, etc) attack.
     protected boolean pdBayEngagedMissile = false; // true if one or more point defense bays engages this attack. Used for reporting if this is a single large missile (thunderbolt, etc) attack.
     protected boolean advancedPD = false; //true if advanced StratOps game rule is on
+    protected WeaponHandler parentBayHandler = null; //Used for weapons bays when Aero Sanity is on
     
     /**
      * Write debug information to the logs.
@@ -368,13 +369,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
     
     /**
-     * Sets the attack value of point defense weapons used against a missile bay attack
+     * Used with Aero Sanity mod
+     * Returns the handler for the BayWeapon this individual weapon belongs to
+     */ 
+    protected WeaponHandler getParentBayHandler() {
+        return parentBayHandler;
+    }
+    
+    /**
+     * Sets the parent handler for each sub-weapon handler called when looping through bay weapons
      * Used with Aero Sanity to pass counterAV through to the individual missile handler from the bay handler
      * 
-     * @param av - A <code>int</code> representing point defense bay damage.
+     * @param ah - The <code>AttackHandler</code> for the BayWeapon this individual weapon belongs to
      */ 
-    protected void setCounterAV(int av) {
-        CounterAV = av;
+    protected void setParentBayHandler(WeaponHandler bh) {
+        parentBayHandler = bh;
     }
     
     /**

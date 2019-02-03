@@ -518,9 +518,10 @@ public class BayWeaponHandler extends WeaponHandler {
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
                     AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
-                    if (bayWHandler instanceof MissileWeaponHandler || bayWHandler instanceof CapitalMissileHandler) {
+                    // This should always be true. Maybe there's a better way to write this?
+                    if (bayWHandler instanceof WeaponHandler) {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
-                        wHandler.setCounterAV(CounterAV);
+                        wHandler.setParentBayHandler(this);
                     }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {

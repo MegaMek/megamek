@@ -492,7 +492,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
             //Now report and apply the effect, if any
             if (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged) {
-                return counterAVMod;
+                // Let's try to mimc reduced AMS effectiveness against higher munition attack values
+                return (counterAVMod / calcDamagePerHit());
             }
         }
         return 0;
@@ -1110,8 +1111,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @return
      */
     protected boolean isAdvancedAMS() {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-            return advancedPD && (amsBayEngaged || pdBayEngaged);
+        //Cluster hits calculation in Compute needs this to be on
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && getParentBayHandler() != null) {
+            WeaponHandler bayHandler = getParentBayHandler();
+            return advancedPD && (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged);
         }
         return advancedAMS && (amsEngaged || apdsEngaged);
     }
@@ -1119,9 +1123,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     //Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        if (wtype.hasFlag(WeaponType.F_LARGEMISSILE)) {
-            return true;
-        }
-        return false;
+        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
     }
 }

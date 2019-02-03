@@ -135,6 +135,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
+        int counterAV = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
@@ -164,6 +165,11 @@ public class ATMHandler extends MissileWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
+        
+        //Point Defenses engage the missiles still aimed at us
+        counterAV = calcCounterAV();
+        av = av - counterAV;
+        
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }

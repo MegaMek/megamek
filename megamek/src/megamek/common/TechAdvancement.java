@@ -704,7 +704,7 @@ public class TechAdvancement implements ITechnology {
     }
 
     public int getBaseAvailability(int era) {
-        if (era < 0 || era > availability.length) {
+        if (era < 0 || era >= availability.length) {
             return RATING_X;
         }
         return availability[era];

@@ -414,7 +414,7 @@ public interface ITechnology {
     }
 
     public static String getRatingName(int rating) {
-        if ((rating < 0) || (rating > ratingNames.length)) {
+        if ((rating < 0) || (rating >= ratingNames.length)) {
             return "U";
         }
         return ratingNames[rating];

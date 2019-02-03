@@ -270,6 +270,15 @@ public class CLIATMHandler extends ATMHandler {
         // add AMS mods
         int amsMod = getAMSHitsMod(vPhaseReport);
         nMissilesModifier += amsMod;
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                    || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                nMissilesModifier -= getAeroSanityAMSHitsMod();
+            }
+        }
 
         if (allShotsHit()) {
             if (amsMod == 0) {

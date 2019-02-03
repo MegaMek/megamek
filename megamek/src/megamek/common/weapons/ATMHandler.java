@@ -36,6 +36,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -289,6 +290,12 @@ public class ATMHandler extends MissileWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                        || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP))) {
+            nMissilesModifier -= getAeroSanityAMSHitsMod();
+        }
 
         if (allShotsHit()) {
             missilesHit = wtype.getRackSize();

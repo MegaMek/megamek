@@ -17,13 +17,16 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.Tank;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -76,6 +79,16 @@ public class LRMAntiTSMHandler extends LRMHandler {
         
         // AMS mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                    || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                nMissilesModifier -= getAeroSanityAMSHitsMod();
+            }
+        }
+        
         if (allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {

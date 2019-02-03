@@ -34,6 +34,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
 import megamek.server.Server;
 
@@ -264,6 +265,12 @@ public class LRMHandler extends MissileWeaponHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                        || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP))) {
+            nMissilesModifier -= getAeroSanityAMSHitsMod();
+        }
 
         int rackSize = wtype.getRackSize();
         boolean minRangeELRMAttack = false;

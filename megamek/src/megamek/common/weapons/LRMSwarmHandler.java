@@ -449,6 +449,15 @@ public class LRMSwarmHandler extends LRMHandler {
 
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                    || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+                nMissilesModifier -= getAeroSanityAMSHitsMod();
+            }
+        }
 
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles

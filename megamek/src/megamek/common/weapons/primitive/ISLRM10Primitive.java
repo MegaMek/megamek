@@ -40,6 +40,7 @@ public class ISLRM10Primitive extends LRMWeapon {
         addLookupName("IS LRM-10 Primitive");
         addLookupName("ISLRM10p");
         addLookupName("IS LRM 10 Primitive");
+        this.shortName = "LRM/10 p";
         heat = 4;
         rackSize = 10;
         minimumRange = 6;

@@ -329,9 +329,9 @@ import megamek.common.weapons.primitive.ISLRM10Primitive;
 import megamek.common.weapons.primitive.ISLRM15Primitive;
 import megamek.common.weapons.primitive.ISLRM20Primitive;
 import megamek.common.weapons.primitive.ISLRM5Primitive;
-import megamek.common.weapons.primitive.ISLaserMediumPrimitive;
+import megamek.common.weapons.primitive.ISLaserPrimitiveMedium;
 import megamek.common.weapons.primitive.ISLaserPrimitiveLarge;
-import megamek.common.weapons.primitive.ISLaserSmallPrimitive;
+import megamek.common.weapons.primitive.ISLaserPrimitiveSmall;
 import megamek.common.weapons.primitive.ISLongTomPrimitive;
 import megamek.common.weapons.primitive.ISPPCPrimitive;
 import megamek.common.weapons.primitive.ISSRM2Primitive;
@@ -1151,11 +1151,11 @@ public class WeaponType extends EquipmentType {
     public static void initializeTypes() {
         // Laser types
         EquipmentType.addType(new ISLaserMedium());
-        EquipmentType.addType(new ISLaserMediumPrimitive());
+        EquipmentType.addType(new ISLaserPrimitiveMedium());
         EquipmentType.addType(new ISLaserLarge());
         EquipmentType.addType(new ISLaserPrimitiveLarge());
         EquipmentType.addType(new ISLaserSmall());
-        EquipmentType.addType(new ISLaserSmallPrimitive());
+        EquipmentType.addType(new ISLaserPrimitiveSmall());
         EquipmentType.addType(new ISPulseLaserLarge());
         EquipmentType.addType(new ISPulseLaserLargePrototype());
         EquipmentType.addType(new ISXPulseLaserLarge());

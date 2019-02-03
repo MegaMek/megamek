@@ -34,6 +34,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         super();
         name = "Prototype LB 20-X Autocannon";
         setInternalName("CLLBXAC20Prototype");
+        shortName = "LB 20-X (P)";
         heat = 6;
         damage = 20;
         rackSize = 20;

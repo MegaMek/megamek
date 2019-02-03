@@ -43,6 +43,7 @@ public class ISAC10Primitive extends ACWeapon {
         addLookupName("AC/10p");
         addLookupName("ISAC10p");
         addLookupName("IS Autocannon/10 Primitive");
+        this.shortName = "AC/10p";
         ammoType = AmmoType.T_AC_PRIMITIVE;
         heat = 3;
         damage = 10;

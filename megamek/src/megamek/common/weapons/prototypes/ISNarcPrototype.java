@@ -34,6 +34,7 @@ public class ISNarcPrototype extends NarcWeapon {
         this.name = "Prototype Narc Missile Beacon";
         this.setInternalName("ISNarcBeaconPrototype");
         this.addLookupName("PrototypeNARCBeacon");
+        shortName = "Narc (P)";
         this.heat = 0;
         this.rackSize = 1;
         this.shortRange = 3;

@@ -44,6 +44,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         name = "Prototype LB 10-X Autocannon";
         setInternalName("ISLBXAC10Prototype");
         addLookupName("IS LB 10-X AC Prototype");
+        shortName = "LC 10-X (P)";
         flags = flags.or(F_PROTOTYPE);
         criticals = 7;
         heat = 2;

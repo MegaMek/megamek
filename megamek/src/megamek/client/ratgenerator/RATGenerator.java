@@ -470,7 +470,7 @@ public class RATGenerator {
 								fRec.getSalvage(late).get(entry.getKey()),
 										early, late, year));
 			}
-			if (late != early) {
+			if (!late.equals(early)) {
 				for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
 					if (!salvageEntries.containsKey(entry.getKey())) {
 						salvageEntries.put(entry.getKey(), interpolate(0.0,

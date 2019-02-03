@@ -1,19 +1,14 @@
 ##STANDARD BUILDINGS, NO ARMOR##
 
 #SINGLEHEX
-#super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_light/building_light_00.png"
-#super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_medium/building_medium_00.png"
-#super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_heavy/building_heavy_00.png"
-#super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_hard/building_hard_00.png"
-
-#super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:1;bldg_class:0" "" "saxarba/building_single/cropped_farm.png"
-#super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:2;bldg_class:0" "" "saxarba/building_single/cropped_church.png"
-#super * "building:1;bldg_elev:3;bldg_cf:*;fluff:11:3;bldg_class:0" "" "saxarba/building_single/light_bldg.png"
-#super * "building:2;bldg_elev:3;bldg_cf:*;fluff:11:4;bldg_class:0" "" "saxarba/building_single/cropped_cannon_tower.png"
-#super * "building:3;bldg_elev:3;bldg_cf:*;fluff:11:5;bldg_class:0" "" "saxarba/building_single/cropped_refinery.png"
-#super * "building:3;bldg_elev:4;bldg_cf:*;fluff:11:6;bldg_class:0" "" "saxarba/building_single/cropped_mage_tower.png"
-#super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:7;bldg_class:0" "" "saxarba/building_single/cropped_barn.png"
-#super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:8;bldg_class:0" "" "saxarba/building_single/chicken_coop.png"
+super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:1;bldg_class:0" "" "saxarba/building_single/legacy_farm.png"
+super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:2;bldg_class:0" "" "saxarba/building_single/legacy_church.png"
+super * "building:1;bldg_elev:3;bldg_cf:*;fluff:11:3;bldg_class:0" "" "saxarba/building_single/legacy_building.png"
+super * "building:2;bldg_elev:3;bldg_cf:*;fluff:11:4;bldg_class:0" "" "saxarba/building_single/legacy_tower1.png"
+super * "building:3;bldg_elev:3;bldg_cf:*;fluff:11:5;bldg_class:0" "" "saxarba/building_single/legacy_refinery.png"
+super * "building:3;bldg_elev:4;bldg_cf:*;fluff:11:6;bldg_class:0" "" "saxarba/building_single/legacy_tower2.png"
+super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:7;bldg_class:0" "" "saxarba/building_single/legacy_barn.png"
+super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:8;bldg_class:0" "" "saxarba/building_single/legacy_chicken.png"
 
 super * "building:4;bldg_elev:1;bldg_cf:*;bldg_class:0" "" "saxarba/building_single/building_single_hard_1.png"
 super * "building:4;bldg_elev:*;bldg_cf:*;fluff:1;bldg_class:0" "" "saxarba/building_single/building_single_hard_1.png"
@@ -37,6 +32,11 @@ super * "building:1;bldg_elev:1;bldg_cf:*;bldg_class:0" "" "saxarba/building_sin
 super * "building:1;bldg_elev:2;bldg_cf:*;bldg_class:0" "" "saxarba/building_single/building_single_light_1.png"
 super * "building:1;bldg_elev:3;bldg_cf:*;bldg_class:0" "" "saxarba/building_single/building_single_light_3.png"
 super * "building:1;bldg_elev:4;bldg_cf:*;bldg_class:0" "" "saxarba/building_single/building_single_light_2.png"
+
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_light/building_light_00.png"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_medium/building_medium_00.png"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_heavy/building_heavy_00.png"
+super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_hard/building_hard_00.png"
 
 #LIGHT
 super * "building:1:00;bldg_elev:*;bldg_cf:*;bldg_class:0" "" "saxarba/building_light/building_light_00.png"

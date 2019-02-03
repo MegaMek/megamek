@@ -464,23 +464,8 @@ public class BayWeaponHandler extends WeaponHandler {
 
         //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
         
-        // Report any AMS bay action against standard missiles.
-        // This only gets used in atmosphere/ground battles
-        // Non AMS point defenses only work in space
+        // Handle point defense fire. For cluster hit missile launchers, we'll report later.
         CounterAV = calcCounterAV();
-        //use this if counterfire destroys all the missiles
-        if (amsBayEngaged && (attackValue <= 0)) {
-            r = new Report(3356);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        } else if (amsBayEngaged) {
-            r = new Report(3354);
-            r.indent();
-            r.add(CounterAV);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
         
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -505,6 +490,42 @@ public class BayWeaponHandler extends WeaponHandler {
                 return false;
             }
         }
+        
+        //Report point defense effects
+        //Set up a cluster hits table modifier
+        double counterAVMod = (getCounterAV() / weapon.getBayWeapons().size());
+        //Report a failure due to overheating
+        if (pdOverheated
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } else if (pdOverheated) {
+            //Report a partial failure
+            r = new Report (3361);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+            //Halve the effectiveness of cluster hits modification
+            counterAVMod /= 2.0;
+        }
+        //Now report the effects, if any
+        //Missiles using the cluster hits table
+        if (amsBayEngaged || pdBayEngaged) {
+            r = new Report(3366);
+            r.indent();
+            r.subject = subjectId;
+            r.add((int) counterAVMod);
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+        //Large missiles
 
         Report.addNewline(vPhaseReport);
         toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");

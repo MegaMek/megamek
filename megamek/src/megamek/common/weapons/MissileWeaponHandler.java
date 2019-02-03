@@ -249,9 +249,21 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // Aero sanity reduces effectiveness of AMS bays with default cluster mods.
         // This attempts to account for that, but might need some balancing...
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            double counterAVMod = (getCounterAV() / 10.0);
-            nMissilesModifier -= counterAVMod;
+                && (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                        || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP))) {
+            if (getParentBayHandler() != null) {
+                WeaponHandler bayHandler = getParentBayHandler();
+                double counterAVMod = (bayHandler.getCounterAV() / 10.0);
+                //use this if point defenses engage the missiles
+                if (bayHandler.pdOverheated) {
+                    //Halve the effectiveness
+                    counterAVMod /= 2.0;
+                }
+                //Now report and apply the effect, if any
+                if (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged) {
+                    nMissilesModifier -= counterAVMod;
+                }
+            }
         }
 
         if (allShotsHit()) {

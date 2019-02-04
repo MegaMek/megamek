@@ -873,7 +873,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (game.getBoard().inSpace() 
                     || waa.isAirToAir(game)
                     || waa.isAirToGround(game)) {
-            // Ensures AMS state is properly updated
+            // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
@@ -897,16 +897,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.indent();
                 vPhaseReport.addElement(r); 
             }
-            if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
-                // handle single AMS action against standard missiles
-                // Thunderbolts get handled by calcHits below
-                int amsRoll = Compute.d6();
-                r = new Report(3352);
-                r.subject = subjectId;
-                r.add(amsRoll);
-                vPhaseReport.add(r);
-                hits = Math.max(0, hits - amsRoll);
-            } else if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
+            if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
+                // Thunderbolts are destroyed by AMS 50% of the time whether Aero Sanity is on or not
                 hits = calcHits(vPhaseReport);
             } else if (!bMissed && nweaponsHit == 1)  {
                 r = new Report(3390);
@@ -915,6 +907,15 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
             // This is for aero attacks as attack value. Does not apply if Aero Sanity is on
             if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
+                    // handle single AMS action against standard missiles
+                    int amsRoll = Compute.d6();
+                    r = new Report(3352);
+                    r.subject = subjectId;
+                    r.add(amsRoll);
+                    vPhaseReport.add(r);
+                    hits = Math.max(0, hits - amsRoll);
+                }
                 // Report any AMS bay action against standard missiles.
                 if (amsBayEngaged && (attackValue <= 0)) {
                     //use this if AMS counterfire destroys all the missiles
@@ -949,7 +950,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 }
             } 
         } else {
-            //If none of the above apply, or Aero Sanity is on, use this
+            //If none of the above apply
             hits = calcHits(vPhaseReport);
         }
 

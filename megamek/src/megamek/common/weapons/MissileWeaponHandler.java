@@ -870,9 +870,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (game.getBoard().inSpace() 
-                || waa.isAirToAir(game)
-                || waa.isAirToGround(game)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && (game.getBoard().inSpace() 
+                        || waa.isAirToAir(game)
+                        || waa.isAirToGround(game))) {
             // Ensures AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
@@ -946,6 +947,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         } else {
+            //If none of the above apply, or Aero Sanity is on, use this
             hits = calcHits(vPhaseReport);
         }
 

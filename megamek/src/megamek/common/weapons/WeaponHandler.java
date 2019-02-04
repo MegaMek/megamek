@@ -563,7 +563,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         while (vPhaseReport.size() > reportSize) {
                             vPhaseReport.remove(vPhaseReport.size() - 1);
                         }
-                        // nDamPerHit = 1;
                         hits = 0;
                         for (int i = 0; i < nweaponsHit; i++) {
                             hits += calcHits(throwAwayReport);

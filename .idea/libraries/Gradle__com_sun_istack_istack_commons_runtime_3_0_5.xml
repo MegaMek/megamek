@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.sun.istack:istack-commons-runtime:3.0.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.sun.istack/istack-commons-runtime/3.0.5/8052dc9920dfab5d50b8ca95c95a6ce4296a8f8b/istack-commons-runtime-3.0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.sun.istack/istack-commons-runtime/3.0.5/1b3883eeee5caee2bd70bd9aa3f21a27ba5d774d/istack-commons-runtime-3.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

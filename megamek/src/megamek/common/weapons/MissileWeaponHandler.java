@@ -870,10 +870,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && (game.getBoard().inSpace() 
-                        || waa.isAirToAir(game)
-                        || waa.isAirToGround(game))) {
+        if (game.getBoard().inSpace() 
+                    || waa.isAirToAir(game)
+                    || waa.isAirToGround(game)) {
             // Ensures AMS state is properly updated
             getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
@@ -907,38 +906,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.add(amsRoll);
                 vPhaseReport.add(r);
                 hits = Math.max(0, hits - amsRoll);
-            
-            // Report any AMS bay action against standard missiles.          
-            } else if (amsBayEngaged && (attackValue <= 0)) {
-                //use this if AMS counterfire destroys all the missiles
-                r = new Report(3356);
-                r.indent();
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (amsBayEngaged) {
-                //use this if AMS counterfire destroys some of the missiles
-                CounterAV = getCounterAV();
-                r = new Report(3354);
-                r.indent();
-                r.add(CounterAV);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-                
-             // Report any Point Defense bay action against standard missiles.
- 
-            } else if (pdBayEngaged && (attackValue <= 0)) {
-                //use this if PD counterfire destroys all the missiles
-                r = new Report(3355);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (pdBayEngaged) {
-                //use this if PD counterfire destroys some of the missiles
-                r = new Report(3353);
-                r.add(CounterAV);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
-            //This is reported elsewhere. Don't do anything else.   
             } else if (!bMissed && amsEngaged && isTbolt() && !ae.isCapitalFighter()) {
                 hits = calcHits(vPhaseReport);
             } else if (!bMissed && nweaponsHit == 1)  {
@@ -946,6 +913,41 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
+            // This is for aero attacks as attack value. Does not apply if Aero Sanity is on
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                // Report any AMS bay action against standard missiles.
+                if (amsBayEngaged && (attackValue <= 0)) {
+                    //use this if AMS counterfire destroys all the missiles
+                    r = new Report(3356);
+                    r.indent();
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                } else if (amsBayEngaged) {
+                    //use this if AMS counterfire destroys some of the missiles
+                    CounterAV = getCounterAV();
+                    r = new Report(3354);
+                    r.indent();
+                    r.add(CounterAV);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                    
+                // Report any Point Defense bay action against standard missiles.
+     
+                } else if (pdBayEngaged && (attackValue <= 0)) {
+                    //use this if PD counterfire destroys all the missiles
+                    r = new Report(3355);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                } else if (pdBayEngaged) {
+                    //use this if PD counterfire destroys some of the missiles
+                    r = new Report(3353);
+                    r.add(CounterAV);
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                } else if (amsBayEngagedMissile || pdBayEngagedMissile) {
+                //This is reported elsewhere. Don't do anything else.   
+                }
+            } 
         } else {
             //If none of the above apply, or Aero Sanity is on, use this
             hits = calcHits(vPhaseReport);

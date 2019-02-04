@@ -1,0 +1,338 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Kyushu Frigate
+</Name>
+
+<Model>
+(3057)
+</Model>
+
+<year>
+3057
+</year>
+
+<originalBuildYear>
+3057
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:6:1
+smallcraftbay:12.0:0:2
+mechbay:108.0:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:460.0:0
+crewquarters:1603.0:0
+cargobay:64066.0:2:6
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+521
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+11250
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+140
+90
+90
+70
+110
+70
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/40)
+Naval Autocannon (NAC/20)
+Ammo NAC/40:40
+Ammo NAC/20:50
+(B) Naval Autocannon (NAC/40)
+Naval Autocannon (NAC/20)
+Ammo NAC/40:40
+Ammo NAC/20:50
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval PPC (Heavy)
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:125
+(B) Naval Laser 35
+Naval Laser 35
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:125
+(B) Naval Laser 35
+Naval Laser 35
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/40)
+Naval Autocannon (NAC/20)
+Ammo NAC/40:40
+Ammo NAC/20:50
+(B) Naval Autocannon (NAC/40)
+Naval Autocannon (NAC/20)
+Ammo NAC/40:40
+Ammo NAC/20:50
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval PPC (Heavy)
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Naval Autocannon (NAC/20)
+Ammo NAC/40:40
+Ammo NAC/20:50
+(B) Naval Laser 35
+Naval Laser 35
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Naval Autocannon (NAC/20)
+Ammo NAC/40:40
+Ammo NAC/20:50
+(B) Naval Laser 35
+Naval Laser 35
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Ammo NAC/20:50
+(B) Naval PPC (Medium)
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Ammo NAC/20:50
+(B) Naval PPC (Medium)
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+70
+</structural_integrity>
+
+<source>
+TRO 3057R - Clan Invasion
+</source>
+
+<tonnage>
+630000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+130
+100
+</grav_decks>
+
+<crew>
+587
+</crew>
+
+<officers>
+46
+</officers>
+
+<gunners>
+53
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+45
+</escape_pod>
+

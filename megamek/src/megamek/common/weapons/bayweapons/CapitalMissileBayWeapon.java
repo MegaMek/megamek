@@ -25,8 +25,6 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.TeleMissileHandler;
-import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
@@ -52,7 +50,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         this.mediumRange = 24;
         this.longRange = 40;
         this.extremeRange = 50;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);

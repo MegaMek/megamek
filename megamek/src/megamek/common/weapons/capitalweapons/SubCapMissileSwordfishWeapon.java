@@ -48,7 +48,7 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
 		this.mediumRange = 14;
 		this.longRange = 21;
 		this.extremeRange = 28;
-		this.tonnage = 140.0f;
+		this.tonnage = 140.0;
 		this.bv = 317;
 		this.cost = 110000;
 		this.flags = flags.or(F_MISSILE);

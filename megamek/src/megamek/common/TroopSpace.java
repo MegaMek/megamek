@@ -85,6 +85,7 @@ public final class TroopSpace implements Transporter {
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean canLoad(Entity unit) {
         // Assume that we can carry the unit.
         boolean result = true;
@@ -113,6 +114,7 @@ public final class TroopSpace implements Transporter {
      *            <code>IllegalArgumentException</code> exception will be
      *            thrown.
      */
+    @Override
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
@@ -208,6 +210,7 @@ public final class TroopSpace implements Transporter {
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         return false;
     }
@@ -228,16 +231,19 @@ public final class TroopSpace implements Transporter {
      *         location. This value will be <code>null</code> if no unit is
      *         transported on the outside at that location.
      */
+    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
 
+    @Override
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
         return rv;
     }
 
-    public int getCargoMpReduction() {
+    @Override
+    public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
 
@@ -246,13 +252,19 @@ public final class TroopSpace implements Transporter {
         return "troopspace:" + totalSpace;
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }
     
+    @Override
     public void resetTransporter() {
         troops = new HashMap<>();
         currentSpace = totalSpace;
     }
     
+    @Override
+    public int hardpointCost() {
+        return 0;
+    }
 } // End package class TroopSpace implements Transporter

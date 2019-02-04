@@ -30,11 +30,14 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestEntity;
 
 public class BLKAeroFile extends BLKFile implements IMechLoader {
 
@@ -48,6 +51,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Aero a = new Aero();
@@ -174,6 +178,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
         a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
         a.initializeArmor(0, Aero.LOC_WINGS);
+        a.initializeArmor(IArmorState.ARMOR_NA, Aero.LOC_FUSELAGE);
 
         a.autoSetCapArmor();
         a.autoSetFatalThresh();
@@ -184,10 +189,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Wing", Aero.LOC_RWING);
-        loadEquipment(a, "Left Wing", Aero.LOC_LWING);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
 
         // now organize the weapons into groups for capital fighters
         a.updateWeaponGroups();
@@ -207,6 +211,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
     @Override
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
+        boolean addedCase = false;
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null) {
             return;
@@ -257,6 +262,13 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 }                 
 
                 EquipmentType etype = EquipmentType.get(equipName);
+                
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CASE)) {
+                    if (etype.isClan() || addedCase) {
+                        continue;
+                    }
+                    addedCase = true;
+                }
 
                 if (etype == null) {
                     // try w/ prefix
@@ -265,7 +277,8 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 

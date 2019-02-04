@@ -3,6 +3,7 @@ package megamek.client.bot.princess;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.Coords;
 import megamek.common.MovePath;
 
 /**
@@ -12,13 +13,7 @@ import megamek.common.MovePath;
  */
 public class PathRankerState {
     private Map<MovePath.Key, Double> pathSuccessProbabilities = new HashMap<>();
-    
-    /**
-     * Constructor - initializes the internal path ranker state variables to their defaults.
-     */
-    public PathRankerState() {
-        pathSuccessProbabilities = new HashMap<>();
-    }
+    private Map<Coords, Double> incomingFriendlyArtilleryDamage = new HashMap<>();
     
     /**
      * The map of success probabilities for given move paths.
@@ -27,5 +22,21 @@ public class PathRankerState {
      */
     public Map<MovePath.Key, Double> getPathSuccessProbabilities() {
         return pathSuccessProbabilities;
+    }
+    
+    /**
+     * Map of coordinates to known incoming artillery damage.
+     * @return Map of coordinates.
+     */
+    public Map<Coords, Double> getIncomingFriendlyArtilleryDamage() {
+        return incomingFriendlyArtilleryDamage;
+    }
+    
+    /**
+     * Convenience method that clears the current path ranker state. 
+     */
+    public void clearState() {
+        pathSuccessProbabilities.clear();
+        incomingFriendlyArtilleryDamage.clear();
     }
 }

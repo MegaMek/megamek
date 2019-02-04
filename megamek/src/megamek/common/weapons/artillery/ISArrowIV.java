@@ -18,6 +18,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -46,7 +47,7 @@ public class ISArrowIV extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 8;
         extremeRange = 8; // No extreme range.
-        tonnage = 15f;
+        tonnage = 15;
         criticals = 15;
         bv = 240;
         cost = 450000;
@@ -59,7 +60,8 @@ public class ISArrowIV extends ArtilleryWeapon {
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_CC);	
+            .setReintroductionFactions(F_CC)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
 }

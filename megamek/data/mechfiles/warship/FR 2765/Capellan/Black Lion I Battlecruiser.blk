@@ -2,284 +2,58 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
-Black Lion I-Battlecruiser
+Black Lion I Battlecruiser
 </Name>
+
 <Model>
+
 </Model>
 
-<Tonnage>
-720000
-</Tonnage>
+<year>
+2315
+</year>
+
+<originalBuildYear>
+2315
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:12.0:2:1
+smallcraftbay:12.0:2:2
+cargobay:93688.0:2:3
+crewquarters:3486.0:0
+1stclassquarters:1190.0:0
+2ndclassquarters:350.0:0
+steeragequarters:700.0:0
+</transporters>
+
 <SafeThrust>
 3
 </SafeThrust>
-<Armor>
-72
-84
-84
-84
-84
-72
-</Armor>
-<Nose Equipment>
-(B) NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-(B) NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Nose Equipment>
-
-<Front Left Side Equipment>
-NAC20
-NAC20
-NAC20 Ammo:30
-(B) KillerWhale
-KillerWhale
-KillerWhale
-KillerWhale Ammo:30
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Front Left Side Equipment>
-
-<Front Right Side Equipment>
-NAC20
-NAC20
-NAC20 Ammo:30
-(B) KillerWhale
-KillerWhale
-KillerWhale
-KillerWhale Ammo:30
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Front Right Side Equipment>
-
-<Left Broadside Equipment>
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Right Broadside Equipment>
-
-<Aft Left Side Equipment>
-NAC20
-NAC20
-NAC20 Ammo:30
-(B) KillerWhale
-KillerWhale
-KillerWhale
-KillerWhale Ammo:30
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Aft Left Side Equipment>
-
-<Aft Right Side Equipment> 
-NAC20
-NAC20
-NAC20 Ammo:30
-(B) KillerWhale
-KillerWhale
-KillerWhale
-KillerWhale Ammo:30
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Aft Right Side Equipment>
-
-<Aft Equipment> 
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-NAC20
-NAC20
-NAC20
-NAC20 Ammo:45
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISAC5 Ammo:80
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-(B) ISAC2
-ISAC2
-ISAC2
-ISAC2
-ISAC2 Ammo:90
-</Aft Equipment>
-
-<structural_integrity>
-75
-</structural_integrity>
 
 <heatsinks>
 1954
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
@@ -288,57 +62,310 @@ ISAC2 Ammo:90
 10000
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-2315
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+1
+</engine_type>
 
 <armor_type>
-0
+41
 </armor_type>
 
 <armor_tech>
 5
+</armor_tech>
 
-<engine_type>
-0
-</engine_type>
+<armor>
+72
+84
+84
+72
+84
+84
+</armor>
 
-<motion_type>
-aerodyne
-</motion_type>
+<Nose Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Nose Equipment>
 
-<transporters>
-SmallCraftBay:12:2
-SmallCraftBay:12:2
-CargoBay:93688:2
-</transporters>
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Left Front Side Equipment>
 
-<docking_collar>
-0
-</docking_collar>
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Right Front Side Equipment>
 
-<grav_deck>
-2
-</grav_deck>
+<Aft Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Aft Equipment>
 
-<escape_pod>
-36
-</escape_pod>
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Aft Left Side Equipment>
 
-<life_boat>
-36
-</life_boat>
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:30
+(B) Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:30
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:45
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+(B) Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<source>
+FR2765-CCAF - Star League
+</source>
+
+<tonnage>
+720000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+150
+150
+</grav_decks>
+
 <crew>
 717
 </crew>
+
+<officers>
+99
+</officers>
+
+<gunners>
+104
+</gunners>
 
 <passengers>
 70
@@ -347,3 +374,16 @@ CargoBay:93688:2
 <marines>
 140
 </marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+36
+</life_boat>
+
+<escape_pod>
+36
+</escape_pod>
+

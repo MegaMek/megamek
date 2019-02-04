@@ -42,10 +42,10 @@ public class ISLRT15OS extends LRTWeapon {
         waterMediumRange = 14;
         waterLongRange = 21;
         waterExtremeRange = 28;
-        tonnage = 7.5f;
+        tonnage = 7.5;
         criticals = 3;
         bv = 27;
-        flags = flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         cost = 87500;
         rulesRefs = "230,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

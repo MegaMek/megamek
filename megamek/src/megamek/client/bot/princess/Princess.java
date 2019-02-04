@@ -36,7 +36,6 @@ import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
@@ -44,7 +43,6 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
-import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -70,7 +68,6 @@ import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
@@ -92,6 +89,7 @@ public class Princess extends BotClient {
     
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
+    private ArtilleryTargetingControl atc;
     
     
     private BehaviorSettings behaviorSettings;
@@ -109,7 +107,7 @@ public class Princess extends BotClient {
     private boolean fleeBoard = false;
     private final IMoralUtil moralUtil = new MoralUtil(getLogger());
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
-    private final Set<Integer> myFleeingEntities = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
 
     /**
@@ -164,6 +162,18 @@ public class Princess extends BotClient {
 
     public LogLevel getVerbosity() {
         return getBehaviorSettings().getVerbosity();
+    }
+    
+    /**
+     * Lazy-loading accessor for the artillery targeting control.
+     * @return
+     */
+    public ArtilleryTargetingControl getArtilleryTargetingControl() {
+        if(atc == null) {
+            atc = new ArtilleryTargetingControl();
+        }
+        
+        return atc;
     }
 
     /**
@@ -332,6 +342,11 @@ public class Princess extends BotClient {
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    @Override
+    protected void initTargeting() {
+        getArtilleryTargetingControl().initializeForTargetingPhase();
     }
 
     @Override
@@ -529,21 +544,26 @@ public class Princess extends BotClient {
             // are loaded
             final Entity shooter = game.getFirstEntity(getMyTurn());
 
-            // If my unit is forced to withdraw, don't fire unless I've been 
-            // fired on.
+            // Forego firing if 
+            // a) hidden, 
+            // b) under "peaceful" forced withdrawal, 
+            // c) majority firepower is jammed 
+            // d) best firing plan comes up as crap (no expected damage/null)
+            //
+            // If foregoing firing, unjam highest-damage weapons first, then turret
+            
+            boolean skipFiring = false;
+            
+            // If my unit is forced to withdraw, don't fire unless I've been fired on.
             if (getForcedWithdrawal() && shooter.isCrippled()) {
                 final StringBuilder msg = new StringBuilder(shooter.getDisplayName())
                         .append(" is crippled and withdrawing.");
                 try {
                     if (attackedWhileFleeing.contains(shooter.getId())) {
-                        msg.append("\n\tBut I was fired on, so I will return " +
-                                   "fire.");
+                        msg.append("\n\tBut I was fired on, so I will return fire.");
                     } else {
-                        msg.append("\n\tI will not fire so long as I'm not " +
-                                   "fired on.");
-                        sendAttackData(shooter.getId(),
-                                       new Vector<>(0));
-                        return;
+                        msg.append("\n\tI will not fire so long as I'm not fired on.");
+                        skipFiring = true;
                     }
                 } finally {
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
@@ -552,50 +572,74 @@ public class Princess extends BotClient {
             
             // TODO: Make hidden units spot since they can't do anything else
             if(shooter.isHidden()) {
-                sendAttackData(shooter.getId(), new Vector<>(0));
+                skipFiring = true;
                 log(getClass(), METHOD_NAME, LogLevel.INFO, "Hidden unit skips firing.");
+            }
+
+            // calculating a firing plan is somewhat expensive, so 
+            // we skip this step if we have already decided not to fire due to being hidden or under "peaceful forced withdrawal"
+            if(!skipFiring) {
+                // Set up ammo conservation.
+                final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
+    
+                // entity that can act this turn make sure weapons are loaded
+                final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
+                                                                      getHonorUtil(),
+                                                                      game,
+                                                                      ammoConservation);
+                if ((null != plan) && (plan.getExpectedDamage() > 0)) {
+                    getFireControl(shooter).loadAmmo(shooter, plan);
+                    plan.sortPlan();
+    
+                    log(getClass(),
+                        METHOD_NAME,
+                        LogLevel.INFO,
+                        shooter.getDisplayName() +
+                        " - Best Firing Plan: " +
+                        plan.getDebugDescription(LogLevel.DEBUG ==
+                                                 getVerbosity()));
+    
+                    // Add expected damage from the chosen FiringPlan to the 
+                    // damageMap for the target enemy.
+                    final Integer targetId = plan.getTarget().getTargetId();
+                    final Double newDamage = damageMap.get(targetId) + plan.getExpectedDamage();
+                    damageMap.replace(targetId,newDamage);
+    
+                    // tell the game I want to fire
+                    sendAttackData(shooter.getId(), plan.getEntityActionVector());
+                    return;
+                } else {
+                    log(getClass(), METHOD_NAME, LogLevel.INFO,
+                        "No best firing plan for " + shooter.getDisplayName());
+                    skipFiring = true;
+                }
+            }
+            
+            // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
+            if(skipFiring) {
+                Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+                sendAttackData(shooter.getId(), unjamPlan);
                 return;
             }
-
-            // Set up ammo conservation.
-            final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
-
-            // entity that can act this turn make sure weapons are loaded
-            final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
-                                                                  getHonorUtil(),
-                                                                  game,
-                                                                  ammoConservation);
-            if (null != plan) {
-                getFireControl(shooter).loadAmmo(shooter, plan);
-                plan.sortPlan();
-
-                log(getClass(),
-                    METHOD_NAME,
-                    LogLevel.INFO,
-                    shooter.getDisplayName() +
-                    " - Best Firing Plan: " +
-                    plan.getDebugDescription(LogLevel.DEBUG ==
-                                             getVerbosity()));
-
-                // Add expected damage from the chosen FiringPlan to the 
-                // damageMap for the target enemy.
-                final Integer targetId = plan.getTarget().getTargetId();
-                final Double newDamage = damageMap.get(targetId) + plan.getExpectedDamage();
-                damageMap.replace(targetId,newDamage);
-
-                // tell the game I want to fire
-                sendAttackData(shooter.getId(), plan.getEntityActionVector());
-
-            } else {
-                log(getClass(), METHOD_NAME, LogLevel.INFO,
-                    "No best firing plan for " + shooter.getDisplayName());
-                sendAttackData(shooter.getId(), new Vector<>(0));
-            }
+            
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
     }
 
+    /**
+     * Calculates the targeting/offboard turn
+     * This includes firing TAG and non-direct-fire artillery
+     */
+    @Override
+    protected void calculateTargetingOffBoardTurn() {
+        Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+        FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
+        
+        sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
+        sendDone(true);
+    }
+    
     private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
         final String METHOD_NAME = "calcAmmoConservation(Entity)";
         final double aggroFactor =
@@ -1031,10 +1075,25 @@ public class Princess extends BotClient {
         return moralUtil;
     }
 
+    /**
+     * Logic to determine if this entity is "falling back" for any reason
+     * @param entity The entity to check.
+     * @return Whether or not the entity is falling back.
+     */
     boolean isFallingBack(final Entity entity) {
-        return getMyFleeingEntities().contains(entity.getId());
+        return (getBehaviorSettings().getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) ||
+                (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true));
     }
 
+    /**
+     * Logic to determine if this entity is in a state where it can shoot due to being attacked while fleeing.
+     * @param entity Entity to check.
+     * @return Whether or not this entity can shoot while falling back.
+     */
+    boolean canShootWhileFallingBack(Entity entity) {
+        return attackedWhileFleeing.contains(entity.getId());
+    }
+    
     boolean mustFleeBoard(final Entity entity) {
         if (!isFallingBack(entity)) {
             return false;
@@ -1361,8 +1420,9 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                // Is my unit trying to withdraw?
-                final boolean fleeing = getMyFleeingEntities().contains(mine.getId());
+                // Is my unit trying to withdraw as per forced withdrawal rules?
+                // shortcut: we already check for forced withdrawal above, so need to do that here
+                final boolean fleeing = crippledUnits.contains(mine.getId()); 
 
                 for (final int id : attackedBy) {
                     final Entity entity = getGame().getEntity(id);
@@ -1503,6 +1563,8 @@ public class Princess extends BotClient {
                 return; // no need to initialize twice
             }
 
+            refreshCrippledUnits();
+            
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
@@ -1571,6 +1633,27 @@ public class Princess extends BotClient {
         newtonianAerospacePathRanker.setFireControl(fireControls.get(FireControlType.Basic));
         newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
+    }
+    
+    /**
+     * Load the list of units considered crippled at the time the bot was loaded or the beginning of the turn,
+     * whichever is the more recent.
+     */
+    public void refreshCrippledUnits() {
+        // if we're not following 'forced withdrawal' rules, there's no need for this
+        if(!getForcedWithdrawal()) {
+            return;
+        }
+        
+        // this approach is a little bit inefficient, but the running time is only O(n) where n is the number
+        // of princess owned units, so it shouldn't be a big deal. 
+        crippledUnits.clear();
+        
+        for(Entity e : this.getEntitiesOwned()) {
+            if(e.isCrippled(true)) {
+                crippledUnits.add(e.getId());
+            }
+        }
     }
     
     private boolean isEnemyGunEmplacement(final Entity entity,
@@ -1700,41 +1783,11 @@ public class Princess extends BotClient {
     public void endOfTurnProcessing() {
         getLogger().methodBegin(getClass(), "endOfTurnProcessing()");
         checkForDishonoredEnemies();
-        updateMyFleeingEntities();
         checkForBrokenEnemies();
+        // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishoneredEnemies
+        // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
+        refreshCrippledUnits();
         getLogger().methodEnd(getClass(), "endOfTurnProcessing()");
-    }
-
-    Set<Integer> getMyFleeingEntities() {
-        return myFleeingEntities;
-    }
-
-    private void updateMyFleeingEntities() {
-        final String METHOD_NAME = "updateMyFleeingEntities()";
-
-        final StringBuilder msg =
-                new StringBuilder("Updating my list of falling back units.");
-
-        try {
-            // If the Forced Withdrawal rule is not turned on, then it's a 
-            // fight to the death anyway.
-            if (!getForcedWithdrawal()) {
-                msg.append("\n\tForced withdrawal turned off.");
-                return;
-            }
-
-            for (final Entity mine : getEntitiesOwned()) {
-                if (myFleeingEntities.contains(mine.getId())) {
-                    continue;
-                }
-                if (wantsToFallBack(mine)) {
-                    msg.append("\n\tAdding ").append(mine.getDisplayName());
-                    myFleeingEntities.add(mine.getId());
-                }
-            }
-        } finally {
-            log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
-        }
     }
 
     protected void handlePacket(final Packet c) {
@@ -1798,8 +1851,9 @@ public class Princess extends BotClient {
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
         MovePath retval = path;
-        evadeIfNotFiring(retval, 0 >= expectedDamage);
+        evadeIfNotFiring(retval, expectedDamage >= 0);
         unloadTransportedInfantry(retval);
+        unjamRAC(retval);
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
@@ -1808,6 +1862,18 @@ public class Princess extends BotClient {
         }
         
         return retval;
+    }
+    
+    /**
+     * Helper function that appends an unjam RAC command to the end of a qualifying path.
+     * @param path The path to process.
+     */
+    private void unjamRAC(MovePath path) { 
+        if(path.getEntity().canUnjamRAC() && 
+                (path.getMpUsed() <= path.getEntity().getWalkMP()) &&
+                !path.isJumping()) {
+            path.addStep(MoveStepType.UNJAM_RAC);
+        }
     }
     
     /**
@@ -1828,7 +1894,7 @@ public class Princess extends BotClient {
         // then evade
         if(pathEntity.isAirborne() &&
            !possibleToInflictDamage &&
-           (path.getMpUsed() <= AeroGroundPathFinder.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
+           (path.getMpUsed() <= AeroPathUtil.calculateMaxSafeThrust((IAero) path.getEntity()) - 2)) {
             path.addStep(MoveStepType.EVADE);
         }
     }
@@ -1862,6 +1928,11 @@ public class Princess extends BotClient {
         // loop through all entities carried by the current entity
         for(Transporter transport : movingEntity.getTransports()) {
             for(Entity loadedEntity : transport.getLoadedUnits()) {
+                // there's really no good reason for Princess to disconnect trailers.
+                // Let's skip those for now. We don't want to create a bogus 'unload' step for them anyhow.
+                if (loadedEntity.isTrailer() && loadedEntity.getTowedBy() != Entity.NONE) {
+                    continue;
+                }
                 // favorable conditions include: 
                 // - the loaded entity should be able to enter the current terrain
                 // - the loaded entity should be within max weapons range + movement range of an enemy
@@ -1887,7 +1958,7 @@ public class Princess extends BotClient {
             }
         }
     }
-
+    
     public void sendChat(final String message,
                          final LogLevel logLevel) {
         if (getVerbosity().willLog(logLevel)) {

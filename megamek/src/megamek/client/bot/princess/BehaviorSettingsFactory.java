@@ -16,11 +16,12 @@ package megamek.client.bot.princess;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
+import megamek.utils.MegaMekXmlUtil;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -144,7 +145,7 @@ public class BehaviorSettingsFactory {
                 return null;
             }
             try(InputStream is = new FileInputStream(behaviorFile)) {
-                return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+                return MegaMekXmlUtil.newSafeDocumentBuilder().parse(is);
             }
         } catch (Exception e) {
             getLogger().error(getClass(), METHOD_NAME, e);
@@ -212,7 +213,7 @@ public class BehaviorSettingsFactory {
                 return false;
             }
 
-            Document behaviorDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Document behaviorDoc = MegaMekXmlUtil.newSafeDocumentBuilder().newDocument();
             Node rootNode = behaviorDoc.createElement("princessBehaviors");
             synchronized (behaviorMap) {
                 for (String key : behaviorMap.keySet()) {

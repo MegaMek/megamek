@@ -43,7 +43,7 @@ battlearmorbay:20.0:1:3
 2ndclassquarters:0.0:0
 1stclassquarters:50.0:0
 crewquarters:161.0:0
-cargobay:509.5:1:4
+cargobay:509.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -229,6 +229,9 @@ ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 ISLaserAntiMissileSystem
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 30

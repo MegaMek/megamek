@@ -44,7 +44,7 @@ public class CLLB2XAC extends LBXACWeapon {
         this.mediumRange = 20;
         this.longRange = 30;
         this.extremeRange = 40;
-        this.tonnage = 5.0f;
+        this.tonnage = 5.0;
         this.criticals = 3;
         this.bv = 47;
         this.cost = 150000;

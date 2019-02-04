@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,39 +20,32 @@ Heavy Strike Fighter
 Inseki II
 </Model>
 
-<Tonnage>
-45
-</Tonnage>
+<year>
+2793
+</year>
+
+<originalBuildYear>
+2793
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-12
-10
-10
-8
-</Armor>
-
-<Nose Equipment>
-PPC
-</Nose Equipment>
-
-<Left Wing Equipment>
-LRM 10
-IS Ammo LRM-10
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-LRM 10
-IS Ammo LRM-10
-</Right Wing Equipment>
-
-<Aft Equipment>
-Machine Gun
-IS Machine Gun Ammo - Half
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -66,30 +59,47 @@ IS Machine Gun Ammo - Half
 480
 </fuel>
 
-<type>
-IS Level 1
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-2793
-</year>
+<armor>
+12
+10
+10
+8
+</armor>
+
+<Nose Equipment>
+PPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+LRM 10
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 10
+</Right Wing Equipment>
+
+<Aft Equipment>
+Machine Gun
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Machine Gun Ammo - Half
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Succession Wars
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+45.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

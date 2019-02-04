@@ -45,7 +45,7 @@ public class ISERLaserLarge extends LaserWeapon {
         this.waterMediumRange = 9;
         this.waterLongRange = 12;
         this.waterExtremeRange = 18;
-        this.tonnage = 5.0f;
+        this.tonnage = 5.0;
         this.criticals = 2;
         this.bv = 163;
         this.cost = 200000;
@@ -60,7 +60,7 @@ public class ISERLaserLarge extends LaserWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
             .setISAdvancement(2610, 2620, 3045, 2950, 3037)
-            .setISApproximate(false, false, false,false, false)
+            .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
             .setReintroductionFactions(F_DC);

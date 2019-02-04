@@ -15,7 +15,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -867,6 +866,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
     }
+
+    /**
+     * @see {@link UnitType}
+     */
+    public abstract int getUnitType();
     
     public CrewType defaultCrewType() {
         return CrewType.SINGLE;
@@ -1378,6 +1382,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getWeightClassName() {
         return EntityWeightClass.getClassName(getWeightClass(), this);
     }
+    
+    //Since this varies by unit type, it will be defined as overrides in each relevant class
+    public boolean isSuperHeavy() {
+        return false;
+    }
 
     public void setWeight(double weight) {
         this.weight = weight;
@@ -1397,7 +1406,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns the number of locations in the entity
      */
     public abstract int locations();
-
+    
+    /**
+     * Determines where to place equipment that does not require a specific location. What
+     * this means varies by {@link Entity} type.
+     * 
+     * @return        The location to place equipment that is not required to be assigned a location,
+     *                defaulting to Entity.LOC_NONE for unit types that do not have such a location.
+     */
+    public int getBodyLocation() {
+        return LOC_NONE;
+    }
+    
     /**
      * Returns the player that "owns" this entity.
      */
@@ -1573,7 +1593,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isLoadableThisTurn() {
         return (delta_distance == 0) && (conveyance == Entity.NONE)
-               && !unloadedThisTurn && !isClearingMinefield();
+               && !unloadedThisTurn && !isClearingMinefield() && getTractor() == Entity.NONE;
     }
 
     /**
@@ -2280,6 +2300,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
+     * Convenience method to determine whether this entity should be treated as an airborne aero on a ground map.
+     * @return True if this is an airborne aircraft on a ground map.
+     */
+    public boolean isAirborneAeroOnGroundMap() {
+        return isAero() && isAirborne() && getGame().getBoard().onGround();
+    }
+    
+    /**
      * Returns the display name for this entity.
      */
     @Override
@@ -2497,7 +2525,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!ignoreheat) {
             mp = Math.max(0, mp - getHeatMPReduction());
         }
-        mp = Math.max(mp - getCargoMpReduction(), 0);
+        mp = Math.max(mp - getCargoMpReduction(this), 0);
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
                                  .getMovementMods(this);
@@ -3036,6 +3064,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
     }
+    
+    /**
+     * @return The index of the first armored location (skipping vehicle body, et. al.)
+     */
+    public int firstArmorIndex() {
+        return 0;
+    }
 
     /**
      * Initializes the armor on the unit. Sets the original and starting point
@@ -3310,7 +3345,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod++;
         }
         if ((mod > 0) && (getCrew() != null)
-                && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
+                && hasAbility(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
             mod--;
         }
 
@@ -3490,6 +3525,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // Oneshot ammo will be identified by having a location
                 // of null. Other areas in the code will rely on this.
                 addEquipment(m, Entity.LOC_NONE, false);
+                // Fusillade gets a second round, which can be a different munition type so
+                // need to allow for two separate mounts.
+                if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+                    Mounted m2 = new Mounted(this, m.getType());
+                    m2.setOmniPodMounted(mounted.isOmniPodMounted());
+                    m2.setShotsLeft(shots);
+                    m.setLinked(m2);
+                    addEquipment(m2, Entity.LOC_NONE, false);
+                }
             }
         }
         if (mounted.getType() instanceof AmmoType) {
@@ -3571,13 +3615,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return the <code>int</code> count of the amount of shots of all
      * munitions equivalent to the given ammo type.
      */
-    public int getTotalMunitionsOfType(EquipmentType et) {
+    public int getTotalMunitionsOfType(@Nullable EquipmentType et) {
         int totalShotsLeft = 0;
         
         // specifically don't count caseless munitions as being of the same type as non-caseless
         for (Mounted amounted : getAmmo()) {
             boolean amCaseless = ((AmmoType) amounted.getType()).getMunitionType() == AmmoType.M_CASELESS;
-            boolean etCaseless = ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
+            boolean etCaseless = (et != null) && ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
             boolean caselessMismatch = amCaseless != etCaseless;
             
             if (amounted.getType().equals(et) && !caselessMismatch && !amounted.isDumping()) {                
@@ -3788,6 +3832,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
+        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                && (mountedAmmo.getLocation() == Entity.LOC_NONE)) {
+            // Make sure this ammo is in the chain, then move it to the head.
+            for (Mounted current = mounted; current != null; current = current.getLinked()) {
+                if (current == mountedAmmo) {
+                    current.getLinkedBy().setLinked(current.getLinked());
+                    current.setLinked(mounted.getLinked());
+                    mounted.setLinked(current);
+                    return true;
+                }
+            }
         }
         return success;
     }
@@ -5119,13 +5174,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
        
         // check for Manei Domini implants
-        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
-        	|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)	
-        	|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        	|| hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)	
+        	|| hasAbility(OptionsConstants.MD_MM_IMPLANTS))
         		&& (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
-            		&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
-			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) 
+            || (hasAbility(OptionsConstants.MD_MM_IMPLANTS) 
+            		&& (hasAbility(OptionsConstants.MD_VDNI) 
+			|| hasAbility(OptionsConstants.MD_BVDNI)))) 
                
         {
             return !checkECM
@@ -5139,7 +5194,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                   getPosition());
         }
         // check for SPA
-        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+        if (hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
             return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
@@ -5158,13 +5213,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) 
-        		|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
-        		|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO) 
+        		|| hasAbility(OptionsConstants.MD_MM_IMPLANTS))
+        		|| hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
                 	&& (this instanceof Infantry) && !(this instanceof BattleArmor))        		
-                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
-                	&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
-    			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
+                || (hasAbility(OptionsConstants.MD_MM_IMPLANTS) 
+                	&& (hasAbility(OptionsConstants.MD_VDNI) 
+    			|| hasAbility(OptionsConstants.MD_BVDNI)))) {
             cyberBonus = 2;
         }
 
@@ -5180,7 +5235,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check for SPA
         int spaBonus = 0;
-        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+        if (hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
             spaBonus = 1;
         }
 
@@ -5480,8 +5535,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         if ((this instanceof Infantry) && (null != crew)
-            && crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
-            && crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
+                //Fix for Bug Report #1194
+            && hasAbility(OptionsConstants.MD_ENH_MM_IMPLANTS)
+            && hasAbility(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return true;
         }
         return false;
@@ -6792,14 +6848,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
         if ((weatherMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
+                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
         if ((windMod != 0) && !game.getBoard().inSpace()
-                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
+                && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
@@ -7265,7 +7321,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
                 && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
-            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
+            if (hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 roll.addModifier(-1, "Mountaineer");
             }
         } else {
@@ -7295,7 +7351,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
-            if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
+            if (hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
                 roll.addModifier(-1, "Swamp Beast");
             }
             addPilotingModifierForTerrain(roll, curPos, false);
@@ -7351,7 +7407,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = 1;
         }
 
-        if ((waterLevel > 1) && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FROGMAN)
+        if ((waterLevel > 1) && hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && ((this instanceof Mech) || (this instanceof Protomech))) {
             roll.append(new PilotingRollData(getId(), -1, "Frogman"));
         }
@@ -7671,7 +7727,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = -1;
         }
 
-        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE)) {
+        if (hasAbility(OptionsConstants.PILOT_MANEUVERING_ACE)) {
             mod--;
         }
 
@@ -7771,13 +7827,40 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // one can only load one's own team's units!
         if (!unit.isEnemyOf(this)) {
-            // Walk through this entity's transport components;
-            // if one of them can load the unit, we can.
-            Enumeration<Transporter> iter = transports.elements();
-            while (iter.hasMoreElements()) {
-                Transporter next = iter.nextElement();
-                if (next.canLoad(unit)
-                    && (!checkElev || (unit.getElevation() == getElevation()))) {
+            
+            /* Mechanized BA and protomechs occupy the same space, and if one is already
+             * present the other cannot be loaded. It is still possible for a support vee
+             * to carry mechanized BA externally and protos in a bay, so we need to check for
+             * external units first then check for conflicts only for other external mounts. */ 
+            boolean hasExternalBA = false;
+            boolean hasExternalProtos = false;
+            boolean hasExternalUltraheavy = false;
+            if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                    || unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                for (Transporter t : transports) {
+                    // ProtomechClampMount is a subclass of BattleArmorHandles so we need to check it first
+                    if (t instanceof ProtomechClampMount) {
+                        hasExternalProtos |= t.getUnused() == 0;
+                        hasExternalUltraheavy |= t.getLoadedUnits().stream()
+                                .anyMatch(e -> e.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+                    } else if (t instanceof BattleArmorHandles) {
+                        hasExternalBA |= t.getUnused() == 0;
+                    }
+                }
+            }
+            // We can't mix BA and protos, and we can't mount an ultraheavy proto if already carrying another.
+            boolean noExternalMount = (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR) && hasExternalProtos)
+                    || (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalBA);
+                    
+            if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH) && hasExternalProtos) {
+                noExternalMount |= hasExternalUltraheavy
+                        || (unit.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+            }
+            
+            for (Transporter t : transports) {
+                if (t.canLoad(unit)
+                        && (!checkElev || unit.getElevation() == getElevation())
+                        && !((t instanceof BattleArmorHandles) && noExternalMount)) {
                     return true;
                 }
             }
@@ -7983,7 +8066,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void pickUp(MechWarrior mw) {
-        pickedUpMechWarriors.addElement(new Integer(mw.getId()));
+        pickedUpMechWarriors.addElement(mw.getId());
     }
 
     /**
@@ -8001,6 +8084,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         for (Transporter next : transports) {
+            //Don't look at trailer hitches here, that's separate
+            if (next instanceof TankTrailerHitch) {
+                continue;
+            }
             for (Entity e : next.getLoadedUnits()) {
                 result.add(e);
             }
@@ -8583,10 +8670,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         int rv = 0;
         for (Transporter t : transports) {
-            rv += t.getCargoMpReduction();
+            rv += t.getCargoMpReduction(carrier);
         }
         return rv;
     }
@@ -8635,6 +8722,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getTransportId() {
         return conveyance;
+    }
+    
+    @Override
+    public int hardpointCost() {
+        return 0;
     }
 
     /**
@@ -9384,7 +9476,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isUsingManAce() {
-        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE);
+        return hasAbility(OptionsConstants.PILOT_MANEUVERING_ACE);
     }
 
     public Enumeration<Entity> getKills() {
@@ -9679,7 +9771,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // check if we can dodge and target can attack us,
             // then we are eligible.
             canHit |= ((this instanceof Mech) && !isProne()
-                       && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
+                       && hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
                     .canPhysicalTarget(game, target.getId(), this));
         }
 
@@ -10116,8 +10208,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param weaponId The <code>int</code> id of the shooting lrm launcher
      */
     public void addTargetedBySwarm(int entityId, int weaponId) {
-        hitBySwarmsEntity.addElement(new Integer(entityId));
-        hitBySwarmsWeapon.addElement(new Integer(weaponId));
+        hitBySwarmsEntity.addElement(entityId);
+        hitBySwarmsWeapon.addElement(weaponId);
     }
 
     /**
@@ -10141,16 +10233,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getShortRangeModifier() {
         int mod = 0;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_MEDIUM)) {
             mod = 2;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_LONG)) {
             mod = 4;
         }
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_EXTREME)) {
             mod = 6;
         }
-        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
@@ -10170,10 +10262,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_MEDIUM)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_M)) {
@@ -10187,10 +10279,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_LONG)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
@@ -10210,10 +10302,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+        if (hasAbility(OptionsConstants.GUNNERY_RANGE_MASTER, Crew.RANGEMASTER_EXTREME)) {
             mod = 0;
         }
-        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
+        if (hasAbility(OptionsConstants.GUNNERY_SNIPER) && (mod > 0)) {
             mod = mod / 2;
         }
         return mod;
@@ -10407,6 +10499,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        if (isSupportVehicle()) {
+            for (Transporter t : getTransports()) {
+                int seatCost = 0;
+                if (t instanceof PillionSeatCargoBay) {
+                    seatCost += 10;
+                } else if (t instanceof StandardSeatCargoBay) {
+                    seatCost += 100;
+                }
+                if (seatCost > 0) {
+                    bvText.append(startColumn);
+                    bvText.append("Seating");
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append(commafy.format(seatCost));
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
+            }
+        }
         return cost;
     }
     
@@ -10582,7 +10693,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT));
+        return (hasEiCockpit() && hasAbility(OptionsConstants.UNOFF_EI_IMPLANT));
     }
 
     public boolean isLayingMines() {
@@ -10788,7 +10899,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         IHex hex = game.getBoard().getHex(c);
         hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
 
-        if (hex.containsTerrain(Terrains.JUNGLE) && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
+        if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
             roll.addModifier(-1, "Forest Ranger");
         }
     }
@@ -13418,64 +13529,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return Math.ceil(total / 5) / 2;
     }
 
-    public class EntityFluff implements Serializable {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -8018098140016149185L;
-        private String capabilities = "";
-        private String overview = "";
-        private String deployment = "";
-        private String history = "";
-        private String mmlImageFilePath = "";
-
-        public EntityFluff() {
-            // Constructor
-        }
-
-        public String getCapabilities() {
-            return capabilities;
-        }
-
-        public void setCapabilities(String newCapabilities) {
-            capabilities = newCapabilities;
-        }
-
-        public String getOverview() {
-            return overview;
-        }
-
-        public void setOverview(String newOverview) {
-            overview = newOverview;
-        }
-
-        public String getDeployment() {
-            return deployment;
-        }
-
-        public void setDeployment(String newDeployment) {
-            deployment = newDeployment;
-        }
-
-        public void setHistory(String newHistory) {
-            history = newHistory;
-        }
-
-        public String getHistory() {
-            return history;
-        }
-
-        public String getMMLImagePath() {
-            return mmlImageFilePath;
-        }
-
-        public void setMMLImagePath(String filePath) {
-            mmlImageFilePath = filePath;
-        }
-
-
-    }
-
     public Vector<Integer> getLoadedKeepers() {
         return loadedKeepers;
     }
@@ -13779,14 +13832,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         vDesc.addElement(r);
                     }
                     if (this instanceof Mech) {
-                        vCriticals.put(new Integer(Mech.LOC_CT),
+                        vCriticals.put(Mech.LOC_CT,
                                        new LinkedList<CriticalSlot>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
                             CriticalSlot cs = getCritical(Mech.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                                 && (cs.getIndex() == Mech.SYSTEM_ENGINE)
                                 && cs.isHittable()) {
-                                vCriticals.get(new Integer(Mech.LOC_CT))
+                                vCriticals.get(Mech.LOC_CT)
                                           .add(cs);
                                 hits--;
                             }
@@ -13802,33 +13855,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 .hasModerateMovementDamage();
                         boolean heavyMovementDamage = tank
                                 .hasHeavyMovementDamage();
-                        vCriticals.put(new Integer(Tank.LOC_BODY),
-                                       new LinkedList<CriticalSlot>());
-                        vCriticals.put(new Integer(-1),
-                                       new LinkedList<CriticalSlot>());
+                        vCriticals.put(Tank.LOC_BODY, new LinkedList<>());
+                        vCriticals.put(-1, new LinkedList<>());
                         if (tank instanceof VTOL) {
-                            vCriticals.put(new Integer(VTOL.LOC_ROTOR),
-                                           new LinkedList<CriticalSlot>());
+                            vCriticals.put(VTOL.LOC_ROTOR, new LinkedList<>());
                         }
                         for (int i = 0; i < hits; i++) {
                             if (tank instanceof VTOL) {
                                 if (vtolStabilizerHit) {
-                                    vCriticals.get(new Integer(Tank.LOC_BODY))
-                                              .add(new CriticalSlot(
+                                    vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
                                                       CriticalSlot.TYPE_SYSTEM,
                                                       Tank.CRIT_ENGINE));
                                 } else {
                                     vCriticals
-                                            .get(new Integer(VTOL.LOC_ROTOR))
-                                            .add(new CriticalSlot(
+                                            .get(VTOL.LOC_ROTOR).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM,
                                                     VTOL.CRIT_FLIGHT_STABILIZER));
                                     vtolStabilizerHit = true;
                                 }
                             } else {
                                 if (heavyMovementDamage) {
-                                    vCriticals.get(new Integer(Tank.LOC_BODY))
-                                              .add(new CriticalSlot(
+                                    vCriticals.get(Tank.LOC_BODY).add(new CriticalSlot(
                                                       CriticalSlot.TYPE_SYSTEM,
                                                       Tank.CRIT_ENGINE));
                                 } else if (moderateMovementDamage) {
@@ -13836,8 +13883,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // signify the calling function to deal
                                     // movement damage
                                     vCriticals
-                                            .get(new Integer(-1))
-                                            .add(new CriticalSlot(
+                                            .get(-1).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM, 3));
                                     heavyMovementDamage = true;
                                 } else if (minorMovementDamage) {
@@ -13845,8 +13891,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // signify the calling function to deal
                                     // movement damage
                                     vCriticals
-                                            .get(new Integer(-1))
-                                            .add(new CriticalSlot(
+                                            .get(-1).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM, 2));
                                     moderateMovementDamage = true;
                                 } else {
@@ -13854,8 +13899,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // signify the calling function to deal
                                     // movement damage
                                     vCriticals
-                                            .get(new Integer(-1))
-                                            .add(new CriticalSlot(
+                                            .get(-1).add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM, 1));
                                     minorMovementDamage = true;
                                 }
@@ -13875,9 +13919,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                         .randomInt(getNumberOfCriticals(loc));
                                 slot = getCritical(loc, slotIndex);
                             } while ((slot == null) || !slot.isHittable());
-                            vCriticals.put(new Integer(loc),
-                                           new LinkedList<CriticalSlot>());
-                            vCriticals.get(new Integer(loc)).add(slot);
+                            vCriticals.put(loc, new LinkedList<>());
+                            vCriticals.get(loc).add(slot);
                         }
                     }
                 }
@@ -14620,7 +14663,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getAllowedPhysicalAttacks() {
-        if ((null != crew) && crew.getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
+        if ((null != crew) && hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             return 2;
         }
         return 1;
@@ -14976,4 +15019,519 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getTilesetModeString() {
         return "";
     }
+    
+    //Tractors and trailers, tugs, etc
+    
+    /**
+     * Used to determine if this vehicle can be towed by a tractor
+     * 
+     * @return
+     */
+    public boolean isTrailer() {
+        return false;
+    }
+    
+    /**
+     * Used to determine if this vehicle can be the engine/tractor 
+     * for a bunch of trailers
+     * 
+     * @return
+     */
+    public boolean isTractor() {
+        return false;
+    }
+    
+    /**
+     * Returns a list of Coords that need to be checked for entities that can be towed
+     * This accounts for the hexes occupied by each entity in the 'train', plus hexes
+     * in front of or behind each trailer hitch 
+     * 
+     * @return
+     */
+    public Set<Coords> getHitchLocations() {
+        Set<Coords> trailerPos = new HashSet<Coords>();
+        //First, set up a list of all the entities in this train
+        ArrayList<Entity> thisTrain = new ArrayList<>();
+        thisTrain.add(this);
+        for (int id : getAllTowedUnits()) {
+            Entity trailer = game.getEntity(id);
+            thisTrain.add(trailer);
+        }
+        //Check each entity in the train for working hitches
+        for (Entity e : thisTrain) {
+            for (Mounted m : e.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_HITCH) && m.isReady()) {
+                    //Add the coords of the unit with the empty hitch
+                    trailerPos.add(e.getPosition());
+                    
+                    //Now, check the location of the hitch (which should just be front or rear)
+                    //and add the hex adjacent to the entity in the appropriate direction
+                    //Offset the location value to match the directions in Coords.
+                    int dir = e.getFacing();
+                    if (m.getLocation() == Tank.LOC_REAR
+                            || m.getLocation() == SuperHeavyTank.LOC_REAR) {
+                        dir = ((dir + 3) % 6);
+                    }
+                    trailerPos.add(e.getPosition().translated(dir));
+                }
+            }
+        }
+        return trailerPos;
+    }
+    
+    /**
+     * Matches up a trailer hitch transporter with its Id # 
+     *
+     * @param bayNumber - the index of the transporter we're trying to find.
+     * @returns the trailerhitch corresponding to the passed-in value
+     */
+    public TankTrailerHitch getHitchById(int bayNumber) {
+        Transporter transporter = transports.get(bayNumber);
+        if (transporter instanceof TankTrailerHitch) {
+            return (TankTrailerHitch) transporter;
+        }
+        return null;
+    }
+    
+    /**
+     * Finds the trailer hitch transporter that is carrying a given entityId
+     * Hitches move around in Transports on loading a saved game
+     *
+     * @param id - the id of the loaded Entity we're trying to find
+     * @returns the trailerhitch corresponding to the passed-in value
+     */
+    public TankTrailerHitch getHitchCarrying(int id) {
+        for (Transporter next : transports) {
+            if (next instanceof TankTrailerHitch) {
+                if (next.getLoadedUnits().contains(game.getEntity(id))) {
+                    return (TankTrailerHitch) next;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Adds a trailer hitch to any tracked or wheeled military vehicle, or SupportVee with 
+     * Tractor chassis mod that doesn't already have one
+     */
+    public void addTrailerHitchEquipment() {
+        
+    }
+    
+    /**
+     * Determines if this vehicle is currently able to tow designated trailer. 
+     *
+     * @param trailerId - the ID of the <code>Entity</code> to be towed.
+     * @return <code>true</code> if the trailer can be towed, <code>false</code>
+     * otherwise.
+     */
+    public boolean canTow(int trailerId) {
+        Entity trailer = game.getEntity(trailerId);
+        
+        //Null check
+        if (trailer == null) {
+            return false;
+        }
+        
+        //Shouldn't be using this method if Trailer isn't a trailer
+        if (!trailer.isTrailer()) {
+            return false;
+        }
+        
+        //Can't tow if we aren't a tractor
+        if (!isTractor()) {
+            return false;
+        }
+        
+        //If this entity is in a transport bay, it can't tow another
+        if (getTransportId() != Entity.NONE) {
+            return false;
+        }
+        
+        //If Trailer moved or is already being towed, discard it 
+        if (!trailer.isLoadableThisTurn()) {
+            return false;
+        }
+        
+        // Can't tow yourself, either.
+        if (trailer.equals(this)) {
+            return false;
+        }
+        
+        // one can only tow friendly units!
+        if (trailer.isEnemyOf(this)) {
+            return false;
+        }
+        
+        //Can't tow if hitch and trailer aren't at the same elevation
+        if (trailer.getElevation() != getElevation()) {
+            return false;
+        }
+        
+        //If none of the above happen, assume that we can't tow the trailer...
+        boolean result = false;
+        
+        //First, set up a list of all the entities in this train
+        ArrayList<Entity> thisTrain = new ArrayList<Entity>();
+        thisTrain.add(this);
+        for (int id : getAllTowedUnits()) {
+            Entity tr = game.getEntity(id);
+            thisTrain.add(tr);
+        }
+        
+        //Add up the weight of all carried trailers. A tractor can tow a total tonnage equal to its own.
+        double tractorWeight = getWeight();
+        double trailerWeight = 0;       
+        //Add up what the tractor's already towing
+        for (int id : getAllTowedUnits()) {
+            Entity tr = game.getEntity(id);
+            trailerWeight += tr.getWeight();
+        }
+        if (trailerWeight + trailer.getWeight() > tractorWeight) {
+            return false;
+        }
+        
+        //Next, look for an empty hitch somewhere in the train
+        boolean hitchFound = false;
+        for (Entity e : thisTrain) {
+            //Quit looking if we've already found a valid hitch
+            if (hitchFound) {
+                break;
+            }
+            for (Transporter t : e.getTransports()) {
+                if (t.canLoad(trailer)) {
+                    result = true;
+                    hitchFound = true;
+                    //stop looking
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+    
+    
+    /**
+     * Used with MoveStep.TOW to find and update the correct entity when adding it to a train
+     */
+    private int isTowing = Entity.NONE;
+
+    /**
+     * Returns the entity to be towed
+     * 
+     * @return
+     */
+    public int getTowing() {
+        return isTowing;
+    }
+    
+    /**
+     * Change the towed status of this entity
+     * 
+     * @param id - the ID of the entity being towed
+     */
+    public void setTowing(int id) {
+        isTowing = id;
+    }
+    
+    /**
+     * The id of the powered tractor towing the whole train
+     * this entity is part of. This will often be the same
+     * entity as towedBy
+     */
+    private int tractor = Entity.NONE;
+
+    /**
+     * Returns the tractor towing the train this entity is part of
+     * 
+     * @return
+     */
+    public int getTractor() {
+        return tractor;
+    }
+    
+    /**
+     * Sets the tractor towing the train this entity is part of
+     * 
+     * @param t - the tractor towing this train
+     */
+    public void setTractor(int id) {
+        tractor = id;
+    }
+    
+    /**
+     * The ID of the entity directly towing this one
+     * Used to find and set the correct Transporter
+     */
+    private int towedBy = Entity.NONE;
+
+    /**
+     * Returns the Entity that is directly towing this one
+     * 
+     * @return
+     */
+    public int getTowedBy() {
+        return towedBy;
+    }
+    
+    /**
+     * Sets the Entity that is directly towing this one
+     * 
+     * @param id - the id of the Entity towing this trailer
+     */
+    public void setTowedBy(int id) {
+        towedBy = id;
+    }
+    
+    /**
+     * A list of entity IDs being towed behind this entity, if present
+     * 
+     * Used to ensure all following trailers are disconnected if the train
+     * is broken at this entity. 
+     */
+    private List<Integer> connectedUnits = new ArrayList<Integer>();
+    
+    /**
+     * Returns the entities towed behind this entity
+     * 
+     * @return
+     */
+    public List<Integer> getConnectedUnits() {
+        return Collections.unmodifiableList(connectedUnits);
+    }
+    
+    /**
+     * Attaches a trailer to this train
+     * 
+     * @param e - the entity to be added to this train
+     */
+    public void towUnit(int id) {
+        Entity towed = game.getEntity(id);
+        //Add this trailer to the connected list for all trailers already in this train
+        for (int tr : getAllTowedUnits()) {
+            Entity trailer = game.getEntity(tr);
+            trailer.connectedUnits.add(id);
+        }
+        addTowedUnit(id);
+        towed.setTractor(this.getId());
+        //Now, find the transporter and the actual towing entity (trailer or tractor)
+        Entity towingEnt = game.getEntity(towed.towedBy);
+        if (towingEnt != null) {
+            Transporter hitch = towingEnt.getHitchById(towed.getTargetBay());
+            if (hitch != null) {
+                hitch.load(towed);
+            }
+        }
+    }
+    
+    /**
+     * Detaches an entity from this entity's towing mechanism
+     * also detaches all trailers behind this one from the whole
+     * train
+     *
+     * @param id - the id of entity to be detached
+     */
+    public void disconnectUnit(int id) {
+        Entity towed = game.getEntity(id);
+        Entity tractor = game.getEntity(towed.getTractor());
+        //Remove the designated trailer from the tractor's carried units
+        removeTowedUnit(id);
+        //Now, find and empty the transporter on the actual towing entity (trailer or tractor)
+        Entity towingEnt = game.getEntity(towed.towedBy);
+        towingEnt.connectedUnits.clear();
+        if (towingEnt != null) {
+            Transporter hitch = towingEnt.getHitchCarrying(id);
+            if (hitch != null) {
+                hitch.unload(towed);
+            }
+        }
+        //If there are other trailers behind the one being dropped, disconnect all of them
+        //from the tractor and from each other, so they can be picked up again later
+        for (int i : towed.getConnectedUnits()) {
+            Entity trailer = game.getEntity(i);
+            trailer.setTractor(Entity.NONE);
+            tractor.removeTowedUnit(i);
+            towingEnt = game.getEntity(trailer.towedBy);
+            if (towingEnt != null) {
+                Transporter hitch = towingEnt.getHitchCarrying(i);
+                if (hitch != null) {
+                    hitch.unload(trailer);
+                }
+            }
+            trailer.setTowedBy(Entity.NONE);
+            trailer.connectedUnits.clear();
+        }
+        //Update these last, or we get concurrency issues
+        towed.setTractor(Entity.NONE);
+        towed.setTowedBy(Entity.NONE);
+        towed.connectedUnits.clear();
+    }
+    
+    /**
+     * A list of all the entity IDs towed by this entity,
+     * including those connected to other towed trailers
+     * 
+     * Use this for the tractor/engine/tug
+     */
+    private List<Integer> isTractorFor = new ArrayList<Integer>();
+    
+    /**
+     * Returns a list of all entities towed behind this tractor.
+     * 
+     * @return
+     */
+    public List<Integer> getAllTowedUnits() {
+        return Collections.unmodifiableList(isTractorFor);
+    }
+    
+    /**
+     * Adds an entity to this tractor's train
+     */
+    public void addTowedUnit(int id) {
+        isTractorFor.add(id);
+    }
+    
+    /**
+     * Removes an entity from this tractor's train
+     */
+    public void removeTowedUnit(int id) {
+        isTractorFor.remove(isTractorFor.indexOf(id));
+    }
+    
+    /**
+     * Get a <code>List</code> of the trailers currently loaded into this payload.
+     *
+     * @return A <code>List</code> of loaded <code>Entity</code> units. This
+     * list will never be <code>null</code>, but it may be empty. The
+     * returned <code>List</code> is independant from the under- lying
+     * data structure; modifying one does not affect the other.
+     * 
+     * This will only return loaded trailers
+     */
+    public List<Entity> getLoadedTrailers() {
+        List<Entity> result = new ArrayList<Entity>();
+
+        // Walk through this entity's transport components;
+        // add any trailers we find there
+        for (Transporter next : transports) {
+            for (Entity e : next.getLoadedUnits()) {
+                if (e.isTrailer()) {
+                    result.add(e);
+                }
+            }
+        }
+        
+        //Now do the same for any additional trailers being carried by those trailers
+        for (int id : getAllTowedUnits()) {
+            Entity trailer = game.getEntity(id);
+            for (Transporter next : trailer.transports) {
+                for (Entity e : next.getLoadedUnits()) {
+                    if (e.isTrailer()) {
+                        result.add(e);
+                    }
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+    /**
+     * Determine if a connected tractor/trailer prevents a weapon in the given location
+     * from firing.
+     *
+     * @param loc    - the <code>int</code> location attempting to fire.
+     * @param secondaryFacing    - the <code>int</code> direction the turret is facing if the weapon is mounted there.
+     * @param isRear - a <code>boolean</code> value stating if the given location
+     *               is rear facing; if <code>false</code>, the location is front
+     *               facing.
+     * @return <code>true</code> if a tractor/trailer unit is in the way,
+     * <code>false</code> if the weapon can fire.
+     */
+    public boolean isWeaponBlockedByTowing(int loc, int secondaryFacing, boolean isRear) {
+        //Per TW p205, assume our trailer is being towed from the front.
+        if (getTowedBy() != Entity.NONE) {
+            if (loc == Tank.LOC_FRONT || 
+                    ((loc == Tank.LOC_TURRET 
+                            || loc == Tank.LOC_TURRET_2
+                            || loc == SuperHeavyTank.LOC_TURRET
+                            || loc == SuperHeavyTank.LOC_TURRET_2)
+                            && (secondaryFacing == getFacing()))) {
+                return true;
+            }
+        }
+        if (!getAllTowedUnits().isEmpty() || !getConnectedUnits().isEmpty()) {
+            //If we're towing something, check for a front or rear hitch
+            Entity towed = null;
+            if (!getAllTowedUnits().isEmpty()) {
+                towed = game.getEntity(getAllTowedUnits().get(0));
+            } else {
+                towed = game.getEntity(getConnectedUnits().get(0));
+            }
+            if (towed == null) {
+                //shouldn't happen, but just in case
+                return false;
+            }
+            TankTrailerHitch hitch = getHitchCarrying(towed.getId());
+            if (hitch != null) {
+                if ((hitch.getRearMounted()) && loc == Tank.LOC_REAR
+                        || isRear
+                        || loc == SuperHeavyTank.LOC_REAR ||
+                        ((loc == Tank.LOC_TURRET 
+                                || loc == Tank.LOC_TURRET_2
+                                || loc == SuperHeavyTank.LOC_TURRET
+                                || loc == SuperHeavyTank.LOC_TURRET_2)
+                                && (secondaryFacing == ((getFacing() + 3) % 6)))) {
+                    return true;
+                } else if (!hitch.getRearMounted() && (loc == Tank.LOC_FRONT || 
+                        ((loc == Tank.LOC_TURRET 
+                        || loc == Tank.LOC_TURRET_2
+                        || loc == SuperHeavyTank.LOC_TURRET
+                        || loc == SuperHeavyTank.LOC_TURRET_2)
+                        && (secondaryFacing == getFacing())))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * determine if an entity has an ability that is identified by its presence or absence only.
+     * The entity may gain this ability from different places, not exclusively the crew.
+     * @param name - name of the ability as recorded in the options
+     * @return true if the entity has this ability from some source
+     */
+    public boolean hasAbility(String name) {
+        if(null != getCrew()) {
+            return getCrew().getOptions().booleanOption(name);
+        }
+        //TODO: look for the ability at the player level
+        return false;
+    }
+    
+    /**
+     * determine if an entity has an ability at a given level.
+     * The entity may gain this ability from different places, not exclusively the crew.
+     * @param name - name of the ability as recorded in the optionsme
+     * @param choice - A string indicating the given level being asked about
+     * @return true if the entity has this ability at the given choice from some source
+     */
+    public boolean hasAbility(String name, String choice) {
+        if(null != getCrew()) {
+            return getCrew().getOptions().stringOption(name).equals(choice);
+        }
+        return false;
+    }
+    
+    public int modifyPhysicalDamageForMeleeSpecialist() {
+        if (!hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
+            return 0;
+        }
+
+        return 1;
+    }
+    
 }

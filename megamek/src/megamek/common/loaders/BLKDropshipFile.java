@@ -32,25 +32,20 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.IArmorState;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
-import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKDropshipFile extends BLKFile implements IMechLoader {
 
-    // armor locatioms
-    public static final int NOSE = 0;
-    public static final int RW = 1;
-    public static final int LW = 2;
-    public static final int AFT = 3;
-
     public BLKDropshipFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Dropship a = new Dropship();
@@ -206,21 +201,20 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
+        a.initializeArmor(armor[BLKAeroFile.NOSE], Dropship.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroFile.RW], Dropship.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroFile.LW], Dropship.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroFile.AFT], Dropship.LOC_AFT);
+        a.initializeArmor(IArmorState.ARMOR_NA, Dropship.LOC_HULL);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
-        loadEquipment(a, "Nose", Aero.LOC_NOSE);
-        loadEquipment(a, "Right Side", Aero.LOC_RWING);
-        loadEquipment(a, "Left Side", Aero.LOC_LWING);
-        loadEquipment(a, "Aft", Aero.LOC_AFT);
-        loadEquipment(a, "System Wide", Entity.LOC_NONE);
+        for (int loc = 0; loc < a.locations(); loc++) {
+            loadEquipment(a, a.getLocationName(loc), loc);
+        }
 
         if (dataFile.exists("omni")) {
             a.setOmni(true);

@@ -40,13 +40,14 @@ public class CLStreakLRM3OS extends StreakLRMWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 1.7f;
+        tonnage = 1.7;
         criticals = 1;
         bv = 51;
         cost = 45000;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But LRM Tech Base and Avail Ratings.
         rulesRefs = "327,TO";
+        flags = flags.or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3057, 3079, 3088).setClanApproximate(false, true, false)

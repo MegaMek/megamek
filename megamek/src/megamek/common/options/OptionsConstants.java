@@ -170,7 +170,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_MOUNTAINEER= "tm_mountaineer"; //$NON-NLS$
     public static final String PILOT_TM_SWAMP_BEAST= "tm_swamp_beast"; //$NON-NLS$
     // public static final String PILOT_WIND_WALKER= "wind_walker"; //$NON-NLS$
-    // public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
+    public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
 
     // GUNNERY SKILLS
     // public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";
@@ -228,13 +228,20 @@ public class OptionsConstants {
     
       //EDGE 
     public static final String EDGE = "edge"; //$NON-NLS$ 
-    //different edge triggers 
+    //different edge triggers
+    //Mech Triggers
     public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit"; //$NON-NLS$ 
     public static final String EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$ 
     public static final String EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$ 
     public static final String EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$ 
     public static final String EDGE_WHEN_MASC_FAILS= "edge_when_masc_fails"; //$NON-NLS$
-     
+    //Aero Triggers
+    public static final String EDGE_WHEN_AERO_ALT_LOSS= "edge_when_aero_alt_loss"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_EXPLOSION= "edge_when_aero_explosion"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_KO= "edge_when_aero_ko"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_LUCKY_CRIT= "edge_when_aero_lucky_crit"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_NUKE_CRIT= "edge_when_aero_nuke_crit"; //$NON-NLS$
+    public static final String EDGE_WHEN_AERO_UNIT_CARGO_LOST= "edge_when_aero_unit_cargo_lost"; //$NON-NLS$
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial_pain_shunt"; // $NON-NLS$

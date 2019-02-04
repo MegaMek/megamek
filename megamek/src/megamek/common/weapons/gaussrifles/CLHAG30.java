@@ -40,7 +40,7 @@ public class CLHAG30 extends HAGWeapon {
         mediumRange = 16;
         longRange = 24;
         extremeRange = 32;
-        tonnage = 13.0f;
+        tonnage = 13.0;
         criticals = 8;
         bv = 401;
         cost = 500000;
@@ -50,6 +50,7 @@ public class CLHAG30 extends HAGWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = rackSize / 2;
         rulesRefs = "219,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

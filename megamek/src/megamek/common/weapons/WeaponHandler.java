@@ -1711,7 +1711,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void useAmmo() {
-        if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+        if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            ArrayList<Mounted> chain = new ArrayList<>();
+            for (Mounted current = weapon.getLinked(); current != null; current = current.getLinked()) {
+                chain.add(current);
+            }
+            if (!chain.isEmpty()) {
+                chain.sort((m1, m2) -> Integer.compare(m2.getUsableShotsLeft(), m1.getUsableShotsLeft()));
+                weapon.setLinked(chain.get(0));
+                for (int i = 0; i < chain.size() - 1; i++) {
+                    chain.get(i).setLinked(chain.get(i + 1));
+                }
+                chain.get(chain.size() - 1).setLinked(null);
+                if (weapon.getLinked().getUsableShotsLeft() == 0) {
+                    weapon.setFired(true);
+                }
+            }
+        } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             weapon.setFired(true);
         }
         setDone();
@@ -1960,8 +1976,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (null != ae.getCrew()) {
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SANDBLASTER) && ae.getCrew()
-                    .getOptions().stringOption(OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(wtype.getName())) {
+            if (ae.hasAbility(OptionsConstants.GUNNERY_SANDBLASTER) && 
+                    ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
                 if (nRange > ranges[RangeType.RANGE_MEDIUM]) {
                     nMissilesModifier += 2;
                 } else if (nRange > ranges[RangeType.RANGE_SHORT]) {
@@ -1969,9 +1985,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 } else {
                     nMissilesModifier += 4;
                 }
-            } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_CLUSTER_MASTER)) {
+            } else if (ae.hasAbility(OptionsConstants.GUNNERY_CLUSTER_MASTER)) {
                 nMissilesModifier += 2;
-            } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_CLUSTER_HITTER)) {
+            } else if (ae.hasAbility(OptionsConstants.GUNNERY_CLUSTER_HITTER)) {
                 nMissilesModifier += 1;
             }
         }

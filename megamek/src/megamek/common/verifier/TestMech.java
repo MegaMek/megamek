@@ -221,7 +221,12 @@ public class TestMech extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
+        return false;
+    }
+    
+    @Override
+    public boolean isProtomech() {
         return false;
     }
 
@@ -396,10 +401,6 @@ public class TestMech extends TestEntity {
             StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
         if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
-            if (!entity.hasWorkingMisc(MiscType.F_ECM)) {
-                buff.append("stealth armor needs ECM suite\n");
-                return false;
-            }
             // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LARM) != 2) {
@@ -540,8 +541,8 @@ public class TestMech extends TestEntity {
         }
 
         allocation.addElement(mounted);
-        allocation.addElement(new Integer(criticals));
-        allocation.addElement(new Integer(count));
+        allocation.addElement(Integer.valueOf(criticals));
+        allocation.addElement(Integer.valueOf(count));
         return false;
     }
 
@@ -607,7 +608,7 @@ public class TestMech extends TestEntity {
                         .integralHeatSinkCapacity(mech.hasCompactHeatSinks()))
                         && (countInternalHeatSinks != ((Mech) entity)
                                 .heatSinks()) && !entity.isOmni())) {
-            heatSinks.addElement(new Integer(countInternalHeatSinks));
+            heatSinks.addElement(Integer.valueOf(countInternalHeatSinks));
         }
         return legal;
     }

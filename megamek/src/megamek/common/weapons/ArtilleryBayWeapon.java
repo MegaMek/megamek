@@ -50,7 +50,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
         this.mediumRange = 12;
         this.longRange = 20;
         this.extremeRange = 25;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_ARTILLERY;

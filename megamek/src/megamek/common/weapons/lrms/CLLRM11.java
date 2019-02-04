@@ -34,7 +34,7 @@ public class CLLRM11 extends LRMWeapon {
         heat = 0;
         rackSize = 11;
         minimumRange = WEAPON_NA;
-        tonnage = 2.2f;
+        tonnage = 2.2;
         criticals = 0;
         bv = 139;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 

@@ -2,151 +2,53 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 League Destroyer
 </Name>
+
 <Model>
 (Block I)
 </Model>
-<Tonnage>
-550000
-</Tonnage>
+
+<year>
+2368
+</year>
+
+<originalBuildYear>
+2368
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:3:1
+smallcraftbay:6.0:1:2
+dropshuttlebay:2.0:1:4:f4
+dropshuttlebay:2.0:1:5:f5
+1stclassquarters:400.0:0
+crewquarters:1344.0:0
+cargobay:108805.5:1:7
+</transporters>
+
 <SafeThrust>
 3
 </SafeThrust>
-<Armor>
-35
-43
-43
-43
-43
-34
-</Armor>
-<Nose Equipment>
-NAC20
-NAC20
-NAC20 Ammo:40
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Nose Equipment>
-
-<Front Left Side Equipment>
-NAC10
-NAC10 Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Front Left Side Equipment>
-
-<Front Right Side Equipment>
-NAC10
-NAC10 Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Front Right Side Equipment>
-
-<Left Broadside Equipment>
-NAC40
-NAC40 Ammo:20
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-NAC40
-NAC40 Ammo:20
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Right Broadside Equipment>
-
-<Aft Left Side Equipment>
-NAC10
-NAC10 Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Left Side Equipment>
-
-<Aft Right Side Equipment>
-NAC10
-NAC10 Ammo:30
-NL45
-NL35
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Right Side Equipment>
-
-<Aft Equipment>
-NAC20
-NAC20 Ammo:20
-NAC10
-NAC10 Ammo:30
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Equipment>
-
-<structural_integrity>
-48
-</structural_integrity>
 
 <heatsinks>
 1300
@@ -160,62 +62,198 @@ ISSmallLaser
 10000
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-2368
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+41
+</armor_type>
 
-<transporters>
-ASFBay:12:3
-SmallCraftBay:6:1
-CargoBay:126805:1
-CargoBay:20000:1
-CargoBay:20000:1
-</transporters>
+<armor_tech>
+5
+</armor_tech>
 
-<docking_collar>
-0
-</docking_collar>
+<armor>
+35
+43
+43
+34
+43
+43
+</armor>
 
-<grav_deck>
+<Nose Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:40
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/10)
+Ammo NAC/20:20
+Ammo NAC/10:30
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Ammo NAC/10:30
+(B) Naval Laser 45
+Naval Laser 35
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+48
+</structural_integrity>
+
+<source>
+FR2765-FWLM - Star League
+</source>
+
+<tonnage>
+550000.0
+</tonnage>
+
+<kf_core>
 1
-</grav_deck>
+</kf_core>
 
-<escape_pod>
-12
-</escape_pod>
+<sail>
+1
+</sail>
 
-<life_boat>
-12
-</life_boat>
+<grav_decks>
+75
+</grav_decks>
 
 <crew>
 286
 </crew>
 
+<officers>
+40
+</officers>
+
+<gunners>
+32
+</gunners>
+
 <passengers>
 0
 </passengers>
 
-<history>
-DropShuttleBay not coded into MM.  20000t CargoBays represent these
-</history>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+12
+</life_boat>
+
+<escape_pod>
+12
+</escape_pod>
+

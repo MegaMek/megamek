@@ -46,7 +46,7 @@ public class ISHeavyPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        tonnage = 10.0f;
+        tonnage = 10.0;
         criticals = 4;
         bv = 317;
         shortAV = 15;

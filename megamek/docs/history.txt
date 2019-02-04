@@ -1,12 +1,66 @@
+
+
 VERSION HISTORY:
 ----------------
-v0.45.1-git
-+ PR #1053 - Gradient & Difference Clouds Camos
-+ Issue #1081 - Narc Explosive ammo type no longer missing the letter "E" in reports
-+ Issue #378 - [Feature] Implements Tac Ops "Use AMS as Weapon" rule
-+ Issue #1051 - AMS no longer nags player when a shutdown mech is attacked
+v0.45.3
++ PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.
++ PR #1197: Fix "ASEW"-related soft lock at end phase when warships or space stations are on the board.
++ PR #1173: Trailers [Partial implementation; trailers can be connected on the field but not in the lounge yet.]
++ PR #1205: Enable Princess to use the "flip arms" functionality for mechs that have it (e.g. Jenner, Rifleman).
++ Data: Removing two unsupported infantry giving loading errors. Unit names pointed to replacements.
++ Issue #1183: Armor not correct on some Warships
++ Data: Resolving Issues #1207,1206,1199,1198
++ PR #1208: Enable Princess to fire artillery and use TAG.
++ PR #1214: Prevent players from being able to control their out-of-control spacecraft when the default flight path would take the spacecraft off board.
++ Data: New Sprites
++ PR #1212: Adds new Edge options for Aerospace units
++ Issue #1218: Fixed protomech-related game-stopping server crash
++ Data: Adding the Saxarba HQ Tileset.
++ Issue #1194: C3i function should apply to boosted cyber comm and enhanced multi model sensor (not standard multimodal sensor) implants per IO
++ PR #1227: Enable Princess to unjam weapons, turrets and rapid-fire autocannons (RACs, etc).
++ Data: New Sprites
++ Data: Fixes to Saxarba HQ Tileset.
++ Issue #1176: Artillery attacks now display flight time with the rest of the firing data when picking a target.
++ Issue #1238: Players can once again place minefields.
+
+v0.45.2 (2018-11-18 0200 UTC)
++ Switched build system from ant to gradle.
++ Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
++ PR #1132: Zweihander
++ Issue #1149: Force Generator switching from Mechs to Protomechs for Clans that deploy them
++ Data: Various fixes to unit names as a result of the Large Craft changes.
++ Data: New Sprites
++ PR #1152: Refactor of methods for getting pilot SPAs
++ Issue #1127: Fix for units not applying camo in certain circumstances
++ PR #1164: System wide equipment [Support for aerospace equipment in a generic, non-firing arc location]
++ Issue #1172: Game Non-Responsive
++ Data: New Sprites
++ PR #1170: Bullet-proofing various edge cases for space maps; weather related info no longer displayed in space
++ Issue #1177: Rocket Launcher bug after configuring unit
++ PR #1185: Protomech validation, updates to protomech unit files from errata and addition of Wars of Reaving units.
++ PR #1186: Protomech equipment (implentation of melee weapon, quad melee system, fusillade, and magnetic clamps) 
++ PR #1184: Bot handling for aerospace units on low-atmospheric maps and on space maps using non-advanced flight rules
++ PR #1193: TRO style summary
++ Data: New Sprites
+
+v0.45.1 (2018-09-03 2300 UTC)
++ PR #1096: Security - address XXE vulnerabilities in XML parsers
++ PR #1053: Gradient & Difference Clouds Camos
++ Issue #1081: Narc Explosive ammo type no longer missing the letter "E" in reports
++ Issue #378: [Feature] Implements Tac Ops "Use AMS as Weapon" rule
++ Issue #1051: AMS no longer nags player when a shutdown mech is attacked
 + Data: New Sprites and data fixes.
-+ PR #1084 - [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") and retreat edges (for when the bot is trying to "forced withdraw" crippled units)
++ PR #1084: [Feature] Allow bot to have separate destination edges (similar to "immediate withdrawal") 
+         and retreat edges (for when the bot is trying to "forced withdraw" crippled units)
++ Data: Moving old and out of date Read.me file.
++ PR #1092: Fixes for force generator (some unit rating mismatches, skill calculations, a few faction rule fixes)
++ PR #1100: Changed a long-standing bot behavior where a bot with "immediate withdrawal" 
+		on would ignore "forced withdrawal" rules and keep firing with its crippled units.
++ Data: New Sprites and some unit fixes.
++ PR #1118: Expose MULParser.parse(Element) for MekHQ perf improvements.
++ Issue #612: [Feature] Year setting in various random unit generation mechanisms now gets set to the game year whenever that changes.
++ PR #1068: Advanced Aerospace construction data and unit fixes.
++ PR #1134: pilot portrait option for tooltip
 
 v0.45.0 (2018-08-02 0200 UTC)
 + PR #1010: New snow theme light woods images for Bloodwolf tilesets & removal of volcano theme woods.
@@ -12186,329 +12240,4 @@ v 0.21.3 (02-12-02, 6:22pm)
 v 0.21.2 (02-11-02, 3pm)
 + punching supported
 + just about everything that has to do with hitting re-written or modified
-+ button placement changes in the gui
-+ kicking supported
-- regression: getting up, jumping, backwards movement is broken
-
-v 0.21.1 (02-07-02, 11:43am)
-+ pilots can wake up from unconciousness
-+ starting position selection (on any 8 primary/secondary compass directions)
-
-v 0.21.0 (01-27-02, 10:30pm)
-+ fixed movement heat costs
-+ ammo exploding doesn't empty the bin until the end of the turn
-+ mepfiles: 1/2 ton MG ammo parsed
-+ mepfiles: flamers (damage only) added
-+ mepfiles: rear facing weapons parsed
-+ rear facing weapons working (torsos only)
-+ initiative phase just displays the report, which has initiative info now
-+ dead entities aren't sent out every phase (just kept on server)
-+ game rounds counted & displayed at the top of the report
-
-v 0.20.5 (01-27-02, 12pm)
-+ fixed a bug where mechs destroyed did't stay dead (yikes!)
-+ fixed a bug causing turns to go to players without active mechs
-+ fixed a bug causing shutdown mechs not to be displayed
-+ changed how crew conditions are handled internally
-+ leg destruction now results in a piloting skill check
-+ server now uses game player data instead of its own
-+ player objects are now aware of their own id
-+ changed how client handles connects/disconnects
-+ changed how server handles players internally
-+ entities are now aware of their id numbers and act accordingly
-+ changed how selected weapons & pending fire are handled internally
-++ AAARGH!! fixed another bug with torso twisting, hopefully the last
-+ mech display kept by client
-
-v 0.20.4 (01-26-02, 6:30pm)
-+ fixed a bug with keyboard listeners lingering
-
-v 0.20.3 (01-26-02, 6pm)
-+ torso twisting hopefully fixed
-+ different random number routine accessed
-
-v 0.20.2 (01-26-02, 11:30am)
-+ changed how certain mech status conditions (destroyed, prone) were
-  handled internally
-+ testing release to track down why torso twists sometimes fail
-
-v 0.20.1 (01-25-02, 1pm)
-+ added some more maps, mechs
-
-v 0.20.0 (01-23-02, 10:40pm)
-+ fixed a bug in the new network code (thread synchronization issues)
-+ added interface for modifying board layout parameters
-+ added "delete mech button"
-+ if mechs or board layout changes in the lounge, all players are unreadied
-+ you can no longer start the game without a mech
-+ calculating battle value
-+ fixed a .mep parsing bug with armor
-+ display total BV for player during startup
-+ auto-center on active mech working again
-+ color selection working again
-+ fixed a bug in initiative where only one player had to click "ready"
-
-v 0.19.3 (01-21-02, 9:30pm)
-+ re-did network communication to use java object serialization exclusively
-+ mapsheet combiner working
-+ new map format!  tile based
-+ editor works with new map format
-- saving doesn't really work with new map format yet
-
-v 0.19.2 (01-16-02, 9:30am)
-+ seperated code into packages: server, client & common
-+ all data in data folder
-+ removed several unused data from board file (reducing size by about 1/4)
-+ seperation of board, game and client.  only one attricious hack needed, too!
-+ at some point, jumping got broken.  fixed it.
-
-v 0.19.1 (01-12-02, 11pm)
-+ chat area now doesn't go to the top every phase change (yay!)
-+ fixed a bug that was giving 10 extra heatsinks to loaded mechs
-+ fixed a number format bug in mech loading: stalker loads now
-+ code: renamed "Game" to "Client" and "GameServer" to "Server"
-
-v 0.19.0 (01-12-02, 9:30pm)
-+ remade initiative and lounge screens
-+ lounge screen now allows loading of mechs
-+ all 3025 weapons & ammo except flamers
-+ mechs deploy around a point instead of at fixed points
-+ code: "location" (and associated) in Entity replaced with "position"
-+ editor: making a new map resets save name
-+ editor: default board size is now 16x17
-+ more maps & tiles added
-
-v 0.18.0 (01-09-02, 2am)
-+ weapon attacks held client-side and sent in a bunch
-+ torso twisting
-+ ammo tracking
-+ ammo auto-reloads if more is availiable
-+ fixed number of leg critical slots (now 6)
-+ ammo explosions from critical hits and heat
-
-v 0.17.0 (12-01-01, 1:49am)
-+ some settings saved (yay!)
-+ walking backwards
-
-v 0.16.7 (10-20-01, 1pm)
-+ falling
-+ falling from actuator hits
-+ falling from 20+ damage
-+ pilot damage due to falling
-+ piloting skill rolls
-
-v 0.16.1
-+ mechs have pilots now, and the pilots can take damage
-+ fixed a bug not allowing you to jump over enemy mechs
-
-v 0.16.0 (09-06-01, 1pm)
-+ fixed board edges in new graphics engine
-+ editor enabled
-+ added jumping support
-+ test scenario: spider vs. urbanmech
-
-v 0.15.5 (08-20-01, 8:22pm)
-++ new graphics engine (sorry, it's slower) should allow almost unlimited board size
-+ criticals on rear torso locations now resolve properly against the main torso
-+ added the rest of the missile hit tables in (oops!)
-
-v 0.15.4 (08-19-01, 9:39pm)
-+ fixed an infinite damage loop bug
-+ firing lines clear properly
-+ added more effects of system criticals
-+ limb blown off criticals work
-+ fixed a bug with partial cover not being assigned
-+ reworked the damage loop so that hit locations 2 should actually critical
-+ people with no mechs don't have to click okay
-
-
-v 0.15.3 (08-19-01, 1:46am)
-+ fixed a bug with player color selection
-
-v 0.15.2 (08-19-01, 1:11am)
-+ image tint cache
-+ lines to show fire
-+ critical hits to weapons & systems (no system effects)
-+ changes to damage readout
-
-v 0.15.1 (08-17-01, 12:40am)
-+ removed the stalker from the default mechs
-+ new rangefinder formula
-  http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
-
-v 0.15.0 (08-16-01, 11pm)
-+ logic to stop people from selecting the same color
-+ 4 different starting positions on the default board
-+ clears target when using "next unit" button
-+ centers current unit in map view area
-+ missile damage displays as "missile" on the weapon list
-+ arms destroyed when torso is destroyed
-+ fixed some errors in keyboard handling
-+++ partial intervening terrain & LOS added (splines handled badly)
-+ dead mechs should be dissapearing better
-+ should be no empty line at the bottom of chat text
-+ ready/moved/shutdown mechs display slightly differently
-+ mech display is movable window
-+ fixed movement data font changing
-+ deselect hex at end of turn
-+ attacker terrain
-+ defender terrain
-
-v 0.14.2 (08-09-01) 6:49pm
-+ partially fixed initiative
-+ next mech button
-+ medium mech graphics added
-+ colors changed to pastelly stuff
-
-v 0.14.1
-+ fixed a range finding bug
-+ overhead pictures of mechs, tinted to the player color
-
-v 0.14 (8-08-01)
-+ disable weapons in destroyed sections
-+ some stacking violations prevented
-+ fixed bug with rear torso internal structure
-+ destroyed mechs don't show up on the map any more
-
-v 0.13.3 (8-07-01, 12:25am)
-+ don't target destroyed mechs
-+ don't resolve fire against destroyed mechs
-+ target immobile modifierx
-
-v 0.13.2 (8-06-01, 3:30pm)
-+ bug fixed with missile damage display
-+ added target arcs
-+ better turn status messages
-+ heat buildup should not resolve until the end of the turn
-+ heat shutdown & startup effects
-+ rotate w/o moving (shift click in movement)
-
-
-v 0.13.1 (8-06-01, 1:00am)
-+ added weapon arcs
-+ added missiles and missile damage resolution
-
-v 0.13 (8-04-01, 4:14pm)
-+ fixed initiative bug with uneven sides
-+ added heat
-
-v 0.12.1 (8-01-01, 12:50am)
-+ can't fire at invalid target/out of range
-
-v 0.12 (7-31-01)
-+ damage
-+ hit location tables
-+ end of turn report
-
-v 0.11 (7-24-01)
-+ more firing
-+ some cursor stuff
-
-v 0.10 (7-08-01)
-+ firing phase
-
-v 0.09 (2-20-01, 10:31pm)
-+ initiative phase
-+ more movement overhauls
-
-v 0.081 (2-13-01, 5:10pm)
-+ lazy ground pathfinder
-  - bug: allows running into water
-  - generally unintelligent path choices
-+ displays movement on map
-+ server forbids moving too far
-
-v 0.080
-+ redraws the sides when the screen area is larger than the board
-+ preliminary display of mechs on the map
-+ preliminary mech movement
-
-v 0.076 (02-09-01, 12:02am)
-+ preliminary game phase progression
-
-v 0.075
-+ buffered map reading.  now about twice as fast!
-+ fixed: sometimes not all the tile pictures will load when
-you load a map, or they'll load halfway.
-+ fixed: when you change the elevation in the editor, the
-little picture in the corner doesn't change
-+ testing fog in the editor: press "f" to toggle
-
-v 0.073 (02-06-01, 10:50pm)
-+ player list in chat
-+ player ready button in chat
-
-v 0.071
-+ resized the tiles to 84 * 72 pixels
-+ redrew the "boring" tileset to match
-
-v 0.07
-+ main menu!
-+ added some multiplayer host/connection support
-
-Version 0.063
-+ fixed: in the editor, clicking on a new tile while holding
-CTRL won't paint that tile, but releasing and then tapping CTRL
-will.
-+ fixed a bug in showing elevation changes while editing boards
-+ CTRL is now the paintbrush and ALT is the eyedropper in the
-editor
-+ internal difference between dragging and selecting a hex.
-
-Version 0.062 (02-05-01, 3:40pm)
-+ tiles have borders to represent elevation changes
-
-Version 0.061 (02-05-01, 3:40pm)
-+ fixed a small bug loading terrain tiles with underscores
-
-version 0.06
-+ saving and loading of maps
-+ slightly more intuitive new map starting
-
-versions before 0.06
-+ i dunno
-
-
-
-*** File '(Unnamed)'
-1.8
-1.8
-localdir
--Xmx1024m
--Xmx1024m
--Xmx1024m
- 1 
- 2 
- 2 
-ls-UCS-1
-
-*** File '(Unnamed)'
-Excalibur
-1.7
-IMP-1B
-ls-ESXi_Host1
-ls-ESXi_Host1
-20:00:00:25
-ESXi
-Host
-Host1
-meach
-
-*** File '(Unnamed)'
-src/megamek/MegaMek.java
-packaging.xml
-src/megamek/server/Server.java
-../mekhq-0.43.8-RC2/Wolfs Dragoons.mul
-.project
-/Users/dylanmyers/git/mekhq/MekHQ/unittests/mekhq/campaign/CampaignTest.java
-ucs_2017_9_13.xml
-Repel Clan Wolf Invaders.mul
-Gentleman Bastards30430330.cpnx
-adLDAP/src/adLDAP.php
-docs/history.txt
-
-*** File '* Startup Log *'
-Processing '/usr/local/Cellar/joe/4.6/etc/joe/joerc'...
-Processing '/usr/local/Cellar/joe/4.6/etc/joe/ftyperc'...
-Finished processing /usr/local/Cellar/joe/4.6/etc/joe/ftyperc
-Finished processing /usr/local/Cellar/joe/4.6/etc/joe/joerc
++ butt

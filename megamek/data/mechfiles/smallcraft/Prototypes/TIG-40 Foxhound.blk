@@ -104,6 +104,9 @@ ISImprovedHeavyGauss Ammo
 ISLaserAntiMissileSystem
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 9
 </structural_integrity>
@@ -113,7 +116,7 @@ ISLaserAntiMissileSystem
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

@@ -24,6 +24,10 @@ D
 3063
 </year>
 
+<originalBuildYear>
+3063
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -78,15 +85,8 @@ Aerodyne
 <Nose Equipment>
 CLATM9:OMNI
 CLATM9:OMNI
-Clan Ammo ATM-9:OMNI
-Clan Ammo ATM-9:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,6 +97,15 @@ CLCASE
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo ATM-9:OMNI
+Clan Ammo ATM-9:OMNI
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Civil War

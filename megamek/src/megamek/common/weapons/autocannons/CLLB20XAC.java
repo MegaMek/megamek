@@ -43,7 +43,7 @@ public class CLLB20XAC extends LBXACWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 12.0f;
+        tonnage = 12.0;
         criticals = 9;
         bv = 237;
         cost = 600000;
@@ -51,6 +51,7 @@ public class CLLB20XAC extends LBXACWeapon {
         medAV = 20;
         maxRange = RANGE_MED;
         rulesRefs = "207,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
         .setTechRating(RATING_F)

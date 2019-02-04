@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,9 +20,24 @@ Triton
 (Standard)
 </Model>
 
-<Tonnage>
-8
-</Tonnage>
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -32,48 +47,56 @@ Triton
 4
 </jumpingMP>
 
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
 6
 13
 4
 4
 8
 3
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 4 Ammo (10)
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+ProtomechJumpJet
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
 
 <Torso Equipment>
 CLERMicroLaser
 </Torso Equipment>
 
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
 <Main Gun Equipment>
 CLStreakSRM4
-CLStreakSRM4 Ammo (10)
 </Main Gun Equipment>
-
-<type>
-Clan
-</type>
-
-<year>
-3067
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Biped
-</motion_type>
 
 <source>
 TRO 3075 - Civil War
 </source>
+
+<tonnage>
+8.0
+</tonnage>
+

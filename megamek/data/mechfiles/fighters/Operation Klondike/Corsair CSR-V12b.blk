@@ -24,6 +24,10 @@ CSR-V12b
 2780
 </year>
 
+<originalBuildYear>
+2780
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -89,6 +96,12 @@ ISMediumPulseLaser
 Small Laser
 Small Laser
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
 
 <source>
 H:Operation Klondyke - Star League

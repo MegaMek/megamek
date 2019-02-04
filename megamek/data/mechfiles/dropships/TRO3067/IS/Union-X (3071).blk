@@ -44,7 +44,7 @@ heavyvehiclebay:4.0:1:5
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
 crewquarters:91.0:0
-cargobay:335.0:0:2
+cargobay:335.0:0:8
 </transporters>
 
 <SafeThrust>
@@ -148,6 +148,9 @@ ISAMS Ammo:72
 Heavy PPC
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>
@@ -159,6 +162,10 @@ TRO 3067 - Jihad
 <tonnage>
 3700.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 133

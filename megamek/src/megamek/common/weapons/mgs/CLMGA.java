@@ -47,7 +47,7 @@ public class CLMGA extends AmmoWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.25f;
+        tonnage = 0.25;
         criticals = 1;
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to

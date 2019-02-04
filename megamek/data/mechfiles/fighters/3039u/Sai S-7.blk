@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,38 +20,32 @@ Sai
 S-7
 </Model>
 
-<Tonnage>
-40
-</Tonnage>
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<Armor>
-40
-30
-30
-20
-</Armor>
-
-<Nose Equipment>
-ISERMediumLaser
-ISERMediumLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-MRM 10
-IS MRM 10 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-MRM 10
-IS MRM 10 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 12
@@ -65,30 +59,46 @@ IS MRM 10 Ammo
 480
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3065
-</year>
+<armor>
+40
+30
+30
+20
+</armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+MRM 10
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+MRM 10
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS MRM 10 Ammo
+IS MRM 10 Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3039 - Civil War
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+40.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

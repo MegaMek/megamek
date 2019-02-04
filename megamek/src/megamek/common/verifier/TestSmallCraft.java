@@ -1,5 +1,16 @@
-/**
- * 
+/*
+ * MegaMek -
+ * Copyright (C) 2017 - The MegaMek Team
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
  */
 package megamek.common.verifier;
 
@@ -22,8 +33,6 @@ import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 
 /**
  * Class for testing and validating instantiations for Small Craft and Dropships.
@@ -38,10 +47,11 @@ public class TestSmallCraft extends TestAero {
     public static final int ARC_LWING = SmallCraft.LOC_LWING;
     public static final int ARC_RWING = SmallCraft.LOC_RWING;
     public static final int ARC_AFT = SmallCraft.LOC_AFT;
+    public static final int ARC_NONE = SmallCraft.LOC_HULL;
     public static final int ARC_FWD_LEFT = SmallCraft.LOC_LWING;
     public static final int ARC_FWD_RIGHT = SmallCraft.LOC_RWING;
-    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 3;
-    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + 3;
+    public static final int ARC_AFT_LEFT = SmallCraft.LOC_LWING + 4;
+    public static final int ARC_AFT_RIGHT = SmallCraft.LOC_RWING + 4;
     
     private final SmallCraft smallCraft;
 
@@ -126,12 +136,6 @@ public class TestSmallCraft extends TestAero {
         return retVal;
     }
     
-    /**
-     * Defines how many spaces each arc has for weapons. More can be added by increasing weight
-     * of master fire control systems.
-     */
-    public static int SLOTS_PER_ARC = 12;
-    
     public static int maxArmorPoints(SmallCraft sc) {
         AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
                 TechConstants.isClan(sc.getArmorTechLevel(0)));
@@ -168,7 +172,7 @@ public class TestSmallCraft extends TestAero {
      *           allotment
      */
     public static double[] extraSlotCost(SmallCraft sc) {
-        int arcs = sc.isSpheroid()? 6 : 4;
+        int arcs = sc.isSpheroid()? 7 : 5;
         int weaponsPerArc[] = new int[arcs];
         double weaponTonnage[] = new double[arcs];
         boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
@@ -188,7 +192,7 @@ public class TestSmallCraft extends TestAero {
         }
         double retVal[] = new double[arcs];
         for (int arc = 0; arc < arcs; arc++) {
-            int excess = (weaponsPerArc[arc] - 1) / SLOTS_PER_ARC;
+            int excess = (weaponsPerArc[arc] - 1) / slotsPerArc(sc);
             if (excess > 0) {
                 retVal[arc] = ceil(excess * weaponTonnage[arc] / 10.0, Ceil.HALFTON);
             }
@@ -211,7 +215,14 @@ public class TestSmallCraft extends TestAero {
      */
     public static double calculateEngineTonnage(boolean clan, double tonnage, 
             int desiredSafeThrust, boolean dropship, int year) {
-        double multiplier = clan? 0.061 : 0.065;
+        double multiplier;
+        if (clan) {
+            multiplier = 0.061;
+        } else if (dropship) {
+            multiplier = dropshipEngineMultiplier(year);
+        } else {
+            multiplier = smallCraftEngineMultiplier(year);
+        }
         return ceil(tonnage * desiredSafeThrust * multiplier, Ceil.HALFTON);
     }
     
@@ -239,7 +250,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double SmallCraftEngineMultiplier(int year) {
+    public static double smallCraftEngineMultiplier(int year) {
         if (year >= 2500) {
             return 0.065;
         } else if (year >= 2400) {
@@ -257,7 +268,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double SmallCraftControlMultiplier(int year) {
+    public static double smallCraftControlMultiplier(int year) {
         if (year >= 2500) {
             return 0.0075;
         } else if (year >= 2400) {
@@ -275,7 +286,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double DropshipEngineMultiplier(int year) {
+    public static double dropshipEngineMultiplier(int year) {
         if (year >= 2500) {
             return 0.065;
         } else if (year >= 2400) {
@@ -293,7 +304,7 @@ public class TestSmallCraft extends TestAero {
         }
     }
     
-    public static double DropshipControlMultiplier(int year) {
+    public static double dropshipControlMultiplier(int year) {
         if (year >= 2500) {
             return 0.0075;
         } else if (year >= 2400) {
@@ -328,28 +339,6 @@ public class TestSmallCraft extends TestAero {
         return crew;
     }
         
-    /**
-     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
-     * @return The vessel's minimum gunner requirements.
-     */
-    public static int requiredGunners(SmallCraft sc) {
-        int capitalWeapons = 0;
-        int stdWeapons = 0;
-        for (Mounted m : sc.getTotalWeaponList()) {
-            if ((m.getType() instanceof BayWeapon)
-                    || (((WeaponType)m.getType()).getLongRange() <= 1)) {
-                continue;
-            }
-            if (((WeaponType)m.getType()).isCapital()
-                    || (m.getType() instanceof ScreenLauncherWeapon)) {
-                capitalWeapons++;
-            } else {
-                stdWeapons++;
-            }
-        }
-        return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
-    }
-    
     public TestSmallCraft(SmallCraft sc, TestEntityOption option, String fs) {
         super(sc, option, fs);
         
@@ -388,10 +377,10 @@ public class TestSmallCraft extends TestAero {
         // Small craft round up to the half ton and dropships to the full ton
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             return ceil(smallCraft.getWeight()
-                    * DropshipControlMultiplier(year), Ceil.TON);
+                    * dropshipControlMultiplier(year), Ceil.TON);
         } else {
             return ceil(smallCraft.getWeight()
-                    * SmallCraftControlMultiplier(year), Ceil.HALFTON);
+                    * smallCraftControlMultiplier(year), Ceil.HALFTON);
         }
     }
 

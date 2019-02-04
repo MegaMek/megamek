@@ -323,7 +323,11 @@ public class Engine implements Serializable, ITechnology {
             if (entity.getWeight() < 5) {
                 roundWeight = TestEntity.Ceil.KILO;
             }
-            return TestEntity.ceil(weight, roundWeight);
+            return TestEntity.round(weight, roundWeight);
+        }
+        // Protomech engines with rating < 40 use a special calculation
+        if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
+            return TestEntity.round(engineRating * 0.025, roundWeight);
         }
         double weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
@@ -494,8 +498,10 @@ public class Engine implements Serializable, ITechnology {
                 break;
             case BATTERY:
                 sb.append(" Battery"); //$NON-NLS-1$
+                break;
             case SOLAR:
                 sb.append(" Solar");  //$NON-NLS-1$
+                break;
             case NONE:
                 sb.append(" NONE"); //$NON-NLS-1$
                 break;

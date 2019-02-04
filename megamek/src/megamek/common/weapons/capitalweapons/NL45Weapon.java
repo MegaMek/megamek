@@ -41,7 +41,7 @@ public class NL45Weapon extends NLWeapon {
         this.mediumRange = 24;
         this.longRange = 36;
         this.extremeRange = 48;
-        this.tonnage = 900.0f;
+        this.tonnage = 900.0;
         this.bv = 1134;
         this.cost = 850000;
         this.shortAV = 4.5;

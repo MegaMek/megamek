@@ -352,6 +352,11 @@ public abstract class Mech extends Entity {
         }
     }
 
+    @Override
+    public int getUnitType() {
+        return UnitType.MEK;
+    }
+
     /**
      * @return if this mech cannot stand up from hulldown
      */
@@ -498,6 +503,41 @@ public abstract class Mech extends Entity {
         } else {
             addTransporter(new ClampMountMech());
         }
+    }
+    
+    public void setProtomechClampMounts() {
+        boolean front = false;
+        boolean rear = false;
+        for (Transporter t: getTransports()) {
+            if (t instanceof ProtomechClampMount) {
+                front |= !((ProtomechClampMount) t).isRear();
+                rear |= ((ProtomechClampMount) t).isRear();
+            }
+        }
+        if (!front) {
+            addTransporter(new ProtomechClampMount(false));
+        }
+        if (!rear) {
+            addTransporter(new ProtomechClampMount(true));
+        }
+    }
+    
+    @Override
+    public void load(Entity unit, boolean checkElev, int bayNumber) {
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            boolean rear = bayNumber > 0;
+            for (Transporter t : getTransports()) {
+                if ((t instanceof ProtomechClampMount)
+                        && t.canLoad(unit)
+                        && (!checkElev || (unit.getElevation() == getElevation()))
+                        && (((ProtomechClampMount) t).isRear() == rear)) {
+                    t.load(unit);
+                    unit.setTargetBay(-1);
+                    return;
+                }
+            }
+        }
+        super.load(unit, checkElev, bayNumber);
     }
 
     /**
@@ -5266,7 +5306,7 @@ public abstract class Mech extends Entity {
             cockpitCost = 200000;
         }
         if (hasEiCockpit()
-                && ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT))) {
+                && ((null != getCrew()) && hasAbility(OptionsConstants.UNOFF_EI_IMPLANT))) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;
@@ -5562,15 +5602,15 @@ public abstract class Mech extends Entity {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+        if (hasAbility(OptionsConstants.MD_VDNI)
+                && !hasAbility(OptionsConstants.MD_BVDNI)) {
             roll.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                && (!getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-                && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT))) {
+                && (!hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT))) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
@@ -5594,7 +5634,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SMALL_PILOT)) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT) && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 
@@ -6690,12 +6730,44 @@ public abstract class Mech extends Entity {
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
-
-
+        
+        if (getFluff().getManufacturer().trim().length() > 0) {
+            sb.append("manufacturer:");
+            sb.append(getFluff().getManufacturer());
+            sb.append(newLine);
+        }
+        
+        if (getFluff().getPrimaryFactory().trim().length() > 0) {
+            sb.append("primaryFactory:");
+            sb.append(getFluff().getPrimaryFactory());
+            sb.append(newLine);
+        }
+        
+        if (getFluff().getNotes().trim().length() > 0) {
+            sb.append("notes:");
+            sb.append(getFluff().getNotes());
+            sb.append(newLine);
+        }
+        
         if (getFluff().getMMLImagePath().trim().length() > 0) {
             sb.append("imagefile:");
             sb.append(getFluff().getMMLImagePath());
             sb.append(newLine);
+        }
+        
+        for (EntityFluff.System system : EntityFluff.System.values()) {
+        	if (getFluff().getSystemManufacturer(system).length() > 0) {
+        		sb.append("systemmanufacturer:");
+        		sb.append(system.toString()).append(":");
+        		sb.append(getFluff().getSystemManufacturer(system));
+        		sb.append(newLine);
+        	}
+        	if (getFluff().getSystemModel(system).length() > 0) {
+        		sb.append("systemmodel:");
+        		sb.append(system.toString()).append(":");
+        		sb.append(getFluff().getSystemModel(system));
+        		sb.append(newLine);
+        	}
         }
 
         if (getUseManualBV()) {
@@ -8667,6 +8739,7 @@ public abstract class Mech extends Entity {
         return super.getInternal(loc);
     }
 
+    @Override
     public boolean isSuperHeavy() {
         return weight > 100;
     }

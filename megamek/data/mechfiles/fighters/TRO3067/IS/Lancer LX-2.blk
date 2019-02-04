@@ -24,6 +24,10 @@ LX-2
 3064
 </year>
 
+<originalBuildYear>
+3064
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -66,7 +73,6 @@ Aerodyne
 <Nose Equipment>
 LRM 10
 ISArtemisIV
-IS Ammo LRM-10 Artemis-capable
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -79,6 +85,13 @@ ISLargePulseLaser
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-10 Artemis-capable
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War

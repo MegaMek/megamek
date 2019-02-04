@@ -104,7 +104,6 @@ Clan Ammo LRM-20:30
 CLUltraAC20
 CLUltraAC20
 Clan Ultra AC/20 Ammo:60
-ISSmallNavalCommScannerSuite
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -149,6 +148,10 @@ Clan Ultra AC/20 Ammo:20
 (B) CLMediumPulseLaser
 CLMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+ISSmallNavalCommScannerSuite
+</Hull Equipment>
 
 <structural_integrity>
 18

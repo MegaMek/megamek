@@ -54,7 +54,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         waterMediumRange = 9;
         waterLongRange = 12;
         waterExtremeRange = 18;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 163;
         cost = 600000;

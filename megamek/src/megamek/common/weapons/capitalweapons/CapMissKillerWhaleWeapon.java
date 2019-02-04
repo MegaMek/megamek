@@ -49,7 +49,7 @@ public class CapMissKillerWhaleWeapon extends CapitalMissileWeapon {
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 150.0f;
+        this.tonnage = 150.0;
         this.bv = 769;
         this.cost = 150000;
         this.flags = flags.or(F_MISSILE);

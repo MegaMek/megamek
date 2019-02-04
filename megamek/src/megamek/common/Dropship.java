@@ -47,7 +47,9 @@ public class Dropship extends SmallCraft {
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
      */
     public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
+        if (arc < asewAffectedTurns.length) {
+            asewAffectedTurns[arc] = turns;
+        }
     }
     
     /*
@@ -55,7 +57,10 @@ public class Dropship extends SmallCraft {
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+        if (arc < asewAffectedTurns.length) {
+            return asewAffectedTurns[arc];            
+        }
+        return 0;
     }
   
     
@@ -76,6 +81,11 @@ public class Dropship extends SmallCraft {
     private boolean dockCollarDamaged = false;
     private boolean kfBoomDamaged = false;
     private int collarType = COLLAR_STANDARD;
+
+    @Override
+    public int getUnitType() {
+        return UnitType.DROPSHIP;
+    }
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;

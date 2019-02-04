@@ -738,7 +738,7 @@ public class Crew implements Serializable {
         s = s.trim();
         int index = s.indexOf(" ");
         if (index == -1) {
-            return new Boolean(true);
+            return Boolean.TRUE;
         }
         String t = s.substring(index + 1, s.length());
         Object result;
@@ -905,14 +905,6 @@ public class Crew implements Serializable {
             return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
         }
         return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
-    }
-
-    public int modifyPhysicalDamagaForMeleeSpecialist() {
-        if (!getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
-            return 0;
-        }
-
-        return 1;
     }
 
     public boolean hasEdgeRemaining() {
@@ -1105,10 +1097,17 @@ public class Crew implements Serializable {
     }
     
     /**
-     * Sets fatigue counter back to zero.
+     * Sets crew state fields back to defaults. Used by MekHQ to clear game state.
      */
-    public void resetFatigue() {
+    public void resetGameState() {
         fatigueCount = 0;
+        doomed = false;
+        ejected = false;
+        for (int i = 0; i < crewType.getCrewSlots(); i++) {
+            unconscious[i] = false;
+            dead[i] = false;
+            missing[i] = false;
+        }
     }
 
     public int rollGunnerySkill() {

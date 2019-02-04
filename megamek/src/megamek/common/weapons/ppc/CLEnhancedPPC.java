@@ -50,7 +50,7 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.waterMediumRange = 10;
         this.waterLongRange = 16;
         this.waterExtremeRange = 20;
-        this.tonnage = 7.0f;
+        this.tonnage = 7.0;
         this.criticals = 3;
         this.bv = 329;
         this.cost = 300000;

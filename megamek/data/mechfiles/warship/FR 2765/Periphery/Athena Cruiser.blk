@@ -2,230 +2,287 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 Athena Cruiser
 </Name>
+
 <Model>
-(Standard)
+(2569)
 </Model>
-<Tonnage>
-50000
-</Tonnage>
+
+<year>
+2569
+</year>
+
+<originalBuildYear>
+2569
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:22.0:5:1
+infantrybay:4.0:1:2:Motorized
+crewquarters:1680.0:0
+1stclassquarters:3500.0:0
+cargobay:11937.0:1:5
+</transporters>
+
 <SafeThrust>
 2
 </SafeThrust>
-<Armor>
+
+<heatsinks>
+7000
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
 70
 68
 68
-68
-68
 70
-</Armor>
+68
+68
+</armor>
 
 <Nose Equipment>
-(B) NAC30
-NAC30
-NAC30 Ammo:20
-(B) NAC30
-NAC30
-NAC30 Ammo:20
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:20
 </Nose Equipment>
 
-<Front Left Side Equipment>
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-</Front Left Side Equipment>
+<Left Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Left Front Side Equipment>
 
-<Front Right Side Equipment>
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-</Front Right Side Equipment>
+<Right Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Right Front Side Equipment>
 
-<Left Broadside Equipment>
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-</Left Broadside Equipment>
-
-<Right Broadside Equipment>
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-</Right Broadside Equipment>
+<Aft Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:200
+</Aft Equipment>
 
 <Aft Left Side Equipment>
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
 </Aft Left Side Equipment>
 
-<Aft Right Side Equipment> 
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:200
+<Aft Right Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+(B) Capital Missile Launcher (White Shark)
+Capital Missile Launcher (White Shark)
+Ammo White Shark:200
 </Aft Right Side Equipment>
 
-<Aft Equipment> 
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-NL55
-(B) NAC30
-NAC30
-NAC30 Ammo:20
-(B) NAC30
-NAC30
-NAC30 Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:20
-(B) WhiteShark
-WhiteShark
-WhiteShark Ammo:200
-</Aft Equipment>
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+</Right Broadsides Equipment>
 
 <structural_integrity>
 90
 </structural_integrity>
-<heatsinks>
-7000
-</heatsinks>
-<sink_type>
-0
-</sink_type>
-<fuel>
-5000
-</fuel>
-<type>
-IS Level 3
-</type>
-<year>
-2569
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
 
-<transporters>
-SmallCraftBay:22:5
-CargoBay:26317:2
-infantrybay:4:5
-</transporters>
-<docking_collar>
-0
-</docking_collar>
-<grav_deck>
-2
-</grav_deck>
-<escape_pod>
-100
-</escape_pod>
-<life_boat>
-100
-</life_boat>
+<source>
+FR2765:Periphery- Star League
+</source>
+
+<tonnage>
+500000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+225
+225
+</grav_decks>
+
 <crew>
 512
 </crew>
+
+<officers>
+50
+</officers>
+
+<gunners>
+120
+</gunners>
+
 <passengers>
 300
 </passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+100
+</life_boat>
+
+<escape_pod>
+100
+</escape_pod>
+

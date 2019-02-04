@@ -38,13 +38,13 @@ Spheroid
 
 <transporters>
 smallcraftbay:1.0:1:1
-infantrybay:18.0:1:2
-infantrybay:18.0:1:3
+infantrybay:18.0:1:2:Foot
+infantrybay:18.0:1:3:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:90.0:0
 crewquarters:308.0:0
-cargobay:1896.5:2:5
-cargobay:1897.0:2:4
+cargobay:1835.5:2:7
+cargobay:1835.5:2:8
 </transporters>
 
 <SafeThrust>
@@ -133,6 +133,9 @@ Medium Laser
 Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 7

@@ -39,7 +39,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
         bv = 30;
@@ -47,6 +47,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         rulesRefs = "230,TM";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(false)
     	.setUnofficial(false)

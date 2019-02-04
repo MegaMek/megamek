@@ -129,6 +129,9 @@ ISSmallPulseLaser
 IS LB 10-X Cluster Ammo:10
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 12
 </structural_integrity>

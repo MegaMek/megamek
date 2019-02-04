@@ -18,6 +18,7 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -45,7 +46,7 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 8;
         extremeRange = 8; // No extreme range.
-        tonnage = 16f;
+        tonnage = 16;
         criticals = 16;
         bv = 240;
         cost = 1800000;
@@ -60,7 +61,8 @@ public class PrototypeArrowIV extends ArtilleryWeapon {
             .setISApproximate(true, false, false, true, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_CC);	
+            .setReintroductionFactions(F_CC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

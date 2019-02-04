@@ -17,7 +17,7 @@
 package megamek.common.weapons.bayweapons;
 
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.MissileBayWeaponHandler;
@@ -48,16 +48,17 @@ public class ATMBayWeapon extends AmmoBayWeapon {
         this.mediumRange = 12;
         this.longRange = 20;
         this.extremeRange = 25;
-        this.tonnage = 0.0f;
+        this.tonnage = 0.0;
         this.bv = 0;
         this.cost = 0;
         this.flags = flags.or(F_MISSILE);
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_ATM;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        // Using same TA as ATM weapon
+        techAdvancement.setTechBase(TECH_BASE_CLAN) .setTechRating(RATING_F)
+        	.setAvailability(RATING_X, RATING_X, RATING_D, RATING_D).setClanAdvancement(3052, 3053, 3054)
+        	.setClanApproximate(true, true, true).setPrototypeFactions(F_CCY)
+        	.setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
     @Override

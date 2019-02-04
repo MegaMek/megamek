@@ -92,19 +92,22 @@ ISArrowIVHomingAmmo
 <Left Side Equipment>
 SRM 6
 IS Ammo SRM-6
-(R) ISERMediumLaser 
+(R) ISERMediumLaser
 </Left Side Equipment>
 
 <Right Side Equipment>
 SRM 6
 IS Ammo SRM-6
-(R) ISERMediumLaser 
+(R) ISERMediumLaser
 </Right Side Equipment>
 
 <Aft Equipment>
 ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 8
@@ -119,7 +122,7 @@ TRO 3075 - Jihad
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

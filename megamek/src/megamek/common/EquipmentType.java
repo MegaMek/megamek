@@ -133,7 +133,7 @@ public class EquipmentType implements ITechnology {
             3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000,
             25000, 15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
             12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000, 5000,
-            5000, 10000 };
+            5000, 10000};
 
     public static final double[] armorPointMultipliers = {
             1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12,
@@ -776,6 +776,19 @@ public class EquipmentType implements ITechnology {
             }
             return 0.05;
         }
+    }
+    
+    /**
+     * Computes protomech armor weight by point.
+     *  
+     * @param type    The armor type
+     * @return        The weight of a point of armor in kg
+     */
+    public static double getProtomechArmorWeightPerPoint(int type) {
+        if (type == T_ARMOR_EDP) {
+            return 0.075;
+        }
+        return 0.05;
     }
     
     /* Armor and structure are stored as integers and standard uses a generic MiscType that

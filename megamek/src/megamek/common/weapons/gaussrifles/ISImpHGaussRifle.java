@@ -53,7 +53,7 @@ public class ISImpHGaussRifle extends GaussWeapon {
         mediumRange = 12;
         longRange = 19;
         extremeRange = 24;
-        tonnage = 20.0f;
+        tonnage = 20.0;
         criticals = 11;
         bv = 385;
         cost = 700000;

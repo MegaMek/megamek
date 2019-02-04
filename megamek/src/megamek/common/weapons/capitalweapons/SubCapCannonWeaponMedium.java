@@ -42,7 +42,7 @@ public class SubCapCannonWeaponMedium extends SubCapCannonWeapon {
         mediumRange = 22;
         longRange = 33;
         extremeRange = 44;
-        tonnage = 500.0f;
+        tonnage = 500.0;
         bv = 708;
         cost = 780000;
         shortAV = 5;

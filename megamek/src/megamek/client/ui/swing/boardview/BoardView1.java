@@ -89,6 +89,7 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
+import megamek.client.bot.princess.BotGeometry;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
@@ -1397,6 +1398,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // debugging method that renders the bounding box of a unit's movement envelope.
         //renderMovementBoundingBox((Graphics2D) g);
+        //renderDonut(g, new Coords(10, 10), 2);
     }
     
     /** 
@@ -1404,6 +1406,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Warning: very slow when rendering the bounding hex for really fast units.
      * @param g Graphics object on which to draw.
      */
+    @SuppressWarnings("unused")
     private void renderMovementBoundingBox(Graphics2D g) {
         if(selectedEntity != null) {
             Princess princess = new Princess("test", "localhost", 2020, LogLevel.DEBUG);
@@ -1441,6 +1444,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
     
+    /** 
+     * Debugging method that renders a hex donut around the given coordinates, with the given radius.
+     * @param g Graphics object on which to draw.
+     */
+    private void renderDonut(Graphics2D g, Coords coords, int radius) {
+        Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
+        
+        for(Coords donutCoords : donut) {
+            Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
+            p.translate(HEX_W  / 2, HEX_H  / 2);
+            drawHexBorder(g, p, Color.PINK, 0, 6);
+        }
+    }
     /**
      *  Returns a list of Coords of all hexes on the board.
      *  Returns ONLY hexes where board.getHex != null.
@@ -4262,7 +4278,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public List<Entity> getEntitiesFlyingOver(Coords c) {
         List<Entity> entities = new ArrayList<Entity>();
         for (FlyOverSprite fsprite : flyOverSprites) {
-            if (fsprite.getEntity().getPassedThrough().contains(c)) {
+            //Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
+            if (fsprite.getEntity().getPassedThrough().contains(c) && !fsprite.getEntity().isSpaceborne()) {
                 entities.add(fsprite.getEntity());
             }
         }

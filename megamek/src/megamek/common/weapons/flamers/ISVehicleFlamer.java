@@ -49,7 +49,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
         this.bv = 5;
         this.cost = 7500;

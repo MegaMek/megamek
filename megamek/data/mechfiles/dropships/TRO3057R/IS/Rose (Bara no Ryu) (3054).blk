@@ -38,11 +38,11 @@ Spheroid
 
 <transporters>
 smallcraftbay:4.0:4:1
-infantrybay:1.0:1:2
+infantrybay:1.0:1:2:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:80.0:0
 crewquarters:280.0:0
-cargobay:9969.0:3:3
+cargobay:9969.0:3:6
 </transporters>
 
 <SafeThrust>
@@ -125,6 +125,9 @@ ISArtemisIV
 (B) ISERPPC
 (B) ISMediumPulseLaser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 10

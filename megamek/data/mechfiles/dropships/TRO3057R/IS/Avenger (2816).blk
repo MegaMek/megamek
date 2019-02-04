@@ -25,7 +25,7 @@ Avenger
 </year>
 
 <originalBuildYear>
-0
+2816
 </originalBuildYear>
 
 <type>
@@ -122,6 +122,9 @@ IS Ammo LRM-20:18
 (B) Medium Laser
 Medium Laser
 </Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
 
 <structural_integrity>
 12

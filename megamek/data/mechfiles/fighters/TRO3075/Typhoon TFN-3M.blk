@@ -1,154 +1,105 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Typhoon
-
 </Name>
 
 <Model>
-
 TFN-3M
-
 </Model>
 
-<Tonnage>
+<year>
+2473
+</year>
 
-90
+<originalBuildYear>
+2473
+</originalBuildYear>
 
-</Tonnage>
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-45
-
-34
-
-34
-
-23
-
-</Armor>
-
-<Nose Equipment>
-
-ISLRM15
-
-ISLRM15 Ammo
-
-ISLRM15 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLRM15
-
-ISLRM15 Ammo
-
-ISLRM15 Ammo
-
-ISPPC
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISLRM15
-
-ISLRM15 Ammo
-
-ISLRM15 Ammo
-
-ISPPC
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 28
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2473
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor>
+45
+34
+34
+23
+</armor>
 
-aerodyne
+<Nose Equipment>
+LRM 15
+</Nose Equipment>
 
-</motion_type>
+<Left Wing Equipment>
+LRM 15
+PPC
+</Left Wing Equipment>
 
+<Right Wing Equipment>
+LRM 15
+PPC
+</Right Wing Equipment>
 
+<Aft Equipment>
+</Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+</Fuselage Equipment>
+
+<tonnage>
+90.0
+</tonnage>
 

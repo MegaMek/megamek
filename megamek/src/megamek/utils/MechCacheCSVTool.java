@@ -42,7 +42,7 @@ public class MechCacheCSVTool {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
         BufferedWriter fout;
         try{
-            fout = new BufferedWriter(new PrintWriter("mechs(IO).csv"));
+            fout = new BufferedWriter(new PrintWriter("Units.csv"));
         } catch (FileNotFoundException e){
             System.out.println("Could not open file for output!");
             return;
@@ -51,21 +51,24 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,BV,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,BV,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
-/*                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
+                if (mech.getUnitType().equals("Gun Emplacement")){
                     continue;
-                }*/
+                }
                 
                 csvLine = new StringBuffer();
                 // Chasis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
+                
+                //Combined Name
+                csvLine.append(mech.getChassis() + " " + mech.getModel()+ ",");
                 
                 //Source Book
                 csvLine.append(mech.getSourceFile() + ",");

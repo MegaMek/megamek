@@ -21,8 +21,10 @@ package megamek.common.verifier;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.function.Function;
 
@@ -37,6 +39,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FirstClassQuartersCargoBay;
 import megamek.common.ITechManager;
 import megamek.common.ITechnology;
+import megamek.common.Jumpship;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SecondClassQuartersCargoBay;
@@ -46,6 +49,7 @@ import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -165,6 +169,22 @@ public class TestAero extends TestEntity {
     }
     
     /**
+     * Defines how many spaces each arc has for weapons. Large units can add more by increasing weight
+     * of master fire control systems.
+     */
+    public static int slotsPerArc(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)
+                || aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
+            return 20;
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
+                || aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return 12;
+        } else {
+            return 5;
+        }
+    }
+    
+    /**
      * @param aero A large craft
      * @return     The maximum number of bay doors. Aerospace units that are not large craft have
      *             a maximum of zero.
@@ -216,17 +236,26 @@ public class TestAero extends TestEntity {
         public Bay newQuarters(int size) {
             return init.apply(size * tonnage);
         }
+        
+        public static Map<Quarters, Integer> getQuartersByType(Aero aero) {
+            EnumMap<TestAero.Quarters, Integer> sizes = new EnumMap<>(TestAero.Quarters.class);
+            for (Quarters q : values()) {
+                sizes.put(q, 0);
+            }
+            for (Bay bay : aero.getTransportBays()) {
+                Quarters q = getQuartersForBay(bay);
+                if (null != q) {
+                    sizes.merge(q, (int) bay.getCapacity(), Integer::sum);
+                }
+            }
+            return sizes;
+        }
     }
     
     /**
      * Defines the maximum engine rating that an Aero can have.
      */
     public static int MAX_ENGINE_RATING = 400;
-    
-    /**
-     * Defines how many spaces each arc has for weapons.
-     */
-    public static int SLOTS_PER_ARC = 5;
     
     /**
      *  Computes the maximum number of armor points for a given Aero
@@ -261,8 +290,9 @@ public class TestAero extends TestEntity {
      */
     public static int[] availableSpace(Aero a){
         // Keep track of the max space we have in each arc
+        int slots = slotsPerArc(a);
         int availSpace[] = 
-            {SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC,SLOTS_PER_ARC};
+            { slots, slots, slots, slots };
         
         // Get the armor type, to determine how much space it uses
         AeroArmor armor = 
@@ -281,6 +311,12 @@ public class TestAero extends TestEntity {
             loc--;
             if (loc < 0){
                 loc = Aero.LOC_AFT;
+            }
+        }
+        // Blue shield particle field dampener takes one slot in each arc.
+        if (a.hasMisc(MiscType.F_BLUE_SHIELD)) {
+            for (int i = 0; i < availSpace.length; i++) {
+                availSpace[i]--;
             }
         }
         
@@ -375,6 +411,8 @@ public class TestAero extends TestEntity {
                 && aero.hasEngine()
                 && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             fuelPerTurn = aero.getWalkMP() * 0.5f;
+        } else if (aero.getWalkMP() == 0) {
+            fuelPerTurn = 0.2f;
         } else {
             fuelPerTurn = aero.getWalkMP();
         }
@@ -407,6 +445,8 @@ public class TestAero extends TestEntity {
                     fuelPerTurn += (aero.getRunMP()-aero.getWalkMP());
                 }
             }
+        } else if (aero.getWalkMP() == 0) {
+            fuelPerTurn = 0.2f;
         } else {
             fuelPerTurn = aero.getWalkMP() + 
                     (aero.getRunMP()-aero.getWalkMP()) * 2;
@@ -416,7 +456,9 @@ public class TestAero extends TestEntity {
 
     public static int weightFreeHeatSinks(Aero aero) {
         if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return TestSmallCraft.weightFreeHeatSinks((SmallCraft)aero);
+            return TestSmallCraft.weightFreeHeatSinks((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.weightFreeHeatSinks((Jumpship) aero);
         } else if (aero.hasEngine()) {
             return aero.getEngine().getWeightFreeEngineHeatSinks();
         } else {
@@ -448,7 +490,12 @@ public class TestAero extends TestEntity {
     public static double calculateDaysAtMax(Aero aero) {
         double stratUse = aero.getStrategicFuelUse();
         if (stratUse > 0) {
-            return aero.getFuelTonnage() / (aero.getStrategicFuelUse() * aero.getRunMP() / 2.0);
+            double maxMP = aero.getRunMP();
+            // check for station-keeping drive
+            if (maxMP == 0) {
+                maxMP = 0.2;
+            }
+            return aero.getFuelTonnage() / (aero.getStrategicFuelUse() * maxMP / 2.0);
         } else {
             return 0.0;
         }
@@ -504,7 +551,12 @@ public class TestAero extends TestEntity {
     }
     
     @Override
-    public boolean isJumpship() {
+    public boolean isAdvancedAerospace() {
+        return false;
+    }
+    
+    @Override
+    public boolean isProtomech() {
         return false;
     }
 
@@ -584,59 +636,10 @@ public class TestAero extends TestEntity {
         return aero.getFuelTonnage();
     }
 
-    /**
-     * @return The number of heat sinks required by conventional fighters
-     */
-    private int getConventionalCountHeatLaserWeapons() {
-        int heat = 0;
-        for (Mounted m : aero.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                    || wt.hasFlag(WeaponType.F_PPC)
-                    || wt.hasFlag(WeaponType.F_PLASMA)
-                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
-                    && !m.getLinkedBy().isInoperable()
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
-                    MiscType) && m.getLinkedBy().getType().
-                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                heat += 5;
-            }
-        }
-        for (Mounted m : aero.getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                heat += 2;
-            }
-            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
-                heat += 12;
-            }
-        }
-        if (aero.getArmorType(1) == EquipmentType.T_ARMOR_STEALTH_VEHICLE) {
-            heat += 10;
-        }
-        return heat;
-    }
-
     @Override
     public int getCountHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            return getConventionalCountHeatLaserWeapons();
+            return heatNeutralHSRequirement();
         }
         return aero.getHeatSinks();
     }
@@ -644,7 +647,7 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightHeatSinks() {
         if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            int required = countHeatEnergyWeapons();
+            int required = heatNeutralHSRequirement();
             return Math.max(0, required - engine.getWeightFreeEngineHeatSinks());
         } else {
             return Math.max(getCountHeatSinks() - engine.getWeightFreeEngineHeatSinks(), 0);
@@ -688,46 +691,6 @@ public class TestAero extends TestEntity {
 
     public Aero getAero() {
         return aero;
-    }
-
-    private int countHeatEnergyWeapons() {
-        int heat = 0;
-        for (Mounted m : aero.getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) 
-                    && (wt.getAmmoType() == AmmoType.T_NA))
-                        || wt.hasFlag(WeaponType.F_PPC)
-                        || wt.hasFlag(WeaponType.F_PLASMA)
-                        || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                        || (wt.hasFlag(WeaponType.F_FLAMER) 
-                                && (wt.getAmmoType() == AmmoType.T_NA))) {
-                heat += wt.getHeat();
-            }
-            // laser insulator reduce heat by 1, to a minimum of 1
-            Mounted linkedBy = m.getLinkedBy();
-            if (wt.hasFlag(WeaponType.F_LASER) && (linkedBy != null)
-                    && !linkedBy.isInoperable()
-                    && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                heat -= 1;
-                if (heat == 0) {
-                    heat++;
-                }
-            }
-
-            if ((linkedBy != null) && 
-                    (linkedBy.getType() instanceof MiscType) && 
-                    linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                heat += 5;
-            }
-        }
-        for (Mounted m : aero.getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
-            // mobile HPGs count as energy weapons for construction purposes
-            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
-                heat += 20;
-            }
-        }
-        return heat;
     }
 
     public String printArmorLocProp(int loc, int wert) {
@@ -1272,7 +1235,10 @@ public class TestAero extends TestEntity {
         if (aero.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
             return 2500000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            return 250000;
+            if (((Jumpship) aero).getDriveCoreType() == Jumpship.DRIVE_CORE_SUBCOMPACT) {
+                return 25000;
+            }
+            return 2500000;
         } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (aero.isPrimitive()) {
                 return getPrimitiveJumpshipMaxTonnage(aero, faction);
@@ -1369,6 +1335,82 @@ public class TestAero extends TestEntity {
             return dropship.isSpheroid()? 30000 : 10000; 
         } else {
             return dropship.isSpheroid()? 50000 : 20000; 
+        }
+    }
+
+    /**
+     * @return Minimum crew requirements based on unit type and equipment crew requirements.
+     */
+    public static int minimumBaseCrew(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return TestSmallCraft.minimumBaseCrew((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.minimumBaseCrew((Jumpship) aero);
+        } else {
+            return 1;
+        }
+    }
+    
+    /**
+     * One gunner is required for each capital weapon and each six standard scale weapons, rounding up
+     * @return The vessel's minimum gunner requirements.
+     */
+    public static int requiredGunners(Aero aero) {
+        if (!aero.isLargeCraft() && !aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return 0;
+        }
+        int capitalWeapons = 0;
+        int stdWeapons = 0;
+        for (Mounted m : aero.getTotalWeaponList()) {
+            if (m.getType() instanceof BayWeapon) {
+                continue;
+            }
+            if ((((WeaponType)m.getType()).getLongRange() <= 1)
+                    // MML range depends on ammo, and getLongRange() returns 0
+                    && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
+                continue;
+            }
+            if (((WeaponType)m.getType()).isCapital()
+                    || (m.getType() instanceof ScreenLauncherWeapon)) {
+                capitalWeapons++;
+            } else {
+                stdWeapons++;
+            }
+        }
+        return capitalWeapons + (int)Math.ceil(stdWeapons / 6.0);
+    }
+
+    /**
+     * Determines whether a piece of equipment should be mounted in a specific location, as opposed
+     * to the fuselage.
+     * 
+     * @param eq       The equipment
+     * @param fighter  If the aero is a fighter (including fixed wing support), the ammo is mounted in the
+     *                 fuselage. Otherwise it's in the location with the weapon.
+     * @return         Whether the equipment needs to be assigned to a location with a firing arc.
+     */
+    public static boolean eqRequiresLocation(EquipmentType eq, boolean fighter) {
+        if (!fighter) {
+            return (eq instanceof WeaponType)
+                    || (eq instanceof AmmoType)
+                    || ((eq instanceof MiscType)
+                            && (eq.hasFlag(MiscType.F_ARTEMIS)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
+                                    || eq.hasFlag(MiscType.F_APOLLO)
+                                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
+                                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                                    || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
+        } else if (eq instanceof MiscType) {
+            if (eq.hasFlag(MiscType.F_CASE)) {
+                return eq.isClan();
+            } else if (eq.hasFlag(MiscType.F_BLUE_SHIELD)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return !(eq instanceof AmmoType);
         }
     }
 }

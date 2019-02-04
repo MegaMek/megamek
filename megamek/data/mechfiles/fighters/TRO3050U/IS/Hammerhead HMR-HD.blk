@@ -24,6 +24,10 @@ HMR-HD
 2571
 </year>
 
+<originalBuildYear>
+2571
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -73,9 +80,6 @@ Aerodyne
 
 <Nose Equipment>
 Autocannon/20
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo AC/20
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -86,6 +90,15 @@ IS Ammo AC/20
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Age of War

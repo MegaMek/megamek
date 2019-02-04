@@ -42,7 +42,7 @@ battlearmorbay:3.0:1:2
 2ndclassquarters:0.0:0
 1stclassquarters:80.0:0
 crewquarters:378.0:0
-cargobay:518.0:2:3
+cargobay:518.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -180,6 +180,9 @@ ISArtemisIV
 ISArtemisIV
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 40
 </structural_integrity>
@@ -191,6 +194,10 @@ TRO 3067 - Clan Invasion
 <tonnage>
 9700.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 84

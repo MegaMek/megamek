@@ -16,6 +16,8 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
+
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -28,38 +30,18 @@ public class SpaceStation extends Jumpship {
      */
     private static final long serialVersionUID = -3160156173650960985L;
     
+    // This only affects cost, but may have an effect in a large-scale strategic setting.
+    private boolean modular = false;
     
-    //ASEW Missile Effects, per location
-    //Values correspond to Locations, inherited from Jumpship: NOS,FLS,FRS,AFT,ALS,ARS
-    private int asewAffectedTurns[] = { 0, 0, 0, 0, 0, 0};
-    
-    
-    /*
-     * Sets the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * @param turns - integer specifying the number of end phases that the effects last through
-     * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
-     * Space Stations should use the same method as Jumpships, but because Warships have a different number of arcs
-     * we run into problems if this isn't explicitly specified here.
-     */
     @Override
-    public void setASEWAffected(int arc, int turns) {
-        asewAffectedTurns[arc] = turns;
-    }
-    
-    /*
-     * Returns the number of rounds a specified firing arc is affected by an ASEW missile
-     * @param arc - integer representing the desired firing arc
-     * Also an override to prevent issues with Warships having a different number of arcs
-     */
-    @Override
-    public int getASEWAffected(int arc) {
-        return asewAffectedTurns[arc];
+    public int getUnitType() {
+        return UnitType.SPACE_STATION;
     }
     
     public SpaceStation() {
         super();
         setDriveCoreType(DRIVE_CORE_NONE);
+        setSail(false);
     }
     
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
@@ -67,18 +49,36 @@ public class SpaceStation extends Jumpship {
             .setTechRating(RATING_D)
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    /*
+
     private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
             .setReintroductionFactions(F_RS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-            */
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return TA_SPACE_STATION;
+        return modular? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
+    }
+    
+    public static TechAdvancement getModularTA() {
+        return TA_SPACE_STATION_MODULAR;
+    }
+    
+    /**
+     * Designates whether this is a modular space station
+     * @param modular
+     */
+    public void setModular(boolean modular) {
+        this.modular = modular;
+    }
+    
+    /**
+     * @return True if this space station has a modular construction, otherwise false.
+     */
+    public boolean isModular() {
+        return modular;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class SpaceStation extends Jumpship {
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // Armor
-        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());
@@ -160,6 +160,9 @@ public class SpaceStation extends Jumpship {
         costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double weightMultiplier = 5.00f;
+        if (modular) {
+            weightMultiplier = 50.00f;
+        }
 
         // Sum Costs
         for (int i = 0; i < costIdx; i++) {
@@ -168,9 +171,73 @@ public class SpaceStation extends Jumpship {
 
         costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
         cost = Math.round(cost * weightMultiplier);
-
+        addCostDetails(cost, costs);
         return cost;
 
+    }
+
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Engine", "Engine Control Unit",
+                "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 18) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     /**

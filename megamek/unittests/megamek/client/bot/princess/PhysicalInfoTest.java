@@ -69,7 +69,7 @@ public class PhysicalInfoTest {
         testPhysicalInfo.setShooter(mockShooter);
         testPhysicalInfo.setTarget(mockTarget);
         Mockito.doNothing().when(testPhysicalInfo).setDamageDirection(Mockito.any(EntityState.class),
-                                                                      Mockito.any(Coords.class));
+                                                                      Mockito.nullable(Coords.class));
         Mockito.doReturn(1).when(testPhysicalInfo).getDamageDirection();
 
         PhysicalAttackType punch = PhysicalAttackType.LEFT_PUNCH;

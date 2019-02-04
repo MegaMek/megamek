@@ -210,7 +210,12 @@ public class Infantry extends Entity {
         // Determine the number of MPs.
         setOriginalWalkMP(1);
     }
-    
+
+    @Override
+    public int getUnitType() {
+        return UnitType.INFANTRY;
+    }
+
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -411,20 +416,20 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
+                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
         if((null != getCrew())
-                && getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
+                && hasAbility(OptionsConstants.MD_PL_MASC)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
-        if ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+        if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                         || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
@@ -481,8 +486,8 @@ public class Infantry extends Entity {
             mp = getOriginalJumpMP();
         }
         if ((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
+                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_DERMAL_ARMOR))
                 && (getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
@@ -2311,12 +2316,14 @@ public class Infantry extends Entity {
     
     @Override
     public String getMovementModeAsString() {
-    	if (getMovementMode().equals(EntityMovementMode.VTOL)) {
-    		return hasMicrolite()? "Microlite" : "Microcopter";
-    	}
-    	if (getMovementMode() == EntityMovementMode.INF_UMU) {
-    		return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
-    	}
+        if (!hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+            if (getMovementMode().equals(EntityMovementMode.VTOL)) {
+                return hasMicrolite()? "Microlite" : "Microcopter";
+            }
+            if (getMovementMode() == EntityMovementMode.INF_UMU) {
+                return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
+            }
+        }
     	return super.getMovementModeAsString();
     }
 
@@ -2389,13 +2396,13 @@ public class Infantry extends Entity {
         double divisor = getDamageDivisor();
         if (getCrew() != null) {
 	    	// TSM reduces divisor to 0.5 if no other armor is worn.
-	    	if (getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+	    	if (hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
 	    		if (getArmorKit() == null) {
 	    			divisor = 0.5;
 	    		}
 	    	}
 	    	// Dermal armor adds one, cumulative with TSM (which gives a total of 1.5 if unarmored).
-	    	if (getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+	    	if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
 	    		divisor++;
 	    	}
         }
@@ -2414,7 +2421,7 @@ public class Infantry extends Entity {
 
         if(hasSneakCamo() ||
         		(getCrew() != null
-        			&& getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
+        			&& hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
             sArmor.append(" (Camo) ");
         }
 
@@ -2551,7 +2558,7 @@ public class Infantry extends Entity {
         if (hasSpecialization(TRENCH_ENGINEERS)) {
             specialAbilities.put(BattleForceSPA.TRN, null);
         }
-        if (getCrew().getOptions().booleanOption("tsm_implant")) {
+        if (hasAbility("tsm_implant")) {
             specialAbilities.put(BattleForceSPA.TSI, null);
         }
     }

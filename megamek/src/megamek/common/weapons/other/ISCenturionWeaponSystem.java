@@ -50,7 +50,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 24;
-        tonnage = 5.0f;
+        tonnage = 5.0;
         criticals = 2;
         bv = 190;
         cost = 1000000;

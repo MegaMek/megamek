@@ -40,7 +40,7 @@ public class ISEnhancedLRM5 extends EnhancedLRMWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 3.0f;
+        tonnage = 3.0;
         criticals = 2;
         bv = 52;
         cost = 37500;

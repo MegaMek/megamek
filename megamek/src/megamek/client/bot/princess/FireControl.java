@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -58,6 +59,9 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.RepairWeaponMalfunctionAction;
+import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
@@ -1646,7 +1650,9 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooterState.isAero());
         
-        if(shooter.isAero()) {
+        // if we're in a position to drop bombs because we're an aircraft on a ground map, then
+        // the "alpha strike" may be a bombing plan.
+        if(shooter.isAirborneAeroOnGroundMap()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
@@ -1854,7 +1860,9 @@ public class FireControl {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
             calculateUtility(bombingPlan, DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
-            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+            // if the bombing plan actually involves doing something
+            if((bombingPlan.size() > 0) && 
+                    (bombingPlan.getUtility() > myPlan.getUtility())) {
                 return bombingPlan;
             }
         }
@@ -1918,7 +1926,8 @@ public class FireControl {
 
         // First plan is a plan that fires only heatless weapons.
         // The remaining plans will build at least some heat.
-        bestPlans[0] = new FiringPlan(target);
+        // we include arm flip information into the regular heat plans, but infantry don't flip arms so we don't bother.
+        bestPlans[0] = new FiringPlan(target, alphaStrike.getFlipArms());
         final FiringPlan nonZeroHeatOptions = new FiringPlan(target);
         final FiringPlan swarmAttack = new FiringPlan(target);
         final FiringPlan legAttack = new FiringPlan(target);
@@ -1985,7 +1994,8 @@ public class FireControl {
                 if ((0 <= leftoverHeatCapacity) &&
                     !bestPlans[leftoverHeatCapacity].containsWeapon(weaponFireInfo.getWeapon())) {
 
-                    final FiringPlan testPlan = new FiringPlan(target);
+                    // make sure to pass along arm flip state from the alpha strike, if any
+                    final FiringPlan testPlan = new FiringPlan(target, alphaStrike.getFlipArms());
                     testPlan.addAll(bestPlans[heatLevel - weaponFireInfo.getHeat()]);
                     testPlan.add(weaponFireInfo);
                     calculateUtility(testPlan, heatTolerance, isAero);
@@ -2033,8 +2043,19 @@ public class FireControl {
                                  final Map<Mounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
-        final FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
-                                                         ammoConservation, game);
+        FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
+                                                    ammoConservation, game);
+        
+        if(shooter.canFlipArms()) {
+            shooter.setArmsFlipped(true);
+            FiringPlan betaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
+            betaStrike.setFlipArms(true);
+            if(betaStrike.getUtility() > alphaStrike.getUtility()) {
+                alphaStrike = betaStrike;
+            }
+            
+            shooter.setArmsFlipped(false);
+        }
         
         // Although they don't track heat, infantry/BA do need to make tradeoffs
         // between firing different weapons, because swarm/leg attacks are
@@ -2085,8 +2106,21 @@ public class FireControl {
         }
 
         // Start with an alpha strike. If it falls under our heat limit, use it.
-        final FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
-                                                           target, targetState, game);
+        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
+                                                       target, targetState, game);
+        
+        if(shooter.canFlipArms()) {
+            shooter.setArmsFlipped(true);
+            FiringPlan betaStrike = guessFullFiringPlan(shooter, shooterState,
+                                                        target, targetState, game);
+            betaStrike.setFlipArms(true);
+            if(betaStrike.getUtility() > alphaStrike.getUtility()) {
+                alphaStrike = betaStrike;
+            }
+            
+            shooter.setArmsFlipped(false);
+        }
+        
         // Infantry and BA may have alternative options, so we need to consider
         // different firing options.
         if (alphaStrike.getHeat() <= maxHeat && !(shooter instanceof Infantry)) {
@@ -2983,7 +3017,7 @@ public class FireControl {
     }
 
     // Helper method that figures out the valid facing changes for the given shooter
-    private List<Integer> getValidFacingChanges(final Entity shooter) {
+    public static List<Integer> getValidFacingChanges(final Entity shooter) {
         // figure out all valid twists or turret turns
         // mechs can turn:
         //		one left, one right unless he has "no torso twist" quirk or is on the ground
@@ -3010,5 +3044,57 @@ public class FireControl {
         }
         
         return validFacingChanges;
+    }
+    
+    /**
+     * This function evaluates whether or not a unit should spend its time
+     * unjamming weapons instead of firing, and returns the appropriate firing plan if that's the case.
+     * @param shooter Entity being considered.
+     * @return Unjam action plan, if we conclude that we should spend time unjamming weapons.
+     */
+    public Vector<EntityAction> getUnjamWeaponPlan(Entity shooter) {
+        int maxJammedDamage = 0;
+        int maxDamageWeaponID = -1;
+        Vector<EntityAction> unjamVector = new Vector<>();
+        
+        // apparently, only tank type units can unjam weapons/clear turrets
+        if(!shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
+            return unjamVector;
+        }
+        
+        Tank tankShooter = (Tank) shooter;
+        
+        // can't unjam if crew is stunned. Skip the rest of the logic to save time. 
+        if(tankShooter.getStunnedTurns() > 0) {
+            return unjamVector;
+        }
+        
+        // step 1: loop through all the unit's jammed weapons to determine the biggest one
+        for(Mounted mounted : tankShooter.getJammedWeapons()) {
+            int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
+            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
+            }
+            
+            if(weaponDamage > maxJammedDamage) {
+                    maxDamageWeaponID = shooter.getEquipmentNum(mounted);
+                    maxJammedDamage = weaponDamage;
+            }
+        }
+                
+        // if any of the unit's weapons are jammed, unjam the biggest one.
+        // we can only unjam one per turn.
+        if(maxDamageWeaponID >= 0) {
+            RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
+                    shooter.getId(), maxDamageWeaponID);
+            
+            unjamVector.add(rwma);
+        // if the unit has a jammed turret, attempt to clear it
+        } else if(tankShooter.canClearTurret()) {
+            UnjamTurretAction uta = new UnjamTurretAction(shooter.getId());
+            unjamVector.add(uta);
+        }
+        
+        return unjamVector;
     }
 }

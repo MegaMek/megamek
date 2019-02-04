@@ -43,7 +43,7 @@ public class ISLB5XAC extends LBXACWeapon {
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 8.0f;
+        this.tonnage = 8.0;
         this.criticals = 5;
         this.bv = 83;
         this.cost = 250000;

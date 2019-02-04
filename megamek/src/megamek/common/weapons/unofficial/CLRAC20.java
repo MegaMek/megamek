@@ -45,11 +45,12 @@ public class CLRAC20 extends RACWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 16.0f;
+        tonnage = 16.0;
         criticals = 10;
         bv = 823;
         cost = 960000;
         rulesRefs = "Unofficial";
+        flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(true)

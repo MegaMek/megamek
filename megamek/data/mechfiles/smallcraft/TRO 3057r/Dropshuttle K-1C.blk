@@ -40,7 +40,7 @@ Spheroid
 1stclassquarters:10.0:0
 2ndclassquarters:0.0:0
 crewquarters:21.0:0
-cargobay:46.5:1:1
+cargobay:46.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -95,6 +95,9 @@ CLMediumPulseLaser
 CLMediumPulseLaser
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
@@ -108,7 +111,7 @@ TRO 3057R - Early Succession War
 </tonnage>
 
 <designtype>
-0
+1
 </designtype>
 
 <crew>

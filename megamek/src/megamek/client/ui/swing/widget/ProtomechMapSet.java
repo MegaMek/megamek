@@ -107,30 +107,32 @@ public class ProtomechMapSet implements DisplayMapSet {
             internalLabels[i] = new PMValueLabel(fm, Color.red.brighter());
             content.addArea(internalLabels[i]);
         }
-        sectionLabels[0].moveTo(70, 30);
-        armorLabels[0].moveTo(60, 45);
-        internalLabels[0].moveTo(80, 45);
-        sectionLabels[1].moveTo(70, 70);
-        armorLabels[1].moveTo(70, 85);
-        internalLabels[1].moveTo(70, 100);
-        sectionLabels[2].moveTo(125, 55);
-        armorLabels[2].moveTo(125, 70);
-        internalLabels[2].moveTo(125, 85);
-        sectionLabels[3].moveTo(15, 55);
-        armorLabels[3].moveTo(15, 70);
-        internalLabels[3].moveTo(15, 85);
-        sectionLabels[4].moveTo(70, 150);
-        armorLabels[4].moveTo(60, 165);
-        internalLabels[4].moveTo(80, 165);
-        sectionLabels[5].moveTo(35, 15);
-        armorLabels[5].moveTo(25, 30);
-        internalLabels[5].moveTo(45, 30);
+        sectionLabels[Protomech.LOC_HEAD].moveTo(70, 30);
+        armorLabels[Protomech.LOC_HEAD].moveTo(60, 45);
+        internalLabels[Protomech.LOC_HEAD].moveTo(80, 45);
+        sectionLabels[Protomech.LOC_TORSO].moveTo(70, 70);
+        armorLabels[Protomech.LOC_TORSO].moveTo(70, 85);
+        internalLabels[Protomech.LOC_TORSO].moveTo(70, 100);
+        sectionLabels[Protomech.LOC_RARM].moveTo(125, 55);
+        armorLabels[Protomech.LOC_RARM].moveTo(125, 70);
+        internalLabels[Protomech.LOC_RARM].moveTo(125, 85);
+        sectionLabels[Protomech.LOC_LARM].moveTo(15, 55);
+        armorLabels[Protomech.LOC_LARM].moveTo(15, 70);
+        internalLabels[Protomech.LOC_LARM].moveTo(15, 85);
+        sectionLabels[Protomech.LOC_LEG].moveTo(70, 150);
+        armorLabels[Protomech.LOC_LEG].moveTo(60, 165);
+        internalLabels[Protomech.LOC_LEG].moveTo(80, 165);
+        sectionLabels[Protomech.LOC_MAINGUN].moveTo(35, 15);
+        armorLabels[Protomech.LOC_MAINGUN].moveTo(25, 30);
+        internalLabels[Protomech.LOC_MAINGUN].moveTo(45, 30);
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
@@ -141,18 +143,19 @@ public class ProtomechMapSet implements DisplayMapSet {
      * @param entity - the <code>Entity</code> to be displayed. This should be
      *            a <code>Protomech</code> unit.
      */
+    @Override
     public void setEntity(Entity entity) {
         Protomech proto = (Protomech) entity;
 
         int loc = proto.locations();
-        if (loc != Protomech.NUM_PMECH_LOCATIONS) {
-            armorLabels[5].setVisible(false);
-            internalLabels[5].setVisible(false);
-            sectionLabels[5].setVisible(false);
+        if (!proto.hasMainGun()) {
+            armorLabels[Protomech.LOC_MAINGUN].setVisible(false);
+            internalLabels[Protomech.LOC_MAINGUN].setVisible(false);
+            sectionLabels[Protomech.LOC_MAINGUN].setVisible(false);
         } else {
-            armorLabels[5].setVisible(true);
-            internalLabels[5].setVisible(true);
-            sectionLabels[5].setVisible(true);
+            armorLabels[Protomech.LOC_MAINGUN].setVisible(true);
+            internalLabels[Protomech.LOC_MAINGUN].setVisible(true);
+            sectionLabels[Protomech.LOC_MAINGUN].setVisible(true);
         }
         for (int i = 0; i < loc; i++) {
             // armor = proto.getArmor(i);

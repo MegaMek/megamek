@@ -22,7 +22,9 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.actions.WeaponAttackAction;
@@ -1038,7 +1040,18 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     && (((BombType)type).getBombType() == BombType.B_ASEW)) {
                 damagePerShot = 5;
             }
-
+            
+            //Capital missiles need a racksize for this
+            if (type.hasFlag(AmmoType.F_CAP_MISSILE)) {
+                rackSize = 1;
+            }
+            
+            //Screen launchers need a racksize. Damage is 15 per TW p251
+            if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+                rackSize = 1;
+                damagePerShot = 15;
+            }
+            
             long mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
@@ -1771,8 +1784,43 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *
      * @return
      */
+    public boolean isOneShotWeapon() {
+        return (getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_ONESHOT);
+    }
+    
+    /**
+     * Checks whether this mount is either one a one-shot weapon or ammo for a one-shot weapon.
+     * @return
+     */
     public boolean isOneShot(){
-        return getType().hasFlag(WeaponType.F_ONESHOT);
+        if (isOneShotWeapon()) {
+            return true;
+        } else if ((getType() instanceof AmmoType) && getLinkedBy() != null) {
+            // There should not be any circular references, but we should track where we've been just in case.
+            // Do a couple checks first to avoid instantiating a set unnecessarily.
+            Set<Mounted> checked = new HashSet<>();
+            for (Mounted current = getLinkedBy(); current != null; current = current.getLinkedBy()) {
+                if (checked.contains(current)) {
+                    return false;
+                }
+                if (current.isOneShotWeapon()) {
+                    return true;
+                }
+                checked.add(current);
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Check for whether this mount is linked by a one-shot weapon
+     * 
+     * @return {@code true} if this is one-shot ammo
+     */
+    public boolean isOneShotAmmo() {
+        return (getType() instanceof AmmoType)
+                && (getLinkedBy() != null)
+                && getLinkedBy().isOneShot();
     }
 
     public boolean isSquadSupportWeapon() {

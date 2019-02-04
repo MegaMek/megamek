@@ -137,8 +137,8 @@
   </behavior>
   <behavior>
     <name>DEFAULT</name>
-    <destinationEdge>3</destinationEdge>
-    <retreatEdge>2</retreatEdge>
+    <destinationEdge>4</destinationEdge>
+    <retreatEdge>4</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>true</goHome>
     <autoFlee>false</autoFlee>

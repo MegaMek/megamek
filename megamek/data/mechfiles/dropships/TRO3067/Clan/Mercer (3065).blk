@@ -41,7 +41,7 @@ mechbay:10.0:4
 1stclassquarters:40.0:0
 2ndclassquarters:0.0:0
 crewquarters:119.0:0
-cargobay:577.0:2:2
+cargobay:577.0:2:5
 </transporters>
 
 <SafeThrust>
@@ -170,6 +170,9 @@ CLArtemisIV
 CLArtemisIV
 </Aft Equipment>
 
+<Hull Equipment>
+</Hull Equipment>
+
 <structural_integrity>
 30
 </structural_integrity>
@@ -181,6 +184,10 @@ TRO 3067 - Civil War
 <tonnage>
 4500.0
 </tonnage>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 37

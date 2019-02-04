@@ -2,131 +2,205 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SpaceStation
 </UnitType>
+
 <Name>
 Snowden Mining Station
 </Name>
+
 <Model>
 (Standard)
 </Model>
-<Tonnage>
-51000
-</Tonnage>
-<Armor>
-23
-22
-22
-22
-22
-22
-</Armor>
-<Nose Equipment>
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-</Nose Equipment>
-<Front Left Side Equipment>
-ISPPC
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-ISSmallLaser
-</Front Left Side Equipment>
-<Front Right Side Equipment> 
-ISPPC
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-ISSmallLaser
-</Front Right Side Equipment>
-<Aft Left Side Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-(B) ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Left Side Equipment>
-<Aft Right Side Equipment> 
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-(B) ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Right Side Equipment>
-<Aft Equipment> 
-ISLargeLaser
-ISLargeLaser
-ISSmallLaser
-ISSmallLaser
-</Aft Equipment>
-<structural_integrity>
-1
-</structural_integrity>
-<heatsinks>
-79
-</heatsinks>
-<sink_type>
-0
-</sink_type>
-<fuel>
-510
-</fuel>
-<type>
-IS Level 3
-</type>
+
 <year>
 2575
 </year>
-<internal_type>
+
+<originalBuildYear>
+2575
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<designtype>
 0
-</internal_type>
-<armor_type>
-0
-</armor_type>
+</designtype>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <transporters>
-SmallCraftBay:22:4
-ShuttleHangerAndFacilities:1:0
-MechBayBay:30:4
-IndustrialMechStorageFacilities:1:0
-PressurisedRepair:5000:1
-UnPressurisedRepair:15000:1
-CargoBay:7706:1
-CargoBay:7706:1
-OreProcessingFacility:6000:1
+mechbay:30.0:3
+cargobay:5000.0:0:2
+smallcraftbay:22.0:3:3
+cargobay:5100.0:0:4
+navalrepairpressurized:5000.0:1:5:f4
+navalrepairpressurized:15000.0:1:6:f5
+navalrepairpressurized:80000.0:1:8:f0
+1stclassquarters:200.0:0
+crewquarters:518.0:0
+steeragequarters:4200.0:0
+2ndclassquarters:1750.0:0
+cargobay:14662.0:0:12
 </transporters>
-<docking_collar>
+
+<SafeThrust>
 0
-</docking_collar>
-<grav_deck>
-2
-</grav_deck>
-<escape_pod>
+</SafeThrust>
+
+<heatsinks>
+79
+</heatsinks>
+
+<sink_type>
 0
-</escape_pod>
-<life_boat>
+</sink_type>
+
+<fuel>
+5100
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+22
+22
+22
+22
+22
+22
+</armor>
+
+<Nose Equipment>
+(B) Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) PPC
+(B) Medium Laser
+Medium Laser
+(B) Small Laser
+Small Laser
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) PPC
+(B) Medium Laser
+Medium Laser
+(B) Small Laser
+Small Laser
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Large Laser
+(B) Small Laser
+Small Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Small Laser
+Small Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Small Laser
+Small Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<source>
+HB:MPS - Age of War
+</source>
+
+<tonnage>
+51000.0
+</tonnage>
+
+<sail>
+0
+</sail>
+
+<grav_decks>
+250
 150
-</life_boat>
+</grav_decks>
+
 <crew>
-354
+240
 </crew>
+
+<officers>
+20
+</officers>
+
+<gunners>
+14
+</gunners>
+
 <passengers>
 1000
 </passengers>
+
+<marines>
+90
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+150
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

@@ -13,7 +13,7 @@ Aero
 </UnitType>
 
 <Name>
-Persepolis	
+Persepolis
 </Name>
 
 <Model>
@@ -24,13 +24,20 @@ Persepolis
 3134
 </year>
 
+<originalBuildYear>
+3134
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
 
 <motion_type>
-None
+Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -77,26 +84,35 @@ CLERLargeLaser
 CLImprovedMediumHeavyLaser
 CLImprovedMediumHeavyLaser
 CLTargeting Computer
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLLRM20
 CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLLRM20
 CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLImprovedSmallHeavyLaser
 CLImprovedSmallHeavyLaser
+CLCASE
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLCASE
+</Fuselage Equipment>
 
 <source>
 XTRO Republic II - Dark Ages

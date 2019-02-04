@@ -38,9 +38,9 @@ public class CLStreakSRM4IOS extends StreakSRMWeapon {
         mediumRange = 8;
         longRange = 12;
         extremeRange = 16;
-        tonnage = 1.5f;
+        tonnage = 1.5;
         criticals = 1;
-        flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        flags = flags.or(F_NO_FIRES).or(F_ONESHOT).andNot(F_PROTO_WEAPON);
         bv = 16;
         cost = 72000;
         shortAV = 8;

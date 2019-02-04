@@ -24,6 +24,10 @@ RPR-300X
 3070
 </year>
 
+<originalBuildYear>
+3070
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -75,11 +82,6 @@ Aerodyne
 Hyper Velocity Auto Cannon/10
 Hyper Velocity Auto Cannon/10
 Extended LRM 10
-IS Ammo HVAC/10
-IS Ammo HVAC/10
-IS Ammo HVAC/10
-IS Ammo Extended LRM-10
-IS Ammo Extended LRM-10
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,10 +97,22 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<tonnage>
-85.0
-</tonnage>
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+</Fuselage Equipment>
 
 <source>
 XTRO Steiner - Jihad
 </source>
+
+<tonnage>
+85.0
+</tonnage>
+

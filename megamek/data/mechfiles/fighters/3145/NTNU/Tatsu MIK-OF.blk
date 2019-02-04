@@ -24,6 +24,10 @@ MIK-OF
 3100
 </year>
 
+<originalBuildYear>
+3100
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -78,18 +85,24 @@ Large Re-engineered Laser:OMNI
 <Left Wing Equipment>
 ISMML7:OMNI
 Large Re-engineered Laser:OMNI
-IS Ammo MML-7 LRM:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Large Re-engineered Laser:OMNI
 ISMML7:OMNI
-IS Ammo MML-7 LRM:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-IS Ammo MML-7 SRM:OMNI
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-7 LRM:OMNI
+IS Ammo MML-7 LRM:OMNI
+IS Ammo MML-7 SRM:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3145 NTNU - Late Republic

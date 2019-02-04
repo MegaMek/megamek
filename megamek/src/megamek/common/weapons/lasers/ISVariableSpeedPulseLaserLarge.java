@@ -54,7 +54,7 @@ public class ISVariableSpeedPulseLaserLarge extends
         damageShort = 11;
         damageMedium = 9;
         damageLong = 7;
-        tonnage = 9.0f;
+        tonnage = 9.0;
         criticals = 4;
         bv = 123;
         cost = 465000;

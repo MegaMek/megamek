@@ -2,139 +2,207 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 Riga II Destroyer/Carrier
 </Name>
-<model>
-(Standard)
-</model>
-<Tonnage>
-600000
-</Tonnage>
-<SafeThrust>
-4
-</SafeThrust>
-<Armor>
-120
-100
-100
-100
-100
-120
-</Armor>
-<Nose Equipment>
-MediumNPPC
-MediumNPPC
-MediumNPPC
-MediumNPPC
-(B) NAC40
-NAC40 Ammo:20
-(B) NAC40
-NAC40 Ammo:20
-</Nose Equipment>
-<Front Left Side Equipment>
-NL45
-NL45
-NL35
-NL35
-</Front Left Side Equipment>
-<Front Right Side Equipment>
-NL45
-NL45
-NL35
-NL35
-</Front Right Side Equipment>
-<Left Broadside Equipment>
-NAC30
-NAC30
-NAC30 Ammo:200
-</Left Broadside Equipment>
-<Right Broadside Equipment>
-NAC30
-NAC30
-NAC30 Ammo:200
-</Right Broadside Equipment>
-<Aft Left Side Equipment>
-NL45
-NL45
-NL35
-NL35
-</Aft Left Side Equipment>
-<Aft Right Side Equipment>
-NL45
-NL45
-NL35
-NL35
-</Aft Right Side Equipment>
-<Aft Equipment> 
-NL45
-NL45
-NL35
-NL35
-</Aft Equipment>
-<structural_integrity>
-60
-</structural_integrity>
-<heatsinks>
-581
-</heatsinks>
-<sink_type>
-1
-</sink_type>
-<fuel>
-9000
-</fuel>
-<type>
-IS Level 3
-</type>
+
+<Model>
+(2747)
+</Model>
+
 <year>
 2747
 </year>
-<internal_type>
-0
-</internal_type>
+
+<originalBuildYear>
+2747
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:4:1
+asfbay:18.0:4:2
+smallcraftbay:5.0:2:3
+dockingcollar
+dockingcollar
+1stclassquarters:400.0:0
+crewquarters:1400.0:0
+cargobay:73888.0:1:6
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+581
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+22500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
 <armor_type>
 12
 </armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
-<transporters>
-ASFBay:18:4
-ASFBay:18:4
-SmallCraftBay:5:2
-CargoBay:70496:1
-</transporters>
-<docking_collar>
-2
-</docking_collar>
 
-<grav_deck>
-2
-</grav_deck>
+<armor_tech>
+5
+</armor_tech>
 
-<escape_pod>
-20
-</escape_pod>
-<life_boat>
-30
-</life_boat>
+<armor>
+120
+100
+100
+120
+100
+100
+</armor>
+
+<Nose Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 35
+Naval Laser 35
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:200
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:200
+</Right Broadsides Equipment>
+
+<structural_integrity>
+60
+</structural_integrity>
+
+<source>
+FR2765-P - Star League
+</source>
+
+<tonnage>
+600000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+140
+65
+</grav_decks>
+
 <crew>
 337
 </crew>
+
+<officers>
+40
+</officers>
+
+<gunners>
+42
+</gunners>
+
 <passengers>
 0
 </passengers>
 
-<lithium-fusion>
-</lithium-fusion>
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+30
+</life_boat>
+
+<escape_pod>
+20
+</escape_pod>
+

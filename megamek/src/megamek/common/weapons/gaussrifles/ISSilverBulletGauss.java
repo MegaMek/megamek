@@ -54,7 +54,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         mediumRange = 15;
         longRange = 22;
         extremeRange = 30;
-        tonnage = 15.0f;
+        tonnage = 15.0;
         criticals = 7;
         bv = 198;
         cost = 350000;
@@ -72,7 +72,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         rulesRefs = "314,TO";
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3051, 3080, 3090).setPrototypeFactions(F_FS,F_LC)
+            .setISAdvancement(3051, 3080, 3090,DATE_NONE, DATE_NONE).setPrototypeFactions(F_FS,F_LC)
             .setProductionFactions(F_FC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 

@@ -111,7 +111,7 @@ public class StreakHandler extends MissileWeaponHandler {
                     : null;
             if (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                nMissilesModifier -= getAeroSanityAMSHitsMod();
+                amsMod = (int) -getAeroSanityAMSHitsMod();
             }
         }
         

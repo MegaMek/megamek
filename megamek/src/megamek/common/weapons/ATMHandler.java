@@ -304,7 +304,11 @@ public class ATMHandler extends MissileWeaponHandler {
         }
 
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            // We want buildings and large craft to be able to affect this number with AMS
+            // treat as a Streak launcher (cluster roll 11) to make this happen
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier, weapon.isHotLoaded(), true,
+                    isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()

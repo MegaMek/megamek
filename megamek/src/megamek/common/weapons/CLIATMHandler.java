@@ -281,12 +281,11 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         if (allShotsHit()) {
-            if (amsMod == 0) {
-                missilesHit = wtype.getRackSize();
-            } else {
-                missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod,
-                        weapon.isHotLoaded(), allShotsHit(), isAdvancedAMS());
-            }
+            // We want buildings and large craft to be able to affect this number with AMS
+            // treat as a Streak launcher (cluster roll 11) to make this happen
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier, weapon.isHotLoaded(), true,
+                    isAdvancedAMS());
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()

@@ -448,22 +448,24 @@ public class LRMSwarmHandler extends LRMHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         // add AMS mods
-        nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        
+        int amsMod = getAMSHitsMod(vPhaseReport);
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
             if (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                nMissilesModifier -= getAeroSanityAMSHitsMod();
+                amsMod = (int) -getAeroSanityAMSHitsMod();
             }
         }
+        nMissilesModifier += amsMod;
+        
+        
 
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
             if (allShotsHit()) {
-                missilesHit = swarmMissilesLeft;
+                missilesHit = (swarmMissilesLeft - amsMod);
             } else {
                 missilesHit = Compute.missilesHit(swarmMissilesLeft,
                         nMissilesModifier, weapon.isHotLoaded(), false,

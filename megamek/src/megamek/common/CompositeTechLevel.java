@@ -349,7 +349,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             if (end == null) {
                 sb.append("+");
             } else {
-                if (end != start) {
+                if (!end.equals(start)) {
                     sb.append("-").append(formatYear(end, endApproximate));
                 }
             }

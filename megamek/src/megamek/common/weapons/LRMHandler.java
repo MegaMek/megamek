@@ -276,7 +276,9 @@ public class LRMHandler extends MissileWeaponHandler {
         boolean minRangeELRMAttack = false;
         
         // ELRMs only hit with half their rack size rounded up at minimum range.
+        // Ignore this for space combat. 1 hex is 18km across.
         if (wtype instanceof ExtendedLRMWeapon
+                && !game.getBoard().inSpace()
                 && (nRange <= wtype.getMinimumRange())) {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;
@@ -285,7 +287,7 @@ public class LRMHandler extends MissileWeaponHandler {
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(rackSize,
                     nMissilesModifier, weapon.isHotLoaded(), true,
                     isAdvancedAMS());
         } else {

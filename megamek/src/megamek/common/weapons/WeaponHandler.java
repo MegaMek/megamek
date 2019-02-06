@@ -1658,6 +1658,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return true;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && !ae.isCapitalFighter()
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && ((Entity) target).isCapitalScale()
                 && !((Entity) target).isCapitalFighter()) {

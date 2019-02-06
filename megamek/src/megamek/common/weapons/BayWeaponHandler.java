@@ -493,7 +493,7 @@ public class BayWeaponHandler extends WeaponHandler {
         
         //Report point defense effects
         //Set up a cluster hits table modifier
-        double counterAVMod = (getCounterAV());
+        double counterAVMod = getCounterAV();
         //Report a failure due to overheating
         if (pdOverheated
                 && (!(amsBayEngaged

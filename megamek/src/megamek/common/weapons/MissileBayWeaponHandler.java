@@ -155,6 +155,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     protected void setPDBayReportingFlag() {
         pdBayEngaged = true;
     }
+    
+    //Check for Thunderbolt. We'll use this for single AMS resolution
+    @Override
+    protected boolean isTbolt() {
+        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
+    }
 
     /*
      * check for special munitions and their effect on av 

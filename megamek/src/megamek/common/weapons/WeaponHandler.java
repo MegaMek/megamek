@@ -245,6 +245,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
     
     /**
+     * Sets whether or not this weapon is considered a single, large missile for AMS resolution
+     */
+    protected boolean isTbolt() {
+        return false;
+    }
+    
+    /**
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      * See also TeleMissileAttackAction, which contains a modified version of this to work against 

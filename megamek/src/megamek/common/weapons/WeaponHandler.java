@@ -133,6 +133,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean advancedPD = false; //true if advanced StratOps game rule is on
     protected WeaponHandler parentBayHandler = null; //Used for weapons bays when Aero Sanity is on
     
+    protected boolean amsEngaged = false;
+    protected boolean apdsEngaged = false;
+    
     /**
      * Write debug information to the logs.
      *
@@ -575,6 +578,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             r.add(getCounterAV());
                             r.newlines = 0;
                             vPhaseReport.addElement(r);
+                        } else if (amsEngaged) {
+                            Report r = new Report(3350);
+                            r.subject = entityTarget.getId();
+                            r.newlines = 0;
+                            vPhaseReport.add(r);
                         }
                         Report r = new Report(3325);
                         r.subject = subjectId;

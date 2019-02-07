@@ -49,8 +49,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -4801130911083653548L;
-    boolean amsEngaged = false;
-    boolean apdsEngaged = false;
     boolean advancedAMS = false;
     boolean advancedPD = false;
     boolean multiAMS = false;

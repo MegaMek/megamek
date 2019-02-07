@@ -83,8 +83,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
-            if (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
-                    || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            if (entityTarget.isLargeCraft()) {
                 nMissilesModifier -= getAeroSanityAMSHitsMod();
             }
         }

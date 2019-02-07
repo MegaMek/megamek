@@ -267,8 +267,7 @@ public class LRMHandler extends MissileWeaponHandler {
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && (entityTarget.hasETypeFlag(Entity.ETYPE_DROPSHIP)
-                        || entityTarget.hasETypeFlag(Entity.ETYPE_JUMPSHIP))) {
+                && entityTarget.isLargeCraft()) {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
         }
 

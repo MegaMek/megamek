@@ -145,7 +145,11 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected void setAMSBayReportingFlag() {
-        amsBayEngaged = true;
+        if (isTbolt()) {
+            amsBayEngagedMissile = true;
+        } else {
+            amsBayEngaged = true;
+        }
     }
     
     /**
@@ -153,7 +157,11 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected void setPDBayReportingFlag() {
-        pdBayEngaged = true;
+        if (isTbolt()) {
+            pdBayEngagedMissile = true;
+        } else {
+            pdBayEngaged = true;
+        }
     }
     
     //Check for Thunderbolt. We'll use this for single AMS resolution

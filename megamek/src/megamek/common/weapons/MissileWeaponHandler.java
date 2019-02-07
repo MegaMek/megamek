@@ -494,8 +494,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
             //Now report and apply the effect, if any
             if (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged) {
-                // Let's try to mimc reduced AMS effectiveness against higher munition attack values
-                return (counterAVMod / calcDamagePerHit());
+                // Let's try to mimic reduced AMS effectiveness against higher munition attack values
+                // Set a minimum -4 (default AMS mod)
+                return Math.max((counterAVMod / calcDamagePerHit()),2);
             }
         } else if (getCounterAV() > 0) {
             // Good for squadron missile fire. This may get divided up against too many missile racks to produce a result.

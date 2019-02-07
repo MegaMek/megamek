@@ -567,6 +567,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         for (int i = 0; i < nweaponsHit; i++) {
                             hits += calcHits(throwAwayReport);
                         }
+                        //Report point defense fire
+                        if (pdBayEngaged || amsBayEngaged) {
+                            Report r = new Report(3367);
+                            r.indent();
+                            r.subject = subjectId;
+                            r.add(getCounterAV());
+                            r.newlines = 0;
+                            vPhaseReport.addElement(r);
+                        }
                         Report r = new Report(3325);
                         r.subject = subjectId;
                         r.add(hits);
@@ -1658,10 +1667,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return true;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && !ae.isCapitalFighter()
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && ((Entity) target).isCapitalScale()
-                && !((Entity) target).isCapitalFighter()) {
+                && !((Entity) target).isCapitalFighter()
+                && !ae.isCapitalFighter()) {
             return true;
         }
         return false;

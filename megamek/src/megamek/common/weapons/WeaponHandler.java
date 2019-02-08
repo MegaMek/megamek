@@ -599,6 +599,73 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         r.newlines = 0;
                         vPhaseReport.add(r);
                     } else {
+                        //If point defenses engage Large, single missiles
+                        if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                            int AMSHits = 0;
+                            Report r = new Report(3236);
+                            r.subject = subjectId;
+                            r.add(nweaponsHit);
+                            vPhaseReport.add(r);
+                            r = new Report(3230);
+                            r.indent(1);
+                            r.subject = subjectId;
+                            vPhaseReport.add(r);
+                            for (int i = 0; i < nweaponsHit; i++) {
+                                int destroyRoll = Compute.d6();
+                                if (destroyRoll <= 3) {
+                                    r = new Report(3240);
+                                    r.subject = subjectId;
+                                    r.add("missile");
+                                    r.add(destroyRoll);
+                                    vPhaseReport.add(r);
+                                    AMSHits += 1;
+                                } else {
+                                    r = new Report(3241);
+                                    r.add("missile");
+                                    r.add(destroyRoll);
+                                    r.subject = subjectId;
+                                    vPhaseReport.add(r);                                
+                                }
+                            }
+                            nweaponsHit = nweaponsHit - AMSHits;
+                        } else if (amsEngaged || apdsEngaged) {
+                            //If you're shooting at a target using single AMS
+                            //Too many variables here as far as AMS numbers
+                            //Just allow 1 missile to be shot down
+                            int AMSHits = 0;
+                            Report r = new Report(3236);
+                            r.subject = subjectId;
+                            r.add(nweaponsHit);
+                            vPhaseReport.add(r);
+                            if (amsEngaged) {
+                                r = new Report(3230);
+                                r.indent(1);
+                                r.subject = subjectId;
+                                vPhaseReport.add(r);
+                            }
+                            if (apdsEngaged) {
+                                r = new Report(3231);
+                                r.indent(1);
+                                r.subject = subjectId;
+                                vPhaseReport.add(r);
+                            }
+                            int destroyRoll = Compute.d6();
+                            if (destroyRoll <= 3) {
+                                r = new Report(3240);
+                                r.subject = subjectId;
+                                r.add("missile");
+                                r.add(destroyRoll);
+                                vPhaseReport.add(r);
+                                AMSHits = 1;
+                            } else {
+                                r = new Report(3241);
+                                r.add("missile");
+                                r.add(destroyRoll);
+                                r.subject = subjectId;
+                                vPhaseReport.add(r);                                
+                            }
+                            nweaponsHit = nweaponsHit - AMSHits;
+                        }
                         nCluster = 1;
                         Report r = new Report(3325);
                         r.subject = subjectId;

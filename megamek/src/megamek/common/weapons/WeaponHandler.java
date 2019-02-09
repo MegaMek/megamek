@@ -601,6 +601,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     } else {
                         //If point defenses engage Large, single missiles
                         if (pdBayEngagedMissile || amsBayEngagedMissile) {
+                            // remove the last reports because they showed the
+                            // number of shots that hit
+                            while (vPhaseReport.size() > reportSize) {
+                                vPhaseReport.remove(vPhaseReport.size() - 1);
+                            }
                             int AMSHits = 0;
                             Report r = new Report(3236);
                             r.subject = subjectId;
@@ -629,6 +634,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             }
                             nweaponsHit = nweaponsHit - AMSHits;
                         } else if (amsEngaged || apdsEngaged) {
+                            // remove the last reports because they showed the
+                            // number of shots that hit
+                            while (vPhaseReport.size() > reportSize) {
+                                vPhaseReport.remove(vPhaseReport.size() - 1);
+                            }
                             //If you're shooting at a target using single AMS
                             //Too many variables here as far as AMS numbers
                             //Just allow 1 missile to be shot down

@@ -17,12 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AR10Handler;
-import megamek.common.weapons.AttackHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -74,18 +68,5 @@ public class AR10Weapon extends CapitalMissileWeapon {
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
             .setReintroductionFactions(F_FS,F_LC);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new AR10Handler(toHit, waa, game, server);
     }
 }

@@ -17,12 +17,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.BarracudaHandler;
-import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -73,18 +67,5 @@ public class CapMissBarracudaWeapon extends CapitalMissileWeapon {
             .setPrototypeFactions(F_TA)
             .setProductionFactions(F_TA)
             .setReintroductionFactions(F_FS,F_LC);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new BarracudaHandler(toHit, waa, game, server);
     }
 }

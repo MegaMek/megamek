@@ -118,7 +118,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
         //This has to be up here so that we don't screw up glancing/direct blow reports
-        attackValue = calcAttackValue();
+        nDamPerHit = calcAttackValue();
         
         //CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();

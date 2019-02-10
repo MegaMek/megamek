@@ -22,6 +22,7 @@ v0.45.3
 + Data: Fixes to Saxarba HQ Tileset.
 + Issue #1176: Artillery attacks now display flight time with the rest of the firing data when picking a target.
 + Issue #1238: Players can once again place minefields.
++ Issue MML#233: Medium Re-engineered Laser cost
 
 v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.

@@ -16,12 +16,9 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Building;
-import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;

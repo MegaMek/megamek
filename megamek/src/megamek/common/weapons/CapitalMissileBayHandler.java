@@ -656,6 +656,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
                     AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
+                    // This should always be true. Maybe there's a better way to write this?
+                    if (bayWHandler instanceof WeaponHandler) {
+                        WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                        wHandler.setParentBayHandler(this);
+                    }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {
                         //fix the reporting - is there a better way to do this

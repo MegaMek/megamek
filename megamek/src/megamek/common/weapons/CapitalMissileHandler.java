@@ -101,7 +101,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addElement(r);
                 
-        //Point Defense fire vs Capital Missiles
+        
         
         // are we a glancing hit?  Check for this here, report it later
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
@@ -116,10 +116,19 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
-
-        //This has to be up here so that we don't screw up glancing/direct blow reports
-        nDamPerHit = calcDamagePerHit();
         
+        //Point Defense fire vs Capital Missiles
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            if (getParentBayHandler() != null) {
+                WeaponHandler bayHandler = getParentBayHandler();
+                CounterAV = bayHandler.getCounterAV();
+            }
+            nDamPerHit = calcDamagePerHit();
+        } else {
+            // Should only be used when using a grounded dropship with individual weapons
+            // Otherwise we're using CapitalMissileBayHandler
+            attackValue = calcAttackValue();
+        }
         //CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();
         
@@ -363,9 +372,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
                 toReturn = 1000;
             } 
-            if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
-                nukeS2S = true;
-            }
+            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
         }
         
         // we default to direct fire weapons for anti-infantry damage

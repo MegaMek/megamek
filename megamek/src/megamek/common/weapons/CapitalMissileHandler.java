@@ -16,9 +16,12 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -118,7 +121,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
         //This has to be up here so that we don't screw up glancing/direct blow reports
-        nDamPerHit = calcAttackValue();
+        nDamPerHit = calcDamagePerHit();
         
         //CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();
@@ -330,6 +333,54 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         av = (int) Math.floor(getBracketingMultiplier() * av);
         
         return av;
+    }
+    
+    /**
+     * Calculate the damage per hit.
+     *
+     * @return an <code>int</code> representing the damage dealt per hit.
+     */
+    @Override
+    protected int calcDamagePerHit() {
+        AmmoType atype = (AmmoType) ammo.getType();
+        double toReturn = wtype.getDamage(nRange);
+        
+        //AR10 munitions
+        if (atype != null) {
+            if (atype.getAmmoType() == AmmoType.T_AR10) {
+                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                    toReturn = 4;
+                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                    toReturn = 3;
+                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                    toReturn = 1000;
+                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                    toReturn = 100;
+                } else {
+                    toReturn = 2;
+                }
+            }
+            //Nuclear Warheads for non-AR10 missiles
+            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                toReturn = 100;
+            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                toReturn = 1000;
+            } 
+            if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
+                nukeS2S = true;
+            }
+        }
+        
+        // we default to direct fire weapons for anti-infantry damage
+        if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+        }
+
+        if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+
+        return (int) toReturn;
     }
   
     @Override

@@ -105,10 +105,17 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         
         // are we a glancing hit?  Check for this here, report it later
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (getParentBayHandler() != null) {
+                    WeaponHandler bayHandler = getParentBayHandler();
+                    bGlancing = bayHandler.bGlancing;
+                }
             } else {
+                if (roll == toHit.getValue()) {
+                    bGlancing = true;
+                } else {
                 bGlancing = false;
+                }
             }
         }
         
@@ -118,11 +125,11 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         
         //Point Defense fire vs Capital Missiles
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-            if (getParentBayHandler() != null) {
-                WeaponHandler bayHandler = getParentBayHandler();
-                CounterAV = bayHandler.getCounterAV();
-            }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && getParentBayHandler() != null) {
+            WeaponHandler bayHandler = getParentBayHandler();
+            CounterAV = bayHandler.getCounterAV();
+            CapMissileArmor = bayHandler.CapMissileArmor;
             nDamPerHit = calcDamagePerHit();
         } else {
             // Should only be used when using a grounded dropship with individual weapons
@@ -130,6 +137,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             attackValue = calcAttackValue();
         }
         //CalcAttackValue triggers counterfire, so now we can safely get this
+        //If Aero Sanity is on we get it from the parent Bay
         CapMissileAMSMod = getCapMissileAMSMod();
         
         //Only do this if the missile wasn't destroyed

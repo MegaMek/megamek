@@ -120,7 +120,13 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         }
         
         // Set Margin of Success/Failure and check for Direct Blows
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                && getParentBayHandler() != null) {
+            WeaponHandler bayHandler = getParentBayHandler();
+            toHit.setMoS(roll - Math.max(2, bayHandler.toHit.getValue()));
+        } else {
+            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        }
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         

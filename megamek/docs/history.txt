@@ -1,7 +1,7 @@
-
-
 VERSION HISTORY:
 ----------------
+v0.45.4-SNAPSHOT
+
 v0.45.3 (2019-02-12 0500 UTC)
 + PR #1196: Explicitly set military/civilian flag for space stations; Prevent sensor contacts from displaying unit info on space maps.
 + PR #1197: Fix "ASEW"-related soft lock at end phase when warships or space stations are on the board.

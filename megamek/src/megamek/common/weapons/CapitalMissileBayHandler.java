@@ -63,10 +63,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!cares(phase)) {
-            return true;
-        }
-
+        
         if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
@@ -525,8 +522,6 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-
-        insertAttacks(phase, vPhaseReport);
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;

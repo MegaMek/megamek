@@ -107,8 +107,9 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                 if (getParentBayHandler() != null) {
+                    //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
                     WeaponHandler bayHandler = getParentBayHandler();
-                    bGlancing = bayHandler.bGlancing;
+                    bGlancing = (roll == bayHandler.toHit.getValue());
                 }
             } else {
                 if (roll == toHit.getValue()) {
@@ -122,6 +123,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         // Set Margin of Success/Failure and check for Direct Blows
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && getParentBayHandler() != null) {
+            //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
             WeaponHandler bayHandler = getParentBayHandler();
             toHit.setMoS(roll - Math.max(2, bayHandler.toHit.getValue()));
         } else {
@@ -135,7 +137,6 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 && getParentBayHandler() != null) {
             WeaponHandler bayHandler = getParentBayHandler();
             CounterAV = bayHandler.getCounterAV();
-            CapMissileArmor = bayHandler.CapMissileArmor;
             nDamPerHit = calcDamagePerHit();
         } else {
             // Should only be used when using a grounded dropship with individual weapons
@@ -143,7 +144,6 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             attackValue = calcAttackValue();
         }
         //CalcAttackValue triggers counterfire, so now we can safely get this
-        //If Aero Sanity is on we get it from the parent Bay
         CapMissileAMSMod = getCapMissileAMSMod();
         
         //Only do this if the missile wasn't destroyed

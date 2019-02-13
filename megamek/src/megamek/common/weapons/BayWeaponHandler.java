@@ -528,7 +528,10 @@ public class BayWeaponHandler extends WeaponHandler {
         //Large missiles
 
         Report.addNewline(vPhaseReport);
-        toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
+        //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+        //data from the 'real' toHit data of this bay handler
+        ToHitData autoHit = new ToHitData();
+        autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
         for (int wId : weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);

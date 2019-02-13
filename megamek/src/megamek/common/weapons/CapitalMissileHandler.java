@@ -434,17 +434,17 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 // Santa Anna, per IO rules
                 || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
             return 9;
+        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
+                || atype.getAmmoType() == AmmoType.T_KRAKENM
+                // Peacemaker, per IO rules
+                || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            return 8;
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
                 || atype.getAmmoType() == AmmoType.T_KILLER_WHALE_T
                 || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY
                 || atype.getAmmoType() == AmmoType.T_ALAMO) {
             return 10;
-        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
-                || atype.getAmmoType() == AmmoType.T_KRAKENM
-                // Peacemaker, per IO rules
-                || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
-            return 8;
         } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
             return 12;
         } else {

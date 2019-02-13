@@ -540,7 +540,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 if(bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true. Maybe there's a better way to write this?
                     if (bayWHandler instanceof WeaponHandler) {

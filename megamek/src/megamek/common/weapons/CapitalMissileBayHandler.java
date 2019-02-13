@@ -641,8 +641,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
-        
-        vPhaseReport.addElement(r);
+
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
